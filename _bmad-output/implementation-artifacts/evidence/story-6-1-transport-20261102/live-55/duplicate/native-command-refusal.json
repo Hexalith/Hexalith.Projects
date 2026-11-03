@@ -1,0 +1,83 @@
+{
+  "diagnosticOnly": true,
+  "actualNativeFailure": "CreateFolder HTTP500 during setup",
+  "database": "20261103T172250432Z/dashboard.db",
+  "spans": [
+    {
+      "resource": "eventstore",
+      "route": "api/v1/commands",
+      "durationMs": 1518.8458,
+      "status": "500"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "route": "/process",
+      "durationMs": 572.1704,
+      "status": "503"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "route": null,
+      "durationMs": 399.9918,
+      "status": "200"
+    },
+    {
+      "resource": "eventstore",
+      "route": "api/v1/streams/read/workload",
+      "durationMs": 402.1699,
+      "status": "200"
+    }
+  ],
+  "closedLogFacts": [
+    {
+      "resource": "Hexalith.Folders",
+      "scope": "Hexalith.Folders.Server.FoldersDevelopmentOwnerMetadataDiagnostics",
+      "facts": {}
+    },
+    {
+      "resource": "eventstore",
+      "scope": "Hexalith.EventStore.Controllers.StreamsController",
+      "facts": {}
+    },
+    {
+      "resource": "eventstore",
+      "scope": "Hexalith.EventStore.Controllers.StreamsController",
+      "facts": {
+        "InitialStatus": "available",
+        "FinalStatus": "available",
+        "InitialSequence": "3",
+        "FinalSequence": "3",
+        "ObservationsEqual": "true",
+        "TotalElapsedMilliseconds": "220.1047",
+        "TaskCanceled": "false",
+        "TaskFaulted": "false",
+        "RequestCanceled": "false"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "scope": "Hexalith.Folders.Server.FoldersDevelopmentOwnerMetadataDiagnostics",
+      "facts": {
+        "Available": "false",
+        "ElapsedMilliseconds": "499.2751",
+        "CallerCanceled": "true"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "scope": "Hexalith.EventStore.Pipeline.LoggingBehavior",
+      "facts": {
+        "ExceptionType": "DomainServiceSafeDenialException"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "scope": "Hexalith.EventStore.ErrorHandling.GlobalExceptionHandler",
+      "facts": {
+        "ExceptionType": "DomainServiceSafeDenialException"
+      }
+    }
+  ],
+  "fixedCatchUpMilliseconds": 500,
+  "qualificationAccepted": false
+}

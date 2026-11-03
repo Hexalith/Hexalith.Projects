@@ -17,7 +17,8 @@ using Shouldly;
 using Xunit;
 
 /// <summary>Local asymmetric software proof only; no deployed identity, enrollment or acceptance is established.</summary>
-public sealed class SupportedProjectAuthorityHttpTests
+/// <param name="output">The native per-test output for closed transport observations.</param>
+public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
 {
     /// <summary>Proves the authorized two-hop path and read-only persisted end-state.</summary>
     [Fact]
@@ -28,6 +29,8 @@ public sealed class SupportedProjectAuthorityHttpTests
         var before = await fixture.SnapshotAsync(); before.ShouldAllBe(item => item.Bytes.Length > 0 && item.ETag.Length > 0);
         fixture.Projects.Services.GetRequiredService<IDataProtectionProvider>().ShouldBeOfType<EphemeralDataProtectionProvider>();
         var opened = await fixture.ReadAsync<GetProjectResponse>(fixture.Open());
+        output.WriteLine("Actual owner gateway HTTP statuses=" + string.Join(',', fixture.Routes.OwnerResponseStatuses));
+        foreach (string observation in fixture.Routes.OwnerProofObservations) output.WriteLine("Actual owner proof observation=" + observation);
         fixture.Routes.Attempts.ShouldBe(OpenSteps());
         opened.ProjectId.ShouldBe("project-a"); opened.Name.ShouldBeNull(); opened.Description.ShouldBeNull();
         var first = await fixture.ReadAsync<ProjectListPage>(fixture.List(new(PageSize: 1)));
@@ -115,7 +118,10 @@ public sealed class SupportedProjectAuthorityHttpTests
         };
         await fixture.RefusedAsync(fixture.Open(), HttpStatusCode.NotFound); await fixture.RefusedAsync(fixture.Open(), HttpStatusCode.NotFound);
         var rejected = fixture.Routes.Hops.Last(hop => hop.Target == target);
-        rejected.Status.ShouldBe(404); await fixture.VerifyHopAsync(rejected, exact: false);
+        // The finite Folder catalog refuses an unenrolled tenant before the envelope dispatcher.
+        // The public refusal, signed digest mismatch and unchanged persisted state remain required.
+        rejected.Status.ShouldBe(target == "folders" && fault == "tenant" ? 503 : 404);
+        await fixture.VerifyHopAsync(rejected, exact: false);
         var token = new JsonWebToken(rejected.Assertion);
         token.GetClaim(QueryCallerAuthorityBinding.DigestClaim).Value.ShouldNotBe(QueryCallerAuthorityBinding.Bind(rejected.Query)[QueryCallerAuthorityBinding.DigestClaim]);
         AssertProfileRequests(fixture); await fixture.AssertUnchangedAsync(before);

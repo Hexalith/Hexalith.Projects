@@ -1,0 +1,362 @@
+{
+  "proof": {
+    "catalog": {
+      "bytes": 216267,
+      "root": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+      "canonicalBytesAndFacetsUnchanged": true,
+      "activationInputSha256": "b979dce022586ade399e33cb9d6cb839a44a6d86d531c1da22e8073d0f82c0c8"
+    },
+    "eventstore": {
+      "inputSha256": "cc53a3b6526208206aab15f13619cc40a6b56e0e0e3ee3de0af41c6784e432da",
+      "identitySha256": "dfe811a1aa7de93adf7c530b1492109a144972c7576e3e4581bc8ec6d1b6126a",
+      "freshCapturePerOperation": true
+    },
+    "folders": {
+      "inputSha256": "e08777b2015d546e9fc0dc4f86ceb0b1b5b081791125072be9d50ab70472b3e2",
+      "identitySha256": "908fb1a4040054866f716f57c50d82c39e67975367b43ca19f250bba647c2373",
+      "freshCapturePerOperation": true
+    },
+    "compiledCapture": {
+      "operationsHash": "ef90ec20212d4e8c72b161640024b2ae523fefb21136c7aa637fb8b368bb640b",
+      "routeCount": 68,
+      "operationCount": 68,
+      "assemblies": [
+        "Hexalith.Projects.Server",
+        "Hexalith.Tenants.Contracts",
+        "Hexalith.Folders.Server"
+      ]
+    },
+    "queryFixture": {
+      "normalizedTruthSha256": "4900ebfd86c612c1e18fc2363f2b4ca67b1e397ec93b282976e6850b2c9c95d7",
+      "authorityAndFolders": "existing in-memory test fixture only; no live authority evidence",
+      "clock": "existing fixed fixture clock; not a live source or authority refresh"
+    }
+  },
+  "results": [
+    {
+      "name": "seven-exact-byte-decodes-owned-memo",
+      "operations": 80,
+      "medianMilliseconds": 13.8578,
+      "p95Milliseconds": 17.5701,
+      "averageAllocatedBytes": 5899003
+    },
+    {
+      "name": "fresh-release-binding-owned-memo",
+      "operations": 80,
+      "medianMilliseconds": 1.1672,
+      "p95Milliseconds": 3.3311,
+      "averageAllocatedBytes": 1178043
+    },
+    {
+      "name": "fresh-capture-and-observe-eventstore",
+      "operations": 60,
+      "medianMilliseconds": 15.9865,
+      "p95Milliseconds": 19.2548,
+      "averageAllocatedBytes": 10889895
+    },
+    {
+      "name": "fresh-capture-and-observe-folders",
+      "operations": 60,
+      "medianMilliseconds": 4.5891,
+      "p95Milliseconds": 7.7384,
+      "averageAllocatedBytes": 3483985
+    },
+    {
+      "name": "actual-68-route-owner-four-reads-plus-operations",
+      "operations": 60,
+      "medianMilliseconds": 18.5391,
+      "p95Milliseconds": 20.85,
+      "averageAllocatedBytes": 11336268
+    },
+    {
+      "name": "real-query-executor-list-continuation-open-in-memory-fixture",
+      "operations": 120,
+      "medianMilliseconds": 0.4403,
+      "p95Milliseconds": 0.6357,
+      "averageAllocatedBytes": 251850
+    }
+  ],
+  "binaries": [
+    {
+      "name": "Hexalith.Commons.Diagnostics",
+      "sha256": "a1b78f9e51e8440c74a53b6bbd2ffb2936fc709823ac3e797b04e54e540bf824",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Http",
+      "sha256": "a7f432f11910bc21e48b40fbf44ff035f139f013cafc0308597c02a1e8d3817f",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Publication",
+      "sha256": "f365c1f85cdaa8ac13a36ba9ef3105690951fa5a8531f8abf3f4ad9138bf5ac1",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Serialization",
+      "sha256": "c9dfae5740da1c7dd4b43404c569a0b43d42d8a761d1490d434cd5d1be9e59d4",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.TenantAccess",
+      "sha256": "d1558f2ec4b3e282e325602569f496c6a83874c7ecf481db6a7801e600ddf96a",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.UniqueIds",
+      "sha256": "5f97e0fe51600c80a00feb835bad99e10c38b1aa6bda510eb7a63e9f6edb37b3",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Client",
+      "sha256": "effe7c73aa41c0e885e9be628fabed0e8897d8ff71c7905795b96cb8ca26891f",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Contracts",
+      "sha256": "7b7740c843d6951a8bebd1d4d8b4f6b37834b20be6f76762256f7dd03c946ea6",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Server",
+      "sha256": "95c3ff28aaf414eb853c04c2bca3bb3dfa0b46c95450f40496c92bb24ae6367d",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations",
+      "sha256": "f0c4a551811753c6143e40ee6766fad134814214114eb951e866df823561bae6",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Admin.Abstractions",
+      "sha256": "2eccb9ec2b2c6bd215c98375ea5d53d2118d81bfe79805700826427a17f42ddf",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Client",
+      "sha256": "e5914a933742004573fc3115017864261d745b5430e0b250f9185bbedba99bef",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Contracts",
+      "sha256": "cb4b8e9da1b8c7a21a2bb33caabc0c488e5a120e985ff8ac536e70f069132001",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.DomainService",
+      "sha256": "213f865a7336813ea783ea35857cf0d96c091d5ebbd70cd3442238a1c4b629bc",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Gateway",
+      "sha256": "d240c6fc9bb9e0903ecaf184771c5a869805d486d00818bee9d5351b676118f7",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Server",
+      "sha256": "8efcb395a29d11b54f6d1d4da8c9fb0eacacf257b7dbee846a2faf48a2692da3",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.ServiceDefaults",
+      "sha256": "8dd971be5aab2aec4cd7d9184a1f10e3684d5923d35db8a7b79ddb0de7f8fb0b",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Testing",
+      "sha256": "33da21963d684260e86d7322db69df94a112f3b265e7760a2779d0de5e4fc099",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Client",
+      "sha256": "43b386b3bbcb4b4626fa916155fb4e894cfbd432b906c2455210549f57f22573",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Contracts",
+      "sha256": "f51c79ce95655d28cbb8db8c7adc291b2d997d96793bb19a9671ccd00fc44397",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Server",
+      "sha256": "ab258b75c2bd5fb7db7e2594e8d3559cca385fc63f983805b3c9d576da5de8a6",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.ServiceDefaults",
+      "sha256": "851d2950ac645fade5d56405562906222db85c1f2a1f288a4a53dc5b5683e310",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders",
+      "sha256": "43e833f5806577bdcb7d024e4af59018130561afcbc1cb093c5cd353978075a5",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Contracts.UI",
+      "sha256": "464a99abcdd880c07c9a7fc82dd8d6ff92e0827ca6e1c018b2e5e46735205fd7",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Contracts",
+      "sha256": "972abc21786e9cf6930239af60908b8ff6436363c05754befc799116dd9ccc03",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Shell",
+      "sha256": "f3cfa96c642aaee502d475dd061863db04418826f5be4a1d9446811fb1fadb34",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.McpCli.Abstractions",
+      "sha256": "eb7e8c14a6796b3e94904ecfc441dd238e65b7d49dc01bd017fbf89e80b52ad3",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Memories.Client.Rest",
+      "sha256": "61a0c39348784b5a5dff3dcc9c13529c495f26f577562a209a29e67f493e4dc5",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Memories.Contracts",
+      "sha256": "51fc6910841e2710103fade8865a349c55a2c39f02093d51aed56de46f97ab3a",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Client",
+      "sha256": "e69b486f9634964de92afc9502282b63f12a086f6b61fa35096109cf3f5e46e4",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Contracts",
+      "sha256": "f0cdf1b4a1c6a386b62028f64d3091ac077957c4305aa760f864104b5df9865e",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Infrastructure",
+      "sha256": "bc0c82c8541035445ec61c77625672e72947b2e2c1f283dc0c939d7bfdee41af",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Server.Tests",
+      "sha256": "9a3eb5e5371ed438b11c6a4d0c773222199f872fda5b1301f58895787ee4e8db",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Server",
+      "sha256": "4698f8e713abe6c558652b854ad594b2fd004ffe876d969dcaf09e7b321f171c",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.ServiceDefaults",
+      "sha256": "d8b8fd9d7f95439fbef3c30c290d66072b7e8a15dcdcc24808f6e5e602191f6b",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Testing",
+      "sha256": "a48fb3794efb7b2bfbc5826025b222167c995bffd5c913c13783dd8b0626c730",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Workers",
+      "sha256": "e70af0777c350dfea60bb62a3d63723155c563240b18796b0a31997b3d6e1cdf",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects",
+      "sha256": "c48245bea89286838380cb49920982cb4634db722ef4d2b66ba1220f1481bd8a",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Tenants.Client",
+      "sha256": "6f81cbccef7058cccf34fdfe8ea9917ee549c45c01df6a2e0c81cdb00a2c439e",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Tenants.Contracts",
+      "sha256": "bf6a4af36ab40d54c4bec2d5ba319b21b64dfe4c14090e612e0c0415015ce8be",
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+      "jitOptimizerDisabled": true,
+      "portablePdbPresent": true
+    }
+  ],
+  "liveAuthorityStateHostTrustLeaseOrRuntimeCallsPerformed": false
+}

@@ -1,0 +1,15 @@
+{
+  "passed": 1116,
+  "failed": 2,
+  "skipped": 0,
+  "notRun": 0,
+  "sourceInputsBeforeRepair": {
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/PromotedTenantSourceVersionTests.cs": "475edce02c6e48faf33470cde1476e46f954c8246a45c68838dd91ac5eb6c020",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DirectTenantSourceVersionTests.cs": "363443e2938ffe2554596047101e1de710c67b83e906f6ae46b8648dd5ce2607"
+  },
+  "failures": [
+    "Hexalith.EventStore.Server.Tests.Routing.DirectTenantSourceVersionTests.DirectChildUsesExistingMappedVersionOrOrdinaryUnmappedProducer(selector: \\\"unmapped\\\", expected: \\\"3.130.1\\\")",
+    "Hexalith.EventStore.Server.Tests.Routing.PromotedTenantSourceVersionTests.PromotedSelectedNodeKeepsOneProducerWhileUnrelatedAndMappedMetadataRemainOwned(scenario: \\\"unmapped\\\", forwards: True)"
+  ],
+  "cause": "Each deliberately unmapped synthetic child inherited the real parent HEXALITH_SOURCE_MAPPING_HASH. The guard correctly retained mapper ownership. Parent full-source mapping stays unchanged."
+}

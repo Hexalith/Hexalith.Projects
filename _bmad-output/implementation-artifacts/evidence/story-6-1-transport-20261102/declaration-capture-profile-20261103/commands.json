@@ -1,0 +1,26 @@
+{
+  "status": "diagnostic-only-no-source-repair-selected",
+  "nativeRuntimeEvidence": false,
+  "build": [
+    "dotnet",
+    "build",
+    "/tmp/story61-declaration-profile-20261103/Profile.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "run": [
+    "dotnet",
+    "/tmp/story61-declaration-profile-20261103/bin/Debug/net10.0/Profile.dll"
+  ],
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "sourceSha256": {
+    "Profile.csproj": "f0e946198b9f72c2376f293f13d5669ea9a70abea326cf489528f4661092f60e",
+    "Program.cs": "081ebca3916a4d79ef3bbf3f1534926e90f866c504a996e6b893c225df5e624a"
+  },
+  "binarySha256": "cb1e6a664f435356b60e7ec4e08d344a5916fedb5ad82e510a593c9b74c76bba",
+  "warmMedianAvoidableTwoReadsMs": 2.9623,
+  "conclusion": "The actual configured current68-declaration owner binaries verify equal output on repeated fresh reads; avoiding two repeats saves about3ms in this offline warm profile, insufficient evidence for the live64-164ms observer bottleneck. No SDK source edit selected."
+}

@@ -1,0 +1,109 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "checks": [
+    {
+      "label": "selected-sdk-diagnostic-composition",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*NativeSourceReadDiagnosticsTests",
+        "-class",
+        "*StreamsControllerTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/native-diagnostics-selected.xml"
+      ],
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "sourceInputs": {
+        "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "b1e9ff321278598b33e0c0b650a72c1640737fa5142eb9639a73617c53f124e2",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "ca42574a558e37961b8599e05a88a60d9fdf11e46eda553e368c7ce5c811c51d",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "db9e674799f53656fd8d455729019b409e835a92d343e9c2b86225c01e9e04ca"
+      }
+    },
+    {
+      "label": "selected-folder-diagnostic-composition",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+        "-class",
+        "*FoldersDevelopmentOwnerMetadataTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/owner-diagnostics-composition.xml"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "sourceInputs": {
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs": "fb146fc8194cfd05d8bd1406d0959bd768b2922b2728d8743fe89d8c54ebc314",
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs": "f061b65fad6fcadb9eceeaaf9a72398832ef85a6363071691d9c5aea6b4b2265",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs": "1e1999f9842110b326ca9b8939fd777fef57b27752a5f2207a9e835268c266de",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs": "cd972c118c53af3982e2d7904bf2e2d2b0f4ae8f17b5adbd73fb8ce52c592db3",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj": "e69a9c77a04a4d58ee205d264ec3462eb0918dcadf40807449a883d468366d9b"
+      }
+    },
+    {
+      "label": "canonical-codec-routing",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Contracts.Tests.Routing.*",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/codec-routing-final.xml"
+      ],
+      "passed": 199,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "sourceInputs": {
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "c0e3bf5d5b2dc393bbb509ac3f6997437d3f8b48331b607381ccf3e5aac405e8",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Routing/RouteCatalogCanonicalOrderingTests.cs": "ad91770a4f7121d71ba4a66918410329dca6dd04ac3309a624afc157d9a1ecd5"
+      }
+    }
+  ],
+  "initialFolderBuildFailure": {
+    "code": "HXW005",
+    "log": "owner-diagnostics-initial-build.log",
+    "repair": "Exclude the redundant ExcludeAssets=all package placeholder only when the actual full-source Commons mapping is selected; retain direct source and legacy case."
+  }
+}

@@ -38,7 +38,7 @@ using Hexalith.Projects.Contracts.Ui;
 public sealed class ProjectsDomainProcessor(
     TimeProvider timeProvider,
     IProjectEventStoreAuthorizationValidator authorizationValidator,
-    ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor
+    ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor, Hexalith.EventStore.DomainService.IDomainCommandPayloadInventory
 {
     private static readonly JsonSerializerOptions PayloadJsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -65,6 +65,15 @@ public sealed class ProjectsDomainProcessor(
     private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
         authorizationValidator ?? throw new ArgumentNullException(nameof(authorizationValidator));
     private readonly ProjectOwnerBootstrapVerifier? _bootstrap = bootstrap;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<Type> CommandPayloadTypes =>
+    [
+        typeof(CreateProjectPayload), typeof(UpdateProjectSetupPayload), typeof(ArchiveProjectPayload),
+        typeof(RestoreProjectPayload), typeof(SetProjectFolderPayload), typeof(LinkFileReferencePayload),
+        typeof(UnlinkFileReferencePayload), typeof(LinkMemoryPayload), typeof(UnlinkMemoryPayload),
+        typeof(ConfirmProjectResolutionPayload), typeof(GrantProjectChatBotAuthority), typeof(RevokeProjectChatBotAuthority),
+    ];
 
     /// <inheritdoc/>
     public async Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
@@ -951,65 +960,4 @@ public sealed class ProjectsDomainProcessor(
         }
     }
 
-    private sealed record CreateProjectPayload(
-        [property: JsonRequired] string? Name,
-        string? Description,
-        string? SetupMetadata);
-
-    private sealed record UpdateProjectSetupPayload(
-        string? RequestSchemaVersion,
-        ProjectSetup? Setup);
-
-    private sealed record ArchiveProjectPayload(
-        [property: JsonRequired] string? ArchiveIntent,
-        [property: JsonRequired] string? RequestSchemaVersion);
-
-    private sealed record RestoreProjectPayload(
-        [property: JsonRequired] string? RequestSchemaVersion,
-        [property: JsonRequired] string? RestoreIntent);
-
-    private sealed record SetProjectFolderPayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? ProjectId,
-        string? FolderId,
-        ProjectFolderMetadata? FolderMetadata,
-        bool ReplacementConfirmed);
-
-    private sealed record LinkFileReferencePayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? ProjectId,
-        string? FileReferenceId,
-        string? FolderId,
-        ProjectFileReferenceMetadata? FileMetadata);
-
-    private sealed record UnlinkFileReferencePayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? UnlinkIntent,
-        string? ProjectId,
-        string? FileReferenceId);
-
-    private sealed record LinkMemoryPayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? ProjectId,
-        string? MemoryReferenceId,
-        ProjectMemoryReferenceMetadata? MemoryMetadata);
-
-    private sealed record UnlinkMemoryPayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? UnlinkIntent,
-        string? ProjectId,
-        string? MemoryReferenceId);
-
-    private sealed record ConfirmProjectResolutionPayload(
-        string? RequestSchemaVersion,
-        string? Operation,
-        string? ProjectId,
-        string? ConversationId,
-        string? SourceProjectId,
-        string? ResolutionResult);
 }

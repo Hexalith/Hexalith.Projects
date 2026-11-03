@@ -1,0 +1,23 @@
+{
+  "artifacts": "/tmp/story61-pure-domain-artifacts-nrg9xpa3",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--artifacts-path",
+    "/tmp/story61-pure-domain-artifacts-nrg9xpa3"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "/tmp/story61-pure-domain-artifacts-nrg9xpa3/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/domain.xml"
+  ]
+}

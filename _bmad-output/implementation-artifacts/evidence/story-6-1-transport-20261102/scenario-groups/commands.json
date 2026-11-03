@@ -1,0 +1,252 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "tools/qualification/run_supported_project_reads.py": "63b710cb9e337d9d338a320dcebf2ff18ceddab9d665f4d22fcd80140ee37a16",
+    "tests/tools/test_supported_project_reads_launcher.py": "d01a9f452ffec463ce18973e59048ba100b8ee09e25d6fa568564cf12599f48d",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "602d9104034fa2603205434ea21017692e411f840b568826ee8faf0936e102ba",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs": "a500d9085dfac384d0c10f661ba0da14e212e34c3f6705cfe3a23c37e0841d78",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadScenarioEvidence.cs": "94b964b87f1387fa07fc98d7285bb363ebdb94f83e3647cbf83a883375b64808",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "b4e70289fcd54c799ef1c825ef375960c3b0062cace6e91980e54025a045f71e"
+  },
+  "canonicalSpecSha256": "c3401566f16e00918789c576b845f65746c76dfa844cb2c11a5c059434ed6edb",
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "commands": [
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-class",
+      "*SupportedProjectReadFixtureTopologyTests",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadConcurrencyTests",
+      "-xml",
+      "/tmp/story61-scenario-fixture-final.xml"
+    ],
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "py_compile",
+      "tools/qualification/run_supported_project_reads.py",
+      "tests/tools/test_supported_project_reads_launcher.py"
+    ]
+  ],
+  "methodDiscoveryCommands": [
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "*.DuplicateDeliveryUsesActualPersistedOwnersAsync",
+      "-list",
+      "methods/json"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "*.FullReplayUsesActualPersistedOwnersAsync",
+      "-list",
+      "methods/json"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "*.MainReadsUseActualPersistedOwnersAsync",
+      "-list",
+      "methods/json"
+    ]
+  ],
+  "fixtureResult": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 14 threads)]",
+      "id": "c4d4161f-8d8e-4e7d-9971-101658e5f9d6",
+      "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "12:50:32",
+      "start-rtf": "2026-11-03T12:50:32.1603890+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T12:50:33.9681957+00:00",
+      "not-run": "0",
+      "passed": "112",
+      "skipped": "0",
+      "time": "1.808",
+      "time-rtf": "00:00:01.8080000",
+      "total": "112"
+    }
+  ],
+  "launcherResult": {
+    "total": 103,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fullMappedBuild": {
+    "warnings": 0,
+    "errors": 0,
+    "elapsedSeconds": 52.75
+  },
+  "actualProfileRecord": "story61-scenario-actual-mode-check.json",
+  "profile": "ordinary unoptimized Debug; 7 emitted mapping entries unchanged; 3 fresh owned scenarios; no SDK/runtime/authority/timestamp/budget change",
+  "retainedArtifacts": [
+    {
+      "original": "/tmp/story61-native-discovery-DuplicateDeliveryUsesActualPersistedOwnersAsync.json",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-DuplicateDeliveryUsesActualPersistedOwnersAsync.json",
+      "sha256": "6dea04351f1d41dbef1b04b37200a83ab5e62814f7cbcac0cb6c3b174e7deddd"
+    },
+    {
+      "original": "/tmp/story61-native-discovery-DuplicateDeliveryUsesActualPersistedOwnersAsync.stderr",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-DuplicateDeliveryUsesActualPersistedOwnersAsync.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": "/tmp/story61-native-discovery-FullReplayUsesActualPersistedOwnersAsync.json",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-FullReplayUsesActualPersistedOwnersAsync.json",
+      "sha256": "76570dd8ae8ff43329c9d969639da59b87d0bc0e1c2ac2774e3c74362388a040"
+    },
+    {
+      "original": "/tmp/story61-native-discovery-FullReplayUsesActualPersistedOwnersAsync.stderr",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-FullReplayUsesActualPersistedOwnersAsync.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": "/tmp/story61-native-discovery-MainReadsUseActualPersistedOwnersAsync.json",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-MainReadsUseActualPersistedOwnersAsync.json",
+      "sha256": "bf6a9c2ec39858bf7236c13cd4ff1e2dd51adea37098be23b7e948c06fdeaefe"
+    },
+    {
+      "original": "/tmp/story61-native-discovery-MainReadsUseActualPersistedOwnersAsync.stderr",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-native-discovery-MainReadsUseActualPersistedOwnersAsync.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": "/tmp/story61-scenario-actual-mode-check.json",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-actual-mode-check.json",
+      "sha256": "8e6fdbd1da62e1c27514e93aa7b499bfd9d994ef51b55805f21721ff2ffcd80c"
+    },
+    {
+      "original": "/tmp/story61-scenario-actual-mode-check.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-actual-mode-check.log",
+      "sha256": "9a5ce0c15b104ba0bbca8b5dddbc8fb938eb10ff2b7c084d3f22a9add811774f"
+    },
+    {
+      "original": "/tmp/story61-scenario-controls-with-cancellation.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-controls-with-cancellation.log",
+      "sha256": "aaa4924ab2fa43e63745e359b330bebeb0a5d2a13b155f5b877f266a11673fe1"
+    },
+    {
+      "original": "/tmp/story61-scenario-coordinator-initial.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-coordinator-initial.log",
+      "sha256": "c5bcedd827b3ebf97d1190126e20561a0b04b60cb14c2a7983a48d2ef46f0f26"
+    },
+    {
+      "original": "/tmp/story61-scenario-coordinator-second.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-coordinator-second.log",
+      "sha256": "f689de39e0671adc51e82c62cfd9b6c0bcb5597ab53fcc7d10d7fcddb0390317"
+    },
+    {
+      "original": "/tmp/story61-scenario-csharp-controls-build.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-csharp-controls-build.log",
+      "sha256": "70e14951bfbaa31c9ad372aad05192d017f82128c493f5c286428f33a591a747"
+    },
+    {
+      "original": "/tmp/story61-scenario-csharp-initial-build.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-csharp-initial-build.log",
+      "sha256": "5202d1d76fa472182a0bbc90ba19ebf520a13f361960fd3fbab25a0b7d1e73f7"
+    },
+    {
+      "original": "/tmp/story61-scenario-csharp-second-build.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-csharp-second-build.log",
+      "sha256": "60920939ef6eb6e6622471e70d9c8c2071803acd31adcbebb67e4d4abb249a5f"
+    },
+    {
+      "original": "/tmp/story61-scenario-fixture-controls.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-fixture-controls.log",
+      "sha256": "770d2498430827c094b2373e9814527f174638d9c77b8a18f96f1df09ee2efa7"
+    },
+    {
+      "original": "/tmp/story61-scenario-fixture-controls.xml",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-fixture-controls.xml",
+      "sha256": "f9c8cde16500ea77a663ddf1cbfa4c72d9b17f1b4a9e169db534eea594ad7d69"
+    },
+    {
+      "original": "/tmp/story61-scenario-fixture-final.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-fixture-final.log",
+      "sha256": "668fac009060187d3b2d0ff4b905470e2835f782a0adbceb88b1a5dd8c11ceec"
+    },
+    {
+      "original": "/tmp/story61-scenario-fixture-final.xml",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-fixture-final.xml",
+      "sha256": "0b5e0f2a71f7d997a3425d9edc0ed28cc01724663f5630461ebefeb66a749fb2"
+    },
+    {
+      "original": "/tmp/story61-scenario-full-mapped-build.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-full-mapped-build.log",
+      "sha256": "3c8a97ab663177d7defda0eceb85d47a75eeb7087eb4e76323302a038b4cca24"
+    },
+    {
+      "original": "/tmp/story61-scenario-native-binding-build.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-native-binding-build.log",
+      "sha256": "fd1e5326a4e38e4382accd450dcb4417e1da07ec6acd1a779882758d6b3a0364"
+    },
+    {
+      "original": "/tmp/story61-scenario-native-runner-help.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-native-runner-help.log",
+      "sha256": "13cc2507db72cfa30ce4953a2de80fb224cfe78bfac453d3953a5ac7d8996e4f"
+    },
+    {
+      "original": "/tmp/story61-scenario-new-controls-initial.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-new-controls-initial.log",
+      "sha256": "eccb1c6e706cb1ba1bc1517cf6dcd3404744f911fd3838635e46314c715360ff"
+    },
+    {
+      "original": "/tmp/story61-scenario-provider-joins-controls.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-provider-joins-controls.log",
+      "sha256": "2df061eb9bc90cb65b1161a6c593c90e110a701b8c3f70081c31ece3ab837a5d"
+    },
+    {
+      "original": "/tmp/story61-scenario-validator-legacy.log",
+      "retained": "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scenario-groups/story61-scenario-validator-legacy.log",
+      "sha256": "7c1d9325800508e1c9b19836a918d867b45cabe86a5442bc6e3b60a130d7bc23"
+    }
+  ],
+  "acceptance": "pending actual 3 group native execution, full Integration/Server regressions, exact per-group cleanup and external preservation"
+}

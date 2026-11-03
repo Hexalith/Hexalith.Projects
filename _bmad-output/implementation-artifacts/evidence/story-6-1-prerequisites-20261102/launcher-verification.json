@@ -1,0 +1,72 @@
+{
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "sourceRootEnvironment": {
+    "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+    "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+    "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+    "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+    "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+    "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "HexalithPlatformRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src"
+  },
+  "buildCommand": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "--configuration",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0"
+  ],
+  "buildExitCode": 0,
+  "liveLaneRun": false,
+  "featureAccepted": false,
+  "topologyCommand": [
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectReadTopologyTests",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-prerequisites-20261102/launcher-topology.xml",
+    "-noLogo"
+  ],
+  "topologyExitCode": 0,
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 82,
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0
+  },
+  "changedInputsSha256": {
+    "tools/qualification/run_supported_project_reads.py": "1d91e6d557c22d306c7f68550ad0d809a9231627ed6d05af616eb52c1ce31a1e",
+    "tests/tools/test_supported_project_reads_launcher.py": "00714405ff13efd08512ae30cd26535dd7ca583d8c105bba56c7cd9349899772",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "85d4b6f67ccafa6b63589a0f06739097189b6a82ee5d3673c4ca61d0ac3d6cf6",
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "eb056c4728ed822f4b19ce849261308c65b9b47013fb38fbf861945cac0695cc"
+  }
+}

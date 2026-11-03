@@ -16,12 +16,18 @@ internal sealed class ProjectAuthorityRoutes
     public ConcurrentQueue<ProjectAuthorityTokenAttempt> TokenRequests { get; } = new();
     /// <summary>Gets sanitized receiver attempts before forwarding.</summary>
     public ConcurrentQueue<ProjectAuthorityInvocationAttempt> Invocations { get; } = new();
+    /// <summary>Gets actual owner gateway response codes without retaining requests or credentials.</summary>
+    public ConcurrentQueue<int> OwnerResponseStatuses { get; } = new();
+    /// <summary>Gets closed proof observations selected only by the private diagnostic runner.</summary>
+    public ConcurrentQueue<string> OwnerProofObservations { get; } = new();
+    /// <summary>Gets or sets a read-only observer that never replaces the actual gateway decision.</summary>
+    public Func<BoundOwnerQueryRequest, string?, CancellationToken, Task<string>>? OwnerProofObserver { get; set; }
     /// <summary>Gets the complete chronological token and service attempt sequence.</summary>
     public ConcurrentQueue<string> Attempts { get; } = new();
     /// <summary>Clears observations between an authorized control and a fault.</summary>
     public void ClearAttempts()
     {
-        TokenRequests.Clear(); Invocations.Clear(); Attempts.Clear(); Hops.Clear();
+        TokenRequests.Clear(); Invocations.Clear(); Attempts.Clear(); Hops.Clear(); OwnerResponseStatuses.Clear(); OwnerProofObservations.Clear();
     }
     /// <summary>Gets or sets an envelope fault applied after issuance.</summary>
     public Func<QueryEnvelope, QueryEnvelope>? ChangeQuery { get; set; }

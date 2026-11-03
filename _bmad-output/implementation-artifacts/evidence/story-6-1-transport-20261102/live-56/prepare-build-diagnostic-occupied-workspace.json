@@ -1,0 +1,26 @@
+{
+  "diagnosticOnly": true,
+  "command": [
+    "dotnet",
+    "run",
+    "--project",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+    "--",
+    "prepare-build",
+    "--manifest",
+    "module/hexalith.module-manifest.v2.json",
+    "--mode",
+    "source",
+    "--workspace",
+    "/tmp/story61-live56-prepare-diagnostic-tzm4bjg6",
+    "--output",
+    "json"
+  ],
+  "exitCode": 2,
+  "workspace": "/tmp/story61-live56-prepare-diagnostic-tzm4bjg6",
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  }
+}

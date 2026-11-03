@@ -1,0 +1,17 @@
+{
+  "actualActorReadsFinishedAtMilliseconds": 297.2258,
+  "firstPostStateCatalogReadAtMilliseconds": 565.5763,
+  "nativeRequestFinishedAtMilliseconds": 570.8065,
+  "postStateCatalogWrites": [
+    {
+      "resource": "eventstore",
+      "spanSha256": "f6b7cc57aa93023e5d8d484f7d3d14bb388e222dfa24074ea0613afbf35a6898",
+      "parentSpanSha256": "7c53d5b4c149e5d9ced4446a3398d46f736f2f9a8a4b6585a4bd612c61082085",
+      "operation": "catalog-state-POST",
+      "startMillisecondsRelativeToGateway": 568.5215,
+      "durationMilliseconds": 2.1468,
+      "recordedHttpStatus": "204"
+    }
+  ],
+  "attribution": "Source ReleaseAsync awaits the local gate before its first fresh ReleaseCore store read; native actor state work is already complete. No post-state CAS conflicts occurred."
+}

@@ -1,0 +1,1557 @@
+{
+  "nativeDatabase": "/home/administrator/.aspire/dashboard/runs/20261103T013333101Z/dashboard.db",
+  "nativeDatabaseSha256": "201f130b9d3237490c14e5a8b2f67894adb5c67141b3e825f5290a35d9f68515",
+  "exactOwnedTenantOrganizationActorUrlMatched": true,
+  "boundTenantHash": "C47BB82459CC575BE1DF6E5203BAF93E1E695ECA4DC72E81559D4F66676A127F",
+  "requests": [
+    {
+      "traceSha256": "52d209b10cb7bf2b60f77d722cd32989d99fb9a7ebbbbd1c0e53f483ca2baa44",
+      "rootSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+      "gatewayDurationMilliseconds": 229.3594,
+      "gatewayRecordedHttpStatus": "200",
+      "spans": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "parentSpanSha256": "64ae910c82a49c90f4ba1e35da4d3976c5f6442b1290141454a3716e9c4f8fc4",
+          "operation": "gateway-workload-metadata",
+          "startMillisecondsRelativeToGateway": 0.0,
+          "durationMilliseconds": 229.3594,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a8e5aaa1be36770091f6dd72d62d6d30a7d1403ef5c989ae958190dbbcbcad57",
+          "parentSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.8239,
+          "durationMilliseconds": 1.1283,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "6c538305bd2de45f3143c9ce89686af39993f15c589eb3d2c8a3ef594fee313f",
+          "parentSpanSha256": "a8e5aaa1be36770091f6dd72d62d6d30a7d1403ef5c989ae958190dbbcbcad57",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.9916,
+          "durationMilliseconds": 0.695,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "e72f4831bb63b0a92d3450fcc88367d21ebe6aa16f0dc0a83700b9208bd92f6b",
+          "parentSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 72.0338,
+          "durationMilliseconds": 2.9481,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "bdf9f5cc5f143d054da926d047378267cb7c1dca2df4997f16bd7bee098422c3",
+          "parentSpanSha256": "e72f4831bb63b0a92d3450fcc88367d21ebe6aa16f0dc0a83700b9208bd92f6b",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 72.3575,
+          "durationMilliseconds": 2.3624,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "366f3e2ac7cbc1229aabdd67c59ef46c33b510ae4809c1b141fb276d60eb6b51",
+          "parentSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 80.3175,
+          "durationMilliseconds": 142.6121,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "897e525549e0161e17955e2dae62b2a87a743f7da5a38e953ef86fa3bf50b503",
+          "parentSpanSha256": "366f3e2ac7cbc1229aabdd67c59ef46c33b510ae4809c1b141fb276d60eb6b51",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 80.5953,
+          "durationMilliseconds": 142.1931,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "parentSpanSha256": "897e525549e0161e17955e2dae62b2a87a743f7da5a38e953ef86fa3bf50b503",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 81.2761,
+          "durationMilliseconds": 141.1765,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "fec10d9724571e41d8dd42f5e92ab37b3343f96ac3623f21fd7d678acf3cc60b",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 100.4725,
+          "durationMilliseconds": 10.3839,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "778764db8a2abedcb1f55b242536205809c06fe8b392fe383474569b2509b7cf",
+          "parentSpanSha256": "fec10d9724571e41d8dd42f5e92ab37b3343f96ac3623f21fd7d678acf3cc60b",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 100.7384,
+          "durationMilliseconds": 6.2025,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "cc99606e6f9983928e1281d5c020d8ef89530adf49c77c77f2c12e389c5dfe62",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 206.2154,
+          "durationMilliseconds": 3.7597,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "78dd9fd450b0e339d6b80131052908696203560918036bd31ac20b7f8b393a10",
+          "parentSpanSha256": "cc99606e6f9983928e1281d5c020d8ef89530adf49c77c77f2c12e389c5dfe62",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 206.5404,
+          "durationMilliseconds": 3.2622,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "f4a5ce7e28d218ce0359b2430cbd6d300abe590e269a9c75dd5dc2fdbc5f7a24",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 214.1948,
+          "durationMilliseconds": 1.0038,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "3f2fedad3befaeddc03f4a4e55382dcd6c0dea646cdea996bcc94045409b002c",
+          "parentSpanSha256": "f4a5ce7e28d218ce0359b2430cbd6d300abe590e269a9c75dd5dc2fdbc5f7a24",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 214.4217,
+          "durationMilliseconds": 0.5714,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "01ceda3f53c72923f697a8843ceea1ae383c01cbb638452ec5a472d4bf8729a3",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 215.3156,
+          "durationMilliseconds": 0.7886,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "402aef7cfe368396462a65fea6bba7a46a8788d2362c96594214943e3ec7848d",
+          "parentSpanSha256": "01ceda3f53c72923f697a8843ceea1ae383c01cbb638452ec5a472d4bf8729a3",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 215.4703,
+          "durationMilliseconds": 0.4643,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2aae4bc936e2399f85d6333c5e27319c1e516e1f9531146ec813d15b0065b671",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 216.4218,
+          "durationMilliseconds": 0.9297,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "46a7aa9b4e07980aa35c3e85121bf342458852d4f8f2e52aa6119003331a6a1c",
+          "parentSpanSha256": "2aae4bc936e2399f85d6333c5e27319c1e516e1f9531146ec813d15b0065b671",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 216.6309,
+          "durationMilliseconds": 0.5574,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "915c87934e3471ccbb7e8842442f2108671a2a4dd5f36afc49cd62283dc5da68",
+          "parentSpanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 219.7625,
+          "durationMilliseconds": 2.4831,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "80af5eb731cc8c0f5fd38831214531dd546d4c4536c65af0e2d8e4bf432c3b58",
+          "parentSpanSha256": "915c87934e3471ccbb7e8842442f2108671a2a4dd5f36afc49cd62283dc5da68",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 219.9467,
+          "durationMilliseconds": 2.1002,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "8591f4d2ab5d8ee645cd644aa70f6b9a5b4f9e6eb17a8c398fb164149851e773",
+          "parentSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 223.5965,
+          "durationMilliseconds": 0.7751,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "285b399931f3169477d4650f3015766637fe81dcc9bcea437cd8c134c5ec72dd",
+          "parentSpanSha256": "8591f4d2ab5d8ee645cd644aa70f6b9a5b4f9e6eb17a8c398fb164149851e773",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 223.7466,
+          "durationMilliseconds": 0.4657,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "423d9b8b5cf51f4b6763d01340c04540cf2985f89e1f9a63de7389a9b4c6ef9e",
+          "parentSpanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 226.9281,
+          "durationMilliseconds": 2.2982,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "a763371d9efab082b8aab696f7e41910eb4614ac5228593d3151c21fbb6f74a0",
+          "parentSpanSha256": "423d9b8b5cf51f4b6763d01340c04540cf2985f89e1f9a63de7389a9b4c6ef9e",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 227.0962,
+          "durationMilliseconds": 1.9669,
+          "recordedHttpStatus": null
+        }
+      ],
+      "admissionEvents": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 8.6739,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "2.1101"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 10.0752,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.3997"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 70.5105,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "61.8083"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 71.8915,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.3795"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "23615497f2c3e3c8c3c69e9efd5eab58e84ca29a09039b0cc8d073b10f3b5153",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 79.3443,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "78.0362"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 115.4429,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.8131"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 116.7562,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.312"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 199.4364,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "82.6788"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 206.0425,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "6.6036"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "6bc712ecc3936f9ee89e09926ef049fd630a372ea7753f2584688785da7c498a",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 213.9574,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "113.632"
+          }
+        }
+      ]
+    },
+    {
+      "traceSha256": "52d209b10cb7bf2b60f77d722cd32989d99fb9a7ebbbbd1c0e53f483ca2baa44",
+      "rootSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+      "gatewayDurationMilliseconds": 215.7194,
+      "gatewayRecordedHttpStatus": "200",
+      "spans": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "parentSpanSha256": "b71875afe45bf4f811f91f41d710b6bc6bc54140774c7e7f2865ef192eddc832",
+          "operation": "gateway-workload-metadata",
+          "startMillisecondsRelativeToGateway": 0.0,
+          "durationMilliseconds": 215.7194,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "4ffbc71d92436c8f721f02d181b761532442d1b5b2034277474d4b6fdb76e85f",
+          "parentSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.4823,
+          "durationMilliseconds": 1.0011,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "981c2060f7a265c38b2914478a04c70b8c57a5c690a6948d90ddc135b0b5060e",
+          "parentSpanSha256": "4ffbc71d92436c8f721f02d181b761532442d1b5b2034277474d4b6fdb76e85f",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.6111,
+          "durationMilliseconds": 0.619,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2d2e6de779cfef7b55a51a1b15ce4293ea23f7530f9958bc6d28865d44e70f4c",
+          "parentSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 74.1006,
+          "durationMilliseconds": 2.8485,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "689842ace31b4c2b58e53eeb11fc8f6df0bbfecae460162abf3150b5602f4c30",
+          "parentSpanSha256": "2d2e6de779cfef7b55a51a1b15ce4293ea23f7530f9958bc6d28865d44e70f4c",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 74.3776,
+          "durationMilliseconds": 2.3605,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2561066e474b9fa6c81f56fd9bafd4432bdf9e7fb4a057666e5621d471f8b689",
+          "parentSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 81.4118,
+          "durationMilliseconds": 125.0787,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "ea37f4eb69bfca067f2609cab67c9ffe0c3ba260b1383149d6f567c0afceaebb",
+          "parentSpanSha256": "2561066e474b9fa6c81f56fd9bafd4432bdf9e7fb4a057666e5621d471f8b689",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 81.5955,
+          "durationMilliseconds": 124.7407,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "parentSpanSha256": "ea37f4eb69bfca067f2609cab67c9ffe0c3ba260b1383149d6f567c0afceaebb",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 82.1486,
+          "durationMilliseconds": 123.9224,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "c9c12a8bac36d89cb516db81b3286bdca7f2dbaaf60ae0b1c0ed58e68a074b52",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 114.6513,
+          "durationMilliseconds": 1.1485,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "3a05d4809e68289a6b1021cae16108ac09d01eb88d10ca6e50f64ba99e68d09b",
+          "parentSpanSha256": "c9c12a8bac36d89cb516db81b3286bdca7f2dbaaf60ae0b1c0ed58e68a074b52",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 114.9282,
+          "durationMilliseconds": 0.6632,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "9ff49b6458d1429fb27ffa7e6ce8b3d67e5a58fe023f487b4d37adf6f31717bd",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 191.7134,
+          "durationMilliseconds": 2.4406,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "d182b65bd4d2d98e3d08d25879c66d6ff0912d6b756474701fcee365b6c5900c",
+          "parentSpanSha256": "9ff49b6458d1429fb27ffa7e6ce8b3d67e5a58fe023f487b4d37adf6f31717bd",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 191.9333,
+          "durationMilliseconds": 2.0701,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "1356dd3c87aa2fd3b383c810e0d7b58e23fa43f1fe8e6af71fbe0de98a6ce0fe",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 197.8603,
+          "durationMilliseconds": 0.8225,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "fffcd656bd359abe2d613ce70469589b56555b5869075b79520c3ef926d7be98",
+          "parentSpanSha256": "1356dd3c87aa2fd3b383c810e0d7b58e23fa43f1fe8e6af71fbe0de98a6ce0fe",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 198.0334,
+          "durationMilliseconds": 0.4497,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "12b11309c0f1aaeb06a1eddab79f0f54ebaa186483b0de488703d9a81f9cbe66",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 198.814,
+          "durationMilliseconds": 0.6464,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "70891c964655a2237af0664d57d05eb722922c88fc534f0d67bb114a5ac4860c",
+          "parentSpanSha256": "12b11309c0f1aaeb06a1eddab79f0f54ebaa186483b0de488703d9a81f9cbe66",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 198.9607,
+          "durationMilliseconds": 0.3063,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "ca52ddcf29aa5655537c2b0e7466590f871546074773604fdabe9d55ff1cb629",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 199.769,
+          "durationMilliseconds": 1.0636,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "c568000ee5214e24f14273ff2070b32ddfabd2068ec279cdab7ad10fc3ac0efa",
+          "parentSpanSha256": "ca52ddcf29aa5655537c2b0e7466590f871546074773604fdabe9d55ff1cb629",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 199.9202,
+          "durationMilliseconds": 0.6594,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "8478574c6fca30476d57387b42dc73d11bba2b47672eb24dd9eec02e5d5f4402",
+          "parentSpanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 203.5696,
+          "durationMilliseconds": 2.3433,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "65c9536ae3cd9100eeed117cf4ae47fc4fb1560445ad1bef24944bd04515fff9",
+          "parentSpanSha256": "8478574c6fca30476d57387b42dc73d11bba2b47672eb24dd9eec02e5d5f4402",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 203.7936,
+          "durationMilliseconds": 1.9486,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "686a666d720300105dbee292a8ebc63cfd575443a656c9b220200a73e0b5446c",
+          "parentSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 207.054,
+          "durationMilliseconds": 0.8362,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "73e92f31828bfd17e70c9899a23bd0771ac1713ef41acedff0ef0ac93d8bc1e2",
+          "parentSpanSha256": "686a666d720300105dbee292a8ebc63cfd575443a656c9b220200a73e0b5446c",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 207.2169,
+          "durationMilliseconds": 0.5308,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "1d801e980ee4547d61ec7bd84c8b4bcc822154d5adb88f01b43072eb89ed4d33",
+          "parentSpanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 212.7579,
+          "durationMilliseconds": 2.8088,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "6dab9968fda2e6f8782da9777e5af88016515607ab35fc8fa2ef3a2de3347eb3",
+          "parentSpanSha256": "1d801e980ee4547d61ec7bd84c8b4bcc822154d5adb88f01b43072eb89ed4d33",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 212.9726,
+          "durationMilliseconds": 2.3884,
+          "recordedHttpStatus": null
+        }
+      ],
+      "admissionEvents": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 7.7746,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.7402"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 9.1882,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.4121"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 72.526,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "63.3362"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 73.942,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.4142"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "48992deaa875ac1303613f29b5c7ce407f3ccf122f97cc2965e14c1b1458a1ca",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 80.525,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "78.187"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 120.0532,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.8904"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 121.688,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.6332"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 190.1718,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "68.4826"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 191.5686,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.3951"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2be5d52d66c445f3ba7b394ee1d16d22cf40f518e9c1d23b33ca07f152d95f87",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 197.7075,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "83.2196"
+          }
+        }
+      ]
+    },
+    {
+      "traceSha256": "52d209b10cb7bf2b60f77d722cd32989d99fb9a7ebbbbd1c0e53f483ca2baa44",
+      "rootSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+      "gatewayDurationMilliseconds": 188.6914,
+      "gatewayRecordedHttpStatus": "200",
+      "spans": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "parentSpanSha256": "7a1590cb07af2ca7d49501a20c14bb7c74e67aa52fd192a81da319587c4c2ef0",
+          "operation": "gateway-workload-metadata",
+          "startMillisecondsRelativeToGateway": 0.0,
+          "durationMilliseconds": 188.6914,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "523f73de082261821889d555c2f664baf945703e791830a764e956ca23e9bc97",
+          "parentSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.5662,
+          "durationMilliseconds": 0.9296,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "86370424a34be1fc71f17549819718800124ff2724b19e0c24f5cfa944b9bd62",
+          "parentSpanSha256": "523f73de082261821889d555c2f664baf945703e791830a764e956ca23e9bc97",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 2.7164,
+          "durationMilliseconds": 0.5721,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "db813762ccba0e5e3670678562e1c3d181e954f1bda4955d26b49acaa9ff9a05",
+          "parentSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 67.9576,
+          "durationMilliseconds": 2.9644,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "e32068c7cd5d0b085aa4841b446252dca4e613cea4f93b38573bbe45dd33e8c4",
+          "parentSpanSha256": "db813762ccba0e5e3670678562e1c3d181e954f1bda4955d26b49acaa9ff9a05",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 68.2839,
+          "durationMilliseconds": 2.4268,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "880be12b3f578d9b8e09f9684958f47ddb75453d1de8ca6b67aae4d85f0a4ee9",
+          "parentSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 75.3763,
+          "durationMilliseconds": 105.147,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "30301c7b3db099a730b1ca5ab6792c1152125cdbdb611c313823f9ae158d7294",
+          "parentSpanSha256": "880be12b3f578d9b8e09f9684958f47ddb75453d1de8ca6b67aae4d85f0a4ee9",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 75.5689,
+          "durationMilliseconds": 104.7764,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "parentSpanSha256": "30301c7b3db099a730b1ca5ab6792c1152125cdbdb611c313823f9ae158d7294",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 76.0866,
+          "durationMilliseconds": 104.0187,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "9d30dfad7a292760a0aa30b399b3fd88f62a915f280d3c2f35bfad4c872cc496",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 96.3285,
+          "durationMilliseconds": 1.1875,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "ec3984df12f43025c06fab708752582e14f712b90ac44bff68bb99b834a66ba4",
+          "parentSpanSha256": "9d30dfad7a292760a0aa30b399b3fd88f62a915f280d3c2f35bfad4c872cc496",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 96.6206,
+          "durationMilliseconds": 0.7139,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "ee8830ab87e7a637fb84bab63b576792c7379bf647e212552c9f336d6ad9f399",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 164.9107,
+          "durationMilliseconds": 2.7055,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "29c83e0ea84deb5dc220d0f2fb8e201fb4b852b46a4a60959e2126a89571c5f0",
+          "parentSpanSha256": "ee8830ab87e7a637fb84bab63b576792c7379bf647e212552c9f336d6ad9f399",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 165.2245,
+          "durationMilliseconds": 2.2027,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "3e4a3119c5be567fb70d318b914f6e30cbb9fb4acd365679ee243808ce93af60",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 171.3398,
+          "durationMilliseconds": 0.8744,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "28edf36ba5e0d8ccd3c7909938283760180f347330ac1098cc5aaa08925dd962",
+          "parentSpanSha256": "3e4a3119c5be567fb70d318b914f6e30cbb9fb4acd365679ee243808ce93af60",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 171.5242,
+          "durationMilliseconds": 0.4827,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "686a33d60ee183c48164691ab209eebd4b7b385e3a2ee57c0396c429cb2a2440",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 172.322,
+          "durationMilliseconds": 0.6725,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "f8779d4308ae9703f26d5f2422d148f71d35b255662770c972832cbf711e43eb",
+          "parentSpanSha256": "686a33d60ee183c48164691ab209eebd4b7b385e3a2ee57c0396c429cb2a2440",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 172.4512,
+          "durationMilliseconds": 0.3862,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "162ff171298b8136fbf6b0252f9c6b2adad15eee119b9a2305e5d71ae6789c77",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 173.2943,
+          "durationMilliseconds": 0.8319,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "dc7d712702b5bb996c3a9ecf4f555ec058687eb868b9f54793ccc1e985d293e7",
+          "parentSpanSha256": "162ff171298b8136fbf6b0252f9c6b2adad15eee119b9a2305e5d71ae6789c77",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 173.4398,
+          "durationMilliseconds": 0.5248,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "11e6f4401971faa9c6faaf6e5aabcb946f43032c2a36f8ed26d1c74c8f07c9ca",
+          "parentSpanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 176.5065,
+          "durationMilliseconds": 3.4412,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "269eb626b2e6619ec1a91425b4c6b98f106b5e9abbd9e6a24796d5ca81de4ce5",
+          "parentSpanSha256": "11e6f4401971faa9c6faaf6e5aabcb946f43032c2a36f8ed26d1c74c8f07c9ca",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 176.6606,
+          "durationMilliseconds": 3.0858,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "fa548953ca26573e6d92d32ab1b0204d4ad05eb4dc2cb90161633338273403aa",
+          "parentSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 181.1275,
+          "durationMilliseconds": 0.8334,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "16bcdf79e137426e6624c42254b367ce1400bd4edbd9a69fdd0edb029be7b8ec",
+          "parentSpanSha256": "fa548953ca26573e6d92d32ab1b0204d4ad05eb4dc2cb90161633338273403aa",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 181.2922,
+          "durationMilliseconds": 0.476,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "2f4e9929b8ad1ba330c0ba204015af43d5a408491795a668ef486d8c28fc1e61",
+          "parentSpanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 184.3413,
+          "durationMilliseconds": 4.1622,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "21e852760dd88a086ece788b9489c23311a9c83b3ffb1315b96a68ee4a6dab87",
+          "parentSpanSha256": "2f4e9929b8ad1ba330c0ba204015af43d5a408491795a668ef486d8c28fc1e61",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 184.5107,
+          "durationMilliseconds": 2.0505,
+          "recordedHttpStatus": null
+        }
+      ],
+      "admissionEvents": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 7.6252,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.7694"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 8.985,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.3585"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 66.3576,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "57.3704"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 67.7946,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.4352"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a2879c23e4200b318c792f4b86fe72ed661126889988f184e656f41e34cde3a6",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 74.4548,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "72.0322"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 107.5903,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "7.0657"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 109.0994,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.5078"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 163.3115,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "54.2105"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 164.7611,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.4475"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "29918bbe7a50bc504b47fa4c058b615dac4a199cc6b4510f4417af88b9f290dd",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 171.1567,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "75.0024"
+          }
+        }
+      ]
+    },
+    {
+      "traceSha256": "200b5c40390066b122ed6726ed2958c18b1aee3d68b9d3c93566b4199de12f04",
+      "rootSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+      "gatewayDurationMilliseconds": 508.5222,
+      "gatewayRecordedHttpStatus": "499",
+      "spans": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "parentSpanSha256": "05d28f3bf4732acbd5a2c95c8057f752f8e40bde75beac298cef466ca526193d",
+          "operation": "gateway-workload-metadata",
+          "startMillisecondsRelativeToGateway": 0.0,
+          "durationMilliseconds": 508.5222,
+          "recordedHttpStatus": "499"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "715838ac35865c4b740fb6aeea1b375ffdbb0a1ca523220ca4ff2b8c2c34b80a",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 248.1477,
+          "durationMilliseconds": 1.1371,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "5c609bc89921dbfe71019a87ead1ee0edae20dba3c5be69d4e50c9f7fd0720ed",
+          "parentSpanSha256": "715838ac35865c4b740fb6aeea1b375ffdbb0a1ca523220ca4ff2b8c2c34b80a",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 248.3562,
+          "durationMilliseconds": 0.54,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "3b4c7de69d311188d7715c13441e493bfddd0a957b5512dbb969f8f00f106632",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 311.7149,
+          "durationMilliseconds": 2.5405,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "f3f8d05d4ddc525d18d7aed210c2e2b8cde06f590c00cb55aca50dfc149fc8ef",
+          "parentSpanSha256": "3b4c7de69d311188d7715c13441e493bfddd0a957b5512dbb969f8f00f106632",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 311.9703,
+          "durationMilliseconds": 2.1209,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "df3b463991878437d2564e6dae0a2f75ee716c14fed34ba16bb30939d790bc28",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 318.6513,
+          "durationMilliseconds": 539.6845,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "221ebf871c24873c2643c129716e11259b7442693209a23c1fb2654b1d59754e",
+          "parentSpanSha256": "df3b463991878437d2564e6dae0a2f75ee716c14fed34ba16bb30939d790bc28",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 320.544,
+          "durationMilliseconds": 537.6745,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "parentSpanSha256": "221ebf871c24873c2643c129716e11259b7442693209a23c1fb2654b1d59754e",
+          "operation": "native-atomic-metadata-pair",
+          "startMillisecondsRelativeToGateway": 321.2081,
+          "durationMilliseconds": 536.6972,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "4425c464fd66666f19fd7b9e9896ef4318977f87e8731c32b75dc0c018de95c9",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 417.4565,
+          "durationMilliseconds": 1.1306,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "871484317f1e9463302cb790b4b750fc01f3db931eaa4e3c19d17d0a7d4afd89",
+          "parentSpanSha256": "4425c464fd66666f19fd7b9e9896ef4318977f87e8731c32b75dc0c018de95c9",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 417.675,
+          "durationMilliseconds": 0.7122,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "79f222cdac73a896fd7fa8f0e08a04ffa4cc5cf038e99f03ef66c730c14afae1",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 457.8176,
+          "durationMilliseconds": 8.1744,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "46dda6a08787524ba33b95d6219bcef490a652427b849e87f448ccda379126de",
+          "parentSpanSha256": "79f222cdac73a896fd7fa8f0e08a04ffa4cc5cf038e99f03ef66c730c14afae1",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 457.9296,
+          "durationMilliseconds": 1.3595,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a789c03a92e4c9ed333915ca29fa6e6ebc8f99ef2a0932ddff67c06a2cb90290",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 481.4502,
+          "durationMilliseconds": 5.347,
+          "recordedHttpStatus": "409"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "2bc296eb97e66da14b92cf8d975d204670218fe02051109845dea41dd8bac79d",
+          "parentSpanSha256": "a789c03a92e4c9ed333915ca29fa6e6ebc8f99ef2a0932ddff67c06a2cb90290",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 481.748,
+          "durationMilliseconds": 2.3215,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "a5e9329d73060dfccc9a4f68362e7c680d261514d39c9bfdca7345334df8edb1",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 490.1146,
+          "durationMilliseconds": 0.4006,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "cbf52da204a6b75069b407d13a2243c7d620699838cc9a3485193b722d8af43f",
+          "parentSpanSha256": "a5e9329d73060dfccc9a4f68362e7c680d261514d39c9bfdca7345334df8edb1",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 490.1793,
+          "durationMilliseconds": 0.286,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "e47a5dd2d374d51c1b3692ac610048e4959b727cb237b26d0de8852602822427",
+          "parentSpanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 492.9937,
+          "durationMilliseconds": 15.2217,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "940372d56da28920c57c85c9357def654dbbd2392d507fb9a0efdab1dae2795f",
+          "parentSpanSha256": "e47a5dd2d374d51c1b3692ac610048e4959b727cb237b26d0de8852602822427",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 493.4624,
+          "durationMilliseconds": 11.2646,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "0da1879ea4b4987dfbe970d29980a16f9a7ee20bbad69d644db079a4561c2f0c",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 502.3533,
+          "durationMilliseconds": 5.8591,
+          "recordedHttpStatus": "409"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "1133dc6e94e6d1af92ad0c7ee701efb2f28f61f29224cd74b0d161d6d9328379",
+          "parentSpanSha256": "0da1879ea4b4987dfbe970d29980a16f9a7ee20bbad69d644db079a4561c2f0c",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 503.1804,
+          "durationMilliseconds": 3.1409,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "3c4f65daa594b23a730c8b2db49f2865dc5a9151fb006ee93dbd91f00167cd12",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 509.7423,
+          "durationMilliseconds": 0.9595,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "5815b937de0e3b46419d39f918a03d93b13d0876b04e5ba40d31cf091fbf0ea9",
+          "parentSpanSha256": "3c4f65daa594b23a730c8b2db49f2865dc5a9151fb006ee93dbd91f00167cd12",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 510.2296,
+          "durationMilliseconds": 0.4234,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "3338f723a14f55d7a614b0b25376bea28e79b67821cd10d70a772e3d9b9dd873",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 682.7413,
+          "durationMilliseconds": 3.6248,
+          "recordedHttpStatus": "409"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "65d008069390def0ccd3d102d8076854cce11ca7091a903ced40f1b5baf98c9c",
+          "parentSpanSha256": "3338f723a14f55d7a614b0b25376bea28e79b67821cd10d70a772e3d9b9dd873",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 682.944,
+          "durationMilliseconds": 3.235,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "425c59accc0dcfec51321aaadca4f201b856c75550774375b3825f6efaaa0c76",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 689.7966,
+          "durationMilliseconds": 0.7048,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "fbe72b293ed48759378f17f483e78b6300d49ef935d5c0990361d8addb66347c",
+          "parentSpanSha256": "425c59accc0dcfec51321aaadca4f201b856c75550774375b3825f6efaaa0c76",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 689.9598,
+          "durationMilliseconds": 0.4075,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "8b2e2d3c1c90d4d78f26f7fe3dfe18ac22e5a6151d04c69a085a689f514af903",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 836.1747,
+          "durationMilliseconds": 9.9674,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "d7926081a9d874d722094641d86adba8149ed6c285084f1f2e1a896d836fa76c",
+          "parentSpanSha256": "8b2e2d3c1c90d4d78f26f7fe3dfe18ac22e5a6151d04c69a085a689f514af903",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 836.6294,
+          "durationMilliseconds": 8.035,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "930f0fd0e7371b8ce5d5ee294eabcb6fc79ac77a92070d9ab954a387de5eb643",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 849.8131,
+          "durationMilliseconds": 1.3101,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "823a5c54e4d2a154bac682580d41c331829f6027cfa217d80210ca226d0008a6",
+          "parentSpanSha256": "930f0fd0e7371b8ce5d5ee294eabcb6fc79ac77a92070d9ab954a387de5eb643",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 850.0532,
+          "durationMilliseconds": 0.8223,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "61da90472c626738ae0964633206586a65e8f4cff331e959c66879d0a3ff5fd8",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 851.2674,
+          "durationMilliseconds": 0.5871,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "278cd8151c56d683e207f8f779d3ba9e4e99bc015922554174febdae16171330",
+          "parentSpanSha256": "61da90472c626738ae0964633206586a65e8f4cff331e959c66879d0a3ff5fd8",
+          "operation": "native-actor-state-read",
+          "startMillisecondsRelativeToGateway": 851.3667,
+          "durationMilliseconds": 0.3763,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "5238d20b117d8825d9eb519e95853c83d81e957c1e4a6ab029cfa82cb2d991cd",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 852.0871,
+          "durationMilliseconds": 0.7009,
+          "recordedHttpStatus": "200"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "ad10f5f5ac2000dde309c90a120cecfdd5e21d0b37048b8327f3fa30e1c7ed4b",
+          "parentSpanSha256": "5238d20b117d8825d9eb519e95853c83d81e957c1e4a6ab029cfa82cb2d991cd",
+          "operation": "catalog-state-GET",
+          "startMillisecondsRelativeToGateway": 852.1876,
+          "durationMilliseconds": 0.448,
+          "recordedHttpStatus": null
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "0fed04b5a6196a7610b74cde9b1e5929816bc11aad62f9c0451ed86f712ba771",
+          "parentSpanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 854.9352,
+          "durationMilliseconds": 2.8096,
+          "recordedHttpStatus": "204"
+        },
+        {
+          "resource": "eventstore-dapr-cli",
+          "spanSha256": "759cfacfe887b2e82a07a17cd5836fd488eb612decae3b584115c22a71943788",
+          "parentSpanSha256": "0fed04b5a6196a7610b74cde9b1e5929816bc11aad62f9c0451ed86f712ba771",
+          "operation": "catalog-state-POST",
+          "startMillisecondsRelativeToGateway": 855.0796,
+          "durationMilliseconds": 2.0871,
+          "recordedHttpStatus": null
+        }
+      ],
+      "admissionEvents": [
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 253.3323,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.832"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 254.7561,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.4218"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 310.1618,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "55.4042"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 311.5702,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.4066"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "823bba3b4f44fe8f66a881d3f242bbb1001bb8642c319eff88856f626e769691",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 317.7818,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "7",
+            "cache_hits": "7",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "69.7977"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 423.8276,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.8828"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 425.3074,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.4782"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 497.9648,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "72.6561"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 500.2983,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "2.3318"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 519.4752,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "4.459"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 520.8713,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.3951"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 679.826,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "158.9535"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 682.6054,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "2.7767"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 694.6691,
+          "attributes": {
+            "phase": "binding",
+            "elapsed_ms": "1.8306"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 696.0866,
+          "attributes": {
+            "phase": "profile",
+            "elapsed_ms": "1.4158"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 834.587,
+          "attributes": {
+            "phase": "observer",
+            "elapsed_ms": "138.4985"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.validate_phase",
+          "startMillisecondsRelativeToGateway": 836.05,
+          "attributes": {
+            "phase": "trust",
+            "elapsed_ms": "1.4617"
+          }
+        },
+        {
+          "resource": "eventstore",
+          "spanSha256": "eb9b933df030c4df31e6672ff7382cf23e7f292b6d02f1b62bc190fc0f8e914e",
+          "event": "private.route_catalog.decode_scope",
+          "startMillisecondsRelativeToGateway": 849.6154,
+          "attributes": {
+            "enabled": "true",
+            "completed": "true",
+            "request_canceled": "false",
+            "capture_count": "17",
+            "cache_hits": "17",
+            "document_count": "1",
+            "retained_bytes": "216267",
+            "host_memo_enabled": "true",
+            "elapsed_ms": "432.3219"
+          }
+        }
+      ]
+    }
+  ],
+  "gateway499Meaning": "Server-recorded cancellation; canceled client received no HTTP status."
+}

@@ -1,0 +1,59 @@
+{
+  "qualificationGroup": "full-replay",
+  "nativeResult": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "seconds": 216.113
+  },
+  "actualFailure": "Supported read returned HTTP 404.",
+  "stoppingPoint": "First post-invalid open after both tenant first/continuation pages returned Complete.",
+  "tenantProjectionEvidence": [
+    {
+      "tenantSha256": "8742959679D2618F85F38DF836B65593F4393944FDFF2E807D2423F2205C903D",
+      "keyFamily": "projects",
+      "lastEventTimestamp": "2026-11-03T13:47:04.9289379+00:00",
+      "etag": "2",
+      "allPresentSamplesBytesAndEtagsUnchanged": false
+    },
+    {
+      "tenantSha256": "8742959679D2618F85F38DF836B65593F4393944FDFF2E807D2423F2205C903D",
+      "keyFamily": "projection",
+      "lastEventTimestamp": "2026-11-03T13:47:04.9289379+00:00",
+      "etag": "2",
+      "allPresentSamplesBytesAndEtagsUnchanged": true
+    },
+    {
+      "tenantSha256": "AEF5D75454ACACC3F5251C307ECB0EC9AA81317458A233F53C44ED96C4F10351",
+      "keyFamily": "projects",
+      "lastEventTimestamp": "2026-11-03T13:45:37.780226+00:00",
+      "etag": "2",
+      "allPresentSamplesBytesAndEtagsUnchanged": false
+    },
+    {
+      "tenantSha256": "AEF5D75454ACACC3F5251C307ECB0EC9AA81317458A233F53C44ED96C4F10351",
+      "keyFamily": "projection",
+      "lastEventTimestamp": "2026-11-03T13:45:37.780226+00:00",
+      "etag": "2",
+      "allPresentSamplesBytesAndEtagsUnchanged": true
+    }
+  ],
+  "rawProjectionEvidenceSha256": "91fe9b0700377190cc99e05093e0c379487e0971f9640fc2094a6170ed7e5cf4",
+  "callbackBudgetMilliseconds": 2000,
+  "actualFolderQueryRecordedCancellationMilliseconds": 2003.8928,
+  "actualProjectsHttpStatus": 404,
+  "clientReceivedHttpStatusForCanceledMetadata": null,
+  "validNativeObservationsAcceptedAfterCancellation": false,
+  "transportFacts": "failed-open-transport-facts.json",
+  "mainNotStarted": true,
+  "originalFailureAndReportsPreserved": true,
+  "allOwnedCleanupAndExternalPreservationPassed": true,
+  "providerControlAndMatrixNotWrittenAfterFeatureFailure": true,
+  "folderDeadlineMillisecondsRelativeToTrace": 2833.1484,
+  "criticalCasConflictsBeforeFolderDeadline": 0,
+  "allObservedCasConflictsAfterFolderDeadline": true,
+  "earliestObservedCasConflictMillisecondsRelativeToTrace": 2953.1353,
+  "attribution": "Fresh observer computation/timing and independent authorization reads exceed the actual2s callback window; no predeadline CAS retry loop or missing native proof. No authority accepted after cancellation."
+}

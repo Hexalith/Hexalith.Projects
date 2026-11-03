@@ -157,7 +157,7 @@ public sealed class ProjectReadQueryExecutor(
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
 
-            return Success(new ProjectListPage(rows, next, hasMore, PageSnapshot(rows, index)));
+            return Success(new ProjectListPage(rows, next, hasMore, PageSnapshot(index)));
         }
         catch (Exception) when (!cancellationToken.IsCancellationRequested)
         {
@@ -410,18 +410,10 @@ public sealed class ProjectReadQueryExecutor(
         catch (ArgumentException) { return false; }
     }
 
-    private AdmissionSnapshot PageSnapshot(ProjectListRow[] rows, ProjectReadIndex index)
-    {
-        AdmissionResponseState state = rows.Any(row => row.Snapshot.ResponseState == AdmissionResponseState.Unavailable) ? AdmissionResponseState.Unavailable
-            : rows.Any(row => row.Snapshot.ResponseState == AdmissionResponseState.Partial) ? AdmissionResponseState.Partial : AdmissionResponseState.Complete;
-        AdmissionComponent[] unavailableComponents = rows.SelectMany(row => row.Snapshot.Components)
-            .Where(component => !component.Included || component.Freshness != EvidenceFreshnessState.Current)
-            .GroupBy(component => component.Name, StringComparer.Ordinal)
-            .Select(group => group.FirstOrDefault(component => component.Freshness == EvidenceFreshnessState.Unavailable) ?? group.First()).ToArray();
-        return new(state, clock.GetUtcNow(), 0,
-            [Component("Enumeration", true, EvidenceFreshnessState.Current, "Current", index.LastVerifiedAt), .. unavailableComponents],
-            state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
-    }
+    private AdmissionSnapshot PageSnapshot(ProjectReadIndex index)
+        => new(AdmissionResponseState.Complete, clock.GetUtcNow(), 0,
+            [Component("Enumeration", true, EvidenceFreshnessState.Current, "Current", index.LastVerifiedAt)],
+            [AdmissionRecoveryAction.None]);
 
     private static AdmissionComponent Component(string name, bool included, EvidenceFreshnessState freshness, string reason, DateTimeOffset? verified)
         => new(name, included, freshness, reason) { LastVerifiedAt = verified };

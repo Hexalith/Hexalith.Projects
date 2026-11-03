@@ -1,0 +1,42 @@
+{
+  "manualProjectionHttpStatus": 200,
+  "actualProtocol": 2,
+  "actualOutcomes": [
+    {
+      "projection": "project-reads",
+      "status": "AlreadyCompleted",
+      "reasonSha256": null
+    }
+  ],
+  "head": 3,
+  "originalFailure": "strict fresh Completed response assertion despite real AlreadyCompleted convergence",
+  "matrixRowsAccepted": 0,
+  "exactCleanupVerified": true,
+  "selectedRepair": "Keep actual AlreadyCompleted status; require real exact persisted project-reads source/actor/full receipt/unchanged idle epoch proof before seed completion, within same existing30s budget shared with subsequent all-projection wait. No artificial new event, rebuild or status conversion.",
+  "rawLogsRetainedOwnerPrivate": true,
+  "rawLogsSha256": {
+    "input-capture-facts.json": "ca8132a86e5021cf50512bfd4e1d03959654eeaac8a775190fbe11c58ee779b6",
+    "supported-read-authority.json": "aa9a4862c125e6801ee2d9312f85a552058dfbc0dd8bccf91d477d8c1a4df1d6",
+    "input-eventstore.observation.json": "d4888598565a75ae4a4ebc896df59a331435ec4bea1c9dbc82c16123077fe468",
+    "stop-1076782.json": "b2fcfe24ce610e14875f5d3e2a303b298c50e63429fa303aba2a6fa36ce837e4",
+    "eventstore.json": "4931bd8871daa734fd30367d25abbcb29d55186b6e50da9a3067dfdb6304b4c4",
+    "tenants-dapr-cli.json": "267b073fde34c6f1a9f95f05942260adb36c95be5dd0aa33a4b8e453301f309b",
+    "projects.json": "2ef7d2bd8d0c6b58bdc9e0dc535cce493d30f33b8a2d30f436d3102716947326",
+    "projects-dapr-cli.json": "c02207e60ea4ca39da097f6399e8140506a57e781bc7e34afaa58c71049edbc9",
+    "folders.json": "a23fec7260de16ca447d3bb283e41dbe1bda54816c08789255325e98e87baaf9",
+    "seed-proof-state.json": "14c92d5940382b543f622a57015672a0a7a4e5e2fc206c974b5eb22d8dc2bcb9",
+    "folders-dapr-cli.json": "80b224399b89b3e81f987d3cc084bf862e75f6735eaed20c9254a277611b5523",
+    "tenants.json": "27418fe9d53de5a039484bc5cc2646a6d4493bde436655ff172696430b739c83",
+    "input-folders.observation.json": "8cc68d4ce77884a6ffd178c6c099d615fa0522047f646475c486544380433ab1",
+    "projects-workers.json": "29eadb9d026678010c327d743fd3e109cf3d42d8633602e2d41347a7f6d2763f",
+    "input-catalog.json": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+    "folders-workers.json": "de7bf7cca5a1cbc3efdd4f7f012df4aedec3413f461d42f1d1a9d1c561ed7bd6",
+    "shared-epoch-proof-state.json": "8cc06e185d8dde9dbe9add1525afcbd04e463494bf005e12cdb7952ce2cf6380",
+    "folders-workers-dapr-cli.json": "dfc7ea84f4a97b9695750c464321bc91d467b3c4b9454fcbeb759ec8b2893ff0",
+    "input-activation.json": "43a438df1bba9d90eec162ef0002adabfcc899783a4b0cd50df00a489a55d390",
+    "eventstore-dapr-cli.json": "e6718b2840ef73684fcaa332c13e4c72122aff370a9c768b77608f97250d4416",
+    "delivery-work-proof-state.json": "6210d5be425b1811e4c2aca7179e0ad85ac47b535240484eb70034eed2c843b8",
+    "projects-workers-dapr-cli.json": "7637f25157c056b0d7aedf1232750b41a9fb8f45662f6dc6752c0da427e42188",
+    "cutover-proof-state.json": "b7f42ff2a78ad2116d84e9280cb94ac586624e45688a885709e0dd8e62cc0e7b"
+  }
+}

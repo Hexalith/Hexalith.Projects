@@ -1,0 +1,26 @@
+{
+  "kind": "standalone-pure-codec-no-authority-or-runtime-calls",
+  "sourceAttempt": "live-18",
+  "catalogBytes": 216267,
+  "catalogSha256": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+  "originalRouteFacetDigest": "ccea698835926b7e7f36abc7376552d9cb21e69d2f7d2e7716e5b7e7b956daea",
+  "originalIdempotencyFacetDigest": "5e4038bc1b88ee930c8da29c87b028b629dd0c2bf7bf56214360bec8a586b203",
+  "everyMeasuredDecodedRoundTripByteIdentical": true,
+  "canonicalCatalogRetainedOnlyOwnerPrivate": true,
+  "loop": {
+    "warmup": 20,
+    "iterations": 100,
+    "pairedRepetitions": 3,
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "timingLimit": "Standalone wall timings vary and do not establish that the bounded live owner path succeeds.",
+  "beforeCodecSha256": "a1c6b0a2bdf990a48493c9c4538e31596304ae5d79aeed868c89c733a213ac95",
+  "afterCodecSha256": "c0e3bf5d5b2dc393bbb509ac3f6997437d3f8b48331b607381ccf3e5aac405e8",
+  "beforeAssemblySha256": "656f0847404c99c3224d5ecac8aee2ecc3dc83588b2b9122cc4c67bf71f80d2a",
+  "afterAssemblySha256": "cd1fc4c66c57297568e4d70f67be8f25f293e315a86bd03d982f3d9495f70963",
+  "commandPattern": [
+    "dotnet",
+    "/tmp/story61-codec-profile-{baseline|ordered}-bin/CodecProfile.dll",
+    "<exact-owner-private-catalog.json>"
+  ]
+}

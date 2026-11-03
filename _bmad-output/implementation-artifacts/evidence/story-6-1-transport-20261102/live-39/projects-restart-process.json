@@ -1,0 +1,97 @@
+{
+  "resource": "projects",
+  "action": "restart",
+  "completed": true,
+  "stage": "completed",
+  "before": {
+    "resourceName": "projects-yfmwyxua",
+    "launcherPid": 3686544,
+    "launcherStartTicks": "7307807",
+    "pid": 3687067,
+    "startTicks": "7307861",
+    "binarySha256": "008b2d5473bfac9659991539efea39cdf7de85a3eb384be2b8dfac370da5d2b1",
+    "assemblySha256": "d1e4b978d49091c6cc6dc57a794ed2db059682eb340d12ca680ee4d09f611140"
+  },
+  "appHostPid": 3683330,
+  "appHostStartTicks": "7307249",
+  "configurationSha256": "a28fa4c0f3fe9a27c2ac56f3c6469150879512c00a4123733c97901d00375040",
+  "oldProcessExited": true,
+  "after": {
+    "resourceName": "projects-yfmwyxua",
+    "launcherPid": 3826910,
+    "launcherStartTicks": "7336952",
+    "pid": 3827047,
+    "startTicks": "7337000",
+    "binarySha256": "008b2d5473bfac9659991539efea39cdf7de85a3eb384be2b8dfac370da5d2b1",
+    "assemblySha256": "d1e4b978d49091c6cc6dc57a794ed2db059682eb340d12ca680ee4d09f611140"
+  },
+  "discovery": {
+    "resolver": "sqlite",
+    "version": "v1",
+    "alphaTestInfrastructureOnly": true,
+    "daprdSha256": [
+      "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+    ],
+    "configurationSha256": {
+      "eventstore": "01f4710be9b0eb5bfbe499519343ef126335030584dc93b6866754800979e351",
+      "folders": "10bea150fae2ca98015ca863e59459111a035f65fd7ef8a4f4a83046ba9b370b",
+      "folders-workers": "10a0d306522ffa1857da1261c5efe11d587f0c64ad460eb9af345c80ae055d36",
+      "projects": "3e947d3007d0f7f2cddcb919572342b209d52d8690da4c4b4fb8f5736a4cd0bf",
+      "projects-workers": "10a0d306522ffa1857da1261c5efe11d587f0c64ad460eb9af345c80ae055d36",
+      "tenants": "39da8e2cf441cb428ce3f3e6233a795c9a111f0a26a234e498119f1945f77ef3"
+    },
+    "registryIdentitySha256": "31a6a65e0d2444d758f1ddddd9e40b63cdbd1e93878af32897a81bde4a117f48",
+    "ownedSidecars": [
+      {
+        "appId": "eventstore",
+        "pid": 3686481,
+        "namespaceVerified": true,
+        "startTicks": "7307803",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders",
+        "pid": 3686438,
+        "namespaceVerified": true,
+        "startTicks": "7307802",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders-workers",
+        "pid": 3686255,
+        "namespaceVerified": true,
+        "startTicks": "7307793",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects",
+        "pid": 3686573,
+        "namespaceVerified": true,
+        "startTicks": "7307808",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects-workers",
+        "pid": 3686254,
+        "namespaceVerified": true,
+        "startTicks": "7307793",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "tenants",
+        "pid": 3686256,
+        "namespaceVerified": true,
+        "startTicks": "7307793",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      }
+    ],
+    "observationsRequired": 1
+  },
+  "endpointsRediscovered": true
+}

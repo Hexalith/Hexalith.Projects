@@ -1,0 +1,99 @@
+{
+  "sourceProfile": "selected-private-Debug-Development",
+  "nativeMetadataBudgetMilliseconds": 2000,
+  "folderPermissionCatchupBudgetMilliseconds": 500,
+  "observations": [
+    {
+      "resource": "eventstore",
+      "phaseEvent": "started",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "BBFB9252918B764DAE9CADD1E947B53232D7267B77B0B521D14A7D494FAE0E06",
+      "Phase": "initial"
+    },
+    {
+      "resource": "eventstore",
+      "phaseEvent": "completed",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "BBFB9252918B764DAE9CADD1E947B53232D7267B77B0B521D14A7D494FAE0E06",
+      "Phase": "initial",
+      "Status": "unsupported",
+      "Exists": false,
+      "CurrentSequence": 0,
+      "Erased": false,
+      "ProofPresent": false,
+      "ElapsedMilliseconds": 383.2183,
+      "RequestCanceled": false
+    },
+    {
+      "resource": "eventstore",
+      "phaseEvent": "started",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "Phase": "initial"
+    },
+    {
+      "resource": "eventstore",
+      "phaseEvent": "completed",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "Phase": "initial",
+      "Status": "available",
+      "Exists": true,
+      "CurrentSequence": 3,
+      "Erased": false,
+      "ProofPresent": true,
+      "ElapsedMilliseconds": 415.6138,
+      "RequestCanceled": true
+    },
+    {
+      "resource": "folders",
+      "phaseEvent": "started",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "BBFB9252918B764DAE9CADD1E947B53232D7267B77B0B521D14A7D494FAE0E06"
+    },
+    {
+      "resource": "folders",
+      "phaseEvent": "completed",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "BBFB9252918B764DAE9CADD1E947B53232D7267B77B0B521D14A7D494FAE0E06",
+      "ElapsedMilliseconds": 2005.0736,
+      "Available": false,
+      "CallerCanceled": false
+    },
+    {
+      "resource": "folders",
+      "phaseEvent": "started",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B"
+    },
+    {
+      "resource": "folders",
+      "phaseEvent": "completed",
+      "TenantHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "DomainHash": "63B8533061410C19B6A9B7C7BF81A935F1845164E860440CA1197002E3C81CB9",
+      "AggregateHash": "B9949761FF1F03E52D30DCCFD61DCD0F8B516A8854DDB4FEF595D2118A9DFB7B",
+      "ElapsedMilliseconds": 492.6527,
+      "Available": false,
+      "CallerCanceled": true
+    }
+  ],
+  "baselineIdentification": "Actual folders organization identity has tenant hash equal to aggregate hash; expected domain SHA256 matches folders. It agrees with the accepted ACL prefix/readiness head3.",
+  "baselineProofAvailableOnlyAfterCallerCanceled": true,
+  "lateAuthorityAccepted": false,
+  "baselineSecondInspectionObserved": false,
+  "absentProbeRefusal": "Unsupported with Exists=false and no proof; unavailable is expected and supplies no organization authority.",
+  "folderClientReceivedHttpStatusForCanceledBaseline": null,
+  "rawLogSha256": {
+    "eventstore.json": "1ba6dc17ee76890b55b00f40e4ecf737073134bdca04c6e101c283cedc25f322",
+    "folders.json": "601b972edb27177d90eac2bdcb44cecec5865fc09ea17c7bba2b4b9455724f0e"
+  },
+  "rawLogsRetainedOwnerPrivate": true,
+  "sourceManifestSha256": "715203036850e467de62b38621549675b2ffc817410030f22f9c707f5fc32fca"
+}

@@ -1,0 +1,44 @@
+{
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "3627d6a487efcd6609195873737835f5ce9be65ba2d77789ac901b0fde312fbd",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "a6f69a80c4c8e64f63abe899562f055a2bb531e42cda2c1726879a7cddc4bfe3"
+  },
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "selectedChanges": [
+    "MapProjectStream copies real MetadataVersion and StoredPayloadVersion; missing correlation refuses instead of substituting MessageId",
+    "Closed actual projection response outcomes retained before original Completed assertion; original enum requirement unchanged and exact protocol/one named outcome now required"
+  ],
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-project-metadata.xml"
+  ],
+  "nativeResult": {
+    "total": 82,
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "runtimeAcceptance": "Pending; original32 failure preserved; actualmanualoutcome notinferred"
+}

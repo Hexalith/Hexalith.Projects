@@ -27,6 +27,7 @@ internal sealed class GatewayFixtureLoopbackHandler(GatewayFixtureLocalRoutes ro
             request.RequestUri = new Uri(routes.Hosts[target], method);
             request.Headers.TryAddWithoutValidation(DaprAppChannelToken.HeaderName, "story61-owned-local-channel");
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            routes.TransportResponses.Enqueue(target + ":" + method + ":" + (int)response.StatusCode);
             if (target == "folders" && method == "query" && routes.OwnerResponseOverride is { } malformed && response.IsSuccessStatusCode)
             {
                 using var payload = System.Text.Json.JsonDocument.Parse(malformed);

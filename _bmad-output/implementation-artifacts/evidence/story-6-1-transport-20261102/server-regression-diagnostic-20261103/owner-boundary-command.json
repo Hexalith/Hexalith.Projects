@@ -1,0 +1,23 @@
+{
+  "diagnosticOnly": true,
+  "expectedQualificationScenarioNotExecuted": [
+    "dotnet",
+    "/tmp/supported-project-reads-private-uu3nofkz/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+    "-method",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.MainReadsUseActualPersistedOwnersAsync",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/server-regression-diagnostic-20261103/distributed.xml"
+  ],
+  "actualNativeCommand": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/server-regression-diagnostic-20261103/server-regressions.xml"
+  ],
+  "assemblySha256": "c47c18e15c3f5d271fa7f617950bbf726cb9632f04dc7a12e5f17b4cf8567fc5",
+  "launcherSourceSha256": "63b710cb9e337d9d338a320dcebf2ff18ceddab9d665f4d22fcd80140ee37a16",
+  "normalGuardsAndCleanupUnchanged": true,
+  "qualificationIntentionallyRefused": true,
+  "nativeExitCode": 1,
+  "assemblyUnchanged": true
+}

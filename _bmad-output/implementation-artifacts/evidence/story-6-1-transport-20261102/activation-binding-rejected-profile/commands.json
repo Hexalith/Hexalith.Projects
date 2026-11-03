@@ -1,0 +1,81 @@
+{
+  "status": "rejected-not-selected-no-SDK-source-change",
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "originalStandaloneLayout": "/tmp/story61-activation-binding-profile",
+  "buildCommand": [
+    "dotnet",
+    "build",
+    "/tmp/story61-activation-binding-profile/Profile.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "runCommand": [
+    "env",
+    "DOTNET_PROCESSOR_COUNT=2",
+    "dotnet",
+    "/tmp/story61-activation-binding-profile/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-activation.json"
+  ],
+  "profileSources": {
+    "RouteCatalogActivationBinding.original.txt": "7608b3ca8e113bfa17c7e3d0f3864536b42ed3f0d5d408dcba49b02471901118",
+    "Profile.csproj": "bdb41ed4ffb9781daf0f0ae1e280eb3f3b2ccdce6e0ed0c338ffb08b2c6f34e4",
+    "BaselineBinding.cs": "d4975db49ddeb65548ac9670dcbc7ce8dbe739bb8939d3a5419a836ed64506af",
+    "CandidateBinding.cs": "a741a8da465831b7283b982286b32a891ea32a50b20ae59d015c91466fbd2193",
+    "Program.cs": "633ba637f453918cfe8bfa1a4b55d3da8685dbe81b36e57242f10312305431e4"
+  },
+  "actualInputSha256": "13578375f6cac5db62c1ac4d3838a2bb1734d25ec1b75e66a31bd8dd77b8e46e",
+  "actualInputPath": "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-activation.json",
+  "actualAuxiliaryCount": 85,
+  "actualSDKAndCopiedBaselineCandidateDigestAgree": true,
+  "bindingDigest": "99982d39d13020fad4f536e30ae39cc8c1f1efd28bfbe1959ad88fd1e8e127b0",
+  "summary": [
+    {
+      "existingWarmByteMemo": false,
+      "preserved-baseline": {
+        "medianMilliseconds": 10.256797500000001,
+        "medianAllocatedBytes": 13460220.5,
+        "trials": 8,
+        "operationsPerTrial": 20
+      },
+      "per-call-lazy-concrete-inputs": {
+        "medianMilliseconds": 10.0501975,
+        "medianAllocatedBytes": 13460544.5,
+        "trials": 8,
+        "operationsPerTrial": 20
+      }
+    },
+    {
+      "existingWarmByteMemo": true,
+      "preserved-baseline": {
+        "medianMilliseconds": 1.1010024999999999,
+        "medianAllocatedBytes": 1511162.5,
+        "trials": 8,
+        "operationsPerTrial": 20
+      },
+      "per-call-lazy-concrete-inputs": {
+        "medianMilliseconds": 1.121345,
+        "medianAllocatedBytes": 1511160.5,
+        "trials": 8,
+        "operationsPerTrial": 20
+      }
+    }
+  ],
+  "reason": "The candidate premise was a parenthesis-reading error. Original whole-list uniqueness check is outside auxiliary.Any and executes once. Candidate gives no meaningful improvement; SDK source unchanged.",
+  "noAuthorityHostTrustStateLeaseOrPermissionResultCache": true,
+  "freshOwnedDeserializedInputEachOperation": true,
+  "notLiveAuthorityOrLatencyEvidence": true,
+  "furtherSemanticControlsNotRunForRejectedCandidate": true,
+  "actualSdkBinaries": [
+    {
+      "name": "Hexalith.EventStore.ServiceDefaults",
+      "path": "/tmp/story61-activation-binding-profile/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "sha256": "f4c6a53d2fc48ad37318963ca384385d68d1d76614f5abbe41827577ca7e0c75"
+    },
+    {
+      "name": "Hexalith.EventStore.Contracts",
+      "path": "/tmp/story61-activation-binding-profile/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "sha256": "b132e0231f52a192033ce87b810041982704cdbb359a120b5c401cc931dbd404"
+    }
+  ]
+}

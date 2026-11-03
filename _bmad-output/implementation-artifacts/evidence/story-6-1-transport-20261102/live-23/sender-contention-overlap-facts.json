@@ -1,0 +1,114 @@
+{
+  "exactTraceTimingOrigin": "actual failed Folder metadata start",
+  "writes": [
+    {
+      "host": "eventstore",
+      "status": "204",
+      "atMs": 66.5241,
+      "commandTypes": [],
+      "ancestorOperations": [
+        "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+        "CallActor/ProjectionLifecycleActor/BeginDeliveryWriteAsync",
+        "operation-sha256:907bf9a40f9ce9967d9811779df472faa3c5418d189735e007761e04447e5e19"
+      ]
+    },
+    {
+      "host": "Hexalith.Folders",
+      "status": "409",
+      "atMs": 70.9519,
+      "commandTypes": [
+        "Hexalith.Folders.Commands.GrantFolderAccess"
+      ],
+      "ancestorOperations": [
+        "POST /process",
+        "CallLocal/folders/process",
+        "CallLocal/folders/process",
+        "POST",
+        "operation-sha256:862a83a6246669ac4cd50f19cc2ca1a0b6a66eddba2478ad2d8a8c5f68b73219",
+        "operation-sha256:cb32424efaa852b82bf39bb6647855f3f87467bc37d83d99abbbe3c1ea1101e8"
+      ]
+    },
+    {
+      "host": "eventstore",
+      "status": "204",
+      "atMs": 86.1834,
+      "commandTypes": [],
+      "ancestorOperations": [
+        "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+        "CallActor/ProjectionLifecycleActor/BeginDeliveryWriteAsync",
+        "operation-sha256:907bf9a40f9ce9967d9811779df472faa3c5418d189735e007761e04447e5e19"
+      ]
+    },
+    {
+      "host": "Hexalith.Folders",
+      "status": "409",
+      "atMs": 124.0612,
+      "commandTypes": [
+        "Hexalith.Folders.Commands.GrantFolderAccess"
+      ],
+      "ancestorOperations": [
+        "POST /process",
+        "CallLocal/folders/process",
+        "CallLocal/folders/process",
+        "POST",
+        "operation-sha256:862a83a6246669ac4cd50f19cc2ca1a0b6a66eddba2478ad2d8a8c5f68b73219",
+        "operation-sha256:cb32424efaa852b82bf39bb6647855f3f87467bc37d83d99abbbe3c1ea1101e8"
+      ]
+    },
+    {
+      "host": "Hexalith.Folders",
+      "status": "204",
+      "atMs": 177.67,
+      "commandTypes": [
+        "Hexalith.Folders.Commands.GrantFolderAccess"
+      ],
+      "ancestorOperations": [
+        "POST /process",
+        "CallLocal/folders/process",
+        "CallLocal/folders/process",
+        "POST",
+        "operation-sha256:862a83a6246669ac4cd50f19cc2ca1a0b6a66eddba2478ad2d8a8c5f68b73219",
+        "operation-sha256:cb32424efaa852b82bf39bb6647855f3f87467bc37d83d99abbbe3c1ea1101e8"
+      ]
+    }
+  ],
+  "attributionLimit": "No write bodies or ETags were retained.",
+  "exactOverlappingSuccessfulWrites": [
+    {
+      "writeAtMilliseconds": 86.1834,
+      "writerTraceSha256": "6f41884698f221172a5d97e94a209a994c9f68e365ecc77bb002ac246439e93c",
+      "actualProjectionActorAncestors": [
+        {
+          "actorSha256": "806b77e7d7d2a53e391fcbf34c90686bdb2f63e912e351798874a7d8db61d437",
+          "sameTenant": true,
+          "sameFolder": true,
+          "containsFoldersDomain": true
+        },
+        {
+          "actorSha256": "806b77e7d7d2a53e391fcbf34c90686bdb2f63e912e351798874a7d8db61d437",
+          "sameTenant": true,
+          "sameFolder": true,
+          "containsFoldersDomain": true
+        }
+      ]
+    },
+    {
+      "writeAtMilliseconds": 66.5241,
+      "writerTraceSha256": "6f41884698f221172a5d97e94a209a994c9f68e365ecc77bb002ac246439e93c",
+      "actualProjectionActorAncestors": [
+        {
+          "actorSha256": "806b77e7d7d2a53e391fcbf34c90686bdb2f63e912e351798874a7d8db61d437",
+          "sameTenant": true,
+          "sameFolder": true,
+          "containsFoldersDomain": true
+        },
+        {
+          "actorSha256": "806b77e7d7d2a53e391fcbf34c90686bdb2f63e912e351798874a7d8db61d437",
+          "sameTenant": true,
+          "sameFolder": true,
+          "containsFoldersDomain": true
+        }
+      ]
+    }
+  ]
+}

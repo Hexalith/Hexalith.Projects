@@ -1,0 +1,135 @@
+{
+  "actualCatalogBytes": 216267,
+  "canonicalRoot": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+  "rootMatches": true,
+  "activationInputSha256": "744e36e316bfabf26a550e0a4c2a1fc615c6ff015b15f104c030a1c0b6468030",
+  "observationInputSha256": "6672ae8de7571c594c31a0056539e9166e110a1e0d89f17dcb5d3d74ecbf508b",
+  "observationIdentitySha256": "55ed3051d826b89b1a57dce97f33e9bd06550a4904ba9a77cdaa2df6ce9340b0",
+  "configuration": "ordinary Debug / Optimize=false / DEBUG enabled",
+  "authorityStateTransport": "owned in-memory HTTP model through actual DaprRouteCatalogStateStore; no network or live authority evidence",
+  "independentReceiversAndRemoteRpcNotMeasured": true,
+  "results": [
+    {
+      "mode": "ordinary-fresh-acquire-and-release",
+      "operations": 30,
+      "medianMs": 29.4008,
+      "p95Ms": 33.2223,
+      "allocatedBytesPerOperation": 14231224,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 30
+    },
+    {
+      "mode": "held-with-fresh-validation-and-owned-body",
+      "operations": 30,
+      "medianMs": 20.1583,
+      "p95Ms": 23.4637,
+      "allocatedBytesPerOperation": 7364809,
+      "stateReads": 0,
+      "stateWrites": 0,
+      "freshHostObservations": 30
+    },
+    {
+      "mode": "held-with-fresh-validation-and-owned-body",
+      "operations": 30,
+      "medianMs": 19.5732,
+      "p95Ms": 24.1628,
+      "allocatedBytesPerOperation": 7360356,
+      "stateReads": 0,
+      "stateWrites": 0,
+      "freshHostObservations": 30
+    },
+    {
+      "mode": "ordinary-fresh-acquire-and-release",
+      "operations": 30,
+      "medianMs": 32.3844,
+      "p95Ms": 35.1165,
+      "allocatedBytesPerOperation": 14226021,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 30
+    },
+    {
+      "mode": "ordinary-fresh-acquire-and-release",
+      "operations": 30,
+      "medianMs": 22.5466,
+      "p95Ms": 30.873,
+      "allocatedBytesPerOperation": 14203538,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 30
+    },
+    {
+      "mode": "held-with-fresh-validation-and-owned-body",
+      "operations": 30,
+      "medianMs": 6.8343,
+      "p95Ms": 12.2791,
+      "allocatedBytesPerOperation": 7319237,
+      "stateReads": 0,
+      "stateWrites": 0,
+      "freshHostObservations": 30
+    }
+  ],
+  "lifetimeResults": [
+    {
+      "mode": "parent-acquire-child-acquire-child-release-parent-release",
+      "operations": 30,
+      "medianMs": 27.3658,
+      "p95Ms": 34.5368,
+      "allocatedBytesPerOperation": 28334542,
+      "stateReads": 120,
+      "stateWrites": 120,
+      "freshHostObservations": 60
+    },
+    {
+      "mode": "parent-acquire-held-validation-parent-release",
+      "operations": 30,
+      "medianMs": 21.9633,
+      "p95Ms": 23.2907,
+      "allocatedBytesPerOperation": 22158125,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 60
+    },
+    {
+      "mode": "parent-acquire-held-validation-parent-release",
+      "operations": 30,
+      "medianMs": 21.9787,
+      "p95Ms": 23.8323,
+      "allocatedBytesPerOperation": 22157463,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 60
+    },
+    {
+      "mode": "parent-acquire-child-acquire-child-release-parent-release",
+      "operations": 30,
+      "medianMs": 27.3545,
+      "p95Ms": 31.6875,
+      "allocatedBytesPerOperation": 28334960,
+      "stateReads": 120,
+      "stateWrites": 120,
+      "freshHostObservations": 60
+    },
+    {
+      "mode": "parent-acquire-child-acquire-child-release-parent-release",
+      "operations": 30,
+      "medianMs": 27.1746,
+      "p95Ms": 35.0813,
+      "allocatedBytesPerOperation": 28335036,
+      "stateReads": 120,
+      "stateWrites": 120,
+      "freshHostObservations": 60
+    },
+    {
+      "mode": "parent-acquire-held-validation-parent-release",
+      "operations": 30,
+      "medianMs": 22.1119,
+      "p95Ms": 24.3225,
+      "allocatedBytesPerOperation": 22159173,
+      "stateReads": 60,
+      "stateWrites": 60,
+      "freshHostObservations": 60
+    }
+  ]
+}

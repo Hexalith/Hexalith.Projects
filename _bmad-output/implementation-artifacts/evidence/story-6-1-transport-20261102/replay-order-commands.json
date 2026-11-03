@@ -1,0 +1,64 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs": "b91eefdfcdcd7b74261da006b4b5e03997eea7926eaa99fff0ab7daa5b6c7179",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "8706b1eb2ae52b2915929e31af65ba11da9e823c5e6b736bf478e7b92abf67c6",
+    "tools/qualification/run_supported_project_reads.py": "7974f6a31af9347f822fed9b0835204f65408e5871a214c66e5a98bede33f786",
+    "tests/tools/test_supported_project_reads_launcher.py": "20dd13d7f86d15807a188ff9d1b8fd8ab1b41fce20addc9c7de5c6191941b6fa"
+  },
+  "actualMeasurementBefore": "live-39/replay-truth-freshness-facts.json",
+  "selectedRepair": "MoveUNCHANGEDduplicate\u2192fullreplay blocks immediatelyafterSeedandCompleteAsyncsetup, beforemainSnapshot/firstcursor. Samesinglefixture/provider/retainedsource andalloriginalassertions. Mainrestart\u2192revocationcursoriscreatedafterintentionalrebuilds. Recordactualeleven-orderinMATRIX_CASES; strictmissing/duplicate/reversed+obsoleteorderrefusalsretained.",
+  "unchanged": "Alltimestamps/events/authorityguards/300sfreshness/90srecovery/15sstate/2smetadata/500mspermissions; noreplayassertionremovedorrelaxed.",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "buildResult": "0warnings/0errors",
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-replay-order.xml"
+  ],
+  "nativeResult": {
+    "total": "84",
+    "passed": "84",
+    "failed": "0",
+    "skipped": "0",
+    "not-run": "0"
+  },
+  "launcherControlsCommand": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/tools",
+    "-p",
+    "test_supported_project_reads_launcher.py"
+  ],
+  "launcherControlsResult": {
+    "passed": 84,
+    "failed": 0
+  },
+  "additionalChecks": [
+    "changedfiles gitdiffcheck passed",
+    "python3 -m py_compile tools/qualification/run_supported_project_reads.py tests/tools/test_supported_project_reads_launcher.py passed"
+  ],
+  "runtimeAcceptance": "Pendingfresh40all11matrix+fullIntegration/Server+cleanup/externalpreservation; noneacceptedfromprior9rows."
+}

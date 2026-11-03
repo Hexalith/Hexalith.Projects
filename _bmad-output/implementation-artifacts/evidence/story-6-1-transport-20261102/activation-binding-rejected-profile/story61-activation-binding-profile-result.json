@@ -1,0 +1,390 @@
+{
+  "inputPath": "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-activation.json",
+  "inputSha256": "13578375f6cac5db62c1ac4d3838a2bb1734d25ec1b75e66a31bd8dd77b8e46e",
+  "actualAuxiliaryCount": 85,
+  "expectedBindingDigest": "99982d39d13020fad4f536e30ae39cc8c1f1efd28bfbe1959ad88fd1e8e127b0",
+  "originalProductionAndCopiedFunctionsAgree": true,
+  "freshOwnedDeserializedInputPerOperation": true,
+  "authorityHostTrustStateLeasePermissionResultsRetained": false,
+  "runtimeNetworkCallsPerformed": false,
+  "profileBuild": {
+    "configuration": "Debug",
+    "optimized": false,
+    "gcMode": "Workstation",
+    "note": "Standalone pure-computation model; not live host p99 or authority evidence."
+  },
+  "actualSdkBinaries": [
+    {
+      "name": "Hexalith.EventStore.ServiceDefaults",
+      "path": "/tmp/story61-activation-binding-profile/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "sha256": "f4c6a53d2fc48ad37318963ca384385d68d1d76614f5abbe41827577ca7e0c75"
+    },
+    {
+      "name": "Hexalith.EventStore.Contracts",
+      "path": "/tmp/story61-activation-binding-profile/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "sha256": "b132e0231f52a192033ce87b810041982704cdbb359a120b5c401cc931dbd404"
+    }
+  ],
+  "trials": [
+    {
+      "warm": false,
+      "iteration": 0,
+      "warmup": true,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 24.98411,
+      "allocatedBytesPerOperation": 13525148
+    },
+    {
+      "warm": false,
+      "iteration": 0,
+      "warmup": true,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 27.516334999999998,
+      "allocatedBytesPerOperation": 13515720
+    },
+    {
+      "warm": false,
+      "iteration": 1,
+      "warmup": true,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 24.758875,
+      "allocatedBytesPerOperation": 13505192
+    },
+    {
+      "warm": false,
+      "iteration": 1,
+      "warmup": true,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 23.274195,
+      "allocatedBytesPerOperation": 13561557
+    },
+    {
+      "warm": false,
+      "iteration": 2,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 23.026495,
+      "allocatedBytesPerOperation": 13562013
+    },
+    {
+      "warm": false,
+      "iteration": 2,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 13.18751,
+      "allocatedBytesPerOperation": 13526137
+    },
+    {
+      "warm": false,
+      "iteration": 3,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 12.756499999999999,
+      "allocatedBytesPerOperation": 13522462
+    },
+    {
+      "warm": false,
+      "iteration": 3,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 12.48469,
+      "allocatedBytesPerOperation": 13491337
+    },
+    {
+      "warm": false,
+      "iteration": 4,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 10.778855,
+      "allocatedBytesPerOperation": 13460188
+    },
+    {
+      "warm": false,
+      "iteration": 4,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 9.955315,
+      "allocatedBytesPerOperation": 13460630
+    },
+    {
+      "warm": false,
+      "iteration": 5,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 10.06245,
+      "allocatedBytesPerOperation": 13459785
+    },
+    {
+      "warm": false,
+      "iteration": 5,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 9.65711,
+      "allocatedBytesPerOperation": 13459736
+    },
+    {
+      "warm": false,
+      "iteration": 6,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 9.70679,
+      "allocatedBytesPerOperation": 13459343
+    },
+    {
+      "warm": false,
+      "iteration": 6,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 9.74338,
+      "allocatedBytesPerOperation": 13459837
+    },
+    {
+      "warm": false,
+      "iteration": 7,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 10.10429,
+      "allocatedBytesPerOperation": 13460459
+    },
+    {
+      "warm": false,
+      "iteration": 7,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 10.252745,
+      "allocatedBytesPerOperation": 13460253
+    },
+    {
+      "warm": false,
+      "iteration": 8,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 10.260850000000001,
+      "allocatedBytesPerOperation": 13460491
+    },
+    {
+      "warm": false,
+      "iteration": 8,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 9.68939,
+      "allocatedBytesPerOperation": 13460970
+    },
+    {
+      "warm": false,
+      "iteration": 9,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 10.037945,
+      "allocatedBytesPerOperation": 13459407
+    },
+    {
+      "warm": false,
+      "iteration": 9,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 10.164570000000001,
+      "allocatedBytesPerOperation": 13460094
+    },
+    {
+      "warm": true,
+      "iteration": 0,
+      "warmup": true,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.33556,
+      "allocatedBytesPerOperation": 1511090
+    },
+    {
+      "warm": true,
+      "iteration": 0,
+      "warmup": true,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1309850000000001,
+      "allocatedBytesPerOperation": 1511253
+    },
+    {
+      "warm": true,
+      "iteration": 1,
+      "warmup": true,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.07348,
+      "allocatedBytesPerOperation": 1511492
+    },
+    {
+      "warm": true,
+      "iteration": 1,
+      "warmup": true,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.102765,
+      "allocatedBytesPerOperation": 1511221
+    },
+    {
+      "warm": true,
+      "iteration": 2,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1034549999999999,
+      "allocatedBytesPerOperation": 1511083
+    },
+    {
+      "warm": true,
+      "iteration": 2,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.2714349999999999,
+      "allocatedBytesPerOperation": 1511181
+    },
+    {
+      "warm": true,
+      "iteration": 3,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1222400000000001,
+      "allocatedBytesPerOperation": 1511552
+    },
+    {
+      "warm": true,
+      "iteration": 3,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.0923349999999998,
+      "allocatedBytesPerOperation": 1510974
+    },
+    {
+      "warm": true,
+      "iteration": 4,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.165565,
+      "allocatedBytesPerOperation": 1511161
+    },
+    {
+      "warm": true,
+      "iteration": 4,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.12045,
+      "allocatedBytesPerOperation": 1511140
+    },
+    {
+      "warm": true,
+      "iteration": 5,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.080085,
+      "allocatedBytesPerOperation": 1511122
+    },
+    {
+      "warm": true,
+      "iteration": 5,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.09855,
+      "allocatedBytesPerOperation": 1511164
+    },
+    {
+      "warm": true,
+      "iteration": 6,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.0773899999999998,
+      "allocatedBytesPerOperation": 1511313
+    },
+    {
+      "warm": true,
+      "iteration": 6,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1311149999999999,
+      "allocatedBytesPerOperation": 1511207
+    },
+    {
+      "warm": true,
+      "iteration": 7,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1092,
+      "allocatedBytesPerOperation": 1511028
+    },
+    {
+      "warm": true,
+      "iteration": 7,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.221445,
+      "allocatedBytesPerOperation": 1511425
+    },
+    {
+      "warm": true,
+      "iteration": 8,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.073995,
+      "allocatedBytesPerOperation": 1511108
+    },
+    {
+      "warm": true,
+      "iteration": 8,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.14487,
+      "allocatedBytesPerOperation": 1511352
+    },
+    {
+      "warm": true,
+      "iteration": 9,
+      "warmup": false,
+      "mode": "per-call-lazy-concrete-inputs",
+      "operations": 20,
+      "millisecondsPerOperation": 1.1168150000000001,
+      "allocatedBytesPerOperation": 1511035
+    },
+    {
+      "warm": true,
+      "iteration": 9,
+      "warmup": false,
+      "mode": "preserved-baseline",
+      "operations": 20,
+      "millisecondsPerOperation": 1.115535,
+      "allocatedBytesPerOperation": 1511497
+    }
+  ]
+}

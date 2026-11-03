@@ -5,6 +5,8 @@
     <IsPackable>false</IsPackable>
     <IsPublishable>true</IsPublishable>
     <UserSecretsId>hexalith-projects</UserSecretsId>
+    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == ''">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform</HexalithPlatformRoot>
+    <HexalithBuildsRoot Condition="'$(HexalithBuildsRoot)' == ''">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Builds</HexalithBuildsRoot>
     <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -20,6 +22,12 @@
     <ProjectReference Include="$(HexalithTenantsRoot)\src\Hexalith.Tenants\Hexalith.Tenants.csproj" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Server\Hexalith.Folders.Server.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Workers\Hexalith.Folders.Workers.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <Compile Include="$(HexalithPlatformRoot)\DaprSelfHostedMtls.cs" Link="Platform\DaprSelfHostedMtls.cs" />
+    <Compile Include="$(HexalithPlatformRoot)\DaprSelfHostedMtlsSubscriber.cs" Link="Platform\DaprSelfHostedMtlsSubscriber.cs" />
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.EventStore\Hexalith.Folders.EventStore.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="$(HexalithBuildsRoot)\src\libraries\Hexalith.Builds.Tooling\Hexalith.Builds.Tooling.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />

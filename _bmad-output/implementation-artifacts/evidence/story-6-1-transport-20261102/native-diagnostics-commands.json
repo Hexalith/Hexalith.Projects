@@ -1,0 +1,63 @@
+{
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "*NativeSourceReadDiagnosticsTests",
+    "-class",
+    "*StreamsControllerTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/native-diagnostics.xml"
+  ],
+  "passed": 77,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "1bccc946f4bd3bb9599549e86946edded074faaa1c428e164c5ef38a5304b338",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "83e30b1b496785abf0e865a5dc998c4549ab011535e792a41fa1645ef5930a6a",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "692e581cc84bf582e5fb8ca6c5636135a3f1225cc54972cdc452068c36949881",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs": "811a07662245773ea6ff21de5d8a6f51445ec0367cb0066eb7496d005723e041",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs": "f061b65fad6fcadb9eceeaaf9a72398832ef85a6363071691d9c5aea6b4b2265",
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "743fd874a37ba8a1b78de35605d4d7ba8ddd4864afcbbd60483750704af6d3db",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "602b45ab566d071ffd14eb1c1e86a1cbbf807efd52f25aeb30682182cb022477"
+  },
+  "fixtureBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "fixtureTestCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-diagnostics.xml"
+  ],
+  "fixturePassed": 76,
+  "fixtureFailed": 0,
+  "fixtureSkipped": 0
+}

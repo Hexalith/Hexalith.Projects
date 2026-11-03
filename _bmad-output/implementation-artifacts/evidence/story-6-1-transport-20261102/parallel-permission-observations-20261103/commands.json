@@ -1,0 +1,165 @@
+{
+  "status": "focused-controls-passed-qualification-pending",
+  "runtimeProductionSourceChanged": [
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs"
+  ],
+  "sourceHashes": {
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs": "a3d97f32cb711e12c60772b818d7e0d674a410a18ca8a4faf5385395d637adfb",
+    "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs": "6f64f25663005676dcc90e7c877b58d387a89807ed31940553a70a8e289389f1",
+    "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs": "314739655d6018df96900ada82a685f078412b6c8c3887b6888771b70d705640",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchTests.cs": "af1fdebde58c7d2b2c89b6e86f5472e50d912f934f6e6bb33cbd8212138e3e5f"
+  },
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "results": {
+    "story61-parallel-permissions-final.xml": [
+      {
+        "total": "99",
+        "passed": "99",
+        "failed": "0",
+        "skipped": "0",
+        "not-run": "0",
+        "errors": "0",
+        "time": "12.850"
+      }
+    ],
+    "story61-folder-freshness.xml": [
+      {
+        "total": "2",
+        "passed": "2",
+        "failed": "0",
+        "skipped": "0",
+        "not-run": "0",
+        "errors": "0",
+        "time": "0.104"
+      }
+    ],
+    "story61-concurrent-held-metadata.xml": [
+      {
+        "total": "50",
+        "passed": "50",
+        "failed": "0",
+        "skipped": "0",
+        "not-run": "0",
+        "errors": "0",
+        "time": "15.951"
+      }
+    ],
+    "story61-concurrent-held-no-debug-corrected.xml": [
+      {
+        "total": "50",
+        "passed": "50",
+        "failed": "0",
+        "skipped": "0",
+        "not-run": "0",
+        "errors": "0",
+        "time": "15.756"
+      }
+    ]
+  },
+  "blockedDrainWithThrowingCancellationCallbackCovered": true,
+  "private500msPermissionAnd2sMetadataDeadlinesUnchanged": true,
+  "sdkProductionSourceChanged": false,
+  "notes": "GetOnce joins all started reads. Existing outer catch-up WaitAsync may return exhausted while cancellation/drain finishes; no late source authority is accepted.",
+  "debugAbsentMeaning": "Ordinary Configuration=Debug with DisableImplicitConfigurationDefines=true across the graph; actual owning-repository artifact path satisfies fixture source discovery. Original external/tmp artifact attempt failed fixture initialization before guard execution and is preserved separately.",
+  "buildCommands": [
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Tests/Hexalith.Folders.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ]
+  ],
+  "debugAbsentBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--artifacts-path",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-concurrent-held-no-debug-20261103",
+    "-p:DisableImplicitConfigurationDefines=true"
+  ],
+  "testEnvironment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "testCommands": [
+    [
+      "dotnet",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+      "-class",
+      "*ParallelPermissionObservationTests",
+      "-class",
+      "*EventStoreOrganizationEffectivePermissionsReadModelTests",
+      "-class",
+      "*FolderOwnerReadQueryHandlerTests",
+      "-class",
+      "*FoldersDevelopmentOwnerMetadataTests",
+      "-xml",
+      "/tmp/story61-parallel-permissions-final.xml"
+    ],
+    [
+      "dotnet",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Tests/bin/Debug/net10.0/Hexalith.Folders.Tests.dll",
+      "-class",
+      "*EffectivePermissionsReadModelFreshnessTests",
+      "-xml",
+      "/tmp/story61-folder-freshness.xml"
+    ],
+    [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "*HeldMetadataDispatchTests",
+      "-xml",
+      "/tmp/story61-concurrent-held-metadata.xml"
+    ],
+    [
+      "dotnet",
+      "references/Hexalith.EventStore/artifacts/story61-concurrent-held-no-debug-20261103/bin/Hexalith.EventStore.Server.Tests/debug/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "*HeldMetadataDispatchTests",
+      "-xml",
+      "/tmp/story61-concurrent-held-no-debug-corrected.xml"
+    ]
+  ],
+  "inputFailuresPreserved": [
+    "First Folders control build failed two CA2007 diagnostics; exact await sites corrected without analyzer changes.",
+    "External/tmp artifact path native selection failed50/50 at unchanged fixture repository discovery; corrected owning artifact path passed50/50."
+  ],
+  "sourceHashesStillMatch": true
+}

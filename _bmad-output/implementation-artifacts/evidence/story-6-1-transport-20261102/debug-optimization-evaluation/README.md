@@ -1,0 +1,7 @@
+# Debug optimization evaluation
+
+This is a bounded compiler-property and pure-work evaluation, not live acceptance. Both complete isolated Server.Tests source graphs built with zero warnings/errors and all seven mapping environment entries. The measured optimized build retained Debug/DEBUG and portable symbols; actual binary DebuggableAttribute flags distinguish it from ordinary Debug. No optimized runtime profile was selected because the measured gain was not material or consistent.
+
+`evaluation.json` records exact source/property/build coordinates; `measurements.json` records six alternating fresh-process commands, private input paths/hashes, unchanged canonical bytes/facets, fresh observation identities and normalized list/continuation/open truth. The query benchmark uses the existing in-memory authority/Folder/clock fixture and supplies no live evidence. Actual live authority is untouched.
+
+Reproduction uses two standalone layouts. Keep each original `profiler/Program.cs` and `profiler/Profile.csproj` together; `initial-comparison` contains the earlier layout and its original results before adding compiled declaration capture. Build owning tests into the isolated artifacts paths using the exact seven-entry source environment and helper; build each profiler with ProfileInputDir set to that test output and Optimize false/true. Run the recorded argv with the separately retained owner-private catalog/activation/observation inputs matching their hashes. The public packet intentionally contains no raw private inputs or built binaries.

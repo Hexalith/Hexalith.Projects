@@ -1,0 +1,32 @@
+{
+  "qualification": "failed-live-attempt-retained",
+  "metadataTransport": {
+    "method": "POST",
+    "path": "api/v1/streams/read/workload",
+    "receivedHttpStatus": null,
+    "attemptMilliseconds": 417.8168,
+    "exceptionTypes": [
+      "TaskCanceledException",
+      "IOException",
+      "SocketException"
+    ]
+  },
+  "realIssuerAcquisitionHttpStatus": 200,
+  "domainSafeDenialHttpStatus": 503,
+  "gatewayCommandHttpStatus": 500,
+  "enclosingPermissionCatchUpBudgetMilliseconds": 500,
+  "nativeMetadataBudgetMilliseconds": 2000,
+  "interpretation": "The existing enclosing permission catch-up deadline canceled the in-flight metadata request; no native head or authority was accepted.",
+  "sourceLogsSha256": {
+    "supported-read-authority.json": "75d1f94f7fdc60017983b1bc6678793f46f259060370908a7ba03b9013e29433",
+    "eventstore.json": "4178efddf49f5ba43482550ced01d150544cbe3c4963b98f8ff0f3bf661e2ed7",
+    "projects.json": "53f036a6603a88e8e855a54974243b75cd6b905b0438ecb895352e82b9845c7b",
+    "projects-dapr-cli.json": "2cb4bc403862fff0f1584f823daf1a314b8b4c2ab66ebb9a01e79bc5252d314b",
+    "folders.json": "62c880aa1679418dd3c2323f37b1ef87f9ac7583adcc279b5ea221847f43969d",
+    "folders-dapr-cli.json": "4be3d5b2dc3feaaa3969003b0a5183e089a90599a31a452fcf5fa62d4bd357f4",
+    "tenants.json": "1a6a002f80cdee20de649471bba4cca957e67af19a88bffa6ab55809aa0034ce",
+    "projects-workers.json": "31690df97d25b19ba508f8ac1058f45dd9563c9f4333c8edb6b065ec2b98d367",
+    "folders-workers.json": "6332ae368662d69aa9ed5f63af0e74b7cf7a26a72e9df679fc92782d7cad41aa",
+    "eventstore-dapr-cli.json": "40c6db8bcf2ca41b3f0f2715d856e4bc2795f358ecfa44f9abde54938e3f7ff9"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "protocol": "existing-cooperative-same-user-nonblocking-advisory-lock",
+  "lockPath": "/tmp/hexalith-timesheets-local-runtime.lock",
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--scenario",
+    "main",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/main-preflight-20261103"
+  ],
+  "acquired": true,
+  "released": true,
+  "contentsReadOrWritten": false,
+  "lifecycleOfOtherTasksInvoked": false,
+  "acquiredUtc": "2026-11-03T15:57:31.280537+00:00",
+  "identity": {
+    "device": 2096,
+    "inode": 1110522,
+    "uid": 1000,
+    "mode": 384,
+    "links": 1,
+    "size": 0,
+    "modifiedNs": 1793620078044563332
+  },
+  "launcherPid": 3902803,
+  "childExitCode": 1,
+  "lockIdentityAndMetadataPreserved": true,
+  "releasedUtc": "2026-11-03T16:08:21.115814+00:00"
+}

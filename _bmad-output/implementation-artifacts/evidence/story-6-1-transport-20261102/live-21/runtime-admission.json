@@ -1,0 +1,37 @@
+{
+  "protocol": "existing-cooperative-same-user-nonblocking-advisory-lock",
+  "lockPath": "/tmp/hexalith-timesheets-local-runtime.lock",
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-21"
+  ],
+  "acquired": true,
+  "released": true,
+  "contentsReadOrWritten": false,
+  "lifecycleOfOtherTasksInvoked": false,
+  "acquiredUtc": "2026-11-02T23:07:24.842025+00:00",
+  "identity": {
+    "device": 2096,
+    "inode": 1110522,
+    "uid": 1000,
+    "mode": 384,
+    "links": 1,
+    "size": 0,
+    "modifiedNs": 1793620078044563332
+  },
+  "launcherPid": 1847544,
+  "childExitCode": 1,
+  "lockIdentityAndMetadataPreserved": true,
+  "releasedUtc": "2026-11-02T23:11:05.092273+00:00",
+  "wrapperCommand": [
+    "python3",
+    "/tmp/story61-admitted-launch21.py"
+  ],
+  "retainedWrapper": "runtime-admission-wrapper.py",
+  "wrapperSha256": "01fb08644e49dbb88868700088ed920dff73c1a9e4c166b4250300082017a8e5"
+}

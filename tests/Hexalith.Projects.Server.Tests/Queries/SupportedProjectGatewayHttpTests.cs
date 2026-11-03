@@ -58,12 +58,105 @@ using Shouldly;
 using Xunit;
 
 /// <summary>Local bound-signing source lane: real gateway/SDK/owner HTTP and Dapr persistence; loopback replaces service discovery only.</summary>
-public sealed class SupportedProjectGatewayHttpTests
+/// <param name="output">The native per-test output for closed transport observations.</param>
+public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
 {
     private const string Issuer = "story61-bound-signing";
     private const string Audience = "configured-read-audience";
     private const string Channel = "story61-owned-local-channel";
     private static readonly string SigningKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
+    /// <summary>Uses the SDK's actual named query client while preserving fixture discovery and workload signing.</summary>
+    [Fact]
+    public async Task NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion()
+    {
+        int directDaprCalls = 0, ownerCalls = 0;
+        var daprBuilder = WebApplication.CreateBuilder();
+        daprBuilder.Configuration["urls"] = "http://127.0.0.1:0";
+        await using WebApplication daprTrap = daprBuilder.Build();
+        daprTrap.MapFallback(() => { Interlocked.Increment(ref directDaprCalls); return Results.StatusCode(500); });
+        await daprTrap.StartAsync(TestContext.Current.CancellationToken);
+        var receiverBuilder = WebApplication.CreateBuilder();
+        receiverBuilder.Configuration["urls"] = "http://127.0.0.1:0";
+        await using WebApplication receiver = receiverBuilder.Build();
+        receiver.MapPost("/query", (HttpContext context) =>
+        {
+            Interlocked.Increment(ref ownerCalls);
+            context.Request.Headers.Authorization.ShouldBeEmpty();
+            context.Request.Headers[DaprAppChannelToken.HeaderName].ToString().ShouldBe(Channel);
+            string assertion = context.Request.Headers[EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName].Single()!;
+            ClaimsPrincipal principal = new JwtSecurityTokenHandler { MapInboundClaims = false }.ValidateToken(assertion, new TokenValidationParameters
+            {
+                ValidateIssuer = true, ValidIssuer = Issuer, ValidateAudience = true, ValidAudience = "projects",
+                ValidateLifetime = true, ValidateIssuerSigningKey = true, RequireSignedTokens = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SigningKey)),
+                ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+            }, out _);
+            principal.FindFirst(EventStoreWorkloadAuthenticationDefaults.CallerClaimType)!.Value.ShouldBe("eventstore");
+            principal.FindFirst(EventStoreWorkloadAuthenticationDefaults.OperationClaimType)!.Value.ShouldBe(EventStoreWorkloadOperations.DomainServiceQuery);
+            return Results.Ok(QueryResult.FromPayload(JsonSerializer.SerializeToElement(new { observed = true })));
+        });
+        await receiver.StartAsync(TestContext.Current.CancellationToken);
+        var routes = new GatewayFixtureLocalRoutes();
+        routes.Add("projects", receiver);
+        using RSA ownerKey = RSA.Create(2048);
+        WebApplication gateway = await StartGatewayAsync(daprTrap.Urls.Single(), "http://127.0.0.1:1", routes, ownerKey, "tenant-a");
+        await using var lifetime = gateway.ConfigureAwait(true);
+        QueryResult result = await gateway.Services.GetRequiredService<IDomainQueryInvoker>().InvokeAsync(
+            new QueryEnvelope("tenant-a", "projects", "projects", ListProjectsQuery.QueryType, "{}"u8.ToArray(), "transport-control", "actor-1"),
+            TestContext.Current.CancellationToken);
+        result.Success.ShouldBeTrue();
+        result.GetPayload().GetProperty("observed").GetBoolean().ShouldBeTrue();
+        ownerCalls.ShouldBe(1);
+        directDaprCalls.ShouldBe(0);
+    }
+
+    /// <summary>Exercises the real Folder receiver guard before any owner read or persistence call.</summary>
+    [Fact]
+    public async Task FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch()
+    {
+        const string tenant = "catalog-receiver-control";
+        var routes = new GatewayFixtureLocalRoutes();
+        WebApplication folders = await StartFoldersAsync("http://127.0.0.1:1", "http://127.0.0.1:1", routes,
+            new GatewayFixtureOwnerHeads(), DateTimeOffset.UtcNow, tenant);
+        await using var foldersLifetime = folders.ConfigureAwait(true);
+        using RSA ownerKey = RSA.Create(2048);
+        WebApplication gateway = await StartGatewayAsync("http://127.0.0.1:1", "http://127.0.0.1:1", routes, ownerKey, tenant);
+        await using var gatewayLifetime = gateway.ConfigureAwait(true);
+        string assertion = (await gateway.Services.GetRequiredService<IWorkloadAssertionIssuer>().IssueAsync(
+            new("folders", EventStoreWorkloadOperations.DomainServiceQuery), TestContext.Current.CancellationToken))!;
+        ClaimsPrincipal service = new JwtSecurityTokenHandler { MapInboundClaims = false }.ValidateToken(assertion, new TokenValidationParameters
+        {
+            ValidateIssuer = true, ValidIssuer = Issuer, ValidateAudience = true, ValidAudience = "folders",
+            ValidateLifetime = true, ValidateIssuerSigningKey = true, RequireSignedTokens = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SigningKey)),
+            ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+        }, out _);
+        service.FindAll(RouteCatalogSurfacePolicy.ClaimType).Select(claim => claim.Value).ShouldBe(["service"]);
+        var committed = await folders.Services.GetRequiredService<IRouteCatalogAuthority>().ReadbackAsync(TestContext.Current.CancellationToken);
+        string differentRoot = (committed.RootDigest[0] == 'f' ? "e" : "f") + committed.RootDigest[1..];
+        long differentEpoch = checked(committed.Epoch + 1);
+        differentRoot.ShouldNotBe(committed.RootDigest);
+        differentEpoch.ShouldNotBe(committed.Epoch);
+        using HttpClient client = new() { BaseAddress = new(folders.Urls.Single()) };
+        foreach (bool differentGeneration in new[] { false, true })
+        {
+            using HttpRequestMessage request = new(HttpMethod.Post, "/query")
+            {
+                Content = JsonContent.Create(new QueryEnvelope(tenant, "folders", "folder-a", FolderOwnerReadQuery.QueryType,
+                    "{}"u8.ToArray(), "receiver-control", "actor-1")),
+            };
+            request.Headers.Add(DaprAppChannelToken.HeaderName, Channel);
+            request.Headers.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
+            if (differentGeneration)
+            {
+                request.Headers.Add(RouteCatalogInvocationHandler.RootHeader, differentRoot);
+                request.Headers.Add(RouteCatalogInvocationHandler.EpochHeader, differentEpoch.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+            using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        }
+    }
 
     [Fact]
     public async Task GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
@@ -75,7 +168,7 @@ public sealed class SupportedProjectGatewayHttpTests
         var transport = new GatewayFixtureLocalRoutes();
         var heads = new GatewayFixtureOwnerHeads();
         DateTimeOffset now = DateTimeOffset.UtcNow;
-        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now).ConfigureAwait(true);
+        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now, tenant).ConfigureAwait(true);
         await using var foldersLifetime = folders.ConfigureAwait(true);
         transport.Add("folders", folders);
         WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport).ConfigureAwait(true);
@@ -174,6 +267,7 @@ public sealed class SupportedProjectGatewayHttpTests
         SubmitQueryRequest SuggestAttachments(params ProjectAdvisoryAttachment[] inputs) => new(tenant, "projects", "projects", ResolveProjectFromAttachmentsQuery.QueryType,
             Payload: JsonSerializer.SerializeToElement(new ResolveProjectFromAttachmentsQuery(inputs), JsonSerializerOptions.Web));
         var conversationSuggestions = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestConversation("conversation-a"));
+        output.WriteLine("Actual symmetric fixture transport responses=" + string.Join(',', transport.TransportResponses));
         conversationSuggestions.Candidates.Select(item => item.ProjectId).ShouldBe(["project-a", "project-b"]);
         conversationSuggestions.Candidates.Select(item => item.Score).ShouldBe([50, 20]); conversationSuggestions.Incomplete.ShouldBeFalse();
         var folderSuggestions = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestAttachments(new ProjectAdvisoryAttachment("folder", "folder-project-b")));
@@ -276,10 +370,12 @@ public sealed class SupportedProjectGatewayHttpTests
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now)
+    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant)
     {
         var builder = Builder("folders", http, grpc, routes);
+        builder.Services.AddFoldersProductionAuthentication(builder.Configuration, builder.Environment);
         builder.Services.AddFoldersServer(); builder.Services.AddEventStoreReadModelStore();
+        GatewayFixtureCatalogComposition.AddFolderReceiver(builder, tenant, includeAdvisoryQueries: true);
         // Unused command services require a repository to compose; owner reads below use only persisted ACL projections.
         builder.Services.AddSingleton<IFolderRepository, InMemoryFolderRepository>();
         builder.Services.AddSingleton<Hexalith.Folders.Projections.TenantAccess.IUtcClock>(new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(now.AddSeconds(1)));
@@ -293,7 +389,8 @@ public sealed class SupportedProjectGatewayHttpTests
             (options, _) => { options.Audience = "folders"; options.AllowedCallers.Add("eventstore"); });
         builder.Services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
             [EventStoreWorkloadOperations.DomainServiceQuery, EventStoreWorkloadOperations.DomainServiceMetadata]);
-        WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapFoldersDomainServiceEndpoints();
+        WebApplication app = builder.Build(); app.UseAuthentication(); app.UseEventStoreHttpHostSecurity(); app.UseAuthorization(); app.MapFoldersDomainServiceEndpoints();
+        app.Services.GetRequiredService<EventStoreDomainServiceEndpointSource>().Capture(app);
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
@@ -354,6 +451,9 @@ public sealed class SupportedProjectGatewayHttpTests
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
+        builder.Services.AddHttpClient(DaprDomainQueryInvoker.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
+            .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
         WebApplication app = builder.Build(); app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;

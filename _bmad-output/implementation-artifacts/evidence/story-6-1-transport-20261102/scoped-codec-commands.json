@@ -1,0 +1,250 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "mappingEnvironment": "focused-build-environment.json",
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "8dfbcced9607df128a94bd58d2471168fb87cd8f29d77f9221d1de39e16d85e0",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "29ea45905f229069a8099987bc5d8d1c35ff5b6221fe6009e0a4977d71b5215c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj": "e381a51922113082ef497d168b909da325e408a30e9670f870d0447e5590230a",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "6016299a9e00b23a1107d30baa33ef11fa4bdc41068dd482bd4c3ef0f80e920c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "fa0410f4fac1c60bd85e8fd7e8afd76fad11acee636cadbffce2182eed9a4481",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "d3e917a400906259889edc93ec5473d1890be0a5dc8d5c6cdc7299c1bcd5e431",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "b1e9ff321278598b33e0c0b650a72c1640737fa5142eb9639a73617c53f124e2",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "a07018a1f63eef02e652cb78db54cfc0caf105898192c20adb55308ddc5410bb",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDecodeScopeTests.cs": "475205453a3504fda5a64b86e150e23b990dd92d24be0c1aab3710e8b9e3ab9c",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/CatalogConstructorCompatibilityTests.cs": "e34555b247cfd428d34fd24dde23a81974450380e1fb5110a30b19aea7435222",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "b975ffd8d1c165fbbf83e2fe83afc4c77d3173cf91b9a673dde863507b69c313",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj": "99a917d9b60fe3291e3912cc7f618b93812232bf1192f8c4f6b58d1b34d57e50",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs": "fb146fc8194cfd05d8bd1406d0959bd768b2922b2728d8743fe89d8c54ebc314",
+    "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs": "e31f2732bfb57de5c84566cfe7652a1904407a1079c558b722c7667589ef8978",
+    "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj": "465c8816edaea9a61191d9dc2dfa49a176772f7e1cd827851d90d60b6298f2d0",
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "75206dcee8bcc5d861a66b6ced39afbef5fde1c607c48e04bf3f8817a36c185c",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "332fccc34eb7e74fa12145d99c5eae86f114aa16514e06d814babbf4fe9ae7b7"
+  },
+  "checks": [
+    {
+      "label": "sdk-debug",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*RouteCatalogDecodeScopeTests",
+        "-class",
+        "*ScopedRouteCatalogAcquisitionTests",
+        "-class",
+        "*NativeSourceReadDiagnosticsTests",
+        "-class",
+        "*CatalogConstructorCompatibilityTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scoped-codec-debug-final.xml"
+      ],
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "label": "sdk-no-debug-conditionals",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--artifacts-path",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt",
+        "-p:DisableImplicitConfigurationDefines=true"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt/bin/Hexalith.EventStore.Server.Tests/debug/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*RouteCatalogDecodeScopeTests",
+        "-class",
+        "*ScopedRouteCatalogAcquisitionTests",
+        "-class",
+        "*NativeSourceReadDiagnosticsTests",
+        "-class",
+        "*CatalogConstructorCompatibilityTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scoped-codec-no-debug.xml"
+      ],
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "label": "folder-debug-private-registration",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+        "-class",
+        "*FoldersDevelopmentOwnerMetadataTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/folder-scoped-debug.xml"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "label": "folder-no-debug-private-refusal",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--artifacts-path",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/artifacts/story61-scoped-release-fpfveoxi",
+        "-p:DisableImplicitConfigurationDefines=true"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/artifacts/story61-scoped-release-fpfveoxi/bin/Hexalith.Folders.Server.Tests/debug/Hexalith.Folders.Server.Tests.dll",
+        "-class",
+        "*FoldersDevelopmentOwnerMetadataTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/folder-scoped-no-debug.xml"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "label": "final-codec-contract-vectors",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Contracts.Tests.Routing.*",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scoped-codec-contracts.xml"
+      ],
+      "passed": 199,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "label": "final-sdk-authority-stream-regressions",
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.*",
+        "-class",
+        "*NativeSourceReadDiagnosticsTests",
+        "-class",
+        "*StreamsControllerTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/scoped-codec-authority.xml"
+      ],
+      "passed": 1141,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    }
+  ],
+  "conditionalBuildMeaning": "Configuration remains Debug under the exact source mapping; official SDK DisableImplicitConfigurationDefines disables DEBUG while retaining framework symbols. These are conditional-guard controls, not a claimed full Release build.",
+  "conditionalPropertyCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "msbuild",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-nologo",
+    "-target:AddImplicitDefineConstants",
+    "-getProperty:DefineConstants,Configuration",
+    "-p:DisableImplicitConfigurationDefines=true"
+  ],
+  "conditionalProperties": {
+    "DefineConstants": "TRACE;NET;NET10_0;NETCOREAPP;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER",
+    "Configuration": "Debug"
+  },
+  "fullMappedReleaseAttempt": {
+    "result": "correctly-refused",
+    "code": "HXW006",
+    "log": "scoped-codec-full-release-refusal.log",
+    "reason": "Full source mapping pins Configuration=Debug; guard preserved.",
+    "command": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Release",
+      "-m:1",
+      "--artifacts-path",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt"
+    ]
+  },
+  "mixedSourcePropertyControls": "folder-source-selection-evaluation.json",
+  "mixedConditionalCompilation": {
+    "source": "folder-source-guard/Program.cs",
+    "project": "folder-source-guard/SourceGuard.csproj",
+    "buildCommand": [
+      "dotnet",
+      "build",
+      "/tmp/story61-folder-source-guard/SourceGuard.csproj",
+      "-c",
+      "Debug"
+    ],
+    "testCommand": [
+      "dotnet",
+      "/tmp/story61-folder-source-guard/bin/Debug/net10.0/SourceGuard.dll"
+    ],
+    "result": "default-inert-explicit-refusal-unpublished-type-reference-absent"
+  }
+}

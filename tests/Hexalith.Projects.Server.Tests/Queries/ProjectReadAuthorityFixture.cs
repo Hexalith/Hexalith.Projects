@@ -12,6 +12,7 @@ using System.Text.Json;
 using Dapr.Client;
 using Hexalith.EventStore.Authentication;
 using Hexalith.EventStore.Authorization;
+using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.EventStore.Contracts.Queries;
@@ -178,7 +179,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     {
         using HttpResponseMessage response = await Client.PostAsJsonAsync("/api/v1/queries", query, TestContext.Current.CancellationToken).ConfigureAwait(false);
         string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
-        response.StatusCode.ShouldBe(HttpStatusCode.OK, body);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, body + "; actual owner gateway HTTP statuses=" + string.Join(',', Routes.OwnerResponseStatuses));
         return JsonSerializer.Deserialize<SubmitQueryResponse>(body, JsonSerializerOptions.Web)!.Payload.Deserialize<T>(JsonSerializerOptions.Web)!;
     }
     /// <summary>Requires one scenario-specific safe closed Problem Details response and returns its canonical stable outcome.</summary>
@@ -326,6 +327,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         {
             [EventStoreWorkloadAuthenticationDefaults.CallerClaimType] = "eventstore",
             [EventStoreWorkloadAuthenticationDefaults.OperationClaimType] = EventStoreWorkloadOperations.DomainServiceQuery,
+            [RouteCatalogSurfacePolicy.ClaimType] = "service",
             ["eventstore:grant-id"] = "gateway-to-" + query.Domain, ["eventstore:grant-revision"] = 1,
         };
         foreach (var binding in QueryCallerAuthorityBinding.Bind(query)) claims.Add(binding.Key, binding.Value);
@@ -347,6 +349,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             ValidateIssuerSigningKey = true, RequireSignedTokens = true, ValidateLifetime = false,
         }).ConfigureAwait(false);
         result.IsValid.ShouldBeTrue();
+        result.ClaimsIdentity.FindAll(RouteCatalogSurfacePolicy.ClaimType).Select(claim => claim.Value).ShouldBe(["service"]);
     }
     /// <summary>Sends malformed or ordinary OAuth form controls through the same passive observer to the actual broker.</summary>
     public async Task<HttpStatusCode> SendTokenControlAsync(string fault)
@@ -405,6 +408,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         var folderBuilder = Builder("folders");
         folderBuilder.Services.AddFoldersProductionAuthentication(folderBuilder.Configuration, folderBuilder.Environment);
         folderBuilder.Services.AddFoldersServer(); folderBuilder.Services.AddEventStoreReadModelStore();
+        GatewayFixtureCatalogComposition.AddFolderReceiver(folderBuilder, Tenant);
         folderBuilder.Services.AddSingleton<IFolderRepository, InMemoryFolderRepository>();
         folderBuilder.Services.AddSingleton<Hexalith.Folders.Projections.TenantAccess.IUtcClock>(new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(Now.AddSeconds(1)));
         folderBuilder.Services.AddSingleton<IOrganizationStreamSequenceReader>(Heads);
@@ -417,7 +421,8 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             (options, _) => { options.Audience = "folders"; options.AllowedCallers.Add("eventstore"); });
         folderBuilder.Services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
             [EventStoreWorkloadOperations.DomainServiceQuery, EventStoreWorkloadOperations.DomainServiceMetadata]);
-        Folders = folderBuilder.Build(); _hosts.Add(Folders); Folders.UseAuthentication(); Folders.UseAuthorization(); Folders.MapFoldersDomainServiceEndpoints();
+        Folders = folderBuilder.Build(); _hosts.Add(Folders); Folders.UseAuthentication(); Folders.UseEventStoreHttpHostSecurity(); Folders.UseAuthorization(); Folders.MapFoldersDomainServiceEndpoints();
+        Folders.Services.GetRequiredService<EventStoreDomainServiceEndpointSource>().Capture(Folders);
         await Folders.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); Routes.Add("folders", Folders);
         var projectsBuilder = Builder("projects");
         projectsBuilder.Services.AddProjectsAuthentication(projectsBuilder.Configuration, projectsBuilder.Environment);
@@ -449,7 +454,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             {
                 GrantId = "projects-to-owner-gateway", Revision = 1, ClientId = "projects-synthetic-client", Workload = "projects", Audience = "eventstore",
                 ClientSecretSha256 = Digest(_secrets["projects"]), Operations = [EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery],
-                AllowUnbound = true, NotBefore = Now.AddMinutes(-10), ExpiresAt = Now.AddMinutes(10),
+                AllowUnbound = true, Surface = "service", NotBefore = Now.AddMinutes(-10), ExpiresAt = Now.AddMinutes(10),
             }];
         });
         WebApplication app = builder.Build(); _hosts.Add(app); app.MapEventStoreWorkloadBindingAuthority();
@@ -461,7 +466,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     {
         GrantId = "gateway-to-" + domain, Revision = 1, ClientId = "eventstore-synthetic-client", Workload = "eventstore", Audience = domain,
         ClientSecretSha256 = Digest(_secrets["eventstore"]), Operations = [EventStoreWorkloadOperations.DomainServiceQuery],
-        AllowQueryAuthorityDigest = true, NotBefore = Now.AddMinutes(-10), ExpiresAt = Now.AddMinutes(10),
+        AllowQueryAuthorityDigest = true, Surface = "service", NotBefore = Now.AddMinutes(-10), ExpiresAt = Now.AddMinutes(10),
         Bindings = new(StringComparer.Ordinal)
         {
             [EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] = [Tenant],
@@ -504,9 +509,25 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
+        builder.Services.AddHttpClient(DaprDomainQueryInvoker.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new ProjectAuthorityLoopbackHandler(Routes, Channel)))
+            .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
         Gateway = builder.Build(); _hosts.Add(Gateway); Gateway.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>(); Gateway.UseExceptionHandler(); Gateway.UseAuthentication(); Gateway.UseAuthorization(); Gateway.MapControllers();
         await Gateway.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); Routes.Add("eventstore", Gateway);
+        if (Environment.GetEnvironmentVariable("STORY61_OWNER_BOUNDARY_DIAGNOSTICS") == "1")
+        {
+            Routes.OwnerProofObserver = async (request, proof, token) =>
+            {
+                bool signed = BoundOwnerQueryProof.Verify(request, proof, "projects", Convert.ToBase64String(_ownerKey.ExportSubjectPublicKeyInfo()), DateTimeOffset.UtcNow);
+                WorkloadAssertionEvaluation origin = await Gateway.Services.GetRequiredService<WorkloadAssertionValidator>().ValidateForAudienceAsync(
+                    DaprInternalAuthenticationOptions.SchemeName, request.OriginatingAssertion,
+                    EventStoreWorkloadOperations.DomainServiceQuery, ["eventstore"], "projects", token).ConfigureAwait(false);
+                bool binding = request.OriginatingQuery is { } original && origin.Principal is not null
+                    && QueryCallerAuthorityBinding.Verify(original, origin.Principal, "eventstore");
+                return JsonSerializer.Serialize(new { signed, originSucceeded = origin.Succeeded, originReason = origin.ReasonCode, binding }, JsonSerializerOptions.Web);
+            };
+        }
     }
 
     private async Task SeedAsync()

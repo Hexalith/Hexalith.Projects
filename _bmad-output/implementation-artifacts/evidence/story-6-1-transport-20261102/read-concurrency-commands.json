@@ -1,0 +1,76 @@
+{
+  "profile": "ordinary mapped Debug; Optimize=true evaluated and not selected",
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "453312675bcd54328150d4b225f34b039a0fb254febb2ba34c50f09758c568bc",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadConcurrencyTests.cs": "13c14f7e4e0687f4bbe50a945526941942f2d8f674753f4f78e3abb31502d7c4"
+  },
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "helperSha256": "02b31dfb5c9532efa36b712104e6cb7f7fa3f07edf3fa365994391bf6a832f3e",
+  "commands": [
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-class",
+      "*SupportedProjectReadFixtureTopologyTests",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadConcurrencyTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-read-concurrency.xml"
+    ],
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ]
+  ],
+  "results": {
+    "build": {
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    "fixture": {
+      "total": 98,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    "launcher": {
+      "total": 84,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "initialBuild": "Retained initial3 CA2007 missing ConfigureAwait analyzer errors; only3 test awaits changed to ConfigureAwait(true), final build passed.",
+  "changes": "Fixture-only cap2 independent Tenant truth pipelines; same8 reads/assertions/order perTenant, local dictionaries merged afterall. LockedRSA signer and serialized diagnosticrecords. No runtime/snapshot/source/authority/clock/budget changes."
+}

@@ -1,0 +1,41 @@
+# Story 6.1 runtime stabilization continuation
+
+Canonical spec remains the sole source of truth and all earlier context must still be loaded. This handoff records work/evidence, not a change to acceptance. No commit, stage, branch, push, publication, dependency update or public-route change was performed.
+
+## Current state
+
+No owned runtime or build/test process remains active. Story/spec remain in progress. Final same-source three-group/eleven-row aggregate and complete Projects Integration/Server regressions are still required. Parent owns canonical documentation/tracking reconciliation and final workflow review.
+
+The most recent public coordinator attempt is `live-56`. Root and duplicate 103 launcher controls passed, then source prepare-build exited 2 before AppHost/resource allocation. A fresh read-only preparation diagnostic proves HXW004: Conversations checkout HEAD `28442aafd5c27feb517576c21ec5f0aa8ecff43e` differs from unchanged superproject staged gitlink `77c33177d7458e7a63d115eda9cf35b6485fb510`. Reflog records checkout to main then origin/main fast-forward. Captured build-input files for Conversations/Builds/Platform are unchanged from the preceding capture diagnostic. Platform/Builds range/pin reports are warnings and are not claimed as newly introduced drift. Preserve external user checkout/index/branch/pin changes; do not silently restore/stage/update them to pass mapping. Exact commands/output/proof are in live-56/prepare-build-diagnostic.*, prerequisite-blocker.json and runtime-admission.json. An initial diagnostic accidentally used an already-existing workspace; its HXW007 result is separately retained as occupied-workspace history, not accepted as the original cause. Both diagnostic-created directories were removed exactly.
+
+## Implemented repairs
+
+1. Folder permission read: EventStoreFolderEffectivePermissionsReadModel overlaps independent fresh Folder head and Organization baseline/head after stored Folder identity validation. Original Folder-first precedence and caller cancellation identity remain. Every started operation is canceled/drained, including throwing cancellation callbacks; outer catch-up may finish while cancellation/drain continues and accepts no late authority. New Folders tests and concurrent SDK held-fence controls prove behavior.
+2. Root Integration topology test normalizes source line endings only; every security expectation remains.
+3. Root legacy HTTP fixtures configure the SDK named domain-query-invocation client with their existing loopback and actual workload assertion handler. New named-client control verifies real issued JWT signature, exact channel, no human bearer and zero direct-Dapr trap calls.
+4. Local Folder fixtures use actual SDK domain security/catalog guard and outbound root/epoch handler around explicitly synthetic immutable query declarations. Shared HTTP security, endpoint capture and real receipt verifier preserve the complete endpoint inventory. New control validates a real signed service token then rejects missing/different actual catalog generation before owner dispatch.
+5. RSA fixture owner and bound query grants explicitly select service. Purpose-built clock-skew assertion signs service and independent signature verification requires it. Only exact inner folders+tenant tamper status becomes 503 because finite catalog refuses foreign scope before envelope dispatch; outer 404, valid signature, changed signed digest, profile and unchanged-state requirements remain. No wildcard, artificial precheck or authority relaxation was introduced.
+6. Latest SDK production repair: DevelopmentDomainRouteCatalog reopens and streams every complete executable file through SHA256 instead of allocating each full image. Same sorted observation order, complete current-byte hashes, disposal and fail-closed exceptions; no authority/state/host/trust cache. Gateway same-byte PE/MVID validation is unchanged. Four controls cover empty/buffer-boundary/large files, same length/mtime mutations, replacements/removal, disposal and avoidance of image-sized allocations.
+
+## Verification
+
+- parallel-permission-observations-20261103:99 Folders Server,2 existing Folder freshness,50 SDK held Debug and50 DEBUG-absent; all actual native pass, clean mapped builds. Counts overlap other selections.
+- topology-newline-20261103:24 topology controls pass; source-normalization-only patch.
+- local-query-client-20261103:2 actual native technical controls pass.
+- fixture-final-compatibility-20261103:3 actual native component controls pass, clean build,9 source hashes retained.
+- server-regression-diagnostic-2-20261103:complete actual Server 1344/1344 pass in 49.230s, no failed/errors/skips/not-run, deliberate qualification refusal and exact cleanup/external preservation.
+- capture-phase-diagnostic-20261103:actual unchanged duplicate 1/1 pass in 226.799s; deliberately refused qualification. All owned cleanup/private removal/external preservation pass. Temporary Debug capture instrumentation is removed; exact original/instrumented copies and31 passing owning controls are retained in capture-phase-controls-20261103. Native-only phase summary shows Folder executable hashing median 26.169 ms, p95 37.645 ms, max 146.560 ms and gateway receiver median 30.853 ms. This led to the streamed-image repair.
+- executable-read-profile-20261103:actual 66 configured images/27.56 MB, 60 fresh baseline/candidate sets all equal. Whole-array median 19.974 ms/27.60 MB allocated versus stream 14.598 ms/48 KB. Offline measurement is not native qualification.
+- fresh-executable-stream-20261103:latest mapped Debug build 0 warnings/errors;35 actual owning SDK controls pass, no failed/errors/skips/not-run. Exact selected source diff,2 source hashes, native command/XML and assembly hash retained. Parent independently audited and found no source/test issue. Earlier fullServer and Folder/held controls remain scoped evidence, not a final current-source aggregate.
+
+## Failed qualification history and cleanup
+
+- live-53:duplicate passed; full replay failed actual 2 s callback/permission path. Exact cleanup passed.
+- live-54:all three native scenarios passed, then full Integration 194/195 failed only LF multiline security assertion; no aggregate. Exact cleanup passed.
+- main-preflight and main-preflight-2:diagnostic main passes and Integration 195/195; Server failures exposed and drove named-client/receiver fixture repairs. Never aggregate evidence.
+- live-55:duplicate failed during actual CreateFolder setup HTTP 500; no later group/aggregate. Sanitized native-command-refusal.json proves Folder/process 503 after 572.1704 ms: genuine organization metadata HTTP 200 arrived at 488.6272 ms, but observation exhausted unchanged 500 ms budget at 499.2751 ms. Atomic native metadata pair was current/equal sequence 3 in 220.1047 ms. Initial Sentry cleanup uncertainty retained private material. Separate exact-recovery.json proves captured full-ID Sentry absent, original stopped infrastructure identities valid, exact owned processes/sidecars absent, private/canonical directories removed, external census unchanged and lock metadata preserved/released. Original failed report SHA remains unchanged.
+- live-56:prepare-build metadata blocker described above; no runtime allocated, private cleanup/external preservation/admission release pass. No qualification accepted.
+
+## Next work
+
+Resolve intended stable composition externally without overwriting user changes. Then run a fresh destination for the unchanged public command: MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900. Use the existing nonblocking exact cooperative lock wrapper pattern; failed groups/providers and diagnostic passes cannot be reused. Preserve all seven emitted mapping entries, ordinary Debug, 500 ms permission/2 s metadata callback/300 s Tenant age/90 s recovery/15 s state/900 s native group bounds. No Organization projection/head overlap was selected; measured benefit was only a few milliseconds. Rejected auxiliary duplicate-serialization candidate remains rejected. Full current-source native aggregate/fullregressions, exact cleanup and parent review remain pending.

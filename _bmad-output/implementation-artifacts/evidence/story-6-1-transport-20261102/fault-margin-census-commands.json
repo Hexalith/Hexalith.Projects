@@ -1,0 +1,91 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "ad4c4d08ad07b8ef306e6078b154e4b7fc213d22b512b6e99f05f328d73b76e5",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "28aad5bb4718c364b96fccf75f6f358357ee0667f8105c8fc810c9b7251070bb",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "8706b1eb2ae52b2915929e31af65ba11da9e823c5e6b736bf478e7b92abf67c6",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "b7c763f41c4d9cd4d7def0a24c2005259aeb595d0443376b608dc3dbad875aa9",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadKeyRecordingStore.cs": "49a15fe784847d85835d70ddee54b717547556ab3ec59e6a97b497dd972dc028",
+    "tools/qualification/run_supported_project_reads.py": "917fcb19dbb0db8d77d924da782fd995e207b5599379f083c23fad0e8c907054",
+    "src/Hexalith.Projects.AppHost/DaprComponents/resiliency.yaml": "df4607662ac2eae7abc4b97f710f3f2689e4632d9f19bbadc967a978dad17eea",
+    "src/Hexalith.Projects/Authorization/TenantAccessOptions.cs": "454b7fa32ef92335c8285c1af0fdff4b578bb29bdae594a4f0b202161a7755f8",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionScope.cs": "16236b3370ab9e4c5f932bf680725f885cdfddda7f48d3372fb3575847fdeed0",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionEpochCoordinator.cs": "d002d8596900c7a9a24f035e82439b5bc6c26f72e19711e830f3662a86551681",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/OperationalStatus/OperationalStatusKeys.cs": "96e33554480af2d35f0a41175bdf38ae2e0dbd5788ed1d3a1521902928f57fc8",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/OperationalStatus/OperationalStatusGeneration.cs": "69b36ead5185e596f2587c6ced27d1bbad7b0c6e7e5878f65ac5ff86185771ea"
+  },
+  "actualMeasurementBefore": "live-38/freshness-and-audit-facts.json",
+  "selectedRepair": "Foreign-firstrealfixtureseeding, no timestamp/event changes. ONLYeventstore/projectsbaseline-derivedapp-scopedoneapplicablepolicyfile: statestoreoutbound0retries/noaggregatebreaker, original15stimeout; allothercomponentdirections/components/targets/definitions+ordinaryprofileunchanged. ExistinggatewayProjectsapp0retry/10sandFolder2s unchanged.",
+  "reviewRepair": "Complete freshownedprovider hashedFolderoperational-status/shared-generation/shared-cow-pointer businessfamiliesincluded inbytes/ETag+keysetinvariance; SDKsharedreceipt/checkpoint/epoch/chunk/control-indexcontrolfamiliesexplicitlyseparate. Realownerkeys +actualSDKgenerationreaderproducekeysfortests, bytes/version/missing/newgeneration negatives, zerowrites.",
+  "unchangedBudgetSeconds": {
+    "TenantFreshness": 300,
+    "auditRecovery": 90,
+    "stateTimeout": 15,
+    "metadata": 2,
+    "permissionCatchup": 0.5
+  },
+  "initialFullBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "initialFullBuildResult": "AppHostanddependenciescompiled; ONLY2newtestxUnit1030ConfigureAwaitfalseerrors. Originalretained; twoawaitsConfigureAwaittruefix.",
+  "finalNarrowBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "finalBuildResult": "0warnings/0errors",
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-fault-margin-census.xml"
+  ],
+  "nativeResult": {
+    "total": "84",
+    "passed": "84",
+    "failed": "0",
+    "skipped": "0",
+    "not-run": "0"
+  },
+  "launcherControlsCommand": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/tools",
+    "-p",
+    "test_supported_project_reads_launcher.py"
+  ],
+  "launcherControlsResult": {
+    "passed": 84,
+    "failed": 0
+  },
+  "additionalChecks": [
+    "changedfiles gitdiffcheck passed",
+    "python3 -m py_compile tools/qualification/run_supported_project_reads.py passed"
+  ],
+  "runtimeAcceptance": "Pendingfresh39all11matrix+fullIntegration/Server, exactcleanup/externalpreservation; nofeatureacceptancefromprior5rows."
+}

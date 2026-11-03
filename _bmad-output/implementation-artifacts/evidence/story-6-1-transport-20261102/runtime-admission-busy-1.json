@@ -1,0 +1,22 @@
+{
+  "protocol": "existing-cooperative-same-user-nonblocking-advisory-lock",
+  "lockPath": "/tmp/hexalith-timesheets-local-runtime.lock",
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-17"
+  ],
+  "acquired": false,
+  "released": false,
+  "contentsReadOrWritten": false,
+  "lifecycleOfOtherTasksInvoked": false,
+  "refusal": "Cooperative admission busy; no resources started",
+  "releasedUtc": "2026-11-02T20:40:05.390495+00:00",
+  "wrapperSourceSha256": "66793d8cd4745d859da835b23532c36a25a8ffd1082e6adaef91d1f7a3cfaa27",
+  "resourcesStarted": false,
+  "retainedWrapperSource": "runtime-admission-busy-wrapper.py"
+}

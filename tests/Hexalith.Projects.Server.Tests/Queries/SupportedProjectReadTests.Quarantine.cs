@@ -42,7 +42,12 @@ public sealed partial class SupportedProjectReadTests
         first.Items.Single().ProjectFolderAvailability.ShouldBe(ReferenceState.Pending);
         first.HasMore.ShouldBeTrue();
         first.Cursor.ShouldNotBeNull();
-        first.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        first.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        first.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
+        first.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
+        first.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        first.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        first.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
         fixture.AuditStore.Keys.Count.ShouldBe(1);
 
         ProjectListPage second = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
@@ -50,6 +55,12 @@ public sealed partial class SupportedProjectReadTests
             TestContext.Current.CancellationToken));
         second.Items.Single().ProjectId.ShouldBe("legacy-b");
         second.HasMore.ShouldBeFalse();
+        second.Cursor.ShouldBeNull();
+        second.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        second.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
+        second.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
+        second.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        second.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
         fixture.AuditStore.Keys.Count.ShouldBe(2);
         fixture.Store.Count.ShouldBe(before + 2);
         fixture.AuditStore.Keys.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)

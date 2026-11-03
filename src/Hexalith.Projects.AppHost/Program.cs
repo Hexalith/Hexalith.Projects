@@ -61,10 +61,12 @@ IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.
 
 _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
 
+DevelopmentRouteCatalogComposition? supportedReadCatalog = null;
 if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
 {
     _ = projectsUi.WithExplicitStart();
     SupportedProjectReadFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, daprComponentsPath);
+    supportedReadCatalog = SupportedProjectReadDevelopmentInfrastructure.Add(builder, eventStore, tenants, projects);
 }
 else
 {
@@ -122,7 +124,18 @@ _ = projectsUi
     .WaitFor(projects)
     .WithEnvironment("Projects__BaseAddress", ReferenceExpression.Create($"{projects.GetEndpoint("http")}"));
 
-builder.Build().Run();
+try
+{
+    DistributedApplication application = builder.Build();
+    await using (application.ConfigureAwait(false))
+    {
+        await application.RunAsync().ConfigureAwait(false);
+    }
+}
+finally
+{
+    if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
+}
 
 static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<ProjectResource> eventStore)
 {

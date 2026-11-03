@@ -1,0 +1,120 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs": "2c34e2873d94d1879fff94cdcee24e283feefa9979b1fe528669590e7c1be5b2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "0fdae1121d22eb99b6af710eb234fd6d35bfeccb878ce5a14dd34faa1eddaa1d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "5ba662e443be6a710ac4080bde25a46ff38738a13f798db4e9c860482d683a15",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "003a88323471ad2b77dcac93a37e819083b0c59c3d0ac36728616c65b23a4b86",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ObservedAuxiliaryMembershipTests.cs": "96a192cd813d349dea1c18de141512508c01d79c37118d6ea2df40067f15161a",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "760cdea3d260a8684fdd10e4944a641c2e7d11e507d3f47ffa6b10ab694cd509"
+  },
+  "debugBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "testOnlyIncrementalBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "debugTestCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "*ObservedAuxiliaryMembershipTests",
+    "-class",
+    "*CatalogInstalledObservationTests",
+    "-class",
+    "*RouteCatalogDecodeScopeTests",
+    "-class",
+    "*ScopedRouteCatalogAcquisitionTests",
+    "-class",
+    "*NativeSourceReadDiagnosticsTests",
+    "-class",
+    "*CatalogConstructorCompatibilityTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/observer-focused.xml"
+  ],
+  "noDebugBuildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--artifacts-path",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt",
+    "-p:DisableImplicitConfigurationDefines=true"
+  ],
+  "noDebugTestCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt/bin/Hexalith.EventStore.Server.Tests/debug/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "*ObservedAuxiliaryMembershipTests",
+    "-class",
+    "*CatalogInstalledObservationTests",
+    "-class",
+    "*RouteCatalogDecodeScopeTests",
+    "-class",
+    "*ScopedRouteCatalogAcquisitionTests",
+    "-class",
+    "*NativeSourceReadDiagnosticsTests",
+    "-class",
+    "*CatalogConstructorCompatibilityTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/observer-no-debug.xml"
+  ],
+  "debug": {
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "noDebug": {
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "sameSourceGuardMeaning": "Official DisableImplicitConfigurationDefines=true under unchanged mapped Configuration=Debug; full Release guard remains refused.",
+  "actualObservationPerformance": "Pending exact private input capture and post-teardown comparison; no cost or acceptance claim yet.",
+  "broadTestCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Routing.*",
+    "-class",
+    "*NativeSourceReadDiagnosticsTests",
+    "-class",
+    "*StreamsControllerTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/observer-authority.xml"
+  ],
+  "broad": {
+    "passed": 1144,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  }
+}

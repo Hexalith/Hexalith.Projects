@@ -11,6 +11,9 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Hexalith.EventStore.ErrorHandling;
+using Hexalith.EventStore.Testing;
+using Hexalith.EventStore.Testing.CatalogInvocation;
+using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.Commons.UniqueIds;
 using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.Client.Subscriptions;
@@ -34,9 +37,13 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private string[] _ownedDomainKeyCensus = [];
     private bool _duplicateVerified;
     private bool _replayVerified;
+    private bool _seedAttempted;
+    private readonly HashSet<(string Tenant, string Project)> _recordedReplaySources = [];
     private readonly JsonElement _configuration;
     private readonly Dictionary<string, string> _endpoints;
     private readonly RSA _userKey = RSA.Create();
+    private readonly object _userSigning = new();
+    private readonly SemaphoreSlim _readEvidence = new(1, 1);
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(45) };
     private static readonly JsonSerializerOptions Json = JsonSerializerOptions.Web;
     private readonly DateTimeOffset _startedAt = DateTimeOffset.UtcNow;
@@ -47,6 +54,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     internal string ForeignTenant => Setting("ForeignTenant");
     /// <summary>Gets the launcher-owned namespace.</summary>
     internal string Isolation => Setting("IsolationId");
+    /// <summary>Gets the hash binding all scenario artifacts to this actual owned provider namespace.</summary>
+    internal string ProviderIsolationSha256 => Digest(Isolation);
     /// <summary>Gets the sanitized evidence destination.</summary>
     internal string Evidence { get; } = Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_EVIDENCE")!;
 
@@ -61,11 +70,18 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         _userKey.ImportFromPem(File.ReadAllText(Setting("UserKeyPath")));
     }
 
+    /// <summary>Requires the exact native method selected in this launcher's private configuration.</summary>
+    internal void RequireScenario(string expected)
+    {
+        _ = SupportedProjectReadScenarioEvidence.Cases(expected);
+        Require(Setting("Scenario") == expected, "The native test does not match the owned qualification scenario.");
+    }
+
     /// <summary>Signs a synthetic public credential using trust distinct from workload trust.</summary>
     internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false)
     {
         List<Claim> claims = [new("sub", tenant == ForeignTenant ? "foreign-actor" : "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant),
-            new("azp", chatbot ? "chatbot" : "operator-web"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
+            new("azp", chatbot ? "chatbot" : "operator-web"), new("eventstore:surface", chatbot ? "agent" : "ui"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
             new("scope", "projects.read projects.list"), new("projects:role", chatbot ? "ProjectUser" : "TenantOperator")];
         foreach (string permission in new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
             "create_folder", "manage_folder_access", "manage_organization_acl" }) claims.Add(new("eventstore:permission", permission));
@@ -78,25 +94,36 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             claims.Add(new("global_admin", "true"));
             claims.Add(new("eventstore:tenant", "system"));
         }
-        return new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
+        lock (_userSigning)
         {
-            Issuer = Setting("UserIssuer"), Audience = "supported-read-users", Subject = new ClaimsIdentity(claims),
-            NotBefore = DateTime.UtcNow.AddSeconds(-5), Expires = DateTime.UtcNow.AddMinutes(20),
-            SigningCredentials = new(new RsaSecurityKey(_userKey) { KeyId = "synthetic-user" }, SecurityAlgorithms.RsaSha256),
-        });
+            return new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
+            {
+                Issuer = Setting("UserIssuer"), Audience = "supported-read-users", Subject = new ClaimsIdentity(claims),
+                NotBefore = DateTime.UtcNow.AddSeconds(-5), Expires = DateTime.UtcNow.AddMinutes(20),
+                SigningCredentials = new(new RsaSecurityKey(_userKey) { KeyId = "synthetic-user" }, SecurityAlgorithms.RsaSha256),
+            });
+        }
     }
 
     /// <summary>Seeds both tenants through real authenticated commands and projection callbacks.</summary>
     internal async Task SeedAsync()
     {
-        await CommandAsync("system", "global-administrators", "global-administrators", "BootstrapGlobalAdmin", new { UserId = "actor-1" }, Tenant).ConfigureAwait(false);
-        await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
-        foreach (string tenant in new[] { Tenant, ForeignTenant })
+        Require(!_seedAttempted, "Each owned fixture may seed its genuine commands only once.");
+        _seedAttempted = true;
+        StreamReadPage bootstrap = await AwaitHostedBootstrapAsync().ConfigureAwait(false);
+        await ActivateFreshDeliveryWriterProtocolAsync(bootstrap).ConfigureAwait(false);
+        foreach (string tenant in new[] { ForeignTenant, Tenant })
         {
             string actor = tenant == Tenant ? "actor-1" : "foreign-actor";
+            Stopwatch projectReadiness = new(), folderReadiness = new();
             await CommandAsync("system", "tenants", tenant, "CreateTenant", new { TenantId = tenant, Name = "Synthetic tenant", Description = "Isolated read proof" }, Tenant).ConfigureAwait(false);
+            StreamReadPage created = await StreamAsync("system", "tenants", tenant, tenant).ConfigureAwait(false);
+            await WaitForTenantAuthorityAsync("projects:tenant-access:" + tenant, tenant, actor, created,
+                projectReadiness, requireOwner: false).ConfigureAwait(false);
             await CommandAsync("system", "tenants", tenant, "AddUserToTenant", new { TenantId = tenant, UserId = actor, Role = "TenantOwner" }, Tenant).ConfigureAwait(false);
             StreamReadPage tenantEvents = await StreamAsync("system", "tenants", tenant, tenant).ConfigureAwait(false);
+            await WaitForTenantAuthorityAsync("projects:tenant-access:" + tenant, tenant, actor, tenantEvents,
+                projectReadiness).ConfigureAwait(false);
             // The owners intentionally subscribe to different existing tenant topics. Replay the exact
             // command-persisted events through the real Folder worker callback without changing defaults.
             foreach (StreamReadEvent item in tenantEvents.Events)
@@ -106,47 +133,51 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 {
                     Domain = "tenants", GlobalPosition = item.GlobalPosition, CausationId = item.CausationId, UserId = item.UserId,
                 };
-                using HttpResponseMessage replay = await _http.PostAsJsonAsync(Dapr("folders-workers", "tenants/events"), envelope, Json, Cancellation).ConfigureAwait(false);
-                if (replay.StatusCode != HttpStatusCode.OK)
-                {
-                    byte[] diagnostic = await replay.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false);
-                    string diagnosticPath = Path.Combine(Path.GetDirectoryName(Setting("CertificatePath"))!, "replay-diagnostic.json");
-                    await File.WriteAllBytesAsync(diagnosticPath, diagnostic, Cancellation).ConfigureAwait(false);
-                    if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(diagnosticPath, UnixFileMode.UserRead | UnixFileMode.UserWrite);
-                    using JsonDocument refusal = JsonDocument.Parse(diagnostic);
-                    string code = refusal.RootElement.TryGetProperty("errorCode", out JsonElement error) ? error.GetString() ?? "none" : "application-response";
-                    Require(code.Length < 80 && code.All(character => char.IsAsciiLetterOrDigit(character) || character is '-' or '_'), "Unexpected transport error shape.");
-                    throw new InvalidOperationException("Folder worker persisted-event callback refused (HTTP " + (int)replay.StatusCode + ", code " + code + ").");
-                }
+                // Publish the original persisted envelope on the Folder owner's normal topic through
+                // the owned SDK sidecar. Receiver-free workers have no service-invocation closure.
+                using HttpResponseMessage replay = await _http.PostAsJsonAsync(
+                    _endpoints["eventstore-dapr-cli"] + "/v1.0/publish/pubsub/tenants.events", envelope, Json, Cancellation).ConfigureAwait(false);
+                Require(replay.StatusCode == HttpStatusCode.NoContent, "The real persisted Tenant pub/sub delivery was refused.");
+                // These owner projections deliberately drop older unseen events. Observe each
+                // real retained prefix before publishing the next event on their existing topic.
+                await WaitForTenantAuthorityAsync("projection:folders:tenant-access:" + tenant, tenant, actor, tenantEvents,
+                    folderReadiness, requireOwner: item.SequenceNumber == tenantEvents.Metadata.LatestSequence,
+                    throughSequence: item.SequenceNumber).ConfigureAwait(false);
             }
-            await WaitForStateAsync("projects:tenant-access:" + tenant).ConfigureAwait(false);
-            await WaitForStateAsync("projection:folders:tenant-access:" + tenant).ConfigureAwait(false);
-            await CommandAsync(tenant, "folders", tenant, "Hexalith.Folders.Commands.InitializeOrganizationAclBaseline", new
+            string aclCommand = await CommandAsync(tenant, "folders", tenant, "Hexalith.Folders.Commands.InitializeOrganizationAclBaseline", new
             {
                 RequestSchemaVersion = "v1",
                 Operations = new[] { new { PrincipalKind = "user", PrincipalId = actor, Action = "create_folder" },
                     new { PrincipalKind = "user", PrincipalId = actor, Action = "manage_folder_access" } },
             }, tenant).ConfigureAwait(false);
+            await WaitForOrganizationAclReadinessAsync(tenant, actor, aclCommand).ConfigureAwait(false);
+            await ProbeAbsentFolderMetadataAsync(tenant).ConfigureAwait(false);
             foreach (string project in new[] { "project-a", "project-b" })
             {
                 string folder = "folder-" + project;
-                await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands.CreateFolder", new
+                string createCommand = await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands.CreateFolder", new
                 {
                     RequestSchemaVersion = "v1", FolderId = folder, ParentFolderId = (string?)null,
                     FolderMetadata = new { DisplayName = "Owned folder label", MetadataClass = (string?)null },
                 }, tenant).ConfigureAwait(false);
-                await ChangeFolderAccessAsync(tenant, folder, revoke: false).ConfigureAwait(false);
+                await WaitForFolderCreationReadinessAsync(tenant, folder, actor, createCommand).ConfigureAwait(false);
+                await ChangeFolderAccessAsync(tenant, folder, revoke: false, seed: true).ConfigureAwait(false);
                 await CommandAsync(tenant, "projects", project, "Hexalith.Projects.Commands.CreateProject", new
                 {
                     Name = tenant == ForeignTenant ? "Foreign synthetic name" : "Synthetic project " + project,
                     Description = "Synthetic descriptive metadata", SetupMetadata = (string?)null,
                 }, tenant).ConfigureAwait(false);
-                await CommandAsync(tenant, "projects", project, "Hexalith.Projects.Commands.SetProjectFolder", new
+                string setCommand = await CommandAsync(tenant, "projects", project, "Hexalith.Projects.Commands.SetProjectFolder", new
                 {
                     RequestSchemaVersion = "v1", Operation = "set", ProjectId = project, FolderId = folder,
                     FolderMetadata = new { DisplayName = "Owned folder label" }, ReplacementConfirmed = false,
                 }, tenant).ConfigureAwait(false);
-                await ProjectPersistedStreamAsync(tenant, project).ConfigureAwait(false);
+                using (CancellationTokenSource readiness = CancellationTokenSource.CreateLinkedTokenSource(Cancellation))
+                {
+                    readiness.CancelAfter(TimeSpan.FromSeconds(30));
+                    await ProjectPersistedStreamAsync(tenant, project, setCommand, readiness.Token).ConfigureAwait(false);
+                    await WaitForSeedNamedDeliveryAsync(tenant, "projects", project, setCommand, _seedStreams[(tenant, project)], readiness.Token).ConfigureAwait(false);
+                }
                 await WaitForStateAsync("projection:folders:folder-permissions:" + tenant + ":" + folder).ConfigureAwait(false);
                 long head = await HeadAsync(tenant, folder).ConfigureAwait(false);
                 Require(head >= 2, "The real Folder actor head was not advanced by persisted commands.");
@@ -161,24 +192,35 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             // Wait for the platform's metadata publisher, never substitute the gateway registry.
             await WaitForStateAsync("admin:query-types:" + domain).ConfigureAwait(false);
         }
-        await VerifyRawObserverBatchAsync().ConfigureAwait(false);
     }
 
     /// <summary>Changes owned Folder authority through its command handler and waits for the actual head.</summary>
-    internal async Task ChangeFolderAccessAsync(string tenant, string folder, bool revoke)
+    internal async Task ChangeFolderAccessAsync(string tenant, string folder, bool revoke, bool seed = false)
     {
         string id = Unique(), actor = tenant == ForeignTenant ? "foreign-actor" : "actor-1";
-        await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands." + (revoke ? "RevokeFolderAccess" : "GrantFolderAccess"), new
+        string command = await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands." + (revoke ? "RevokeFolderAccess" : "GrantFolderAccess"), new
         {
             RequestSchemaVersion = "v1",
             Operations = new[] { new { PrincipalKind = "user", PrincipalId = actor, Action = "read_metadata" } },
         }, tenant).ConfigureAwait(false);
-        long head = await HeadAsync(tenant, folder).ConfigureAwait(false);
+        using CancellationTokenSource readiness = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        readiness.CancelAfter(TimeSpan.FromSeconds(30));
+        CancellationToken readToken = seed ? readiness.Token : Cancellation;
+        long head = await HeadAsync(tenant, folder, readToken).ConfigureAwait(false);
         for (int attempt = 0; attempt < 100; attempt++)
         {
-            var value = await StateAsync("projection:folders:folder-permissions:" + tenant + ":" + folder).ConfigureAwait(false);
-            if (value.Bytes.Length > 0 && JsonDocument.Parse(value.Bytes).RootElement.GetProperty("lastSequence").GetInt64() == head) return;
-            await Task.Delay(100, Cancellation).ConfigureAwait(false);
+            var value = await StateAsync("projection:folders:folder-permissions:" + tenant + ":" + folder, readToken).ConfigureAwait(false);
+            if (value.Bytes.Length > 0 && JsonDocument.Parse(value.Bytes).RootElement.GetProperty("lastSequence").GetInt64() == head)
+            {
+                if (seed)
+                {
+                    StreamReadPage source = await StreamAsync(tenant, "folders", folder, tenant, readToken).ConfigureAwait(false);
+                    Require(source.Metadata.LatestSequence == head, "Folder seed head changed before named delivery readiness.");
+                    await WaitForSeedNamedDeliveryAsync(tenant, "folders", folder, command, source, readToken).ConfigureAwait(false);
+                }
+                return;
+            }
+            await Task.Delay(100, readToken).ConfigureAwait(false);
         }
         throw new InvalidOperationException("The real Folder permission projection did not catch up to its owner actor head.");
     }
@@ -191,7 +233,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
         T value = result!.Payload.Deserialize<T>(Json)!;
         if (value is ProjectListPage page)
-            await File.AppendAllTextAsync(Path.Combine(Evidence, "list-admission-observations.jsonl"), JsonSerializer.Serialize(new
+            await AppendReadEvidenceAsync(_readEvidence, Path.Combine(Evidence, "list-admission-observations.jsonl"), JsonSerializer.Serialize(new
             {
                 observedAt = DateTimeOffset.UtcNow, fixtureElapsedSeconds = (DateTimeOffset.UtcNow - _startedAt).TotalSeconds,
                 tenantSha256 = Digest(tenant ?? Tenant), tenantActor, requestedPageSize = list?.PageSize,
@@ -245,18 +287,14 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Reads actual persisted domain evidence from both tenants.</summary>
     internal async Task<SupportedProjectReadStateSnapshot[]> SnapshotAsync(bool allowIncomplete = false)
     {
-        List<SupportedProjectReadStateSnapshot> result = [];
-        foreach (string tenant in new[] { Tenant, ForeignTenant })
+        string[] requiredKeys = new[] { Tenant, ForeignTenant }.SelectMany(tenant => new[]
         {
-            foreach (string key in new[] { ProjectReadModelKeys.Index(tenant), ProjectReadModelKeys.Detail(tenant, "project-a"), ProjectReadModelKeys.Detail(tenant, "project-b"),
-                "projects:tenant-access:" + tenant, "projection:folders:tenant-access:" + tenant, "projection:folders:organization-permissions:" + tenant,
-                "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b" })
-            {
-                SupportedProjectReadStateSnapshot snapshot = await StateAsync(key).ConfigureAwait(false);
-                if (!allowIncomplete) Require(snapshot.Bytes.Length > 0 && snapshot.ETag.Length > 0, "Required persisted domain evidence is absent.");
-                result.Add(snapshot);
-            }
-        }
+            ProjectReadModelKeys.Index(tenant), ProjectReadModelKeys.Detail(tenant, "project-a"), ProjectReadModelKeys.Detail(tenant, "project-b"),
+            "projects:tenant-access:" + tenant, "projection:folders:tenant-access:" + tenant, "projection:folders:organization-permissions:" + tenant,
+            "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b",
+            "projects-conversation-start-setup||" + tenant + ":projects:project-a", "projects-conversation-start-setup||" + tenant + ":projects:project-b",
+        }).ToArray();
+        List<SupportedProjectReadStateSnapshot> result = [.. await ObserveRequiredSnapshotAsync(requiredKeys, StatesAsync, allowIncomplete).ConfigureAwait(false)];
         string[] domainKeys = (await RedisAsync("--scan").ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Where(key => IsOwnedDomainKey(key, Tenant, ForeignTenant)).Order(StringComparer.Ordinal).ToArray();
         foreach (string tenant in new[] { Tenant, ForeignTenant })
@@ -269,6 +307,21 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             result.Add(snapshot);
         }
         return [.. result];
+    }
+
+    /// <summary>Observes the complete required inventory in one batch while retaining its exact keys, bytes and versions.</summary>
+    internal static async Task<SupportedProjectReadStateSnapshot[]> ObserveRequiredSnapshotAsync(string[] keys,
+        Func<IEnumerable<string>, Task<SupportedProjectReadStateSnapshot[]>> observe, bool allowIncomplete)
+    {
+        Require(keys.Length > 0 && keys.Distinct(StringComparer.Ordinal).Count() == keys.Length,
+            "Required domain snapshot keys must be nonempty and distinct.");
+        SupportedProjectReadStateSnapshot[] values = await observe(keys).ConfigureAwait(false);
+        Require(values.Length == keys.Length && values.Select(value => value.Key).Distinct(StringComparer.Ordinal).Count() == keys.Length
+            && values.Select(value => value.Key).Order(StringComparer.Ordinal).SequenceEqual(keys.Order(StringComparer.Ordinal), StringComparer.Ordinal),
+            "The required domain snapshot batch is missing, duplicated or contains a foreign observation.");
+        SupportedProjectReadStateSnapshot[] ordered = keys.Select(key => values.Single(value => value.Key == key)).ToArray();
+        if (!allowIncomplete) Require(ordered.All(value => value.Bytes.Length > 0 && value.ETag.Length > 0), "Required persisted domain evidence is absent.");
+        return ordered;
     }
 
     /// <summary>Requires exact domain bytes and ETags after read-only operations.</summary>
@@ -409,8 +462,15 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     internal static bool IsOwnedDomainKey(string key, string tenant, string foreignTenant)
     {
         if (key.StartsWith("projects:read-audit:", StringComparison.Ordinal) || key.StartsWith("admin:", StringComparison.Ordinal)) return false;
+        if (new[] { "shared-epoch:", "shared-receipt:", "shared-checkpoint:", "shared-chunk:", "shared-control-index:", "shared-control-index-tombstone:" }
+            .Any(prefix => key.StartsWith(prefix, StringComparison.Ordinal))) return false;
+        // The provider is fresh and exclusively owned. These business view/generation families hash
+        // their Tenant identities, so observe the entire family rather than infer ownership from text.
+        if (key.StartsWith("projection:folders:operational-status:", StringComparison.Ordinal)
+            || key.StartsWith("shared-generation:", StringComparison.Ordinal) || key.StartsWith("shared-cow-pointer:", StringComparison.Ordinal)) return true;
         return new[] { tenant, foreignTenant }.Any(owner =>
             key.StartsWith($"projects:reads:v1:{owner.Length}:{owner}:", StringComparison.Ordinal)
+            || key.StartsWith("projects-conversation-start-setup||" + owner + ":projects:", StringComparison.Ordinal)
             || key.StartsWith("projects:tenant-access:" + owner, StringComparison.Ordinal)
             || key.StartsWith("projection:folders:", StringComparison.Ordinal) && key.Contains(":" + owner, StringComparison.Ordinal)
             || key.Contains("AggregateActor", StringComparison.Ordinal) && (key.Contains(owner + ":", StringComparison.Ordinal)
@@ -640,13 +700,31 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         }
     }
 
-    /// <summary>Reads the actual AggregateActor sequence through the owned Folder sidecar.</summary>
-    internal async Task<long> HeadAsync(string tenant, string folder)
+    /// <summary>Observes the actual AggregateActor head through an authenticated empty-range gateway stream read.</summary>
+    internal async Task<long> HeadAsync(string tenant, string folder, CancellationToken? cancellationToken = null)
     {
-        string actorId = Uri.EscapeDataString(tenant + ":folders:" + folder);
-        using HttpResponseMessage response = await _http.PostAsJsonAsync(_endpoints["folders-dapr-cli"] + "/v1.0/actors/AggregateActor/" + actorId + "/method/GetCurrentSequenceAsync", new { }, Json, Cancellation).ConfigureAwait(false);
-        Require(response.StatusCode == HttpStatusCode.OK, "Actual owner stream-head read failed.");
-        return long.Parse(await response.Content.ReadAsStringAsync(Cancellation).ConfigureAwait(false), System.Globalization.CultureInfo.InvariantCulture);
+        StreamReadRequest request = new(tenant, "folders", folder, FromSequence: 0, ToSequence: 0, PageSize: 1);
+        using HttpResponseMessage response = await SendHumanAsync("api/v1/streams/read", request,
+            HumanToken(tenant, chatbot: false, administrator: true), cancellationToken).ConfigureAwait(false);
+        Require(response.StatusCode == HttpStatusCode.OK, "Actual owner stream-head read failed (HTTP " + (int)response.StatusCode + ").");
+        StreamReadPage? page = await response.Content.ReadFromJsonAsync<StreamReadPage>(Json, cancellationToken ?? Cancellation).ConfigureAwait(false);
+        (cancellationToken ?? Cancellation).ThrowIfCancellationRequested();
+        Require(page is not null && IsOwnerHeadObservation(page, tenant, folder), "Actual owner head response was not an exact empty-range observation.");
+        return page!.Metadata.LatestSequence;
+    }
+
+    /// <summary>Validates the SDK empty-range response without deriving a head from events or projection state.</summary>
+    internal static bool IsOwnerHeadObservation(StreamReadPage page, string tenant, string aggregate)
+    {
+        try
+        {
+            return StreamReadPageValidator.ValidateAndGetNextSequence(new(tenant, "folders", aggregate,
+                    FromSequence: 0, ToSequence: 0, PageSize: 1), page) == 0
+                && page.Tenant == tenant && page.Domain == "folders" && page.AggregateId == aggregate
+                && page.Events.Count == 0 && page.Metadata is { FromSequence: 0, ToSequence: 0, LatestSequence: >= 0,
+                    LastSequenceReturned: null, EventCount: 0, IsTruncated: false, NextContinuationToken: null };
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException) { return false; }
     }
 
     /// <summary>Requires dedicated receivers to reject a workload-shaped assertion signed by public-user trust.</summary>
@@ -661,17 +739,21 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 NotBefore = DateTime.UtcNow.AddSeconds(-1), IssuedAt = DateTime.UtcNow, Expires = DateTime.UtcNow.AddSeconds(60),
                 SigningCredentials = new(new RsaSecurityKey(_userKey) { KeyId = "synthetic-user" }, SecurityAlgorithms.RsaSha256),
             });
-            using HttpRequestMessage request = new(HttpMethod.Post, Dapr(domain, "admin/operational-index-metadata"))
+            using HttpResponseMessage refused = await InvokeCatalogAsync(domain, "admin/operational-index-metadata",
+                new AdminOperationalIndexMetadata.Request([domain]) { AppId = domain, ServiceVersion = "v1" },
+                CatalogInvocationCredential.PublicIssuerWorkload, assertion).ConfigureAwait(false);
+            byte[] actualBody = await refused.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false);
+            await File.AppendAllTextAsync(Path.Combine(Evidence, "public-issuer-workload-refusals.jsonl"), JsonSerializer.Serialize(new
             {
-                Content = JsonContent.Create(new AdminOperationalIndexMetadata.Request([domain]) { AppId = domain, ServiceVersion = "v1" }, options: Json),
-            };
-            request.Headers.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
-            using HttpResponseMessage refused = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
-            Require(refused.StatusCode == HttpStatusCode.Unauthorized, "Public-user issuer authenticated at a dedicated workload receiver.");
+                domain, actualTransportHttpStatus = (int)refused.StatusCode, responseBytes = actualBody.Length,
+                responseSha256 = Convert.ToHexString(SHA256.HashData(actualBody)), expectedReceiverHttpStatus = 401,
+                statusSubstituted = false,
+            }, Json) + Environment.NewLine, Cancellation).ConfigureAwait(false);
+            Require(refused.StatusCode == HttpStatusCode.Unauthorized, "Public-user workload assertion did not yield the required receiver HTTP 401; actual transport HTTP " + (int)refused.StatusCode + ".");
         }
     }
 
-    private async Task CommandAsync(string tenant, string domain, string aggregate, string type, object payload, string actorTenant)
+    private async Task<string> CommandAsync(string tenant, string domain, string aggregate, string type, object payload, string actorTenant)
     {
         string messageId = Unique();
         var command = new SubmitCommandRequest(messageId, tenant, domain, aggregate, type, JsonSerializer.SerializeToElement(payload, Json), messageId,
@@ -697,7 +779,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 if (outcome == "Completed")
                 {
                     await File.AppendAllTextAsync(Path.Combine(Evidence, "seed-progress.log"), "Completed " + domain + " " + type + Environment.NewLine, Cancellation).ConfigureAwait(false);
-                    return;
+                    return messageId;
                 }
                 Require(outcome is not ("Rejected" or "TimedOut" or "PublishFailed"), "Fixture command failed: " + type + " (" + outcome + ").");
             }
@@ -706,16 +788,17 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         throw new InvalidOperationException("Fixture command did not reach durable completion: " + type);
     }
 
-    private async Task<StreamReadPage> StreamAsync(string tenant, string domain, string aggregate, string actorTenant)
+    private async Task<StreamReadPage> StreamAsync(string tenant, string domain, string aggregate, string actorTenant, CancellationToken? cancellationToken = null)
     {
-        using HttpResponseMessage response = await SendHumanAsync("api/v1/streams/read", new StreamReadRequest(tenant, domain, aggregate), HumanToken(actorTenant, chatbot: false, administrator: true)).ConfigureAwait(false);
+        using HttpResponseMessage response = await SendHumanAsync("api/v1/streams/read", new StreamReadRequest(tenant, domain, aggregate), HumanToken(actorTenant, chatbot: false, administrator: true), cancellationToken).ConfigureAwait(false);
         Require(response.StatusCode == HttpStatusCode.OK, "Supported source-stream read failed.");
-        return (await response.Content.ReadFromJsonAsync<StreamReadPage>(Json, Cancellation).ConfigureAwait(false))!;
+        return (await response.Content.ReadFromJsonAsync<StreamReadPage>(Json, cancellationToken ?? Cancellation).ConfigureAwait(false))!;
     }
 
-    private async Task ProjectPersistedStreamAsync(string tenant, string project)
+    private async Task ProjectPersistedStreamAsync(string tenant, string project, string acceptedCommand, CancellationToken cancellation)
     {
-        StreamReadPage stream = await StreamAsync(tenant, "projects", project, tenant).ConfigureAwait(false);
+        cancellation.ThrowIfCancellationRequested();
+        StreamReadPage stream = await StreamAsync(tenant, "projects", project, tenant, cancellation).ConfigureAwait(false);
         ProjectionRequest mapped = MapProjectStream(stream, tenant, project);
         using JsonDocument metadata = await MetadataAsync("projects").ConfigureAwait(false);
         var request = new ProjectionDispatchRequest(mapped, ["project-reads"], Unique(), metadata.RootElement.GetProperty("catalogFingerprint").GetString()!);
@@ -723,9 +806,40 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         _seedStreams.Add((tenant, project), stream);
         using HttpResponseMessage response = await InvokeWorkloadAsync("projects", "project/v2", request, "domain-service:project").ConfigureAwait(false);
         Require(response.StatusCode == HttpStatusCode.OK, "Supported persisted projection endpoint refused seeded source events.");
-        ProjectionDispatchResponse? result = await response.Content.ReadFromJsonAsync<ProjectionDispatchResponse>(Json, Cancellation).ConfigureAwait(false);
-        Require(result!.Outcomes.All(item => item.Status == ProjectionDispatchStatus.Completed), "Persisted Project projection did not complete.");
+        ProjectionDispatchResponse? result = await response.Content.ReadFromJsonAsync<ProjectionDispatchResponse>(Json, cancellation).ConfigureAwait(false);
+        cancellation.ThrowIfCancellationRequested();
+        await File.AppendAllTextAsync(Path.Combine(Evidence, "seed-project-projection-outcomes.jsonl"), JsonSerializer.Serialize(new
+        {
+            tenantSha256 = Digest(tenant), projectSha256 = Digest(project), sourceSha256 = Digest(stream), head = stream.Metadata.LatestSequence,
+            actualHttpStatus = (int)response.StatusCode, protocol = result?.Version,
+            outcomes = result?.Outcomes.Select(item => new { projection = item.ProjectionType == "project-reads" ? item.ProjectionType : "unexpected",
+                status = Enum.IsDefined(item.Status) ? item.Status.ToString() : "unknown", reasonSha256 = item.ReasonCode is null ? null : Digest(item.ReasonCode) }),
+        }, Json) + Environment.NewLine, Cancellation).ConfigureAwait(false);
+        bool durableCompletionVerified = false;
+        if (result is { Version: ProjectionDispatchProtocol.Version, Outcomes.Count: 1 }
+            && result.Outcomes[0] is { ProjectionType: "project-reads", Status: ProjectionDispatchStatus.AlreadyCompleted })
+        {
+            await WaitForSeedNamedDeliveryAsync(tenant, "projects", project, acceptedCommand, stream, cancellation,
+                requiredProjection: "project-reads").ConfigureAwait(false);
+            cancellation.ThrowIfCancellationRequested();
+            durableCompletionVerified = true;
+        }
+        Require(ProjectSeedCompletionMatches(result, durableCompletionVerified), "Persisted Project projection did not complete.");
+        cancellation.ThrowIfCancellationRequested();
+        await File.AppendAllTextAsync(Path.Combine(Evidence, "seed-project-completion.jsonl"), JsonSerializer.Serialize(new
+        {
+            tenantSha256 = Digest(tenant), projectSha256 = Digest(project), acceptedCommandSha256 = Digest(acceptedCommand), sourceSha256 = Digest(stream),
+            actualStatus = result!.Outcomes[0].Status.ToString(), durableCompletionVerified, fabricatedCompletionResponse = false,
+        }, Json) + Environment.NewLine, cancellation).ConfigureAwait(false);
+        cancellation.ThrowIfCancellationRequested();
     }
+
+    /// <summary>Requires genuine completion; idempotent AlreadyCompleted additionally needs exact durable source/receipt/idle evidence.</summary>
+    internal static bool ProjectSeedCompletionMatches(ProjectionDispatchResponse? response, bool durableCompletionVerified)
+        => response is { Version: ProjectionDispatchProtocol.Version, Outcomes.Count: 1 }
+            && response.Outcomes[0].ProjectionType == "project-reads"
+            && (response.Outcomes[0].Status == ProjectionDispatchStatus.Completed
+                || response.Outcomes[0].Status == ProjectionDispatchStatus.AlreadyCompleted && durableCompletionVerified);
 
     /// <summary>Requires a complete authenticated source prefix using the SDK paging contract and exact source head.</summary>
     internal static bool IsCompleteProjectStream(StreamReadRequest request, StreamReadPage stream)
@@ -737,19 +851,21 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 && stream.Metadata.LatestSequence >= 2 && last == stream.Metadata.LatestSequence
                 && !stream.Metadata.IsTruncated && stream.Metadata.NextContinuationToken is null
                 && stream.Events.Count == last
-                && stream.Events.Select((item, index) => item.SequenceNumber == index + 1 && item.GlobalPosition > 0 && item.Timestamp != default).All(value => value)
+                && stream.Events.Select((item, index) => item.SequenceNumber == index + 1 && item.GlobalPosition > 0 && item.Timestamp != default
+                    && !string.IsNullOrWhiteSpace(item.CorrelationId)).All(value => value)
                 && stream.Events.Zip(stream.Events.Skip(1)).All(pair => pair.First.GlobalPosition < pair.Second.GlobalPosition)
                 && stream.Events.Select(item => item.MessageId).Distinct(StringComparer.Ordinal).Count() == stream.Events.Count;
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException) { return false; }
     }
 
-    private static ProjectionRequest MapProjectStream(StreamReadPage stream, string tenant, string project)
+    /// <summary>Copies actual readable event metadata without substituting a missing source correlation.</summary>
+    internal static ProjectionRequest MapProjectStream(StreamReadPage stream, string tenant, string project)
     {
         Require(IsCompleteProjectStream(new(tenant, "projects", project), stream), "The authenticated Project stream is missing, truncated or inconsistent with its observed head.");
         return new(tenant, "projects", project, stream.Events.Select(item => new ProjectionEventDto(item.EventTypeName,
-            item.Payload, item.SerializationFormat, item.SequenceNumber, item.Timestamp, item.CorrelationId ?? item.MessageId,
-            item.MessageId, item.UserId, item.GlobalPosition) { StoredPayloadVersion = item.PayloadVersion }).ToArray());
+            item.Payload, item.SerializationFormat, item.SequenceNumber, item.Timestamp, item.CorrelationId!,
+            item.MessageId, item.UserId, item.GlobalPosition) { MetadataVersion = item.MetadataVersion, StoredPayloadVersion = item.PayloadVersion }).ToArray());
     }
 
     private async Task<string[]> OwnedDomainKeyCensusAsync()
@@ -761,6 +877,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             ProjectReadModelKeys.Index(tenant), ProjectReadModelKeys.Detail(tenant, "project-a"), ProjectReadModelKeys.Detail(tenant, "project-b"),
             "projects:tenant-access:" + tenant, "projection:folders:tenant-access:" + tenant, "projection:folders:organization-permissions:" + tenant,
             "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b",
+            "projects-conversation-start-setup||" + tenant + ":projects:project-a", "projects-conversation-start-setup||" + tenant + ":projects:project-b",
         }).ToArray();
         return persisted.Concat(required).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
     }
@@ -776,16 +893,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         {
             ProjectionDispatchRequest retained = _seedRequests[(tenant, project)];
             StreamReadPage source = await ObserveRetainedSourceAsync(tenant, project).ConfigureAwait(false);
-            await RecordReplayAsync(new
-            {
-                kind = "source", tenantSha256 = Digest(tenant), projectSha256 = Digest(project), sourceSha256 = Digest(source),
-                requestEventsSha256 = Digest(retained.Request.Events), catalogSha256 = Digest(retained.CatalogFingerprint),
-                retainedDispatchIdSha256 = Digest(retained.DispatchId), detailKeySha256 = Digest(ProjectReadModelKeys.Detail(tenant, project)),
-                indexKeySha256 = Digest(ProjectReadModelKeys.Index(tenant)), observedHead = source.Metadata.LatestSequence,
-                eventCount = source.Events.Count, complete = true,
-                events = source.Events.Select((item, index) => new { sequence = item.SequenceNumber, globalPosition = item.GlobalPosition,
-                    timestamp = item.Timestamp, sourceEventSha256 = Digest(item), projectionEventSha256 = Digest(retained.Request.Events[index]) }),
-            }).ConfigureAwait(false);
+            await RecordSourceEvidenceAsync(tenant, project, retained, source).ConfigureAwait(false);
             await RequireProjectionAttemptAsync("duplicate", "retained", "project/v2", retained, ProjectionDispatchStatus.AlreadyCompleted).ConfigureAwait(false);
             await RequireProjectionAttemptAsync("duplicate", "fresh", "project/v2", retained with { DispatchId = Unique() }, ProjectionDispatchStatus.AlreadyCompleted).ConfigureAwait(false);
         }
@@ -799,12 +907,16 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Exercises protected refusal controls, complete replay, cursor invalidation and subsequent read-only state.</summary>
     internal async Task VerifyFullReplayAsync()
     {
-        Require(_duplicateVerified, "Duplicate delivery evidence must precede rebuild qualification.");
+        Require(Setting("Scenario") == "full-replay" && !_duplicateVerified,
+            "Full replay requires its independent fresh fixture rather than a borrowed duplicate result.");
+        _ownedDomainKeyCensus = await OwnedDomainKeyCensusAsync().ConfigureAwait(false);
+        await SaveReplayEvidenceAsync().ConfigureAwait(false);
         SupportedProjectReadStateSnapshot[] before = await SnapshotAsync().ConfigureAwait(false);
         Dictionary<string, object> expected = await ReadBothTenantTruthAsync().ConfigureAwait(false);
         foreach ((string tenant, string project) in ProjectScopes())
         {
             StreamReadPage source = await ObserveRetainedSourceAsync(tenant, project).ConfigureAwait(false);
+            await RecordSourceEvidenceAsync(tenant, project, _seedRequests[(tenant, project)], source).ConfigureAwait(false);
             ProjectionDispatchRequest valid = _seedRequests[(tenant, project)] with
             {
                 DispatchId = Unique(), Request = MapProjectStream(source, tenant, project) with { RebuildSourceHeadSequence = source.Metadata.LatestSequence },
@@ -818,6 +930,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 DispatchId = Unique(), Request = valid.Request with { RebuildSourceHeadSequence = source.Events[^2].SequenceNumber },
             }, ProjectionDispatchStatus.Failed).ConfigureAwait(false);
         }
+        Require(_recordedReplaySources.Count == 4, "All four actual full-replay source baselines must be proved.");
         await ObserveReplayStateAsync("invalid", before, []).ConfigureAwait(false);
         await VerifyReadTruthAsync("invalid", expected).ConfigureAwait(false);
         ProjectionDispatchRequest authRequest = _seedRequests[(Tenant, "project-a")];
@@ -988,6 +1101,21 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         return source;
     }
 
+    private async Task RecordSourceEvidenceAsync(string tenant, string project, ProjectionDispatchRequest retained, StreamReadPage source)
+    {
+        Require(_recordedReplaySources.Add((tenant, project)), "A replay source scope was observed more than once.");
+        await RecordReplayAsync(new
+        {
+            kind = "source", tenantSha256 = Digest(tenant), projectSha256 = Digest(project), sourceSha256 = Digest(source),
+            requestEventsSha256 = Digest(retained.Request.Events), catalogSha256 = Digest(retained.CatalogFingerprint),
+            retainedDispatchIdSha256 = Digest(retained.DispatchId), detailKeySha256 = Digest(ProjectReadModelKeys.Detail(tenant, project)),
+            indexKeySha256 = Digest(ProjectReadModelKeys.Index(tenant)), observedHead = source.Metadata.LatestSequence,
+            eventCount = source.Events.Count, complete = true,
+            events = source.Events.Select((item, index) => new { sequence = item.SequenceNumber, globalPosition = item.GlobalPosition,
+                timestamp = item.Timestamp, sourceEventSha256 = Digest(item), projectionEventSha256 = Digest(retained.Request.Events[index]) }),
+        }).ConfigureAwait(false);
+    }
+
     private async Task RequireProjectionAttemptAsync(string kind, string scenario, string route, ProjectionDispatchRequest request,
         ProjectionDispatchStatus? expected, string? credential = null)
     {
@@ -1026,47 +1154,71 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
 
     private async Task<HttpResponseMessage> InvokeProjectionCredentialAsync(string route, ProjectionDispatchRequest payload, string credential)
     {
-        if (credential == "wrong-operation") return await InvokeWorkloadAsync("projects", route, payload, "domain-service:metadata").ConfigureAwait(false);
-        using HttpRequestMessage request = new(HttpMethod.Post, Dapr("projects", route)) { Content = JsonContent.Create(payload, options: Json) };
-        if (credential == "human-bearer") request.Headers.Authorization = new("Bearer", HumanToken(Tenant));
-        if (credential == "public-user-workload")
+        CatalogInvocationCredential mode = credential switch
         {
-            string assertion = new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
+            "anonymous" => CatalogInvocationCredential.Anonymous,
+            "human-bearer" => CatalogInvocationCredential.HumanBearer,
+            "public-user-workload" => CatalogInvocationCredential.PublicIssuerWorkload,
+            "wrong-operation" => CatalogInvocationCredential.WrongOperation,
+            _ => throw new InvalidOperationException("Unknown credential control."),
+        };
+        string? token = mode == CatalogInvocationCredential.HumanBearer ? HumanToken(Tenant) : null;
+        if (mode == CatalogInvocationCredential.PublicIssuerWorkload)
+            token = new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
             {
                 Issuer = Setting("UserIssuer"), Audience = "projects", Subject = new ClaimsIdentity([new Claim("sub", "eventstore"),
                     new Claim("azp", "eventstore"), new Claim("eventstore:operation", "domain-service:project")]),
                 NotBefore = DateTime.UtcNow.AddSeconds(-1), IssuedAt = DateTime.UtcNow, Expires = DateTime.UtcNow.AddSeconds(60),
                 SigningCredentials = new(new RsaSecurityKey(_userKey) { KeyId = "synthetic-user" }, SecurityAlgorithms.RsaSha256),
             });
-            request.Headers.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
-        }
-        return await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
+        return await InvokeCatalogAsync("projects", route, payload, mode, token).ConfigureAwait(false);
     }
 
-    private async Task<Dictionary<string, object>> ReadBothTenantTruthAsync()
+    private Task<Dictionary<string, object>> ReadBothTenantTruthAsync()
+        => ObserveBothTenantTruthAsync([ForeignTenant, Tenant],
+            (tenant, input) => ReadAsync<ProjectListPage>(tenant: tenant, tenantActor: true, list: input),
+            (tenant, project) => ReadAsync<GetProjectResponse>(tenant: tenant, tenantActor: true, project: project, open: true));
+
+    /// <summary>Serializes all eight Tenant observations while preserving each paging and open dependency.</summary>
+    internal static async Task<Dictionary<string, object>> ObserveBothTenantTruthAsync(IReadOnlyList<string> tenants,
+        Func<string, ListProjectsQuery, Task<ProjectListPage>> list, Func<string, string, Task<GetProjectResponse>> open)
     {
-        Dictionary<string, object> observations = [];
-        foreach (string tenant in new[] { Tenant, ForeignTenant })
+        Require(tenants.Count == 2 && tenants.All(tenant => !string.IsNullOrWhiteSpace(tenant))
+            && tenants.Distinct(StringComparer.Ordinal).Count() == 2, "Replay truth requires exactly two distinct Tenant scopes.");
+        async Task<Dictionary<string, object>> ObserveTenantAsync(string tenant)
         {
-            ProjectListPage first = await ReadAsync<ProjectListPage>(tenant: tenant, tenantActor: true, list: new(PageSize: 1)).ConfigureAwait(false);
+            Dictionary<string, object> observations = [];
+            ProjectListPage first = await list(tenant, new(PageSize: 1)).ConfigureAwait(false);
             Require(first.Snapshot.ResponseState == AdmissionResponseState.Complete && !string.IsNullOrWhiteSpace(first.Cursor) && first.HasMore && first.Items.Select(item => item.ProjectId).SequenceEqual(["project-a"]),
                 "Replay first-page ordering or continuation is incomplete.");
-            ProjectListPage next = await ReadAsync<ProjectListPage>(tenant: tenant, tenantActor: true, list: new(Cursor: first.Cursor, PageSize: 1)).ConfigureAwait(false);
+            ProjectListPage next = await list(tenant, new(Cursor: first.Cursor, PageSize: 1)).ConfigureAwait(false);
             Require(next.Snapshot.ResponseState == AdmissionResponseState.Complete && !next.HasMore && next.Cursor is null && first.Items.Concat(next.Items).Select(item => item.ProjectId).SequenceEqual(["project-a", "project-b"]),
                 "Fresh replay paging duplicated or omitted a Project.");
             observations.Add(tenant + ":first", first);
             observations.Add(tenant + ":next", next);
             foreach (ProjectListRow row in first.Items.Concat(next.Items))
             {
-                GetProjectResponse opened = await ReadAsync<GetProjectResponse>(tenant: tenant, tenantActor: true, project: row.ProjectId, open: true).ConfigureAwait(false);
+                GetProjectResponse opened = await open(tenant, row.ProjectId).ConfigureAwait(false);
                 Require(opened.ProjectId == row.ProjectId && opened.Name is not null && opened.Name == row.Name
                     && opened.Snapshot.ProjectVersion == row.Snapshot.ProjectVersion && opened.LifecycleState == row.LifecycleState
                     && opened.Snapshot.ResponseState == AdmissionResponseState.Complete && row.Snapshot.ResponseState == AdmissionResponseState.Complete,
                     "List and open replay metadata or versions disagree.");
                 observations.Add(tenant + ":" + row.ProjectId, opened);
             }
+            return observations;
         }
-        return observations;
+        List<Dictionary<string, object>> observed = [];
+        foreach (string tenant in tenants)
+            observed.Add(await ObserveTenantAsync(tenant).ConfigureAwait(false));
+        return observed.SelectMany(tenant => tenant).ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+    }
+
+    /// <summary>Serializes complete diagnostic records from the two independent read pipelines.</summary>
+    internal static async Task AppendReadEvidenceAsync(SemaphoreSlim gate, string path, string record, CancellationToken cancellation)
+    {
+        await gate.WaitAsync(cancellation).ConfigureAwait(false);
+        try { await File.AppendAllTextAsync(path, record, cancellation).ConfigureAwait(false); }
+        finally { gate.Release(); }
     }
 
     private async Task VerifyReadTruthAsync(string phase, Dictionary<string, object> expected)
@@ -1157,7 +1309,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     private Task SaveReplayEvidenceAsync(CancellationToken cancellation = default) => File.WriteAllTextAsync(Path.Combine(Evidence, "projection-replay.json"),
-        JsonSerializer.Serialize(new { version = 1, duplicateVerified = _duplicateVerified, replayVerified = _replayVerified,
+        JsonSerializer.Serialize(new { version = 2, qualificationGroup = Setting("Scenario"), providerIsolationSha256 = ProviderIsolationSha256, sourceBaselineVerified = _recordedReplaySources.Count == 4, duplicateVerified = _duplicateVerified, replayVerified = _replayVerified,
             ownedDomainKeyCensus = _ownedDomainKeyCensus.Select(Digest).Order(StringComparer.Ordinal), observations = _replayObservations },
             new JsonSerializerOptions { WriteIndented = true }), cancellation);
 
@@ -1168,20 +1320,125 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         return JsonDocument.Parse(await response.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));
     }
 
-    private async Task<HttpResponseMessage> InvokeWorkloadAsync(string domain, string method, object payload, string operation)
+    private Task<HttpResponseMessage> InvokeWorkloadAsync(string domain, string method, object payload, string operation)
     {
-        using var form = new FormUrlEncodedContent(new Dictionary<string, string>
+        Require(operation == (method == "admin/operational-index-metadata" ? "domain-service:metadata" : "domain-service:project"),
+            "Fixture workload operation mismatched its finite callback.");
+        return InvokeCatalogAsync(domain, method, payload);
+    }
+
+    private Task<HttpResponseMessage> InvokeCatalogAsync(string domain, string method, object payload,
+        CatalogInvocationCredential credential = CatalogInvocationCredential.Workload, string? token = null) =>
+        new CatalogInvocationClient(Setting("InvocationDirectory")).InvokeAsync(domain, method,
+            JsonSerializer.SerializeToElement(payload, payload.GetType(), Json), credential, token, Cancellation);
+
+    private async Task<StreamReadPage> AwaitHostedBootstrapAsync()
+    {
+        string root = Path.GetDirectoryName(Setting("InvocationDirectory"))!;
+        using JsonDocument plane = JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root, "catalog-plane.json"), Cancellation).ConfigureAwait(false));
+        Require(plane.RootElement.GetProperty("isolationId").GetString() == Isolation, "Bootstrap catalog belongs to another isolation.");
+        string receipt = Path.Combine(plane.RootElement.GetProperty("directory").GetString()!, "tenants.bootstrap.json");
+        JsonElement? accepted = null;
+        for (int attempt = 0; attempt < 240; attempt++)
         {
-            ["grant_type"] = "client_credentials", ["client_id"] = "eventstore-fixture", ["client_secret"] = Setting("EventStoreSecret"),
-            ["scope"] = new WorkloadAssertionIssuerOptions().BuildScope(domain, operation),
-            ["authorization_details"] = WorkloadAuthorizationDetails.Encode(new(domain, operation)),
-        });
-        using HttpResponseMessage acquired = await _http.PostAsync(_endpoints["broker"] + "/token", form, Cancellation).ConfigureAwait(false);
-        Require(acquired.StatusCode == HttpStatusCode.OK, "Properly scoped workload acquisition failed.");
-        using JsonDocument token = JsonDocument.Parse(await acquired.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));
-        using HttpRequestMessage request = new(HttpMethod.Post, Dapr(domain, method)) { Content = JsonContent.Create(payload, options: Json) };
-        request.Headers.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, token.RootElement.GetProperty("access_token").GetString());
-        return await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
+            if (File.Exists(receipt))
+            {
+                using JsonDocument document = JsonDocument.Parse(await File.ReadAllBytesAsync(receipt, Cancellation).ConfigureAwait(false));
+                accepted = document.RootElement.Clone();
+                break;
+            }
+            await Task.Delay(250, Cancellation).ConfigureAwait(false);
+        }
+        Require(accepted is not null, "Real Tenants hosted bootstrap has no original submission receipt.");
+        JsonElement value = accepted!.Value;
+        string rootDigest = plane.RootElement.GetProperty("rootDigest").GetString()!;
+        Require(HostedBootstrapReceiptMatches(value, rootDigest), "Hosted bootstrap receipt binding failed.");
+        string message = value.GetProperty("MessageId").GetString()!;
+        for (int attempt = 0; attempt < 240; attempt++)
+        {
+            using HttpRequestMessage request = new(HttpMethod.Get, _endpoints["eventstore"] + "/api/v1/commands/status/" + message);
+            request.Headers.Authorization = new("Bearer", HumanToken(Tenant, chatbot: false, administrator: true));
+            using HttpResponseMessage status = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
+            Require(status.StatusCode is HttpStatusCode.OK or HttpStatusCode.NotFound, "Hosted bootstrap durable status read refused.");
+            if (status.StatusCode == HttpStatusCode.OK)
+            {
+                using JsonDocument body = JsonDocument.Parse(await status.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));
+                string? outcome = body.RootElement.GetProperty("status").GetString();
+                Require(outcome is not ("Rejected" or "TimedOut" or "PublishFailed"), "Hosted bootstrap did not persist successfully.");
+                if (outcome == "Completed")
+                {
+                    await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
+                    StreamReadPage stream = await StreamAsync("system", "global-administrators", "global-administrators", Tenant).ConfigureAwait(false);
+                    Require(stream.Events.Count(item => HostedBootstrapEventMatches(item, message,
+                        value.GetProperty("CorrelationId").GetString()!, "actor-1")) == 1,
+                        "Hosted bootstrap has no exactly bound persisted administrator event.");
+                    using JsonDocument finalReceipt = JsonDocument.Parse(await File.ReadAllBytesAsync(receipt, Cancellation).ConfigureAwait(false));
+                    JsonElement final = finalReceipt.RootElement;
+                    Require(HostedBootstrapReceiptMatches(final, rootDigest)
+                        && final.GetProperty("MessageId").GetString() == message
+                        && final.GetProperty("CorrelationId").GetString() == value.GetProperty("CorrelationId").GetString()
+                        && final.GetProperty("AttemptId").GetString() == value.GetProperty("AttemptId").GetString()
+                        && (value.GetProperty("Phase").GetString() != "accepted" || final.GetProperty("Phase").GetString() == "accepted"),
+                        "Hosted bootstrap receipt changed during completion verification.");
+                    int? observedHttpStatus = final.GetProperty("HttpStatus").ValueKind == JsonValueKind.Null
+                        ? null : final.GetProperty("HttpStatus").GetInt32();
+                    await File.WriteAllTextAsync(Path.Combine(Evidence, "bootstrap-delivery.json"), JsonSerializer.Serialize(new
+                    {
+                        hostedReceiptVerified = true, receiptPhase = final.GetProperty("Phase").GetString(), observedHttpStatus,
+                        uncertainDeliveryRecovered = observedHttpStatus is null, actualCommandStatus = outcome,
+                        statusReadHttpStatus = (int)status.StatusCode, commandBindingVerified = true, correlationBindingVerified = true,
+                        persistedGlobalAdministratorSetVerified = true, targetActorVerified = true,
+                    }, new JsonSerializerOptions { WriteIndented = true }), Cancellation).ConfigureAwait(false);
+                    return stream;
+                }
+            }
+            await Task.Delay(250, Cancellation).ConfigureAwait(false);
+        }
+        throw new InvalidOperationException("Hosted bootstrap did not reach actual durable completion.");
+    }
+
+    /// <summary>Accepts only the original exact private submission receipt, preserving a genuinely unknown acknowledgement.</summary>
+    /// <param name="receipt">The actual hosted submission receipt.</param>
+    /// <param name="rootDigest">The selected private catalog root.</param>
+    /// <returns>Whether every original binding and the acknowledgement shape agree.</returns>
+    internal static bool HostedBootstrapReceiptMatches(JsonElement receipt, string rootDigest)
+    {
+        if (receipt.ValueKind != JsonValueKind.Object) return false;
+        string[] fields = ["AttemptId", "RootDigest", "MessageId", "CorrelationId", "PrincipalId", "Phase", "HttpStatus"];
+        if (receipt.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)
+            .SequenceEqual(fields.Order(StringComparer.Ordinal)) != true) return false;
+        if (fields.Where(field => field != "HttpStatus").Any(field => receipt.GetProperty(field).ValueKind != JsonValueKind.String)) return false;
+        return !string.IsNullOrWhiteSpace(receipt.GetProperty("AttemptId").GetString())
+            && receipt.GetProperty("RootDigest").GetString() == rootDigest && receipt.GetProperty("PrincipalId").GetString() == "actor-1"
+            && ByteAether.Ulid.Ulid.TryParse(receipt.GetProperty("MessageId").GetString(), null, out _)
+            && ByteAether.Ulid.Ulid.TryParse(receipt.GetProperty("CorrelationId").GetString(), null, out _)
+            && (receipt.GetProperty("Phase").GetString() == "attempted" && receipt.GetProperty("HttpStatus").ValueKind == JsonValueKind.Null
+                || receipt.GetProperty("Phase").GetString() == "accepted" && receipt.GetProperty("HttpStatus").ValueKind == JsonValueKind.Number
+                    && receipt.GetProperty("HttpStatus").TryGetInt32(out int status) && status == 202);
+    }
+
+    /// <summary>Binds the actual bootstrap event to the original command, correlation and administrator without trusting log stages.</summary>
+    /// <param name="item">The actual persisted source event.</param>
+    /// <param name="messageId">The hosted command identity.</param>
+    /// <param name="correlationId">The hosted correlation identity.</param>
+    /// <param name="principal">The configured administrator actor.</param>
+    /// <returns>Whether source type, causation, correlation and actors all match.</returns>
+    internal static bool HostedBootstrapEventMatches(StreamReadEvent item, string messageId, string correlationId, string principal)
+    {
+        if (item.CausationId != messageId || item.CorrelationId != correlationId || item.UserId != principal
+            || item.EventTypeName.Split(',', 2)[0].Trim() != "Hexalith.Tenants.Contracts.Events.GlobalAdministratorSet"
+            || item.SerializationFormat != "json" || item.MetadataVersion != 1 || item.PayloadVersion is not (null or 1)
+            || item.Timestamp == default || item.Payload is not { Length: > 0 and <= 32768 }) return false;
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(item.Payload);
+            JsonElement payload = document.RootElement;
+            if (payload.ValueKind != JsonValueKind.Object || payload.EnumerateObject().Select(property => property.Name)
+                .Distinct(StringComparer.OrdinalIgnoreCase).Count() != payload.EnumerateObject().Count()) return false;
+            var value = payload.Deserialize<Hexalith.Tenants.Contracts.Events.GlobalAdministratorSet>(Json);
+            return value is not null && value.TenantId == "system" && value.UserId == principal && value.ActorUserId == principal;
+        }
+        catch (JsonException) { return false; }
     }
 
     private async Task<HttpResponseMessage> SendHumanAsync(string route, object body, string token, CancellationToken? cancellationToken = null)
@@ -1190,6 +1447,530 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Headers.Add("X-Correlation-Id", Unique());
         return await _http.SendAsync(request, cancellationToken ?? Cancellation).ConfigureAwait(false);
+    }
+
+    private async Task WaitForTenantAuthorityAsync(string key, string tenant, string actor, StreamReadPage source,
+        Stopwatch readiness, bool requireOwner = true, long? throughSequence = null)
+    {
+        Require(key == "projects:tenant-access:" + tenant || key == "projection:folders:tenant-access:" + tenant,
+            "Tenant readiness requires an exact owning projection key.");
+        readiness.Start();
+        try
+        {
+            while (readiness.Elapsed < TimeSpan.FromSeconds(30))
+            {
+                byte[] bytes = (await StateAsync(key).ConfigureAwait(false)).Bytes;
+                if (bytes.Length > 0)
+                {
+                    using JsonDocument document = JsonDocument.Parse(bytes);
+                    if (readiness.Elapsed < TimeSpan.FromSeconds(30)
+                        && TenantAuthorityStateMatches(document.RootElement, tenant, actor, source,
+                            projectDocument: key == "projects:tenant-access:" + tenant, requireOwner, throughSequence)) return;
+                }
+                await Task.Delay(200, Cancellation).ConfigureAwait(false);
+            }
+            throw new InvalidOperationException("The persisted Tenant authority projection did not reach its exact source head and owner role.");
+        }
+        finally { readiness.Stop(); }
+    }
+
+    /// <summary>Initializes the brand-new disposable store through the real authenticated SDK maintenance protocol before any domain seed.</summary>
+    private async Task ActivateFreshDeliveryWriterProtocolAsync(StreamReadPage bootstrap)
+    {
+        using var budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        budget.CancelAfter(TimeSpan.FromSeconds(30));
+        CancellationToken cancellation = budget.Token;
+        string commit = Setting("WriterProtocolSourceCommit");
+        Require(Regex.IsMatch(commit, "^[0-9a-f]{40}$", RegexOptions.CultureInvariant)
+            && Convert.ToHexStringLower(SHA256.HashData(await File.ReadAllBytesAsync(Path.Combine(Evidence, "source-manifest.json"), cancellation).ConfigureAwait(false)))
+                == Setting("WriterProtocolSourceManifestSha256"), "Fresh cutover requires the exact source-bound v2-only owned fleet.");
+        using var dapr = new Dapr.Client.DaprClientBuilder().Build();
+        Dictionary<string, SupportedProjectReadStateSnapshot> before;
+        while (true)
+        {
+            before = await ReadFreshCutoverInventoryAsync(cancellation).ConfigureAwait(false);
+            Require(!before.ContainsKey(ProjectionDeliveryCutoverObserver.WriterProtocolKey), "A fresh store unexpectedly already has a writer protocol marker.");
+            if (ProjectionDeliveryCutoverObserver.IsQuiescentWithCompletedSource(before.ToDictionary(pair => pair.Key,
+                pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", "actor-1",
+                allowLegacy: true, dapr.JsonSerializerOptions)) break;
+            await Task.Delay(100, cancellation).ConfigureAwait(false);
+        }
+        string id = _endpoints["redis-container-id"];
+        Require(System.Text.Encoding.UTF8.GetString(await RedisBytesAsync(cancellation, ["SAVE"]).ConfigureAwait(false)).Trim() == "OK", "The owned provider did not create a native cutover backup.");
+        string checkedBackup = System.Text.Encoding.UTF8.GetString(await RunOwnedProcessAsync("docker",
+            ["exec", id, "redis-check-rdb", "/data/dump.rdb"], cancellation).ConfigureAwait(false));
+        Require(checkedBackup.Contains("RDB looks OK!", StringComparison.Ordinal), "The actual native backup did not validate.");
+        string root = Path.GetDirectoryName(Setting("InvocationDirectory"))!;
+        string backup = Path.Combine(root, "delivery-cutover.rdb");
+        Require(!File.Exists(backup) && !Directory.Exists(backup), "The native cutover backup destination already exists.");
+        await RunOwnedProcessAsync("docker", ["cp", id + ":/data/dump.rdb", backup], cancellation).ConfigureAwait(false);
+        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(backup, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        Require(new FileInfo(backup) is { LinkTarget: null, Length: > 0 and <= 67108864 }, "The native cutover backup is missing, linked, or oversized.");
+        string backupDigest = Convert.ToHexStringLower(SHA256.HashData(await File.ReadAllBytesAsync(backup, cancellation).ConfigureAwait(false)));
+        string nativeHash = System.Text.Encoding.UTF8.GetString(await RunOwnedProcessAsync("docker", ["exec", id, "sha256sum", "/data/dump.rdb"], cancellation).ConfigureAwait(false));
+        Require(nativeHash.Trim() == backupDigest + "  /data/dump.rdb", "Copied and actual native cutover backup bytes differ.");
+        var after = await ReadFreshCutoverInventoryAsync(cancellation).ConfigureAwait(false);
+        Require(SameCutoverInventory(before, after), "Delivery work changed across native backup and quiescence verification.");
+        string checkpointKey = ProjectionDeliveryCompletionObserver.CheckpointKey(bootstrap.Tenant, bootstrap.Domain,
+            bootstrap.AggregateId!, "global-administrators");
+        bool reconciled = false;
+        if (ProjectionDeliveryCutoverObserver.IsLegacySourceCheckpoint(before[checkpointKey].Bytes, bootstrap, dapr.JsonSerializerOptions))
+        {
+            using HttpResponseMessage hydration = await SendHumanAsync("api/v1/admin/projections/system/global-administrators/delivery-reconciliation/global-administrators/global-administrators",
+                new { }, HumanToken(Tenant, chatbot: false, administrator: true), cancellation).ConfigureAwait(false);
+            Require(hydration.StatusCode == HttpStatusCode.OK, "Authenticated bootstrap checkpoint reconciliation returned HTTP " + (int)hydration.StatusCode + ".");
+            using JsonDocument hydrated = JsonDocument.Parse(await hydration.Content.ReadAsByteArrayAsync(cancellation).ConfigureAwait(false));
+            Require(hydrated.RootElement.GetProperty("status").GetString() == "Completed"
+                && hydrated.RootElement.GetProperty("preservedSequence").GetInt64() == bootstrap.Metadata.LatestSequence,
+                "Bootstrap reconciliation did not preserve the actual accepted source head.");
+            reconciled = true;
+        }
+        before = await ReadFreshCutoverInventoryAsync(cancellation).ConfigureAwait(false);
+        Require(ProjectionDeliveryCutoverObserver.IsQuiescentWithCompletedSource(before.ToDictionary(pair => pair.Key,
+            pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", "actor-1",
+            allowLegacy: false, dapr.JsonSerializerOptions), "Actual bootstrap completion and otherwise empty delivery work were not proved before cutover.");
+        DateTimeOffset submitted = DateTimeOffset.UtcNow;
+        using HttpResponseMessage response = await SendHumanAsync("api/v1/admin/projections/delivery-writer-protocol/activate", new
+        {
+            CutoverCommit = commit, BackupReference = "sha256:" + backupDigest,
+            WritersQuiesced = true, RetryWorkersQuiesced = true, DowngradeProhibitedAcknowledged = true,
+        }, HumanToken(Tenant, chatbot: false, administrator: true), cancellation).ConfigureAwait(false);
+        Require(response.StatusCode == HttpStatusCode.OK, "Authenticated delivery writer cutover returned HTTP " + (int)response.StatusCode + ".");
+        using JsonDocument accepted = JsonDocument.Parse(await response.Content.ReadAsByteArrayAsync(cancellation).ConfigureAwait(false));
+        Require(accepted.RootElement.GetProperty("status").GetString() == "Activated", "Authenticated delivery writer cutover did not activate.");
+        var marker = await ReadSeedDeliveryStatesAsync([ProjectionDeliveryCutoverObserver.WriterProtocolKey], cancellation).ConfigureAwait(false);
+        Require(marker[ProjectionDeliveryCutoverObserver.WriterProtocolKey] is { } actual
+            && ProjectionDeliveryCutoverObserver.WriterProtocolMatches(actual.Bytes, commit, submitted, DateTimeOffset.UtcNow, dapr.JsonSerializerOptions),
+            "Actual persisted writer protocol does not match this exact fresh cutover.");
+        using var readinessRequest = new HttpRequestMessage(HttpMethod.Get, _endpoints["eventstore"] + "/ready");
+        readinessRequest.Headers.Authorization = new("Bearer", HumanToken(Tenant, chatbot: false, administrator: true));
+        using HttpResponseMessage ready = await _http.SendAsync(readinessRequest, cancellation).ConfigureAwait(false);
+        Require(ready.StatusCode == HttpStatusCode.OK, "The actual SDK readiness check did not accept the persisted writer cutover.");
+        cancellation.ThrowIfCancellationRequested();
+        await File.WriteAllTextAsync(Path.Combine(Evidence, "writer-protocol-cutover.json"), JsonSerializer.Serialize(new
+        {
+            authenticatedHttpStatus = (int)response.StatusCode, actualPersistedMarkerVerified = true, sdkCommit = commit,
+            sourceManifestSha256 = Setting("WriterProtocolSourceManifestSha256"), nativeBackupSha256 = backupDigest,
+            providerNativeBackupValidated = true, copiedNativeBackupHashVerified = true, markerInitiallyObservedAbsent = true,
+            actualSdkReadinessHttpStatus = (int)ready.StatusCode,
+            completeProviderDeliveryInventoryVerified = true, unchangedQuiescentInventoryAcrossBackup = true,
+            bootstrapSourceCompletionVerified = true, bootstrapLegacyCheckpointReconciled = reconciled,
+            oldWritersAbsentFromFreshOwnedV2Fleet = true, seedCommandsSubmittedBeforeActivation = false,
+            downgradeProhibitedAcknowledged = true, directMarkerWrite = false,
+        }, Json), cancellation).ConfigureAwait(false);
+        cancellation.ThrowIfCancellationRequested();
+    }
+
+    private async Task<Dictionary<string, SupportedProjectReadStateSnapshot>> ReadFreshCutoverInventoryAsync(CancellationToken cancellation)
+    {
+        const string inventory = "return cjson.encode(redis.call('KEYS','*'))";
+        async Task<string[]> KeysAsync()
+        {
+            using JsonDocument document = JsonDocument.Parse(await RedisBytesAsync(cancellation, ["EVAL", inventory, "0"]).ConfigureAwait(false));
+            // Redis cjson serializes an empty Lua array as an object; startup always has real bootstrap state.
+            Require(document.RootElement.ValueKind == JsonValueKind.Array && document.RootElement.GetArrayLength() is > 0 and <= 4096,
+                "Fresh cutover requires a bounded actual provider inventory after genuine bootstrap.");
+            string[] keys = document.RootElement.EnumerateArray().Select(item => item.GetString()!).ToArray();
+            Require(keys.All(key => !string.IsNullOrWhiteSpace(key)) && keys.Distinct(StringComparer.Ordinal).Count() == keys.Length,
+                "The actual provider inventory is malformed or ambiguous.");
+            return keys.Where(ProjectionDeliveryCutoverObserver.IsRelevantStateKey).Order(StringComparer.Ordinal).ToArray();
+        }
+        string[] keys = await KeysAsync().ConfigureAwait(false);
+        Require(keys.Length <= 256, "Fresh cutover delivery inventory exceeds its bound.");
+        var values = keys.Length == 0 ? new Dictionary<string, SupportedProjectReadStateSnapshot?>()
+            : await ReadSeedDeliveryStatesAsync(keys, cancellation).ConfigureAwait(false);
+        string[] reobserved = await KeysAsync().ConfigureAwait(false);
+        Require(values.Values.All(value => value is not null) && keys.SequenceEqual(reobserved, StringComparer.Ordinal),
+            "Fresh cutover delivery inventory changed or has missing state.");
+        return values.ToDictionary(pair => pair.Key, pair => pair.Value!, StringComparer.Ordinal);
+    }
+
+    /// <summary>Requires the actual complete delivery inventory and byte/ETag observations to remain unchanged across native backup.</summary>
+    internal static bool SameCutoverInventory(IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot> before,
+        IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot> after)
+        => before.Count == after.Count && before.All(pair => pair.Value.Key == pair.Key && pair.Value.Bytes.Length > 0
+            && !string.IsNullOrWhiteSpace(pair.Value.ETag) && after.TryGetValue(pair.Key, out var current) && current.Key == pair.Key
+            && pair.Value.ETag == current.ETag && pair.Value.Bytes.AsSpan().SequenceEqual(current.Bytes));
+
+    /// <summary>Waits for real named SDK completion only during fixture seeding; it supplies no owner authority.</summary>
+    private async Task WaitForSeedNamedDeliveryAsync(string tenant, string domain, string aggregate, string command,
+        StreamReadPage source, CancellationToken cancellation, string? requiredProjection = null)
+    {
+        Require(requiredProjection is null || domain == "projects" && requiredProjection == "project-reads", "Seed readiness projection selection is not finite.");
+        string actor = tenant == ForeignTenant ? "foreign-actor" : "actor-1";
+        Require(SeedSourceMatches(source, tenant, domain, aggregate, command, actor), "Seed delivery has no exact accepted command/source prefix.");
+        string root = Path.GetDirectoryName(Setting("InvocationDirectory"))!;
+        using JsonDocument plane = JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root, "catalog-plane.json"), cancellation).ConfigureAwait(false));
+        Require(plane.RootElement.GetProperty("isolationId").GetString() == Isolation, "Seed delivery catalog belongs to another isolation.");
+        string directory = plane.RootElement.GetProperty("directory").GetString()!;
+        string? expectedRoot = plane.RootElement.GetProperty("rootDigest").GetString();
+        Require(expectedRoot is { Length: 64 } && expectedRoot.All(char.IsAsciiHexDigitLower)
+            && Path.IsPathFullyQualified(directory) && Directory.Exists(directory) && new DirectoryInfo(directory).LinkTarget is null,
+            "Seed delivery requires the exact retained private canonical catalog receipt.");
+        RouteCatalogEnvelope catalog = RouteCatalogCodec.Decode(await File.ReadAllBytesAsync(Path.Combine(directory, "catalog.json"), cancellation).ConfigureAwait(false), expectedRoot);
+        string[] projections = catalog.Declarations.Where(declaration => declaration.Kind == "projection" && declaration.Domain == domain
+            && (requiredProjection is null || declaration.ProjectionType == requiredProjection)
+            && catalog.Routes.Any(route => route.RouteId == declaration.RouteId && route.AppId == domain && route.Method == "project/v2"))
+            .Select(declaration => declaration.ProjectionType!).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        Require(domain is "folders" or "projects" && projections.Length > 0, "Seed delivery requires actual enrolled named owner projections.");
+        var scopes = projections.Select(projection => new
+        {
+            Projection = projection,
+            Checkpoint = ProjectionDeliveryCompletionObserver.CheckpointKey(tenant, domain, aggregate, projection),
+            Actor = "eventstore||ProjectionLifecycleActor||" + ProjectionDeliveryCompletionObserver.LifecycleActorId(tenant, domain, aggregate, projection),
+        }).ToArray();
+        string[] keys = scopes.SelectMany(scope => new[] { scope.Checkpoint, scope.Actor + "||projection-lifecycle-epoch", scope.Actor + "||projection-lifecycle" }).ToArray();
+        using var dapr = new Dapr.Client.DaprClientBuilder().Build();
+        bool Complete(IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot?> before, IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot?> after)
+            => scopes.All(scope => before[scope.Actor + "||projection-lifecycle-epoch"] is { } prior
+                && after[scope.Actor + "||projection-lifecycle-epoch"] is { } current && prior.ETag == current.ETag
+                && after[scope.Checkpoint] is { } checkpoint
+                && ProjectionDeliveryCompletionObserver.IsComplete(source, scope.Projection, checkpoint.Bytes, prior.Bytes,
+                    before[scope.Actor + "||projection-lifecycle"] is null && after[scope.Actor + "||projection-lifecycle"] is null,
+                    current.Bytes, dapr.JsonSerializerOptions));
+        while (true)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            var before = await ReadSeedDeliveryStatesAsync(keys, cancellation).ConfigureAwait(false);
+            if (Complete(before, before))
+            {
+                StreamReadPage currentSource = await StreamAsync(tenant, domain, aggregate, tenant, cancellation).ConfigureAwait(false);
+                Require(SeedSourceMatches(currentSource, tenant, domain, aggregate, command, actor) && Digest(currentSource) == Digest(source),
+                    "The accepted seed source changed during named completion observation.");
+                var after = await ReadSeedDeliveryStatesAsync(keys, cancellation).ConfigureAwait(false);
+                if (Complete(before, after))
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                    await File.AppendAllTextAsync(Path.Combine(Evidence, "seed-delivery-readiness.jsonl"), JsonSerializer.Serialize(new
+                    {
+                        tenantSha256 = Digest(tenant), domain, aggregateSha256 = Digest(aggregate), acceptedCommandSha256 = Digest(command),
+                        head = source.Metadata.LatestSequence, sourceSha256 = Digest(source), acceptedActorSha256 = Digest(actor), acceptedCommandSourceVerified = true,
+                        supportedSourceRechecked = true, actualNamedCompletionVerified = true, explicitLifecycleAbsenceVerified = true,
+                        unchangedPositiveEpochsVerified = true, runtimeAuthoritySupplied = false,
+                        projections = scopes.Select(scope => new { projection = scope.Projection,
+                            checkpointSha256 = Convert.ToHexString(SHA256.HashData(after[scope.Checkpoint]!.Bytes)), checkpointETagSha256 = Digest(after[scope.Checkpoint]!.ETag),
+                            epochSha256 = Convert.ToHexString(SHA256.HashData(after[scope.Actor + "||projection-lifecycle-epoch"]!.Bytes)),
+                            epochETagSha256 = Digest(after[scope.Actor + "||projection-lifecycle-epoch"]!.ETag) }),
+                    }, Json) + Environment.NewLine, cancellation).ConfigureAwait(false);
+                    cancellation.ThrowIfCancellationRequested();
+                    return;
+                }
+            }
+            await Task.Delay(100, cancellation).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Requires the exact complete current source whose head was persisted by the accepted seed command.</summary>
+    internal static bool SeedSourceMatches(StreamReadPage source, string tenant, string domain, string aggregate, string command, string actor)
+    {
+        try
+        {
+            return !string.IsNullOrWhiteSpace(command) && source.Tenant == tenant && source.Domain == domain && source.AggregateId == aggregate
+                && source.Events.Count is > 0 and <= 256 && !source.Metadata.IsTruncated && source.Metadata.NextContinuationToken is null
+                && source.Metadata.LatestSequence == source.Events.Count
+                && StreamReadPageValidator.ValidateAndGetNextSequence(new(tenant, domain, aggregate, PageSize: 256), source) == source.Metadata.LatestSequence
+                && source.Events[^1].CausationId == command && source.Events[^1].CorrelationId == command
+                && !string.IsNullOrWhiteSpace(actor) && source.Events.All(item => item.UserId == actor);
+        }
+        catch (Exception failure) when (failure is ArgumentException or InvalidOperationException) { return false; }
+    }
+
+    private async Task<IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot?>> ReadSeedDeliveryStatesAsync(string[] keys, CancellationToken cancellation)
+    {
+        byte[] response = await RedisBytesAsync(cancellation, ["EVAL", RawStateBatchScript,
+            keys.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), .. keys]).ConfigureAwait(false);
+        return ParseSeedDeliveryStates(response, keys);
+    }
+
+    /// <summary>Preserves explicit provider absence separately from malformed or missing observations.</summary>
+    internal static IReadOnlyDictionary<string, SupportedProjectReadStateSnapshot?> ParseSeedDeliveryStates(byte[] response, string[] keys)
+    {
+        Require(keys.Length > 0 && keys.Distinct(StringComparer.Ordinal).Count() == keys.Length, "Seed observations require distinct exact keys.");
+        using JsonDocument document = JsonDocument.Parse(response);
+        Require(document.RootElement.ValueKind == JsonValueKind.Array && document.RootElement.GetArrayLength() == keys.Length,
+            "The seed provider batch is incomplete.");
+        Dictionary<string, SupportedProjectReadStateSnapshot?> result = new(StringComparer.Ordinal);
+        foreach (JsonElement row in document.RootElement.EnumerateArray())
+        {
+            Require(row.ValueKind == JsonValueKind.Object && row.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)
+                .SequenceEqual(new[] { "dataHex", "exists", "key", "version" }) && row.GetProperty("key").ValueKind == JsonValueKind.String,
+                "The seed provider observation is malformed.");
+            string key = row.GetProperty("key").GetString()!;
+            Require(keys.Contains(key, StringComparer.Ordinal) && !result.ContainsKey(key), "The seed provider key is foreign or repeated.");
+            if (row.GetProperty("exists").ValueKind == JsonValueKind.False)
+            {
+                Require(row.GetProperty("dataHex").ValueKind == JsonValueKind.False && row.GetProperty("version").ValueKind == JsonValueKind.False,
+                    "An absent seed observation carries conflicting value/version evidence.");
+                result.Add(key, null);
+            }
+            else
+            {
+                SupportedProjectReadStateSnapshot value = ParseRawStateBatch(JsonSerializer.SerializeToUtf8Bytes(new[] { row }, Json), [key]).Single();
+                result.Add(key, value);
+            }
+        }
+        return result;
+    }
+
+    private async Task WaitForOrganizationAclReadinessAsync(string tenant, string actor, string command)
+    {
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        budget.CancelAfter(TimeSpan.FromSeconds(30));
+        long head = await HeadAsync(tenant, tenant, budget.Token).ConfigureAwait(false);
+        StreamReadPage source = await StreamAsync(tenant, "folders", tenant, tenant, budget.Token).ConfigureAwait(false);
+        while (true)
+        {
+            budget.Token.ThrowIfCancellationRequested();
+            byte[] bytes = (await StateAsync("projection:folders:organization-permissions:" + tenant, budget.Token).ConfigureAwait(false)).Bytes;
+            if (bytes.Length > 0)
+            {
+                using JsonDocument document = JsonDocument.Parse(bytes);
+                if (OrganizationAclReadinessMatches(document.RootElement, tenant, actor, command, source, head))
+                {
+                    await WaitForSeedNamedDeliveryAsync(tenant, "folders", tenant, command, source, budget.Token).ConfigureAwait(false);
+                    Require(await HeadAsync(tenant, tenant, budget.Token).ConfigureAwait(false) == head,
+                        "The organization head changed during seed readiness.");
+                    budget.Token.ThrowIfCancellationRequested();
+                    await File.AppendAllTextAsync(Path.Combine(Evidence, "organization-seed-readiness.jsonl"), JsonSerializer.Serialize(new
+                    {
+                        tenantSha256 = Digest(tenant), acceptedCommandSha256 = Digest(command), head,
+                        acceptedSourcePrefixVerified = true, exactAclProjectionVerified = true, headRechecked = true,
+                    }, Json) + Environment.NewLine, budget.Token).ConfigureAwait(false);
+                    return;
+                }
+            }
+            await Task.Delay(100, budget.Token).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProbeAbsentFolderMetadataAsync(string tenant)
+    {
+        const string probe = "readiness-probe";
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        budget.CancelAfter(TimeSpan.FromSeconds(30));
+        using HttpResponseMessage absent = await SendHumanAsync("api/v1/streams/read", new StreamReadRequest(tenant, "folders", probe,
+            FromSequence: 0, ToSequence: 0, PageSize: 1), HumanToken(tenant, chatbot: false, administrator: true), budget.Token).ConfigureAwait(false);
+        Require(absent.StatusCode == HttpStatusCode.NotFound, "The finite ordinary Folder metadata probe does not target an absent source.");
+        using HttpRequestMessage request = new(HttpMethod.Get, _endpoints["folders"] + "/api/v1/folders/" + probe + "/effective-permissions");
+        request.Headers.Authorization = new("Bearer", HumanToken(tenant, chatbot: false));
+        request.Headers.Add("X-Correlation-Id", Unique());
+        Stopwatch elapsed = Stopwatch.StartNew();
+        using HttpResponseMessage response = await _http.SendAsync(request, budget.Token).ConfigureAwait(false);
+        await response.Content.LoadIntoBufferAsync(32768, budget.Token).ConfigureAwait(false);
+        byte[] responseBytes = await response.Content.ReadAsByteArrayAsync(budget.Token).ConfigureAwait(false);
+        using JsonDocument document = JsonDocument.Parse(responseBytes);
+        JsonElement body = document.RootElement;
+        budget.Token.ThrowIfCancellationRequested();
+        bool denied = response.StatusCode == HttpStatusCode.OK && body.TryGetProperty("permissions", out JsonElement permissions)
+            && permissions.ValueKind == JsonValueKind.Array && permissions.GetArrayLength() == 0
+            && body.GetProperty("authorizationOutcome").GetString() == "denied_safe";
+        bool unavailable = response.StatusCode == HttpStatusCode.ServiceUnavailable
+            && body.TryGetProperty("status", out JsonElement status) && status.GetInt32() == 503;
+        await File.AppendAllTextAsync(Path.Combine(Evidence, "owner-metadata-probe.jsonl"), JsonSerializer.Serialize(new
+        {
+            tenantSha256 = Digest(tenant), probeSourceConfirmedAbsent = true, requestPath = "/api/v1/folders/{ordinary-absent-folder}/effective-permissions",
+            httpStatus = (int)response.StatusCode, elapsedMilliseconds = elapsed.Elapsed.TotalMilliseconds,
+            actualResponseSha256 = Convert.ToHexString(SHA256.HashData(responseBytes)), deniedWithoutPermissions = denied, unavailable,
+            authorityAcceptedOrSubstituted = false,
+        }, Json) + Environment.NewLine, budget.Token).ConfigureAwait(false);
+        Require(denied || unavailable, "The existing authenticated Folder metadata probe returned an unexpected outcome.");
+    }
+
+    /// <summary>Waits only for exact persisted creation delivery before issuing the next fixture command.</summary>
+    private async Task WaitForFolderCreationReadinessAsync(string tenant, string folder, string actor, string command)
+    {
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        budget.CancelAfter(TimeSpan.FromSeconds(30));
+        long head = await HeadAsync(tenant, folder, budget.Token).ConfigureAwait(false);
+        StreamReadPage source = await StreamAsync(tenant, "folders", folder, tenant, budget.Token).ConfigureAwait(false);
+        while (true)
+        {
+            budget.Token.ThrowIfCancellationRequested();
+            byte[] bytes = (await StateAsync("projection:folders:folder-permissions:" + tenant + ":" + folder, budget.Token).ConfigureAwait(false)).Bytes;
+            if (bytes.Length > 0)
+            {
+                using JsonDocument document = JsonDocument.Parse(bytes);
+                if (FolderCreationReadinessMatches(document.RootElement, tenant, folder, actor, command, source, head))
+                {
+                    await WaitForSeedNamedDeliveryAsync(tenant, "folders", folder, command, source, budget.Token).ConfigureAwait(false);
+                    Require(await HeadAsync(tenant, folder, budget.Token).ConfigureAwait(false) == head,
+                        "The Folder head changed during seed readiness.");
+                    budget.Token.ThrowIfCancellationRequested();
+                    await File.AppendAllTextAsync(Path.Combine(Evidence, "folder-seed-readiness.jsonl"), JsonSerializer.Serialize(new
+                    {
+                        tenantSha256 = Digest(tenant), folderSha256 = Digest(folder), acceptedCommandSha256 = Digest(command), head,
+                        acceptedSourcePrefixVerified = true, exactAclProjectionVerified = true, headRechecked = true,
+                        authorityAcceptedOrSubstituted = false,
+                    }, Json) + Environment.NewLine, budget.Token).ConfigureAwait(false);
+                    return;
+                }
+            }
+            await Task.Delay(100, budget.Token).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Requires the accepted plain CreateFolder prefix and exact current owner projection before the next seed mutation.</summary>
+    /// <param name="projection">The actual persisted Folder permission document.</param>
+    /// <param name="tenant">The exact owned tenant.</param>
+    /// <param name="folder">The exact newly created Folder.</param>
+    /// <param name="actor">The actual command actor.</param>
+    /// <param name="command">The durably completed CreateFolder command identity.</param>
+    /// <param name="source">The real retained stream page.</param>
+    /// <param name="head">The independently observed actual owner head.</param>
+    /// <returns>Whether every retained source and projection binding matches.</returns>
+    internal static bool FolderCreationReadinessMatches(JsonElement projection, string tenant, string folder, string actor,
+        string command, StreamReadPage source, long head)
+    {
+        try
+        {
+            if (tenant == folder || head != 1 || source.Tenant != tenant || source.Domain != "folders" || source.AggregateId != folder
+                || StreamReadPageValidator.ValidateAndGetNextSequence(new(tenant, "folders", folder), source) != head
+                || source.Metadata.LatestSequence != head || source.Metadata.IsTruncated || source.Metadata.NextContinuationToken is not null
+                || source.Events.Count != 1 || projection.GetProperty("tenantId").GetString() != tenant
+                || projection.GetProperty("organizationId").GetString() != tenant || projection.GetProperty("folderId").GetString() != folder
+                || projection.GetProperty("lastSequence").GetInt64() != head || !projection.GetProperty("isCreated").GetBoolean()
+                || projection.GetProperty("isArchived").GetBoolean() || projection.GetProperty("overrides").GetArrayLength() != 0
+                || projection.GetProperty("fileIdentities").EnumerateObject().Any()) return false;
+            StreamReadEvent item = source.Events[0];
+            if (item.SequenceNumber != 1 || string.IsNullOrWhiteSpace(item.MessageId) || item.CausationId != command
+                || item.CorrelationId != command || item.UserId != actor || item.Timestamp == default
+                || item.SerializationFormat != "json" || item.MetadataVersion != 1 || item.PayloadVersion is not (null or 1)
+                || item.Payload is not { Length: > 0 and <= 32768 }
+                || item.EventTypeName.Split(',', 2)[0].Trim() != typeof(Hexalith.Folders.Aggregates.Folder.FolderCreated).FullName) return false;
+            using JsonDocument payload = JsonDocument.Parse(item.Payload);
+            if (payload.RootElement.ValueKind != JsonValueKind.Object
+                || payload.RootElement.EnumerateObject().Select(property => property.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()
+                    != payload.RootElement.EnumerateObject().Count()) return false;
+            var created = payload.RootElement.Deserialize<Hexalith.Folders.Aggregates.Folder.FolderCreated>(
+                Hexalith.EventStore.Contracts.Serialization.EventStorePayloadSerialization.Options);
+            if (created is null || created.ManagedTenantId != tenant || created.OrganizationId != tenant || created.FolderId != folder
+                || created.ActorPrincipalId != actor || created.CorrelationId != command || created.TaskId != command
+                || created.IdempotencyKey != command || created.OccurredAt == default
+                || string.IsNullOrWhiteSpace(created.DisplayName) || created.Tags is null
+                || created.LifecycleState != Hexalith.Folders.Aggregates.Folder.FolderLifecycleState.Active
+                || created.RepositoryBindingState != Hexalith.Folders.Aggregates.Folder.FolderRepositoryBindingState.Unbound) return false;
+            var validation = Hexalith.Folders.Aggregates.Folder.FolderCommandValidator.Validate(new Hexalith.Folders.Aggregates.Folder.CreateFolder(
+                tenant, tenant, folder, created.DisplayName, created.Description, created.PathLabel, created.Tags,
+                actor, command, command, command, PayloadTenantId: null));
+            DateTimeOffset projectedAt = projection.GetProperty("projectedAt").GetDateTimeOffset();
+            if (!validation.IsAccepted || validation.IdempotencyFingerprint != created.IdempotencyFingerprint
+                || projectedAt < item.Timestamp || projectedAt > DateTimeOffset.UtcNow.AddMinutes(2)) return false;
+            JsonElement[] recent = projection.GetProperty("recentMessages").EnumerateArray().ToArray();
+            return recent.Length == 1 && recent[0].GetProperty("sequence").GetInt64() == 1
+                && recent[0].GetProperty("messageId").GetString() == item.MessageId
+                && recent[0].GetProperty("payloadDigest").GetString() == Convert.ToHexString(SHA256.HashData(
+                    [.. System.Text.Encoding.UTF8.GetBytes(item.EventTypeName + ":" + (item.PayloadVersion ?? 1).ToString(System.Globalization.CultureInfo.InvariantCulture) + ":"),
+                        .. item.Payload]));
+        }
+        catch (Exception exception) when (exception is JsonException or KeyNotFoundException or InvalidOperationException
+            or FormatException or ArgumentException) { return false; }
+    }
+
+    /// <summary>Binds seed-only organization readiness to the accepted command, real actor head, retained prefix and exact projected ACL.</summary>
+    internal static bool OrganizationAclReadinessMatches(JsonElement projection, string tenant, string actor, string command,
+        StreamReadPage source, long head)
+    {
+        try
+        {
+            long last = StreamReadPageValidator.ValidateAndGetNextSequence(new(tenant, "folders", tenant), source);
+            string[] actions = ["create_folder", "manage_folder_access"];
+            if (source.Tenant != tenant || source.Domain != "folders" || source.AggregateId != tenant || head != 3 || last != head
+                || source.Metadata.LatestSequence != head || source.Metadata.IsTruncated || source.Metadata.NextContinuationToken is not null
+                || source.Events.Count != head || source.Events.Select(item => item.MessageId).Distinct(StringComparer.Ordinal).Count() != head
+                || projection.GetProperty("tenantId").GetString() != tenant || projection.GetProperty("organizationId").GetString() != tenant
+                || projection.GetProperty("lastSequence").GetInt64() != head || !projection.GetProperty("isInitialized").GetBoolean()) return false;
+            DateTimeOffset projectedAt = projection.GetProperty("projectedAt").GetDateTimeOffset();
+            if (projectedAt < source.Events.Max(item => item.Timestamp) || projectedAt > DateTimeOffset.UtcNow.AddMinutes(2)) return false;
+            List<string> sourceActions = [];
+            for (int index = 0; index < source.Events.Count; index++)
+            {
+                StreamReadEvent item = source.Events[index];
+                string expectedType = "Hexalith.Folders.Aggregates.Organization." + (index == 0
+                    ? "OrganizationAclBaselineInitialized" : "OrganizationAclPrincipalGranted");
+                if (item.SequenceNumber != index + 1 || item.CausationId != command || item.CorrelationId != command || item.UserId != actor
+                    || item.Timestamp == default || item.SerializationFormat != "json" || item.MetadataVersion != 1 || item.PayloadVersion is not (null or 1)
+                    || item.EventTypeName.Split(',', 2)[0].Trim() != expectedType) return false;
+                using JsonDocument payload = JsonDocument.Parse(item.Payload);
+                if (payload.RootElement.EnumerateObject().Select(property => property.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()
+                    != payload.RootElement.EnumerateObject().Count()) return false;
+                Dictionary<string, JsonElement> fields = payload.RootElement.EnumerateObject()
+                    .ToDictionary(property => property.Name, property => property.Value, StringComparer.OrdinalIgnoreCase);
+                if (fields["ManagedTenantId"].GetString() != tenant || fields["OrganizationId"].GetString() != tenant
+                    || fields["CorrelationId"].GetString() != command || fields["TaskId"].GetString() != command
+                    || fields["IdempotencyKey"].GetString() != command) return false;
+                if (index > 0)
+                {
+                    if (!IsUserPrincipalKind(fields["PrincipalKind"]) || fields["PrincipalId"].GetString() != actor) return false;
+                    sourceActions.Add(fields["Action"].GetString()!);
+                }
+            }
+            if (!sourceActions.Order(StringComparer.Ordinal).SequenceEqual(actions)) return false;
+            JsonElement[] grants = projection.GetProperty("grants").EnumerateArray().ToArray();
+            if (grants.Length != 2 || grants.Any(grant => !IsUserPrincipalKind(grant.GetProperty("principalKind"))
+                    || grant.GetProperty("principalId").GetString() != actor)
+                || !grants.Select(grant => grant.GetProperty("action").GetString()).Order(StringComparer.Ordinal).SequenceEqual(actions)) return false;
+            JsonElement messages = projection.GetProperty("processedMessages");
+            JsonElement[] recent = projection.GetProperty("recentMessages").EnumerateArray().ToArray();
+            return messages.EnumerateObject().Count() == head && recent.Length == head && source.Events.All(item =>
+                messages.GetProperty(item.MessageId).GetInt64() == item.SequenceNumber
+                && recent.Count(value => value.GetProperty("messageId").GetString() == item.MessageId
+                    && value.GetProperty("sequence").GetInt64() == item.SequenceNumber
+                    && value.GetProperty("payloadDigest").GetString() == Convert.ToHexString(SHA256.HashData(
+                        [.. System.Text.Encoding.UTF8.GetBytes(item.EventTypeName + ":" + (item.PayloadVersion ?? 1).ToString(System.Globalization.CultureInfo.InvariantCulture) + ":"),
+                            .. item.Payload]))) == 1);
+        }
+        catch (Exception exception) when (exception is JsonException or KeyNotFoundException or InvalidOperationException or FormatException or ArgumentException) { return false; }
+    }
+
+    private static bool IsUserPrincipalKind(JsonElement kind) => kind.ValueKind == JsonValueKind.Number && kind.TryGetInt32(out int value) && value == 0
+        || kind.ValueKind == JsonValueKind.String && string.Equals(kind.GetString(), "User", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Reads the exact owning store layout and requires its positive persisted concurrency version.</summary>
+    internal static bool TenantAuthorityStateMatches(JsonElement state, string tenant, string actor, StreamReadPage source,
+        bool projectDocument, bool requireOwner = true, long? throughSequence = null)
+    {
+        try
+        {
+            JsonElement projection = projectDocument ? state.GetProperty("projection") : state;
+            long version = state.GetProperty("version").GetInt64();
+            return version > 0 && projection.GetProperty("version").GetInt64() == version
+                && (!projectDocument || state.EnumerateObject().Select(property => property.Name).Order()
+                    .SequenceEqual(new[] { "projection", "version" }))
+                && TenantAuthorityProjectionMatches(projection, tenant, actor, source, requireOwner, throughSequence);
+        }
+        catch (Exception exception) when (exception is KeyNotFoundException or InvalidOperationException or FormatException) { return false; }
+    }
+
+    /// <summary>Requires actual enabled owner evidence and each retained Tenant envelope at the exact persisted head.</summary>
+    internal static bool TenantAuthorityProjectionMatches(JsonElement projection, string tenant, string actor, StreamReadPage source,
+        bool requireOwner = true, long? throughSequence = null)
+    {
+        try
+        {
+            long head = throughSequence ?? source.Metadata.LatestSequence;
+            if (source.Tenant != "system" || source.Domain != "tenants" || source.AggregateId != tenant
+                || head < (requireOwner ? 2 : 1) || head > source.Metadata.LatestSequence
+                || source.Metadata.IsTruncated || source.Metadata.NextContinuationToken is not null
+                || source.Events.Count != source.Metadata.LatestSequence || source.Events.Where((item, index) => item.SequenceNumber != index + 1).Any()
+                || projection.GetProperty("tenantId").GetString() != tenant || !projection.GetProperty("enabled").GetBoolean()
+                || projection.GetProperty("watermark").GetInt64() != head
+                || projection.GetProperty("projectionWatermark").GetString() != tenant + ":" + head.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                || projection.GetProperty("lastEventTimestamp").GetDateTimeOffset() != source.Events[(int)head - 1].Timestamp
+                || projection.GetProperty("replayConflict").GetBoolean() || projection.GetProperty("malformedEvidence").GetBoolean()) return false;
+            if (requireOwner)
+            {
+                JsonElement principal = projection.GetProperty("principals").GetProperty(actor);
+                if (principal.GetProperty("principalId").GetString() != actor || principal.GetProperty("role").GetString() != "TenantOwner") return false;
+            }
+            JsonElement processed = projection.GetProperty("processedMessages");
+            return source.Events.Where(item => item.SequenceNumber <= head).All(item => processed.TryGetProperty(item.MessageId, out JsonElement evidence)
+                && evidence.GetProperty("messageId").GetString() == item.MessageId
+                && evidence.GetProperty("tenantId").GetString() == tenant
+                && evidence.GetProperty("eventTypeName").GetString() == item.EventTypeName.Split(',')[0].Split('.')[^1]
+                && evidence.GetProperty("sequenceNumber").GetInt64() == item.SequenceNumber
+                && evidence.GetProperty("timestamp").GetDateTimeOffset() == item.Timestamp);
+        }
+        catch (Exception exception) when (exception is KeyNotFoundException or InvalidOperationException or FormatException) { return false; }
     }
 
     private async Task WaitForStateAsync(string key)
@@ -1202,7 +1983,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         throw new InvalidOperationException("Required persisted projection/catalog did not appear.");
     }
 
-    private async Task<SupportedProjectReadStateSnapshot> StateAsync(string key)
+    private async Task<SupportedProjectReadStateSnapshot> StateAsync(string key, CancellationToken? cancellationToken = null)
     {
         if (key.Contains("||", StringComparison.Ordinal))
         {
@@ -1214,9 +1995,9 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             Require(long.TryParse(version, out long etag) && etag > 0, "A raw persisted actor version observation failed.");
             return new(key, bytes, version);
         }
-        using HttpResponseMessage response = await _http.GetAsync(_endpoints["eventstore-dapr-cli"] + "/v1.0/state/statestore/" + Uri.EscapeDataString(key), Cancellation).ConfigureAwait(false);
+        using HttpResponseMessage response = await _http.GetAsync(_endpoints["eventstore-dapr-cli"] + "/v1.0/state/statestore/" + Uri.EscapeDataString(key), cancellationToken ?? Cancellation).ConfigureAwait(false);
         Require(response.StatusCode is HttpStatusCode.OK or HttpStatusCode.NoContent, "A fresh state-store observation failed.");
-        return new(key, await response.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false),
+        return new(key, await response.Content.ReadAsByteArrayAsync(cancellationToken ?? Cancellation).ConfigureAwait(false),
             response.Headers.TryGetValues("ETag", out IEnumerable<string>? etags) ? etags.Single() : string.Empty);
     }
 
@@ -1276,7 +2057,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     /// <summary>Compares batched provider reads with the retained individual observer on actual domain data and binary controls.</summary>
-    private async Task VerifyRawObserverBatchAsync()
+    internal async Task VerifyRawObserverBatchAsync()
     {
         string[] domainKeys = (await RedisAsync("--scan").ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Where(key => key.Contains("||", StringComparison.Ordinal) && IsOwnedDomainKey(key, Tenant, ForeignTenant)).Order(StringComparer.Ordinal).ToArray();
@@ -1339,13 +2120,15 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private async Task<string> RedisAsync(params string[] arguments)
         => System.Text.Encoding.UTF8.GetString(await RedisBytesAsync(arguments).ConfigureAwait(false));
 
-    private async Task<byte[]> RedisBytesAsync(params string[] arguments)
+    private Task<byte[]> RedisBytesAsync(params string[] arguments) => RedisBytesAsync(Cancellation, arguments);
+
+    private async Task<byte[]> RedisBytesAsync(CancellationToken cancellation, params string[] arguments)
     {
         string id = _endpoints["redis-container-id"];
-        string observed = await ProcessAsync("docker", "inspect", "--format",
-            "{\"id\":{{json .Id}},\"owner\":{{json (index .Config.Labels \"hexalith.supported-reads\")}}}", id).ConfigureAwait(false);
+        string observed = System.Text.Encoding.UTF8.GetString(await RunOwnedProcessAsync("docker", ["inspect", "--format",
+            "{\"id\":{{json .Id}},\"owner\":{{json (index .Config.Labels \"hexalith.supported-reads\")}}}", id], cancellation).ConfigureAwait(false));
         Require(IsOwnedRedisIdentity(observed, id, Isolation), "Storage observation requires the immutable owned creation identity.");
-        return await ProcessBytesAsync("docker", ["exec", id, "redis-cli", "-e", "--raw", .. arguments]).ConfigureAwait(false);
+        return await RunOwnedProcessAsync("docker", ["exec", id, "redis-cli", "-e", "--raw", .. arguments], cancellation).ConfigureAwait(false);
     }
 
     /// <summary>Refuses a name replacement or owner mismatch before storage access.</summary>
@@ -1423,11 +2206,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     internal static bool CursorIsWithinObservedLifetime(DateTimeOffset requestedAt, DateTimeOffset observedAt)
         => observedAt >= requestedAt && observedAt < requestedAt.AddMinutes(15);
 
-    private string Dapr(string app, string method) => _endpoints["eventstore-dapr-cli"] + "/v1.0/invoke/" + app + "/method/" + method;
     private string Setting(string key) => _configuration.GetProperty(key).GetString()!;
     private static string Unique() => UniqueIdHelper.GenerateSortableUniqueStringId().ToLowerInvariant();
     private static void Require(bool condition, string message) => Assert.True(condition, message);
     /// <summary>Disposes the in-process client and synthetic user signer.</summary>
-    public void Dispose() { _http.Dispose(); _userKey.Dispose(); }
+    public void Dispose() { _http.Dispose(); _userKey.Dispose(); _readEvidence.Dispose(); }
 }
 #endif

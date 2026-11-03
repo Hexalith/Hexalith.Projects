@@ -1,0 +1,38 @@
+{
+  "observedUtc": "2026-11-03T14:52:04.984532+00:00",
+  "filesScanned": 1372,
+  "privatePemOrBearerJwtMarkerFiles": [
+    "domain-initial.xml",
+    "domain.xml"
+  ],
+  "rawPayloadsPrinted": false,
+  "classifiedLiteralTestMarkerFiles": [
+    {
+      "file": "domain-initial.xml",
+      "classification": "literal negative-control test argument in passing native XML, no key material",
+      "matches": [
+        {
+          "method": "Harness_DetectsForbiddenContent",
+          "result": "Pass",
+          "literalInlineArgumentMarkerOnly": true,
+          "encodedKeyBodyOrEndMarkerPresent": false
+        }
+      ]
+    },
+    {
+      "file": "domain.xml",
+      "classification": "literal negative-control test argument in passing native XML, no key material",
+      "matches": [
+        {
+          "method": "Harness_DetectsForbiddenContent",
+          "result": "Pass",
+          "literalInlineArgumentMarkerOnly": true,
+          "encodedKeyBodyOrEndMarkerPresent": false
+        }
+      ]
+    }
+  ],
+  "unclassifiedPrivateKeyMaterialFiles": [],
+  "bearerJwtMarkerFiles": [],
+  "originalNativeXmlPreserved": true
+}

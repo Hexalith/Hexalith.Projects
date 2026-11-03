@@ -1,0 +1,21 @@
+{
+  "evaluatedCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "msbuild",
+    "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "-getProperty:HexalithEventStoreVersion,Version,Configuration,UseHexalithProjectReferences,UseNuGetDeps"
+  ],
+  "evaluatedProperties": {
+    "HexalithEventStoreVersion": "3.133.0",
+    "Version": "1.0.0",
+    "Configuration": "Debug",
+    "UseHexalithProjectReferences": "true",
+    "UseNuGetDeps": "false"
+  },
+  "rootPackagePropsSha256": "92076f247ed771a1825bd461fdb8b465036a62d20618953de4869946aa990258",
+  "platformCatalogCoordinateObservedInBuildOutput": "Hexalith.EventStore.Aspire/3.132.1",
+  "eventStoreSourceHead": "a3dbec2f8b6150a3ee33dcbfc2b6bf2fec274625",
+  "packagePinsChanged": false
+}

@@ -1,0 +1,62 @@
+{
+  "status": "diagnostic-only-no-source-repair-selected",
+  "freshObservedInputEachOperation": true,
+  "authorityHostTrustStateLeasePermissionResultsCached": false,
+  "nativeRuntimeEvidence": false,
+  "buildCommand": [
+    "dotnet",
+    "build",
+    "/tmp/story61-observer-profile/Profile.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "runEnvironment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "runCommands": [
+    [
+      "dotnet",
+      "/tmp/story61-observer-profile/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-eventstore.observation.json"
+    ],
+    [
+      "dotnet",
+      "/tmp/story61-observer-profile/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live51-duplicate-nmlen2af/input-folders.observation.json"
+    ]
+  ],
+  "inputSha256": {
+    "input-activation.json": "13578375f6cac5db62c1ac4d3838a2bb1734d25ec1b75e66a31bd8dd77b8e46e",
+    "input-eventstore.observation.json": "bb2fdd09605f2fe3c3f8e28ab96b73fff8850645823ff224565a7b0be82ddd27",
+    "input-folders.observation.json": "521b2defe1b2e191064fae41addfd100ccedc1f721e400c7cc75807ba8a83d4c"
+  },
+  "sourceHashes": {
+    "Profile.csproj": "bdb41ed4ffb9781daf0f0ae1e280eb3f3b2ccdce6e0ed0c338ffb08b2c6f34e4",
+    "ProfileObserver.cs": "edbf7c24a8c77ece44266fc5dfc492d96bd9a383074922e60da7b4dbcb71149d",
+    "Program.cs": "147f4fdc62977b8f135506154364c17de3de265869942170b134333e0caed044"
+  },
+  "medianPhaseMilliseconds": {
+    "eventstore": {
+      "capture": 2.3846,
+      "identity": 8.858,
+      "technical": 0.5073000000000001,
+      "operations": 2.42865,
+      "topology": 1.5661,
+      "inventory": 1.9303,
+      "admission": 2.9044499999999998
+    },
+    "folders": {
+      "capture": 0.85195,
+      "identity": 2.62315,
+      "technical": 0.1585,
+      "operations": 2.4966,
+      "topology": 0.22344999999999998,
+      "inventory": 0.73205,
+      "admission": 0.0726
+    }
+  },
+  "interpretation": "Actual retained host facts validate against their original actual activation; warmed offline computation identifies phase cost but does not establish live bottleneck or justify authority/observation caching. No candidate optimization selected."
+}

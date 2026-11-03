@@ -1,0 +1,84 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "f0b7d8295141a7500d7349dfa1e78b43445ab897587ce2fffa1f7914696299b6",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadConcurrencyTests.cs": "d1e6ce2302be0e9427db49784024cbfc8c19b37c4cff62d0915c42775ca98c95"
+  },
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "commands": [
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-class",
+      "*SupportedProjectReadFixtureTopologyTests",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadConcurrencyTests",
+      "-xml",
+      "/tmp/story61-sequential-read-fixture.xml"
+    ],
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ]
+  ],
+  "fixtureResult": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 14 threads)]",
+      "id": "d10b153e-8e77-4527-afaa-74651a2b3eec",
+      "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "11:09:17",
+      "start-rtf": "2026-11-03T11:09:17.3259576+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T11:09:19.1720972+00:00",
+      "not-run": "0",
+      "passed": "99",
+      "skipped": "0",
+      "time": "1.846",
+      "time-rtf": "00:00:01.8460000",
+      "total": "99"
+    }
+  ],
+  "launcherResult": {
+    "total": 84,
+    "failed": 0,
+    "skipped": 0
+  },
+  "profile": "ordinary mapped unoptimized Debug; SDK+AppHost runtimeunchanged from43; only fixture observation scheduling changed",
+  "evidenceBasis": "45 open-0/1-transport-facts.json: all4 sequential pages Complete; bothcap2opens404 withactual2sowner cancellation; current300s freshness remains decisive",
+  "changes": "All8truth observations sequential inexactTenantorder andperTenantfirst\u2192next\u2192openA\u2192openB; alloriginalassertions/results/before-aftersnapshotsretained; local dictionaries mergedafterboth; runtime/SDKunchanged"
+}

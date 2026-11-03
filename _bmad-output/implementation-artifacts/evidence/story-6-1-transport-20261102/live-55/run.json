@@ -1,0 +1,60 @@
+{
+  "qualification": "independent-scenario-coordinator",
+  "result": "failed",
+  "matrixCompleted": false,
+  "acceptedEquivalence": false,
+  "productionReadiness": false,
+  "groups": [],
+  "launches": [
+    {
+      "group": "duplicate",
+      "identity": {
+        "pid": 1354379,
+        "startTicks": "11016009",
+        "command": [
+          "/usr/bin/python3",
+          "/home/administrator/projects/hexalith/projects/tools/qualification/run_supported_project_reads.py",
+          "--scenario",
+          "duplicate",
+          "--timeout",
+          "900",
+          "--evidence",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-55/duplicate"
+        ]
+      },
+      "evidenceDirectory": "duplicate",
+      "complete": true,
+      "exitCode": 1,
+      "childReportSha256": "6c8204ff857d18c8096d6a4ab853c517bf91376216ff24eef409075eff1dfd87",
+      "childCleanup": {
+        "ownedSidecarsAbsent": true,
+        "preexistingResourcesPreserved": true,
+        "privateMaterialRemoved": false,
+        "recoveryMaterialRetained": true
+      },
+      "cleanupCompletionVerified": false
+    }
+  ],
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 103,
+    "passed": 103,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceManifestSha256": "a9c4dfce4b4fe7c4a720b49861fc8b16ad47cc19b702a699448a564dfeb6e0e4",
+  "failure": "An interrupted/failed scenario cannot qualify and no later group was started.",
+  "interruption": {
+    "requested": false
+  }
+}

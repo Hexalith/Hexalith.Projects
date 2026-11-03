@@ -1,0 +1,291 @@
+{
+  "nativeDatabaseSha256": "b2cbd0cb7407847bc085bcf893a585eca56750b1d933107e7c3b5082d6f20891",
+  "ownerReadElapsedMilliseconds": 495.3109,
+  "spans": [
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "POST /process",
+      "startMsRelativeOwner": -68.262,
+      "durationMs": 580.489,
+      "recordedStatus": "503"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "workload-authority-POST",
+      "startMsRelativeOwner": 1.117,
+      "durationMs": 3.88,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 5.729,
+      "durationMs": 0.854,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 70.952,
+      "durationMs": 2.612,
+      "recordedStatus": "409"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 74.992,
+      "durationMs": 0.772,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 124.061,
+      "durationMs": 2.622,
+      "recordedStatus": "409"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 131.186,
+      "durationMs": 1.053,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 177.67,
+      "durationMs": 2.752,
+      "recordedStatus": "204"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "workload-metadata-POST",
+      "startMsRelativeOwner": 184.19,
+      "durationMs": 276.436,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "operation": "workload-metadata-CallLocal/eventstore/api/v1/streams/read/workload",
+      "startMsRelativeOwner": 184.427,
+      "durationMs": 275.897,
+      "recordedStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "operation": "workload-metadata-CallLocal/eventstore/api/v1/streams/read/workload",
+      "startMsRelativeOwner": 185.15,
+      "durationMs": 288.777,
+      "recordedStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "operation": "workload-metadata-POST api/v1/streams/read/workload",
+      "startMsRelativeOwner": 185.731,
+      "durationMs": 287.929,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 460.89,
+      "durationMs": 0.797,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 471.576,
+      "durationMs": 2.646,
+      "recordedStatus": "409"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 475.688,
+      "durationMs": 7.584,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 492.663,
+      "durationMs": 2.578,
+      "recordedStatus": "204"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-GET",
+      "startMsRelativeOwner": 497.177,
+      "durationMs": 0.815,
+      "recordedStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "operation": "catalog-state-POST",
+      "startMsRelativeOwner": 508.202,
+      "durationMs": 2.719,
+      "recordedStatus": "204"
+    }
+  ],
+  "folderAcquisitionEvents": [
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": -52.734,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "3.3083"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": -51.334,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "1.399"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": -17.215,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "34.1179"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": -15.826,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.3872"
+      }
+    },
+    {
+      "event": "private.route_catalog.decode_scope",
+      "atMsRelativeOwner": -9.65,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "6",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "elapsed_ms": "56.8574"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 15.94,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.7959"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 17.272,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "1.3306"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 69.305,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "52.0311"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 70.789,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.4815"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 79.638,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.6724"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 81.046,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "1.4076"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 117.162,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "36.1147"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 123.899,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "6.7344"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 136.135,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.6485"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 137.462,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "1.3262"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 175.177,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "37.713"
+      }
+    },
+    {
+      "event": "private.route_catalog.validate_phase",
+      "atMsRelativeOwner": 177.527,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "2.3467"
+      }
+    },
+    {
+      "event": "private.route_catalog.decode_scope",
+      "atMsRelativeOwner": 184.131,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "17",
+        "cache_hits": "16",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "elapsed_ms": "179.4758"
+      }
+    }
+  ],
+  "timingOrigin": "actual failed owner metadata start log, exact same native trace and span"
+}

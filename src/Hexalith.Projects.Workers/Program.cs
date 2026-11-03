@@ -9,11 +9,13 @@ using Hexalith.Projects.Workers;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddProjectsTenantEventWorkers();
+bool developmentCatalog = builder.AddProjectsDevelopmentWorkerCatalog();
 
 WebApplication app = builder.Build();
 app.UseCloudEvents();
-app.MapSubscribeHandler();
+Microsoft.AspNetCore.Routing.IEndpointRouteBuilder subscriptions = app.UseProjectsDevelopmentWorkerSecurity(developmentCatalog);
+subscriptions.MapSubscribeHandler();
 app.MapDefaultEndpoints();
-app.MapProjectsTenantEventWorkerEndpoints();
+subscriptions.MapProjectsTenantEventWorkerEndpoints();
 
 await app.RunAsync().ConfigureAwait(false);

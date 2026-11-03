@@ -91,7 +91,7 @@ public sealed class AspireTopologyTests
     public void AppHostShouldUseSharedEventStoreSecurityResource()
     {
         string root = ProjectRoot();
-        string appHost = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Program.cs"));
+        string appHost = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Program.cs")).ReplaceLineEndings("\n");
         string appHostProject = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Hexalith.Projects.AppHost.csproj"));
 
         appHost.ShouldContain("AddHexalithEventStoreSecurity(");

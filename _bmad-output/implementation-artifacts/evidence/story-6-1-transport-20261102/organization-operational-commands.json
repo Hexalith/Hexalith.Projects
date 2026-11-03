@@ -1,0 +1,121 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs": "0bdbce9f97705bfe1ad1d1cb02c453d944392e8b1f2bcb7246258e420c1b4661",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs": "44df6979dcad56f49636761e3a640dd4040adb52d767d4f964dc9c45a8495f52",
+    "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs": "6dacb8cbf3cce2471f77d5e16faef2824b7151978ddec02d0750d3d54506f605",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/OperationalStatus/OperationalStatusEventReader.cs": "c15046b513138080c556686303b65f68e94d45d26364f873023c2594c530de09",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionEpochCoordinator.cs": "d002d8596900c7a9a24f035e82439b5bc6c26f72e19711e830f3662a86551681",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Results/DomainServiceWireResult.cs": "979445fb9c8f94531263339c64c2d1c715d68d1a6bcb891d01758dd1a422f41b",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/BoundedV1DomainResultProducer.cs": "cd6943e3077739a360bac72dc61eb5e6f76f65b29cbe937d220e47cd631626f1",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionEventWireBuilder.cs": "646c2ea70a2366c4a3fb1250748a03a9b3cb9fa42beb645eaec7b257e8563544",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/BoundedV1DomainResultProducerTests.cs": "5674f82c4c022a4eb486e846ab935300969d5603959d681210f0d66071052fc4"
+  },
+  "originalLive30ProductionSourceSha256": "23ac2606f674753045b558bb28069c1c6bb27b4d12d5f57b1e51eba3581746f6",
+  "closedFolderReaderUnchanged": true,
+  "commands": {
+    "fullBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    "finalTestOnlyBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    "finalTests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+      "-class",
+      "*OrganizationOperationalProjectionTests",
+      "-class",
+      "*OperationalStatusProjectionHandlerTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/organization-operational-final.xml"
+    ],
+    "currentV1Build": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    "currentV1Tests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+      "-class",
+      "*OrganizationOperationalProjectionTests",
+      "-class",
+      "*OperationalStatusProjectionHandlerTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/organization-operational-v1.xml"
+    ],
+    "actualSdkV1ProducerTests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+      "-class",
+      "*BoundedV1DomainResultProducerTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/sdk-v1-producer.xml"
+    ]
+  },
+  "finalNativeResult": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "preservedFailures": {
+    "organization-operational-initial.xml": "Real aggregate+shared SDK producer reproduces Unknown operational source event; no production fix existed yet.",
+    "organization-operational-empty-plan-initial.xml": "13/15 pass; existing SDK forbids empty legacy single-owner rebuild plans. Guard retained; supported canonical empty bounded partition used instead."
+  },
+  "selectedRepair": "finite exact source-bound Organization ACL metadata yields no Folder views; genuine shared SDK journal/control receipts still execute; unknown/mixed/foreign/noncurrent metadata and mismatched journal positions refuse; cancellation retained",
+  "runtimeAcceptance": "Pending; originals live30/live31 retained; real eleven-row matrix and full Projects Integration/Server regressions required.",
+  "finalV1Results": {
+    "organization-operational-v1.xml": {
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "sdk-v1-producer.xml": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  },
+  "finalV1Controls": "Real OrganizationAggregate\u2192normal SDK DomainServiceWireResult.FromDomainResult\u2192shared journal; both real omitted-v1 and explicit1 forms; actual SDK bounded producer separately pins null-v1 and stamped-v2. Finite declared version1 types only; unknown/version2/foreign/malformed source still refuse.",
+  "priorExplicitOnlyNativeResult": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0
+  }
+}

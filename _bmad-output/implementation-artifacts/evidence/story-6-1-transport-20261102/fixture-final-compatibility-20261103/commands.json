@@ -1,0 +1,64 @@
+{
+  "build": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "native": [
+    "dotnet",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-method",
+    "*NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+    "-method",
+    "*OperationsDescribeTheSixActualQueryAndResultPairs",
+    "-method",
+    "*FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch",
+    "-xml",
+    "/tmp/story61-fixture-final-compatibility-controls.xml"
+  ],
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "assemblySha256": "f1dc43b63176655f7a77c5f5ad28e44bca4b7f76fc38fd4e6dbfd5f6e8ae0678",
+  "sourceSha256": {
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureCatalogComposition.cs": "6055938b300ef8aa63217b847615040d3b36bbd0bcedaac3d2023682e4379eda",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs": "dbfd40c7c0e02575b54e77afb2fd37d8d7db0a10ed2f08e4e0f0a48794268b68",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityRoutes.cs": "a1e265d222ecd734b7158879132e4f4b973d013f203e0654f0a805392e91a836",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityLoopbackHandler.cs": "0adfce94bae2aab76903ce970f1b2d160727de2588b0c59947e7ea210775db90",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs": "db95931045bde6aba4a6881bb08f83d8f33203fe83cb4a29cd914ba52d745f5c",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs": "898f99099d958aa5b7b39d9fe2808a71fde22f1ca550d75c0d785924a0667bc7",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs": "44aae66a48e6a56357b23b8eb681b48b6a81f74d85870faf26015802c01a6139",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureRouteCatalog.cs": "91e5b668b9a66ffd9442119d53953f51feb5da3266e0354c626de61097633665"
+  },
+  "nativeAssemblies": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 2 threads)]",
+      "id": "d87a6ac0-7843-44ea-9177-768e8d30c2bb",
+      "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "17:12:00",
+      "start-rtf": "2026-11-03T17:12:00.1691378+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T17:12:01.2293369+00:00",
+      "not-run": "0",
+      "passed": "3",
+      "skipped": "0",
+      "time": "1.060",
+      "time-rtf": "00:00:01.0600000",
+      "total": "3"
+    }
+  ],
+  "scope": "Isolated component fixture composition only; no feature qualification or acceptance authority. Earlier failed controls retained as history.",
+  "clarification": "Only folders+tenant tampering expects actual inner503 because finite catalog refuses foreign scope before envelope dispatch. Exact public404/signature/digest/profile/no-write requirements remain. Synthetic skew token explicitly signs service and independent signature check requires it. Unrun invalid multi-binding candidate was removed; finite original catalog unchanged."
+}

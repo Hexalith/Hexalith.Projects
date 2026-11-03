@@ -1,0 +1,191 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "mappingEnvironment": "focused-build-environment.json",
+  "buildEnvironmentRunner": "focused-build-runner.py",
+  "normalEnvironmentPins": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "checks": [
+    {
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+        "-class",
+        "*CatalogInvocationTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/helper.xml"
+      ],
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*WorkloadBindingAuthorityTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/authority.xml"
+      ],
+      "passed": 92,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+        "-class",
+        "*BoundOwnerNativeSourceMetadataReaderTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/owner-sdk.xml"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Tests/Hexalith.Folders.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Tests/bin/Debug/net10.0/Hexalith.Folders.Tests.dll",
+        "-class",
+        "*GatewayOrganizationStreamSequenceReaderTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/owner-folders.xml"
+      ],
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "label": "fixture-readiness-controls",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class",
+        "*SupportedProjectReadEvidenceTests",
+        "-class",
+        "*SupportedProjectReadTopologyTests",
+        "-xml",
+        "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls.xml"
+      ],
+      "passed": 76,
+      "failed": 0,
+      "skipped": 0,
+      "sourceInputs": {
+        "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "3dfc4ca2c3e91e46f1a49a749454026637d20ea70342fadef7f292cc3c45f438",
+        "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "29304ab9fe66254ee46fa82f2e6a51bee00b12ad3fa2cd33088dbb46787e5be9",
+        "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadCapturingStateStore.cs": "bf2f6f7dd27ff0378ceee6102c81aebed610134e23c8f870e824870f51894551"
+      },
+      "finalFixtureBuildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true",
+        "--no-restore",
+        "-p:BuildProjectReferences=false"
+      ]
+    },
+    {
+      "label": "pure-domain-regressions",
+      "artifacts": "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv",
+      "buildCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--artifacts-path",
+        "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv"
+      ],
+      "testCommand": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/domain.xml"
+      ],
+      "passed": 684,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "actualRepositoryDocument": "docs/resolution-scoring-heuristic.md",
+      "actualRepositoryDocumentSha256": "0e5a2acbc081c82d0808ebe81b35aaa86fea2fc94d1a4d5294da1760a6ec4a61",
+      "sourceMappingEnvironment": "focused-build-environment.json",
+      "workingDirectory": "/home/administrator/projects/hexalith/projects"
+    }
+  ]
+}

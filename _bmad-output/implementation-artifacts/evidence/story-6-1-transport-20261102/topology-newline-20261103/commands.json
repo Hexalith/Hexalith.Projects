@@ -1,0 +1,27 @@
+{
+  "change": "Normalize actual source line endings solely for existing multiline security wiring expectation. Every assertion is unchanged.",
+  "sourcePath": "tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs",
+  "sourceSha256": "fbff0fb4dfe4974a6f898c15ccb6ef450952e91aca099de9c0b1efaee7888b96",
+  "appHostSourceChanged": false,
+  "testCommand": [
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*AspireTopologyTests",
+    "-xml",
+    "/tmp/story61-topology-newline.xml"
+  ],
+  "testEnvironment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "result": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "errors": 0
+  },
+  "builds": "Mapped individual Integration and Server.Tests builds passed0warnings/errors; exact logs retained.",
+  "initialStaleAssemblySelection": "Preserved failing old-assembly artifacts; the first selection ran before Integration build completed. Final24selection ran only after successful build completion."
+}

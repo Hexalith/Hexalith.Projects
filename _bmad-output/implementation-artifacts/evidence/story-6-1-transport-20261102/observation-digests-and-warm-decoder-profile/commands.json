@@ -1,0 +1,157 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "observationCommands": [
+    [
+      "dotnet",
+      "/tmp/story61-observation-digests-before/profile/ObserverProfile.dll",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-eventstore.observation.json"
+    ],
+    [
+      "dotnet",
+      "/tmp/story61-observation-digests-before/profile/ObserverProfile.dll",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-folders.observation.json"
+    ],
+    [
+      "dotnet",
+      "/tmp/story61-observation-digests-after/profile/ObserverProfile.dll",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-eventstore.observation.json"
+    ],
+    [
+      "dotnet",
+      "/tmp/story61-observation-digests-after/profile/ObserverProfile.dll",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json",
+      "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-folders.observation.json"
+    ]
+  ],
+  "ownerReadCommand": [
+    "dotnet",
+    "/tmp/story61-owner-read-profile/bin/Debug/net10.0/Profile.dll",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/bin/Debug/net10.0/Hexalith.Tenants.Contracts.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll"
+  ],
+  "schemaSingletonRejectedCommands": [
+    [
+      "dotnet",
+      "/tmp/story61-route-schema-before/profile-with-signature/Profile.dll",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/bin/Debug/net10.0/Hexalith.Tenants.Contracts.dll",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll"
+    ],
+    [
+      "dotnet",
+      "/tmp/story61-route-schema-after/profile/Profile.dll",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/bin/Debug/net10.0/Hexalith.Tenants.Contracts.dll",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll"
+    ]
+  ],
+  "warmParseModelCommand": [
+    "dotnet",
+    "/tmp/story61-warm-parse-profile/bin/Debug/net10.0/Profile.dll",
+    "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json"
+  ],
+  "warmActualCommands": [
+    {
+      "repeat": 1,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-before/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    },
+    {
+      "repeat": 1,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-after/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    },
+    {
+      "repeat": 2,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-before/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    },
+    {
+      "repeat": 2,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-after/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    },
+    {
+      "repeat": 3,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-before/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    },
+    {
+      "repeat": 3,
+      "command": [
+        "dotnet",
+        "/tmp/story61-warm-decoder-after/profile/HostMemoProfile.dll",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-catalog.json",
+        "/tmp/story61-owned-diagnostics-live26-uby_lz0n/input-activation.json"
+      ]
+    }
+  ],
+  "buildCommands": [
+    [
+      "dotnet",
+      "build",
+      "/tmp/story61-observer-profile/ObserverProfile.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story61-owner-read-profile/Profile.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story61-warm-parse-profile/Profile.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story61-host-memo-profile/HostMemoProfile.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1"
+    ]
+  ],
+  "rawInputsRetainedPrivately": true,
+  "publicInputHashes": "capture-input-facts.json",
+  "initialOwnerProfileVariant": "The initial owner-read-results preceded adding OperationsSha256 outside the timed loop; paired singleton experiment includes the complete68-operation signature."
+}

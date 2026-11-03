@@ -1,0 +1,1998 @@
+{
+  "nativeDatabase": "/home/administrator/.aspire/dashboard/runs/20261103T150730056Z/dashboard.db",
+  "nativeDatabaseSha256": "cd3d09fd52d0a544bbdd9767d4f32e7033f048f3c03e6a3171011e2dc55d4a8a",
+  "traceSha256": "e84732fecaaa98652d61131c90afcd1500c2a7449aa2845a46eba5d51ccabdf7",
+  "failedFolderScopeSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+  "folderCallbackMilliseconds": 1997.9467,
+  "recordedServerHttpStatus": 499,
+  "actualFinalListHttpStatus": 200,
+  "actualFinalListResponseState": "Unavailable",
+  "actualFinalListReason": "FolderUnavailable",
+  "spans": [
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "parentSpanSha256": "3e542e2ca62767319c58d1e85ade563feb4c1d2d05ee84e014447b5e96177dd0",
+      "kind": "domain-query",
+      "startMs": 0.0,
+      "durationMs": 1997.9467,
+      "recordedHttpStatus": "499"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "be05702b78898e96e60f1afaec8e0b54b92f8f285c4624f81fccadb4e4d0f783",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "catalog-state-GET",
+      "startMs": 1.0978,
+      "durationMs": 2.8404,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "b108f13a73abec66e0eabcd628007c9a7d0131d90ab5559277fcc6906b530819",
+      "parentSpanSha256": "be05702b78898e96e60f1afaec8e0b54b92f8f285c4624f81fccadb4e4d0f783",
+      "kind": "catalog-state-GET",
+      "startMs": 2.1397,
+      "durationMs": 0.7064,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "e366829a6aca89b0590b0982a17fd24ac286821c23cd27208673dd94897a0d4d",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "catalog-state-POST",
+      "startMs": 88.0399,
+      "durationMs": 3.3772,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "3bcbf8e16ef9a2a05647fb5d73aad672fd1dec26fb4c2ed1cee841707ae4fafc",
+      "parentSpanSha256": "e366829a6aca89b0590b0982a17fd24ac286821c23cd27208673dd94897a0d4d",
+      "kind": "catalog-state-POST",
+      "startMs": 88.3068,
+      "durationMs": 2.868,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "0a87a1641e7805833b88092b1607c12a5ffe71bc43cc0a71b2d7e5ed8bde0b45",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "catalog-state-GET",
+      "startMs": 97.9904,
+      "durationMs": 1.0281,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "9cd9bc865526dd96f3cbe3eec77755e7a0ada88fc61eb87d8476ae9664a94c09",
+      "parentSpanSha256": "0a87a1641e7805833b88092b1607c12a5ffe71bc43cc0a71b2d7e5ed8bde0b45",
+      "kind": "catalog-state-GET",
+      "startMs": 98.1545,
+      "durationMs": 0.6566,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "718edb34e5eff6b4c0a41b29a7f1845c3839f69c23db9f72bf30878a702ccad9",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "catalog-state-POST",
+      "startMs": 188.499,
+      "durationMs": 39.9672,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "1c4b33c9678a6f31bd848b6adf1d4df1c8ca024d705ae37555305296504016d7",
+      "parentSpanSha256": "718edb34e5eff6b4c0a41b29a7f1845c3839f69c23db9f72bf30878a702ccad9",
+      "kind": "catalog-state-POST",
+      "startMs": 189.0091,
+      "durationMs": 26.9524,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "ee1ccbeeb484fd7305889be39c42d71ac67cd7a33be451e010ca7e09acd66c4a",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 232.3257,
+      "durationMs": 7.6069,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "ff4f2165bd9a3cd88cb4297182aaa071258a6ff03c4b3f2c9760f0d149a8dbb1",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 240.4861,
+      "durationMs": 0.1778,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "0252a799813b6f645dc20728fe37cd4e98fef75fe0e189be824717b5df71f87a",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:9aee6b1bcdf617d8e39bb1f2b624c68ea33deb9d48e0364aeaded836d3d00293",
+      "startMs": 244.8739,
+      "durationMs": 11.4544,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "45e3229de055276df9ba79bddd4872eff223b9d8942c4fbff471dbe4c82f078c",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "metadata-transport",
+      "startMs": 344.8172,
+      "durationMs": 423.1183,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "7bf5deea31c8b2fb29872fccf7529fa4ec21622569dfb67ab1c3007fb9b62b01",
+      "parentSpanSha256": "45e3229de055276df9ba79bddd4872eff223b9d8942c4fbff471dbe4c82f078c",
+      "kind": "metadata-transport",
+      "startMs": 345.1096,
+      "durationMs": 419.0037,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "11a7af0925a70b773f9655cd17f14bcefd4ba14dabf4e0b5a89d50d7f01f2e88",
+      "parentSpanSha256": "7bf5deea31c8b2fb29872fccf7529fa4ec21622569dfb67ab1c3007fb9b62b01",
+      "kind": "metadata-transport",
+      "startMs": 346.0592,
+      "durationMs": 478.2897,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "parentSpanSha256": "11a7af0925a70b773f9655cd17f14bcefd4ba14dabf4e0b5a89d50d7f01f2e88",
+      "kind": "metadata-transport",
+      "startMs": 346.6032,
+      "durationMs": 477.4505,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "b9caa4ed2cf86f23f60da5f9bf0507a3e7e619aa0c096269b7bf66b0b62ca94d",
+      "parentSpanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "kind": "catalog-state-GET",
+      "startMs": 349.2403,
+      "durationMs": 2.2587,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "39722466ec36c97595d46a81891767a3e977f9f3b0476668025ce1a9449b76aa",
+      "parentSpanSha256": "b9caa4ed2cf86f23f60da5f9bf0507a3e7e619aa0c096269b7bf66b0b62ca94d",
+      "kind": "catalog-state-GET",
+      "startMs": 350.0828,
+      "durationMs": 0.7393,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7753bbf568b2381411d4ad6413a7f6ace5605f4995eeb2c4cd8a7c5706465f49",
+      "parentSpanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "kind": "catalog-state-POST",
+      "startMs": 460.8657,
+      "durationMs": 2.857,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "913e19db91779565324b739ccb43e010783fe07cc3931df52ec6dae88b0f1d30",
+      "parentSpanSha256": "7753bbf568b2381411d4ad6413a7f6ace5605f4995eeb2c4cd8a7c5706465f49",
+      "kind": "catalog-state-POST",
+      "startMs": 461.2354,
+      "durationMs": 2.2777,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "91abd477d99fdea80ad218e376a5e0be8e35192650b2a517e7667160fcd287eb",
+      "parentSpanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "kind": "native-atomic-pair",
+      "startMs": 480.9501,
+      "durationMs": 276.8436,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "1a60f58d9e865116c12c42b7e81bff3b4f749544d2e431037663cc80cd23d883",
+      "parentSpanSha256": "91abd477d99fdea80ad218e376a5e0be8e35192650b2a517e7667160fcd287eb",
+      "kind": "native-atomic-pair",
+      "startMs": 481.5286,
+      "durationMs": 276.1261,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "parentSpanSha256": "1a60f58d9e865116c12c42b7e81bff3b4f749544d2e431037663cc80cd23d883",
+      "kind": "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+      "startMs": 482.5809,
+      "durationMs": 273.6351,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "941f1b132c05c71c9f478b6310f8fd007356eb4537d810688eef0d1aa4ecddda",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "catalog-state-GET",
+      "startMs": 561.8982,
+      "durationMs": 5.9491,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "5c8b20b57554d145b2e7216e58526c246a06a915c5b39e4878014b7c961992d3",
+      "parentSpanSha256": "941f1b132c05c71c9f478b6310f8fd007356eb4537d810688eef0d1aa4ecddda",
+      "kind": "catalog-state-GET",
+      "startMs": 562.068,
+      "durationMs": 0.5457,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e51425a5840160fc11e27950d053cdd3adf36104f46dd5e42c50c68a12c09a3f",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "catalog-state-POST",
+      "startMs": 696.562,
+      "durationMs": 6.2223,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "4812eaf0e8bf86c42835daff0157ad91e215082c5f6463193af240e817ebf00d",
+      "parentSpanSha256": "e51425a5840160fc11e27950d053cdd3adf36104f46dd5e42c50c68a12c09a3f",
+      "kind": "catalog-state-POST",
+      "startMs": 696.8177,
+      "durationMs": 2.1482,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "84f085222efe6d5f2c90b6e49344f58fabdbb0ce9ae90f732f65525772276a1f",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "native-actor-state",
+      "startMs": 715.1722,
+      "durationMs": 3.5473,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "cddf6034a0421971ae44a964f6f7475ad6a9595ef3f24451a8c3905de6674f86",
+      "parentSpanSha256": "84f085222efe6d5f2c90b6e49344f58fabdbb0ce9ae90f732f65525772276a1f",
+      "kind": "native-actor-state",
+      "startMs": 717.587,
+      "durationMs": 0.8695,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "b1594d99e5b03335bd26d3f9ce13c2451400ebc30215db65278ad9aa82a47b9f",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "native-actor-state",
+      "startMs": 718.8566,
+      "durationMs": 1.0291,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "6d4f9974744f0f5b06843bc6b66853a5157115d76c30f6295c25995f1ec52a16",
+      "parentSpanSha256": "b1594d99e5b03335bd26d3f9ce13c2451400ebc30215db65278ad9aa82a47b9f",
+      "kind": "native-actor-state",
+      "startMs": 719.0509,
+      "durationMs": 0.5627,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "dcbd6eadd0a16c6620474817d6046dc0c166ae134b72ff170419aeea956470fc",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "catalog-state-GET",
+      "startMs": 720.3069,
+      "durationMs": 0.9989,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "21cb29249e7a8fd7c0aa61e734ab9a721952d4ea16a678f48b85e780eea82b4a",
+      "parentSpanSha256": "dcbd6eadd0a16c6620474817d6046dc0c166ae134b72ff170419aeea956470fc",
+      "kind": "catalog-state-GET",
+      "startMs": 720.5203,
+      "durationMs": 0.5939,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "640da7c3c469ebe4638d49278f0fea35d1dd5e1cc599b8b19f018a0c2e06a6df",
+      "parentSpanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "kind": "catalog-state-POST",
+      "startMs": 741.5895,
+      "durationMs": 14.447,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "2e5c27f65268de07f68da927c7476609657ccd926ccd296145a1d4a1e21866dd",
+      "parentSpanSha256": "640da7c3c469ebe4638d49278f0fea35d1dd5e1cc599b8b19f018a0c2e06a6df",
+      "kind": "catalog-state-POST",
+      "startMs": 741.8183,
+      "durationMs": 3.0805,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "52d675170918d3c05c9eb65aa489d244502e7abd6042998c4d0998abdc8debee",
+      "parentSpanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "kind": "catalog-state-GET",
+      "startMs": 758.3233,
+      "durationMs": 19.2818,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "703fa438fef839fc120f555c028cbed91561d7794ffaa7ca80e7528a55c8803e",
+      "parentSpanSha256": "52d675170918d3c05c9eb65aa489d244502e7abd6042998c4d0998abdc8debee",
+      "kind": "catalog-state-GET",
+      "startMs": 763.9215,
+      "durationMs": 0.6777,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "289cbfae4dbb5fed90e07fffe4d8603552845a69ede3662deb25cc1283b1c8e3",
+      "parentSpanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "kind": "catalog-state-POST",
+      "startMs": 819.3272,
+      "durationMs": 4.514,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "83926a4a48e0e4fe7ef4575c2add366f7f23813dda6e69decf259ca1f5463677",
+      "parentSpanSha256": "289cbfae4dbb5fed90e07fffe4d8603552845a69ede3662deb25cc1283b1c8e3",
+      "kind": "catalog-state-POST",
+      "startMs": 819.6031,
+      "durationMs": 3.974,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "8c71302e98be6f4e708783198f89bb497d206c8053f71a4e9c8cded7ea3847d4",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 825.6573,
+      "durationMs": 0.2806,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "968bcff0617177bb6cfb83c78aa25bd368c424e2ac50d5566964bfd4e43e09ff",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:9aee6b1bcdf617d8e39bb1f2b624c68ea33deb9d48e0364aeaded836d3d00293",
+      "startMs": 827.7525,
+      "durationMs": 16.8414,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "de1352e67b932803de493bdd7bfcf87db46e6082fc7b9ddda25ee38ac43d72a8",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "metadata-transport",
+      "startMs": 910.1883,
+      "durationMs": 260.4008,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "720362d8c6f2305f1ff1e064204f0fdcd801ac3503f115ff6fb77386d61d459a",
+      "parentSpanSha256": "de1352e67b932803de493bdd7bfcf87db46e6082fc7b9ddda25ee38ac43d72a8",
+      "kind": "metadata-transport",
+      "startMs": 910.4836,
+      "durationMs": 257.5184,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "f7c4d0e3af3238a0c693b096367d91327e3ab1e2a78bacca75446412ef352ba6",
+      "parentSpanSha256": "720362d8c6f2305f1ff1e064204f0fdcd801ac3503f115ff6fb77386d61d459a",
+      "kind": "metadata-transport",
+      "startMs": 911.2612,
+      "durationMs": 261.2685,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "parentSpanSha256": "f7c4d0e3af3238a0c693b096367d91327e3ab1e2a78bacca75446412ef352ba6",
+      "kind": "metadata-transport",
+      "startMs": 911.8844,
+      "durationMs": 260.4601,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "bb9fda4e31632a05108022dee34ce0f57e5133f91196c3d43d14f2bbfc7e5ce7",
+      "parentSpanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "kind": "catalog-state-GET",
+      "startMs": 914.3421,
+      "durationMs": 1.1655,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "6d882271ad8ae72b5a371c070209e1fef63cb3690f5a5777f17cc961ab836910",
+      "parentSpanSha256": "bb9fda4e31632a05108022dee34ce0f57e5133f91196c3d43d14f2bbfc7e5ce7",
+      "kind": "catalog-state-GET",
+      "startMs": 914.6331,
+      "durationMs": 0.692,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "d4803db88a8bed4b460d51f06590769cdd08fe152c30fd77029f98fea778578d",
+      "parentSpanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "kind": "catalog-state-POST",
+      "startMs": 981.8724,
+      "durationMs": 9.5749,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "75a1002753d9494952ffa2563be1be792f13f9d49121cd592d9ca3a7929ccac3",
+      "parentSpanSha256": "d4803db88a8bed4b460d51f06590769cdd08fe152c30fd77029f98fea778578d",
+      "kind": "catalog-state-POST",
+      "startMs": 982.1776,
+      "durationMs": 2.8475,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7f78cc27ee479abb7876e990c5c6bd7edf23c6e56084032a761b9e29756e20ee",
+      "parentSpanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "kind": "native-atomic-pair",
+      "startMs": 995.5852,
+      "durationMs": 171.4069,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "33d2b1b55424082730f792278125720b2e60bf38e6fe956833e63afd6322bd7d",
+      "parentSpanSha256": "7f78cc27ee479abb7876e990c5c6bd7edf23c6e56084032a761b9e29756e20ee",
+      "kind": "native-atomic-pair",
+      "startMs": 996.0066,
+      "durationMs": 170.8954,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "parentSpanSha256": "33d2b1b55424082730f792278125720b2e60bf38e6fe956833e63afd6322bd7d",
+      "kind": "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+      "startMs": 996.5887,
+      "durationMs": 170.1161,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "9b4649c944eb1cc42446048ccfca4ad4aab09c906074bd242c7dafd731f3d6ee",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "catalog-state-GET",
+      "startMs": 1024.026,
+      "durationMs": 9.693,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "6b936a002937fa116e9ba5d4508486cbe3f83a95b6e4bbd2ff9ba396861c9b57",
+      "parentSpanSha256": "9b4649c944eb1cc42446048ccfca4ad4aab09c906074bd242c7dafd731f3d6ee",
+      "kind": "catalog-state-GET",
+      "startMs": 1031.0968,
+      "durationMs": 2.2747,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "b8b19acbd896644e118ad946cd3519036868b942015e0c6edce9e2d4a4ef6f65",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "catalog-state-POST",
+      "startMs": 1143.9798,
+      "durationMs": 8.0652,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "48c42d247636e5ce992c06485994d5a32f7ea65d0358766f3d95b09e61ae4d98",
+      "parentSpanSha256": "b8b19acbd896644e118ad946cd3519036868b942015e0c6edce9e2d4a4ef6f65",
+      "kind": "catalog-state-POST",
+      "startMs": 1144.293,
+      "durationMs": 2.6302,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "9ce3e7b824b85fa9c586ce41a36957624c5ba854ec3b91dc520cfec4cea2d0f6",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "native-actor-state",
+      "startMs": 1157.5566,
+      "durationMs": 1.8972,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "093d4b8f6b6935971984f434440199f62e60fc8f15d3972c696664158269864d",
+      "parentSpanSha256": "9ce3e7b824b85fa9c586ce41a36957624c5ba854ec3b91dc520cfec4cea2d0f6",
+      "kind": "native-actor-state",
+      "startMs": 1157.8736,
+      "durationMs": 1.1489,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "caa982954f90ee20d8c020cc9237cf8c1663714c891d464e0492f4b0750f156a",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "native-actor-state",
+      "startMs": 1159.6819,
+      "durationMs": 0.8698,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "497eabec2dbd826ee37e815881af538677c141312bf702b96310084e28b5f7b8",
+      "parentSpanSha256": "caa982954f90ee20d8c020cc9237cf8c1663714c891d464e0492f4b0750f156a",
+      "kind": "native-actor-state",
+      "startMs": 1159.885,
+      "durationMs": 0.4709,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "d292509381a8096735c9e22ec50424293d46f381e6419afed539abc7b9daf0f5",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "catalog-state-GET",
+      "startMs": 1160.9936,
+      "durationMs": 0.9001,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "62950d2e2dc7774987e5c6efb24e12fb9b83b8e6fe224fa41030ce37200e67ec",
+      "parentSpanSha256": "d292509381a8096735c9e22ec50424293d46f381e6419afed539abc7b9daf0f5",
+      "kind": "catalog-state-GET",
+      "startMs": 1161.1629,
+      "durationMs": 0.5612,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "9a6a359b5d5cfa5a5ca816a103e4a552772dfa16d196dbf61e1ef227f3a1240f",
+      "parentSpanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "kind": "catalog-state-POST",
+      "startMs": 1163.7154,
+      "durationMs": 2.778,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "c61e7b5022cb13f14e2956cefc78bcba727120ca19a150663b0e21da55932f90",
+      "parentSpanSha256": "9a6a359b5d5cfa5a5ca816a103e4a552772dfa16d196dbf61e1ef227f3a1240f",
+      "kind": "catalog-state-POST",
+      "startMs": 1163.9473,
+      "durationMs": 2.3407,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "ed4aac341da75b25de376624831a9f8894808606a474d0978b2e643ebcae8eb6",
+      "parentSpanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "kind": "catalog-state-GET",
+      "startMs": 1167.4919,
+      "durationMs": 0.7616,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "cb9d0165cf46a9c2ea8c4f996eb16fba75787b21018c88795649f6cd24e80aba",
+      "parentSpanSha256": "ed4aac341da75b25de376624831a9f8894808606a474d0978b2e643ebcae8eb6",
+      "kind": "catalog-state-GET",
+      "startMs": 1167.6048,
+      "durationMs": 0.5066,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "982fb8cae0f7d30948260204d73bd01709b8513fb2f1d6eae3c8d93a100461e4",
+      "parentSpanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "kind": "catalog-state-POST",
+      "startMs": 1170.184,
+      "durationMs": 2.0766,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "e49ce871d177da6a4b2f937e33b8b857884378d03f4e298e912e9643fe89f4eb",
+      "parentSpanSha256": "982fb8cae0f7d30948260204d73bd01709b8513fb2f1d6eae3c8d93a100461e4",
+      "kind": "catalog-state-POST",
+      "startMs": 1170.3882,
+      "durationMs": 1.7802,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "32ea898454671ba7a008bef877ccae9337ad88da537d5ffd8e1361c2d74506f0",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 1173.7496,
+      "durationMs": 0.4099,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "622c03b6fcba83650c245565bc5934b2ea82132d457c3e4fd2acc56186bc7be5",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 1174.8079,
+      "durationMs": 0.2627,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "6027afe36aa494b3084d4e918476bd8b59adfd9c933e61a3f01c9fa5f2353bed",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:9aee6b1bcdf617d8e39bb1f2b624c68ea33deb9d48e0364aeaded836d3d00293",
+      "startMs": 1176.8271,
+      "durationMs": 4.2322,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "cada1b4a7fd654c5233cb96db71d1d9dd207129ee5833ef81e0a38bc2d0c3306",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "metadata-transport",
+      "startMs": 1262.7357,
+      "durationMs": 348.5408,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "0c3b435e18e56d48690463a845d66ee3477ab2ff513f20934c1a03adbaaa383d",
+      "parentSpanSha256": "cada1b4a7fd654c5233cb96db71d1d9dd207129ee5833ef81e0a38bc2d0c3306",
+      "kind": "metadata-transport",
+      "startMs": 1267.9951,
+      "durationMs": 342.9433,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "5b31de6c18fd9f707411ac6517db21b2f257e0160ed2e53de97049b7bc88aa1a",
+      "parentSpanSha256": "0c3b435e18e56d48690463a845d66ee3477ab2ff513f20934c1a03adbaaa383d",
+      "kind": "metadata-transport",
+      "startMs": 1268.8803,
+      "durationMs": 348.4155,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "parentSpanSha256": "5b31de6c18fd9f707411ac6517db21b2f257e0160ed2e53de97049b7bc88aa1a",
+      "kind": "metadata-transport",
+      "startMs": 1271.9441,
+      "durationMs": 345.1257,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "26a39a4110992d1d5f4036c0d54c83ae889853bda541d318e8192eebf88988a2",
+      "parentSpanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "kind": "catalog-state-GET",
+      "startMs": 1274.0908,
+      "durationMs": 6.6046,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "80ede3a029398aa7c1c709faef2c9c54752bb76d5e4cce23d058af094ea44588",
+      "parentSpanSha256": "26a39a4110992d1d5f4036c0d54c83ae889853bda541d318e8192eebf88988a2",
+      "kind": "catalog-state-GET",
+      "startMs": 1279.9352,
+      "durationMs": 0.6337,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "d8f5423fa6d3edf4d9f388ef115b259143cc0b6a796860fe9b231ef240425972",
+      "parentSpanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "kind": "catalog-state-POST",
+      "startMs": 1391.1108,
+      "durationMs": 3.7203,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "79d1919f684370b7fbda32658d4ee2e706de5aa00df9b6335624654b27ae6335",
+      "parentSpanSha256": "d8f5423fa6d3edf4d9f388ef115b259143cc0b6a796860fe9b231ef240425972",
+      "kind": "catalog-state-POST",
+      "startMs": 1391.5836,
+      "durationMs": 2.6359,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "74c42a0e492d8559002e38bd9cdbead70e7503d2deda0c5a51a0f7d8e6259a71",
+      "parentSpanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "kind": "native-atomic-pair",
+      "startMs": 1397.8085,
+      "durationMs": 210.7808,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "1fda11b7363c1752bf7fe119d9c32c268561c41ebaf1bb262bb79ba4ad3ad89a",
+      "parentSpanSha256": "74c42a0e492d8559002e38bd9cdbead70e7503d2deda0c5a51a0f7d8e6259a71",
+      "kind": "native-atomic-pair",
+      "startMs": 1400.7942,
+      "durationMs": 207.4527,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "parentSpanSha256": "1fda11b7363c1752bf7fe119d9c32c268561c41ebaf1bb262bb79ba4ad3ad89a",
+      "kind": "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+      "startMs": 1404.0652,
+      "durationMs": 200.6309,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "bb4eeff14eaf51bf864d170d3c7ad83f7766cc81936d717dcc2725ec59255bc2",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "catalog-state-GET",
+      "startMs": 1463.7334,
+      "durationMs": 2.1277,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "93f79fe4839b686cd522fb3fe9712a7d3d9faeefd4805850f69d763b1d203387",
+      "parentSpanSha256": "bb4eeff14eaf51bf864d170d3c7ad83f7766cc81936d717dcc2725ec59255bc2",
+      "kind": "catalog-state-GET",
+      "startMs": 1465.0965,
+      "durationMs": 0.5703,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "f225b7b26867d17830a1f687036bd3b33a38ecc272e174fb3d48d7fe772a20aa",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "catalog-state-POST",
+      "startMs": 1581.9828,
+      "durationMs": 3.3561,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "4a70fe7eebe027abb1d402387aad61a505475d331a07065fb757bac629fa734e",
+      "parentSpanSha256": "f225b7b26867d17830a1f687036bd3b33a38ecc272e174fb3d48d7fe772a20aa",
+      "kind": "catalog-state-POST",
+      "startMs": 1582.3202,
+      "durationMs": 2.7706,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "46acbd4a1803e80233fc70d0267fe463f774d4bf4d91ca663072709cef78c65e",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "native-actor-state",
+      "startMs": 1587.7027,
+      "durationMs": 1.0327,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "ca89e8e24e04f2f5bea52ae760f6e865d77cbb96fe86d224d3eee8ead6d31037",
+      "parentSpanSha256": "46acbd4a1803e80233fc70d0267fe463f774d4bf4d91ca663072709cef78c65e",
+      "kind": "native-actor-state",
+      "startMs": 1587.9222,
+      "durationMs": 0.6014,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0a78cac88f8134c0bb5131bc6afb9cd0484d91fd45667eab1e7f793ab56dd9f3",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "native-actor-state",
+      "startMs": 1588.8547,
+      "durationMs": 0.7715,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "911b1ae4c11d495f3519817be88de0693b6824ed853bf09aced64eb57a30b813",
+      "parentSpanSha256": "0a78cac88f8134c0bb5131bc6afb9cd0484d91fd45667eab1e7f793ab56dd9f3",
+      "kind": "native-actor-state",
+      "startMs": 1588.9865,
+      "durationMs": 0.4218,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7671f7ad41bd04498242b1d8315ad940a524b680930f5588e47d82838a89d98c",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "catalog-state-GET",
+      "startMs": 1590.0294,
+      "durationMs": 0.7581,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "2080da3a86d0c9c2fbe86b2377129ecd14366c65f073cc601d02ff3a01e77d2f",
+      "parentSpanSha256": "7671f7ad41bd04498242b1d8315ad940a524b680930f5588e47d82838a89d98c",
+      "kind": "catalog-state-GET",
+      "startMs": 1590.1482,
+      "durationMs": 0.4779,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "700b8613d135491aa43cc935eb41dc6bb0929e5af874809157e576e1363171db",
+      "parentSpanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "kind": "catalog-state-POST",
+      "startMs": 1592.4232,
+      "durationMs": 11.962,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "7fdc84b07b934efde6dd1474b596bc939fcaeff5a73288270c31a32b3604d656",
+      "parentSpanSha256": "700b8613d135491aa43cc935eb41dc6bb0929e5af874809157e576e1363171db",
+      "kind": "catalog-state-POST",
+      "startMs": 1592.5914,
+      "durationMs": 6.1621,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "774197147964e6bd585379ece394bffbadcf051c770d97973476c1be1f96e9d9",
+      "parentSpanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "kind": "catalog-state-GET",
+      "startMs": 1609.5932,
+      "durationMs": 1.4825,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "09bec63c5742dba00ea5c855b26aa32fface766a04b439fcce45e2c5d6fc6b82",
+      "parentSpanSha256": "774197147964e6bd585379ece394bffbadcf051c770d97973476c1be1f96e9d9",
+      "kind": "catalog-state-GET",
+      "startMs": 1609.8896,
+      "durationMs": 0.9607,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "d7f8b8d3871f76e742391ebafe46b5a21e38930d7c1ab825c639659a6e024231",
+      "parentSpanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "kind": "catalog-state-POST",
+      "startMs": 1613.6644,
+      "durationMs": 3.2215,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "9dd5940eb243696f7bfc35128b0e54bf0b82ae32bbd24232d84be86648f0ee5e",
+      "parentSpanSha256": "d7f8b8d3871f76e742391ebafe46b5a21e38930d7c1ab825c639659a6e024231",
+      "kind": "catalog-state-POST",
+      "startMs": 1613.893,
+      "durationMs": 2.7748,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "19fc2b7779a7adb13712396ccd1115698bc036e5e7e456a1c55facf18e83476f",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:1639d4a86ac2be4d4ab33b0e3b4c7df69f4ec02c2c14d3c457c8dd8754418b6c",
+      "startMs": 1618.5006,
+      "durationMs": 0.4898,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "0f7f81a50ea367ef1f2d7e8ea5c10bb698f16520ec59b03df3bbb84e317d521c",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "operation-sha256:9aee6b1bcdf617d8e39bb1f2b624c68ea33deb9d48e0364aeaded836d3d00293",
+      "startMs": 1620.4115,
+      "durationMs": 11.8745,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "377e2d7eb6ae8464a76537e3e1b0d98dcf7632eb2a41568206fa65f0d0d47ebd",
+      "parentSpanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "kind": "metadata-transport",
+      "startMs": 1701.8958,
+      "durationMs": 294.247,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "folders-dapr-cli",
+      "spanSha256": "d45715ab881c56b0dc6cd80179dc1724e1ae54797b7ce7c57874e236b6f5c4c8",
+      "parentSpanSha256": "377e2d7eb6ae8464a76537e3e1b0d98dcf7632eb2a41568206fa65f0d0d47ebd",
+      "kind": "metadata-transport",
+      "startMs": 1702.3093,
+      "durationMs": 293.7159,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "cce5f8391ce65939129c6c345c18b754118ebbe617930f20c69fd48dad1c3d49",
+      "parentSpanSha256": "d45715ab881c56b0dc6cd80179dc1724e1ae54797b7ce7c57874e236b6f5c4c8",
+      "kind": "metadata-transport",
+      "startMs": 1706.2671,
+      "durationMs": 289.6236,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "parentSpanSha256": "cce5f8391ce65939129c6c345c18b754118ebbe617930f20c69fd48dad1c3d49",
+      "kind": "metadata-transport",
+      "startMs": 1706.7622,
+      "durationMs": 316.9517,
+      "recordedHttpStatus": "499"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "1b107c82d60b032a045adc02feeeae84ffa9d6a910a4502be2b14203afe87d44",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-GET",
+      "startMs": 1709.3447,
+      "durationMs": 3.2385,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "a788b325c6b07071c2e93f3035e82cfba49bd0d98d0c87dafe3bbc67ce56d1be",
+      "parentSpanSha256": "1b107c82d60b032a045adc02feeeae84ffa9d6a910a4502be2b14203afe87d44",
+      "kind": "catalog-state-GET",
+      "startMs": 1711.9381,
+      "durationMs": 0.5084,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "01476ee6a73b596aa2f17889792ab1ad8d31307ca320393b3e5e26febc24b214",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-POST",
+      "startMs": 1845.6225,
+      "durationMs": 3.1216,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "373a3301878ba78da18500b73d52bae7bd05401acf4608e259d0671108f36a6e",
+      "parentSpanSha256": "01476ee6a73b596aa2f17889792ab1ad8d31307ca320393b3e5e26febc24b214",
+      "kind": "catalog-state-POST",
+      "startMs": 1845.9473,
+      "durationMs": 2.5958,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7f35825fee2e83ba76079ffaa9d309fe2eb1124a7298d9aabf2cb28212eb40ee",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "native-atomic-pair",
+      "startMs": 1851.2628,
+      "durationMs": 195.536,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "e24c5e64004ad4db556fa401c318d659a768aee89a93ac765f831a33c741d80f",
+      "parentSpanSha256": "7f35825fee2e83ba76079ffaa9d309fe2eb1124a7298d9aabf2cb28212eb40ee",
+      "kind": "native-atomic-pair",
+      "startMs": 1851.4651,
+      "durationMs": 195.0999,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "parentSpanSha256": "e24c5e64004ad4db556fa401c318d659a768aee89a93ac765f831a33c741d80f",
+      "kind": "operation-sha256:d64f06307fb0738f75d95a9f9c70c7bf543680e252db6e75128a90f641dc731e",
+      "startMs": 1851.9915,
+      "durationMs": 194.2932,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "fa5d92bb8272f87b69fba123bb199e301268798951ef66e5c3cc21d73dd514b6",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-GET",
+      "startMs": 1880.3372,
+      "durationMs": 3.4473,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "70c957b5be11f59f9540c1a94e2cda08c3daf0d8da5b8972be9d040a2d4bb3d3",
+      "parentSpanSha256": "fa5d92bb8272f87b69fba123bb199e301268798951ef66e5c3cc21d73dd514b6",
+      "kind": "catalog-state-GET",
+      "startMs": 1882.7714,
+      "durationMs": 0.757,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a260708e168b1729a5f846240f9ae31f0cf677b1a24eeab0f62e4409b886776d",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-POST",
+      "startMs": 1973.734,
+      "durationMs": 14.0602,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "5d2302e7a526fa8507b1054c83dd3f165c015e15650d557cb26c209c245036ea",
+      "parentSpanSha256": "a260708e168b1729a5f846240f9ae31f0cf677b1a24eeab0f62e4409b886776d",
+      "kind": "catalog-state-POST",
+      "startMs": 1975.2591,
+      "durationMs": 12.3114,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "839dde24e609aa990dda5cf902f627845977047299ca8d12de4522797df721ca",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "native-actor-state",
+      "startMs": 1989.8662,
+      "durationMs": 6.3658,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "ac416a0b1490deaa55f10c408956e170eeae63243bb43dc456e52f51d2c2ee74",
+      "parentSpanSha256": "839dde24e609aa990dda5cf902f627845977047299ca8d12de4522797df721ca",
+      "kind": "native-actor-state",
+      "startMs": 1990.9081,
+      "durationMs": 4.8347,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "2238135b9b1bb6fe8f0a0869c1a240823d6446b70798ec826a643a3c516cefee",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "native-actor-state",
+      "startMs": 1996.3432,
+      "durationMs": 1.3853,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "8783889f71d39e13572f3cdcae9332ccd0629adf820ac51d8842070693ce629d",
+      "parentSpanSha256": "2238135b9b1bb6fe8f0a0869c1a240823d6446b70798ec826a643a3c516cefee",
+      "kind": "native-actor-state",
+      "startMs": 1996.3798,
+      "durationMs": 0.3652,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e720614991fc2f5b5f83e7143a7e5de63fca7558216ba693ef291959f2d0a57c",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-GET",
+      "startMs": 1996.9414,
+      "durationMs": 1.2567,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "9c2d14e797886c79fff7c5b08473ca80ec1c21b133cadb2cbd1a25535d7df683",
+      "parentSpanSha256": "e720614991fc2f5b5f83e7143a7e5de63fca7558216ba693ef291959f2d0a57c",
+      "kind": "catalog-state-GET",
+      "startMs": 1997.007,
+      "durationMs": 0.2803,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "ae8efedd8e88be0fe3c58ddb93f9d58c8ec66ccde98013be6f57973300be1a97",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-GET",
+      "startMs": 1998.0977,
+      "durationMs": 0.7578,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "a275f3db2c22d164f5cecf2aa123016f630c298a17133e122cbc0f2cdc8c65d0",
+      "parentSpanSha256": "ae8efedd8e88be0fe3c58ddb93f9d58c8ec66ccde98013be6f57973300be1a97",
+      "kind": "catalog-state-GET",
+      "startMs": 1998.1877,
+      "durationMs": 0.2631,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "42907206f2fe90e1f6d4b6262f4e9e8f0f88e27cfa89616020036f77275b5aad",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-POST",
+      "startMs": 1999.9095,
+      "durationMs": 5.8934,
+      "recordedHttpStatus": "409"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "2c90889e8a1a9ed3bc9d21f66bbf20e6fdbe2d3c893939f422083cb756e54d52",
+      "parentSpanSha256": "42907206f2fe90e1f6d4b6262f4e9e8f0f88e27cfa89616020036f77275b5aad",
+      "kind": "catalog-state-POST",
+      "startMs": 1999.9998,
+      "durationMs": 3.5687,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "b7eb4a56b02947ebccbd0e751eacf89f4b1cd7d65dcefc00b119a58ba0860b5a",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-POST",
+      "startMs": 2005.4706,
+      "durationMs": 3.2192,
+      "recordedHttpStatus": "409"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "43406f9258e57baab743c9b771887d0ef6cde33bb08d91135f7638a676a7eb71",
+      "parentSpanSha256": "b7eb4a56b02947ebccbd0e751eacf89f4b1cd7d65dcefc00b119a58ba0860b5a",
+      "kind": "catalog-state-POST",
+      "startMs": 2005.6332,
+      "durationMs": 2.919,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a979bec46f361bc671ce12b87e7756478524d1602f21da3ed20bbfc338b2e0b7",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-GET",
+      "startMs": 2008.1867,
+      "durationMs": 0.6543,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "63f2da015f3f58ec3dee436ba868fdbde8584acf9482522a355ecd2dfda095d6",
+      "parentSpanSha256": "a979bec46f361bc671ce12b87e7756478524d1602f21da3ed20bbfc338b2e0b7",
+      "kind": "catalog-state-GET",
+      "startMs": 2008.2966,
+      "durationMs": 0.5083,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "9708eec7722e3e9d526857b29ea7b79130668b1f2e2ce908f83405446fea9b96",
+      "parentSpanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "kind": "catalog-state-POST",
+      "startMs": 2013.9015,
+      "durationMs": 9.4399,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "7ae8d36a848545f726000ca5ad9384491752f7d1185f42a2af7c786e134cd14e",
+      "parentSpanSha256": "9708eec7722e3e9d526857b29ea7b79130668b1f2e2ce908f83405446fea9b96",
+      "kind": "catalog-state-POST",
+      "startMs": 2014.073,
+      "durationMs": 9.0515,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "efa69ef3f7316bc22100e872c1f9513b3f851023822ab16ccaed2dedada7e28d",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-GET",
+      "startMs": 2014.579,
+      "durationMs": 5.2945,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "de409a8fa7b26793064874195b592ac7db1a533a2096839c0c5c4eedb093f8bd",
+      "parentSpanSha256": "efa69ef3f7316bc22100e872c1f9513b3f851023822ab16ccaed2dedada7e28d",
+      "kind": "catalog-state-GET",
+      "startMs": 2014.6908,
+      "durationMs": 0.3824,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "cca845847ce37d3dbe9839999347a353d06bcdca250e6ba626fd0113360f8037",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-POST",
+      "startMs": 2022.1508,
+      "durationMs": 2.6911,
+      "recordedHttpStatus": "409"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "30299545c486823e3ea4eaecb7783564310562adf4fe109eb2bec15ca2954653",
+      "parentSpanSha256": "cca845847ce37d3dbe9839999347a353d06bcdca250e6ba626fd0113360f8037",
+      "kind": "catalog-state-POST",
+      "startMs": 2022.3598,
+      "durationMs": 2.3148,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a66e98b9881de33db609e6345b417aba07a27537cd0654b6e361eb7f07c4f6ad",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-GET",
+      "startMs": 2038.8671,
+      "durationMs": 1.3675,
+      "recordedHttpStatus": "200"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "50376c017946f0e748fb81624223ed6568262c08f6ecf23504bf580705eef943",
+      "parentSpanSha256": "a66e98b9881de33db609e6345b417aba07a27537cd0654b6e361eb7f07c4f6ad",
+      "kind": "catalog-state-GET",
+      "startMs": 2039.1867,
+      "durationMs": 0.8264,
+      "recordedHttpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "5f1b4e1d0ea91fe3abd3bcd602df83b35f4a2647948e83052688f9c0caeb40ba",
+      "parentSpanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "kind": "catalog-state-POST",
+      "startMs": 2042.1983,
+      "durationMs": 3.9069,
+      "recordedHttpStatus": "204"
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "spanSha256": "6dea4762a75ec48aadc273c7e3f39a0442e2152e9c0643cdbf71cfba642697cb",
+      "parentSpanSha256": "5f1b4e1d0ea91fe3abd3bcd602df83b35f4a2647948e83052688f9c0caeb40ba",
+      "kind": "catalog-state-POST",
+      "startMs": 2042.5442,
+      "durationMs": 3.3438,
+      "recordedHttpStatus": null
+    }
+  ],
+  "catalogPhaseEvents": [
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 21.2629,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "14.4848"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 22.0401,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7752"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 87.063,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "65.0211"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 87.9038,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.8391"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 97.7398,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "96.787"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 101.8442,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.0444"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 102.6251,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7792"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 183.4515,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "80.8249"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 188.3574,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "4.9045"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 230.9407,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "133.0591"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 266.5299,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "7.7257"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 267.3216,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7893"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 339.0845,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "71.7611"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 344.7099,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "5.623"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 848.8542,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.7184"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 849.5592,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7029"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 909.4411,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "59.8806"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 910.114,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.6718"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1190.7586,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.799"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1191.5318,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7707"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1261.8712,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "70.3376"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1262.6506,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.7777"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1635.7406,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.0807"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1638.554,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "2.8109"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1700.5933,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "62.0367"
+      }
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "spanSha256": "8d6b01db45284f6ea0c24a30e4ed02c8660eff0a523f2705d24581c7517e081e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1701.7937,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.196"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 354.6447,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.053"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 355.3758,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7291"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 459.9292,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "104.5512"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 460.6595,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.7287"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0b559b06ac61cf39553426a71f9ddef54655c7ed8219ddd693e22aed828e2443",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 480.0926,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "131.0962"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 586.8237,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "15.906"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 587.5789,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7534"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 695.3608,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "107.7804"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 696.4244,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.0612"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "6eb2ceff2af94d118eb236bdb7d2cb6752458e0f2cd9dc051e968e0caeb05505",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 714.8441,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "153.0864"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 918.2489,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.2005"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 918.9548,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7042"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 981.0404,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "62.0836"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 981.7387,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.6966"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "73df174232466e81e12fedfeecc4238d61b6e03816f408230ded12d5a1a21f42",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 994.7248,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "80.5554"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1044.4305,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.3105"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1045.1464,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7144"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1143.0454,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "97.897"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1143.8128,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.7653"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "e558dc306b079ca433c5393deba967b8f77fe6dba27b8a32e86fafa09f0f611e",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 1157.2049,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "133.321"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1283.2723,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "0.9261"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1296.0936,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "12.8193"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1389.6544,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "93.5572"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1390.8368,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.179"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7ba1a1b7b96e1692fa27608275078dc13ce1a1a9c882d96f1072569b2ec99ce6",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 1397.1109,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "123.1337"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1468.5838,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.0336"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1469.2863,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.7013"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1580.9601,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "111.6724"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1581.7933,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.8307"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "7860e71e92f0c9015fec29e7a47a54304c67e70a4968c119771c010d8b35ca83",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 1587.4883,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "123.9094"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1715.5206,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.0442"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1720.4305,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "4.9075"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1843.7268,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "123.2945"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1845.4142,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "1.6859"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "0479393df3f16f1df0df1b15c990281d13c2e25f4d729d525ffcd5697ba68965",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 1850.6781,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "141.4684"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1886.4917,
+      "attributes": {
+        "phase": "binding",
+        "elapsed_ms": "1.0494"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1887.1441,
+      "attributes": {
+        "phase": "profile",
+        "elapsed_ms": "0.6507"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1972.9088,
+      "attributes": {
+        "phase": "observer",
+        "elapsed_ms": "85.7635"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "event": "private.route_catalog.validate_phase",
+      "startMs": 1973.5893,
+      "attributes": {
+        "phase": "trust",
+        "elapsed_ms": "0.6792"
+      }
+    },
+    {
+      "resource": "eventstore",
+      "spanSha256": "a402cbe18b47827afffa04844a9d01c072d729cc4d2f107a01aab837f31015d9",
+      "event": "private.route_catalog.decode_scope",
+      "startMs": 1989.679,
+      "attributes": {
+        "enabled": "true",
+        "completed": "true",
+        "request_canceled": "false",
+        "capture_count": "7",
+        "cache_hits": "7",
+        "document_count": "1",
+        "retained_bytes": "216267",
+        "host_memo_enabled": "true",
+        "elapsed_ms": "109.6012"
+      }
+    }
+  ],
+  "noLateCompletionAccepted": true,
+  "cleanupAndExternalPreservationPassed": true
+}

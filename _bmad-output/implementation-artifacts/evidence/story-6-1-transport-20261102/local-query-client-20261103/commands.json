@@ -1,0 +1,59 @@
+{
+  "status": "narrow-controls-passed-full-regression-diagnostic-pending",
+  "sourceHashes": {
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs": "bb25912afc99cb6caf89a003ad948a56932f515279a619df9ba4d1f1d04713b7",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs": "b6c94e1282e551ef99ea36fe5d3e7632cf27369b2b578684add0b4ba2d21fb41",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureRouteCatalogTests.cs": "dc82aa64c2e807b9793c56a9d1a5869137942903469b8e797ab258d22d00d7e4"
+  },
+  "newControl": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs::NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "testCommand": [
+    "dotnet",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-method",
+    "*NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+    "-method",
+    "*OperationsDescribeTheSixActualQueryAndResultPairs",
+    "-xml",
+    "/tmp/story61-local-query-client-control.xml"
+  ],
+  "testEnvironment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "results": [
+    {
+      "total": "2",
+      "passed": "2",
+      "failed": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "errors": "0",
+      "time": "0.559"
+    }
+  ],
+  "actualAssertions": [
+    "SDK named query invoker reaches registered fixture receiver exactly once",
+    "Bound DaprHTTPtrap receives zero invocations",
+    "Real issued workload JWT passes signature,issuer,audience,lifetime andHS256algorithm validation",
+    "Raw issuer azp is eventstore and operation is domain-service:query",
+    "App-channel token exact and human bearer absent"
+  ],
+  "fixtureOnlyRepair": true,
+  "productionRoutingOrAuthorityChanged": false,
+  "notDistributedFeatureAuthorityEvidence": true,
+  "refusedInitialSelections": [
+    "Mixed positive class/method filters selected zero tests, retained and rejected.",
+    "New checker initially inspected rebuilt workload claim on rawJWT; failed controls retained. Checker now validates raw azp withMapInboundClaims=false."
+  ]
+}

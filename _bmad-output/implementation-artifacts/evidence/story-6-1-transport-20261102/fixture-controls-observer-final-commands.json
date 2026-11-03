@@ -1,0 +1,43 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-observer-final.xml"
+  ],
+  "passed": 76,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "75206dcee8bcc5d861a66b6ced39afbef5fde1c607c48e04bf3f8817a36c185c",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "332fccc34eb7e74fa12145d99c5eae86f114aa16514e06d814babbf4fe9ae7b7",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "3dfc4ca2c3e91e46f1a49a749454026637d20ea70342fadef7f292cc3c45f438",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "29ea45905f229069a8099987bc5d8d1c35ff5b6221fe6009e0a4977d71b5215c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "003a88323471ad2b77dcac93a37e819083b0c59c3d0ac36728616c65b23a4b86",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "d3e917a400906259889edc93ec5473d1890be0a5dc8d5c6cdc7299c1bcd5e431",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs": "fb146fc8194cfd05d8bd1406d0959bd768b2922b2728d8743fe89d8c54ebc314",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs": "f061b65fad6fcadb9eceeaaf9a72398832ef85a6363071691d9c5aea6b4b2265",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "5ba662e443be6a710ac4080bde25a46ff38738a13f798db4e9c860482d683a15",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "0fdae1121d22eb99b6af710eb234fd6d35bfeccb878ce5a14dd34faa1eddaa1d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs": "2c34e2873d94d1879fff94cdcee24e283feefa9979b1fe528669590e7c1be5b2"
+  }
+}

@@ -182,7 +182,43 @@ audited through the same explicit success events as any other command chain: `Pr
 conversation assignment effects outside this aggregate, optional `ProjectFolderSet`, and optional
 `FileReferenceLinked`, with only safe correlation/task/idempotency metadata.
 
+### `ProjectChatBotAuthorityGranted`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectChatBotAuthorityGranted` (`IProjectEvent` → `IEventPayload`).
+- **Purpose:** Records a bounded, exact ChatBot authority issuance after current Tenant owner validation.
+- **Emitted by:** `ProjectsDomainProcessor.ProcessChatBotAuthorityAsync` for `GrantProjectChatBotAuthority`.
+- **Sensitivity class:** metadata-only authority and idempotency metadata; no credentials, tokens, or sibling payloads.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `PrincipalId`, `Operation`, `ActorClass`, `Origin` — the exact issuance scope.
+  - `GrantId` — unique issuance identity; `ExpiresAt` — bounded UTC expiry.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — actor, request, and idempotency metadata.
+  - `OccurredAt` — pipeline-clock issuance instant.
+- **Consumers:** `ProjectStateApply` folds the issuance into authoritative aggregate state; `ProjectChatBotAuthorityQueryHandler` replays that state for exact authority evidence. `ProjectReadProjectionHandler` explicitly treats this event as a deterministic metadata no-op, advancing sequence/position evidence without changing list/open metadata or granting read authority. List/open still requires current authenticated Tenant, actor, workload/delegation, and Folder authorization.
+
+### `ProjectChatBotAuthorityRevoked`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectChatBotAuthorityRevoked` (`IProjectEvent` → `IEventPayload`).
+- **Purpose:** Records revocation of the current exact ChatBot authority issuance after current Tenant owner validation.
+- **Emitted by:** `ProjectsDomainProcessor.ProcessChatBotAuthorityAsync` for `RevokeProjectChatBotAuthority`.
+- **Sensitivity class:** metadata-only authority and idempotency metadata; no credentials, tokens, or sibling payloads.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `PrincipalId`, `Operation`, `ActorClass`, `Origin`, `GrantId` — exact scope and current issuance being revoked.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — actor, request, and idempotency metadata.
+  - `OccurredAt` — pipeline-clock revocation instant. Revocation carries no `ExpiresAt` field.
+- **Consumers:** `ProjectStateApply` marks the matching issuance revoked; `ProjectChatBotAuthorityQueryHandler` replays that authoritative state. `ProjectReadProjectionHandler` explicitly treats this event as a deterministic metadata no-op that advances sequence/position evidence; it never establishes list/open authority.
+
 ## Rejection events
+
+### `ProjectChatBotAuthorityRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectChatBotAuthorityRejected` (`IRejectionEvent`).
+- **Purpose:** Records a fail-closed refusal of a ChatBot authority grant or revocation.
+- **Emitted by:** `ProjectsDomainProcessor.ProcessChatBotAuthorityAsync` for unavailable owner/source/Project evidence, invalid scope/payload, an active issuance, or a revocation mismatch.
+- **Sensitivity class:** metadata-only bounded refusal code; no protected identities, raw payload, or upstream error details.
+- **Fields:** only `ReasonCode`, the stable refusal code. Identity/correlation fields are not part of this payload.
+- **Consumers:** EventStore rejection handling; `ProjectChatBotAuthorityQueryHandler` recognizes rejection events without applying authority changes. `ProjectReadProjectionHandler` explicitly treats this event as a deterministic metadata no-op that advances sequence/position evidence; it never creates a Project or grants list/open authority.
 
 ### `ProjectCreationRejected`
 

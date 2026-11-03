@@ -1,0 +1,25 @@
+{
+  "actualMatrixRows": [
+    "authorized-list-continuation-open"
+  ],
+  "actualClientResponse": {
+    "domain": "projects",
+    "actualTransportHttpStatus": 500,
+    "responseBytes": 106,
+    "responseSha256": "919E0B3DF9C00C55A988B213451B6210E52623034FE175FB958D9A3DFFE1CF17",
+    "expectedReceiverHttpStatus": 401,
+    "statusSubstituted": false
+  },
+  "actualReceiverDenialCount": 5,
+  "actualReceiverStatus": 401,
+  "actualReceiverReason": "issuer-invalid",
+  "actualResiliencyLoadOrder": [
+    "supported-reads-owner-deadline",
+    "projects-local-resiliency"
+  ],
+  "actualNativeRetryLogCountRetained": 1,
+  "selectedNoRetryPolicyWasNotEffective": true,
+  "originalStatusAssertionRetained": true,
+  "statusConverted": false,
+  "nextRepair": "One complete eventstore-scope private policy cloned from actual defaults, targetedProject0retry/noappbreaker andFolder2s; eventstore loads onlyprivatepolicy path, otherpeers retainoriginalpath. Neverdependonduplicatepolicyloadorder."
+}

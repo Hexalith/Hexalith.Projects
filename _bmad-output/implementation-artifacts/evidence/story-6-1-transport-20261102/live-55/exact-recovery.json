@@ -1,0 +1,48 @@
+{
+  "kind": "separate-exact-recovery-after-failed-qualification",
+  "failedReportSha256": "6c8204ff857d18c8096d6a4ab853c517bf91376216ff24eef409075eff1dfd87",
+  "failedReportUnchanged": true,
+  "qualificationAccepted": false,
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "6ceecb1816fd2a769d50633fcf4e6e77e4f9ad8659daba37df8507519bf763b3",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "6bed06ea386256612dc11d1179fa41d116980c547f16785025fb9a5f11eb2b9f",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-72f7c9b9a5f8547768a98028-redishost",
+      "containerId": "7490cecc98d873466fb08917906354c22d4f71455a2f6d4998243222a4674f26",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "34a1c349d608f65b544749d50256c8ed324cc768c81ded66673c8c19e089355d",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    }
+  ],
+  "ownedSidecarsAbsent": true,
+  "ownedAppHostProcessIdentitiesAbsent": true,
+  "originalStoppedInfrastructureCaptureValid": true,
+  "privateMaterialRemoved": true,
+  "preexistingResourcesPreserved": true,
+  "recoveryCompleted": true,
+  "lockIdentityAndMetadataPreserved": true,
+  "admissionReleased": true
+}

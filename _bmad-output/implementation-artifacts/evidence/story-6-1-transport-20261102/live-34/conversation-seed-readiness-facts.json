@@ -1,0 +1,33 @@
+{
+  "nativeLogSha256": "520d9e51a65498bedbd12cb6d1636aa500d5f4790fb00040869904f684f44362",
+  "recordedLoadedComponents": [
+    "pubsub",
+    "readscatalog",
+    "statestore"
+  ],
+  "conversationNamedComponentLoaded": false,
+  "nativeCallbackBodyRetained": false,
+  "projectionReadinessCompleted": false,
+  "matrixRowsExecuted": 0,
+  "ownedTeardownVerified": true,
+  "privateMaterialRemoved": true,
+  "preexistingResourcesPreserved": false,
+  "unownedObservationChange": {
+    "kind": "daprd",
+    "appId": "commandapi",
+    "processId": 1304701,
+    "actionAgainstItInvoked": false,
+    "causeEstablished": false
+  },
+  "repair": "Model the existing conversation-start-setup handler named Dapr store on exact owned Redis; reference only Projects sidecar. Do not alter handler, auth, budgets or completion guards.",
+  "actualCheckpoint": {
+    "projection": "conversation-start-setup",
+    "lastDeliveredSequence": 0,
+    "receiptCount": 0,
+    "activeRange": {
+      "from": 1,
+      "through": 2
+    },
+    "idleBindingPending": false
+  }
+}

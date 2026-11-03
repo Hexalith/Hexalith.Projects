@@ -1,0 +1,89 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "d42b83b35571658ae99aed00579a41b4a6734517670bb8fd349c735c94a6f873",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs": "668aa4a99f0fd011f3534825de852f5903cd146e8033426bddc7dfdc522f16a1",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadScenarioEvidence.cs": "1a8e5c63795d34dd59360a54a3fc6b189d6bed359be9bc01e3eb9b579294b278",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "5e211236448d612978c095749a9b5d170b0fee58186186781d94694bc50e3a4e"
+  },
+  "commands": [
+    [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-class",
+      "*SupportedProjectReadFixtureTopologyTests",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadConcurrencyTests",
+      "-xml",
+      "/tmp/story61-observer-scheduling-fixture.xml"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "fixtureResults": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 14 threads)]",
+      "id": "df7f4bdc-8a65-4aa2-8ae9-888341062383",
+      "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "13:33:34",
+      "start-rtf": "2026-11-03T13:33:34.2866922+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T13:33:36.0354433+00:00",
+      "not-run": "0",
+      "passed": "125",
+      "skipped": "0",
+      "time": "1.749",
+      "time-rtf": "00:00:01.7490000",
+      "total": "125"
+    }
+  ],
+  "buildResult": {
+    "warnings": 0,
+    "errors": 0,
+    "elapsedSeconds": 6.03
+  },
+  "initialFailedBuildPreserved": "story61-observer-scheduling-build.log",
+  "initialFailure": "One missing explicit ConfigureAwait on an awaited Task variable; corrected without suppression.",
+  "changes": "The same20requiredSnapshotkeys use existing StatesAsync (four raw hashes one atomic batch, sixteen logical reads cap8), exact order/keyset/nonempty retained. Full existing provider parity control deferred from Seed to after all case feature assertions and before matrix receipt/native success; all104domain+4binary complete comparisons remain mandatory.",
+  "ordinaryProfileUnchanged": true,
+  "sdkRuntimeAuthorityClockBudgetChange": false,
+  "noRequiredFeaturePhaseOrRequestRemoved": true,
+  "benchmarks": [
+    "../scenario-observer-profile/result.json",
+    "../scenario-provider-control-profile/result.json"
+  ],
+  "timingModel": "Eight pre-final Snapshot raw batching savings~8.11s plus complete108-key cap8 control~9.55s deferred, ~17.66s modeled advance of last Foreign reads; not a runtime guarantee. All payloads remain privately retained; full actual qualification pending."
+}

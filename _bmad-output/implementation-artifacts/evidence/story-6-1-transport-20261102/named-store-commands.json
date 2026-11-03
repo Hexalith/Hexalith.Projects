@@ -1,0 +1,41 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "416b553ffd153b7e16fade7ac648c4e8e87f2dff39126de9f23c92bf05df3d20",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "bdff7bc122aa5e2e617d068cc4e2775ea443878013bffdc3bc1667960ebf1ba5",
+    "src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs": "e57c241ac96714fcedee920ce67f876b481050fbc2471e99a9687fb278ddb8e4"
+  },
+  "actualNativeBefore": "live-34/conversation-seed-readiness-facts.json",
+  "selectedRepair": "Finite state.redis projects-conversation-start-setup on same ownedRedis, keyPrefixname; onlyProjects sidecarreference, handler/auth/deadlines/completion rules unchanged. Positive topology uses actual handlerStoreName and exact componentreference; every otherreceiver mustlackreference.",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-named-store.xml"
+  ],
+  "nativeResult": {
+    "total": "83",
+    "passed": "83",
+    "failed": "0",
+    "skipped": "0",
+    "not-run": "0"
+  },
+  "runtimeAcceptance": "Pending freshlive35, all11rows/fullIntegration/Server remainrequired"
+}

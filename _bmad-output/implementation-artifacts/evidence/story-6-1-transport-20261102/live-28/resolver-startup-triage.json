@@ -1,0 +1,48 @@
+{
+  "observedUtc": "2026-11-03T03:29:33.657871+00:00",
+  "originalAttempt": "live-28",
+  "originalOutcomePreserved": true,
+  "matrixAccepted": false,
+  "nativeSidecarProcesses": 6,
+  "registeredApps": 5,
+  "missingKnownApp": "tenants",
+  "appConfigNon200ReturnsEmptyConfigurationWithoutError": true,
+  "sqliteInitFailureLoggedAndRuntimeContinues": true,
+  "fixtureResolverOptions": [
+    "connectionString"
+  ],
+  "defaultCleanupIntervalSeconds": 3600,
+  "garbageCollectionHasNoInitialPass": true,
+  "garbageCollectionCannotExplainThisShortAttemptUnderActualDefaults": true,
+  "actualRegistrationFailureReason": "not retained: Tenants native CLI omitted from original failure log capture",
+  "selectedChange": "private failure-log coverage now includes all six existing native CLI resources; no runtime/auth/config/budget change",
+  "sourceInputs": [
+    {
+      "url": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/channel/http/http_channel.go",
+      "sha256": "adbc3e13df6a8e54b257165596a1ee106ab74f0a456fb92248d5637b150adb27"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/runtime/runtime.go",
+      "sha256": "507306a037a4e4b18a5826acf78ed3376180d9bc03ecdd86dbf53559e7133f1a"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/dapr/components-contrib/v1.18.6/nameresolution/sqlite/sqlite.go",
+      "sha256": "d12f0bd7e8c6ea104d9d236acf07f2a133906d877bd704d6c56c7d655be7f160"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/dapr/components-contrib/v1.18.6/nameresolution/sqlite/sqlite_metadata.go",
+      "sha256": "b775d41ccdff1d9e75430a63617815ffa31fa4faf415f38040d5c5c6147c2588"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/dapr/components-contrib/v1.18.6/common/component/sql/cleanup.go",
+      "sha256": "02900e4a4db8172d5fe542dae5cf353bd82bbebc7b73902951e359acb17771b2"
+    }
+  ],
+  "verification": {
+    "command": "python3 -m unittest discover -s tests/tools -p test_supported_project_reads_launcher.py",
+    "total": 84,
+    "passed": 84,
+    "failed": 0
+  },
+  "launcherSha256": "cac2c4ca47a01576c760e6ee2b508a8d960de28a3114f85c96a69b0d9c38cb24"
+}

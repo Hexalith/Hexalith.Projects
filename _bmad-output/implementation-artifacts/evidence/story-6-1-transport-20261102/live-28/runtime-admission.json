@@ -1,0 +1,40 @@
+{
+  "protocol": "existing-cooperative-same-user-nonblocking-advisory-lock",
+  "lockPath": "/tmp/hexalith-timesheets-local-runtime.lock",
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-28"
+  ],
+  "acquired": true,
+  "released": true,
+  "contentsReadOrWritten": false,
+  "lifecycleOfOtherTasksInvoked": false,
+  "acquiredUtc": "2026-11-03T02:58:24.046121+00:00",
+  "identity": {
+    "device": 2096,
+    "inode": 1110522,
+    "uid": 1000,
+    "mode": 384,
+    "links": 1,
+    "size": 0,
+    "modifiedNs": 1793620078044563332
+  },
+  "launcherPid": 2820287,
+  "childExitCode": 1,
+  "lockIdentityAndMetadataPreserved": true,
+  "releasedUtc": "2026-11-03T03:05:23.161071+00:00",
+  "wrapperCommand": [
+    "MSBUILDDISABLENODEREUSE=1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+    "DOTNET_PROCESSOR_COUNT=2",
+    "python3",
+    "/tmp/story61-admitted-launch28.py"
+  ],
+  "wrapperSha256": "52183c5cf1bb7666e56b4b7ac7eeb4bb57ba9513cbf7d8c44a35804b459e6198",
+  "wrapperRetained": "runtime-admission-wrapper.py"
+}

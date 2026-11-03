@@ -12,6 +12,7 @@ internal sealed class GatewayFixtureLocalRoutes
         public bool TamperNextProjectQuery { get; set; }
         public bool HumanBearerForwarded { get; set; }
         public int OwnerQueries { get; set; }
+        public ConcurrentQueue<string> TransportResponses { get; } = new();
         public void Add(string name, WebApplication app) => Hosts[name] = new Uri(app.Urls.Single());
     }
 #endif

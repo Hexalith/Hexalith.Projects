@@ -1,0 +1,122 @@
+{
+  "actualMatrixRows": [
+    "authorized-list-continuation-open",
+    "public-user-and-workload-trust-remain-separate",
+    "populated-foreign-tenant-and-absent-safe-denial",
+    "owned-projects-process-restart-retains-reads-continuation-and-state",
+    "inspection-permission-and-durable-metadata-only-audit",
+    "audit-storage-unavailable-blocks-disclosure",
+    "revocation-observes-real-head-and-invalidates-old-continuation",
+    "owned-folder-outage-honest-unavailability-and-recovery",
+    "authenticated-command-and-projection-compatibility"
+  ],
+  "matrixCompleted": false,
+  "actualReplayTruthFailure": {
+    "observedAt": "2026-11-03T07:08:19.4279215+00:00",
+    "fixtureElapsedSeconds": 309.8871257,
+    "tenantSha256": "75D3DA3E53D5300730B32043541CA6EC6955FFA4D23C50731C569ED13CB1DF9F",
+    "tenantActor": true,
+    "requestedPageSize": 1,
+    "requestedContinuation": false,
+    "httpStatus": 200,
+    "admission": {
+      "httpStatus": 200,
+      "responseState": "Unavailable",
+      "asOfPresent": true,
+      "projectVersion": 0,
+      "itemCount": 0,
+      "hasMore": false,
+      "cursorPresent": false,
+      "components": [
+        {
+          "name": "FolderVisibility",
+          "nameSha256": "0F51A5160ADD651A9508DAAAC8C358C446B35B55AFCB01C283CB3F56FA31D517",
+          "included": false,
+          "freshness": "Unavailable",
+          "reason": "FolderUnavailable",
+          "reasonSha256": "CD42558BF6027DA29C81CFC8265C3DDA9999898DDE57A0D7001AB223F8C6DF04",
+          "lastVerifiedAtPresent": true
+        }
+      ]
+    }
+  },
+  "priorPrimaryContinuation": {
+    "observedAt": "2026-11-03T07:08:12.3787584+00:00",
+    "fixtureElapsedSeconds": 302.837963,
+    "tenantSha256": "2E3BDDAF101E497670ED6EB2624B26BA50BD8505C27ED1FBF95BF1F1C7719E30",
+    "tenantActor": true,
+    "requestedPageSize": 1,
+    "requestedContinuation": true,
+    "httpStatus": 200,
+    "admission": {
+      "httpStatus": 200,
+      "responseState": "Complete",
+      "asOfPresent": true,
+      "projectVersion": 0,
+      "itemCount": 1,
+      "hasMore": false,
+      "cursorPresent": false,
+      "components": [
+        {
+          "name": "Enumeration",
+          "nameSha256": "DF9E302D15F011D9AC92F4D70E553B970C7A6EE6897C814B34A771ACA7932A6C",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current",
+          "reasonSha256": "E0D1B68224BF0B31EF16B206C65B5F8F6B89D18161F4A7CDCB8D0AC8D952549A",
+          "lastVerifiedAtPresent": true
+        }
+      ]
+    }
+  },
+  "actualOldestForeignTenantSourceTimestamp": "2026-11-03T07:03:19.1500942+00:00",
+  "actualForeignSourceAgeSecondsAtFailedResponse": 300.277827,
+  "actualTenantSourceDocuments": [
+    {
+      "keySha256": "ebf4552ab818b40cb52df1b329869891abf5a0301d54957dbf85f677ab3b91bc",
+      "sourceTimestamp": "2026-11-03T07:04:35.8311833+00:00",
+      "stateBytesSha256": "1e851ac5ad53e024ac11295f726589f8234178acbf3b3125b92f72b08bd1421c"
+    },
+    {
+      "keySha256": "1c312e1254848a7c8fc7d220d2d57701f35dd22a556d58a3843d4c8259b13807",
+      "sourceTimestamp": "2026-11-03T07:04:35.8311833+00:00",
+      "stateBytesSha256": "49c900ef58ae431a1d84a31da67468af44423e4b4d611f590343b3bc60b5ba5f"
+    },
+    {
+      "keySha256": "abceee6fe85979f69efd9b8edb8e254674eee4ce0592f85f4ead990e8318ba82",
+      "sourceTimestamp": "2026-11-03T07:03:19.1500942+00:00",
+      "stateBytesSha256": "0eedb8b992e0b0a87c9182720f595af34e80c12c6853959d6230280880a5b160"
+    },
+    {
+      "keySha256": "d4ba68adadc5782458f6270a2c888237762bba2e2b9cd68e700b5a3552cb448f",
+      "sourceTimestamp": "2026-11-03T07:03:19.1500942+00:00",
+      "stateBytesSha256": "c2f44ec3fe525be488e4404db62da77db577b40398a0a46695a0b48b80d5f6af"
+    }
+  ],
+  "actualAuditRecoveryRecord": [
+    "projects-process: attempts=1, statuses=200, transportFailures=0, authorizedRecovery=True",
+    "audit-storage-non-descriptive-list: attempts=1, statuses=200",
+    "audit-storage-non-descriptive-open: attempts=1, statuses=200",
+    "audit-storage-non-descriptive-open: attempts=1, statuses=200",
+    "audit-storage-non-descriptive-list: attempts=1, statuses=200",
+    "audit-storage: attempts=1, statuses=200, transportFailures=0, authorizedRecovery=True",
+    "folder-service: attempts=2, statuses=200,404, transportFailures=0, authorizedRecovery=True"
+  ],
+  "replayAttemptObservationCount": 0,
+  "interpretation": "Primarytruthpage/continuationComplete. Firstforeigntruth200withUnavailable/FolderVisibilityand0items, notmisorderedrows. ActualquietForeignTenant sourceagecrossedunchanged300s; keepassertion/authoritybudget.",
+  "proposedNextAssessment": "Moveoriginalduplicate/fullreplay scenarios beforecapturingmainretainedcursor/restart/revocationbaseline, samesingleprovider/allassertions; recordactualnewcaseorderstrictly. Noguardorbudgetrelaxation.",
+  "cleanup": {
+    "ownedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "preexistingResourcesPreserved": false,
+    "externalObservationsChanged": {
+      "apphosts": [],
+      "containers": [
+        "5e2e2ba646e6",
+        "7679879033d1"
+      ],
+      "sidecars": []
+    }
+  },
+  "rawObservationSha256": "888f2ceaa2a16044d2fdb442183e2e6fe518fe0438ee5c3b5274e03bbf79f7d4"
+}

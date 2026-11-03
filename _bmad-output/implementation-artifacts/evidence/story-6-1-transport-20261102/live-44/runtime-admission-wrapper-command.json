@@ -1,0 +1,28 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "command": [
+    "env",
+    "MSBUILDDISABLENODEREUSE=1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+    "DOTNET_PROCESSOR_COUNT=2",
+    "python3",
+    "/tmp/story61-admitted-launch44.py"
+  ],
+  "wrapperSha256": "941ef334f9cb69335f7e07783b25d73a875f74729b49a74d86ce8d7bd0a810d0",
+  "diagnosticSources": {
+    "story61-capture-owned-diagnostics.py": "53e0c3c5d6b92d45dfe1520a053a30abb9818a20873ccb9e2beda9a29ff6ff88",
+    "story61-capture-catalog-inputs.py": "86c2008bad249426828a43e7c76e1407dbcbb37df40d5ff7f609d381a6473ef2",
+    "story61-monitor-stops.py": "e072bb7756222aabaabaca2031ae6f96496283aa654ababacb7417e3bcf9b8b2",
+    "story61-capture-freshness-and-audit.py": "a0e7aa7fc89a85aa23490baa17afaada87944dccc586e8e8bd1e90c35ce992ca",
+    "story61-capture-seed-proof-state.py": "5076b7b6da1972034f250070570f1688f36d0f42c60cef36e7e8b7cfb8a4e269",
+    "story61-capture-cutover-proof-state.py": "af0b89dc2f08e906e5b9fe132265566876541b45711aa5810a08e4f22c8b618c",
+    "story61-capture-delivery-work-proof-state.py": "01c1b1225e8d3f400c2511fa9220b8cef0e7ee20ecdd388c58890e85fba71e19",
+    "story61-capture-shared-epoch-proof-state.py": "32c235ccf4594405f9e3912cb80d98ab695e4441271b511e80b61fb0c68b5bc9",
+    "story61-recover-live44.py": "e3812498e0ad8263eefa1307c7ca8d50a3e7f7147e8692b2ee5b2694ab31cfcb"
+  },
+  "allEightObserversExitedZero": true,
+  "rawDiagnosticsDirectory": "/tmp/story61-owned-diagnostics-live44-iuyhozi8",
+  "originalExternalPreservation": false,
+  "originalPrivateRemoval": false,
+  "separateOwnedRecoveryPrivateRemoval": true
+}

@@ -1,0 +1,362 @@
+{
+  "proof": {
+    "catalog": {
+      "bytes": 216267,
+      "root": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+      "canonicalBytesAndFacetsUnchanged": true,
+      "activationInputSha256": "b979dce022586ade399e33cb9d6cb839a44a6d86d531c1da22e8073d0f82c0c8"
+    },
+    "eventstore": {
+      "inputSha256": "cc53a3b6526208206aab15f13619cc40a6b56e0e0e3ee3de0af41c6784e432da",
+      "identitySha256": "dfe811a1aa7de93adf7c530b1492109a144972c7576e3e4581bc8ec6d1b6126a",
+      "freshCapturePerOperation": true
+    },
+    "folders": {
+      "inputSha256": "e08777b2015d546e9fc0dc4f86ceb0b1b5b081791125072be9d50ab70472b3e2",
+      "identitySha256": "908fb1a4040054866f716f57c50d82c39e67975367b43ca19f250bba647c2373",
+      "freshCapturePerOperation": true
+    },
+    "compiledCapture": {
+      "operationsHash": "ef90ec20212d4e8c72b161640024b2ae523fefb21136c7aa637fb8b368bb640b",
+      "routeCount": 68,
+      "operationCount": 68,
+      "assemblies": [
+        "Hexalith.Projects.Server",
+        "Hexalith.Tenants.Contracts",
+        "Hexalith.Folders.Server"
+      ]
+    },
+    "queryFixture": {
+      "normalizedTruthSha256": "4900ebfd86c612c1e18fc2363f2b4ca67b1e397ec93b282976e6850b2c9c95d7",
+      "authorityAndFolders": "existing in-memory test fixture only; no live authority evidence",
+      "clock": "existing fixed fixture clock; not a live source or authority refresh"
+    }
+  },
+  "results": [
+    {
+      "name": "seven-exact-byte-decodes-owned-memo",
+      "operations": 80,
+      "medianMilliseconds": 13.3924,
+      "p95Milliseconds": 16.5951,
+      "averageAllocatedBytes": 5898839
+    },
+    {
+      "name": "fresh-release-binding-owned-memo",
+      "operations": 80,
+      "medianMilliseconds": 1.1402,
+      "p95Milliseconds": 1.7989,
+      "averageAllocatedBytes": 1178065
+    },
+    {
+      "name": "fresh-capture-and-observe-eventstore",
+      "operations": 60,
+      "medianMilliseconds": 15.3018,
+      "p95Milliseconds": 19.6149,
+      "averageAllocatedBytes": 10890018
+    },
+    {
+      "name": "fresh-capture-and-observe-folders",
+      "operations": 60,
+      "medianMilliseconds": 4.4529,
+      "p95Milliseconds": 7.1813,
+      "averageAllocatedBytes": 3484439
+    },
+    {
+      "name": "actual-68-route-owner-four-reads-plus-operations",
+      "operations": 60,
+      "medianMilliseconds": 18.0598,
+      "p95Milliseconds": 21.5392,
+      "averageAllocatedBytes": 11356343
+    },
+    {
+      "name": "real-query-executor-list-continuation-open-in-memory-fixture",
+      "operations": 120,
+      "medianMilliseconds": 0.4626,
+      "p95Milliseconds": 0.665,
+      "averageAllocatedBytes": 228741
+    }
+  ],
+  "binaries": [
+    {
+      "name": "Hexalith.Commons.Diagnostics",
+      "sha256": "7d0e80388518ed667e759723c008edc7a16b9bf5e7710e4937a2650d6e2b1fcf",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Http",
+      "sha256": "4512dfc781864a1926eb44fb4146c8d9df342ec3a235bb7b2696c3d215a2cc68",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Publication",
+      "sha256": "f6c37d892eac5521ac889888141a8115b6b9ce472a1c3627071e9a7b145f8e5a",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.Serialization",
+      "sha256": "8d68d81a17fa64c00210c8793350bfd63c6b561a542d84cd4cc135536d7fefa2",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.TenantAccess",
+      "sha256": "300a35af47a8f0e3f75795bcc1142cb6455b53145b56a547abada8f96d1988d6",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Commons.UniqueIds",
+      "sha256": "75d8c0fef337d3634dbe54ef64d7d043b353742e162d50a041a5f12292eecf1a",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Client",
+      "sha256": "cad82a924f73b2e8a471b73517cab02003ba99e4f4f010eea9c53dd99e28099e",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Contracts",
+      "sha256": "f7646c2b6739b6087654d9c19e98e162a2585c04d8a9e4388b7da70fc89d6859",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations.Server",
+      "sha256": "601bfc5462cac6a5cef6d90c8242ca9dbabfbe6b07fb2426bca7c42a0caf226c",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Conversations",
+      "sha256": "53518b0c27a641ff3a1e5933d385d97215cfa30deacb27b1fca089566f5b721c",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Admin.Abstractions",
+      "sha256": "6610b08a85562d8ed5bcd9b3d5aeedc554a26a81f0a5ef9a89d44bbe2ec00181",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Client",
+      "sha256": "77790316f2886c9962a183ed37ca10b82301a17f98918b76f0986d62d43be7e6",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Contracts",
+      "sha256": "ae049437b07047da1966bc44b6e98c190ae02de44ea9eee363d4d5f13cc7b11a",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.DomainService",
+      "sha256": "5831cfade5641f4981cca28695e0d8164f053bee7ce55042b3803ae9a1a210b1",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Gateway",
+      "sha256": "3c98561c918af7e98e3e0b3181af6d266a986b28c2e4a07914ee63193ea1afde",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Server",
+      "sha256": "1f4fd3828c465c271a58d4b8fff8509758e86a89767308a64e63d55c0ba1b310",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.ServiceDefaults",
+      "sha256": "f89175af546bd15d8d774744918c0a79f1a0d5759cf9981910ea90846b24e2fd",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.EventStore.Testing",
+      "sha256": "ef782d5ce4edf8d46dec00fded5de6af080910306a878e7f5eaa6a80b6937f35",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Client",
+      "sha256": "d54cb1a65a33cb18bded462dc6156bce5a79722891de87f50c83cad95384fba8",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Contracts",
+      "sha256": "3e98c7ec903f84be28f142632aa560c72b49081cfcc723d461e2fd3c9d7b546c",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.Server",
+      "sha256": "72f8969b482195f293fd84a94c6325ed1a4590e4bb0f0a7f6ca7d3166fd2ac6f",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders.ServiceDefaults",
+      "sha256": "7804cdab3b830f21f4c17b64288370012680aa9e2fb810e298ca3e06429aad7a",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Folders",
+      "sha256": "1bc100180279818066191844c04f615eb659627f2e489f01dfb8a733915dcb05",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Contracts.UI",
+      "sha256": "3e85345b28e2556833e63435ac8dbfecdfc67fa80f1fe3a31254e9f869fb95de",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Contracts",
+      "sha256": "595c86441a753e5741a181c2361e1434a6d037a89fc375255c7555efe34c5d8f",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.FrontComposer.Shell",
+      "sha256": "8a99e46ed27f0cdc69a1824d569a136d4317f4b220b7c8c9ac0cfe032074888e",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.McpCli.Abstractions",
+      "sha256": "924e5ef6bb62e4b2287611d919699ded71823712e38de8cf1ab309370ed0795f",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Memories.Client.Rest",
+      "sha256": "fdd3eac3fd462d8075afc64f3f7be13ede22d6997615e027bf3b3741820a9e4f",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Memories.Contracts",
+      "sha256": "26138a24d7cd15d3024dd7bede2e1f4d24873fb47bbbda89dae2234755467673",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Client",
+      "sha256": "220820b01c82bca70edabffbb49f823aa7d1fd77252905805c1b6f7375e97819",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Contracts",
+      "sha256": "d6d11cb93c1b34fa2c32c2ddc442c9e5a7742cc8ceb9bd54111e2555f5fd119e",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Infrastructure",
+      "sha256": "39434b6dd74a26cb8db40019f588d60d805476d92e10916a39ecee393caf6441",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Server.Tests",
+      "sha256": "2a9d4a956cf6b41b7c926d1e91569809e5b4ec797dcca3e7e9825a67ad610020",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Server",
+      "sha256": "80023d52723d4e0c0db120e09dceef893c53a4e41ffc4e6ed497cdd3807e5c59",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.ServiceDefaults",
+      "sha256": "1a9bfa7222fc89cb20e26d68116b84c494e91b1890f8a81966ebcb271b31eca2",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Testing",
+      "sha256": "480246e3598bf992683f7722633e65d9c828e17587c7d37aa234c4dc3be85865",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects.Workers",
+      "sha256": "2ba05435bc80db98ff6ab216a4d2d6fd89547f1d38d110bc440c98828bf9d99f",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Projects",
+      "sha256": "d7c83ca95c958106df6e433a8f74763c3eb9fcc70c022912bca4f91a23e4d4d8",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Tenants.Client",
+      "sha256": "2ce7abf2c82f903cc873dbaa2b323c5ea31dfaa1073cfc5ddc9ae45b51a98776",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    },
+    {
+      "name": "Hexalith.Tenants.Contracts",
+      "sha256": "c630eff1fc6e3e1f42d3b5e1b159fa5565bc0ad49d897a6835b30263a30c62ac",
+      "debuggingFlags": "IgnoreSymbolStoreSequencePoints",
+      "jitOptimizerDisabled": false,
+      "portablePdbPresent": true
+    }
+  ],
+  "liveAuthorityStateHostTrustLeaseOrRuntimeCallsPerformed": false
+}

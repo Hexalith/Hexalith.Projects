@@ -1,0 +1,41 @@
+{
+  "result": "recovery-cleanup",
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "ed1a480a98d47bfb2d34cf9ee88d501aa99a16792d82106ebf10b57c0c09d0b8",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "604d4ee1287a83043941e3b1898667d4c1b62be35cc3ddbe454c1003cf2fd651",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "7e0e12cebf29a1e0f6081c85633629703cedfbbf32ffd92fc20c62350757a276",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-c5d6b489610ffbfb22c410be-redishost",
+      "containerId": "5797475b8e4ddfb561725e403f5a24b982836bba555540d1a4ee33245c637202",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    }
+  ],
+  "ownedSidecarsObservedBeforeStop": 0,
+  "ownedSidecarsAbsent": true,
+  "privateMaterialRemoved": true
+}

@@ -1,0 +1,56 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-folder-readiness.xml"
+  ],
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "982e6213766787e81cc0c7e798dc43f979c11aec7c52fbae1734460ea0d45430",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "934aedc48ee1a1a0557847f86e43a8c6f0a552f6dc5b35295ec2a8dd00e3cf41",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "f7c2f8a42bca17b86d76e46b8a1845c32da8d6b7e264abf3c2ff35885c2bcbaf",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "f4bc431960d336f04047bbc7c8e48812b6f98136b7d545fc73198fe6b34c1ea8"
+  },
+  "producerDigestSource": {
+    "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/FoldersFolderPermissionEventProcessor.cs",
+    "sha256": "d6e99f1a760b1bbd9030ae48e9e3ec77e6204f04e0279a16517a0eced2f19360",
+    "semantics": "SHA256 UTF8(exact EventTypeName + colon + PayloadVersionOrOne + colon) concatenated with exact original Payload bytes; uppercase hex."
+  },
+  "result": {
+    "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 2 threads)]",
+    "id": "74c3261c-70c1-4a7e-88aa-20635f57111a",
+    "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "run-date": "2026-11-03",
+    "run-time": "00:29:27",
+    "start-rtf": "2026-11-03T00:29:27.8018302+00:00",
+    "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+    "target-framework": ".NETCoreApp,Version=v10.0",
+    "errors": "0",
+    "failed": "0",
+    "finish-rtf": "2026-11-03T00:29:29.4736544+00:00",
+    "not-run": "0",
+    "passed": "77",
+    "skipped": "0",
+    "time": "1.672",
+    "time-rtf": "00:00:01.6720000",
+    "total": "77"
+  }
+}

@@ -1,10 +1,13 @@
 """Ownership and exception controls for the supported-read launcher's real cleanup logic."""
 import contextlib
+import base64
 import hashlib
 import importlib.util
 import io
 import os
 import socket
+import sqlite3
+import ssl
 import xml.etree.ElementTree as ET
 import json
 from pathlib import Path
@@ -15,7 +18,11 @@ import tempfile
 import textwrap
 import time
 import unittest
-from unittest.mock import patch
+from types import SimpleNamespace
+import urllib.error
+import urllib.parse
+import urllib.request
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("supported_read_launcher", ROOT / "tools/qualification/run_supported_project_reads.py")
@@ -251,7 +258,7 @@ class SupportedReadLauncherCleanupTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             evidence = Path(directory) / "evidence"
             with patch.object(LAUNCHER.shutil, "which", return_value="/test/tool"), patch.object(LAUNCHER, "execute", return_value='{"resources": [{"displayName": "pre-existing"}]}') as execute:
-                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
+                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--scenario", "main", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
                     result = LAUNCHER.main()
             self.assertEqual(result, 1)
             self.assertEqual(execute.call_count, 1)
@@ -310,7 +317,7 @@ class SupportedReadLauncherOwnershipTests(unittest.TestCase):
                 ready.with_suffix(".cleanup").write_text("entered")
                 original_cleanup(*args, **kwargs)
             launcher.cleanup_resources = cleanup
-            sys.argv = ["launcher", "--evidence", str(evidence)]
+            sys.argv = ["launcher", "--scenario", "main", "--evidence", str(evidence)]
             result = launcher.main()
             ready.with_suffix(".restored").write_text(str(signal.getsignal(signal.SIGTERM) == prior))
             sys.exit(result)
@@ -351,7 +358,7 @@ class SupportedReadLauncherOwnershipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             evidence = Path(directory) / "evidence"
             with patch.object(LAUNCHER.shutil, "which", return_value="/test/tool"), patch.object(LAUNCHER, "execute", return_value='banner\n{"resources": []}') as execute:
-                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
+                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--scenario", "main", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(LAUNCHER.main(), 1)
             self.assertEqual(execute.call_count, 1)
             self.assertEqual(json.loads((evidence / "run.json").read_text())["cleanup"], [])
@@ -361,7 +368,7 @@ class SupportedReadLauncherOwnershipTests(unittest.TestCase):
             evidence = Path(directory) / "evidence"
             replies = ["", json.dumps([{"appHostPath": str(LAUNCHER.APPHOST), "appHostPid": 101, "cliPid": 202}])]
             with patch.object(LAUNCHER.shutil, "which", return_value="/test/tool"), patch.object(LAUNCHER, "execute", side_effect=replies) as execute:
-                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
+                with patch.object(LAUNCHER.sys, "argv", ["launcher", "--scenario", "main", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(LAUNCHER.main(), 1)
             self.assertEqual(execute.call_count, 2)
             self.assertEqual(json.loads((evidence / "run.json").read_text())["cleanup"], [])
@@ -640,6 +647,19 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
         self.assertTrue(report["cleanup"][0]["absenceVerified"])
         self.assertNotIn("alreadyAbsent", report["cleanup"][0])
 
+    def test_container_disappearance_requires_exact_missing_identity_and_fresh_absence(self):
+        identity = container_id("disappearing-owned")
+        for fault in ("none", "still-present", "permission", "failed-listing"):
+            report = {"result": "passed", "cleanup": []}
+            failure = RuntimeError("private Docker diagnostic")
+            failure.command_output = ("Error: No such object: " + identity + "\n" if fault != "permission" else "permission denied")
+            observation = RuntimeError("listing failed") if fault == "failed-listing" else ({identity: {"owned"}} if fault == "still-present" else {})
+            with self.subTest(fault=fault), patch.object(LAUNCHER, "execute", side_effect=failure), patch.object(
+                    LAUNCHER, "container_listing", side_effect=[{identity: {"owned"}}, observation]):
+                LAUNCHER.cleanup_resources(None, [{"name": "owned", "id": identity}], "scope", None, report)
+            self.assertEqual(report["cleanup"][0].get("absenceVerified", False), fault == "none")
+            self.assertEqual(report["result"], "passed" if fault == "none" else "failed")
+
     def test_partial_creation_recovers_immutable_cidfile(self):
         identity = container_id("creation")
         with tempfile.TemporaryDirectory() as directory:
@@ -729,10 +749,371 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
     def test_failed_launcher_controls_block_before_external_allocation(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(LAUNCHER.shutil, "which", return_value="/tool"), patch.object(LAUNCHER, "run_launcher_controls", side_effect=RuntimeError("controls failed")), patch.object(LAUNCHER, "execute") as execute, patch.object(LAUNCHER.tempfile, "mkdtemp") as allocate:
             evidence = Path(directory) / "evidence"
-            with patch.object(LAUNCHER.sys, "argv", ["launcher", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
+            with patch.object(LAUNCHER.sys, "argv", ["launcher", "--scenario", "main", "--evidence", str(evidence)]), contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(LAUNCHER.main(), 1)
             execute.assert_not_called()
             allocate.assert_not_called()
+
+
+class SupportedReadCanonicalInfrastructureTests(unittest.TestCase):
+    def setUp(self):
+        self.workspace = tempfile.TemporaryDirectory(prefix="supported-read-controls-")
+        self.addCleanup(self.workspace.cleanup)
+        self.private = Path(self.workspace.name)
+        self.isolation = "reads-0123456789abcdef"
+        # Receipt shape is canonical; no infrastructure or domain state is started by these controls.
+        self.run = Path(tempfile.gettempdir()) / "hexalith-dapr" / os.urandom(16).hex()
+        self.run.mkdir(mode=0o700, parents=True)
+        self.addCleanup(lambda: LAUNCHER.shutil.rmtree(self.run, ignore_errors=True))
+        self.catalog = Path(tempfile.mkdtemp(prefix="hexalith-route-catalog-"))
+        self.addCleanup(lambda: LAUNCHER.shutil.rmtree(self.catalog, ignore_errors=True))
+        self.certificates = self.private / "mtls" / ("dapr-credentials-" + hashlib.sha256(str(self.run).encode()).hexdigest().upper()[:32])
+        self.certificates.mkdir(mode=0o700, parents=True)
+        (self.private / "catalog-custody").mkdir(mode=0o700)
+        (self.private / "catalog-invocations").mkdir(mode=0o700)
+        self.write(self.private / "mtls-plane.json", {"isolationId": self.isolation, "runDirectory": str(self.run), "certificateDirectory": str(self.certificates)})
+        self.write(self.catalog / "catalog.json", {"test": "canonical-owner-catalog"})
+        self.write(self.private / "catalog-plane.json", {"isolationId": self.isolation, "directory": str(self.catalog),
+            "rootDigest": hashlib.sha256((self.catalog / "catalog.json").read_bytes()).hexdigest(), "custodyDirectory": str(self.private / "catalog-custody")})
+        self.registry = self.private / "discovery.sqlite"
+        self.configuration = self.private / "discovery.json"
+        self.write(self.configuration, {})
+        self.binary = self.private / "daprd"
+        self.binary.write_bytes(b"synthetic-runtime")
+        self.binary.chmod(0o600)
+        self.graph, self.containers, self.processes, self.environments = {"resources": []}, {}, [], {}
+        for file in ("ca.crt", "issuer.crt", "issuer.key"):
+            (self.certificates / file).write_bytes(("private-" + file).encode())
+            (self.certificates / file).chmod(0o600)
+        for index, name in enumerate(LAUNCHER.MTLS_RESOURCES):
+            identity, port = container_id(name), 54000 + index
+            self.graph["resources"].append({"displayName": name, "state": "Running", "healthStatus": "Healthy", "properties": {"container.id": identity},
+                "urls": [{"name": "grpc", "url": f"tcp://localhost:{port}"}]})
+            self.containers[identity] = {"Id": identity, "Image": "sha256:" + container_id("image-" + name),
+                "Config": {"Labels": {"hexalith.supported-reads": self.isolation}, "Image": "daprio/sentry:1.18.7" if name == "dapr-sentry" else "daprio/dapr:1.18.7",
+                    "Cmd": ["--trust-domain=localhost", "--tls-enabled", "--sentry-address=dapr-sentry:50001"]},
+                "NetworkSettings": {"Ports": {"50001/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(port)}]}},
+                "HostConfig": {"PortBindings": {"50001/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(port)}]}},
+                "Mounts": [{"Source": str(self.certificates), "Destination": "/var/run/dapr/credentials"},
+                           {"Source": str(self.run / "scheduler"), "Destination": "/var/lock"}]}
+        for index, app in enumerate(sorted(LAUNCHER.READ_APPS)):
+            path = self.catalog / (app + ".configuration.json")
+            self.write(path, {"spec": {"nameResolution": {"component": "sqlite", "version": "v1", "configuration": {"connectionString": str(self.registry)}},
+                "accessControl": {"defaultAction": "deny", "trustDomain": "public", "policies": []}}})
+            pid, port = str(21000 + index), 55000 + index
+            self.processes.append([pid, str(self.binary), "--app-id", app, "--config", str(path), "--dapr-internal-grpc-port", str(port),
+                "--enable-mtls", "--sentry-address", "localhost:54000", "--placement-host-address", "localhost:54001", "--scheduler-host-address", "localhost:54002"])
+            environment = {"NAMESPACE": self.isolation, "DAPR_CONTROLPLANE_TRUST_DOMAIN": "localhost", "DAPR_CONTROLPLANE_NAMESPACE": "default",
+                "DAPR_TRUST_ANCHORS": "private-ca.crt", "DAPR_CERT_CHAIN": "private-issuer.crt", "DAPR_CERT_KEY": "private-issuer.key"}
+            self.environments[pid] = b"\0".join((key + "=" + value).encode() for key, value in environment.items())
+        with contextlib.closing(sqlite3.connect(self.registry)) as database, database:
+            database.execute("CREATE TABLE hosts (app_id TEXT, address TEXT, registration_id TEXT)")
+            database.executemany("INSERT INTO hosts VALUES (?, ?, ?)", [(parts[3], "127.0.0.1:" + parts[7], parts[0]) for parts in self.processes])
+        self.registry.chmod(0o600)
+
+    def write(self, path, value):
+        path.write_text(json.dumps(value))
+        path.chmod(0o600)
+
+    def execute(self, command, **_kwargs):
+        if command[:2] == ["docker", "inspect"]:
+            return json.dumps([self.containers[command[-1]]])
+        if command[:2] == ["docker", "ps"]:
+            return ""
+        self.fail("Unexpected canonical observation command")
+
+    def capture(self):
+        with patch.object(LAUNCHER, "execute", side_effect=self.execute):
+            return LAUNCHER.capture_infrastructure(self.private, self.isolation, self.graph)
+
+    def observe(self):
+        if not (self.private / "infrastructure-observed.json").exists():
+            self.write(self.private / "infrastructure-observed.json", self.capture())
+        original = Path.read_bytes
+        def read(path):
+            if str(path).startswith("/proc/"):
+                return self.environments[path.parts[2]]
+            return original(path)
+        with patch.object(LAUNCHER, "sidecar_processes", return_value=self.processes), patch.object(Path, "read_bytes", read), patch.object(LAUNCHER, "sidecar_listens_at", return_value=True), patch.object(LAUNCHER, "process_start", return_value="observed-test-start"):
+            return LAUNCHER.observe_discovery(self.configuration, self.registry, self.isolation)
+
+    def test_captures_exact_three_canonical_container_images_and_listeners(self):
+        item = self.containers[container_id(LAUNCHER.MTLS_RESOURCES[0])]
+        item["NetworkSettings"]["Ports"]["unpublished/tcp"] = None
+        item["NetworkSettings"]["Ports"]["8080/tcp"] = [{"HostIp": "127.0.0.1", "HostPort": "54100"}]
+        item["HostConfig"]["PortBindings"]["8080/tcp"] = [{"HostIp": "127.0.0.1", "HostPort": "0"}]
+        capture = self.capture()
+        self.assertEqual({item["name"] for item in capture["containers"]}, set(LAUNCHER.MTLS_RESOURCES))
+        self.assertEqual(len({item["id"] for item in capture["containers"]}), 3)
+        self.assertTrue(all(item["imageId"].startswith("sha256:") and item["bindings"] for item in capture["containers"]))
+
+    def test_all_six_rewritten_configurations_use_one_registry_and_native_mtls_identity(self):
+        observation = self.observe()
+        self.assertEqual(len(observation["ownedSidecars"]), 6)
+        self.assertTrue(all(item["mtlsIdentityVerified"] for item in observation["ownedSidecars"]))
+        self.assertEqual(set(observation["configurationSha256"]), LAUNCHER.READ_APPS)
+        self.assertIsNotNone(json.loads((self.private / "infrastructure-observed.json").read_text())["registryIdentity"])
+
+    def test_missing_changed_or_foreign_receipt_refuses_capture(self):
+        path = self.private / "mtls-plane.json"
+        original = path.read_text()
+        path.unlink()
+        with self.assertRaises(FileNotFoundError): self.capture()
+        path.write_text(original)
+        path.chmod(0o600)
+        receipt = json.loads(original)
+        receipt["isolationId"] = "foreign"
+        self.write(path, receipt)
+        with self.assertRaises(RuntimeError): self.capture()
+
+    def test_receipt_symlink_foreign_owner_shared_mode_and_escape_refuse_capture(self):
+        path = self.private / "mtls-plane.json"
+        path.chmod(0o644)
+        with self.assertRaises(RuntimeError): self.capture()
+        path.chmod(0o600)
+        with patch.object(LAUNCHER.os, "getuid", return_value=os.getuid() + 1), self.assertRaises(RuntimeError): self.capture()
+        target = self.private / "receipt-real.json"
+        path.rename(target)
+        path.symlink_to(target)
+        with self.assertRaises(RuntimeError): self.capture()
+        path.unlink()
+        target.rename(path)
+        receipt = json.loads(path.read_text())
+        receipt["runDirectory"] = str(self.private)
+        self.write(path, receipt)
+        with self.assertRaises(RuntimeError): self.capture()
+
+    def test_catalog_root_and_receiver_registry_or_namespace_mismatch_refuse_capture(self):
+        catalog = self.catalog / "catalog.json"
+        original = catalog.read_bytes()
+        catalog.write_bytes(b"changed-catalog")
+        with self.assertRaises(RuntimeError): self.capture()
+        catalog.write_bytes(original)
+        path = self.catalog / "projects.configuration.json"
+        configuration = json.loads(path.read_text())
+        configuration["spec"]["nameResolution"]["configuration"]["connectionString"] += "-foreign"
+        self.write(path, configuration)
+        with self.assertRaises(RuntimeError): self.capture()
+        configuration["spec"]["nameResolution"]["configuration"]["connectionString"] = str(self.registry)
+        configuration["spec"]["accessControl"]["policies"] = [{"namespace": "default", "trustDomain": "public"}]
+        self.write(path, configuration)
+        with self.assertRaises(RuntimeError): self.capture()
+
+    def test_container_missing_identity_owner_image_mount_and_listener_refuse_capture(self):
+        name = LAUNCHER.MTLS_RESOURCES[0]
+        original = json.dumps(self.containers)
+        for fault in ("identity", "owner", "image", "mount", "listener", "tls"):
+            self.containers = json.loads(original)
+            item = self.containers[container_id(name)]
+            if fault == "identity": item["Id"] = container_id("replacement")
+            if fault == "owner": item["Config"]["Labels"]["hexalith.supported-reads"] = "foreign"
+            if fault == "image": item["Image"] = "mutable-image"
+            if fault == "mount": item["Mounts"] = []
+            if fault == "listener": item["NetworkSettings"]["Ports"]["50001/tcp"][0]["HostIp"] = "0.0.0.0"
+            if fault == "tls": item["Config"]["Cmd"] = []
+            with self.subTest(fault=fault), self.assertRaises(RuntimeError): self.capture()
+
+    def test_failed_container_inspection_and_missing_model_never_prove_readiness(self):
+        with patch.object(LAUNCHER, "execute", side_effect=OSError("unobservable")), self.assertRaises(OSError):
+            LAUNCHER.capture_infrastructure(self.private, self.isolation, self.graph)
+        self.graph["resources"].pop()
+        with self.assertRaises(RuntimeError): self.capture()
+
+    def test_changed_configuration_and_replaced_registry_refuse_discovery(self):
+        self.observe()
+        path = self.catalog / "projects.configuration.json"
+        path.write_text(path.read_text() + " ")
+        with self.assertRaises(RuntimeError): self.observe()
+        path.write_text(path.read_text().rstrip())
+        replacement = self.private / "replacement.sqlite"
+        replacement.write_bytes(self.registry.read_bytes())
+        replacement.chmod(0o600)
+        replacement.replace(self.registry)
+        with self.assertRaises(RuntimeError): self.observe()
+
+    def test_changed_receipt_and_issuer_identity_after_capture_refuse_discovery(self):
+        self.observe()
+        path = self.private / "mtls-plane.json"
+        original = path.read_text()
+        path.write_text(original + " ")
+        with self.assertRaises(RuntimeError): self.observe()
+        path.write_text(original)
+        (self.certificates / "issuer.key").write_text("replacement-private-key")
+        with self.assertRaises(RuntimeError): self.observe()
+
+    def test_missing_or_duplicate_sidecar_and_false_identity_refuse_discovery(self):
+        self.observe()
+        original = json.dumps(self.processes)
+        for fault in ("missing", "duplicate", "config", "namespace", "control-domain", "credential", "mtls", "placement"):
+            self.processes = json.loads(original)
+            previous = self.environments[self.processes[0][0]]
+            if fault == "missing": self.processes.pop()
+            if fault == "duplicate": self.processes.append(self.processes[0])
+            if fault == "config": self.processes[0][5] = str(self.configuration)
+            if fault == "namespace": self.environments[self.processes[0][0]] = previous.replace(self.isolation.encode(), b"foreign")
+            if fault == "control-domain": self.environments[self.processes[0][0]] = previous.replace(b"TRUST_DOMAIN=localhost", b"TRUST_DOMAIN=public")
+            if fault == "credential": self.environments[self.processes[0][0]] = previous.replace(b"private-issuer.key", b"foreign-key")
+            if fault == "mtls": self.processes[0].remove("--enable-mtls")
+            if fault == "placement": self.processes[0][-3] = "localhost:50005"
+            with self.subTest(fault=fault), self.assertRaises(RuntimeError): self.observe()
+            self.environments[json.loads(original)[0][0]] = previous
+
+    def test_extra_namespace_process_or_registry_registration_refuses_discovery(self):
+        self.observe()
+        original = list(self.processes)
+        self.processes.append(["29999", str(self.binary), "--app-id", "unowned"])
+        self.environments["29999"] = ("NAMESPACE=" + self.isolation).encode()
+        with self.assertRaises(RuntimeError): self.observe()
+        self.processes = original
+        with contextlib.closing(sqlite3.connect(self.registry)) as database, database: database.execute("INSERT INTO hosts VALUES ('foreign', '127.0.0.1:1234', 'foreign')")
+        with self.assertRaises(RuntimeError): self.observe()
+
+    def test_observation_failure_never_proves_discovery(self):
+        self.write(self.private / "infrastructure-observed.json", self.capture())
+        with patch.object(LAUNCHER, "sidecar_processes", side_effect=PermissionError("unobservable")), self.assertRaises(PermissionError):
+            LAUNCHER.observe_discovery(self.configuration, self.registry, self.isolation)
+
+    def test_canonical_public_pems_and_sqlite_are_private_through_their_owned_parent(self):
+        for file in self.certificates.iterdir(): file.chmod(0o644)
+        self.registry.chmod(0o644)
+        self.assertEqual(len(self.observe()["ownedSidecars"]), 6)
+        self.certificates.chmod(0o755)
+        with self.assertRaises(RuntimeError): self.observe()
+
+    def test_canonical_cleanup_accepts_stopped_container_runtime_ports_but_rejects_changed_config(self):
+        resource = self.capture()["containers"][0]
+        item = self.containers[resource["id"]]
+        item["NetworkSettings"]["Ports"] = {}
+        present, removed = {resource["id"]}, []
+        def execute(command, **_kwargs):
+            if command[:3] == ["docker", "inspect", "--format"]:
+                return json.dumps({"id": item["Id"], "owner": self.isolation})
+            if command[:2] == ["docker", "inspect"]: return json.dumps([item])
+            if command[:2] == ["docker", "rm"]:
+                present.remove(command[-1])
+                removed.append(command[-1])
+                return ""
+            self.fail("Unexpected canonical cleanup command")
+        for changed in (False, True):
+            present.add(resource["id"])
+            removed.clear()
+            if changed: item["HostConfig"]["PortBindings"] = {}
+            report = {"result": "passed", "cleanup": []}
+            with self.subTest(changed=changed), patch.object(LAUNCHER, "execute", side_effect=execute), patch.object(LAUNCHER, "container_listing", side_effect=lambda: {identity: {"canonical"} for identity in present}):
+                LAUNCHER.cleanup_resources(None, [resource], self.isolation, lambda *_args, **_kwargs: self.fail("Unowned host"), report)
+            self.assertEqual(removed, [] if changed else [resource["id"]])
+            self.assertEqual(report["result"], "failed" if changed else "passed")
+
+    def cleanup_report(self):
+        return {"result": "passed", "cleanup": [{"resource": "exact-apphost", "absenceVerified": True}], "ownedSidecarsAbsent": True}
+
+    def test_cleanup_removes_only_canonical_paths_after_exact_absence(self):
+        capture, report = self.capture(), self.cleanup_report()
+        external = Path(tempfile.mkdtemp(prefix="supported-reads-external-"))
+        self.addCleanup(lambda: LAUNCHER.shutil.rmtree(external, ignore_errors=True))
+        with patch.object(LAUNCHER, "execute", side_effect=self.execute):
+            LAUNCHER.cleanup_private_material(self.private, self.isolation, capture, True, report)
+        self.assertTrue(report["privateMaterialRemoved"])
+        self.assertFalse(self.run.exists())
+        self.assertFalse(self.catalog.exists())
+        self.assertTrue(external.exists())
+
+    def test_partial_startup_mtls_receipt_without_catalog_retains_recovery_material(self):
+        (self.private / "catalog-plane.json").unlink()
+        report = self.cleanup_report()
+        with self.assertRaises((RuntimeError, FileNotFoundError)):
+            LAUNCHER.read_infrastructure_receipts(self.private, self.isolation)
+        with patch.object(LAUNCHER, "execute", side_effect=self.execute):
+            LAUNCHER.cleanup_private_material(self.private, self.isolation, None, True, report)
+        self.assertTrue(report["recoveryMaterialRetained"])
+        self.assertFalse(report["privateMaterialRemoved"])
+        self.assertTrue(self.run.exists())
+        self.assertTrue(self.certificates.exists())
+        self.assertEqual(report["result"], "failed")
+
+    def test_cleanup_accepts_sdk_disposal_of_catalog_after_captured_validation(self):
+        capture, report = self.capture(), self.cleanup_report()
+        LAUNCHER.shutil.rmtree(self.catalog)
+        with patch.object(LAUNCHER, "execute", side_effect=self.execute):
+            LAUNCHER.cleanup_private_material(self.private, self.isolation, capture, True, report)
+        self.assertTrue(report["privateMaterialRemoved"])
+
+    def test_cleanup_retains_recovery_on_missing_receipt_changed_ownership_or_failed_absence(self):
+        capture = self.capture()
+        for fault in ("no-capture", "sidecar", "host", "container", "observation", "changed", "private-removal"):
+            report = self.cleanup_report()
+            if fault == "sidecar": report["ownedSidecarsAbsent"] = False
+            if fault == "host": report["cleanup"][0]["absenceVerified"] = False
+            if fault == "changed": report["infrastructureOwnershipChanged"] = True
+            with self.subTest(fault=fault), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(LAUNCHER, "execute", side_effect=OSError("unobservable") if fault == "observation" else None, return_value="unexpected-container" if fault == "container" else ""))
+                if fault == "private-removal": stack.enter_context(patch.object(LAUNCHER.shutil, "rmtree", side_effect=OSError("removal failed")))
+                LAUNCHER.cleanup_private_material(self.private, self.isolation, None if fault == "no-capture" else capture, True, report)
+            self.assertTrue(self.private.exists())
+            self.assertTrue(report["recoveryMaterialRetained"])
+            self.assertFalse(report["privateMaterialRemoved"])
+        (self.private / "mtls-plane.json").unlink()
+        report = self.cleanup_report()
+        with patch.object(LAUNCHER, "execute", return_value=""):
+            LAUNCHER.cleanup_private_material(self.private, self.isolation, capture, True, report)
+        self.assertTrue(report["recoveryMaterialRetained"])
+
+    def test_cleanup_retains_replaced_canonical_directory_and_extra_issuer(self):
+        capture = self.capture()
+        (self.certificates.parent / "unexpected").mkdir(mode=0o700)
+        report = self.cleanup_report()
+        with patch.object(LAUNCHER, "execute", return_value=""):
+            LAUNCHER.cleanup_private_material(self.private, self.isolation, capture, True, report)
+        self.assertTrue(report["recoveryMaterialRetained"])
+        self.assertTrue(self.run.exists())
+
+
+class SupportedReadDelegatedIssuerTests(unittest.TestCase):
+    def test_https_password_endpoint_issues_only_exact_bootstrap_human_and_rs256_signature(self):
+        with tempfile.TemporaryDirectory() as directory:
+            private = Path(directory)
+            LAUNCHER.execute(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", "/CN=localhost",
+                "-addext", "subjectAltName=IP:127.0.0.1", "-keyout", str(private / "certificate.key"), "-out", str(private / "certificate.pem")])
+            LAUNCHER.execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(private / "user.pem")])
+            issuer, password = f"https://127.0.0.1:{LAUNCHER.free_port()}/users", "synthetic-private-password"
+            server, thread = LAUNCHER.issuer_server(private, issuer, password)
+            self.addCleanup(server.server_close)
+            self.addCleanup(server.shutdown)
+            context = ssl.create_default_context(cafile=str(private / "certificate.pem"))
+            valid = {"grant_type": "password", "client_id": "supported-read-bootstrap", "username": "actor-1", "password": password}
+            def request(form, path="/token", content_type="application/x-www-form-urlencoded"):
+                body = urllib.parse.urlencode(form).encode() if isinstance(form, dict) else form
+                return urllib.request.urlopen(urllib.request.Request(issuer + path, data=body, headers={"Content-Type": content_type}), context=context, timeout=10)
+            with request(valid) as response:
+                self.assertEqual(response.headers["Cache-Control"], "no-store")
+                credential = json.load(response)
+            header, payload, signature = credential["access_token"].split(".")
+            decode = lambda value: base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+            self.assertEqual(json.loads(decode(header))["alg"], "RS256")
+            claims = json.loads(decode(payload))
+            self.assertEqual((claims["sub"], claims["iss"], claims["aud"], claims["eventstore:tenant"]), ("actor-1", issuer, "supported-read-users", "system"))
+            self.assertEqual(claims["exp"] - claims["iat"], 120)
+            self.assertEqual(claims["global_admin"], "true")
+            (private / "signature").write_bytes(decode(signature))
+            (private / "unsigned").write_text(header + "." + payload)
+            LAUNCHER.execute(["openssl", "pkey", "-in", str(private / "user.pem"), "-pubout", "-out", str(private / "user-public.pem")])
+            self.assertIn("Verified OK", LAUNCHER.execute(["openssl", "dgst", "-sha256", "-verify", str(private / "user-public.pem"), "-signature", str(private / "signature"), str(private / "unsigned")]))
+            for key in valid:
+                invalid = dict(valid, **{key: "foreign"})
+                with self.subTest(key=key), self.assertRaises(urllib.error.HTTPError) as failure: request(invalid)
+                self.assertEqual(failure.exception.code, 400)
+                failure.exception.close()
+            for body in (b"password=", b"%FF=x", urllib.parse.urlencode(dict(valid, password="\u00e9")).encode(), urllib.parse.urlencode(valid).encode() + b"&username=foreign", b"x" * 4097):
+                with self.subTest(body_length=len(body)), self.assertRaises(urllib.error.HTTPError) as failure: request(body)
+                failure.exception.close()
+            with self.assertRaises(urllib.error.HTTPError) as failure: request(valid, path="/other")
+            failure.exception.close()
+            with self.assertRaises(urllib.error.HTTPError) as failure: request(valid, content_type="application/json")
+            failure.exception.close()
+            with patch.object(LAUNCHER.subprocess, "run", side_effect=subprocess.TimeoutExpired("openssl", 5)), self.assertRaises(urllib.error.HTTPError) as failure:
+                request(valid)
+            self.assertEqual(failure.exception.code, 503)
+            failure.exception.close()
 
 
 class SupportedReadReplayEvidenceTests(unittest.TestCase):
@@ -860,7 +1241,8 @@ class SupportedReadReplayEvidenceTests(unittest.TestCase):
         matrix, replay = self.valid_evidence()
         result = LAUNCHER.require_distributed_replay_evidence(matrix, replay)
         self.assertEqual(result, {"sources": 4, "duplicateAttempts": 8, "rebuildAttempts": 4, "invalidReplayAttempts": 8, "authenticationRefusals": 8, "persistedComparisons": 11})
-        for cases in (matrix["cases"][:-1], [*matrix["cases"][:-1], "unrelated-row"], [*matrix["cases"][:-1], matrix["cases"][0]], list(reversed(matrix["cases"]))):
+        for cases in (matrix["cases"][:-1], [*matrix["cases"][:-1], "unrelated-row"], [*matrix["cases"][:-1], matrix["cases"][0]],
+                      list(reversed(matrix["cases"])), [*matrix["cases"][2:], *matrix["cases"][:2]]):
             with self.subTest(cases=cases), self.assertRaises(RuntimeError):
                 LAUNCHER.require_distributed_replay_evidence({**matrix, "cases": cases}, replay)
 
@@ -1031,6 +1413,423 @@ class SupportedReadReplayEvidenceTests(unittest.TestCase):
         source["events"][-1]["globalPosition"] += 1
         with self.assertRaises(RuntimeError):
             LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+class SupportedReadScenarioGroupTests(unittest.TestCase):
+    def matrix(self, scenario):
+        flags = {"readOnlyDomainBytesAndEtagsUnchanged", "projectsProcessRestartVerified", "duplicateDeliveryVerified", "fullReplayVerified",
+                 "preRestartContinuationAcceptedAfterRestart", "freshPagingAgrees", "retainedCursorAcceptedImmediatelyBeforeRevocation",
+                 "cursorRejectionWithinLifetime", "postRestartForeignAndAbsentDenialsVerified", "bothTenantDomainWatermarksUnchanged",
+                 "actualDaprDiscovery", "actualOwnerActorHeads", "acceptedEquivalence", "productionReadiness"}
+        enabled = {"readOnlyDomainBytesAndEtagsUnchanged", "freshPagingAgrees", "bothTenantDomainWatermarksUnchanged", "actualDaprDiscovery", "actualOwnerActorHeads"}
+        enabled |= ({"projectsProcessRestartVerified", "preRestartContinuationAcceptedAfterRestart", "retainedCursorAcceptedImmediatelyBeforeRevocation", "cursorRejectionWithinLifetime", "postRestartForeignAndAbsentDenialsVerified"} if scenario == "main" else {"duplicateDeliveryVerified"} if scenario == "duplicate" else {"fullReplayVerified"})
+        return {"version": 2, "qualificationGroup": scenario, "providerIsolationSha256": self.provider_sha(scenario), "allGroupCasesExecuted": True, "cases": list(LAUNCHER.SCENARIO_CASES[scenario]),
+                "providerScope": "one-fresh-owned-runtime", **{flag: flag in enabled for flag in flags}}
+
+    def replay(self, scenario):
+        _, old = SupportedReadReplayEvidenceTests().valid_evidence()
+        source = [value for value in old["observations"] if value["kind"] == "source"]
+        if scenario == "duplicate":
+            observations = [value for value in old["observations"] if value["kind"] in {"source", "duplicate"}
+                            or value["kind"] == "state" and value["phase"] in {"duplicate", "duplicate-reads"}
+                            or value["kind"] == "reads" and value["phase"] == "duplicate"]
+        else:
+            observations = []
+            for item in source:
+                observations.append(item)
+                observations.extend(value for value in old["observations"] if value["kind"] == "invalid" and value["sourceSha256"] == item["sourceSha256"])
+            observations.extend(value for value in old["observations"] if value["kind"] not in {"source", "duplicate", "invalid"}
+                                and not (value["kind"] == "state" and value["phase"] in {"duplicate", "duplicate-reads"})
+                                and not (value["kind"] == "reads" and value["phase"] == "duplicate"))
+        return {"version": 2, "qualificationGroup": scenario, "providerIsolationSha256": self.provider_sha(scenario), "sourceBaselineVerified": True, "duplicateVerified": scenario == "duplicate",
+                "replayVerified": scenario == "full-replay", "ownedDomainKeyCensus": old["ownedDomainKeyCensus"], "observations": observations}
+
+    def provider_sha(self, scenario):
+        return hashlib.sha256(("reads-" + hashlib.sha256(scenario.encode()).hexdigest()[:24]).encode()).hexdigest().upper()
+
+    def assembly_path(self, scenario):
+        return "/tmp/native-" + scenario + "/Hexalith.Projects.Integration.Tests.dll"
+
+    def native(self, scenario, total=1, provider_sha=None, assembly_path=None, assembly_sha=None):
+        root = ET.Element("assemblies")
+        assembly = ET.SubElement(root, "assembly", {"name": assembly_path or self.assembly_path(scenario), "total": str(total), "passed": str(total), "failed": "0", "skipped": "0", "not-run": "0", "errors": "0"})
+        collection = ET.SubElement(assembly, "collection")
+        for _ in range(total):
+            test = ET.SubElement(collection, "test", {"type": LAUNCHER.SCENARIO_TEST_TYPE, "method": LAUNCHER.SCENARIO_METHODS[scenario], "result": "Pass"})
+            ET.SubElement(test, "output").text = "supported-read-scenario-v2|" + scenario + "|" + (provider_sha or self.provider_sha(scenario)) + "|" + (assembly_sha or "e" * 64)
+        return root
+
+    def discovery(self):
+        return {"resolver": "sqlite", "version": "v1", "alphaTestInfrastructureOnly": True, "daprdSha256": ["a" * 64],
+                "configurationSha256": {app: hashlib.sha256(app.encode()).hexdigest() for app in LAUNCHER.READ_APPS}, "registryIdentitySha256": "b" * 64,
+                "ownedSidecars": [{"appId": app, "pid": index + 100, "startTicks": str(index + 200), "namespaceVerified": True,
+                                   "registryAddressVerified": True, "mtlsIdentityVerified": True} for index, app in enumerate(sorted(LAUNCHER.READ_APPS))], "observationsRequired": 1}
+
+    def modes(self):
+        return {app: {"wrapperPid": index + 10, "wrapperStartTicks": str(index + 20), "pid": index + 30, "startTicks": str(index + 40),
+                      "environment": "Development", "options": {**LAUNCHER.RUNTIME_FLAGS, "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "true" if app == "folders" else "false"},
+                      "assemblySha256": "c" * 64} for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
+
+    def profile(self):
+        return {project: {"Configuration": "Debug", "Optimize": "false", "DefineConstants": "TRACE;DEBUG;NET10_0", "DebugType": "portable",
+                          "UseHexalithProjectReferences": "true", "UseNuGetDeps": "false", "EnablePrivateCatalogInvocationProof": "true"} for project in LAUNCHER.COMPILATION_PROJECTS}
+
+    def report(self, scenario, frozen, regressions=False):
+        index = LAUNCHER.SCENARIO_GROUPS.index(scenario)
+        digest = lambda text: hashlib.sha256(text.encode()).hexdigest()
+        names = [*LAUNCHER.MTLS_RESOURCES, "reads-" + digest(scenario)[:24] + "-redishost"]
+        ids = {name: digest(scenario + name) for name in names}
+        session = {"appHostPid": index + 1000, "appHostStartTicks": str(index + 2000), "cliPid": index + 3000, "cliStartTicks": str(index + 4000),
+                   "configurationSha256": digest(scenario + "config"), "configurationPathSha256": digest(scenario + "config-path")}
+        sources = {name: {"allSourceProjects": True, "rootAvailableReferences": 1, "sourceProjects": {"FixtureDependency": str(ROOT / "src/FixtureDependency.csproj")}}
+                   for name in ["Hexalith.Projects.Server", "Hexalith.Projects.Workers", "Hexalith.Projects.AppHost", "Hexalith.Projects.ReadAuthority", "Hexalith.EventStore", "Hexalith.Tenants", "Hexalith.Folders", "Hexalith.Folders.Server", "Hexalith.Folders.Workers"]}
+        mapping = {key: "/tmp/mapping-" + scenario + "/" + key for key in ["CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps", "CustomBeforeDirectoryBuildTargets", "CustomAfterDirectoryBuildTargets", "AfterMicrosoftNETSdkTargets"]}
+        mapping.update(Configuration="Debug", HEXALITH_SOURCE_MAPPING_HASH=digest(scenario))
+        report = {"result": "passed", "qualificationGroup": scenario, "providerIsolationSha256": self.provider_sha(scenario), "matrixCompleted": True, "ownedSidecarsAbsent": True, "preexistingResourcesPreserved": True,
+                  "privateMaterialRemoved": True, "ownedSidecarsObservedBeforeStop": 6, "cleanup": [{"resource": "exact-apphost", "removed": True, "absenceVerified": True},
+                      *({"resource": name, "containerId": ids[name], "removed": True, "absenceVerified": True} for name in names)],
+                  "mtlsInfrastructure": [{"name": name, "id": ids[name], "imageId": "sha256:" + "d" * 64, "canonical": True} for name in LAUNCHER.MTLS_RESOURCES],
+                  "ownedAppHostSession": session, "discovery": self.discovery(), "discoveryAfterReads": self.discovery(), "runtimeModes": self.modes(),
+                  "sourceMappingEnvironment": mapping, "sourceMappingHash": mapping["HEXALITH_SOURCE_MAPPING_HASH"], "compilationProfile": self.profile(),
+                  "liveHostSourceReferences": sources, "sourceManifestSha256": hashlib.sha256(json.dumps(frozen, sort_keys=True).encode()).hexdigest(),
+                  "revisions": {".": "a" * 40, "references/Hexalith.EventStore": "b" * 40},
+                  "tests": [{"total": "1", "passed": "1", "failed": "0", "skipped": "0"}]}
+        if scenario == "main":
+            mode = report["runtimeModes"]["projects"]
+            before = {"resourceName": "projects", "pid": mode["pid"], "startTicks": mode["startTicks"], "launcherPid": mode["wrapperPid"],
+                      "launcherStartTicks": mode["wrapperStartTicks"], "assemblySha256": mode["assemblySha256"], "binarySha256": "e" * 64}
+            after = {**before, "pid": before["pid"] + 100, "startTicks": "999", "launcherPid": before["launcherPid"] + 100, "launcherStartTicks": "998"}
+            report["projectsRestart"] = {"resource": "projects", "action": "restart", "completed": True, "stage": "completed", "oldProcessExited": True,
+                                          "endpointsRediscovered": True, "appHostPid": session["appHostPid"], "appHostStartTicks": session["appHostStartTicks"],
+                                          "configurationSha256": session["configurationSha256"], "before": before, "after": after, "discovery": self.discovery()}
+            if regressions:
+                report["regressions"] = {lane: [{"total": "2", "passed": "2", "failed": "0", "skipped": "0"}] for lane in ["Integration", "Server"]}
+        else:
+            report["projectionReplay"] = LAUNCHER.require_distributed_replay_evidence(self.matrix(scenario), self.replay(scenario), scenario)
+        return report
+
+    def write_group(self, parent, scenario, frozen, regressions=False):
+        directory = parent / scenario
+        directory.mkdir(mode=0o700)
+        report = self.report(scenario, frozen, regressions)
+        report.update(nativeTestAssemblyPath=self.assembly_path(scenario), testAssemblySha256="e" * 64, testAssemblyUnchanged=True)
+        report["nativeTestCommand"] = ["dotnet", report["nativeTestAssemblyPath"], "-method", LAUNCHER.SCENARIO_TEST_TYPE + "." + LAUNCHER.SCENARIO_METHODS[scenario], "-xml", str(directory / "distributed.xml")]
+        report["commands"] = [report["nativeTestCommand"]]
+        for name, value in [("run.json", report), ("matrix.json", self.matrix(scenario)), ("source-manifest.json", frozen)]:
+            (directory / name).write_text(json.dumps(value))
+        ET.ElementTree(self.native(scenario)).write(directory / "distributed.xml")
+        fingerprints = [{"keySha256": hashlib.sha256(str(index).encode()).hexdigest().upper(), "bytesSha256": "A" * 64, "etagSha256": "B" * 64} for index in range(6)]
+        (directory / "provider-observer-control.json").write_text(json.dumps({"verified": True, "binaryAndEscapingBoundariesExact": True, "domainKeyCount": 2,
+                                                                           "controlKeyCount": 4, "individual": fingerprints, "batched": fingerprints}))
+        if scenario != "main":
+            (directory / "projection-replay.json").write_text(json.dumps(self.replay(scenario)))
+        else:
+            (directory / "projects-restart-process.json").write_text(json.dumps(report["projectsRestart"]))
+            _, replay = SupportedReadReplayEvidenceTests().valid_evidence()
+            state = next(row["comparison"] for row in replay["observations"] if row["kind"] == "state" and row["phase"] == "duplicate")
+            restart_state = {"bothTenantsCompared": True, "domainKeysBytesEtagsAndWatermarksUnchanged": True, "domainKeyCount": len(state["before"]),
+                             "afterObservation": "observed", "failureType": None, "missingKeys": [],
+                             **{key: state[key] for key in ("before", "after", "beforeWatermarks", "afterWatermarks")}}
+            (directory / "projects-restart-state.json").write_text(json.dumps(restart_state))
+            if regressions:
+                for lane in ["integration", "server"]:
+                    ET.ElementTree(self.native(scenario, 2)).write(directory / (lane + ".xml"))
+        return directory
+
+    def test_v2_groups_keep_exact_actual_ledgers_without_borrowed_flags(self):
+        for group, expected in [("duplicate", (8, 0, 0, 0, 2)), ("full-replay", (0, 8, 8, 4, 9))]:
+            with self.subTest(group=group):
+                result = LAUNCHER.require_distributed_replay_evidence(self.matrix(group), self.replay(group), group)
+                self.assertEqual(tuple(result[key] for key in ["duplicateAttempts", "invalidReplayAttempts", "authenticationRefusals", "rebuildAttempts", "persistedComparisons"]), expected)
+
+    def test_group_native_identity_counts_and_case_nodes_are_not_summaries(self):
+        for mode in ["wrong-method", "wrong-type", "zero", "duplicate", "failed", "skipped", "not-run", "errors", "malformed", "missing-node"]:
+            root = self.native("duplicate");assembly = root.find("assembly");test = root.find(".//test")
+            if mode == "wrong-method": test.set("method", LAUNCHER.SCENARIO_METHODS["full-replay"])
+            elif mode == "wrong-type": test.set("type", "Other.Tests")
+            elif mode == "zero": assembly.set("total", "0");assembly.set("passed", "0")
+            elif mode == "duplicate": assembly.find("collection").append(ET.fromstring(ET.tostring(test)))
+            elif mode == "failed": test.set("result", "Fail")
+            elif mode == "skipped": assembly.set("skipped", "1")
+            elif mode == "not-run": assembly.set("not-run", "1")
+            elif mode == "errors": assembly.set("errors", "1")
+            elif mode == "malformed": assembly.set("total", "not-a-count")
+            else: assembly.remove(assembly.find("collection"))
+            with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_native_scenario(root.findall("assembly"), "duplicate", self.provider_sha("duplicate"), self.assembly_path("duplicate"), "e" * 64)
+        root = self.native("main", 2);root.find("assembly").remove(root.find("assembly/collection"))
+        with self.assertRaises(RuntimeError): LAUNCHER.require_complete_native_results(root.findall("assembly"))
+
+    def test_v2_missing_duplicate_foreign_or_reversed_records_never_qualify(self):
+        for group in ["duplicate", "full-replay"]:
+            for mode in ["missing-source", "duplicate-source", "reversed", "wrong-head", "wrong-status", "wrong-scope", "wrong-watermark", "domain-etag", "missing-truth", "borrowed-flag", "unknown-group"]:
+                replay = self.replay(group);rows = replay["observations"];source = next(row for row in rows if row["kind"] == "source")
+                if mode == "missing-source": rows.remove(source)
+                elif mode == "duplicate-source": rows.insert(0, json.loads(json.dumps(source)))
+                elif mode == "reversed": rows.reverse()
+                elif mode == "wrong-head": source["observedHead"] += 1
+                elif mode == "wrong-status": next(row for row in rows if row["kind"] in {"duplicate", "invalid"})["outcomes"][0]["status"] = "Completed"
+                elif mode == "wrong-scope": next(row for row in rows if row["kind"] in {"duplicate", "invalid"})["tenantSha256"] = "F" * 64
+                elif mode == "wrong-watermark": next(row for row in rows if row["kind"] == "state")["comparison"]["afterWatermarks"][0]["globalPosition"] += 1
+                elif mode == "domain-etag": next(row for row in rows if row["kind"] == "state")["comparison"]["after"][0]["etagSha256"] = "F" * 64
+                elif mode == "missing-truth": rows.remove(next(row for row in rows if row["kind"] == "reads"))
+                elif mode == "borrowed-flag": replay["duplicateVerified" if group == "full-replay" else "replayVerified"] = True
+                else: replay["qualificationGroup"] = "foreign"
+                with self.subTest(group=group, mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_distributed_replay_evidence(self.matrix(group), replay, group)
+
+    def test_complete_census_rejects_empty_partial_foreign_or_replaced_registry(self):
+        valid = self.report("duplicate", {"source": "a" * 64})
+        for mode in ["empty", "partial", "foreign-peer", "pid-duplicate", "start-missing", "namespace", "registry-flag", "mtls", "config", "binary", "registry-replaced", "unrecorded-restart", "zero-observations"]:
+            report = json.loads(json.dumps(valid));after = report["discoveryAfterReads"]
+            if mode == "empty": report["discoveryAfterReads"] = {}
+            elif mode == "partial": after["ownedSidecars"].pop()
+            elif mode == "foreign-peer": after["ownedSidecars"][0]["appId"] = "foreign"
+            elif mode == "pid-duplicate": after["ownedSidecars"][0]["pid"] = after["ownedSidecars"][1]["pid"]
+            elif mode == "start-missing": after["ownedSidecars"][0].pop("startTicks")
+            elif mode in ["namespace", "registry-flag", "mtls"]: after["ownedSidecars"][0][{"namespace": "namespaceVerified", "registry-flag": "registryAddressVerified", "mtls": "mtlsIdentityVerified"}[mode]] = False
+            elif mode == "config": after["configurationSha256"].pop("folders")
+            elif mode == "binary": after["daprdSha256"] = []
+            elif mode == "registry-replaced": after["registryIdentitySha256"] = "f" * 64
+            elif mode == "unrecorded-restart": after["ownedSidecars"][0]["pid"] += 10000
+            else: after["observationsRequired"] = 0
+            with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_owned_group_report(report, "duplicate")
+        LAUNCHER.require_owned_group_report(valid, "duplicate")
+
+    def test_canonical_mtls_names_join_three_distinct_non_provider_cleanup_ids(self):
+        for mode in ["duplicate", "swapped", "missing-cleanup-name", "provider-as-mtls"]:
+            report = self.report("duplicate", {"source": "a" * 64})
+            rows = report["mtlsInfrastructure"]
+            if mode == "duplicate": rows[1]["id"] = rows[0]["id"]
+            elif mode == "swapped": rows[0]["id"], rows[1]["id"] = rows[1]["id"], rows[0]["id"]
+            elif mode == "missing-cleanup-name": report["cleanup"][1]["resource"] = "foreign"
+            else: rows[0]["id"] = report["cleanup"][-1]["containerId"]
+            with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_owned_group_report(report, "duplicate")
+
+    def test_same_scenario_other_provider_or_assembly_artifacts_are_rejected(self):
+        for mode in ["matrix", "replay", "native-provider", "native-path", "native-assembly", "native-missing-marker", "native-duplicate-marker", "command", "binary-changed"]:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory);frozen = {"source": "a" * 64};group = self.write_group(root, "duplicate", frozen)
+                if mode in ["matrix", "replay"]:
+                    path = group / ("matrix.json" if mode == "matrix" else "projection-replay.json");value = json.loads(path.read_text());value["providerIsolationSha256"] = "F" * 64;path.write_text(json.dumps(value))
+                elif mode.startswith("native"):
+                    native = self.native("duplicate", provider_sha="F" * 64 if mode == "native-provider" else None, assembly_path="/tmp/other/Tests.dll" if mode == "native-path" else None, assembly_sha="f" * 64 if mode == "native-assembly" else None)
+                    if mode == "native-missing-marker": native.find(".//test").remove(native.find(".//output"))
+                    elif mode == "native-duplicate-marker": native.find(".//output").text *= 2
+                    ET.ElementTree(native).write(group / "distributed.xml")
+                else:
+                    path = group / "run.json";value = json.loads(path.read_text())
+                    if mode == "command": value["nativeTestCommand"][1] = "/tmp/other/Tests.dll"
+                    else: value["testAssemblyUnchanged"] = False
+                    path.write_text(json.dumps(value))
+                with self.assertRaises(RuntimeError): LAUNCHER.read_qualified_scenario(group, "duplicate", frozen, False)
+
+    def test_only_exact_owned_restart_census_can_change_a_sidecar_identity(self):
+        report = self.report("main", {"source": "a" * 64});peer = next(row for row in report["discoveryAfterReads"]["ownedSidecars"] if row["appId"] == "projects")
+        peer.update(pid=9999, startTicks="7777");report["projectsRestart"]["discovery"] = json.loads(json.dumps(report["discoveryAfterReads"]))
+        LAUNCHER.require_owned_group_report(report, "main")
+        for mode in ["receipt-missing", "foreign-session", "old-process", "changed-binary", "wrong-census"]:
+            invalid = json.loads(json.dumps(report))
+            if mode == "receipt-missing": invalid.pop("projectsRestart")
+            elif mode == "foreign-session": invalid["projectsRestart"]["appHostPid"] += 1
+            elif mode == "old-process": invalid["projectsRestart"]["after"] = invalid["projectsRestart"]["before"]
+            elif mode == "changed-binary": invalid["projectsRestart"]["after"]["assemblySha256"] = "f" * 64
+            else: invalid["projectsRestart"]["discovery"] = self.discovery()
+            with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_owned_group_report(invalid, "main")
+
+    def test_owned_cleanup_mode_mapping_and_graph_are_all_required(self):
+        valid = self.report("duplicate", {"source": "a" * 64})
+        for mode in ["cleanup-missing", "container-missing", "recovery", "external", "private", "source-fallback", "optimized", "no-debug", "production", "wrong-peer-option", "mapping-missing", "mapping-hash"]:
+            invalid = json.loads(json.dumps(valid))
+            if mode == "cleanup-missing": invalid["cleanup"][0]["absenceVerified"] = False
+            elif mode == "container-missing": invalid["cleanup"].pop()
+            elif mode == "recovery": invalid["recoveryMaterialRetained"] = True
+            elif mode == "external": invalid["preexistingResourcesPreserved"] = False
+            elif mode == "private": invalid["privateMaterialRemoved"] = False
+            elif mode == "source-fallback": next(iter(invalid["liveHostSourceReferences"].values()))["allSourceProjects"] = False
+            elif mode == "optimized": next(iter(invalid["compilationProfile"].values()))["Optimize"] = "true"
+            elif mode == "no-debug": next(iter(invalid["compilationProfile"].values()))["DefineConstants"] = "TRACE"
+            elif mode == "production": invalid["runtimeModes"]["folders"]["environment"] = "Production"
+            elif mode == "wrong-peer-option": invalid["runtimeModes"]["projects"]["options"]["EventStore__RouteCatalog__ReuseHeldMetadataDispatch"] = "true"
+            elif mode == "mapping-missing": invalid["sourceMappingEnvironment"].pop("AfterMicrosoftNETSdkTargets")
+            else: invalid["sourceMappingHash"] = "f" * 64
+            with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_owned_group_report(invalid, "duplicate")
+
+    def test_aggregate_requires_three_fresh_exact_native_groups_and_current_graph(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);frozen = {"source": "a" * 64}
+            groups = [LAUNCHER.read_qualified_scenario(self.write_group(root, group, frozen, group == "main"), group, frozen, group == "main") for group in LAUNCHER.SCENARIO_GROUPS]
+            result = LAUNCHER.require_aggregate_scenarios(groups, True)
+            self.assertEqual(result["cases"], list(LAUNCHER.MATRIX_CASES));self.assertEqual(len(result["groups"]), 3)
+            self.assertNotEqual(self.report("duplicate", frozen)["sourceMappingHash"], self.report("full-replay", frozen)["sourceMappingHash"])
+            for mode in ["missing", "duplicate", "reversed", "unknown", "shared-provider", "shared-process", "source", "graph", "mode", "no-regressions", "summary-only"]:
+                changed = json.loads(json.dumps(groups))
+                if mode == "missing": changed.pop()
+                elif mode == "duplicate": changed[1] = changed[0]
+                elif mode == "reversed": changed.reverse()
+                elif mode == "unknown": changed[0]["group"] = "foreign"
+                elif mode == "shared-provider": changed[1]["providerId"] = changed[0]["providerId"]
+                elif mode == "shared-process": changed[1]["sessionIdentity"] = changed[0]["sessionIdentity"]
+                elif mode == "source": changed[1]["sourceManifestSha256"] = "f" * 64
+                elif mode == "graph": next(iter(changed[1]["sourceDependencyGraph"].values()))["FixtureDependency"] = str(ROOT / "src/other.csproj")
+                elif mode == "mode": next(iter(changed[1]["compilationProfile"].values()))["DefineConstants"] += ";OTHER"
+                elif mode == "no-regressions": changed[-1]["fullRegressionsCompleted"] = False
+                else: changed[1]["native"] = [{"passed": "1"}]
+                with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_aggregate_scenarios(changed, True)
+
+    def test_group_files_cannot_be_replaced_after_native_completion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);frozen = {"source": "a" * 64};group = self.write_group(root, "duplicate", frozen)
+            LAUNCHER.read_qualified_scenario(group, "duplicate", frozen, False)
+            for mode in ["native", "source", "summary", "symlink"]:
+                target = group / ("distributed.xml" if mode == "native" else "source-manifest.json" if mode == "source" else "run.json")
+                original = target.read_bytes()
+                try:
+                    if mode == "native": ET.ElementTree(self.native("main")).write(target)
+                    elif mode == "source": target.write_text(json.dumps({"other": "a" * 64}))
+                    elif mode == "summary":
+                        value = json.loads(original);value["tests"][0]["passed"] = "0";target.write_text(json.dumps(value))
+                    else:
+                        other = root / "replacement.json";other.write_bytes(original);target.unlink();target.symlink_to(other)
+                    with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.read_qualified_scenario(group, "duplicate", frozen, False)
+                finally:
+                    if target.is_symlink(): target.unlink()
+                    target.write_bytes(original)
+
+class SupportedReadScenarioCoordinatorTests(unittest.TestCase):
+    def setUp(self):
+        self.data = SupportedReadScenarioGroupTests()
+        self.frozen = {"source": "a" * 64}
+
+    def args(self):
+        return SimpleNamespace(timeout=2, regressions=True, artifacts=None)
+
+    def packets(self, root):
+        for group in LAUNCHER.SCENARIO_GROUPS:
+            self.data.write_group(root, group, self.frozen, group == "main")
+
+    def child(self, code=0):
+        child = Mock();child.pid = 12345;child.poll.return_value = code;child.wait.return_value = code
+        return child
+
+    def test_coordinator_runs_only_three_sequential_fresh_groups_and_main_regressions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);self.packets(root);children = [self.child() for _ in LAUNCHER.SCENARIO_GROUPS]
+            with patch.object(LAUNCHER, "run_launcher_controls", return_value={"passed": 1}), patch.object(LAUNCHER, "source_manifest", return_value=self.frozen), \
+                 patch.object(LAUNCHER.subprocess, "Popen", side_effect=children) as spawn, \
+                 patch.object(LAUNCHER, "capture_launcher_identity", side_effect=lambda child, command: {"pid": child.pid, "startTicks": "10", "command": command}), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(LAUNCHER.coordinate_scenarios(self.args(), root), 0)
+            self.assertEqual(spawn.call_count, 3)
+            self.assertTrue(all(call.kwargs["start_new_session"] for call in spawn.call_args_list))
+            self.assertEqual([call.args[0][call.args[0].index("--scenario") + 1] for call in spawn.call_args_list], list(LAUNCHER.SCENARIO_GROUPS))
+            self.assertEqual(["--regressions" in call.args[0] for call in spawn.call_args_list], [False, False, True])
+            matrix = json.loads((root / "matrix.json").read_text());report = json.loads((root / "run.json").read_text())
+            self.assertEqual(matrix["cases"], list(LAUNCHER.MATRIX_CASES));self.assertTrue(report["matrixCompleted"])
+            self.assertTrue(all(row["complete"] and row["cleanupCompletionVerified"] for row in report["launches"]))
+
+    def test_failed_child_with_preexisting_passing_files_never_starts_the_next_group(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);self.packets(root);child = self.child(1)
+            with patch.object(LAUNCHER, "run_launcher_controls", return_value={"passed": 1}), patch.object(LAUNCHER, "source_manifest", return_value=self.frozen), \
+                 patch.object(LAUNCHER.subprocess, "Popen", return_value=child) as spawn, patch.object(LAUNCHER, "capture_launcher_identity", return_value={"pid": child.pid, "startTicks": "10", "command": []}), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(LAUNCHER.coordinate_scenarios(self.args(), root), 1)
+            self.assertEqual(spawn.call_count, 1);self.assertFalse((root / "matrix.json").exists())
+            report = json.loads((root / "run.json").read_text());self.assertEqual(report["groups"], [])
+            self.assertEqual(report["launches"][0]["exitCode"], 1)
+
+    def test_source_drift_after_one_passed_group_blocks_every_later_start(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);self.packets(root);child = self.child()
+            with patch.object(LAUNCHER, "run_launcher_controls", return_value={"passed": 1}), patch.object(LAUNCHER, "source_manifest", side_effect=[self.frozen, self.frozen, {"changed": "b" * 64}]), \
+                 patch.object(LAUNCHER.subprocess, "Popen", return_value=child) as spawn, patch.object(LAUNCHER, "capture_launcher_identity", return_value={"pid": child.pid, "startTicks": "10", "command": []}), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(LAUNCHER.coordinate_scenarios(self.args(), root), 1)
+            self.assertEqual(spawn.call_count, 1);self.assertFalse((root / "matrix.json").exists())
+            self.assertEqual(len(json.loads((root / "run.json").read_text())["groups"]), 1)
+
+    def spawn_dummy(self, directory):
+        script = textwrap.dedent('''
+            from pathlib import Path
+            import signal,sys,time,json
+            root=Path(sys.argv[1]);root.mkdir(exist_ok=True)
+            def close(signum,_frame):
+                (root/'cleaning').write_text(str(signum));time.sleep(.1)
+                (root/'run.json').write_text(json.dumps({'privateMaterialRemoved':True,'ownedSidecarsAbsent':True,'preexistingResourcesPreserved':True,'cleanup':[{'absenceVerified':True}]}))
+                (root/'cleaned').write_text('done');raise SystemExit(1)
+            signal.signal(signal.SIGTERM,close);signal.signal(signal.SIGINT,close)
+            (root/'ready').write_text('ready')
+            while True:time.sleep(.02)
+        ''')
+        command = [sys.executable, "-u", "-c", script, str(directory)]
+        child = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        identity = LAUNCHER.capture_launcher_identity(child, command)
+        deadline = time.monotonic() + 3
+        while not (directory / "ready").exists() and time.monotonic() < deadline: time.sleep(.01)
+        self.assertTrue((directory / "ready").exists())
+        return child, identity
+
+    def finish_dummy(self, child):
+        if child.poll() is None: child.kill()
+        child.wait(timeout=3)
+
+    def test_exact_interruption_waits_for_real_owned_child_cleanup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);child, identity = self.spawn_dummy(root)
+            try:
+                self.assertEqual(os.getsid(child.pid), child.pid)
+                start = time.monotonic();LAUNCHER.forward_owned_launcher_signal(child, identity, signal.SIGTERM)
+                self.assertEqual(LAUNCHER.wait_owned_launcher(child, identity, {"requested": True}, cleanup_wait_seconds=2), 1)
+                self.assertGreaterEqual(time.monotonic() - start, .08);self.assertTrue((root / "cleaned").exists())
+            finally: self.finish_dummy(child)
+
+    def test_foreign_or_recycled_identity_is_never_signaled(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);child, identity = self.spawn_dummy(root)
+            try:
+                for changed in [{**identity, "startTicks": "other"}, {**identity, "command": ["foreign"]}, {**identity, "pid": child.pid + 1}]:
+                    with self.assertRaises(RuntimeError): LAUNCHER.forward_owned_launcher_signal(child, changed, signal.SIGTERM)
+                self.assertIsNone(child.poll());self.assertFalse((root / "cleaning").exists())
+            finally: self.finish_dummy(child)
+
+    def test_normal_exit_between_poll_and_identity_check_is_completed_not_unknown(self):
+        child = Mock();child.poll.side_effect = [None, 0];child.wait.return_value = 0
+        with patch.object(LAUNCHER, "owned_launcher_identity_matches", return_value=False):
+            self.assertEqual(LAUNCHER.wait_owned_launcher(child, {}, {}), 0)
+        child.send_signal.assert_not_called()
+
+    def test_unproved_cleanup_timeout_preserves_material_and_does_not_kill_child(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);(root / "retained-material").write_text("owned-test-material");child, identity = self.spawn_dummy(root)
+            try:
+                with self.assertRaises(RuntimeError): LAUNCHER.wait_owned_launcher(child, identity, {"requested": True}, cleanup_wait_seconds=.02)
+                self.assertIsNone(child.poll());self.assertTrue((root / "retained-material").exists());self.assertFalse((root / "cleaning").exists())
+            finally: self.finish_dummy(child)
+
+    def test_known_coordinator_exception_interrupts_exact_child_and_awaits_finally(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);childdir = root / "duplicate";childdir.mkdir();child, identity = self.spawn_dummy(childdir)
+            original = Path.write_text;failed = False
+            def writing(path, *args, **kwargs):
+                nonlocal failed
+                if path.name == "active-group.json" and not failed:
+                    failed = True;raise OSError("injected coordinator receipt failure")
+                return original(path, *args, **kwargs)
+            try:
+                with patch.object(LAUNCHER, "run_launcher_controls", return_value={"passed": 1}), patch.object(LAUNCHER, "source_manifest", return_value=self.frozen), \
+                     patch.object(LAUNCHER.subprocess, "Popen", return_value=child) as spawn, patch.object(LAUNCHER, "capture_launcher_identity", return_value=identity), patch.object(Path, "write_text", writing), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(LAUNCHER.coordinate_scenarios(self.args(), root), 1)
+                self.assertEqual(spawn.call_count, 1);self.assertTrue((childdir / "cleaned").exists())
+                report = json.loads((root / "run.json").read_text());self.assertTrue(report["launches"][0]["cleanupCompletionVerified"])
+                self.assertFalse(report.get("activeChildCompletionUnproved", False));self.assertFalse((root / "matrix.json").exists())
+            finally: self.finish_dummy(child)
+
+    def test_unknown_active_child_is_retained_without_adoption_or_later_start(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);childdir = root / "duplicate";childdir.mkdir();child, identity = self.spawn_dummy(childdir)
+            try:
+                with patch.object(LAUNCHER, "run_launcher_controls", return_value={"passed": 1}), patch.object(LAUNCHER, "source_manifest", return_value=self.frozen), \
+                     patch.object(LAUNCHER.subprocess, "Popen", return_value=child) as spawn, patch.object(LAUNCHER, "capture_launcher_identity", side_effect=RuntimeError("identity unknown")), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(LAUNCHER.coordinate_scenarios(self.args(), root), 1)
+                self.assertEqual(spawn.call_count, 1);self.assertIsNone(child.poll());self.assertFalse((childdir / "cleaning").exists())
+                report = json.loads((root / "run.json").read_text());self.assertTrue(report["activeChildCompletionUnproved"]);self.assertTrue(report["recoveryMaterialRetainedByChild"])
+                self.assertTrue(json.loads((root / "active-group.json").read_text())["active"])
+            finally: self.finish_dummy(child)
 
 
 if __name__ == "__main__":

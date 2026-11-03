@@ -1,0 +1,31 @@
+{
+  "artifacts": "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--artifacts-path",
+    "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/artifacts/story61-pure-domain-2zvugknv/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/domain.xml"
+  ],
+  "passed": 684,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "actualRepositoryDocument": "docs/resolution-scoring-heuristic.md",
+  "actualRepositoryDocumentSha256": "0e5a2acbc081c82d0808ebe81b35aaa86fea2fc94d1a4d5294da1760a6ec4a61",
+  "sourceMappingEnvironment": "focused-build-environment.json",
+  "workingDirectory": "/home/administrator/projects/hexalith/projects"
+}

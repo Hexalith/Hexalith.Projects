@@ -1,0 +1,43 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "mappingEnvironment": "focused-build-environment.json",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Routing.*",
+    "-class",
+    "*NativeSourceReadDiagnosticsTests",
+    "-class",
+    "*StreamsControllerTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/codec-authority-final.xml"
+  ],
+  "passed": 1118,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "c0e3bf5d5b2dc393bbb509ac3f6997437d3f8b48331b607381ccf3e5aac405e8",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Routing/RouteCatalogCanonicalOrderingTests.cs": "ad91770a4f7121d71ba4a66918410329dca6dd04ac3309a624afc157d9a1ecd5",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "b1e9ff321278598b33e0c0b650a72c1640737fa5142eb9639a73617c53f124e2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "ca42574a558e37961b8599e05a88a60d9fdf11e46eda553e368c7ce5c811c51d",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "db9e674799f53656fd8d455729019b409e835a92d343e9c2b86225c01e9e04ca",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/PromotedTenantSourceVersionTests.cs": "751f47ed61715019a5af5757a54d1ae9297a77169450f7cf001ef8b5f23487d9",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DirectTenantSourceVersionTests.cs": "a7561d13bf644c008427314f69786605c84242b98d5bbe4ef644be46d00ca819"
+  },
+  "syntheticChildIsolation": "Only each bare synthetic child removes the actual seven inherited mapping entries; the real parent build and test environment remain unchanged, and every scenario property and assertion is retained.",
+  "priorFailure": "codec-authority-initial.xml"
+}

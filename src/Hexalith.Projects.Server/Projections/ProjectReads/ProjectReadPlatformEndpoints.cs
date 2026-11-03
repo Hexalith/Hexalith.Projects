@@ -38,7 +38,15 @@ internal static class ProjectReadPlatformEndpoints
             catch (ArgumentException) { return Results.BadRequest("invalid-projection"); }
             catch (Exception) when (!cancellationToken.IsCancellationRequested) { return Results.StatusCode(StatusCodes.Status503ServiceUnavailable); }
         });
-        delivery.RequireAuthorization(EventStoreDomainServicePolicies.Project);
-        rebuild.RequireAuthorization(EventStoreDomainServicePolicies.Project);
+        if (endpoints.ServiceProvider.GetService<ProjectsDevelopmentCatalogProfile>() is not null)
+        {
+            delivery.RequireEventStoreDomainServicePolicy("/project/v2");
+            rebuild.RequireEventStoreDomainServicePolicy("/project/rebuild/v1");
+        }
+        else
+        {
+            delivery.RequireAuthorization(EventStoreDomainServicePolicies.Project);
+            rebuild.RequireAuthorization(EventStoreDomainServicePolicies.Project);
+        }
     }
 }

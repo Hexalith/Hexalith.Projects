@@ -202,6 +202,11 @@ public sealed partial class SupportedProjectReadTests
     [InlineData("audience")]
     [InlineData("scope")]
     [InlineData("header")]
+    [InlineData("missing-actor")]
+    [InlineData("missing-workload")]
+    [InlineData("missing-audience")]
+    [InlineData("missing-scope")]
+    [InlineData("delegation-flag")]
     public async Task AuthorityMismatchWinsOverInvalidPayload(string mismatch)
     {
         SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
@@ -214,6 +219,11 @@ public sealed partial class SupportedProjectReadTests
             "delegation" => query with { DelegationId = null },
             "audience" => query with { Audience = ["other"] },
             "scope" => query with { Scopes = [] },
+            "missing-actor" => query with { OriginalActorId = null },
+            "missing-workload" => query with { AuthenticatedWorkloadId = null },
+            "missing-audience" => query with { Audience = null },
+            "missing-scope" => query with { Scopes = null },
+            "delegation-flag" => query with { IsDelegated = false, DelegationId = null },
             _ => query,
         };
         if (mismatch == "header") { fixture.Http.Request.Headers["X-Hexalith-Tenant-Id"] = "tenant-b"; }
@@ -267,8 +277,12 @@ public sealed partial class SupportedProjectReadTests
         Encoding.UTF8.GetString(result.PayloadBytes!).ShouldNotContain("private-");
         response.References.Where(item => item.ReferenceKind != "ProjectFolder").All(item => item.DisplayName is null && item.ReferenceState == ReferenceState.Unavailable).ShouldBeTrue();
         ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
-        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial); page.Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
-        page.Snapshot.Components.ShouldContain(component => component.Name == "References" && !component.Included);
+        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        page.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
+        page.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
+        page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        page.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        page.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "References" && !component.Included);
     }
 
     [Fact]
@@ -389,8 +403,12 @@ public sealed partial class SupportedProjectReadTests
         opened.References.Single().ReferenceState.ShouldBe(expected);
         opened.References.Single().ReasonCode.ShouldBe("ReferenceUnavailable"); opened.References.Single().DisplayName.ShouldBeNull();
         ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await tenant.Executor.ListAsync(tenant.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
-        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable); page.Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
-        page.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
+        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        page.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
+        page.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
+        page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        page.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        page.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
     }
 
     [Fact]

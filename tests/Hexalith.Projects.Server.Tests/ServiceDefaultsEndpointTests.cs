@@ -5,7 +5,10 @@
 
 namespace Hexalith.Projects.Server.Tests;
 
+using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Projects.Authorization;
+
+using Microsoft.AspNetCore.Authorization;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.ServiceDefaults;
@@ -42,6 +45,26 @@ public sealed class ServiceDefaultsEndpointTests
         routePatterns.ShouldContain("/health");
         routePatterns.ShouldContain("/alive");
         routePatterns.ShouldContain("/ready");
+    }
+
+    /// <summary>Classifies only the three metadata-safe probes under the shared fail-closed HTTP inventory.</summary>
+    [Fact]
+    public async Task HealthProbesPassTheSharedHttpSecurityInventory()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.AddServiceDefaults();
+        builder.Services.AddEventStoreHttpHostSecurity();
+        using WebApplication app = builder.Build();
+        app.MapDefaultEndpoints();
+        var endpoints = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints).ToArray();
+        (await EventStoreHttpEndpointInventory.ValidateAsync(endpoints, app.Services)).ShouldBeEmpty();
+        endpoints.Length.ShouldBe(3);
+        foreach (RouteEndpoint endpoint in endpoints.OfType<RouteEndpoint>())
+        {
+            EventStoreHttpEndpointInventory.IsProbe(endpoint.RoutePattern.RawText).ShouldBeTrue();
+            endpoint.Metadata.GetMetadata<IAllowAnonymous>().ShouldNotBeNull();
+            endpoint.Metadata.GetOrderedMetadata<IAuthorizeData>().ShouldBeEmpty();
+        }
     }
 
     /// <summary>Verifies default health checks include liveness and readiness tags.</summary>

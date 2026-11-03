@@ -144,9 +144,9 @@ public static class ProjectsServiceDefaults
             readyChecks.ResponseWriter = WriteMetadataOnlyHealthResponseAsync;
         }
 
-        _ = app.MapHealthChecks(HealthEndpointPath, allChecks);
-        _ = app.MapHealthChecks(AliveEndpointPath, liveChecks);
-        _ = app.MapHealthChecks(ReadyEndpointPath, readyChecks);
+        _ = app.MapHealthChecks(HealthEndpointPath, allChecks).AllowAnonymous();
+        _ = app.MapHealthChecks(AliveEndpointPath, liveChecks).AllowAnonymous();
+        _ = app.MapHealthChecks(ReadyEndpointPath, readyChecks).AllowAnonymous();
 
         return app;
     }

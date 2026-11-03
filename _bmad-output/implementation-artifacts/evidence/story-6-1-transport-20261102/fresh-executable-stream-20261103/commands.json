@@ -1,0 +1,63 @@
+{
+  "change": "Reopen and stream each complete current domain executable image through SHA256, preserving fresh byte hashes and order while removing image-sized temporary allocations. No authority, state, host or trust result cache.",
+  "scope": "Domain executable observation only; gateway PE/MVID same-byte checks unchanged. Temporary capture instrumentation removed before this selected repair.",
+  "sourceSha256": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": "89946810e7fbd1a5903f3fb22c02f53c863a5cc1c3145fc24d95a6b4c795ed4d",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": "04ed5d3dba7a739227db163177090759463398694e530c6b88d40fd3cd83e59d"
+  },
+  "gatewayCaptureRestoredToOriginal": true,
+  "gatewayOriginalSha256": "358e103a603e25d084f7967c9a00db85de124cc0846142ee80f85af557169f3b",
+  "build": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore"
+  ],
+  "native": [
+    "dotnet",
+    "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "*DevelopmentExecutableImageTests",
+    "-class",
+    "*RunScopedProjectionCatalogTests",
+    "-class",
+    "*DevelopmentProjectionActorObservationTests",
+    "-class",
+    "*DevelopmentDomainRouteCatalogTests",
+    "-class",
+    "*DevelopmentGatewayAdminMetadataTests",
+    "-xml",
+    "/tmp/story61-fresh-executable-stream-controls.xml"
+  ],
+  "nativeWorkdir": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "nativeAssemblies": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, non-parallel]",
+      "id": "8ac518f9-53da-4f34-ade6-68c63216be62",
+      "name": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "17:56:55",
+      "start-rtf": "2026-11-03T17:56:55.3480492+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T17:56:57.0116134+00:00",
+      "not-run": "0",
+      "passed": "35",
+      "skipped": "0",
+      "time": "1.664",
+      "time-rtf": "00:00:01.6640000",
+      "total": "35"
+    }
+  ],
+  "nativeAssemblySha256": "9536c96737ffc8c83c5af7e539eabc0244f5ccb180d8173e78cf09a357a812b0"
+}

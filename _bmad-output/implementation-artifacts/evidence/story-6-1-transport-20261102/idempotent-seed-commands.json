@@ -1,0 +1,41 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "4b38529d731a8abb176218f8d200a5aaa386b4871aec1853f252ee82dc69d6de",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "62a5a57c8cbbb1aec054d00fc4428738fd375d61147dbe41a914076ef620d877"
+  },
+  "exactNativeOriginalEvidence": "live-33/seed-project-projection-outcomes.jsonl: HTTP200/protocol2/project-reads AlreadyCompleted, reasonnull",
+  "selectedRepair": "Actual AlreadyCompleted only qualifies after exact persisted project-reads completion/source/accepted-actor/positive unchanged idle epoch proof. Status remainsAlreadyCompleted; no forcednewwrite/rebuild/event. Same existing30s seed budget nowshared from before manual mapping through conditionalreceipt and later all-projectionwait. Every other status/malformedshape refuses.",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-idempotent-seed.xml"
+  ],
+  "nativeResult": {
+    "total": 83,
+    "passed": 83,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "runtimeAcceptance": "Pending; originals32/33 preserved; real11rows/fullIntegration/Server required",
+  "review": "Literal freshCompleted requirement adapted to actual SDK idempotent completion with stricter persistedproof; reportforindependentaudit, parentcapacityerrored."
+}

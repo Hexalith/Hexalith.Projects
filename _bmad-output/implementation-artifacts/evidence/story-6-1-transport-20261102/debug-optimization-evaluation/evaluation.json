@@ -1,0 +1,463 @@
+{
+  "selection": "Not selected: bounded measured source-bound capture/codec/query work shows no material consistent benefit; ordinary Debug retained.",
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-prerequisite-dev-mapping-20261102/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "c900d9d8c2670b712fdf8e3cd501924d50ce0417e186ee04838ae958bfd101ec",
+    "Configuration": "Debug"
+  },
+  "helperSha256": "02b31dfb5c9532efa36b712104e6cb7f7fa3f07edf3fa365994391bf6a832f3e",
+  "evaluations": [
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;SUPPORTED_PROJECT_READ_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;FOLDERS_OWNER_METADATA_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=false",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;HEXALITH_EVENTSTORE_MAPPED_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;SUPPORTED_PROJECT_READ_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;FOLDERS_OWNER_METADATA_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj",
+        "-p:Configuration=Debug",
+        "-p:Optimize=true",
+        "-getProperty:Configuration,Optimize,DefineConstants,DebugType,DebugSymbols,UseHexalithProjectReferences,HexalithEventStoreFromSource,EnablePrivateCatalogInvocationProof,MSBuildVersion,NETCoreSdkVersion"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "Configuration": "Debug",
+        "Optimize": "true",
+        "DefineConstants": "TRACE;HEXALITH_EVENTSTORE_MAPPED_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "DebugSymbols": "true",
+        "UseHexalithProjectReferences": "true",
+        "HexalithEventStoreFromSource": "true",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "MSBuildVersion": "18.9.15",
+        "NETCoreSdkVersion": "10.0.403"
+      }
+    }
+  ],
+  "sourceInputs": {
+    "/home/administrator/projects/hexalith/projects/Directory.Build.props": "dd28973111bdb352af15b6e46c0793fe4137d94a6c68c122e0ecdce8fb27ca67",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj": "ca33bfaff9121430aee389c2e0f79cf3aa9506501e9f4e167176eef41a38b284",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/Directory.Build.props": "66b2d5f9b4b60ef17fff045881badc565fcca6e4dfb51919aee760feebb6f477",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/Directory.Build.props": "cc30ee0ae15320e771aa1834d9cfa2053cb257bdf33966c87ca39dc8a4da0bfd",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Workspace/SourceMappingMaterializer.cs": "a1047a5ecefab785366fc2297b7ca5ad443976e81608845094078e2a7ebe92b3",
+    "/home/administrator/.dotnet/sdk/10.0.403/Microsoft.Common.CurrentVersion.targets": "879d9742497730b1c8bac7b90c3b14bcb3d4280a87c50b651a1c4430744207ba",
+    "/home/administrator/.dotnet/sdk/10.0.403/Roslyn/Microsoft.CSharp.Core.targets": "33a63870665f8eb019f43da5effa450f6c8000089a879bc5373061e870bd3780",
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.CSharp.targets": "76590c9893d1d056a1b24d2ce46b8c653a6ad18bbfc262ce8c2f8db6f18ef88f",
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.props": "211a5f89b3eb6076516cee71001baad4d822ab8e4143c1d656db278c7977f356",
+    "/home/administrator/.dotnet/sdk/10.0.403/Microsoft.CSharp.CurrentVersion.targets": "81b28346851f41d20d643d63ec8ab6389c285b1cb43345312f4942eaa9f6c726"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:Optimize=false",
+        "--artifacts-path",
+        "/tmp/story61-opt-debug-profile/artifacts-ordinary"
+      ],
+      "log": "build-ordinary.log",
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:Optimize=true",
+        "--artifacts-path",
+        "/tmp/story61-opt-debug-profile/artifacts-optimized"
+      ],
+      "log": "build-optimized.log",
+      "exitCode": 0
+    }
+  ],
+  "profilerSourceHashes": {
+    "profiler/Profile.csproj": "34a03f4fe05851df33bafd76889d508cd76d8b012e949f3e81216631a7479e1f",
+    "profiler/Program.cs": "d2835180a365242717043cc00c377833a8af7a2a2719a5f9fc79d783a383a40b",
+    "initial-comparison/Profile.csproj": "34a03f4fe05851df33bafd76889d508cd76d8b012e949f3e81216631a7479e1f",
+    "initial-comparison/Program.cs": "2cc9ef7eddafa7303349441ac793ebedd04b7489dbc045358aea288cf456fb5b"
+  },
+  "compilerSourcesExplain": {
+    "Microsoft.NET.Sdk.props": "Debug defaults Optimize=false only when unset; Release defaults true only when unset. Debug symbols default true; DebugType portable.",
+    "Microsoft.NET.Sdk.CSharp.targets": "Configuration generates DEBUG independently of Optimize.",
+    "Microsoft.CSharp.Core.targets": "CoreCompile passes Optimize, DefineConstants, DebugType and EmitDebugInformation independently to Csc."
+  },
+  "profilerBuildCommands": [
+    {
+      "argv": [
+        "env",
+        "DOTNET_PROCESSOR_COUNT=2",
+        "dotnet",
+        "build",
+        "/tmp/story61-opt-debug-profile/profiler/Profile.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:Optimize=false",
+        "-p:ProfileInputDir=/tmp/story61-opt-debug-profile/artifacts-ordinary/bin/Hexalith.Projects.Server.Tests/debug",
+        "--artifacts-path",
+        "/tmp/story61-opt-debug-profile/profiler-ordinary"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "env",
+        "DOTNET_PROCESSOR_COUNT=2",
+        "dotnet",
+        "build",
+        "/tmp/story61-opt-debug-profile/profiler/Profile.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:Optimize=true",
+        "-p:ProfileInputDir=/tmp/story61-opt-debug-profile/artifacts-optimized/bin/Hexalith.Projects.Server.Tests/debug",
+        "--artifacts-path",
+        "/tmp/story61-opt-debug-profile/profiler-optimized"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "runEnvironment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  }
+}

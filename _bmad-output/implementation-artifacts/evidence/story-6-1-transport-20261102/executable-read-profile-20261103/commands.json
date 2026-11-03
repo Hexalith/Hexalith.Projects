@@ -1,0 +1,40 @@
+{
+  "diagnosticOnly": true,
+  "nativeRuntimeEvidence": false,
+  "freshFilesEveryOperation": true,
+  "allDigestsEqual": true,
+  "totalBytes": 27555640,
+  "fileCount": 66,
+  "summary": {
+    "wholeArray": {
+      "medianMs": 19.9735,
+      "p95Ms": 21.7703,
+      "medianAllocatedBytes": 27601560
+    },
+    "stream": {
+      "medianMs": 14.5979,
+      "p95Ms": 15.0275,
+      "medianAllocatedBytes": 48048
+    }
+  },
+  "sourceSha256": {
+    "Profile.csproj": "f0e946198b9f72c2376f293f13d5669ea9a70abea326cf489528f4661092f60e",
+    "Program.cs": "b47eee3844fd3543986b8c967b05ddd2c974e522697f723918e9420719257c29"
+  },
+  "build": [
+    "dotnet",
+    "build",
+    "/tmp/story61-executable-profile-20261103/Profile.csproj",
+    "-c",
+    "Debug",
+    "-m:1"
+  ],
+  "run": [
+    "dotnet",
+    "/tmp/story61-executable-profile-20261103/bin/Debug/net10.0/Profile.dll"
+  ],
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "conclusion": "Fresh streamed hashing preserves every digest while removing image-sized temporary allocations; measured candidate selected for domain executable capture only. Gateway same-byte PE/MVID validation remains unchanged."
+}

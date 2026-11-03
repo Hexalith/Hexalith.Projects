@@ -1,0 +1,154 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/ProjectionDeliveryCutoverObserver.cs": "b2d8428b8f772f3295b66e4794d931b8eb7baba9844af5baf928129540d11ee6",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCutoverObserverTests.cs": "9ee9d05c6325ef3fdcb2b2b45936bc48410f907f13bf343cf05779fac20f3edc",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCompletionObserverTests.cs": "c718b5cace4214135ba3bb344cb9d104c87dc55a2efba1d3a7a60406334bc626",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "c6bc49c1ffe6785c579066022c8557967b0ff1b71c567700f5bd56612dbe0731",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "0753b809ced10852247447abefd8b1654a65976a24a28b12f07107c27a29bdb7",
+    "tools/qualification/run_supported_project_reads.py": "b151049491ac9ceedbcbd2d1de4a81767a578ad7584a632ddfd3f05b8964e69d"
+  },
+  "commands": {
+    "sdkBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    "fixtureBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true"
+    ],
+    "fixtureFinalBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    "sdkNoDebugBuild": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--artifacts-path",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt",
+      "-p:DisableImplicitConfigurationDefines=true"
+    ],
+    "sdkDebugTests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+      "-class",
+      "*ProjectionDeliveryCutoverObserverTests",
+      "-class",
+      "*ProjectionDeliveryCompletionObserverTests",
+      "-class",
+      "*CatalogInvocationTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/cutover-and-delivery-final.xml"
+    ],
+    "sdkNoDebugTests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/artifacts/story61-scoped-release-4dhhgvvt/bin/Hexalith.EventStore.Testing.Tests/debug/Hexalith.EventStore.Testing.Tests.dll",
+      "-class",
+      "*ProjectionDeliveryCutoverObserverTests",
+      "-class",
+      "*ProjectionDeliveryCompletionObserverTests",
+      "-class",
+      "*CatalogInvocationTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/cutover-and-delivery-no-debug.xml"
+    ],
+    "fixtureTests": [
+      "python3",
+      "/tmp/build-story61-helper.py",
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-cutover.xml"
+    ],
+    "launcherTests": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ]
+  },
+  "results": {
+    "cutover-and-delivery-final.xml": {
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "cutover-and-delivery-no-debug.xml": {
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "fixture-controls-cutover.xml": {
+      "total": 80,
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  },
+  "launcherControls": {
+    "total": 84,
+    "passed": 84,
+    "failed": 0
+  },
+  "helperSourceSha256": "02b31dfb5c9532efa36b712104e6cb7f7fa3f07edf3fa365994391bf6a832f3e",
+  "mappingFileSha256": "60b430db7bc14f7ef5b4bdcb1994bf25f3f12132b7ef766393bf9f4820c5a52d",
+  "noDebugMeaning": "DisableImplicitConfigurationDefines=true; actual Configuration remains mapped Debug, not a full Release claim",
+  "selectedMaintenance": "real authenticated SDK legacy-bootstrap reconciliation if actual historical checkpoint exists; supported writer-protocol activation; native backup before hydration; exact marker and ready readback",
+  "runtimeAcceptance": "Pending; live29 original failure retained; eleven-row matrix and full Projects Integration/Server regressions still required",
+  "originalBuildFailuresRetained": [
+    "cutover-sdk-build.log: nullability and argument validation before correction",
+    "cutover-sdk-test-build.log: new helper was not yet compiled after initial build refusal",
+    "cutover-fixture-build.log: span across await before correction"
+  ],
+  "buildOutputCaptures": {
+    "sdkBuild": "cutover-sdk-final-build.log",
+    "fixtureBuild": "cutover-fixture-build.log (initial failure)",
+    "fixtureFinalBuild": "cutover-fixture-current-build.log",
+    "sdkNoDebugBuild": "cutover-no-debug-build.log"
+  }
+}

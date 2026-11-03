@@ -1,0 +1,49 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "ac5cf05de034f0fb4f557542c479dc5f93cca2c1b631fa360c7ba2ac88532b22",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "647407a4a9d1f36c9f6370b4707330b4fabdc62a7bccf3ae3576ecd3b94c097c",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "862d8b85ba4d4ef46fb335b1fe7fb15bb824fa43dd6f0be54e4f4322f3c5f93e",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "9272d7805dae97b54ee47d771eaebbb0e24af127be9fdb0dd162c3145e18a53b"
+  },
+  "actualNativeBefore": "live-35/workload-negative-transport-facts.json",
+  "selectedRepair": "Private eventstore targetProjects noRetry/noappbreaker, same10s Project timeout. ExistingFolder2s andhandler500ms unchanged. Exact401trustassert remains, allactualtransportstatuses recordedwithoutconversion. Includefinite namedConversationstoretenantProjectkey families in persistedbytes/ETags andcensus, requireallfourkeys.",
+  "upstreamSource": {
+    "url": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/api/http/directmessaging.go",
+    "downloadedSha256": "e21f456b086478f6ee5e6d580f8b12d88736b157fdcd2eb98f2d1d7495a5121c"
+  },
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-auth-refusal.xml"
+  ],
+  "nativeResult": {
+    "total": "83",
+    "passed": "83",
+    "failed": "0",
+    "skipped": "0",
+    "not-run": "0"
+  },
+  "checks": [
+    "changedfiles gitdiffcheck passed"
+  ],
+  "runtimeAcceptance": "Pending freshlive36 all11rows/fullIntegration/Server required"
+}

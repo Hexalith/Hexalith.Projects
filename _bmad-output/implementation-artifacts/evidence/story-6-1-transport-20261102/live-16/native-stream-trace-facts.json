@@ -1,0 +1,28 @@
+{
+  "nativeDatabase": "/home/administrator/.aspire/dashboard/runs/20261102T202507785Z/dashboard.db",
+  "nativeDatabaseSha256": "15982e495a90b3d5512c20fd9b1d115548b27495d8f137872cc2fbe2b7fe4023",
+  "traceSha256": "fe99914f19e1d0324d3b458c37be3a27b9b285e06c6e106352425c4d78ba6b69",
+  "actualTransportSpans": [
+    {
+      "resource": "folders-dapr-cli",
+      "operation": "CallLocal/eventstore/api/v1/streams/read/workload",
+      "durationMilliseconds": 105.9412,
+      "httpStatus": null
+    },
+    {
+      "resource": "eventstore-dapr-cli",
+      "operation": "CallLocal/eventstore/api/v1/streams/read/workload",
+      "durationMilliseconds": 103.4503,
+      "httpStatus": null
+    },
+    {
+      "resource": "eventstore",
+      "operation": "POST api/v1/streams/read/workload",
+      "durationMilliseconds": 118.4315,
+      "httpStatus": "499"
+    }
+  ],
+  "authorityInferredFromTimeout": false,
+  "folderClientReceivedHttpStatus": null,
+  "gateway499Meaning": "server span recorded cancellation status; not an HTTP response received by the canceled Folder client"
+}

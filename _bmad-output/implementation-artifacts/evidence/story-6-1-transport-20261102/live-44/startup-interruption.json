@@ -1,0 +1,19 @@
+{
+  "intentionalInterruption": true,
+  "reason": "Exact owned Placement published health backend unreachable; six app peers neverstarted, before bootstrap/seeding/matrix. No deadline/config/feature change.",
+  "observedAtUtc": "2026-11-03T10:50:54.772408+00:00",
+  "signal": "SIGINT",
+  "exactLauncherArgumentsVerified": true,
+  "launcherStartTicks": "8638988",
+  "readOnlyDiagnosticSha256": {
+    "aspire-describe-startup.json": "15c939cca68b8abea33393ae8a73c8ad17e5bfe1d6b112db1c5ad475fe7f4f6a",
+    "placement-startup.json": "fe8be9845fe624b37bf387920c4a65ba563f92c36b7079a151fee955c904d8a4",
+    "placement-container-inspect.json": "94b77a8bd2d2e51d30a9f95608e2872392f43658bcd8a9df7759d881f8968235",
+    "placement-native-health-facts.json": "b7e6e3b12d59efd982d305058dc6080c66c87fbd465aa1d735e244aa8ea2140f"
+  },
+  "directMappedHealthOutcome": "ConnectionRefusedError",
+  "hostHealthOutcome": "TimeoutError",
+  "containerNativeHealthOutcome": "OSError",
+  "ownedPlacementContainerRunning": true,
+  "noOtherLifecycleOrGlobalDockerAction": true
+}

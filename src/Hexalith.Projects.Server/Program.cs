@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddProjectsServer();
+bool developmentCatalog = builder.AddProjectsDevelopmentCatalog();
 builder.Services.AddProjectsServerRuntimeInfrastructure();
 _ = builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
 bool authenticationEnabled = !ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(
@@ -24,10 +25,15 @@ WebApplication app = builder.Build();
 if (authenticationEnabled)
 {
     _ = app.UseAuthentication();
+    if (developmentCatalog)
+    {
+        _ = Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions.UseEventStoreHttpHostSecurity(app);
+    }
     _ = app.UseAuthorization();
 }
 
 app.MapDefaultEndpoints();
 app.MapProjectsServerEndpoints();
+app.MapProjectsDevelopmentCatalog();
 
 await app.RunAsync().ConfigureAwait(false);

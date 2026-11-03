@@ -1,0 +1,10 @@
+{
+  "database": "/home/administrator/.aspire/dashboard/runs/20261103T130952590Z/dashboard.db",
+  "databaseSha256": "b0db9ae8c3b3edc4cacbd2c78dbcee9e87a782760fd0bb768672727c5d494490",
+  "query": "select (s.end_time_ticks-s.start_time_ticks)/10000.0 from telemetry_spans s join telemetry_span_attributes a using(trace_id,span_id) where a.attribute_key='url.full' and a.attribute_value like '%/v1.0/state/statestore/%'",
+  "spanCount": 637,
+  "medianMilliseconds": 0.4088,
+  "totalMilliseconds": 304.0995,
+  "maxMilliseconds": 8.5688,
+  "meaning": "Actual EventStore daprd recorded state-GET span cost, excludes fixture process/HTTP client overhead. No extra multi-second saving claimed."
+}

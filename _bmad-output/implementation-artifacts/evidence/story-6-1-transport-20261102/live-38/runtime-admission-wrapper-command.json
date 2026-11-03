@@ -1,0 +1,18 @@
+{
+  "sha256": "b0fc486aa393358ce95071dff587414badf0d3f0e2c11464c657892d37812c48",
+  "command": [
+    "env",
+    "MSBUILDDISABLENODEREUSE=1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+    "DOTNET_PROCESSOR_COUNT=2",
+    "python3",
+    "/tmp/story61-admitted-launch38.py"
+  ],
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "observerSourceSha256": "a0e7aa7fc89a85aa23490baa17afaada87944dccc586e8e8bd1e90c35ce992ca",
+  "observerCommand": [
+    "python3",
+    "/tmp/story61-capture-freshness-and-audit.py",
+    "/tmp/story61-live38-diagnostic-coordinate.json"
+  ]
+}

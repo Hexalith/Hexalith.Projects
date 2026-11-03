@@ -1,0 +1,66 @@
+{
+  "before": {
+    "OperationsSha256": "ef90ec20212d4e8c72b161640024b2ae523fefb21136c7aa637fb8b368bb640b",
+    "Assemblies": [
+      "Hexalith.Projects.Server",
+      "Hexalith.Tenants.Contracts",
+      "Hexalith.Folders.Server"
+    ],
+    "RouteCount": 68,
+    "OperationCount": 68,
+    "Results": [
+      {
+        "Part": "one-read",
+        "MedianMilliseconds": 1.5242,
+        "AverageAllocatedBytes": 1167947
+      },
+      {
+        "Part": "three-reads",
+        "MedianMilliseconds": 3.6167,
+        "AverageAllocatedBytes": 3504064
+      },
+      {
+        "Part": "operations-with-read",
+        "MedianMilliseconds": 15.4058,
+        "AverageAllocatedBytes": 7831955
+      },
+      {
+        "Part": "current-four-reads-plus-operations",
+        "MedianMilliseconds": 19.5441,
+        "AverageAllocatedBytes": 11280558
+      }
+    ]
+  },
+  "after": {
+    "OperationsSha256": "ef90ec20212d4e8c72b161640024b2ae523fefb21136c7aa637fb8b368bb640b",
+    "Assemblies": [
+      "Hexalith.Projects.Server",
+      "Hexalith.Tenants.Contracts",
+      "Hexalith.Folders.Server"
+    ],
+    "RouteCount": 68,
+    "OperationCount": 68,
+    "Results": [
+      {
+        "Part": "one-read",
+        "MedianMilliseconds": 1.5272,
+        "AverageAllocatedBytes": 1167947
+      },
+      {
+        "Part": "three-reads",
+        "MedianMilliseconds": 3.5976,
+        "AverageAllocatedBytes": 3504064
+      },
+      {
+        "Part": "operations-with-read",
+        "MedianMilliseconds": 14.0816,
+        "AverageAllocatedBytes": 7768374
+      },
+      {
+        "Part": "current-four-reads-plus-operations",
+        "MedianMilliseconds": 21.5013,
+        "AverageAllocatedBytes": 11270355
+      }
+    ]
+  }
+}

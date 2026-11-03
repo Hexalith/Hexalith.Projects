@@ -1,0 +1,91 @@
+{
+  "diagnosticSourceUnchangedFrom37": true,
+  "actualMatrixRows": [
+    "authorized-list-continuation-open",
+    "public-user-and-workload-trust-remain-separate",
+    "populated-foreign-tenant-and-absent-safe-denial",
+    "owned-projects-process-restart-retains-reads-continuation-and-state",
+    "inspection-permission-and-durable-metadata-only-audit"
+  ],
+  "allMatrixAccepted": false,
+  "samplingSeconds": 3,
+  "rawNativeObservationSha256": "de14d5a84cd8cb10c4f3b09c02f9d07097f22680b044fe98d7d4dfdd9117e6fe",
+  "samples": 126,
+  "actualNativeAclTransitions": [
+    {
+      "firstObservedUtc": "2026-11-03T06:34:34.240511+00:00",
+      "nativeAllKeys": true,
+      "nativeAllCommands": true
+    },
+    {
+      "firstObservedUtc": "2026-11-03T06:38:16.790029+00:00",
+      "nativeAllKeys": false,
+      "nativeAllCommands": true
+    },
+    {
+      "firstObservedUtc": "2026-11-03T06:39:35.833349+00:00",
+      "nativeAllKeys": true,
+      "nativeAllCommands": true
+    }
+  ],
+  "actualStoredTenantEvidenceAtRestoration": [
+    {
+      "keySha256": "3558c71d9d3bf9efc8b9bc658a021f95034be776b44be57c631298160228b841",
+      "family": "projects-tenant-access",
+      "lastActualEventTimestamp": "2026-11-03T06:34:40.9844441+00:00",
+      "actualAgeSecondsAtFirstRestoredObservation": 294.848905,
+      "freshnessSecondsRemaining": 5.151095,
+      "watermarkSha256": "140409613aadd96bf28420057e19b176e0917f136824399c52a84bbc3d256560",
+      "stateBytesSha256": "c7acf218ee297962586854153f34f423dde21fc2178c6ed00c1ada42743a3c82",
+      "providerVersionSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "keySha256": "3846965787009654d4342ea078c77dd05748567b5193386216baa1d91f3b70d7",
+      "family": "folders-tenant-access",
+      "lastActualEventTimestamp": "2026-11-03T06:34:40.9844441+00:00",
+      "actualAgeSecondsAtFirstRestoredObservation": 294.848905,
+      "freshnessSecondsRemaining": 5.151095,
+      "watermarkSha256": "140409613aadd96bf28420057e19b176e0917f136824399c52a84bbc3d256560",
+      "stateBytesSha256": "03b97c8096143e23c4d1f6620aa5fe0d8d9bd236025ad98e0406647308bd8b37",
+      "providerVersionSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "keySha256": "d744385a8a81956080c30f5fc78b0fc964c38315db6d97528e541dc59607cfa0",
+      "family": "projects-tenant-access",
+      "lastActualEventTimestamp": "2026-11-03T06:36:05.1516781+00:00",
+      "actualAgeSecondsAtFirstRestoredObservation": 210.681671,
+      "freshnessSecondsRemaining": 89.318329,
+      "watermarkSha256": "ead36a752322405a1f57a6d06036d1291dd584a418a4c180d09c5a652c060c96",
+      "stateBytesSha256": "d02f01f4f22d81b5e1fd488a4a5d359c24e7dac8dd52eba9cde2f36ece3e04b8",
+      "providerVersionSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "keySha256": "83331b042444fd5c4a1355f3590d67ebe4e43413650f10f04095f1bb776396ac",
+      "family": "folders-tenant-access",
+      "lastActualEventTimestamp": "2026-11-03T06:36:05.1516781+00:00",
+      "actualAgeSecondsAtFirstRestoredObservation": 210.681671,
+      "freshnessSecondsRemaining": 89.318329,
+      "watermarkSha256": "ead36a752322405a1f57a6d06036d1291dd584a418a4c180d09c5a652c060c96",
+      "stateBytesSha256": "b028e2ca59ac7ae7bcd7d90dd92adebd6299fec0364e58547664c0d62ba35c5c",
+      "providerVersionSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    }
+  ],
+  "actualTenantDocumentsBytesAndProviderVersionsUnchangedDuringFaultAndRecovery": true,
+  "actualFinalObservationUtc": "2026-11-03T06:41:10.839075+00:00",
+  "actualRecoveryRecord": "audit-storage: attempts=51, statuses=404, transportFailures=0, authorizedRecovery=False",
+  "budgetSecondsUnchanged": {
+    "TenantFreshness": 300,
+    "auditRecovery": 90,
+    "stateTimeout": 15,
+    "metadata": 2,
+    "permissionCatchup": 0.5
+  },
+  "nativeRedis6AclDryRunUnsupportedAndNotUsedAsProof": true,
+  "sourceTimestampRefreshed": false,
+  "providerPermissionRuleRestored": true,
+  "cleanup": {
+    "ownedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "preexistingResourcesPreserved": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "kind": "standalone-model-of-seven-sequential-pure-decodes-per-fresh-scope",
+  "catalogFromActualAttempt": "live-18",
+  "catalogBytes": 216267,
+  "catalogRootSha256": "c5e8e77da6423d55516a2007b42e655ed0106153f884b8f2a04b7f3f3dc68aca",
+  "privateCanonicalBytesNotPublished": true,
+  "profiledContractsAssemblySha256": "4cac92a6efaa754bfe6cf07d4517f11b12c512c49850c5037fa12793c8358cef",
+  "profiledAssemblyMatchesCurrentDebugContracts": true,
+  "allInputAndEncodedBytesAndFacetDigestsEqual": true,
+  "sourceInputs": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "8dfbcced9607df128a94bd58d2471168fb87cd8f29d77f9221d1de39e16d85e0",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "29ea45905f229069a8099987bc5d8d1c35ff5b6221fe6009e0a4977d71b5215c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "6016299a9e00b23a1107d30baa33ef11fa4bdc41068dd482bd4c3ef0f80e920c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "fa0410f4fac1c60bd85e8fd7e8afd76fad11acee636cadbffce2182eed9a4481"
+  },
+  "buildCommand": [
+    "dotnet",
+    "build",
+    "/tmp/story61-scoped-codec-profile/CodecProfile.csproj",
+    "-c",
+    "Debug"
+  ],
+  "testCommand": [
+    "dotnet",
+    "/tmp/story61-scoped-codec-profile/bin/Debug/net10.0/CodecProfile.dll",
+    "<exact-owner-private-live18-catalog.json>"
+  ],
+  "runtimeAuthorityCallsPerformed": false,
+  "limitation": "Standalone pure computation does not qualify the live500ms owner read or any matrix row."
+}

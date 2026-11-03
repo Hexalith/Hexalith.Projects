@@ -1,0 +1,127 @@
+{
+  "actualMatrixRows": [
+    "authorized-list-continuation-open"
+  ],
+  "completeMatrixAccepted": false,
+  "nativeDatabase": "/home/administrator/.aspire/dashboard/runs/20261103T053712372Z/dashboard.db",
+  "nativeDatabaseSha256": "c822318976179240b6cf3d2ed0af6fcaf9767e64ae928cb362604a242b117669",
+  "actualMetadataNegativeTraceSpans": [
+    {
+      "resource": "eventstore",
+      "spanSha256": "f56f81adc4ddea5d3ef1587ae5111953114ce743893ae6c60521ff6512947310",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 500,
+      "durationMilliseconds": 7537.5542,
+      "pathKind": "Daprinvoke"
+    },
+    {
+      "resource": "projects",
+      "spanSha256": "24e8e4cac6e6aaf0d533bc1eebd7428ec908d234cd1c47102732551069d37af3",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 401,
+      "durationMilliseconds": 13.9648,
+      "pathKind": "actualownerreceiver"
+    },
+    {
+      "resource": "projects",
+      "spanSha256": "e86f44d316fa121bf95fb170049e6362325700f6cd0dbbabc3009b1d6fc6a8b9",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 401,
+      "durationMilliseconds": 1.8876,
+      "pathKind": "actualownerreceiver"
+    },
+    {
+      "resource": "projects",
+      "spanSha256": "4dfe1587c1c81b5805a2f6a7fff9127fb01f1bd3906f718b0c0291908720278d",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 401,
+      "durationMilliseconds": 1.0696,
+      "pathKind": "actualownerreceiver"
+    },
+    {
+      "resource": "projects",
+      "spanSha256": "79fa58f71184377fd9bfe03fd3162bd3055dac7b4a97dad5dc5c84a9258e6f39",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 401,
+      "durationMilliseconds": 1.1022,
+      "pathKind": "actualownerreceiver"
+    },
+    {
+      "resource": "projects",
+      "spanSha256": "2bea3caa7450a205b445ee11cdc33c80df104bf2dd4464caf68f3c4ea3a60643",
+      "traceSha256": "f90c2957632b59e73e0fafdfe8cc791d2b808ee6250b7776fd7ca613e433b55a",
+      "recordedHttpStatus": 401,
+      "durationMilliseconds": 1.1361,
+      "pathKind": "actualownerreceiver"
+    }
+  ],
+  "actualOwnerCredentialDenials": [
+    {
+      "status": 401,
+      "reason": "issuer-invalid",
+      "category": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents"
+    },
+    {
+      "status": 401,
+      "reason": "issuer-invalid",
+      "category": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents"
+    },
+    {
+      "status": 401,
+      "reason": "issuer-invalid",
+      "category": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents"
+    },
+    {
+      "status": 401,
+      "reason": "issuer-invalid",
+      "category": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents"
+    },
+    {
+      "status": 401,
+      "reason": "issuer-invalid",
+      "category": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents"
+    }
+  ],
+  "actualLoadedComponents": {
+    "projects": [
+      "projects-conversation-start-setup",
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ],
+    "eventstore": [
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ],
+    "folders": [
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ],
+    "projects-workers": [
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ],
+    "folders-workers": [
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ],
+    "tenants": [
+      "pubsub",
+      "readscatalog",
+      "statestore"
+    ]
+  },
+  "literalExpectedReceiverStatus": 401,
+  "transportStatusConverted": false,
+  "guardRelaxation": false,
+  "defaultRetryPolicy": {
+    "maxRetries": 5,
+    "breakerConsecutiveFailures": 5
+  },
+  "attribution": "Receiver conclusively rejects issuer-invalid401; caller actually receives500 after5receiver attempts. Source policy and Dapr errors.As path support breaker/retry masking; actual500body wasnotretained, donotclaimexactbodyreason.",
+  "selectedRepair": "Private eventstore target Projects uses0retries/noappbreaker withunchanged10s timeout. Retainexact401assert; nextfreshrealrunmustobservestatus. Folder2s/500msbudgetsunchanged."
+}

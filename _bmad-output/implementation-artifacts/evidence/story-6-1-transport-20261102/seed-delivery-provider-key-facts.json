@@ -1,0 +1,32 @@
+{
+  "runtimeVersion": "Dapr v1.18.7",
+  "sourceLinks": [
+    {
+      "url": "https://github.com/dapr/dapr/blob/v1.18.7/pkg/actors/state/state.go",
+      "sha256": "e39188343273239609754b1215d3f11b71b614482d150c9d670dce8af5fd3dce"
+    },
+    {
+      "url": "https://github.com/dapr/dapr/blob/v1.18.7/pkg/actors/internal/key/key.go",
+      "sha256": "c96623e6ea5ce07c9ccbc3a8c356261753a66cdf4a3bfa33431c86141125ed38"
+    },
+    {
+      "url": "https://github.com/dapr/dapr/blob/v1.18.7/pkg/actors/api/api.go",
+      "sha256": "bb7252950b7349f311882653216d0d5c7c68ef573d6a63354ba2def165bae3ab"
+    }
+  ],
+  "verifiedFacts": {
+    "actorStateKeyComponents": [
+      "appId",
+      "actorType",
+      "actorId",
+      "stateKey"
+    ],
+    "separator": "||",
+    "namespaceNotAddedByTheseActorStateKeyFunctions": true,
+    "fixtureRawObserverRemainsReadOnlyAndOwnerContainerBound": true
+  },
+  "notClaimed": [
+    "shared lease emptiness",
+    "runtime authority from checkpoint or lifecycle observations"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "build": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore",
+    "-p:BuildProjectReferences=false"
+  ],
+  "native": [
+    "dotnet",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-method",
+    "*NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+    "-method",
+    "*OperationsDescribeTheSixActualQueryAndResultPairs",
+    "-method",
+    "*FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch",
+    "-xml",
+    "/tmp/story61-fixture-catalog-readback-controls.xml"
+  ],
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "assemblySha256": "c47c18e15c3f5d271fa7f617950bbf726cb9632f04dc7a12e5f17b4cf8567fc5",
+  "sourceSha256": {
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureCatalogComposition.cs": "6055938b300ef8aa63217b847615040d3b36bbd0bcedaac3d2023682e4379eda",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs": "470110c5fb41917c9c81e1dd847761c2a2bc0fdddf24926623c739138383987d",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityRoutes.cs": "a1e265d222ecd734b7158879132e4f4b973d013f203e0654f0a805392e91a836",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityLoopbackHandler.cs": "0adfce94bae2aab76903ce970f1b2d160727de2588b0c59947e7ea210775db90",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs": "db95931045bde6aba4a6881bb08f83d8f33203fe83cb4a29cd914ba52d745f5c",
+    "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs": "898f99099d958aa5b7b39d9fe2808a71fde22f1ca550d75c0d785924a0667bc7",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs": "d8856e621b4dc502300e56108496b6377f57944a2d4a55705159913968636cba"
+  },
+  "nativeAssemblies": [
+    {
+      "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 2 threads)]",
+      "id": "1efa869a-f089-47a3-9243-3821c8073166",
+      "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "run-date": "2026-11-03",
+      "run-time": "17:00:06",
+      "start-rtf": "2026-11-03T17:00:06.4328325+00:00",
+      "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+      "target-framework": ".NETCoreApp,Version=v10.0",
+      "errors": "0",
+      "failed": "0",
+      "finish-rtf": "2026-11-03T17:00:07.4917667+00:00",
+      "not-run": "0",
+      "passed": "3",
+      "skipped": "0",
+      "time": "1.059",
+      "time-rtf": "00:00:01.0590000",
+      "total": "3"
+    }
+  ],
+  "scope": "Isolated component fixture composition only; no feature qualification or acceptance authority. Earlier failed controls retained as history."
+}

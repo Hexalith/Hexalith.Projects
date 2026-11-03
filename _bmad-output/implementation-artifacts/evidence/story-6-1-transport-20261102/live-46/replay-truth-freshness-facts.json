@@ -1,0 +1,82 @@
+{
+  "failedResponse": {
+    "observedAt": "2026-11-03T11:17:56.641889+00:00",
+    "fixtureElapsedSeconds": 310.9376005,
+    "tenantSha256": "423066C9E1D4CF7BE0787FE7604753A30673A1556EC70F26A362BEB5733D3946",
+    "tenantActor": true,
+    "requestedPageSize": 1,
+    "requestedContinuation": true,
+    "httpStatus": 200,
+    "admission": {
+      "httpStatus": 200,
+      "responseState": "Unavailable",
+      "asOfPresent": true,
+      "projectVersion": 0,
+      "itemCount": 0,
+      "hasMore": false,
+      "cursorPresent": false,
+      "components": [
+        {
+          "name": "FolderVisibility",
+          "nameSha256": "0F51A5160ADD651A9508DAAAC8C358C446B35B55AFCB01C283CB3F56FA31D517",
+          "included": false,
+          "freshness": "Stale",
+          "reason": "FolderUnavailable",
+          "reasonSha256": "CD42558BF6027DA29C81CFC8265C3DDA9999898DDE57A0D7001AB223F8C6DF04",
+          "lastVerifiedAtPresent": true
+        }
+      ]
+    }
+  },
+  "actualPersistedSource": [
+    {
+      "owner": "projects",
+      "tenantClass": "primary",
+      "tenantSha256": "1B9C2F5023FB417DC2AB099F473D3CC806089C5CF96097CDC046AEB71DE32E7B",
+      "sourceTimestamp": "2026-11-03T11:14:17.1643467+00:00",
+      "sourceAgeAtFailedResponseSeconds": 219.477543,
+      "sourceBytesSha256": "1ae5aeba917c4c97b98c9058b37cbe5b5be1aefd8e3effe764e117d8be36ba70",
+      "actualEtag": "2",
+      "snapshotCopiesWithExactSameBytesAndEtag": 71,
+      "latestObservationUtc": "2026-11-03T11:18:01.552144+00:00"
+    },
+    {
+      "owner": "folders",
+      "tenantClass": "primary",
+      "tenantSha256": "1B9C2F5023FB417DC2AB099F473D3CC806089C5CF96097CDC046AEB71DE32E7B",
+      "sourceTimestamp": "2026-11-03T11:14:17.1643467+00:00",
+      "sourceAgeAtFailedResponseSeconds": 219.477543,
+      "sourceBytesSha256": "7dd1f987c9d0981f8542aef7857067c5010f906050134aae6925f23d21f80dca",
+      "actualEtag": "2",
+      "snapshotCopiesWithExactSameBytesAndEtag": 70,
+      "latestObservationUtc": "2026-11-03T11:18:01.552144+00:00"
+    },
+    {
+      "owner": "projects",
+      "tenantClass": "foreign",
+      "tenantSha256": "423066C9E1D4CF7BE0787FE7604753A30673A1556EC70F26A362BEB5733D3946",
+      "sourceTimestamp": "2026-11-03T11:12:55.7798326+00:00",
+      "sourceAgeAtFailedResponseSeconds": 300.862057,
+      "sourceBytesSha256": "dfbd29d439b0fd13ccf8a770cc0186430a7417ad01222ba6a322d9887cf5ff02",
+      "actualEtag": "2",
+      "snapshotCopiesWithExactSameBytesAndEtag": 96,
+      "latestObservationUtc": "2026-11-03T11:18:01.552144+00:00"
+    },
+    {
+      "owner": "folders",
+      "tenantClass": "foreign",
+      "tenantSha256": "423066C9E1D4CF7BE0787FE7604753A30673A1556EC70F26A362BEB5733D3946",
+      "sourceTimestamp": "2026-11-03T11:12:55.7798326+00:00",
+      "sourceAgeAtFailedResponseSeconds": 300.862057,
+      "sourceBytesSha256": "bac02c2beaf0c7b82c33764333218dc013936abda81fc968f35f0b8ff501b606",
+      "actualEtag": "2",
+      "snapshotCopiesWithExactSameBytesAndEtag": 95,
+      "latestObservationUtc": "2026-11-03T11:18:01.552144+00:00"
+    }
+  ],
+  "freshnessBudgetSeconds": 300,
+  "sourceAndTimestampNotMutatedByObserver": true,
+  "rawReadOnlyObservationsSha256": "2ea9c9ebdfdbf78287c40ba5c718f9f4c05999be65a240823aa22f3ca080b83a",
+  "guardUnchanged": true,
+  "lateOrStaleAuthorityAccepted": false
+}

@@ -3,25 +3,697 @@ namespace Hexalith.Projects.Integration.Tests;
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Dapr.Client;
+using Hexalith.EventStore.Client.Projections;
+using Hexalith.EventStore.Contracts.Streams;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Infrastructure;
+using Hexalith.Projects.Projections.TenantAccess;
 using Xunit;
 
 /// <summary>Focused controls for the distributed fixture's independent evidence checks.</summary>
 public sealed class SupportedProjectReadEvidenceTests
 {
+    /// <summary>The complete provider control must finish before the actual matrix file can exist.</summary>
+    [Fact]
+    public async Task ScenarioReceiptWaitsForDeferredProviderVerification()
+    {
+        string path = Path.Combine(Path.GetTempPath(), "supported-read-receipt-" + Guid.NewGuid().ToString("N") + ".json");
+        TaskCompletionSource entered = new(TaskCreationOptions.RunContinuationsAsynchronously), release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        async Task VerifyAsync()
+        {
+            entered.SetResult();
+            await release.Task.ConfigureAwait(false);
+        }
+        try
+        {
+            Task write = SupportedProjectReadScenarioEvidence.WriteAfterProviderVerificationAsync(path, "duplicate",
+                SupportedProjectReadScenarioEvidence.Cases("duplicate"), "reads-" + new string('a', 24), VerifyAsync, TestContext.Current.CancellationToken);
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            Assert.False(File.Exists(path));
+            Assert.False(write.IsCompleted);
+            release.SetResult();
+            await write.ConfigureAwait(true);
+            using JsonDocument receipt = JsonDocument.Parse(await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
+            Assert.Equal("duplicate", receipt.RootElement.GetProperty("qualificationGroup").GetString());
+        }
+        finally { release.TrySetResult(); File.Delete(path); }
+    }
+
+    /// <summary>Faulted, canceled and late-canceled provider checks never leave a successful matrix receipt.</summary>
+    [Theory]
+    [InlineData("fault")]
+    [InlineData("canceled")]
+    [InlineData("late-canceled")]
+    public async Task FailedDeferredProviderVerificationCannotPersistScenarioSuccess(string mode)
+    {
+        string path = Path.Combine(Path.GetTempPath(), "supported-read-receipt-" + Guid.NewGuid().ToString("N") + ".json");
+        using CancellationTokenSource cancellation = new();
+        Task VerifyAsync()
+        {
+            if (mode == "fault") return Task.FromException(new InvalidOperationException("Provider parity failed."));
+            cancellation.Cancel();
+            return mode == "canceled" ? Task.FromCanceled(cancellation.Token) : Task.CompletedTask;
+        }
+        try
+        {
+            Task write = SupportedProjectReadScenarioEvidence.WriteAfterProviderVerificationAsync(path, "duplicate",
+                SupportedProjectReadScenarioEvidence.Cases("duplicate"), "reads-" + new string('a', 24), VerifyAsync, cancellation.Token);
+            if (mode == "fault") await Assert.ThrowsAsync<InvalidOperationException>(() => write);
+            else await Assert.ThrowsAnyAsync<OperationCanceledException>(() => write);
+            Assert.False(File.Exists(path));
+        }
+        finally { File.Delete(path); }
+    }
+
+    /// <summary>One complete required-key batch preserves all twenty values and their original inventory order.</summary>
+    [Fact]
+    public async Task RequiredSnapshotUsesOneCompleteBatchAndRetainsEveryByteAndVersion()
+    {
+        string[] keys = Enumerable.Range(0, 20).Select(index => (index % 5 == 0 ? "named||" : "logical:") + index).ToArray();
+        SupportedProjectReadStateSnapshot[] expected = keys.Select((key, index) => new SupportedProjectReadStateSnapshot(key, [(byte)index, 0, 255], (index + 1).ToString(System.Globalization.CultureInfo.InvariantCulture))).ToArray();
+        int batches = 0;
+        SupportedProjectReadStateSnapshot[] actual = await SupportedProjectReadDistributedFixture.ObserveRequiredSnapshotAsync(keys, observed =>
+        {
+            batches++;
+            Assert.Equal(keys, observed);
+            return Task.FromResult(expected.Reverse().ToArray());
+        }, allowIncomplete: false);
+        Assert.Equal(1, batches);
+        Assert.Equal(keys, actual.Select(value => value.Key));
+        Assert.True(SupportedProjectReadDistributedFixture.SameDomainState(expected, actual));
+    }
+
+    /// <summary>Batching cannot conceal a missing, duplicated, foreign or empty required value or version.</summary>
+    [Theory]
+    [InlineData("missing")]
+    [InlineData("duplicate")]
+    [InlineData("foreign")]
+    [InlineData("empty-data")]
+    [InlineData("empty-version")]
+    public async Task RequiredSnapshotBatchRejectsIncompleteOrSubstitutedObservations(string mode)
+    {
+        string[] keys = ["logical:key", "named||key"];
+        SupportedProjectReadStateSnapshot[] values = [new(keys[0], [1], "1"), new(keys[1], [2], "2")];
+        values = mode switch
+        {
+            "missing" => values[..1], "duplicate" => [values[0], values[0]], "foreign" => [values[0], new("foreign", [2], "2")],
+            "empty-data" => [values[0], new(keys[1], [], "2")], _ => [values[0], new(keys[1], [2], string.Empty)],
+        };
+        await Assert.ThrowsAsync<Xunit.Sdk.TrueException>(() => SupportedProjectReadDistributedFixture.ObserveRequiredSnapshotAsync(keys,
+            _ => Task.FromResult(values), allowIncomplete: false));
+    }
+
+    /// <summary>Incomplete observations retain their actual absent bytes and version for later failure evidence.</summary>
+    [Fact]
+    public async Task IncompleteSnapshotNeverInventsPersistedBytesOrVersion()
+    {
+        SupportedProjectReadStateSnapshot[] observed = await SupportedProjectReadDistributedFixture.ObserveRequiredSnapshotAsync(["logical:missing"],
+            _ => Task.FromResult<SupportedProjectReadStateSnapshot[]>([new("logical:missing", [], string.Empty)]), allowIncomplete: true);
+        Assert.Empty(observed.Single().Bytes);
+        Assert.Empty(observed.Single().ETag);
+    }
+
+    /// <summary>Ambiguous required inventories fail before accessing the provider.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RequiredSnapshotRejectsEmptyOrDuplicateInventoriesBeforeRead(bool duplicate)
+    {
+        int reads = 0;
+        await Assert.ThrowsAsync<Xunit.Sdk.TrueException>(() => SupportedProjectReadDistributedFixture.ObserveRequiredSnapshotAsync(
+            duplicate ? ["logical:key", "logical:key"] : [], _ =>
+            {
+                reads++;
+                return Task.FromResult(Array.Empty<SupportedProjectReadStateSnapshot>());
+            }, allowIncomplete: false));
+        Assert.Equal(0, reads);
+    }
+
+    /// <summary>Each independent receipt contains only its actual finite cases and never borrows another scenario flag.</summary>
+    [Theory]
+    [InlineData("duplicate", 1)]
+    [InlineData("full-replay", 1)]
+    [InlineData("main", 9)]
+    public void ScenarioReceiptsNeverClaimAnotherRuntimeOrUnexecutedCase(string scenario, int count)
+    {
+        string[] cases = SupportedProjectReadScenarioEvidence.Cases(scenario);
+        JsonElement result = SupportedProjectReadScenarioEvidence.Create(scenario, cases, "reads-" + new string('a', 24));
+        Assert.Equal(2, result.GetProperty("version").GetInt32());
+        Assert.Equal(scenario, result.GetProperty("qualificationGroup").GetString());
+        Assert.Equal("one-fresh-owned-runtime", result.GetProperty("providerScope").GetString());
+        Assert.Equal(count, result.GetProperty("cases").GetArrayLength());
+        Assert.Equal(scenario == "duplicate", result.GetProperty("duplicateDeliveryVerified").GetBoolean());
+        Assert.Equal(scenario == "full-replay", result.GetProperty("fullReplayVerified").GetBoolean());
+        Assert.Equal(scenario == "main", result.GetProperty("projectsProcessRestartVerified").GetBoolean());
+        Assert.False(result.GetProperty("productionReadiness").GetBoolean());
+        Assert.False(result.GetProperty("acceptedEquivalence").GetBoolean());
+        cases[0] = "poisoned";
+        Assert.DoesNotContain("poisoned", SupportedProjectReadScenarioEvidence.Cases(scenario));
+    }
+
+    /// <summary>Identical scenario rows from two real isolation names retain distinct provider bindings.</summary>
+    [Fact]
+    public void ScenarioMetadataBindsItsOwnProviderIsolation()
+    {
+        string[] cases = SupportedProjectReadScenarioEvidence.Cases("duplicate");
+        JsonElement first = SupportedProjectReadScenarioEvidence.Create("duplicate", cases, "reads-" + new string('a', 24));
+        JsonElement second = SupportedProjectReadScenarioEvidence.Create("duplicate", cases, "reads-" + new string('b', 24));
+        Assert.NotEqual(first.GetProperty("providerIsolationSha256").GetString(), second.GetProperty("providerIsolationSha256").GetString());
+        Assert.Equal(64, first.GetProperty("providerIsolationSha256").GetString()!.Length);
+        Assert.Equal(first.GetProperty("cases").GetRawText(), second.GetProperty("cases").GetRawText());
+    }
+
+    /// <summary>An unowned, shared, malformed or path-like isolation cannot produce a group receipt.</summary>
+    [Theory]
+    [InlineData("")]
+    [InlineData("shared")]
+    [InlineData("reads-short")]
+    [InlineData("reads-../other")]
+    public void ScenarioMetadataRejectsUnownedIsolationNames(string isolation)
+        => Assert.Throws<InvalidOperationException>(() => SupportedProjectReadScenarioEvidence.Create("duplicate", SupportedProjectReadScenarioEvidence.Cases("duplicate"), isolation));
+
+    /// <summary>Missing, duplicated, mixed or reordered scenario cases refuse before a qualifying receipt exists.</summary>
+    [Theory]
+    [InlineData("missing")]
+    [InlineData("duplicate")]
+    [InlineData("mixed")]
+    [InlineData("reversed")]
+    [InlineData("unknown")]
+    public void ScenarioReceiptRejectsMissingDuplicatedSubstitutedOrUnknownCases(string mode)
+    {
+        string[] cases = SupportedProjectReadScenarioEvidence.Cases("main");
+        cases = mode switch
+        {
+            "missing" => cases[..^1],
+            "duplicate" => [.. cases, cases[0]],
+            "mixed" => [.. cases[..^1], SupportedProjectReadScenarioEvidence.Cases("duplicate")[0]],
+            "reversed" => cases.Reverse().ToArray(),
+            _ => cases,
+        };
+        Assert.Throws<InvalidOperationException>(() => SupportedProjectReadScenarioEvidence.Create(mode == "unknown" ? "other" : "main", cases, "reads-" + new string('a', 24)));
+    }
+
+    /// <summary>AlreadyCompleted never substitutes for durable proof, and no refusal or malformed outcome qualifies.</summary>
+    [Fact]
+    public void SeedProjectionCompletionRequiresExactDurableProofForIdempotentOutcome()
+    {
+        Hexalith.EventStore.Contracts.Projections.ProjectionDispatchResponse Response(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus status)
+            => new(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchProtocol.Version,
+                [new("project-reads", status, null, null)]);
+        var completed = Response(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed);
+        var already = Response(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.AlreadyCompleted);
+        Assert.True(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(completed, false));
+        Assert.False(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(already, false));
+        Assert.True(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(already, true));
+        foreach (var status in Enum.GetValues<Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus>()
+            .Where(item => item is not (Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed
+                or Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.AlreadyCompleted)))
+            Assert.False(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(Response(status), true));
+        foreach (var malformed in new[]
+        {
+            completed with { Version = 999 }, completed with { Outcomes = [] }, completed with { Outcomes = [.. completed.Outcomes, .. completed.Outcomes] },
+            completed with { Outcomes = [completed.Outcomes[0] with { ProjectionType = "foreign" }] },
+        }) Assert.False(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(malformed, true));
+        Assert.False(SupportedProjectReadDistributedFixture.ProjectSeedCompletionMatches(null, true));
+    }
+
+    /// <summary>The seed mapper retains actual metadata/version/correlation fields and refuses a missing source correlation.</summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData(1)]
+    public void PersistedProjectionMappingPreservesSourceWireMetadata(int? payloadVersion)
+    {
+        var first = new StreamReadEvent(1, "Event", "{}"u8.ToArray(), "json", 1, "event-1", "correlation", "cause", DateTimeOffset.UtcNow, "actor")
+            { GlobalPosition = 10, PayloadVersion = payloadVersion };
+        var second = first with { SequenceNumber = 2, GlobalPosition = 11, MessageId = "event-2" };
+        var source = new StreamReadPage("tenant", "projects", "project", [first, second], new(0, null, 2, 2, 2, false, null));
+        var mapped = SupportedProjectReadDistributedFixture.MapProjectStream(source, "tenant", "project");
+        Assert.All(mapped.Events, item => { Assert.Equal(1, item.MetadataVersion); Assert.Equal(payloadVersion, item.StoredPayloadVersion); Assert.Equal("correlation", item.CorrelationId); });
+        Assert.Equal(first.GlobalPosition, mapped.Events[0].GlobalPosition);
+        Assert.Equal(first.UserId, mapped.Events[0].UserId);
+        Assert.Equal(first.MessageId, mapped.Events[0].MessageId);
+        Assert.False(SupportedProjectReadDistributedFixture.IsCompleteProjectStream(new("tenant", "projects", "project"),
+            source with { Events = [first with { CorrelationId = null }, second] }));
+    }
+
+    /// <summary>Native backup quiescence requires the complete unchanged source inventory, bytes and ETags.</summary>
+    [Fact]
+    public void CutoverInventoryRejectsAddedMissingChangedAndUnversionedState()
+    {
+        var before = new Dictionary<string, SupportedProjectReadStateSnapshot>
+        {
+            ["projection-activation:outbox:v1:00"] = new("projection-activation:outbox:v1:00", "{\"items\":[],\"lastRevision\":1}"u8.ToArray(), "1"),
+        };
+        Assert.True(SupportedProjectReadDistributedFixture.SameCutoverInventory(before, before));
+        foreach (var after in new[]
+        {
+            new Dictionary<string, SupportedProjectReadStateSnapshot>(),
+            new Dictionary<string, SupportedProjectReadStateSnapshot>(before) { ["extra"] = new("extra", "{}"u8.ToArray(), "1") },
+            new Dictionary<string, SupportedProjectReadStateSnapshot> { [before.First().Key] = before.First().Value with { ETag = "2" } },
+            new Dictionary<string, SupportedProjectReadStateSnapshot> { [before.First().Key] = before.First().Value with { Bytes = "{}"u8.ToArray() } },
+        }) Assert.False(SupportedProjectReadDistributedFixture.SameCutoverInventory(before, after));
+        var unversioned = new Dictionary<string, SupportedProjectReadStateSnapshot> { [before.First().Key] = before.First().Value with { ETag = "" } };
+        Assert.False(SupportedProjectReadDistributedFixture.SameCutoverInventory(unversioned, unversioned));
+    }
+
+    /// <summary>Seed completion binds the complete supported source to the actual last accepted command.</summary>
+    [Fact]
+    public void SeedDeliverySourceRefusesWrongCommandScopeOrHead()
+    {
+        var item = new StreamReadEvent(1, "Event", "{}"u8.ToArray(), "json", 1, "event", "accepted-command", "accepted-command", DateTimeOffset.UtcNow, "actor");
+        var source = new StreamReadPage("tenant", "folders", "folder", [item], new(0, null, 1, 1, 1, false, null));
+        bool Matches(StreamReadPage value, string command = "accepted-command") => SupportedProjectReadDistributedFixture.SeedSourceMatches(value, "tenant", "folders", "folder", command, "actor");
+        Assert.True(Matches(source));
+        Assert.False(Matches(source, "different-command"));
+        Assert.False(Matches(source, ""));
+        foreach (StreamReadPage invalid in new[]
+        {
+            source with { Tenant = "other" }, source with { Domain = "other" }, source with { AggregateId = "other" },
+            source with { Events = [] }, source with { Metadata = source.Metadata with { LatestSequence = 2 } },
+            source with { Metadata = source.Metadata with { IsTruncated = true } },
+            source with { Metadata = source.Metadata with { NextContinuationToken = new("unexpected") } },
+            source with { Events = [item with { CorrelationId = "other" }] }, source with { Events = [item with { CausationId = "other" }] },
+            source with { Events = [item with { UserId = "other" }] },
+        }) Assert.False(Matches(invalid));
+    }
+
+    /// <summary>Only an explicit complete provider response can prove lifecycle absence; missing or conflicting observations refuse.</summary>
+    [Fact]
+    public void SeedProviderObservationsDistinguishExplicitAbsenceFromMissingProof()
+    {
+        string[] keys = ["checkpoint", "epoch", "lifecycle"];
+        object[] rows = [new { key = keys[0], exists = true, dataHex = "7B7D", version = "1" },
+            new { key = keys[1], exists = true, dataHex = "32", version = "2" },
+            new { key = keys[2], exists = false, dataHex = false, version = false }];
+        var observed = SupportedProjectReadDistributedFixture.ParseSeedDeliveryStates(JsonSerializer.SerializeToUtf8Bytes(rows), keys);
+        Assert.Equal("{}"u8.ToArray(), observed["checkpoint"]!.Bytes);
+        Assert.Equal("2"u8.ToArray(), observed["epoch"]!.Bytes);
+        Assert.Null(observed["lifecycle"]);
+        foreach (object[] invalid in new[]
+        {
+            rows.Take(2).ToArray(), new[] { rows[0], rows[1], rows[1] },
+            new object[] { rows[0], rows[1], new { key = "other", exists = false, dataHex = false, version = false } },
+            new object[] { rows[0], rows[1], new { key = "lifecycle", exists = false, dataHex = "", version = false } },
+            new object[] { rows[0], rows[1], new { key = "lifecycle", dataHex = false, version = false } },
+            new object[] { rows[0], rows[1], new { key = "lifecycle", exists = true, dataHex = false, version = false } },
+        }) Assert.Throws<Xunit.Sdk.TrueException>(() => SupportedProjectReadDistributedFixture.ParseSeedDeliveryStates(JsonSerializer.SerializeToUtf8Bytes(invalid), keys));
+    }
+
+    /// <summary>Head observations require an exact authenticated SDK metadata shape and preserve the independently returned current sequence.</summary>
+    [Fact]
+    public void OwnerHeadObservationRejectsForeignBodiesRangesCountsAndContinuations()
+    {
+        var page = new StreamReadPage("tenant", "folders", "folder", [], new(0, 0, null, 42, 0, false, null));
+        bool Matches(StreamReadPage value) => SupportedProjectReadDistributedFixture.IsOwnerHeadObservation(value, "tenant", "folder");
+        Assert.True(Matches(page));
+        Assert.True(Matches(page with { Metadata = page.Metadata with { LatestSequence = 0 } }));
+        foreach (var invalid in new[]
+        {
+            page with { Tenant = "foreign" }, page with { Domain = "foreign" }, page with { AggregateId = "foreign" },
+            page with { Metadata = page.Metadata with { FromSequence = 1 } }, page with { Metadata = page.Metadata with { ToSequence = null } },
+            page with { Metadata = page.Metadata with { LastSequenceReturned = 1 } }, page with { Metadata = page.Metadata with { LatestSequence = -1 } },
+            page with { Metadata = page.Metadata with { EventCount = 1 } }, page with { Metadata = page.Metadata with { IsTruncated = true } },
+            page with { Metadata = page.Metadata with { NextContinuationToken = new("unexpected") } },
+            page with { Events = [new(1, "unexpected", [], "json", 1, "message", "correlation", "command", DateTimeOffset.UtcNow, "actor")] },
+        }) Assert.False(Matches(invalid));
+    }
+
+    /// <summary>Seed readiness needs the accepted ACL command, exact retained prefix, current head and projected actor grants.</summary>
+    [Fact]
+    public async Task OrganizationSeedReadinessRejectsForeignChangedOrIncompleteEvidence()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        string[] actions = ["create_folder", "manage_folder_access"];
+        Hexalith.Folders.Aggregates.Organization.IOrganizationAclEvent[] typed = [
+            new Hexalith.Folders.Aggregates.Organization.OrganizationAclBaselineInitialized("tenant", "tenant", "accepted-command",
+                "accepted-command", "accepted-command", new string('A', 64)),
+            .. actions.Select(action => new Hexalith.Folders.Aggregates.Organization.OrganizationAclPrincipalGranted("tenant", "tenant",
+                Hexalith.Folders.Aggregates.Organization.OrganizationAclPrincipalKind.User, "actor", action,
+                "accepted-command", "accepted-command", "accepted-command", new string('A', 64))),
+        ];
+        StreamReadEvent[] events = typed.Select((value, index) => new StreamReadEvent(index + 1, value.GetType().FullName!,
+            JsonSerializer.SerializeToUtf8Bytes(value, value.GetType()), "json", 1, "event-" + index,
+            "accepted-command", "accepted-command", now, "actor")).ToArray();
+        var source = new StreamReadPage("tenant", "folders", "tenant", events, new(0, null, 3, 3, 3, false, null));
+        var state = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
+        using HttpClient unusedTransport = new();
+        var model = new Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel(state,
+            new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(now),
+            new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(unusedTransport));
+        foreach ((StreamReadEvent item, int index) in events.Select((item, index) => (item, index)))
+        {
+            string digest = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+                [.. System.Text.Encoding.UTF8.GetBytes(item.EventTypeName + ":1:"), .. item.Payload]));
+            await model.ApplyAsync("tenant", "tenant", item.MessageId, item.SequenceNumber, typed[index],
+                TestContext.Current.CancellationToken, digest);
+        }
+        var stored = await state.GetAsync<Hexalith.Folders.Authorization.OrganizationPermissionProjection>("statestore",
+            "projection:folders:organization-permissions:tenant", TestContext.Current.CancellationToken);
+        using DaprClient client = new DaprClientBuilder().Build();
+        JsonObject projection = JsonSerializer.SerializeToNode(stored.Value, client.JsonSerializerOptions)!.AsObject();
+        bool Matches(JsonObject value, StreamReadPage? stream = null, long head = 3) => SupportedProjectReadDistributedFixture
+            .OrganizationAclReadinessMatches(JsonSerializer.SerializeToElement(value), "tenant", "actor", "accepted-command", stream ?? source, head);
+        Assert.True(Matches(projection));
+        foreach (string field in projection.Select(property => property.Key).ToArray())
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid.Remove(field); Assert.False(Matches(invalid));
+        }
+        foreach ((string field, JsonNode? value) in new (string, JsonNode?)[]
+        {
+            ("tenantId", JsonValue.Create("foreign")), ("organizationId", JsonValue.Create("foreign")),
+            ("lastSequence", JsonValue.Create(2)), ("isInitialized", JsonValue.Create(false)),
+            ("projectedAt", JsonValue.Create(now.AddSeconds(-1))), ("projectedAt", JsonValue.Create(now.AddMinutes(3))),
+        })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid[field] = value; Assert.False(Matches(invalid));
+        }
+        foreach (string field in new[] { "principalId", "action" })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid["grants"]![0]![field] = "foreign"; Assert.False(Matches(invalid));
+        }
+        var changed = (JsonObject)projection.DeepClone(); changed["grants"]![0]!["principalKind"] = 1; Assert.False(Matches(changed));
+        changed = (JsonObject)projection.DeepClone(); changed["processedMessages"]!["event-1"] = 1; Assert.False(Matches(changed));
+        changed = (JsonObject)projection.DeepClone(); changed["recentMessages"]![0]!["payloadDigest"] = "invalid"; Assert.False(Matches(changed));
+        changed = (JsonObject)projection.DeepClone(); changed["recentMessages"]![0]!["payloadDigest"] = new string('B', 64); Assert.False(Matches(changed));
+        Assert.False(Matches(projection, head: 2));
+        Assert.False(Matches(projection, source with { Tenant = "foreign" }));
+        Assert.False(Matches(projection, source with { Metadata = source.Metadata with { IsTruncated = true } }));
+        Assert.False(Matches(projection, source with { Metadata = source.Metadata with { EventCount = 2 } }));
+        Assert.False(Matches(projection, source with { Events = events.Skip(1).ToArray() }));
+        foreach (var invalid in new[]
+        {
+            events[1] with { CausationId = "other" }, events[1] with { CorrelationId = "other" }, events[1] with { UserId = "other" },
+            events[1] with { EventTypeName = "foreign.OrganizationAclPrincipalGranted" },
+            events[1] with { Payload = """{"ManagedTenantId":"foreign"}"""u8.ToArray() },
+        }) Assert.False(Matches(projection, source with { Events = [events[0], invalid, events[2]] }));
+    }
+
+    /// <summary>Creation readiness binds a real aggregate event, actual permission projector and actual Dapr serialization without inventing grants.</summary>
+    [Fact]
+    public async Task FolderCreationSeedReadinessUsesActualProducerProjectorAndStoreSerialization()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        var command = new Hexalith.Folders.Aggregates.Folder.CreateFolder("tenant", "tenant", "folder", "Owned folder label",
+            null, null, [], "actor", "accepted-command", "accepted-command", "accepted-command", null);
+        var result = Hexalith.Folders.Aggregates.Folder.FolderAggregate.Handle(
+            Hexalith.Folders.Aggregates.Folder.FolderState.Empty, command, now);
+        var created = Assert.IsType<Hexalith.Folders.Aggregates.Folder.FolderCreated>(Assert.Single(result.Events));
+        var item = new StreamReadEvent(1, created.GetType().FullName!, JsonSerializer.SerializeToUtf8Bytes(created),
+            "json", 1, "actual-event", "accepted-command", "accepted-command", now, "actor");
+        var source = new StreamReadPage("tenant", "folders", "folder", [item], new(0, null, 1, 1, 1, false, null));
+        string Digest(StreamReadEvent value) => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+            [.. System.Text.Encoding.UTF8.GetBytes(value.EventTypeName + ":" + (value.PayloadVersion ?? 1) + ":"), .. value.Payload]));
+        var state = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
+        var clock = new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(now);
+        using HttpClient unusedTransport = new();
+        var sequence = new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(unusedTransport);
+        var organization = new Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel(state, clock, sequence);
+        var model = new Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel(state, clock, sequence, organization);
+        await model.ApplyAsync("tenant", "folder", item.MessageId, 1, Digest(item), created, TestContext.Current.CancellationToken);
+        var stored = await state.GetAsync<Hexalith.Folders.Authorization.FolderPermissionProjection>("statestore",
+            "projection:folders:folder-permissions:tenant:folder", TestContext.Current.CancellationToken);
+        using DaprClient client = new DaprClientBuilder().Build();
+        JsonObject projection = JsonSerializer.SerializeToNode(stored.Value, client.JsonSerializerOptions)!.AsObject();
+        bool Matches(JsonObject value, StreamReadPage? stream = null, long head = 1, string accepted = "accepted-command")
+            => SupportedProjectReadDistributedFixture.FolderCreationReadinessMatches(JsonSerializer.SerializeToElement(value),
+                "tenant", "folder", "actor", accepted, stream ?? source, head);
+        Assert.True(Matches(projection));
+        Assert.Empty(projection["overrides"]!.AsArray());
+        foreach (string field in projection.Select(property => property.Key).ToArray())
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid.Remove(field); Assert.False(Matches(invalid));
+        }
+        foreach ((string field, JsonNode? value) in new (string, JsonNode?)[]
+        {
+            ("tenantId", JsonValue.Create("foreign")), ("organizationId", JsonValue.Create("foreign")), ("folderId", JsonValue.Create("foreign")),
+            ("lastSequence", JsonValue.Create(0)), ("lastSequence", JsonValue.Create(2)), ("isCreated", JsonValue.Create(false)),
+            ("isArchived", JsonValue.Create(true)), ("projectedAt", JsonValue.Create(now.AddSeconds(-1))),
+            ("projectedAt", JsonValue.Create(now.AddMinutes(3))),
+        })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid[field] = value; Assert.False(Matches(invalid));
+        }
+        foreach ((string field, JsonNode? value) in new (string, JsonNode?)[]
+        {
+            ("messageId", JsonValue.Create("foreign")), ("sequence", JsonValue.Create(2)),
+            ("payloadDigest", JsonValue.Create("invalid")), ("payloadDigest", JsonValue.Create(new string('B', 64))),
+        })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid["recentMessages"]![0]![field] = value; Assert.False(Matches(invalid));
+        }
+        var changed = (JsonObject)projection.DeepClone(); changed["recentMessages"] = new JsonArray(); Assert.False(Matches(changed));
+        changed = (JsonObject)projection.DeepClone(); changed["fileIdentities"]!["unexpected"] = new JsonObject(); Assert.False(Matches(changed));
+        changed = (JsonObject)projection.DeepClone(); changed["overrides"]!.AsArray().Add(new JsonObject()); Assert.False(Matches(changed));
+        Assert.False(Matches(projection, head: 0));
+        Assert.False(Matches(projection, head: 2));
+        Assert.False(Matches(projection, accepted: "other-command"));
+        foreach (var invalid in new[]
+        {
+            source with { Tenant = "foreign" }, source with { Domain = "foreign" }, source with { AggregateId = "foreign" },
+            source with { Metadata = source.Metadata with { IsTruncated = true } },
+            source with { Metadata = source.Metadata with { EventCount = 2 } },
+            source with { Metadata = source.Metadata with { LatestSequence = 2 } }, source with { Events = [] },
+        }) Assert.False(Matches(projection, invalid));
+        foreach (var invalid in new[]
+        {
+            item with { CausationId = "foreign" }, item with { CorrelationId = "foreign" }, item with { UserId = "foreign" },
+            item with { EventTypeName = "foreign.FolderCreated" }, item with { Timestamp = default },
+            item with { SerializationFormat = "other" }, item with { MetadataVersion = 2 }, item with { PayloadVersion = 2 },
+            item with { Payload = [] }, item with { Payload = "{\"ManagedTenantId\":\"tenant\",\"managedTenantId\":\"tenant\"}"u8.ToArray() },
+        }) Assert.False(Matches(projection, source with { Events = [invalid] }));
+        foreach (var invalid in new[]
+        {
+            created with { ManagedTenantId = "foreign" }, created with { OrganizationId = "foreign" }, created with { FolderId = "foreign" },
+            created with { ActorPrincipalId = "foreign" }, created with { CorrelationId = "foreign" }, created with { TaskId = "foreign" },
+            created with { IdempotencyKey = "foreign" }, created with { IdempotencyFingerprint = new string('B', 64) },
+            created with { OccurredAt = default }, created with { DisplayName = "changed" }, created with { Tags = null! },
+            created with { LifecycleState = (Hexalith.Folders.Aggregates.Folder.FolderLifecycleState)999 },
+            created with { RepositoryBindingState = (Hexalith.Folders.Aggregates.Folder.FolderRepositoryBindingState)999 },
+        })
+        {
+            var changedSource = item with { Payload = JsonSerializer.SerializeToUtf8Bytes(invalid) };
+            changed = (JsonObject)projection.DeepClone(); changed["recentMessages"]![0]!["payloadDigest"] = Digest(changedSource);
+            Assert.False(Matches(changed, source with { Events = [changedSource] }));
+        }
+    }
+
+    /// <summary>The real handler and store serializer retain the wrapped Projects and direct owner projection layouts.</summary>
+    [Fact]
+    public async Task TenantAuthorityReadinessUsesActualVersionedProjectsStoreDocument()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        using DaprClient client = new DaprClientBuilder().Build();
+        SupportedProjectReadCapturingStateStore capture = new(client.JsonSerializerOptions);
+        DaprProjectTenantAccessProjectionStore store = new(capture);
+        ProjectTenantAccessHandler handler = new(store, new FixedUtcClock(now), new TenantAccessOptions());
+        await handler.HandleAsync(new(ProjectTenantAccessEventKind.TenantCreated, "tenant", "created", 1, now,
+            "correlation"), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(new(ProjectTenantAccessEventKind.UserAddedToTenant, "tenant", "owner", 2, now,
+            "correlation", "actor", "TenantOwner"), TestContext.Current.CancellationToken);
+        StreamReadEvent[] events = [
+            new(1, "Hexalith.Tenants.Contracts.Events.TenantCreated", [], "json", 1, "created", "correlation", "command", now, "actor"),
+            new(2, "Hexalith.Tenants.Contracts.Events.UserAddedToTenant", [], "json", 1, "owner", "correlation", "command", now, "actor"),
+        ];
+        var source = new StreamReadPage("system", "tenants", "tenant", events, new(0, null, 2, 2, 2, false, null));
+        JsonElement document = capture.Document!.Value;
+        bool Matches(JsonElement value, bool wrapped = true) => SupportedProjectReadDistributedFixture
+            .TenantAuthorityStateMatches(value, "tenant", "actor", source, wrapped);
+        Assert.True(Matches(document));
+        Assert.Equal(2, document.GetProperty("version").GetInt64());
+        JsonElement direct = document.GetProperty("projection");
+        Assert.True(Matches(direct, wrapped: false));
+        Assert.False(Matches(direct));
+        Assert.False(Matches(document, wrapped: false));
+        foreach (string field in new[] { "projection", "version" })
+        {
+            var invalid = JsonNode.Parse(document.GetRawText())!.AsObject(); invalid.Remove(field);
+            Assert.False(Matches(JsonSerializer.SerializeToElement(invalid)));
+        }
+        foreach (long version in new long[] { -1, 0, 1, 3 })
+        {
+            var invalid = JsonNode.Parse(document.GetRawText())!.AsObject(); invalid["version"] = version;
+            Assert.False(Matches(JsonSerializer.SerializeToElement(invalid)));
+        }
+        var changed = JsonNode.Parse(document.GetRawText())!.AsObject(); changed["projection"]!["version"] = 3;
+        Assert.False(Matches(JsonSerializer.SerializeToElement(changed)));
+        changed = JsonNode.Parse(document.GetRawText())!.AsObject(); changed["unexpected"] = true;
+        Assert.False(Matches(JsonSerializer.SerializeToElement(changed)));
+        changed = JsonNode.Parse(document.GetRawText())!.AsObject(); changed["projection"]!["processedMessages"]!["owner"]!["eventTypeName"] = "different";
+        Assert.False(Matches(JsonSerializer.SerializeToElement(changed)));
+    }
+
+    /// <summary>A present projection cannot authorize seeding until its exact retained source and actor owner evidence have arrived.</summary>
+    [Fact]
+    public void TenantAuthorityReadinessRejectsPresentButIncompleteOrConflictingProjection()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        StreamReadEvent[] events = [
+            new(1, "Hexalith.Tenants.Contracts.Events.TenantCreated", [], "json", 1, "created", "correlation", "command", now, "actor"),
+            new(2, "Hexalith.Tenants.Contracts.Events.UserAddedToTenant", [], "json", 1, "owner", "correlation", "command", now, "actor"),
+        ];
+        var source = new StreamReadPage("system", "tenants", "tenant", events, new(0, null, 2, 2, 2, false, null));
+        JsonObject projection = JsonSerializer.SerializeToNode(new
+        {
+            tenantId = "tenant", enabled = true, watermark = 2, projectionWatermark = "tenant:2", lastEventTimestamp = now,
+            replayConflict = false, malformedEvidence = false,
+            principals = new Dictionary<string, object> { ["actor"] = new { principalId = "actor", role = "TenantOwner" } },
+            processedMessages = events.ToDictionary(item => item.MessageId, item => new
+            {
+                messageId = item.MessageId, tenantId = "tenant", eventTypeName = item.EventTypeName.Split('.')[^1],
+                sequenceNumber = item.SequenceNumber, timestamp = item.Timestamp,
+            }),
+        })!.AsObject();
+        bool Matches(JsonObject value, StreamReadPage? stream = null) => SupportedProjectReadDistributedFixture
+            .TenantAuthorityProjectionMatches(JsonSerializer.SerializeToElement(value), "tenant", "actor", stream ?? source);
+        Assert.True(Matches(projection));
+        foreach (string field in projection.Select(property => property.Key).ToArray())
+        {
+            var missing = (JsonObject)projection.DeepClone(); missing.Remove(field); Assert.False(Matches(missing));
+        }
+        foreach ((string field, JsonNode? value) in new (string, JsonNode?)[]
+        {
+            ("tenantId", JsonValue.Create("foreign")), ("enabled", JsonValue.Create(false)), ("watermark", JsonValue.Create(1)),
+            ("projectionWatermark", JsonValue.Create("tenant:1")), ("lastEventTimestamp", JsonValue.Create(now.AddSeconds(-1))),
+            ("replayConflict", JsonValue.Create(true)), ("malformedEvidence", JsonValue.Create(true)),
+        })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid[field] = value; Assert.False(Matches(invalid));
+        }
+        foreach (string field in new[] { "principalId", "role" })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid["principals"]!["actor"]![field] = "other"; Assert.False(Matches(invalid));
+        }
+        foreach (string field in new[] { "messageId", "tenantId", "eventTypeName", "sequenceNumber", "timestamp" })
+        {
+            var invalid = (JsonObject)projection.DeepClone(); invalid["processedMessages"]!["owner"]!.AsObject().Remove(field); Assert.False(Matches(invalid));
+        }
+        var presentOnly = (JsonObject)projection.DeepClone(); presentOnly["principals"] = new JsonObject(); Assert.False(Matches(presentOnly));
+        var missingEvent = (JsonObject)projection.DeepClone(); missingEvent["processedMessages"]!.AsObject().Remove("owner"); Assert.False(Matches(missingEvent));
+        Assert.False(Matches(projection, source with { Tenant = "foreign" }));
+        Assert.False(Matches(projection, source with { Metadata = source.Metadata with { IsTruncated = true } }));
+        Assert.False(Matches(projection, source with { Events = events.Skip(1).ToArray() }));
+        var first = (JsonObject)projection.DeepClone(); first["watermark"] = 1; first["projectionWatermark"] = "tenant:1";
+        first["principals"] = new JsonObject(); first["processedMessages"]!.AsObject().Remove("owner");
+        Assert.True(SupportedProjectReadDistributedFixture.TenantAuthorityProjectionMatches(
+            JsonSerializer.SerializeToElement(first), "tenant", "actor", source, requireOwner: false, throughSequence: 1));
+        Assert.False(SupportedProjectReadDistributedFixture.TenantAuthorityProjectionMatches(
+            JsonSerializer.SerializeToElement(first), "tenant", "actor", source, throughSequence: 1));
+        first["processedMessages"]!["created"]!["messageId"] = "different-original-event";
+        Assert.False(SupportedProjectReadDistributedFixture.TenantAuthorityProjectionMatches(
+            JsonSerializer.SerializeToElement(first), "tenant", "actor", source, requireOwner: false, throughSequence: 1));
+        Assert.False(SupportedProjectReadDistributedFixture.TenantAuthorityProjectionMatches(
+            JsonSerializer.SerializeToElement(projection), "tenant", "actor", source, throughSequence: 3));
+    }
+
+    /// <summary>Unknown delivery acknowledgements require the same original receipt; negative or conflicting statuses never pass.</summary>
+    [Fact]
+    public void HostedBootstrapReceiptRetainsUnknownAcknowledgementAndRejectsConflicts()
+    {
+        string root = new('a', 64);
+        JsonObject receipt = new()
+        {
+            ["AttemptId"] = "original-hosted-attempt", ["RootDigest"] = root, ["MessageId"] = "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+            ["CorrelationId"] = "01ARZ3NDEKTSV4RRFFQ69G5FAW", ["PrincipalId"] = "actor-1", ["Phase"] = "attempted", ["HttpStatus"] = null,
+        };
+        bool Matches(JsonObject value) => SupportedProjectReadDistributedFixture.HostedBootstrapReceiptMatches(JsonSerializer.SerializeToElement(value), root);
+        Assert.True(Matches(receipt));
+        foreach (string field in receipt.Select(property => property.Key).ToArray())
+        {
+            var missing = (JsonObject)receipt.DeepClone(); missing.Remove(field); Assert.False(Matches(missing));
+        }
+        foreach ((string field, JsonNode? value) in new (string, JsonNode?)[]
+        {
+            ("RootDigest", JsonValue.Create("other")), ("PrincipalId", JsonValue.Create("other-actor")),
+            ("MessageId", JsonValue.Create("invalid")), ("CorrelationId", JsonValue.Create("invalid")),
+            ("Phase", JsonValue.Create("response-received")), ("HttpStatus", JsonValue.Create(500)), ("HttpStatus", JsonValue.Create(202)),
+        })
+        {
+            var invalid = (JsonObject)receipt.DeepClone(); invalid[field] = value; Assert.False(Matches(invalid));
+        }
+        receipt["Phase"] = "accepted"; receipt["HttpStatus"] = 202; Assert.True(Matches(receipt));
+        foreach (int status in new[] { 200, 400, 401, 403, 409, 500, 503 }) { receipt["HttpStatus"] = status; Assert.False(Matches(receipt)); }
+    }
+
+    /// <summary>Only exact source type, command causation, correlation, metadata actor and decoded target/acting actor prove bootstrap.</summary>
+    [Fact]
+    public void HostedBootstrapEventRequiresExactCommandAndActorBindings()
+    {
+        byte[] Payload(string tenant = "system", string target = "actor-1", string actor = "actor-1") =>
+            JsonSerializer.SerializeToUtf8Bytes(new { TenantId = tenant, UserId = target, ActorUserId = actor, SetAt = DateTimeOffset.UtcNow });
+        var value = new StreamReadEvent(1, "Hexalith.Tenants.Contracts.Events.GlobalAdministratorSet", Payload(), "json", 1,
+            "01ARZ3NDEKTSV4RRFFQ69G5FAX", "correlation", "command", DateTimeOffset.UtcNow, "actor-1");
+        bool Matches(StreamReadEvent item) => SupportedProjectReadDistributedFixture.HostedBootstrapEventMatches(item, "command", "correlation", "actor-1");
+        Assert.True(Matches(value));
+        foreach (var invalid in new[]
+        {
+            value with { CausationId = "other" }, value with { CorrelationId = "other" }, value with { UserId = "other" },
+            value with { Payload = Payload(target: "other") }, value with { Payload = Payload(actor: "other") }, value with { Payload = Payload(tenant: "foreign") },
+            value with { EventTypeName = "foreign.GlobalAdministratorSet" }, value with { Payload = "invalid"u8.ToArray() },
+            value with { Payload = """{"userId":"actor-1","UserId":"other"}"""u8.ToArray() }, value with { MetadataVersion = 2 },
+        }) Assert.False(Matches(invalid));
+    }
+
     /// <summary>New domain keys are observed while permitted audit and operational writes stay separate.</summary>
     [Fact]
     public void DomainFamilyEnumerationIncludesNewKeysAndExcludesAuditAndOperationalKeys()
     {
         foreach (string key in new[] { "projects:reads:v1:5:owned:9:new-entry", "projects:tenant-access:owned",
             "projection:folders:new-domain-family:owned:new-folder", "eventstore||AggregateActor||owned:projects:new-project||journal",
-            "eventstore||AggregateActor||system:tenants:owned||journal" })
+            "eventstore||AggregateActor||system:tenants:owned||journal", "projects-conversation-start-setup||owned:projects:new-project",
+            "projects-conversation-start-setup||foreign:projects:new-project" })
             Assert.True(SupportedProjectReadDistributedFixture.IsOwnedDomainKey(key, "owned", "foreign"), "Owned domain family was omitted.");
         foreach (string key in new[] { "projects:read-audit:v1:owned", "admin:catalog:owned", "projection:folders:folder-permissions:unrelated:folder",
-            "projects:reads:v1:9:unrelated:detail" })
+            "projects:reads:v1:9:unrelated:detail", "projects-conversation-start-setup||unrelated:projects:new-project",
+            "projects-conversation-start-setup||owned-other:projects:new-project", "projects-conversation-start-setup||owned:other:new-project" })
             Assert.False(SupportedProjectReadDistributedFixture.IsOwnedDomainKey(key, "owned", "foreign"), "Unrelated or permitted state entered the domain comparison.");
+    }
+
+    /// <summary>Real owner/SDK hashed keys remain inside byte, version and complete-keyset invariance checks.</summary>
+    [Fact]
+    public async Task HashedOwnerViewsAndRealSdkGenerationKeysCannotEscapeDomainSnapshots()
+    {
+        var backing = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
+        var recording = new SupportedProjectReadKeyRecordingStore(backing);
+        var coordinator = new SharedProjectionEpochCoordinator(recording, backing);
+        var scope = Hexalith.Folders.Projections.OperationalStatus.OperationalStatusGeneration.Scope("owned");
+        string lifecycle = Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Lifecycle("owned", "folder");
+        string[] logical = [lifecycle,
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Checkpoint("owned", "folder"),
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Workspace("owned", "folder", "workspace"),
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Task("owned", "folder", "task"),
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Receipt("owned", "folder", 1),
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Message("owned", "folder", "message"),
+            Hexalith.Folders.Projections.OperationalStatus.OperationalStatusKeys.Evidence(lifecycle)];
+        foreach (string key in logical)
+            _ = await coordinator.ReadGenerationAsync<JsonObject>(scope, 1, key, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        string[] business = logical.Concat(recording.ReadKeys.Where(key => key.StartsWith("shared-generation:", StringComparison.Ordinal)
+            || key.StartsWith("shared-cow-pointer:", StringComparison.Ordinal))).Distinct(StringComparer.Ordinal).ToArray();
+        Assert.Equal(logical.Length * 3, business.Length);
+        foreach (string key in business)
+        {
+            Assert.DoesNotContain("owned", key, StringComparison.Ordinal);
+            Assert.True(SupportedProjectReadDistributedFixture.IsOwnedDomainKey(key, "owned", "foreign"));
+        }
+        Assert.Contains(recording.ReadKeys, key => key == "shared-epoch:" + scope.ComputeHash());
+        foreach (string key in recording.ReadKeys.Where(key => key.StartsWith("shared-epoch:", StringComparison.Ordinal)).Concat(new[]
+        {
+            "shared-receipt:" + scope.ComputeHash() + ":1:ABC", "shared-checkpoint:" + scope.ComputeHash() + ":ABC",
+            "shared-chunk:" + scope.ComputeHash() + ":ABC", "shared-control-index:ABC", "shared-control-index-tombstone:ABC",
+        })) Assert.False(SupportedProjectReadDistributedFixture.IsOwnedDomainKey(key, "owned", "foreign"));
+        var before = business.Select(key => new SupportedProjectReadStateSnapshot(key, [1], "v1")).ToArray();
+        Assert.False(SupportedProjectReadDistributedFixture.SameDomainState(before, [before[0] with { Bytes = [2] }, .. before.Skip(1)]));
+        Assert.False(SupportedProjectReadDistributedFixture.SameDomainState(before, [before[0] with { ETag = "v2" }, .. before.Skip(1)]));
+        Assert.False(SupportedProjectReadDistributedFixture.SameDomainState(before, before.Skip(1).ToArray()));
+        _ = await coordinator.ReadGenerationAsync<JsonObject>(scope, 2, lifecycle, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        string added = recording.ReadKeys.First(key => key.StartsWith("shared-generation:", StringComparison.Ordinal) && !business.Contains(key, StringComparer.Ordinal));
+        Assert.True(SupportedProjectReadDistributedFixture.IsOwnedDomainKey(added, "owned", "foreign"));
+        Assert.False(SupportedProjectReadDistributedFixture.SameDomainState(before, [.. before, new(added, [1], "v1")]));
+        Assert.Equal(0, recording.WriteCount);
+        Assert.Equal(0, backing.Count);
     }
 
     /// <summary>Closed audit values, types, hash, count, time and sensitive exclusions are all required.</summary>

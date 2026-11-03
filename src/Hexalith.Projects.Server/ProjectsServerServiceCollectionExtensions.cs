@@ -178,19 +178,22 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
-        services.AddAuthentication().AddEventStoreWorkloadScheme(
-            EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
-            "Authentication:Workload",
-            static (options, _) =>
-            {
-                options.Audience ??= "projects";
-                if (options.AllowedCallers.Count == 0) { options.AllowedCallers.Add("eventstore"); }
-            });
-        services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
-            [EventStoreWorkloadOperations.DomainServiceProcess,
-                EventStoreWorkloadOperations.DomainServiceQuery,
-                EventStoreWorkloadOperations.DomainServiceProject,
-                EventStoreWorkloadOperations.DomainServiceMetadata]);
+        if (!services.Any(descriptor => descriptor.ServiceType == typeof(ProjectsDevelopmentCatalogProfile)))
+        {
+            services.AddAuthentication().AddEventStoreWorkloadScheme(
+                EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
+                "Authentication:Workload",
+                static (options, _) =>
+                {
+                    options.Audience ??= "projects";
+                    if (options.AllowedCallers.Count == 0) { options.AllowedCallers.Add("eventstore"); }
+                });
+            services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
+                [EventStoreWorkloadOperations.DomainServiceProcess,
+                    EventStoreWorkloadOperations.DomainServiceQuery,
+                    EventStoreWorkloadOperations.DomainServiceProject,
+                    EventStoreWorkloadOperations.DomainServiceMetadata]);
+        }
         services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
         services.AddEventStoreWorkloadAssertionIssuer();
         string authorityDaprEndpoint = Environment.GetEnvironmentVariable("DAPR_HTTP_ENDPOINT")
@@ -301,10 +304,20 @@ public static class ProjectsServerServiceCollectionExtensions
         IHostEnvironment environment = endpoints.ServiceProvider.GetRequiredService<IHostEnvironment>();
         if (endpoints.ServiceProvider.GetService<ProjectAuthorityRuntimeSecurity>() is not null)
         {
-            _ = processEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Process);
-            _ = projectEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Project);
-            _ = queryEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Query);
-            _ = metadataEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Metadata);
+            if (endpoints.ServiceProvider.GetService<ProjectsDevelopmentCatalogProfile>() is not null)
+            {
+                processEndpoint.RequireEventStoreDomainServicePolicy(ProjectsServerModule.ProcessRoute);
+                projectEndpoint.RequireEventStoreDomainServicePolicy(ProjectsServerModule.ProjectRoute);
+                queryEndpoint.RequireEventStoreDomainServicePolicy("/query");
+                metadataEndpoint.RequireEventStoreDomainServicePolicy("/admin/operational-index-metadata");
+            }
+            else
+            {
+                _ = processEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Process);
+                _ = projectEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Project);
+                _ = queryEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Query);
+                _ = metadataEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Metadata);
+            }
         }
         else if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
         {
@@ -312,7 +325,12 @@ public static class ProjectsServerServiceCollectionExtensions
             _ = metadataEndpoint.RequireAuthorization();
         }
 
-        endpoints.MapProjectsDomainServiceEndpoints();
+        IEndpointRouteBuilder publicEndpoints = endpoints;
+        if (endpoints.ServiceProvider.GetService<ProjectsDevelopmentCatalogProfile>() is not null)
+        {
+            publicEndpoints = endpoints.MapGroup(string.Empty).RequireAuthorization(EventStoreHttpHostSecurityExtensions.HumanPolicy);
+        }
+        publicEndpoints.MapProjectsDomainServiceEndpoints();
         endpoints.MapProjectReadPlatformEndpoints();
         return endpoints;
     }
@@ -333,10 +351,11 @@ public static class ProjectsServerServiceCollectionExtensions
         {
             DomainProjectionIdentityOptions identity = services.GetRequiredService<IOptions<DomainProjectionIdentityOptions>>().Value;
             if (request.AppId != identity.AppId || request.ServiceVersion != identity.ServiceVersion) { return null; }
-            return AdminOperationalIndexMetadata.Create(new DiscoveryResult([], []), request.Domains,
+            AdminOperationalIndexMetadata.Response response = AdminOperationalIndexMetadata.Create(services.GetService<DiscoveryResult>() ?? new DiscoveryResult([], []), request.Domains,
                 services.GetServices<IDomainQueryHandler>(), services.GetServices<IAsyncDomainProjectionHandler>(),
                 identity.AppId, identity.ServiceVersion, services.GetRequiredService<IOptions<ProjectionDispatchOptions>>().Value,
                 [ProjectsServerModule.DomainName]);
+            return LegacyProjectionCatalogRegistration.Bind(response, services.GetServices<LegacyProjectionCatalogRegistration>());
         }
 
         // Projects uses its own processor rather than an EventStoreAggregate<TState>. Advertise the

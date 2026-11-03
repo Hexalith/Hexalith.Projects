@@ -1,0 +1,28 @@
+{
+  "sources": [
+    {
+      "originalPath": "/tmp/story61-capture-owned-diagnostics-low-rate.py",
+      "retained": "story61-capture-owned-diagnostics-low-rate.py",
+      "sha256": "df6f2c28b28c75832aba34b4775596e6c7dfc7d95c48a14f8229ce528aac005c"
+    },
+    {
+      "originalPath": "/tmp/story61-capture-catalog-inputs.py",
+      "retained": "story61-capture-catalog-inputs.py",
+      "sha256": "86c2008bad249426828a43e7c76e1407dbcbb37df40d5ff7f609d381a6473ef2"
+    },
+    {
+      "originalPath": "/tmp/story61-monitor-stops-low-rate.py",
+      "retained": "story61-monitor-stops-low-rate.py",
+      "sha256": "57e3509840d3f1e6e0ea3511f76d439af70d14a9dc8f56f18bff49875830328f"
+    },
+    {
+      "originalPath": "/tmp/story61-capture-freshness-and-audit-low-rate.py",
+      "retained": "story61-capture-freshness-and-audit-low-rate.py",
+      "sha256": "e7aa7567b275187f8b824b0fa87e014cc01d6f53b5a9f3e6ac9c4d090c626844"
+    }
+  ],
+  "selection": "Passive private failure-log capture0.5s; canonical-input capture once; optional stop provenance scan1s; exactowned Tenant/ACL read sampling15s. Four optional1s seed/cutover/delivery/shared-epoch Redis watchers omitted.",
+  "qualificationSourcesAndModesUnchanged": true,
+  "allMandatoryQualificationGatesAndNativeDiagnosticsRetained": true,
+  "priorWatcherCausalityNotClaimed": true
+}

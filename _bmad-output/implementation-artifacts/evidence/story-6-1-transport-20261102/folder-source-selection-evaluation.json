@@ -1,0 +1,85 @@
+{
+  "purpose": "Read-only property evaluation; no build/restore/validation target bypass claimed. The real parent mapping remains unchanged.",
+  "observations": [
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "-nologo",
+        "-getProperty:DefineConstants,HexalithEventStoreFromSource",
+        "-p:Configuration=Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreFromSource=true"
+      ],
+      "evaluated": {
+        "DefineConstants": "TRACE;FOLDERS_OWNER_METADATA_SOURCE;DEBUG",
+        "HexalithEventStoreFromSource": "true"
+      },
+      "sourceOnlyConstantPresent": true,
+      "projectSha256": "99a917d9b60fe3291e3912cc7f618b93812232bf1192f8c4f6b58d1b34d57e50"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "-nologo",
+        "-getProperty:DefineConstants,HexalithEventStoreFromSource",
+        "-p:Configuration=Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreFromSource=false"
+      ],
+      "evaluated": {
+        "DefineConstants": "TRACE;DEBUG",
+        "HexalithEventStoreFromSource": "false"
+      },
+      "sourceOnlyConstantPresent": false,
+      "projectSha256": "99a917d9b60fe3291e3912cc7f618b93812232bf1192f8c4f6b58d1b34d57e50"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "-nologo",
+        "-getProperty:DefineConstants,HexalithEventStoreFromSource",
+        "-p:Configuration=Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreFromSource=true"
+      ],
+      "evaluated": {
+        "DefineConstants": "TRACE;FOLDERS_OWNER_METADATA_SOURCE;DEBUG",
+        "HexalithEventStoreFromSource": "true"
+      },
+      "sourceOnlyConstantPresent": true,
+      "projectSha256": "465c8816edaea9a61191d9dc2dfa49a176772f7e1cd827851d90d60b6298f2d0"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/build-story61-helper.py",
+        "dotnet",
+        "msbuild",
+        "references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "-nologo",
+        "-getProperty:DefineConstants,HexalithEventStoreFromSource",
+        "-p:Configuration=Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreFromSource=false"
+      ],
+      "evaluated": {
+        "DefineConstants": "TRACE;DEBUG",
+        "HexalithEventStoreFromSource": "false"
+      },
+      "sourceOnlyConstantPresent": false,
+      "projectSha256": "465c8816edaea9a61191d9dc2dfa49a176772f7e1cd827851d90d60b6298f2d0"
+    }
+  ]
+}

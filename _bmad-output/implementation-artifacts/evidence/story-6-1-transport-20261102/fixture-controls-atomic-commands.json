@@ -1,0 +1,51 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "buildCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "testCommand": [
+    "python3",
+    "/tmp/build-story61-helper.py",
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "*SupportedProjectReadEvidenceTests",
+    "-class",
+    "*SupportedProjectReadTopologyTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/fixture-controls-atomic.xml"
+  ],
+  "sourceInputs": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "a430bf6b1db1239b34875efc8f597e52a054e23f189218a86d256ca0117e50cb",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "3dfc4ca2c3e91e46f1a49a749454026637d20ea70342fadef7f292cc3c45f438",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "e4e267b19c42ab698bdace5ed60cc8bde5e2dcbcc14144d2e3c2e3ad46881dbf",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "29304ab9fe66254ee46fa82f2e6a51bee00b12ad3fa2cd33088dbb46787e5be9"
+  },
+  "result": {
+    "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 2 threads)]",
+    "id": "c7924959-471a-489d-8ed7-441ae064987c",
+    "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "run-date": "2026-11-02",
+    "run-time": "23:41:42",
+    "start-rtf": "2026-11-02T23:41:42.0935095+00:00",
+    "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+    "target-framework": ".NETCoreApp,Version=v10.0",
+    "errors": "0",
+    "failed": "0",
+    "finish-rtf": "2026-11-02T23:41:43.7394731+00:00",
+    "not-run": "0",
+    "passed": "76",
+    "skipped": "0",
+    "time": "1.646",
+    "time-rtf": "00:00:01.6460000",
+    "total": "76"
+  }
+}

@@ -2,20 +2,51 @@
 namespace Hexalith.Projects.Integration.Tests;
 
 using System.Net;
-using System.Text.Json;
+using System.Security.Cryptography;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Shouldly;
 using Xunit;
 
 /// <summary>Qualifies the actual isolated gateway/domain/owner chain without discovery or head substitutions.</summary>
-public sealed class SupportedProjectReadDistributedTests
+/// <param name="output">The native per-test output that binds the runtime provider and executing assembly.</param>
+public sealed class SupportedProjectReadDistributedTests(ITestOutputHelper output)
 {
-    /// <summary>Executes every approved matrix row and independently checks persisted domain and audit state.</summary>
+    /// <summary>Proves duplicate delivery against one freshly seeded owned runtime.</summary>
     [Fact]
-    public async Task SupportedReadsTraverseCurrentDistributedOwnersWithoutDomainWritesAsync()
+    public async Task DuplicateDeliveryUsesActualPersistedOwnersAsync()
     {
         using SupportedProjectReadDistributedFixture fixture = new();
+        fixture.RequireScenario("duplicate");
+        WriteNativeBinding(fixture, "duplicate");
+        await fixture.SeedAsync();
+        await fixture.VerifyDuplicateDeliveryAsync();
+        string[] completed = ["duplicate-project-delivery-retains-supported-reads-and-state"];
+        await File.AppendAllTextAsync(Path.Combine(fixture.Evidence, "read-progress.log"), completed[0] + Environment.NewLine, TestContext.Current.CancellationToken);
+        await WriteScenarioResultAsync(fixture, "duplicate", completed);
+    }
+
+    /// <summary>Proves full replay against its own fresh source and persisted baseline.</summary>
+    [Fact]
+    public async Task FullReplayUsesActualPersistedOwnersAsync()
+    {
+        using SupportedProjectReadDistributedFixture fixture = new();
+        fixture.RequireScenario("full-replay");
+        WriteNativeBinding(fixture, "full-replay");
+        await fixture.SeedAsync();
+        await fixture.VerifyFullReplayAsync();
+        string[] completed = ["full-project-replay-retains-truth-and-invalidates-old-continuation"];
+        await File.AppendAllTextAsync(Path.Combine(fixture.Evidence, "read-progress.log"), completed[0] + Environment.NewLine, TestContext.Current.CancellationToken);
+        await WriteScenarioResultAsync(fixture, "full-replay", completed);
+    }
+
+    /// <summary>Keeps all nine read, restart, audit, revocation and outage rows in one owned runtime.</summary>
+    [Fact]
+    public async Task MainReadsUseActualPersistedOwnersAsync()
+    {
+        using SupportedProjectReadDistributedFixture fixture = new();
+        fixture.RequireScenario("main");
+        WriteNativeBinding(fixture, "main");
         await fixture.SeedAsync();
         List<string> completed = [];
         async Task CompleteAsync(string row)
@@ -132,18 +163,18 @@ public sealed class SupportedProjectReadDistributedTests
         await fixture.ReadAsync<GetProjectResponse>(open: true);
         await CompleteAsync("owned-folder-outage-honest-unavailability-and-recovery");
         await CompleteAsync("authenticated-command-and-projection-compatibility");
-        await fixture.VerifyDuplicateDeliveryAsync();
-        await CompleteAsync("duplicate-project-delivery-retains-supported-reads-and-state");
-        await fixture.VerifyFullReplayAsync();
-        await CompleteAsync("full-project-replay-retains-truth-and-invalidates-old-continuation");
-        await File.WriteAllTextAsync(Path.Combine(fixture.Evidence, "matrix.json"), JsonSerializer.Serialize(new
-        {
-            allCasesExecuted = completed.Count == 11, cases = completed, readOnlyDomainBytesAndEtagsUnchanged = true,
-            projectsProcessRestartVerified = true, duplicateDeliveryVerified = true, fullReplayVerified = true, preRestartContinuationAcceptedAfterRestart = true, freshPagingAgrees = true,
-            retainedCursorAcceptedImmediatelyBeforeRevocation = true, cursorRejectionWithinLifetime = true,
-            postRestartForeignAndAbsentDenialsVerified = true, bothTenantDomainWatermarksUnchanged = true,
-            actualDaprDiscovery = true, actualOwnerActorHeads = true, acceptedEquivalence = false, productionReadiness = false,
-        }, new JsonSerializerOptions { WriteIndented = true }), TestContext.Current.CancellationToken);
+        await WriteScenarioResultAsync(fixture, "main", completed);
     }
+
+    private void WriteNativeBinding(SupportedProjectReadDistributedFixture fixture, string scenario)
+    {
+        string assembly = typeof(SupportedProjectReadDistributedTests).Assembly.Location;
+        string digest = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(assembly))).ToLowerInvariant();
+        output.WriteLine("supported-read-scenario-v2|" + scenario + "|" + fixture.ProviderIsolationSha256 + "|" + digest);
+    }
+
+    private static Task WriteScenarioResultAsync(SupportedProjectReadDistributedFixture fixture, string scenario, IReadOnlyList<string> completed)
+        => SupportedProjectReadScenarioEvidence.WriteAfterProviderVerificationAsync(Path.Combine(fixture.Evidence, "matrix.json"), scenario, completed,
+            fixture.Isolation, fixture.VerifyRawObserverBatchAsync, TestContext.Current.CancellationToken);
 }
 #endif
