@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <DefineConstants Condition="'$(HexalithEventStoreFromSource)' == 'true'">$(DefineConstants);FOLDERS_OWNER_METADATA_SOURCE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <PackageReference Include="Hexalith.Commons.UniqueIds" ExcludeAssets="all" Condition="'$(HexalithCommonsFromSource)' != 'true'" />
+    <ProjectReference Include="$(HexalithCommonsRoot)/src/libraries/Hexalith.Commons.UniqueIds/Hexalith.Commons.UniqueIds.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../shared/NativeContent/*.cs" Link="NativeContent/%(Filename)%(Extension)" />
+    <ProjectReference Include="../../src/Hexalith.Folders.Client/Hexalith.Folders.Client.csproj" />
+    <Compile Include="../shared/EventStore/RecordingDaprClient.cs" Link="Content/RecordingDaprClient.cs" />
+    <!-- Reuse the pinned platform protocol harness; no package version changes. -->
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" Condition="'$(HexalithEventStoreFromSource)' == 'true'" />
+    <PackageReference Include="Hexalith.EventStore.Testing" Condition="'$(HexalithEventStoreFromSource)' != 'true'" />
+    <Compile Include="../shared/OperationalStatus/*.cs" Link="OperationalStatus/%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../tools/Task36FoldObserver/Task36FoldObserver.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\..\src\Hexalith.Folders.Server\Hexalith.Folders.Server.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Folders.Testing\Hexalith.Folders.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\fixtures\event-evolution\*" Link="event-evolution\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- Story 5.5: shared, test-only parity oracle (transport columns) + golden-lifecycle step list linked
+       (not copied). Same file set Story 5.4 introduced for CLI/MCP; consumed here for REST transport-parity
+       conformance against the in-process server host. -->
+  <ItemGroup>
+    <Compile Include="..\shared\Parity\ParityOracle.cs">
+      <Link>Parity\ParityOracle.cs</Link>
+    </Compile>
+    <Compile Include="..\shared\Parity\ParityScenarios.cs">
+      <Link>Parity\ParityScenarios.cs</Link>
+    </Compile>
+    <Compile Include="..\shared\Parity\GoldenLifecycle.cs">
+      <Link>Parity\GoldenLifecycle.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="YamlDotNet" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

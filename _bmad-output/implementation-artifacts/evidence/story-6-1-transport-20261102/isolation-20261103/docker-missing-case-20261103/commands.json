@@ -1,0 +1,36 @@
+{
+  "sourceManifestSha256": "b54edcdc7c47dc7eedf968b037b6e5c3b686607bb740d1d9e927c26090ada492",
+  "changedBuildInputs": [
+    "tests/tools/test_supported_project_reads_launcher.py",
+    "tools/qualification/run_supported_project_reads.py"
+  ],
+  "sourceSha256": {
+    "tools/qualification/run_supported_project_reads.py": "962a2809f4a66f6fded0b12abe01015793764bf754dadaafc69d97f298b4f51e",
+    "tests/tools/test_supported_project_reads_launcher.py": "c088752a4847fd6cad5e7c6b80fb293474e7254d5dfa3f3ad243debb684abb47"
+  },
+  "pythonControlsPassed": 109,
+  "pythonControlsFailed": 0,
+  "pythonControlsSkipped": 0,
+  "mutations": [
+    {
+      "mutation": "remove-lowercase-form",
+      "testsRun": 1,
+      "failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "detected": true
+    },
+    {
+      "mutation": "remove-exact-recorded-id-binding",
+      "testsRun": 1,
+      "failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "detected": true
+    }
+  ],
+  "qualificationAccepted": false,
+  "runtimeStarted": false,
+  "originalLive59CleanupExceptionTextRetained": false,
+  "scope": "Add only the actual exact lowercase Docker missing-object form; retain recorded full identity and successful fresh complete-list absence requirements."
+}

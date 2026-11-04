@@ -1,0 +1,984 @@
+diff --git a/src/Hexalith.Folders.Server/FolderDomainProcessor.cs b/src/Hexalith.Folders.Server/FolderDomainProcessor.cs
+index 55d9be71..271a38ee 100644
+--- a/src/Hexalith.Folders.Server/FolderDomainProcessor.cs
++++ b/src/Hexalith.Folders.Server/FolderDomainProcessor.cs
+@@ -1616,6 +1616,7 @@ public sealed partial class FolderDomainProcessor(
+ 
+     private static DomainResult Rejection(CommandEnvelope envelope, FolderResultCode code, FolderResult? result)
+     {
++        if (Enum.IsDefined(code)) Activity.Current?.SetTag("hexalith.folders.rejection.result_code", code.ToString());
+         // FolderCommandRejected.Create canonicalizes correlation/idempotency identifiers
+         // before they enter the rejection event so that an internal /process caller cannot
+         // smuggle CR/LF or oversized values into downstream log/trace surfaces. Values that
+diff --git a/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs b/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs
+index 3032e23f..88ee3f68 100644
+--- a/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs
++++ b/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs
+@@ -87,6 +87,7 @@ public static class FoldersServerHostComposition
+             FoldersRuntimeCatalogDeclarations.Routes.Where(route => route.Kind == "projection").ToArray()));
+         builder.Services.AddEventStoreDevelopmentDomainCatalog(builder.Configuration,
+             typeof(FoldersRuntimeCatalogDeclarations).Assembly);
++        builder.AddFoldersDevelopmentOwnerMetadata();
+         builder.Services.AddHostedService<FolderRepositoryStartupAssertion>();
+ 
+         // Validate scoped service lifetimes at build time so a missing or misconfigured DI
+diff --git a/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj b/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj
+index cb887c57..814c5e06 100644
+--- a/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj
++++ b/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj
+@@ -5,6 +5,7 @@
+     <EnableContainer>true</EnableContainer>
+     <ContainerRepository>hexalith-folders-server</ContainerRepository>
+     <HexalithContainerServiceName>server</HexalithContainerServiceName>
++    <DefineConstants Condition="'$(HexalithEventStoreFromSource)' == 'true'">$(DefineConstants);FOLDERS_OWNER_METADATA_SOURCE</DefineConstants>
+   </PropertyGroup>
+   <ItemGroup>
+     <InternalsVisibleTo Include="Hexalith.Folders.Server.Tests" />
+diff --git a/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs b/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs
+index c61f5549..5f8af941 100644
+--- a/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs
++++ b/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs
+@@ -28,6 +28,12 @@ public sealed class OperationalStatusProjectionHandler(OperationalStatusProjecti
+     {
+         try
+         {
++            cancellationToken.ThrowIfCancellationRequested();
++            if (OrganizationAclOperationalSource.IsCompletePrefix(request))
++            {
++                cancellationToken.ThrowIfCancellationRequested();
++                return DomainProjectionHandlerResult.Completed();
++            }
+             OperationalStatusEvent[] events = Read(request);
+             var result = await writer.ApplyAsync(request.TenantId, request.AggregateId, dispatchId,
+                 events, cancellationToken).ConfigureAwait(false);
+@@ -55,6 +61,9 @@ public sealed class OperationalStatusProjectionHandler(OperationalStatusProjecti
+         CancellationToken cancellationToken)
+     {
+         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
++        cancellationToken.ThrowIfCancellationRequested();
++        if (OrganizationAclOperationalSource.IsCompletePrefix(request))
++            throw new InvalidOperationException("Organization ACL source has no Folder operations; use bounded shared partition transport.");
+         OperationalStatusEvent[] events = Read(request);
+         // The SDK verifies original global positions against the sealed capture before invoking us.
+         // Domain folding verifies the contiguous 1..N owner prefix, independently of later appends.
+@@ -71,13 +80,24 @@ public sealed class OperationalStatusProjectionHandler(OperationalStatusProjecti
+     /// <inheritdoc/>
+     public SharedProjectionScope CreateScope(string tenantId) => OperationalStatusGeneration.Scope(tenantId);
+     /// <inheritdoc/>
+-    public Task<IReadOnlyList<ReadModelBatchOperation>> FoldCatchUpAsync(SharedProjectionDelivery delivery,
++    public async Task<IReadOnlyList<ReadModelBatchOperation>> FoldCatchUpAsync(SharedProjectionDelivery delivery,
+         long generation, SharedProjectionEpochCoordinator coordinator, CancellationToken cancellationToken)
+     {
+         ArgumentNullException.ThrowIfNull(delivery);
+         if (_foldDiagnostics.IsEnabled("FoldCatchUp"))
+             _foldDiagnostics.Write("FoldCatchUp", new KeyValuePair<string, long>(delivery.SourceStream, delivery.EnvelopePosition));
+-        return writer.FoldCatchUpAsync(delivery, generation, cancellationToken);
++        ProjectionRequest request = JsonSerializer.Deserialize<ProjectionRequest>(delivery.CanonicalPayload, JsonSerializerOptions.Web)
++            ?? throw new InvalidOperationException("Operational delivery is unreadable.");
++        if (request.Domain != "folders" || request.AggregateId != delivery.SourceStream || request.Events.Length != 1)
++            throw new InvalidOperationException("Operational delivery scope conflicts.");
++        if (OrganizationAclOperationalSource.IsCompletePrefix(request))
++        {
++            if (request.Events[0].GlobalPosition != delivery.EnvelopePosition || request.Events[0].SequenceNumber != delivery.OwnerSequenceNumber)
++                throw new InvalidOperationException("Organization ACL delivery position differs from its source.");
++            cancellationToken.ThrowIfCancellationRequested();
++            return [];
++        }
++        return await writer.FoldCatchUpAsync(delivery, generation, cancellationToken).ConfigureAwait(false);
+     }
+     /// <inheritdoc/>
+     public Task<DomainSharedProjectionRebuildCandidate> CreateEmptyCandidateAsync(
+@@ -103,6 +123,11 @@ public sealed class OperationalStatusProjectionHandler(OperationalStatusProjecti
+         ArgumentNullException.ThrowIfNull(aggregateHistory);
+         if (aggregateHistory.TenantId != identity.TenantId || aggregateHistory.Domain != Domain)
+             throw new InvalidOperationException("Operational rebuild partition scope conflicts.");
++        if (OrganizationAclOperationalSource.IsCompletePrefix(aggregateHistory))
++        {
++            cancellationToken.ThrowIfCancellationRequested();
++            return [JsonSerializer.SerializeToUtf8Bytes(Array.Empty<SharedProjectionMutation>())];
++        }
+         var plan = await PrepareRebuildAsync(aggregateHistory, identity.OperationId, cancellationToken).ConfigureAwait(false);
+         List<ReadOnlyMemory<byte>> chunks = [];
+         List<SharedProjectionMutation> page = [];
+diff --git a/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs b/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs
+index afcbf5fc..ca08e879 100644
+--- a/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs
++++ b/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs
+@@ -83,23 +83,72 @@ public sealed class EventStoreFolderEffectivePermissionsReadModel(
+         }
+ 
+         long folderHead;
++        EffectivePermissionsReadModelResult baseline;
++        using CancellationTokenSource observations = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
++        Task<long>? folderRead = null;
++        Task<EffectivePermissionsReadModelResult>? organizationRead = null;
+         try
+         {
+-            folderHead = await sequenceReader.GetCurrentSequenceAsync(request.ManagedTenantId,
+-                request.FolderId, cancellationToken).ConfigureAwait(false);
++            try
++            {
++                folderRead = sequenceReader.GetCurrentSequenceAsync(request.ManagedTenantId,
++                    request.FolderId, observations.Token);
++            }
++            catch (Exception ex) when (ex is not OperationCanceledException)
++            {
++                return EffectivePermissionsReadModelResult.Unavailable("folder_stream_unavailable", now);
++            }
++
++            // The independent current Folder and Organization sources share only the caller's
++            // deadline. Keep both fresh observations; neither supplies authority to the other.
++            try
++            {
++                organizationRead = organizationReadModel.GetAsync(
++                    request with { FolderId = FolderStreamName.ReservedOrganizationPermissionScope }, observations.Token);
++            }
++            catch (Exception ex)
++            {
++                organizationRead = Task.FromException<EffectivePermissionsReadModelResult>(ex);
++            }
++            try
++            {
++                folderHead = await folderRead.ConfigureAwait(false);
++            }
++            catch (Exception ex) when (ex is not OperationCanceledException)
++            {
++                return EffectivePermissionsReadModelResult.Unavailable("folder_stream_unavailable", now);
++            }
++            if (folderHead < folder.LastSequence)
++            {
++                return EffectivePermissionsReadModelResult.Malformed(freshness);
++            }
++            baseline = await organizationRead.ConfigureAwait(false);
+         }
+-        catch (Exception ex) when (ex is not OperationCanceledException)
++        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+         {
+-            return EffectivePermissionsReadModelResult.Unavailable("folder_stream_unavailable", now);
++            cancellationToken.ThrowIfCancellationRequested();
++            throw;
+         }
+-
+-        if (folderHead < folder.LastSequence)
++        finally
+         {
+-            return EffectivePermissionsReadModelResult.Malformed(freshness);
++            try
++            {
++                observations.Cancel();
++            }
++            catch (AggregateException) { /* A cleanup callback cannot replace the selected observation outcome. */ }
++            finally
++            {
++                // GetOnce owns each started read through completion. The outer catch-up bound
++                // may return exhausted while this cancellation/drain finishes; it accepts no late authority.
++                try
++                {
++                    await Task.WhenAll((Task?)folderRead ?? Task.CompletedTask,
++                        (Task?)organizationRead ?? Task.CompletedTask).ConfigureAwait(false);
++                }
++                catch (Exception) { /* Preserve the original Folder-first result/error precedence. */ }
++            }
+         }
+ 
+-        EffectivePermissionsReadModelResult baseline = await organizationReadModel.GetAsync(
+-            request with { FolderId = FolderStreamName.ReservedOrganizationPermissionScope }, cancellationToken).ConfigureAwait(false);
+         if (baseline.Status is not (EffectivePermissionsReadModelStatus.Available
+             or EffectivePermissionsReadModelStatus.Stale or EffectivePermissionsReadModelStatus.NotFound)
+             || baseline.Status != EffectivePermissionsReadModelStatus.NotFound && baseline.Snapshot is null)
+diff --git a/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj b/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj
+index d791b7ab..3732ef01 100644
+--- a/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj
++++ b/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj
+@@ -1,9 +1,10 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <IsPackable>false</IsPackable>
++    <DefineConstants Condition="'$(HexalithEventStoreFromSource)' == 'true'">$(DefineConstants);FOLDERS_OWNER_METADATA_SOURCE</DefineConstants>
+   </PropertyGroup>
+   <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+-    <PackageReference Include="Hexalith.Commons.UniqueIds" ExcludeAssets="all" />
++    <PackageReference Include="Hexalith.Commons.UniqueIds" ExcludeAssets="all" Condition="'$(HexalithCommonsFromSource)' != 'true'" />
+     <ProjectReference Include="$(HexalithCommonsRoot)/src/libraries/Hexalith.Commons.UniqueIds/Hexalith.Commons.UniqueIds.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+diff --git a/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs b/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs
+new file mode 100644
+index 00000000..24519deb
+--- /dev/null
++++ b/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs
+@@ -0,0 +1,50 @@
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.DomainService;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.ServiceDefaults.Routing;
++using Hexalith.Folders.Authorization;
++
++using Microsoft.Extensions.DependencyInjection.Extensions;
++using Microsoft.Extensions.Options;
++
++namespace Hexalith.Folders.Server;
++
++/// <summary>Selects the real bound owner metadata path only for an explicitly private source Development proof.</summary>
++internal static class FoldersDevelopmentOwnerMetadata
++{
++    /// <summary>Enables the bound SDK metadata adapter only for the explicit private source Development catalog.</summary>
++    /// <param name="builder">The actual Folders host builder.</param>
++    internal static void AddFoldersDevelopmentOwnerMetadata(this WebApplicationBuilder builder)
++    {
++        if (!builder.Configuration.GetValue<bool>("Folders:EventStore:OwnerMetadataReads:Enabled")) return;
++#if DEBUG && FOLDERS_OWNER_METADATA_SOURCE
++        if (!builder.Environment.IsDevelopment()
++            || string.IsNullOrWhiteSpace(builder.Configuration["EventStore:RouteCatalog:DevelopmentBootstrap:Directory"]))
++            throw new InvalidOperationException("Private owner metadata requires the selected Development catalog.");
++        const string clientName = "folders-bound-owner-metadata";
++        builder.Services.AddHttpClient(clientName, http =>
++        {
++            string endpoint = builder.Configuration["DAPR_HTTP_ENDPOINT"]
++                ?? "http://127.0.0.1:" + builder.Configuration["DAPR_HTTP_PORT"];
++            http.BaseAddress = new Uri(endpoint.TrimEnd('/') + "/v1.0/invoke/eventstore/method/");
++            http.Timeout = TimeSpan.FromSeconds(3);
++        });
++        builder.Services.AddSingleton<INativeSourceMetadataReader>(provider =>
++        {
++            INativeSourceMetadataReader reader = new BoundOwnerNativeSourceMetadataReader(
++                provider.GetRequiredService<IHttpClientFactory>(), clientName, provider.GetRequiredService<IWorkloadAssertionIssuer>(),
++                "folders", builder.Configuration["Authentication:BoundStreamRead:PrivateKey"]
++                    ?? throw new InvalidOperationException("The owner proof key is missing."), ["folders"], TimeProvider.System);
++            return builder.Configuration.GetValue<bool>("Folders:EventStore:OwnerMetadataReads:DiagnosticsEnabled")
++                && provider.GetRequiredService<IOptions<RouteCatalogHostOptions>>().Value is
++                    { DevelopmentFixture: true, Profile: "Development", RequireTechnicalHttpBinding: true }
++                && provider.GetRequiredService<IHostEnvironment>().IsDevelopment()
++                ? new FoldersDevelopmentOwnerMetadataDiagnostics(reader,
++                    provider.GetRequiredService<ILogger<FoldersDevelopmentOwnerMetadataDiagnostics>>()) : reader;
++        });
++        builder.Services.Replace(ServiceDescriptor.Singleton<IOrganizationStreamSequenceReader, GatewayOrganizationStreamSequenceReader>());
++#else
++        throw new InvalidOperationException("Private owner metadata requires a local Debug source build.");
++#endif
++    }
++}
+diff --git a/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs b/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs
+new file mode 100644
+index 00000000..d3568bd0
+--- /dev/null
++++ b/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs
+@@ -0,0 +1,47 @@
++using System.Diagnostics;
++using System.Security.Cryptography;
++using System.Text;
++
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Streams;
++
++namespace Hexalith.Folders.Server;
++
++/// <summary>Records only source hashes and timing around the unchanged selected private owner reader.</summary>
++/// <param name="inner">The actual bound owner SDK reader.</param>
++/// <param name="logger">The actual private Development host logger.</param>
++internal sealed class FoldersDevelopmentOwnerMetadataDiagnostics(INativeSourceMetadataReader inner,
++    ILogger<FoldersDevelopmentOwnerMetadataDiagnostics> logger) : INativeSourceMetadataReader
++{
++    /// <inheritdoc/>
++    public async Task<NativeSourceObservation?> ReadAsync(AggregateIdentity identity, CancellationToken cancellationToken = default)
++    {
++        string tenant = Hash(identity.TenantId), domain = Hash(identity.Domain), aggregate = Hash(identity.AggregateId);
++        long started = Stopwatch.GetTimestamp();
++        try
++        {
++            logger.LogInformation("Private owner metadata started: TenantHash={TenantHash}, DomainHash={DomainHash}, AggregateHash={AggregateHash}",
++                tenant, domain, aggregate);
++        }
++        catch (Exception) { /* Diagnostic logging cannot replace an owner read. */ }
++        NativeSourceObservation? result = null;
++        try
++        {
++            result = await inner.ReadAsync(identity, cancellationToken).ConfigureAwait(false);
++            return result;
++        }
++        finally
++        {
++            try
++            {
++                logger.LogInformation("Private owner metadata completed: TenantHash={TenantHash}, DomainHash={DomainHash}, AggregateHash={AggregateHash}, Available={Available}, ElapsedMilliseconds={ElapsedMilliseconds}, CallerCanceled={CallerCanceled}",
++                    tenant, domain, aggregate, result?.Proof is not null, Stopwatch.GetElapsedTime(started).TotalMilliseconds,
++                    cancellationToken.IsCancellationRequested);
++            }
++            catch (Exception) { /* Diagnostic logging cannot replace the owner result or cancellation. */ }
++        }
++    }
++
++    private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
++}
+diff --git a/src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs b/src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs
+new file mode 100644
+index 00000000..a32f399e
+--- /dev/null
++++ b/src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs
+@@ -0,0 +1,56 @@
++using System.Text.Json;
++
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Events;
++using Hexalith.EventStore.Contracts.Serialization;
++using Hexalith.Folders.Aggregates.Organization;
++
++namespace Hexalith.Folders.Server;
++
++/// <summary>Recognizes the finite same-domain organization ACL source contracts that produce no Folder operational views.</summary>
++internal static class OrganizationAclOperationalSource
++{
++    private static readonly IReadOnlyDictionary<string, Type> Types = new[]
++    {
++        typeof(OrganizationAclBaselineInitialized), typeof(OrganizationAclPrincipalGranted), typeof(OrganizationAclPrincipalRevoked),
++    }.ToDictionary(type => type.FullName!, StringComparer.Ordinal);
++
++    /// <summary>Validates every known ACL event against its real source scope before permitting an empty domain fold.</summary>
++    /// <remarks>The SDK bounded V1 producer omits PayloadVersion for declared version one; null and explicit one are the same supported contract here.</remarks>
++    internal static bool IsCompletePrefix(ProjectionRequest request)
++    {
++        ArgumentNullException.ThrowIfNull(request);
++        if (request.Events is null || !request.Events.Any(item => Types.ContainsKey(item.EventTypeName))) return false;
++        if (request.Domain != "folders" || !OrganizationStreamName.TryCreate(request.TenantId, request.AggregateId, out _, out _)
++            || request.Events.Length == 0 || request.Events.Select(item => item.MessageId).Distinct(StringComparer.Ordinal).Count() != request.Events.Length)
++            throw new InvalidOperationException("Invalid organization ACL operational source scope.");
++        long? prior = null;
++        long priorPosition = 0;
++        foreach (ProjectionEventDto source in request.Events)
++        {
++            if (!Types.TryGetValue(source.EventTypeName, out Type? type) || EventPayloadVersionResolver.GetDeclaredVersion(type) != 1 || source.MetadataVersion != 1 || source.StoredPayloadVersion is not (null or 1)
++                || source.SequenceNumber <= 0 || source.GlobalPosition <= priorPosition || prior is { } sequence && source.SequenceNumber != sequence + 1
++                || string.IsNullOrWhiteSpace(source.MessageId) || string.IsNullOrWhiteSpace(source.CorrelationId) || source.Timestamp == default
++                || !string.Equals(source.SerializationFormat, "json", StringComparison.OrdinalIgnoreCase) || source.Payload is not { Length: > 0 })
++                throw new InvalidOperationException("Invalid organization ACL operational source metadata.");
++            var value = JsonSerializer.Deserialize(source.Payload, type, EventStorePayloadSerialization.Options) as IOrganizationAclEvent
++                ?? throw new InvalidOperationException("Invalid organization ACL operational source payload.");
++            if (value.ManagedTenantId != request.TenantId || value.OrganizationId != request.AggregateId || value.CorrelationId != source.CorrelationId
++                || string.IsNullOrWhiteSpace(value.TaskId) || string.IsNullOrWhiteSpace(value.IdempotencyKey) || string.IsNullOrWhiteSpace(value.IdempotencyFingerprint))
++                throw new InvalidOperationException("Organization ACL operational source binding differs.");
++            IOrganizationAclCommand? command = value switch
++            {
++                OrganizationAclPrincipalGranted grant => new GrantOrganizationAclPrincipal(grant.ManagedTenantId, grant.OrganizationId,
++                    grant.PrincipalKind, grant.PrincipalId, grant.Action, grant.CorrelationId, grant.TaskId, grant.IdempotencyKey, null),
++                OrganizationAclPrincipalRevoked revoke => new RevokeOrganizationAclPrincipal(revoke.ManagedTenantId, revoke.OrganizationId,
++                    revoke.PrincipalKind, revoke.PrincipalId, revoke.Action, revoke.CorrelationId, revoke.TaskId, revoke.IdempotencyKey, null),
++                _ => null,
++            };
++            if (command is not null && !OrganizationAclCommandValidator.Validate(command).IsAccepted)
++                throw new InvalidOperationException("Organization ACL operational source principal or action is invalid.");
++            prior = source.SequenceNumber;
++            priorPosition = source.GlobalPosition;
++        }
++        return true;
++    }
++}
+diff --git a/src/Hexalith.Folders/Authorization/GatewayOrganizationStreamSequenceReader.cs b/src/Hexalith.Folders/Authorization/GatewayOrganizationStreamSequenceReader.cs
+new file mode 100644
+index 00000000..0c9a31c6
+--- /dev/null
++++ b/src/Hexalith.Folders/Authorization/GatewayOrganizationStreamSequenceReader.cs
+@@ -0,0 +1,26 @@
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++
++namespace Hexalith.Folders.Authorization;
++
++/// <summary>Reads the current owner head through supported native metadata, preserving in-turn actor sequences.</summary>
++/// <param name="metadata">The explicitly enrolled owner metadata reader.</param>
++public sealed class GatewayOrganizationStreamSequenceReader(INativeSourceMetadataReader metadata) : IOrganizationStreamSequenceReader
++{
++    /// <inheritdoc/>
++    public async Task<long> GetCurrentSequenceAsync(string tenantId, string organizationId, CancellationToken cancellationToken = default)
++    {
++        ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
++        ArgumentException.ThrowIfNullOrWhiteSpace(organizationId);
++        cancellationToken.ThrowIfCancellationRequested();
++        if (OrganizationActorSequenceScope.TryGet(tenantId, organizationId, out long current)
++            || FolderActorSequenceScope.TryGet(tenantId, organizationId, out current)) return current;
++        var identity = new AggregateIdentity(tenantId, "folders", organizationId);
++        var observation = await metadata.ReadAsync(identity, cancellationToken).ConfigureAwait(false);
++        if (observation?.Proof is not { Erased: false } proof
++            || !NativeSourceProofCodec.IsValid(proof, identity, proof.HeadSequence, proof.RetainedFloor))
++            throw new InvalidOperationException("Current organization owner metadata is unavailable.");
++        cancellationToken.ThrowIfCancellationRequested();
++        return proof.HeadSequence;
++    }
++}
+diff --git a/tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs b/tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs
+new file mode 100644
+index 00000000..a0c58f61
+--- /dev/null
++++ b/tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs
+@@ -0,0 +1,14 @@
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++
++namespace Hexalith.Folders.Server.Tests;
++
++/// <summary>Fails if a composition-only diagnostic control attempts to issue authority.</summary>
++internal sealed class DiagnosticCompositionAssertionIssuer : IWorkloadAssertionIssuer
++{
++    /// <inheritdoc/>
++    public bool CanBindResources => true;
++
++    /// <inheritdoc/>
++    public ValueTask<string?> IssueAsync(WorkloadAssertionRequest request, CancellationToken cancellationToken = default)
++        => throw new InvalidOperationException("Composition must not issue or dispatch a workload assertion.");
++}
+diff --git a/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs b/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs
+new file mode 100644
+index 00000000..7cf3e47e
+--- /dev/null
++++ b/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs
+@@ -0,0 +1,64 @@
++using System.Security.Cryptography;
++
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.DomainService;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.ServiceDefaults.Routing;
++
++using Microsoft.AspNetCore.Builder;
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Hosting;
++
++using Shouldly;
++
++using Xunit;
++
++namespace Hexalith.Folders.Server.Tests;
++
++/// <summary>Checks the selected owner registration through the actual SDK Development bootstrap options.</summary>
++public sealed class FoldersDevelopmentOwnerMetadataTests
++{
++    /// <summary>The explicit private flag selects diagnostics without inventing raw SDK option configuration or issuing authority.</summary>
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public void RealBootstrapOptionsSelectOnlyTheOptedInOwnerDecorator(bool diagnostics)
++    {
++        string directory = Directory.CreateTempSubdirectory("folder-owner-diagnostic-").FullName;
++        try
++        {
++            WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
++            builder.Configuration["Folders:EventStore:OwnerMetadataReads:Enabled"] = "true";
++            builder.Configuration["Folders:EventStore:OwnerMetadataReads:DiagnosticsEnabled"] = diagnostics.ToString();
++            var section = builder.Configuration.GetSection("EventStore:RouteCatalog:DevelopmentBootstrap");
++            section["Directory"] = directory;
++            section["HostId"] = "folders-host";
++            section["CoordinatorHostId"] = "eventstore-host";
++            section["AttemptId"] = "folder-owner-diagnostic";
++            section["BindingVersion"] = "2";
++            section["RequiredHostIds:0"] = "folders-host";
++            section["RequiredHostIds:1"] = "eventstore-host";
++            using RSA key = RSA.Create(2048);
++            builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
++            builder.Services.AddSingleton<IWorkloadAssertionIssuer, DiagnosticCompositionAssertionIssuer>();
++            builder.Services.AddEventStoreDevelopmentRouteCatalogBootstrap(builder.Configuration,
++                (_, _) => throw new InvalidOperationException("Composition must not activate or observe a catalog."));
++#if DEBUG && FOLDERS_OWNER_METADATA_SOURCE
++            builder.AddFoldersDevelopmentOwnerMetadata();
++            using var provider = builder.Services.BuildServiceProvider();
++
++            builder.Configuration["EventStore:RouteCatalog:DevelopmentFixture"].ShouldBeNull();
++            builder.Configuration["EventStore:RouteCatalog:Profile"].ShouldBeNull();
++            builder.Configuration["EventStore:RouteCatalog:RequireTechnicalHttpBinding"].ShouldBeNull();
++            INativeSourceMetadataReader reader = provider.GetRequiredService<INativeSourceMetadataReader>();
++            if (diagnostics) reader.ShouldBeOfType<FoldersDevelopmentOwnerMetadataDiagnostics>();
++            else reader.ShouldBeOfType<BoundOwnerNativeSourceMetadataReader>();
++#else
++            Should.Throw<InvalidOperationException>(() => builder.AddFoldersDevelopmentOwnerMetadata()).Message
++                .ShouldBe("Private owner metadata requires a local Debug source build.");
++#endif
++        }
++        finally { Directory.Delete(directory, recursive: true); }
++    }
++}
+diff --git a/tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs b/tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs
+new file mode 100644
+index 00000000..37ed4ec1
+--- /dev/null
++++ b/tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs
+@@ -0,0 +1,171 @@
++using System.Text.Json;
++using System.Text.Json.Nodes;
++
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Events;
++using Hexalith.EventStore.Contracts.Results;
++using Hexalith.Folders.Aggregates.Organization;
++using Hexalith.Folders.Projections.OperationalStatus;
++using Hexalith.Folders.Server;
++using Hexalith.Folders.Queries.Folders;
++using Hexalith.Folders.Tests.OperationalStatus;
++
++using Shouldly;
++using Xunit;
++
++namespace Hexalith.Folders.Server.Tests;
++
++/// <summary>Pins organization ACL intake to real aggregate events and the normal shared SDK journal without inventing Folder views.</summary>
++public sealed class OrganizationOperationalProjectionTests
++{
++    /// <summary>The same-domain organization prefix settles its actual SDK journal while producing no Folder status data.</summary>
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task ActualOrganizationAclPrefixCompletesSharedJournalWithoutFolderViews(bool explicitVersion)
++    {
++        ProjectionRequest prefix = ProduceAclPrefix(explicitVersion: explicitVersion);
++        OperationalStatusTestStore store = new();
++        var handler = new OperationalStatusProjectionHandler(new(store, store, store));
++        var coordinator = new SharedProjectionEpochCoordinator(store, store);
++        SharedProjectionScope scope = handler.CreateScope("tenant-a");
++        var lease = await coordinator.RegisterWriterAsync(scope, handler.OrdinaryWriterId, TestContext.Current.CancellationToken);
++        List<SharedProjectionDelivery> deliveries = [];
++        foreach (ProjectionEventDto source in prefix.Events)
++        {
++            ProjectionRequest request = prefix with { Events = [source] };
++            long sequence = source.SequenceNumber;
++            var delivery = new SharedProjectionDelivery("tenant-a", sequence,
++                JsonSerializer.SerializeToUtf8Bytes(request, JsonSerializerOptions.Web),
++                JsonSerializer.SerializeToUtf8Bytes(sequence), OwnerSequenceNumber: sequence);
++            deliveries.Add(delivery);
++            (await coordinator.JournalAsync(scope, lease, delivery, TestContext.Current.CancellationToken))
++                .ShouldBe(SharedProjectionJournalResult.Journaled);
++        }
++        await coordinator.CatchUpAsync(scope, (delivery, generation, token) => handler.FoldCatchUpAsync(delivery,
++            generation, coordinator, token), TestContext.Current.CancellationToken);
++        var status = await coordinator.GetStatusAsync(scope, TestContext.Current.CancellationToken);
++        status.PendingDeliveryCount.ShouldBe(0);
++        status.IsDegraded.ShouldBeFalse();
++        foreach (var delivery in deliveries)
++            (await coordinator.JournalAsync(scope, lease, delivery, TestContext.Current.CancellationToken))
++                .ShouldBe(SharedProjectionJournalResult.AlreadyJournaled);
++        store.Snapshot<OperationalStatusCheckpoint>("statestore", OperationalStatusKeys.Checkpoint("tenant-a", "tenant-a")).ShouldBeNull();
++        store.Snapshot<FolderLifecycleStatusReadModelSnapshot>("statestore", OperationalStatusKeys.Lifecycle("tenant-a", "tenant-a")).ShouldBeNull();
++    }
++    /// <summary>Direct compute and rebuild planning acknowledge only validated non-Folder ACL input and create no views.</summary>
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(false, true)]
++    [InlineData(true, false)]
++    [InlineData(true, true)]
++    public async Task CurrentAclPrefixUsesEmptyBoundedPartitionsAndNoFolderViews(bool includeRevocation, bool explicitVersion)
++    {
++        var store = new OperationalStatusTestStore();
++        var handler = new OperationalStatusProjectionHandler(new(store, store, store));
++        var request = ProduceAclPrefix(includeRevocation, explicitVersion);
++        Should.Throw<InvalidOperationException>(() => OperationalStatusEventReader.ReadEffective(request.Events[0]));
++        (await handler.ProjectAsync(request, "dispatch", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        await Should.ThrowAsync<InvalidOperationException>(() => handler.PrepareRebuildAsync(request, "rebuild", TestContext.Current.CancellationToken));
++        var identity = new Hexalith.EventStore.DomainService.DomainSharedProjectionRebuildIdentity("tenant-a", "folders",
++            OperationalStatusKeys.ProjectionType, "rebuild", "catalog");
++        var chunks = await handler.PreparePartitionChunksAsync(identity, request, TestContext.Current.CancellationToken);
++        chunks.Count.ShouldBe(1);
++        var partitions = new OperationalStatusPartitionCursor(chunks);
++        List<ReadModelBatchOperation> operations = [];
++        await foreach (var operation in handler.StreamFinalizedOperationsAsync(identity, partitions, TestContext.Current.CancellationToken)) operations.Add(operation);
++        operations.ShouldBeEmpty();
++        store.Count.ShouldBe(0);
++    }
++
++    /// <summary>Foreign scope, changed source metadata, unknown types and mixed namespaces retain source refusal.</summary>
++    [Fact]
++    public async Task ChangedOrUnrecognizedOrganizationInputsNeverBecomeNoOpCompletion()
++    {
++        var store = new OperationalStatusTestStore();
++        var handler = new OperationalStatusProjectionHandler(new(store, store, store));
++        var prefix = ProduceAclPrefix();
++        var item = prefix.Events[0];
++        ProjectionRequest single = prefix with { Events = [item] };
++        foreach (var bad in new[]
++        {
++            single with { TenantId = "foreign" }, single with { AggregateId = "foreign" }, single with { Domain = "foreign" },
++            single with { Events = [item with { CorrelationId = "foreign" }] }, single with { Events = [item with { SequenceNumber = 0 }] },
++            single with { Events = [item with { GlobalPosition = 0 }] }, single with { Events = [item with { MetadataVersion = 2 }] },
++            single with { Events = [item with { StoredPayloadVersion = 2 }] }, single with { Events = [item with { StoredPayloadVersion = 0 }] },
++            single with { Events = [item with { SerializationFormat = "yaml" }] }, single with { Events = [item with { MessageId = "" }] },
++            single with { Events = [item with { Timestamp = default }] }, single with { Events = [item with { Payload = "{}"u8.ToArray() }] },
++            single with { Events = [item with { EventTypeName = "Unknown.OrganizationEvent" }] },
++            single with { Events = [item, item with { SequenceNumber = 2, GlobalPosition = 2 }] },
++            prefix with { Events = [item, prefix.Events[1] with { GlobalPosition = item.GlobalPosition }] },
++            prefix with { Events = [item, OperationalStatusTestData.Projection([OperationalStatusTestData.Created()]).Events[0] with { SequenceNumber = 2 }] },
++        })
++        {
++            (await handler.ProjectAsync(bad, "dispatch", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
++            await Should.ThrowAsync<InvalidOperationException>(() => handler.PrepareRebuildAsync(bad, "rebuild", TestContext.Current.CancellationToken));
++        }
++        foreach ((string field, JsonNode value) in new (string, JsonNode)[]
++        {
++            ("PrincipalKind", JsonValue.Create(999)!), ("Action", JsonValue.Create("unknown_action")!),
++            ("ManagedTenantId", JsonValue.Create("foreign")!), ("TaskId", JsonValue.Create("")!),
++            ("IdempotencyFingerprint", JsonValue.Create("")!),
++        })
++        {
++            var body = JsonNode.Parse(prefix.Events[1].Payload)!.AsObject();
++            string property = body.Select(pair => pair.Key).Single(key => key.Equals(field, StringComparison.OrdinalIgnoreCase));
++            body[property] = value;
++            var invalid = prefix with { Events = [prefix.Events[1] with { Payload = JsonSerializer.SerializeToUtf8Bytes(body) }] };
++            (await handler.ProjectAsync(invalid, "dispatch", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
++        }
++        store.Count.ShouldBe(0);
++        var delivery = new SharedProjectionDelivery("tenant-a", item.GlobalPosition + 1,
++            JsonSerializer.SerializeToUtf8Bytes(single, JsonSerializerOptions.Web), "1"u8.ToArray(), OwnerSequenceNumber: item.SequenceNumber);
++        await Should.ThrowAsync<InvalidOperationException>(() => handler.FoldCatchUpAsync(delivery, 0,
++            new SharedProjectionEpochCoordinator(store, store), TestContext.Current.CancellationToken));
++        delivery = delivery with { EnvelopePosition = item.GlobalPosition, OwnerSequenceNumber = 2 };
++        await Should.ThrowAsync<InvalidOperationException>(() => handler.FoldCatchUpAsync(delivery, 0,
++            new SharedProjectionEpochCoordinator(store, store), TestContext.Current.CancellationToken));
++    }
++
++    /// <summary>Cancellation remains observable before direct ACL completion or empty rebuild planning.</summary>
++    [Fact]
++    public async Task CanceledAclSourceDoesNotReturnCompletion()
++    {
++        var store = new OperationalStatusTestStore();
++        var handler = new OperationalStatusProjectionHandler(new(store, store, store));
++        using var canceled = new CancellationTokenSource(); canceled.Cancel();
++        await Should.ThrowAsync<OperationCanceledException>(() => handler.ProjectAsync(ProduceAclPrefix(), "dispatch", canceled.Token));
++        await Should.ThrowAsync<OperationCanceledException>(() => handler.PrepareRebuildAsync(ProduceAclPrefix(), "rebuild", canceled.Token));
++        store.Count.ShouldBe(0);
++    }
++
++    private static ProjectionRequest ProduceAclPrefix(bool includeRevocation = false, bool explicitVersion = false)
++    {
++        var command = new InitializeOrganizationAclBaseline("tenant-a", "tenant-a",
++            [new(OrganizationAclOperationIntent.Grant, OrganizationAclPrincipalKind.User, "actor-a", "create_folder"),
++             new(OrganizationAclOperationIntent.Grant, OrganizationAclPrincipalKind.User, "actor-a", "manage_folder_access")],
++            "correlation-a", "task-a", "idempotency-a", null);
++        var produced = OrganizationAggregate.Handle(OrganizationState.Empty, command);
++        produced.Code.ShouldBe(OrganizationAclResultCode.Accepted);
++        produced.Events.Count.ShouldBe(3);
++        IReadOnlyList<IOrganizationAclEvent> retained = produced.Events;
++        if (includeRevocation)
++        {
++            var revoke = new RevokeOrganizationAclPrincipal("tenant-a", "tenant-a", OrganizationAclPrincipalKind.User, "actor-a", "create_folder",
++                "correlation-r", "task-r", "idempotency-r", null);
++            var revoked = OrganizationAggregate.Handle(OrganizationState.Empty.Apply(produced.Events), revoke);
++            revoked.Code.ShouldBe(OrganizationAclResultCode.Accepted);
++            retained = [.. produced.Events, .. revoked.Events];
++        }
++        int sequence = 0;
++        retained.ShouldAllBe(item => EventPayloadVersionResolver.GetDeclaredVersion(item.GetType()) == 1);
++        var wire = DomainServiceWireResult.FromDomainResult(DomainResult.Success([.. retained.Cast<IEventPayload>()]));
++        wire.Events.ShouldAllBe(item => item.PayloadVersion == null);
++        var events = wire.Events.Select(item => new ProjectionEventDto(item.EventTypeName, item.Payload, item.SerializationFormat, ++sequence,
++            DateTimeOffset.UtcNow, retained[sequence - 1].CorrelationId, "message-" + sequence, "actor-a", sequence)
++            { MetadataVersion = 1, StoredPayloadVersion = explicitVersion ? 1 : item.PayloadVersion }).ToArray();
++        return new("tenant-a", "folders", "tenant-a", events);
++    }
++
++}
+diff --git a/tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs b/tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs
+new file mode 100644
+index 00000000..6928313c
+--- /dev/null
++++ b/tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs
+@@ -0,0 +1,200 @@
++using Hexalith.Folders.Aggregates.Folder;
++using Hexalith.Folders.Aggregates.Organization;
++using Hexalith.Folders.Authorization;
++using Hexalith.Folders.Projections.TenantAccess;
++
++using Shouldly;
++using Xunit;
++
++namespace Hexalith.Folders.Server.Tests;
++
++/// <summary>Requires fresh independent observations and owns their complete failure/cancellation lifecycle.</summary>
++public sealed class ParallelPermissionObservationTests
++{
++    [Fact]
++    public async Task BothCurrentSourcesStartTogetherAndNeitherAloneCanAuthorize()
++    {
++        CancellationToken token = TestContext.Current.CancellationToken;
++        TaskCompletionSource folderStarted = NewSignal(), organizationStarted = NewSignal();
++        TaskCompletionSource<long> folderHead = NewHead(), organizationHead = NewHead();
++        int folderReads = 0, organizationReads = 0;
++        var reader = new PermissionObservationSequenceReader(async (aggregate, cancellation) =>
++        {
++            if (aggregate == "folder-a")
++            {
++                Interlocked.Increment(ref folderReads);
++                folderStarted.TrySetResult();
++                return await folderHead.Task.WaitAsync(cancellation).ConfigureAwait(false);
++            }
++            aggregate.ShouldBe("tenant-a");
++            Interlocked.Increment(ref organizationReads);
++            organizationStarted.TrySetResult();
++            return await organizationHead.Task.WaitAsync(cancellation).ConfigureAwait(false);
++        });
++        var (model, store) = await CreateAsync(reader, token);
++        var before = store.Snapshot();
++        try
++        {
++            Task<EffectivePermissionsReadModelResult> pending = model.GetAsync(Request(), token);
++            await Task.WhenAll(folderStarted.Task, organizationStarted.Task).WaitAsync(TimeSpan.FromSeconds(5), token);
++            pending.IsCompleted.ShouldBeFalse();
++            folderHead.SetResult(2);
++            pending.IsCompleted.ShouldBeFalse();
++            organizationHead.SetResult(1);
++            EffectivePermissionsReadModelResult result = await pending.ConfigureAwait(true);
++            result.Status.ShouldBe(EffectivePermissionsReadModelStatus.Available);
++            result.Snapshot!.PermissionVersion.ShouldBe("[\"2\",\"1\"]");
++            result.Snapshot.ResourceVersion.ShouldBe("2");
++            result.Snapshot.RevocationFreshnessEstablished.ShouldBeTrue();
++            (await model.GetAsync(Request(), token)).Status.ShouldBe(EffectivePermissionsReadModelStatus.Available);
++            folderReads.ShouldBe(2);
++            organizationReads.ShouldBe(2);
++            store.Snapshot().ShouldBe(before);
++        }
++        finally
++        {
++            folderHead.TrySetResult(2);
++            organizationHead.TrySetResult(1);
++        }
++    }
++
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(false, true)]
++    [InlineData(true, false)]
++    [InlineData(true, true)]
++    public async Task FolderFailureOrMalformedHeadCancelsAndDrainsStartedOrganizationRead(bool malformed, bool throwingCallback)
++    {
++        CancellationToken token = TestContext.Current.CancellationToken;
++        TaskCompletionSource folderStarted = NewSignal(), organizationStarted = NewSignal(), organizationStopped = NewSignal();
++        TaskCompletionSource organizationCanceled = NewSignal(), cleanupRelease = NewSignal();
++        TaskCompletionSource<long> folderHead = NewHead();
++        var reader = new PermissionObservationSequenceReader(async (aggregate, cancellation) =>
++        {
++            if (aggregate == "folder-a")
++            {
++                folderStarted.TrySetResult();
++                return await folderHead.Task.WaitAsync(cancellation).ConfigureAwait(false);
++            }
++            organizationStarted.TrySetResult();
++            using CancellationTokenRegistration callback = throwingCallback
++                ? cancellation.Register(() => throw new InvalidOperationException("Cancellation callback failed.")) : default;
++            try { await Task.Delay(Timeout.InfiniteTimeSpan, cancellation).ConfigureAwait(false); return 1; }
++            finally
++            {
++                organizationCanceled.TrySetResult();
++                await cleanupRelease.Task.ConfigureAwait(false);
++                organizationStopped.TrySetResult();
++            }
++        });
++        var (model, store) = await CreateAsync(reader, token);
++        var before = store.Snapshot();
++        try
++        {
++            Task<EffectivePermissionsReadModelResult> pending = model.GetAsync(Request(), token);
++            await Task.WhenAll(folderStarted.Task, organizationStarted.Task).WaitAsync(TimeSpan.FromSeconds(5), token);
++            if (malformed) folderHead.SetResult(0);
++            else folderHead.SetException(new IOException("Current Folder source unavailable."));
++            await organizationCanceled.Task.WaitAsync(TimeSpan.FromSeconds(5), token);
++            pending.IsCompleted.ShouldBeFalse();
++            cleanupRelease.SetResult();
++            EffectivePermissionsReadModelResult result = await pending.WaitAsync(TimeSpan.FromSeconds(5), token);
++            result.Status.ShouldBe(malformed ? EffectivePermissionsReadModelStatus.Malformed : EffectivePermissionsReadModelStatus.Unavailable);
++            result.Snapshot.ShouldBeNull();
++            if (!malformed) result.Freshness.ReasonCode.ShouldBe("folder_stream_unavailable");
++            organizationStopped.Task.IsCompletedSuccessfully.ShouldBeTrue();
++            store.Snapshot().ShouldBe(before);
++        }
++        finally { folderHead.TrySetResult(2); cleanupRelease.TrySetResult(); }
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task OrganizationFailureCannotOvertakeFolderOutcome(bool malformedFolder)
++    {
++        CancellationToken token = TestContext.Current.CancellationToken;
++        TaskCompletionSource organizationObserved = NewSignal();
++        TaskCompletionSource<long> folderHead = NewHead();
++        var reader = new PermissionObservationSequenceReader(async (aggregate, cancellation) =>
++        {
++            if (aggregate == "folder-a") return await folderHead.Task.WaitAsync(cancellation).ConfigureAwait(false);
++            organizationObserved.TrySetResult();
++            throw new IOException("Current Organization source unavailable.");
++        });
++        var (model, _) = await CreateAsync(reader, token);
++        try
++        {
++            Task<EffectivePermissionsReadModelResult> pending = model.GetAsync(Request(), token);
++            await organizationObserved.Task.WaitAsync(TimeSpan.FromSeconds(5), token);
++            pending.IsCompleted.ShouldBeFalse();
++            folderHead.SetResult(malformedFolder ? 0 : 2);
++            EffectivePermissionsReadModelResult result = await pending.ConfigureAwait(true);
++            result.Status.ShouldBe(malformedFolder ? EffectivePermissionsReadModelStatus.Malformed : EffectivePermissionsReadModelStatus.Unavailable);
++            result.Snapshot.ShouldBeNull();
++            if (!malformedFolder) result.Freshness.ReasonCode.ShouldBe("organization_projection_unavailable");
++        }
++        finally { folderHead.TrySetResult(2); }
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task CallerOrCatchupCancellationDrainsBothSourcesAndAcceptsNoLateAuthority(bool catchupDeadline)
++    {
++        CancellationToken token = TestContext.Current.CancellationToken;
++        using CancellationTokenSource caller = CancellationTokenSource.CreateLinkedTokenSource(token);
++        TaskCompletionSource folderStarted = NewSignal(), organizationStarted = NewSignal();
++        TaskCompletionSource folderStopped = NewSignal(), organizationStopped = NewSignal();
++        var reader = new PermissionObservationSequenceReader(async (aggregate, cancellation) =>
++        {
++            bool folder = aggregate == "folder-a";
++            (folder ? folderStarted : organizationStarted).TrySetResult();
++            try { await Task.Delay(Timeout.InfiniteTimeSpan, cancellation).ConfigureAwait(false); return folder ? 2 : 1; }
++            finally { (folder ? folderStopped : organizationStopped).TrySetResult(); }
++        });
++        var (model, store) = await CreateAsync(reader, token);
++        var before = store.Snapshot();
++        Task<EffectivePermissionsReadModelResult> pending = model.GetAsync(Request() with { WaitForCatchUp = catchupDeadline }, caller.Token);
++        await Task.WhenAll(folderStarted.Task, organizationStarted.Task).WaitAsync(TimeSpan.FromSeconds(5), token);
++        if (catchupDeadline)
++        {
++            EffectivePermissionsReadModelResult result = await pending.WaitAsync(TimeSpan.FromSeconds(2), token);
++            result.Status.ShouldBe(EffectivePermissionsReadModelStatus.Unavailable);
++            result.Snapshot.ShouldBeNull();
++            result.Freshness.ReasonCode.ShouldBe("permission_projection_catch_up_timeout");
++        }
++        else
++        {
++            await caller.CancelAsync();
++            (await Should.ThrowAsync<OperationCanceledException>(() => pending)).CancellationToken.ShouldBe(caller.Token);
++        }
++        await Task.WhenAll(folderStopped.Task, organizationStopped.Task).WaitAsync(TimeSpan.FromSeconds(2), token);
++        store.Snapshot().ShouldBe(before);
++    }
++
++    private static EffectivePermissionsReadModelRequest Request() => new("tenant-a", "folder-a",
++        [EffectivePermissionPrincipal.User("actor")], null, null, "read_your_writes");
++
++    private static TaskCompletionSource NewSignal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
++
++    private static TaskCompletionSource<long> NewHead() => new(TaskCreationOptions.RunContinuationsAsynchronously);
++
++    private static async Task<(EventStoreFolderEffectivePermissionsReadModel Model, FolderOwnerReadStore Store)> CreateAsync(
++        IOrganizationStreamSequenceReader reader, CancellationToken token)
++    {
++        var clock = new FixedUtcClock(new DateTimeOffset(2026, 11, 3, 15, 0, 0, TimeSpan.Zero));
++        var store = new FolderOwnerReadStore();
++        var organization = new EventStoreOrganizationEffectivePermissionsReadModel(store, clock, reader);
++        var model = new EventStoreFolderEffectivePermissionsReadModel(store, clock, reader, organization);
++        await organization.ApplyAsync("tenant-a", "tenant-a", "baseline", 1,
++            new OrganizationAclBaselineInitialized("tenant-a", "tenant-a", "corr", "task", "key", "fingerprint"), token).ConfigureAwait(false);
++        await model.ApplyAsync("tenant-a", "folder-a", "created", 1, "created", new FolderCreated("tenant-a", "tenant-a", "folder-a",
++            "Folder", null, null, [], FolderLifecycleState.Active, FolderRepositoryBindingState.Unbound,
++            "actor", "corr", "task", "create", "create", clock.UtcNow), token).ConfigureAwait(false);
++        await model.ApplyAsync("tenant-a", "folder-a", "granted", 2, "granted", new FolderAccessGranted("tenant-a", "tenant-a", "folder-a",
++            FolderAccessPrincipalKind.User, "actor", "read_metadata", "actor", "corr", "task", "grant", "grant", 2, clock.UtcNow), token).ConfigureAwait(false);
++        store.ForbidWrites = true;
++        return (model, store);
++    }
++}
+diff --git a/tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs b/tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs
+new file mode 100644
+index 00000000..5ed4470c
+--- /dev/null
++++ b/tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs
+@@ -0,0 +1,13 @@
++using Hexalith.Folders.Authorization;
++
++namespace Hexalith.Folders.Server.Tests;
++
++/// <summary>Controls independent source observations without supplying permission decisions.</summary>
++/// <param name="read">The current exact aggregate head observation.</param>
++internal sealed class PermissionObservationSequenceReader(Func<string, CancellationToken, Task<long>> read)
++    : IOrganizationStreamSequenceReader
++{
++    /// <inheritdoc/>
++    public Task<long> GetCurrentSequenceAsync(string tenantId, string organizationId,
++        CancellationToken cancellationToken = default) => read(organizationId, cancellationToken);
++}
+diff --git a/tests/Hexalith.Folders.Tests/Authorization/GatewayOrganizationStreamSequenceReaderTests.cs b/tests/Hexalith.Folders.Tests/Authorization/GatewayOrganizationStreamSequenceReaderTests.cs
+new file mode 100644
+index 00000000..3086534c
+--- /dev/null
++++ b/tests/Hexalith.Folders.Tests/Authorization/GatewayOrganizationStreamSequenceReaderTests.cs
+@@ -0,0 +1,48 @@
++using Hexalith.Folders.Authorization;
++using Shouldly;
++using Xunit;
++
++namespace Hexalith.Folders.Tests.Authorization;
++
++/// <summary>Supported owner metadata and same-actor lock avoidance stay fail closed and exactly scoped.</summary>
++public sealed class GatewayOrganizationStreamSequenceReaderTests
++{
++    /// <summary>Verifies supported Metadata Produces The Actual Head.</summary>
++    [Fact]
++    public async Task SupportedMetadataProducesTheActualHead()
++    {
++        var source = new OwnerMetadataReaderStub();
++        (await new GatewayOrganizationStreamSequenceReader(source).GetCurrentSequenceAsync("tenant", "organization", TestContext.Current.CancellationToken)).ShouldBe(0);
++        source.Calls.ShouldBe(1);
++    }
++
++    /// <summary>Verifies in Turn Sequences Avoid Self Invocation And Never Cross Tenant.</summary>
++    /// <param name="folder">The folder control.</param>
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task InTurnSequencesAvoidSelfInvocationAndNeverCrossTenant(bool folder)
++    {
++        var source = new OwnerMetadataReaderStub();
++        var reader = new GatewayOrganizationStreamSequenceReader(source);
++        using (folder ? FolderActorSequenceScope.Enter("tenant", "organization", 7) : OrganizationActorSequenceScope.Enter("tenant", "organization", 7))
++        {
++            (await reader.GetCurrentSequenceAsync("tenant", "organization", TestContext.Current.CancellationToken)).ShouldBe(7);
++            source.Calls.ShouldBe(0);
++            (await reader.GetCurrentSequenceAsync("other-tenant", "organization", TestContext.Current.CancellationToken)).ShouldBe(0);
++            source.Calls.ShouldBe(1);
++        }
++    }
++
++    /// <summary>Verifies missing And Foreign Proof Never Produce Current Authority.</summary>
++    /// <param name="foreign">The foreign control.</param>
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task MissingAndForeignProofNeverProduceCurrentAuthority(bool foreign)
++    {
++        var source = new OwnerMetadataReaderStub { Missing = !foreign, Foreign = foreign };
++        var reader = new GatewayOrganizationStreamSequenceReader(source);
++        await Should.ThrowAsync<InvalidOperationException>(() => reader.GetCurrentSequenceAsync("tenant", "organization", TestContext.Current.CancellationToken));
++    }
++}
+diff --git a/tests/Hexalith.Folders.Tests/Authorization/OwnerMetadataReaderStub.cs b/tests/Hexalith.Folders.Tests/Authorization/OwnerMetadataReaderStub.cs
+new file mode 100644
+index 00000000..b791d6f6
+--- /dev/null
++++ b/tests/Hexalith.Folders.Tests/Authorization/OwnerMetadataReaderStub.cs
+@@ -0,0 +1,25 @@
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Streams;
++
++namespace Hexalith.Folders.Tests.Authorization;
++
++/// <summary>Provides explicit native metadata evidence for sequence adapter controls.</summary>
++internal sealed class OwnerMetadataReaderStub : INativeSourceMetadataReader
++{
++    /// <summary>Gets or sets the calls control.</summary>
++    internal int Calls { get; private set; }
++    /// <summary>Gets or sets the missing control.</summary>
++    internal bool Missing { get; set; }
++    /// <summary>Gets or sets the foreign control.</summary>
++    internal bool Foreign { get; set; }
++    /// <inheritdoc/>
++    public Task<NativeSourceObservation?> ReadAsync(AggregateIdentity identity, CancellationToken cancellationToken = default)
++    {
++        Calls++;
++        if (Missing) return Task.FromResult<NativeSourceObservation?>(null);
++        if (Foreign) identity = new AggregateIdentity("foreign", identity.Domain, identity.AggregateId);
++        var proof = NativeSourceProofCodec.CreateSeed(identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++        return Task.FromResult<NativeSourceObservation?>(new(proof, DateTimeOffset.UtcNow));
++    }
++}

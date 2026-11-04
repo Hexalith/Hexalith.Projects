@@ -1,0 +1,27 @@
+{
+  "observedUtc": "2026-11-03T18:36:45.511604+00:00",
+  "isolatedRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "sourceSha256": {
+    "tools/qualification/run_supported_project_reads.py": "d4e569cf0e02cf368d59fcea573d086e69b3eb56eed4a62c0f56e0aa178fd299",
+    "tests/tools/test_supported_project_reads_launcher.py": "26e3c0e1e0e995ca0a4719795a96e7ebaf84d3f28d7e935433f77ac5ac642aab"
+  },
+  "sourceManifestSha256": "6c9f76406cfa8212409c048d2f15638255bc128b18625a54c522690335603a17",
+  "originalManifestSha256": "c75eab6b5b660dbeee46ce279379b60002f577f06d5dd20e5d5fa12e6c2e26ab",
+  "changedBuildInputs": [
+    "tests/tools/test_supported_project_reads_launcher.py",
+    "tools/qualification/run_supported_project_reads.py"
+  ],
+  "baselineNativeExitFailures": 40,
+  "fixedNativeExitPasses": 40,
+  "fixedActualKernelExitTransitionsObserved": 40,
+  "pythonControlsPassed": 109,
+  "pythonControlsFailed": 0,
+  "pythonControlsSkipped": 0,
+  "noSignalAuthorizationChanged": true,
+  "externalPreservationFailureWaived": false,
+  "qualificationAccepted": false,
+  "primaryLinuxSources": [
+    "https://github.com/torvalds/linux/blob/master/include/linux/sched.h",
+    "https://github.com/torvalds/linux/blob/master/kernel/exit.c"
+  ]
+}

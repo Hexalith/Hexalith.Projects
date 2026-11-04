@@ -1,0 +1,191 @@
+using Aspire.Hosting.ApplicationModel;
+
+using Hexalith.EventStore.Aspire;
+using Hexalith.Projects.AppHost;
+using Hexalith.Projects.Aspire;
+
+IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
+SupportedProjectReadFixtureProfile.Configure(builder);
+const string projectsUiOidcClientId = "hexalith-projects-ui";
+const string projectsUiOidcClientSecret = "projects-ui-local-e2e";
+
+string daprComponentsPath = ProjectsAppHost.ResolveDaprComponentsPath(
+    builder.AppHostDirectory,
+    Directory.GetCurrentDirectory());
+string accessControlConfigPath = ProjectsAppHost.ResolveDaprConfigPath(
+    builder.AppHostDirectory,
+    Directory.GetCurrentDirectory(),
+    "accesscontrol.yaml");
+_ = ProjectsAppHost.ResolveDaprConfigPath(
+    builder.AppHostDirectory,
+    Directory.GetCurrentDirectory(),
+    "resiliency.yaml");
+string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModule.LocalDaprRedisHost;
+(string? daprPlacementHostAddress, string? daprSchedulerHostAddress) = AspireDaprLocalServiceEndpoints.Resolve(
+    builder.Configuration[AspireDaprLocalServiceEndpoints.PlacementHostAddressKey],
+    builder.Configuration[AspireDaprLocalServiceEndpoints.SchedulerHostAddressKey]);
+HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity();
+
+IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
+ConfigureProjectsEventStoreDomainRegistrations(eventStore);
+if (ProjectsLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
+{
+    // A parallel browser lane must not serialize every accepted command behind EventStore's
+    // tenant-wide projection ETag actor. Use the platform-supported polling mode only for the
+    // explicit fixture profile; /project is still exercised asynchronously at this short cadence.
+    _ = eventStore.WithEnvironment(
+        "EventStore__Projections__Domains__projects__RefreshIntervalMs",
+        "250");
+}
+
+IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith_Tenants>(ProjectsAspireModule.TenantsAppId);
+_ = eventStore
+    .WithReference(tenants)
+    .WaitFor(tenants);
+// Local-dev: widen the tenant-access projection freshness budgets. They are measured from the last
+// tenant lifecycle/membership event; with the defaults (mutation 5 min, diagnostic 30 min) the
+// projection goes "stale" once a few minutes pass without new tenant events, so project create/list
+// start failing (safe-denial / read-model-unavailable) even though access is valid. Production keeps
+// the tight defaults; here we set a generous budget so a seeded tenant stays usable.
+IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId)
+    .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", "7.00:00:00")
+    .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", "7.00:00:00");
+IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexalith_Projects_UI>(ProjectsAspireModule.ProjectsUiAppId);
+// The workers host is a Dapr pub/sub subscriber (tenant + project event projections). It must expose
+// an HTTP endpoint so Aspire assigns it a managed port and wires the Dapr sidecar's --app-port; without
+// a declared endpoint the sidecar runs with app-port 0, never calls /dapr/subscribe, and no events are
+// delivered (the tenant-access + projection-journal read models stay empty). The explicit endpoint also
+// avoids the framework default :5000 (which collided with other locally-running apps).
+IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId)
+    .WithHttpEndpoint();
+
+_ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
+
+DevelopmentRouteCatalogComposition? supportedReadCatalog = null;
+if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
+{
+    _ = projectsUi.WithExplicitStart();
+    SupportedProjectReadFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, daprComponentsPath);
+    supportedReadCatalog = SupportedProjectReadDevelopmentInfrastructure.Add(builder, eventStore, tenants, projects);
+}
+else
+{
+    _ = builder.AddHexalithProjects(
+        eventStore,
+        tenants,
+        projects,
+        projectsWorkers,
+        redisHost,
+        accessControlConfigPath,
+        daprComponentsPath,
+        daprPlacementHostAddress,
+        daprSchedulerHostAddress);
+}
+
+if (security is not null)
+{
+    // Match the local realm's workload credential to the gateway's outbound assertion issuer.
+    bool persistWorkloadSecret = bool.TryParse(
+        builder.Configuration[HexalithEventStoreSecurityOptions.DefaultPersistentConfigurationKey]?.Trim(),
+        out bool keycloakPersistent) && keycloakPersistent;
+    IResourceBuilder<ParameterResource> workloadClientSecret = builder.AddParameter(
+        "eventstore-workload-client-secret",
+        new GenerateParameterDefault
+        {
+            MinLength = 32,
+            Lower = true,
+            MinLower = 1,
+            Numeric = true,
+            MinNumeric = 1,
+            Upper = true,
+            MinUpper = 1,
+            Special = false,
+        },
+        secret: true,
+        persist: persistWorkloadSecret);
+    _ = security.Keycloak.WithEnvironment("HEXALITH_EVENTSTORE_WORKLOAD_CLIENT_SECRET", workloadClientSecret);
+    _ = eventStore.WithEventStoreWorkloadClientCredentials("eventstore", workloadClientSecret);
+
+    _ = eventStore.WithJwtBearerSecurity(security);
+    _ = tenants.WithJwtBearerSecurity(security);
+    _ = projects
+        .WithJwtBearerSecurity(security)
+        // The project's default launch profile must never override AppHost-provided OIDC.
+        .WithEnvironment("Authentication__JwtBearer__AllowAnonymousDevelopment", "false");
+    _ = projectsWorkers.WithSecurityDependency(security);
+    _ = projectsUi.WithOpenIdConnectSecurity(
+        security,
+        projectsUiOidcClientId,
+        projectsUiOidcClientSecret);
+}
+
+_ = projectsUi
+    .WithReference(projects)
+    .WaitFor(projects)
+    .WithEnvironment("Projects__BaseAddress", ReferenceExpression.Create($"{projects.GetEndpoint("http")}"));
+
+try
+{
+    DistributedApplication application = builder.Build();
+    await using (application.ConfigureAwait(false))
+    {
+        await application.RunAsync().ConfigureAwait(false);
+    }
+}
+finally
+{
+    if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
+}
+
+static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<ProjectResource> eventStore)
+{
+    string[] sampleRegistrationKeys =
+    [
+        "tenant-a|orders|v1",
+        "tenant-b|inventory|v1",
+        "*|counter|v1",
+        "*|greeting|v1"
+    ];
+
+    foreach (string key in sampleRegistrationKeys)
+    {
+        SuppressEventStoreDomainServiceRegistration(eventStore, key);
+    }
+
+    // Register the projects domain so EventStore dispatches CreateProject (and the other project
+    // commands) to the projects app's /process callback. The wildcard tenant ('*') covers every managed
+    // tenant; AppId/Domain 'projects' match the Dapr sidecar app-id and ProjectsServerModule.DomainName.
+    _ = eventStore
+        .WithEnvironment("EventStore__DomainServices__Registrations__*|projects|v1__AppId", "projects")
+        .WithEnvironment("EventStore__DomainServices__Registrations__*|projects|v1__Domain", "projects");
+
+    // Project events are tenant-scoped by convention ('{tenant}.projects.events'), but the
+    // projects-workers projection subscriber listens on the static 'projects.events' topic. Override so
+    // persisted project events land where the worker subscribes (mirrors the Tenants
+    // global-administrators topic-override precedent), otherwise the list projection journal never fills.
+    _ = eventStore.WithEnvironment("EventStore__Publisher__TopicOverrides__projects", "projects.events");
+
+    // Tenant aggregates live in the 'system' tenant, so by convention their events publish to
+    // 'tenants.events'. The projects-workers tenant-access subscriber listens on 'system.tenants.events'
+    // (ProjectsTenantEventSubscription.TopicName). Override so tenant lifecycle/membership events reach
+    // the worker and populate the tenant-access projection the authorization gate reads.
+    _ = eventStore.WithEnvironment("EventStore__Publisher__TopicOverrides__tenants", "system.tenants.events");
+
+    SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
+}
+
+static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<ProjectResource> eventStore, string registrationKey)
+{
+    _ = eventStore
+        .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__AppId", string.Empty)
+        .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__Domain", string.Empty);
+}
+
+static void SuppressEventStoreOperationalIndexMetadataRegistration(
+    IResourceBuilder<ProjectResource> eventStore,
+    string registrationKey)
+{
+    _ = eventStore.WithEnvironment(
+        $"EventStore__DomainServices__Registrations__{registrationKey}__Domain",
+        string.Empty);
+}

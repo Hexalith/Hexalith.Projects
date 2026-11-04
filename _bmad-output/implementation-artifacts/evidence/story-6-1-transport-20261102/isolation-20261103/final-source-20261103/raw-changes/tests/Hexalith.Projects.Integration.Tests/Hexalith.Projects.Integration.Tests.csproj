@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <DefineConstants Condition="'$(SupportedProjectReadDistributed)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_DISTRIBUTED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Hexalith.Projects.AppHost\Hexalith.Projects.AppHost.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Aspire\Hexalith.Projects.Aspire.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Server\Hexalith.Projects.Server.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Testing\Hexalith.Projects.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Workers\Hexalith.Projects.Workers.csproj" />
+    <ProjectReference Include="..\Hexalith.Projects.E2E.Fixtures\Hexalith.Projects.E2E.Fixtures.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(SupportedProjectReadDistributed)' == 'true'">
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

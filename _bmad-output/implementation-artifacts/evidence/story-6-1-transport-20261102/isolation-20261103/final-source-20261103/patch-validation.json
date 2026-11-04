@@ -1,0 +1,43 @@
+{
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/isolation-20261103/final-source-20261103/patches/Projects.patch"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/isolation-20261103/final-source-20261103/patches/Hexalith.EventStore.patch"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "repository": "references/Hexalith.Folders",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/isolation-20261103/final-source-20261103/patches/Hexalith.Folders.patch"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    }
+  ],
+  "allChangedRawCopiesMatch": true,
+  "allNonemptyPatchesReverseCheck": true,
+  "mutationPerformed": false
+}

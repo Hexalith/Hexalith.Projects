@@ -1,0 +1,140 @@
+{
+  "observedUtc": "2026-11-03T18:37:20.292066+00:00",
+  "originalChildReportSha256": "0398335e36607a91e0b978ffe421cc3ab44209bff0e226dc15a8623074a9d336",
+  "originalCoordinatorReportSha256": "15e29054ba53508d54b70969012f6710f49cace24a67413e6e58e9f7d8b2c7dd",
+  "processes": {
+    "eventstore-pid": {
+      "pid": 3076063,
+      "capturedStartTicks": "11407362",
+      "observedStartTicks": null
+    },
+    "eventstore-wrapperPid": {
+      "pid": 3075539,
+      "capturedStartTicks": "11407272",
+      "observedStartTicks": null
+    },
+    "tenants-pid": {
+      "pid": 3075930,
+      "capturedStartTicks": "11407343",
+      "observedStartTicks": null
+    },
+    "tenants-wrapperPid": {
+      "pid": 3075347,
+      "capturedStartTicks": "11407260",
+      "observedStartTicks": null
+    },
+    "projects-pid": {
+      "pid": 3076049,
+      "capturedStartTicks": "11407358",
+      "observedStartTicks": null
+    },
+    "projects-wrapperPid": {
+      "pid": 3075601,
+      "capturedStartTicks": "11407280",
+      "observedStartTicks": null
+    },
+    "projects-workers-pid": {
+      "pid": 3075875,
+      "capturedStartTicks": "11407337",
+      "observedStartTicks": null
+    },
+    "projects-workers-wrapperPid": {
+      "pid": 3075284,
+      "capturedStartTicks": "11407256",
+      "observedStartTicks": null
+    },
+    "folders-pid": {
+      "pid": 3075958,
+      "capturedStartTicks": "11407346",
+      "observedStartTicks": null
+    },
+    "folders-wrapperPid": {
+      "pid": 3075473,
+      "capturedStartTicks": "11407269",
+      "observedStartTicks": null
+    },
+    "folders-workers-pid": {
+      "pid": 3075827,
+      "capturedStartTicks": "11407332",
+      "observedStartTicks": null
+    },
+    "folders-workers-wrapperPid": {
+      "pid": 3075272,
+      "capturedStartTicks": "11407256",
+      "observedStartTicks": null
+    },
+    "eventstore-sidecar": {
+      "pid": 3075491,
+      "capturedStartTicks": "11407269",
+      "observedStartTicks": null
+    },
+    "folders-sidecar": {
+      "pid": 3075469,
+      "capturedStartTicks": "11407268",
+      "observedStartTicks": null
+    },
+    "folders-workers-sidecar": {
+      "pid": 3075273,
+      "capturedStartTicks": "11407256",
+      "observedStartTicks": null
+    },
+    "projects-sidecar": {
+      "pid": 3075599,
+      "capturedStartTicks": "11407280",
+      "observedStartTicks": null
+    },
+    "projects-workers-sidecar": {
+      "pid": 3075281,
+      "capturedStartTicks": "11407256",
+      "observedStartTicks": null
+    },
+    "tenants-sidecar": {
+      "pid": 3075346,
+      "capturedStartTicks": "11407260",
+      "observedStartTicks": null
+    },
+    "apphost": {
+      "pid": 3070511,
+      "capturedStartTicks": "11406637",
+      "observedStartTicks": null
+    },
+    "cli": {
+      "pid": 3037420,
+      "capturedStartTicks": "11398654",
+      "observedStartTicks": null
+    }
+  },
+  "allCapturedProcessIdentitiesAbsent": true,
+  "containers": [
+    {
+      "id": "b88543ddc796ce944ea8e4b875f7d3677bb6294bdfb1e82c45992cb032ba8120",
+      "resource": "dapr-scheduler-mtls",
+      "exitCode": 1,
+      "exactAbsent": false
+    },
+    {
+      "id": "5462c0201add1da0c694d5517cb0703ff4c9229488db4b7d146b9920fbc09d37",
+      "resource": "dapr-placement-mtls",
+      "exitCode": 1,
+      "exactAbsent": false
+    },
+    {
+      "id": "9678957c2d713e64dd695f11535ab697f5358f95839084bcf849342c92dd13c8",
+      "resource": "dapr-sentry",
+      "exitCode": 1,
+      "exactAbsent": false
+    },
+    {
+      "id": "afd8602977ae7f0bfe53b506f65021d3263dac2d1577c57f05a45d4ad7f2f71e",
+      "resource": "reads-9231aa8c126e644a1d2f07ed-redishost",
+      "exitCode": 1,
+      "exactAbsent": false
+    }
+  ],
+  "allFourContainersAbsent": false,
+  "exactAppHostSessionsAbsent": true,
+  "privateDirectoryAbsent": true,
+  "originalExternalPreservationFailureRetained": true,
+  "qualificationAccepted": false,
+  "cleanupActionsTaken": []
+}

@@ -1,0 +1,963 @@
+// <copyright file="ProjectsDomainProcessor.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.Server;
+
+using System;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Contracts.Commands;
+using Hexalith.EventStore.Contracts.Events;
+using Hexalith.EventStore.Contracts.Results;
+using Hexalith.Projects.Aggregates.Project;
+using Hexalith.Projects.Server.Authorization;
+using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Contracts.Commands;
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Ui;
+
+/// <summary>
+/// The Projects <c>/process</c> aggregate-callback domain processor (Story 1.4). Mirrors the Folders
+/// <c>FolderDomainProcessor</c> stripped to the create slice: it deserializes the create payload,
+/// derives the command from the verified envelope (tenant comes from the envelope, never the payload),
+/// invokes the pure <see cref="ProjectAggregate"/> <c>Handle</c>, and maps the result to a
+/// <see cref="DomainResult"/> (success events, a domain rejection event, or a no-op for an idempotent
+/// replay). Domain rejections are events, never exceptions; only a malformed payload / unexpected
+/// failure fails closed to a metadata-only rejection.
+/// </summary>
+public sealed class ProjectsDomainProcessor(
+    TimeProvider timeProvider,
+    IProjectEventStoreAuthorizationValidator authorizationValidator,
+    ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor, Hexalith.EventStore.DomainService.IDomainCommandPayloadInventory
+{
+    private static readonly JsonSerializerOptions PayloadJsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+    };
+
+    private static readonly JsonSerializerOptions StateJsonOptions = new(JsonSerializerDefaults.Web);
+
+    private static readonly IReadOnlyDictionary<string, Type> ProjectEventTypes = typeof(IProjectEvent).Assembly
+        .GetTypes()
+        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IProjectEvent).IsAssignableFrom(type))
+        .ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
+
+    // EventStore persists rejection results as ordinary stream events. They record a refused command and
+    // never change Project state, so rehydration skips them after the stream-identity checks.
+    private static readonly IReadOnlySet<string> ProjectRejectionEventTypes = typeof(IProjectEvent).Assembly
+        .GetTypes()
+        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IRejectionEvent).IsAssignableFrom(type))
+        .Select(static type => type.FullName!)
+        .ToHashSet(StringComparer.Ordinal);
+
+    private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+    private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
+        authorizationValidator ?? throw new ArgumentNullException(nameof(authorizationValidator));
+    private readonly ProjectOwnerBootstrapVerifier? _bootstrap = bootstrap;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<Type> CommandPayloadTypes =>
+    [
+        typeof(CreateProjectPayload), typeof(UpdateProjectSetupPayload), typeof(ArchiveProjectPayload),
+        typeof(RestoreProjectPayload), typeof(SetProjectFolderPayload), typeof(LinkFileReferencePayload),
+        typeof(UnlinkFileReferencePayload), typeof(LinkMemoryPayload), typeof(UnlinkMemoryPayload),
+        typeof(ConfirmProjectResolutionPayload), typeof(GrantProjectChatBotAuthority), typeof(RevokeProjectChatBotAuthority),
+    ];
+
+    /// <inheritdoc/>
+    public async Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        if (!string.Equals(command.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal))
+        {
+            return Rejection(command, ProjectResultCode.ValidationFailed, null, ProjectsServerModule.CreateProjectCommandType);
+        }
+
+        if (command.CommandType is ProjectsServerModule.GrantProjectChatBotAuthorityCommandType or
+            ProjectsServerModule.RevokeProjectChatBotAuthorityCommandType)
+        {
+            return await ProcessChatBotAuthorityAsync(command, currentState).ConfigureAwait(false);
+        }
+
+        string? actionToken = command.CommandType switch
+        {
+            ProjectsServerModule.CreateProjectCommandType => ProjectAuthorizationGate.CreateProjectAction,
+            ProjectsServerModule.UpdateProjectSetupCommandType => ProjectAuthorizationGate.UpdateProjectSetupAction,
+            ProjectsServerModule.ArchiveProjectCommandType => ProjectAuthorizationGate.ArchiveProjectAction,
+            ProjectsServerModule.RestoreProjectCommandType => ProjectAuthorizationGate.RestoreProjectAction,
+            ProjectsServerModule.SetProjectFolderCommandType => ProjectAuthorizationGate.SetProjectFolderAction,
+            ProjectsServerModule.LinkFileReferenceCommandType => ProjectAuthorizationGate.LinkFileReferenceAction,
+            ProjectsServerModule.UnlinkFileReferenceCommandType => ProjectAuthorizationGate.UnlinkFileReferenceAction,
+            ProjectsServerModule.LinkMemoryCommandType => ProjectAuthorizationGate.LinkMemoryAction,
+            ProjectsServerModule.UnlinkMemoryCommandType => ProjectAuthorizationGate.UnlinkMemoryAction,
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => ProjectAuthorizationGate.ConfirmProjectResolutionAction,
+            _ => null,
+        };
+
+        if (actionToken is null)
+        {
+            return Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType);
+        }
+
+        EventStoreAuthorizationValidationResult validation;
+        try
+        {
+            validation = await _authorizationValidator.ValidateAsync(
+                new EventStoreAuthorizationValidationRequest(
+                    command.TenantId,
+                    command.UserId,
+                    actionToken,
+                    command.AggregateId,
+                    command.CorrelationId,
+                    ReadTaskId(command),
+                    [AuthorizationLayer.EventStoreValidator]),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            validation = EventStoreAuthorizationValidationResult.Unavailable();
+        }
+
+        if (validation.Status != EventStoreAuthorizationValidationStatus.Allowed)
+        {
+            return Rejection(command, ProjectResultCode.Unauthorized, null, command.CommandType);
+        }
+
+        return command.CommandType switch
+        {
+            ProjectsServerModule.CreateProjectCommandType => ProcessCreate(command, currentState),
+            ProjectsServerModule.UpdateProjectSetupCommandType => ProcessUpdateProjectSetup(command, currentState),
+            ProjectsServerModule.ArchiveProjectCommandType => ProcessArchiveProject(command, currentState),
+            ProjectsServerModule.RestoreProjectCommandType => ProcessRestoreProject(command, currentState),
+            ProjectsServerModule.SetProjectFolderCommandType => ProcessSetProjectFolder(command, currentState),
+            ProjectsServerModule.LinkFileReferenceCommandType => ProcessLinkFileReference(command, currentState),
+            ProjectsServerModule.UnlinkFileReferenceCommandType => ProcessUnlinkFileReference(command, currentState),
+            ProjectsServerModule.LinkMemoryCommandType => ProcessLinkMemory(command, currentState),
+            ProjectsServerModule.UnlinkMemoryCommandType => ProcessUnlinkMemory(command, currentState),
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => ProcessConfirmProjectResolution(command, currentState),
+            _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
+        };
+    }
+
+    private async Task<DomainResult> ProcessChatBotAuthorityAsync(CommandEnvelope envelope, object? currentState)
+    {
+        string operation = envelope.CommandType == ProjectsServerModule.GrantProjectChatBotAuthorityCommandType
+            ? nameof(GrantProjectChatBotAuthority) : nameof(RevokeProjectChatBotAuthority);
+        if (_bootstrap is null || !IsSafeGrantToken(envelope.TenantId) ||
+            !IsSafeGrantToken(envelope.AggregateId) || !IsSafeGrantToken(envelope.UserId) ||
+            !await _bootstrap.IsCurrentOwnerAsync(envelope.TenantId, envelope.UserId, operation,
+                CancellationToken.None).ConfigureAwait(false))
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("owner_unavailable")]);
+        }
+
+        ProjectState state;
+        try
+        {
+            state = RehydrateProjectState(envelope, currentState);
+        }
+        catch (Exception exception) when (exception is JsonException or ArgumentException or InvalidOperationException)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("source_unavailable")]);
+        }
+
+        if (!state.IsCreated || state.TenantId != envelope.TenantId ||
+            state.ProjectId != envelope.AggregateId || state.Lifecycle != ProjectLifecycle.Active)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("project_unavailable")]);
+        }
+
+        try
+        {
+            if (operation == nameof(GrantProjectChatBotAuthority))
+            {
+                GrantProjectChatBotAuthority? grant = JsonSerializer.Deserialize<GrantProjectChatBotAuthority>(envelope.Payload, PayloadJsonOptions);
+                DateTimeOffset now = _timeProvider.GetUtcNow();
+                if (grant is null || !ValidGrantScope(grant.PrincipalId, grant.Operation, grant.ActorClass, grant.Origin) ||
+                    !IsSafeGrantToken(grant.GrantId) || grant.ExpiresAt.Offset != TimeSpan.Zero ||
+                    grant.ExpiresAt <= now || grant.ExpiresAt > now.AddDays(30) ||
+                    state.ChatBotGrantIssuanceIds.Contains(grant.GrantId))
+                {
+                    return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_grant")]);
+                }
+
+                string scope = ChatBotGrantScope.For(grant.PrincipalId, grant.Operation, grant.ActorClass, grant.Origin);
+                if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? prior) &&
+                    !prior.Revoked && prior.ExpiresAt > now)
+                {
+                    return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("grant_active")]);
+                }
+
+                return DomainResult.Success([new ProjectChatBotAuthorityGranted(envelope.TenantId,
+                    envelope.AggregateId, grant.PrincipalId, grant.Operation, grant.ActorClass,
+                    grant.Origin, grant.GrantId, grant.ExpiresAt, envelope.UserId,
+                    envelope.CorrelationId, ReadTaskId(envelope), envelope.MessageId,
+                    Convert.ToHexString(SHA256.HashData(envelope.Payload)), now)]);
+            }
+
+            RevokeProjectChatBotAuthority? revoke = JsonSerializer.Deserialize<RevokeProjectChatBotAuthority>(envelope.Payload, PayloadJsonOptions);
+            if (revoke is null || !ValidGrantScope(revoke.PrincipalId, revoke.Operation, revoke.ActorClass, revoke.Origin) ||
+                !IsSafeGrantToken(revoke.GrantId))
+            {
+                return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_revoke")]);
+            }
+
+            string revokeScope = ChatBotGrantScope.For(revoke.PrincipalId, revoke.Operation, revoke.ActorClass, revoke.Origin);
+            if (!state.ChatBotGrants.TryGetValue(revokeScope, out ProjectChatBotGrant? current) ||
+                current.GrantId != revoke.GrantId || current.Revoked)
+            {
+                return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("grant_mismatch")]);
+            }
+
+            return DomainResult.Success([new ProjectChatBotAuthorityRevoked(envelope.TenantId,
+                envelope.AggregateId, revoke.PrincipalId, revoke.Operation, revoke.ActorClass,
+                revoke.Origin, revoke.GrantId, envelope.UserId, envelope.CorrelationId,
+                ReadTaskId(envelope), envelope.MessageId,
+                Convert.ToHexString(SHA256.HashData(envelope.Payload)), _timeProvider.GetUtcNow())]);
+        }
+        catch (Exception exception) when (exception is JsonException or ArgumentException)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_grant_payload")]);
+        }
+    }
+
+    private static bool IsSafeGrantToken(string? value)
+        => !string.IsNullOrWhiteSpace(value) && value.Length <= 128 && value != "*" &&
+            value.All(static character => char.IsAsciiLetterOrDigit(character) || character is '-' or '_' or '.' or ':');
+
+    private static bool ValidGrantScope(string principal, string operation, string actorClass, string origin)
+        => IsSafeGrantToken(principal) && IsSafeGrantToken(operation) &&
+            actorClass is "human" or "service" or "ai" &&
+            origin is "Api" or "Ui" or "Cli" or "Mcp" or "Worker" or "Mailbox" or "Ai";
+
+    private DomainResult ProcessCreate(CommandEnvelope envelope, object? currentState)
+    {
+        CreateProjectPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<CreateProjectPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            // Malformed payload / type mismatch fails closed to a metadata-only rejection (no echo).
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        if (payload is null || string.IsNullOrWhiteSpace(payload.Name))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        // Tenant comes from the verified EventStore envelope (authoritative authority), never the
+        // payload. The command pipeline already validated the envelope identity components.
+        CreateProject command = new(
+            envelope.TenantId,
+            projectId,
+            payload.Name,
+            payload.Description,
+            payload.SetupMetadata,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // Any unexpected exception from the pure aggregate must fail closed without leaking
+            // type/stack metadata through the gateway response.
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessUpdateProjectSetup(CommandEnvelope envelope, object? currentState)
+    {
+        UpdateProjectSetupPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<UpdateProjectSetupPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+        }
+
+        if (payload.Setup is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "setup", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        UpdateProjectSetup command = new(
+            envelope.TenantId,
+            projectId,
+            payload.Setup,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessArchiveProject(CommandEnvelope envelope, object? currentState)
+    {
+        try
+        {
+            ArchiveProjectPayload? payload = JsonSerializer.Deserialize<ArchiveProjectPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+            if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+            }
+
+            if (!string.Equals(payload.ArchiveIntent, "archive", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "archiveIntent", envelope.CommandType);
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        ArchiveProject command = new(
+            envelope.TenantId,
+            projectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessRestoreProject(CommandEnvelope envelope, object? currentState)
+    {
+        try
+        {
+            RestoreProjectPayload? payload = JsonSerializer.Deserialize<RestoreProjectPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+            if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+            }
+
+            if (!string.Equals(payload.RestoreIntent, "restore", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "restoreIntent", envelope.CommandType);
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        RestoreProject command = new(
+            envelope.TenantId,
+            projectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessSetProjectFolder(CommandEnvelope envelope, object? currentState)
+    {
+        SetProjectFolderPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<SetProjectFolderPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "set", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FolderId)
+            || payload.FolderMetadata is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        SetProjectFolder command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FolderId!,
+            payload.FolderMetadata,
+            payload.ReplacementConfirmed,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+
+    private DomainResult ProcessLinkFileReference(CommandEnvelope envelope, object? currentState)
+    {
+        LinkFileReferencePayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<LinkFileReferencePayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FileReferenceId)
+            || string.IsNullOrWhiteSpace(payload.FolderId)
+            || payload.FileMetadata is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        LinkFileReference command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FileReferenceId!,
+            payload.FolderId!,
+            payload.FileMetadata,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessUnlinkFileReference(CommandEnvelope envelope, object? currentState)
+    {
+        UnlinkFileReferencePayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<UnlinkFileReferencePayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(payload.UnlinkIntent, "removeReference", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FileReferenceId))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        UnlinkFileReference command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FileReferenceId!,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessLinkMemory(CommandEnvelope envelope, object? currentState)
+    {
+        LinkMemoryPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<LinkMemoryPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.MemoryReferenceId)
+            || payload.MemoryMetadata is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        LinkMemory command = new(
+            envelope.TenantId,
+            projectId,
+            payload.MemoryReferenceId!,
+            payload.MemoryMetadata,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessUnlinkMemory(CommandEnvelope envelope, object? currentState)
+    {
+        UnlinkMemoryPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<UnlinkMemoryPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(payload.UnlinkIntent, "removeReference", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.MemoryReferenceId))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        UnlinkMemory command = new(
+            envelope.TenantId,
+            projectId,
+            payload.MemoryReferenceId!,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessConfirmProjectResolution(CommandEnvelope envelope, object? currentState)
+    {
+        ConfirmProjectResolutionPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<ConfirmProjectResolutionPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "confirm", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.ConversationId)
+            || !string.Equals(payload.ResolutionResult, "MultipleCandidates", StringComparison.Ordinal))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        ProjectId? sourceProjectId = null;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+            if (!string.IsNullOrWhiteSpace(payload.SourceProjectId))
+            {
+                sourceProjectId = new ProjectId(payload.SourceProjectId!);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        ConfirmProjectResolution command = new(
+            envelope.TenantId,
+            projectId,
+            payload.ConversationId!,
+            sourceProjectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = RehydrateProjectState(envelope, currentState);
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private static string ReadTaskId(CommandEnvelope envelope)
+        => envelope.Extensions is not null
+            && envelope.Extensions.TryGetValue("taskId", out string? taskId)
+            && !string.IsNullOrWhiteSpace(taskId)
+            ? taskId
+            : envelope.CorrelationId;
+
+    private static ProjectState RehydrateProjectState(CommandEnvelope command, object? currentState)
+        => currentState switch
+        {
+            null => ProjectState.Empty,
+            ProjectState typedState => typedState,
+            DomainServiceCurrentState snapshotAware => RehydrateFromCurrentState(command, snapshotAware),
+            JsonElement json when IsSnapshotAwareState(json) => RehydrateFromCurrentState(command, DeserializeCurrentState(json)),
+            JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
+            JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            _ => JsonSerializer.SerializeToElement(currentState, currentState.GetType(), StateJsonOptions)
+                .Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+        };
+
+    private static ProjectState RehydrateFromCurrentState(CommandEnvelope command, DomainServiceCurrentState currentState)
+    {
+        ProjectState state = DeserializeSnapshot(command, currentState.SnapshotState);
+        ProjectIdentity identity = new(command.TenantId, new ProjectId(command.AggregateId));
+
+        foreach (Hexalith.EventStore.Contracts.Events.EventEnvelope eventEnvelope in currentState.Events)
+        {
+            Hexalith.EventStore.Contracts.Events.EventMetadata metadata = eventEnvelope.Metadata;
+            if (!string.Equals(metadata.TenantId, command.TenantId, StringComparison.Ordinal)
+                || !string.Equals(metadata.Domain, command.Domain, StringComparison.Ordinal)
+                || !string.Equals(metadata.AggregateId, command.AggregateId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
+            }
+
+            if (ProjectRejectionEventTypes.Contains(metadata.EventTypeName))
+            {
+                continue;
+            }
+
+            if (!ProjectEventTypes.TryGetValue(metadata.EventTypeName, out Type? eventType))
+            {
+                throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
+            }
+
+            IProjectEvent projectEvent = JsonSerializer.Deserialize(eventEnvelope.Payload, eventType, StateJsonOptions) as IProjectEvent
+                ?? throw new InvalidOperationException("Project aggregate history contains an invalid event payload.");
+            state = ProjectStateApply.Apply(state, projectEvent, identity);
+        }
+
+        return state;
+    }
+
+    // EventStore snapshots the whole snapshot-aware current state, so a snapshot can itself carry an
+    // older snapshot plus the events folded into it; rehydrate it recursively before applying the tail.
+    private static ProjectState DeserializeSnapshot(CommandEnvelope command, object? snapshotState)
+        => snapshotState switch
+        {
+            null => ProjectState.Empty,
+            ProjectState typed => typed,
+            DomainServiceCurrentState nested => RehydrateFromCurrentState(command, nested),
+            JsonElement json when IsSnapshotAwareState(json) => RehydrateFromCurrentState(command, DeserializeCurrentState(json)),
+            JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
+            JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            _ => DeserializeSnapshot(command, JsonSerializer.SerializeToElement(snapshotState, snapshotState.GetType(), StateJsonOptions)),
+        };
+
+    private static DomainServiceCurrentState DeserializeCurrentState(JsonElement json)
+        => json.Deserialize<DomainServiceCurrentState>(StateJsonOptions)
+            ?? throw new InvalidOperationException("Unable to deserialize Project aggregate state.");
+
+    private static bool IsSnapshotAwareState(JsonElement json)
+        => json.ValueKind == JsonValueKind.Object
+            && json.TryGetProperty("currentSequence", out _)
+            && json.TryGetProperty("events", out _);
+
+    private static DomainResult ToDomainResult(ProjectResult result)
+        => result.Code switch
+        {
+            // Persist-then-publish: the success event is persisted then published by the pipeline.
+            ProjectResultCode.Created
+                or ProjectResultCode.SetupUpdated
+                or ProjectResultCode.Archived
+                or ProjectResultCode.Restored
+                or ProjectResultCode.FolderSet
+                or ProjectResultCode.FileReferenceLinked
+                or ProjectResultCode.FileReferenceUnlinked
+                or ProjectResultCode.MemoryLinked
+                or ProjectResultCode.MemoryUnlinked
+                or ProjectResultCode.ProjectResolutionConfirmed => DomainResult.Success(result.Events),
+
+            // A logical replay produced no new event — acknowledge as a no-op (the prior event landed).
+            ProjectResultCode.IdempotentReplay => DomainResult.NoOp(),
+
+            // Every other code is a domain rejection (an event, never an exception).
+            _ => DomainResult.Rejection([result.ToRejectionEvent()]),
+        };
+
+    private static DomainResult Rejection(CommandEnvelope envelope, ProjectResultCode code, string? rejectedField, string commandType)
+    {
+        // Build the metadata-only rejection directly from the envelope when no aggregate result is
+        // available (malformed payload). Reason maps through the shared vocabulary.
+        ProjectResult synthetic = ProjectResult.Rejected(
+            ToContractCommandType(commandType),
+            envelope.TenantId,
+            SafeProjectId(envelope.AggregateId).Value,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId,
+            code,
+            rejectedField);
+
+        return DomainResult.Rejection([synthetic.ToRejectionEvent()]);
+    }
+
+    private static string ToContractCommandType(string commandType)
+        => commandType switch
+        {
+            ProjectsServerModule.UpdateProjectSetupCommandType => nameof(UpdateProjectSetup),
+            ProjectsServerModule.ArchiveProjectCommandType => nameof(ArchiveProject),
+            ProjectsServerModule.RestoreProjectCommandType => nameof(RestoreProject),
+            ProjectsServerModule.SetProjectFolderCommandType => nameof(SetProjectFolder),
+            ProjectsServerModule.LinkFileReferenceCommandType => nameof(LinkFileReference),
+            ProjectsServerModule.UnlinkFileReferenceCommandType => nameof(UnlinkFileReference),
+            ProjectsServerModule.LinkMemoryCommandType => nameof(LinkMemory),
+            ProjectsServerModule.UnlinkMemoryCommandType => nameof(UnlinkMemory),
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => nameof(ConfirmProjectResolution),
+            _ => nameof(CreateProject),
+        };
+
+    // Produces a placeholder ProjectId so the synthetic rejection result can be built even when the
+    // envelope aggregate id is malformed; the rejection event never echoes it (SafePassthrough +
+    // ToRejectionEvent only surface safe metadata).
+    private static ProjectId SafeProjectId(string aggregateId)
+    {
+        try
+        {
+            return new ProjectId(aggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return new ProjectId("unknown");
+        }
+    }
+
+}

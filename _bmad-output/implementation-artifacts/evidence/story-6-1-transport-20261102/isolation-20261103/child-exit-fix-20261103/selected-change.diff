@@ -1,0 +1,121 @@
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -1808,17 +1808,40 @@
+     child.send_signal(signum)
+ 
+ 
++def owned_launcher_exit_started(child, identity: dict) -> bool:
++    """Observe only the captured child's kernel exit transition; this never authorizes a signal."""
++    if identity.get("pid") != child.pid or identity.get("command") != child.args:
++        return False
++    try:
++        process = Path("/proc", str(child.pid))
++        before = process.joinpath("stat").read_text().rsplit(")", 1)[1].split()
++        arguments = process.joinpath("cmdline").read_bytes()
++        after = process.joinpath("stat").read_text().rsplit(")", 1)[1].split()
++        # Linux PF_EXITING is set before exit_mm clears cmdline, before waitpid can
++        # reap the child. Empty argv alone never establishes this transition.
++        return (process.stat().st_uid == os.getuid() and not arguments
++                and before[19] == after[19] == identity.get("startTicks")
++                and int(before[6]) & 0x00000004 != 0 and int(after[6]) & 0x00000004 != 0)
++    except (OSError, ValueError, IndexError):
++        return False
++
++
+ def wait_owned_launcher(child, identity: dict, interrupted: dict, *, cleanup_wait_seconds: float = 900) -> int:
+     deadline = None
+     while child.poll() is None:
++        exiting = False
+         if not owned_launcher_identity_matches(child, identity):
+             if child.poll() is not None:
+                 break
+-            raise RuntimeError("Active child completion/cleanup is unknown; preserved material must be recovered by exact ownership.")
+-        if interrupted.get("requested"):
++            exiting = owned_launcher_exit_started(child, identity)
++            if not exiting:
++                if child.poll() is not None:
++                    break
++                raise RuntimeError("Active child completion/cleanup is unknown; preserved material must be recovered by exact ownership.")
++        if interrupted.get("requested") or exiting:
+             deadline = deadline or time.monotonic() + cleanup_wait_seconds
+             if time.monotonic() >= deadline:
+-                raise RuntimeError("Interrupted child cleanup completion is unproved; no later group may start.")
++                raise RuntimeError("Interrupted or exiting child cleanup completion is unproved; no later group may start.")
+         time.sleep(.05)
+     return child.wait()
+ 
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -1793,6 +1793,72 @@
+             self.assertEqual(LAUNCHER.wait_owned_launcher(child, {}, {}), 0)
+         child.send_signal.assert_not_called()
+ 
++    def test_only_exact_kernel_exit_with_empty_command_line_is_observed(self):
++        child = Mock(pid=123, args=["owned"])
++        identity = {"pid": 123, "startTicks": "10", "command": ["owned"]}
++        def snapshot(flags=4, started="10"):
++            return "123 (owned child) " + " ".join(["R", "0", "0", "0", "0", "0", str(flags), *(["0"] * 12), started])
++        for name, changed, uid, command, snapshots in [
++                ("exact exit", identity, os.getuid(), b"", [snapshot(), snapshot()]),
++                ("foreign pid", {**identity, "pid": 124}, os.getuid(), b"", [snapshot(), snapshot()]),
++                ("changed capture command", {**identity, "command": ["foreign"]}, os.getuid(), b"", [snapshot(), snapshot()]),
++                ("foreign owner", identity, os.getuid() + 1, b"", [snapshot(), snapshot()]),
++                ("live empty argv", identity, os.getuid(), b"", [snapshot(0), snapshot(0)]),
++                ("missing initial exit flag", identity, os.getuid(), b"", [snapshot(0), snapshot()]),
++                ("missing final exit flag", identity, os.getuid(), b"", [snapshot(), snapshot(0)]),
++                ("nonempty argv", identity, os.getuid(), b"foreign\0", [snapshot(), snapshot()]),
++                ("different initial start", identity, os.getuid(), b"", [snapshot(started="11"), snapshot()]),
++                ("recycled final start", identity, os.getuid(), b"", [snapshot(), snapshot(started="11")]),
++                ("malformed proc stat", identity, os.getuid(), b"", ["malformed", snapshot()])]:
++            with self.subTest(name=name):
++                process = Mock();process.stat.return_value = SimpleNamespace(st_uid=uid)
++                status = Mock();status.read_text.side_effect = snapshots
++                arguments = Mock();arguments.read_bytes.return_value = command
++                process.joinpath.side_effect = lambda part: status if part == "stat" else arguments
++                with patch.object(LAUNCHER, "Path", return_value=process):
++                    self.assertEqual(LAUNCHER.owned_launcher_exit_started(child, changed), name == "exact exit")
++        for error in (FileNotFoundError(), PermissionError()):
++            with patch.object(LAUNCHER, "Path", side_effect=error):
++                self.assertFalse(LAUNCHER.owned_launcher_exit_started(child, identity))
++
++    def test_kernel_exit_waits_for_actual_child_exit_without_signaling(self):
++        child = Mock();child.poll.side_effect = [None, None, 0];child.wait.return_value = 0
++        with patch.object(LAUNCHER, "owned_launcher_identity_matches", return_value=False), \
++             patch.object(LAUNCHER, "owned_launcher_exit_started", return_value=True) as observed, patch.object(LAUNCHER.time, "sleep"):
++            self.assertEqual(LAUNCHER.wait_owned_launcher(child, {}, {}), 0)
++        observed.assert_called_once();child.wait.assert_called_once();child.send_signal.assert_not_called()
++
++    def test_exit_finishing_during_kernel_observation_is_reaped(self):
++        child = Mock();child.poll.side_effect = [None, None, 0];child.wait.return_value = 0
++        with patch.object(LAUNCHER, "owned_launcher_identity_matches", return_value=False), \
++             patch.object(LAUNCHER, "owned_launcher_exit_started", return_value=False):
++            self.assertEqual(LAUNCHER.wait_owned_launcher(child, {}, {}), 0)
++        child.wait.assert_called_once();child.send_signal.assert_not_called()
++
++    def test_kernel_exit_observation_never_authorizes_an_unknown_child_signal(self):
++        child = Mock();child.poll.return_value = None
++        with patch.object(LAUNCHER, "owned_launcher_identity_matches", return_value=False), \
++             patch.object(LAUNCHER, "owned_launcher_exit_started", return_value=True) as observed:
++            with self.assertRaises(RuntimeError): LAUNCHER.forward_owned_launcher_signal(child, {}, signal.SIGTERM)
++        observed.assert_not_called();child.send_signal.assert_not_called()
++
++    def test_wait_refuses_live_foreign_recycled_or_changed_identity(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory);child, identity = self.spawn_dummy(root)
++            try:
++                for changed in [{**identity, "startTicks": "other"}, {**identity, "command": ["foreign"]}, {**identity, "pid": child.pid + 1}]:
++                    with self.assertRaises(RuntimeError): LAUNCHER.wait_owned_launcher(child, changed, {})
++                self.assertIsNone(child.poll());self.assertFalse((root / "cleaning").exists())
++            finally: self.finish_dummy(child)
++
++    def test_unfinished_kernel_exit_still_has_a_finite_cleanup_bound(self):
++        child = Mock();child.poll.return_value = None
++        with patch.object(LAUNCHER, "owned_launcher_identity_matches", return_value=False), \
++             patch.object(LAUNCHER, "owned_launcher_exit_started", return_value=True), patch.object(LAUNCHER.time, "monotonic", side_effect=[1, 1, 3]), \
++             patch.object(LAUNCHER.time, "sleep"):
++            with self.assertRaises(RuntimeError): LAUNCHER.wait_owned_launcher(child, {}, {}, cleanup_wait_seconds=1)
++        child.wait.assert_not_called();child.send_signal.assert_not_called()
++
+     def test_unproved_cleanup_timeout_preserves_material_and_does_not_kill_child(self):
+         with tempfile.TemporaryDirectory() as directory:
+             root = Path(directory);(root / "retained-material").write_text("owned-test-material");child, identity = self.spawn_dummy(root)

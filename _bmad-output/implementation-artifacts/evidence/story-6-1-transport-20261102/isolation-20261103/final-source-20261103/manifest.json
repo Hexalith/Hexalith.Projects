@@ -1,0 +1,1426 @@
+{
+  "createdUtc": "2026-11-03T19:11:11.055690+00:00",
+  "isolatedRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "sourceManifestSha256": "b54edcdc7c47dc7eedf968b037b6e5c3b686607bb740d1d9e927c26090ada492",
+  "buildInputCount": 16663,
+  "repositories": [
+    {
+      "repository": ".",
+      "revision": "98efe700b60cacfe0b3cc3cb0c134e0902419b4c",
+      "detached": true,
+      "patch": "patches/Projects.patch",
+      "patchSha256": "3768f24c20e4a439c9045838a64a05f3be22fee530ea77f4f53adb462a2cf7a8",
+      "trackedChangedCount": 29,
+      "untrackedSourceCount": 25,
+      "sourceFiles": [
+        {
+          "path": "src/Hexalith.Projects.AppHost/DaprComponents/sentry.yaml",
+          "untracked": true,
+          "sha256": "4c1f0b33f962e5eee20d7f95921c017c073e7627f9a3b38d59feb71c258edcd4",
+          "size": 155,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.AppHost/DaprComponents/sentry.yaml",
+          "crlfCount": 0,
+          "lfCount": 8
+        },
+        {
+          "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+          "untracked": false,
+          "sha256": "ca33bfaff9121430aee389c2e0f79cf3aa9506501e9f4e167176eef41a38b284",
+          "size": 3264,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+          "crlfCount": 36,
+          "lfCount": 36
+        },
+        {
+          "path": "src/Hexalith.Projects.AppHost/Program.cs",
+          "untracked": false,
+          "sha256": "18608825c78de965441aeec2f4c998837796811e1980a2d5084489488fc7a989",
+          "size": 9531,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.AppHost/Program.cs",
+          "crlfCount": 191,
+          "lfCount": 191
+        },
+        {
+          "path": "src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs",
+          "untracked": true,
+          "sha256": "c6e0de63632f726114fb4ca679c4e3c92fb126cb5bca11ebf653fee663cc4364",
+          "size": 9987,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs",
+          "crlfCount": 140,
+          "lfCount": 140
+        },
+        {
+          "path": "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs",
+          "untracked": false,
+          "sha256": "e50f59b063b464036721e2fde1e79f02cbb460ba19260fba2c28cbe5b1f41db4",
+          "size": 30777,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs",
+          "crlfCount": 371,
+          "lfCount": 371
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ArchiveProjectPayload.cs",
+          "untracked": true,
+          "sha256": "1973bc101c0903ae2e2eab876c65dd81ac27fbd5d9c5931d6ce16e2a8ca43f58",
+          "size": 538,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ArchiveProjectPayload.cs",
+          "crlfCount": 12,
+          "lfCount": 12
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ConfirmProjectResolutionPayload.cs",
+          "untracked": true,
+          "sha256": "7ad7298421204e612400f5a08bc248c1dfab7b752298ff87e387cbce92f7a596",
+          "size": 977,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ConfirmProjectResolutionPayload.cs",
+          "crlfCount": 20,
+          "lfCount": 20
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/CreateProjectPayload.cs",
+          "untracked": true,
+          "sha256": "71eb89f31d7b94b8f8e9304fbabe4a02cfc40d333915b36ecb8f1c3fa5aea56d",
+          "size": 592,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/CreateProjectPayload.cs",
+          "crlfCount": 14,
+          "lfCount": 14
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/LinkFileReferencePayload.cs",
+          "untracked": true,
+          "sha256": "a6cb57f9865c274a1f7b50ffd46bf35d698323f88283e12e0f36852bf1a358a4",
+          "size": 947,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/LinkFileReferencePayload.cs",
+          "crlfCount": 20,
+          "lfCount": 20
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/LinkMemoryPayload.cs",
+          "untracked": true,
+          "sha256": "5e235e841234d06f9b62967e20a59b52716bf53bf02f7a602d85a588bf831215",
+          "size": 860,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/LinkMemoryPayload.cs",
+          "crlfCount": 18,
+          "lfCount": 18
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/Program.cs",
+          "untracked": false,
+          "sha256": "365b37e238ab181dda447cd6051acfdb093b234f902e73d49ae7dab4fb32e1bd",
+          "size": 1437,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/Program.cs",
+          "crlfCount": 39,
+          "lfCount": 39
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadPlatformEndpoints.cs",
+          "untracked": false,
+          "sha256": "7ec681838f3ec64fe50ea8275d0aa0df9d48e6aafedb685c77acc79ef879fe23",
+          "size": 2955,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadPlatformEndpoints.cs",
+          "crlfCount": 52,
+          "lfCount": 52
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs",
+          "untracked": true,
+          "sha256": "b7616fe9e3cc87def0526b56d411dc722348eb490e1c25a723633849be518174",
+          "size": 2740,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs",
+          "crlfCount": 44,
+          "lfCount": 44
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogProfile.cs",
+          "untracked": true,
+          "sha256": "d64ec2da19544e97e5d40c70836d92ab8f5003c43bd619820eb4b138a8cb1d00",
+          "size": 211,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogProfile.cs",
+          "crlfCount": 4,
+          "lfCount": 4
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsDomainProcessor.cs",
+          "untracked": false,
+          "sha256": "4c56e0ee04667aed75e7116b1dfa6d562ca800e6fd72f9bb5fecbe5e61e450f0",
+          "size": 44564,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsDomainProcessor.cs",
+          "crlfCount": 963,
+          "lfCount": 963
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsIntentAdapters.cs",
+          "untracked": true,
+          "sha256": "5157998f0a35c2d426fc652818bb8578ef47afcdf6dfbcbcdba5f9ff109bc67c",
+          "size": 2218,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsIntentAdapters.cs",
+          "crlfCount": 41,
+          "lfCount": 41
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsRuntimeCatalogDeclarations.cs",
+          "untracked": true,
+          "sha256": "bdcd8ce5e4bccdf54b1234d15353e2fe629c1443b78e43302e2566892a912725",
+          "size": 9557,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsRuntimeCatalogDeclarations.cs",
+          "crlfCount": 128,
+          "lfCount": 128
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+          "untracked": false,
+          "sha256": "8261fa7a5c840b34d1e93165664ae47a7296c933b95e0d6ac8314bffad5520be",
+          "size": 23098,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+          "crlfCount": 380,
+          "lfCount": 380
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs",
+          "untracked": false,
+          "sha256": "5500427759566ecb7ceda1cf46c4817c4d98ed26c49c3d72f0c54499594db5a5",
+          "size": 29734,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs",
+          "crlfCount": 434,
+          "lfCount": 434
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/RestoreProjectPayload.cs",
+          "untracked": true,
+          "sha256": "24fbd0643a6347d25c5321caebc47e79944ad3e769df2eeda21bef3fe0c6d067",
+          "size": 538,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/RestoreProjectPayload.cs",
+          "crlfCount": 12,
+          "lfCount": 12
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/SetProjectFolderPayload.cs",
+          "untracked": true,
+          "sha256": "56635a86aafbe68b9a0b0d7ab2d89cbbdbfa26566b82c2d59d4b341af928a332",
+          "size": 970,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/SetProjectFolderPayload.cs",
+          "crlfCount": 20,
+          "lfCount": 20
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/UnlinkFileReferencePayload.cs",
+          "untracked": true,
+          "sha256": "8116983032aeb877e88cc0be6bec9c8809753c90e88efd293d1eb7a72944f36d",
+          "size": 826,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/UnlinkFileReferencePayload.cs",
+          "crlfCount": 18,
+          "lfCount": 18
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/UnlinkMemoryPayload.cs",
+          "untracked": true,
+          "sha256": "5bc91bc0e16c6ff94d76bd52ea656a510d961396ea3fd5757aa9eee093fed1ff",
+          "size": 818,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/UnlinkMemoryPayload.cs",
+          "crlfCount": 18,
+          "lfCount": 18
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/UpdateProjectSetupPayload.cs",
+          "untracked": true,
+          "sha256": "9aa062f469bfdc2b392f88a8bdc34a121d295b084cc1207495f2175fccb70325",
+          "size": 482,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Server/UpdateProjectSetupPayload.cs",
+          "crlfCount": 12,
+          "lfCount": 12
+        },
+        {
+          "path": "src/Hexalith.Projects.ServiceDefaults/ProjectsServiceDefaults.cs",
+          "untracked": false,
+          "sha256": "e899744aca08f8136992580393b47d864adbe0dfcadc557ab3dba0b2fd794f89",
+          "size": 7098,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.ServiceDefaults/ProjectsServiceDefaults.cs",
+          "crlfCount": 0,
+          "lfCount": 179
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+          "untracked": false,
+          "sha256": "24d387c182ce1ef84bf915e6f3d9940b27de5b19b5e357cbc2862133ef0d59ec",
+          "size": 2037,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+          "crlfCount": 26,
+          "lfCount": 26
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/Program.cs",
+          "untracked": false,
+          "sha256": "ab9364395a487640273b030b598feb9570cfa0f3c5e8b5259b17aedb9ad285d4",
+          "size": 890,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Workers/Program.cs",
+          "crlfCount": 21,
+          "lfCount": 21
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/ProjectsWorkerDevelopmentCatalog.cs",
+          "untracked": true,
+          "sha256": "55c79e9b1b843e8f8d460ab72d4475ea6313bdb05b5985f03a157ae30bbd1e34",
+          "size": 2918,
+          "rawCopy": "raw-changes/src/Hexalith.Projects.Workers/ProjectsWorkerDevelopmentCatalog.cs",
+          "crlfCount": 59,
+          "lfCount": 59
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs",
+          "untracked": false,
+          "sha256": "fbff0fb4dfe4974a6f898c15ccb6ef450952e91aca099de9c0b1efaee7888b96",
+          "size": 17991,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs",
+          "crlfCount": 0,
+          "lfCount": 380
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+          "untracked": false,
+          "sha256": "ed5bcba093c9d2860c5b86c08c36b8e6bdfa12d54553b1958ff540e86a405aeb",
+          "size": 1890,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+          "crlfCount": 0,
+          "lfCount": 31
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadCapturingStateStore.cs",
+          "untracked": true,
+          "sha256": "bf2f6f7dd27ff0378ceee6102c81aebed610134e23c8f870e824870f51894551",
+          "size": 1605,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadCapturingStateStore.cs",
+          "crlfCount": 34,
+          "lfCount": 34
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadConcurrencyTests.cs",
+          "untracked": true,
+          "sha256": "d1e6ce2302be0e9427db49784024cbfc8c19b37c4cff62d0915c42775ca98c95",
+          "size": 8609,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadConcurrencyTests.cs",
+          "crlfCount": 161,
+          "lfCount": 161
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs",
+          "untracked": false,
+          "sha256": "d42b83b35571658ae99aed00579a41b4a6734517670bb8fd349c735c94a6f873",
+          "size": 176545,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs",
+          "crlfCount": 2215,
+          "lfCount": 2215
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs",
+          "untracked": false,
+          "sha256": "668aa4a99f0fd011f3534825de852f5903cd146e8033426bddc7dfdc522f16a1",
+          "size": 12643,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs",
+          "crlfCount": 180,
+          "lfCount": 180
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs",
+          "untracked": false,
+          "sha256": "5e211236448d612978c095749a9b5d170b0fee58186186781d94694bc50e3a4e",
+          "size": 101141,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs",
+          "crlfCount": 1377,
+          "lfCount": 1377
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadKeyRecordingStore.cs",
+          "untracked": true,
+          "sha256": "49a15fe784847d85835d70ddee54b717547556ab3ec59e6a97b497dd972dc028",
+          "size": 1706,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadKeyRecordingStore.cs",
+          "crlfCount": 41,
+          "lfCount": 41
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadScenarioEvidence.cs",
+          "untracked": true,
+          "sha256": "1a8e5c63795d34dd59360a54a3fc6b189d6bed359be9bc01e3eb9b579294b278",
+          "size": 3830,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadScenarioEvidence.cs",
+          "crlfCount": 56,
+          "lfCount": 56
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs",
+          "untracked": false,
+          "sha256": "404ecd85c8d60717db767aaa83369f499d3e76e0d0d0e9bf129b9b5a0b9a6571",
+          "size": 25013,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs",
+          "crlfCount": 302,
+          "lfCount": 302
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/ProjectsRuntimeCatalogTests.cs",
+          "untracked": true,
+          "sha256": "9301850cf24b0585e35fc2b0bba1413cb0e6daffa0d50db7b34488cc3be1ff84",
+          "size": 13763,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/ProjectsRuntimeCatalogTests.cs",
+          "crlfCount": 202,
+          "lfCount": 202
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/ProjectsWorkerCatalogTests.cs",
+          "untracked": true,
+          "sha256": "d6b8bcad0ae05dc9cf772ef81c2b1d25ad2aef250bb45e5b74f3930c0f3073bd",
+          "size": 2514,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/ProjectsWorkerCatalogTests.cs",
+          "crlfCount": 52,
+          "lfCount": 52
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureCatalogComposition.cs",
+          "untracked": true,
+          "sha256": "6055938b300ef8aa63217b847615040d3b36bbd0bcedaac3d2023682e4379eda",
+          "size": 2277,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureCatalogComposition.cs",
+          "crlfCount": 37,
+          "lfCount": 37
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs",
+          "untracked": false,
+          "sha256": "db95931045bde6aba4a6881bb08f83d8f33203fe83cb4a29cd914ba52d745f5c",
+          "size": 782,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs",
+          "crlfCount": 18,
+          "lfCount": 18
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs",
+          "untracked": false,
+          "sha256": "898f99099d958aa5b7b39d9fe2808a71fde22f1ca550d75c0d785924a0667bc7",
+          "size": 2457,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs",
+          "crlfCount": 39,
+          "lfCount": 39
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityLoopbackHandler.cs",
+          "untracked": false,
+          "sha256": "0adfce94bae2aab76903ce970f1b2d160727de2588b0c59947e7ea210775db90",
+          "size": 4880,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityLoopbackHandler.cs",
+          "crlfCount": 74,
+          "lfCount": 74
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityRoutes.cs",
+          "untracked": false,
+          "sha256": "a1e265d222ecd734b7158879132e4f4b973d013f203e0654f0a805392e91a836",
+          "size": 2791,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/ProjectAuthorityRoutes.cs",
+          "crlfCount": 43,
+          "lfCount": 43
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs",
+          "untracked": false,
+          "sha256": "dbfd40c7c0e02575b54e77afb2fd37d8d7db0a10ed2f08e4e0f0a48794268b68",
+          "size": 46051,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs",
+          "crlfCount": 567,
+          "lfCount": 567
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs",
+          "untracked": false,
+          "sha256": "44aae66a48e6a56357b23b8eb681b48b6a81f74d85870faf26015802c01a6139",
+          "size": 31720,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs",
+          "crlfCount": 455,
+          "lfCount": 455
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+          "untracked": false,
+          "sha256": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+          "size": 42086,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+          "crlfCount": 490,
+          "lfCount": 490
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Enumeration.cs",
+          "untracked": true,
+          "sha256": "a4d441f80f01ad57676940d3c045e2d9c0a38c614c655682821b27742d4be021",
+          "size": 8479,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Enumeration.cs",
+          "crlfCount": 135,
+          "lfCount": 135
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs",
+          "untracked": false,
+          "sha256": "8364a70209a7a63a13c294f20ab144a3e4213e4cb4d4d576154bb898c36c22b2",
+          "size": 6015,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs",
+          "crlfCount": 93,
+          "lfCount": 93
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.cs",
+          "untracked": false,
+          "sha256": "a991061704cc72eba8ffec75144614eb9fafedc402cf0939e3d076ac86d9ffe1",
+          "size": 32216,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.cs",
+          "crlfCount": 459,
+          "lfCount": 459
+        },
+        {
+          "path": "tests/Hexalith.Projects.Server.Tests/ServiceDefaultsEndpointTests.cs",
+          "untracked": false,
+          "sha256": "588800e762577e847494143af9c34b3d2ae68d9b96c9f5938e9c92c7ab3f182e",
+          "size": 5140,
+          "rawCopy": "raw-changes/tests/Hexalith.Projects.Server.Tests/ServiceDefaultsEndpointTests.cs",
+          "crlfCount": 0,
+          "lfCount": 116
+        },
+        {
+          "path": "tests/tools/test_supported_project_reads_launcher.py",
+          "untracked": false,
+          "sha256": "c088752a4847fd6cad5e7c6b80fb293474e7254d5dfa3f3ad243debb684abb47",
+          "size": 145268,
+          "rawCopy": "raw-changes/tests/tools/test_supported_project_reads_launcher.py",
+          "crlfCount": 1918,
+          "lfCount": 1918
+        },
+        {
+          "path": "tools/qualification/run_supported_project_reads.py",
+          "untracked": false,
+          "sha256": "962a2809f4a66f6fded0b12abe01015793764bf754dadaafc69d97f298b4f51e",
+          "size": 166433,
+          "rawCopy": "raw-changes/tools/qualification/run_supported_project_reads.py",
+          "crlfCount": 2443,
+          "lfCount": 2443
+        }
+      ]
+    },
+    {
+      "repository": "references/Hexalith.AI.Tools",
+      "revision": "1745b6663ad32bb1288167135ed0f979366c53a0",
+      "detached": true,
+      "patch": "patches/Hexalith.AI.Tools.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Builds",
+      "revision": "d2a430c988462a634674a69c562ea4afd1f06ef4",
+      "detached": true,
+      "patch": "patches/Hexalith.Builds.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Commons",
+      "revision": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+      "detached": true,
+      "patch": "patches/Hexalith.Commons.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Conversations",
+      "revision": "77c33177d7458e7a63d115eda9cf35b6485fb510",
+      "detached": true,
+      "patch": "patches/Hexalith.Conversations.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "revision": "a3dbec2f8b6150a3ee33dcbfc2b6bf2fec274625",
+      "detached": true,
+      "patch": "patches/Hexalith.EventStore.patch",
+      "patchSha256": "50639941bb61e90facaa3a8f3ec0abdbc6806f49fb03fd737fb06cc191179810",
+      "trackedChangedCount": 26,
+      "untrackedSourceCount": 43,
+      "sourceFiles": [
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+          "untracked": false,
+          "sha256": "e381a51922113082ef497d168b909da325e408a30e9670f870d0447e5590230a",
+          "size": 1071,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+          "crlfCount": 0,
+          "lfCount": 19
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs",
+          "untracked": false,
+          "sha256": "c7d3073add2b0463596fade06bb3dc99aae146b0dbd32af51544d288a9e54671",
+          "size": 16260,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs",
+          "crlfCount": 0,
+          "lfCount": 383
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs",
+          "untracked": true,
+          "sha256": "9bcaf4a2308d3a219e9e3b19c806a47a207cc0a93e2ea94e09460debc4bafc74",
+          "size": 4745,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs",
+          "crlfCount": 0,
+          "lfCount": 107
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeSuppression.cs",
+          "untracked": true,
+          "sha256": "04c37688a620ffad1ab5ecd9c5edaf0e49e2f5fc812f324283e00eeca7ac31ca",
+          "size": 557,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeSuppression.cs",
+          "crlfCount": 0,
+          "lfCount": 11
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs",
+          "untracked": true,
+          "sha256": "1f816bca2ee398cfed05f465d03387e501bf6a3cd83f404c36e1796625fe1d1f",
+          "size": 2242,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs",
+          "crlfCount": 0,
+          "lfCount": 52
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/BoundOwnerNativeSourceMetadataReader.cs",
+          "untracked": true,
+          "sha256": "5009690deeac26596618c326922f10e479d0aa9365262da49a07c64b179384c0",
+          "size": 4144,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/BoundOwnerNativeSourceMetadataReader.cs",
+          "crlfCount": 0,
+          "lfCount": 72
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs",
+          "untracked": false,
+          "sha256": "89946810e7fbd1a5903f3fb22c02f53c863a5cc1c3145fc24d95a6b4c795ed4d",
+          "size": 11169,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs",
+          "crlfCount": 0,
+          "lfCount": 144
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs",
+          "untracked": false,
+          "sha256": "3687e39c6e0fdd44c2c8b07da4bd389d60dbf3c66f19a25b1baf252f94b3fd9d",
+          "size": 2500,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs",
+          "crlfCount": 0,
+          "lfCount": 45
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs",
+          "untracked": false,
+          "sha256": "9b4bf0f605d150273381baeeb587b96b83906672689bff92e80b65fe4cb9760d",
+          "size": 1062,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs",
+          "crlfCount": 0,
+          "lfCount": 22
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DomainServiceGatewayBoundStreamReadProofSource.cs",
+          "untracked": true,
+          "sha256": "c92fd56132b8847434cf1a2b33c1f88f2446b3fbea6b46eaac756a8db0809af1",
+          "size": 1155,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainServiceGatewayBoundStreamReadProofSource.cs",
+          "crlfCount": 0,
+          "lfCount": 22
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Actors/AggregateActor.SourceProof.cs",
+          "untracked": false,
+          "sha256": "026d07cc6b0b4f090bd7d72ec0d1be02b1e7a233300da4b351a598806d24c511",
+          "size": 11187,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Actors/AggregateActor.SourceProof.cs",
+          "crlfCount": 0,
+          "lfCount": 220
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Actors/IAggregateActor.cs",
+          "untracked": false,
+          "sha256": "890f1c8d34e10a7f5d1df78e80d33d32aa5aa24b8e2532eff7ecbf8d4950e9ce",
+          "size": 7072,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Actors/IAggregateActor.cs",
+          "crlfCount": 0,
+          "lfCount": 114
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Actors/SourceProofInspectionPair.cs",
+          "untracked": true,
+          "sha256": "119217994ccf430cb64d6c15a171c532b810ddc766e17cea080097087af7be48",
+          "size": 577,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Actors/SourceProofInspectionPair.cs",
+          "crlfCount": 0,
+          "lfCount": 11
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityGrant.cs",
+          "untracked": false,
+          "sha256": "8735be14e080e6907139e0261e889a0099fe3debaf9bceb77f363bbd216aaede",
+          "size": 2728,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityGrant.cs",
+          "crlfCount": 0,
+          "lfCount": 38
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs",
+          "untracked": false,
+          "sha256": "2da5508d393dd63210f4dc4f386f37e54b6a1c2068c5f60ef96869c6f1741f37",
+          "size": 13033,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs",
+          "crlfCount": 0,
+          "lfCount": 189
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs",
+          "untracked": false,
+          "sha256": "23e1fcd490140dc96b668b78baa65e3b0d9988ee71d2e4fa951cc7120daf44ae",
+          "size": 14183,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs",
+          "crlfCount": 0,
+          "lfCount": 152
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogInventory.cs",
+          "untracked": true,
+          "sha256": "55bd36e7b1ec015af68fd98907270d957119422bd6916dd8ef2ef681a49caa56",
+          "size": 4622,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogInventory.cs",
+          "crlfCount": 0,
+          "lfCount": 73
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs",
+          "untracked": false,
+          "sha256": "7fb8971a93f68e644bcf5004d0e0949e7115ee2b3b96f59d0d07e40aa693de59",
+          "size": 27083,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs",
+          "crlfCount": 0,
+          "lfCount": 409
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogDispatchLease.cs",
+          "untracked": false,
+          "sha256": "5c2911f3319485c5a962ae3643390f0821dc617981254423af1b70662c6d68ca",
+          "size": 5477,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogDispatchLease.cs",
+          "crlfCount": 0,
+          "lfCount": 131
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHeldMetadataDispatch.cs",
+          "untracked": true,
+          "sha256": "1ddc4e2f2781fd5942d90647cc6c39efd163ce466ba9f5879600ee760db88a7b",
+          "size": 4517,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHeldMetadataDispatch.cs",
+          "crlfCount": 0,
+          "lfCount": 98
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs",
+          "untracked": false,
+          "sha256": "b42646e204e792dbd712dd2e4d00a372c5202ac103e898c9bebda47dca8932df",
+          "size": 3495,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs",
+          "crlfCount": 0,
+          "lfCount": 54
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs",
+          "untracked": false,
+          "sha256": "b3e73e12c1db8953b9e2370387222a189a57fe4bc4eac4dffde1a10ced1057d5",
+          "size": 24785,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs",
+          "crlfCount": 0,
+          "lfCount": 380
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs",
+          "untracked": true,
+          "sha256": "fccea82e4bcb5457c234ce702ed4259e2e67f0eefed4bf3bb719ad46bf587a8e",
+          "size": 1667,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs",
+          "crlfCount": 0,
+          "lfCount": 36
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogMetadataRequest.cs",
+          "untracked": true,
+          "sha256": "75d653c4b5669b93b6e6a0bc291a81ea08dec1215c1308882befeced57a3e775",
+          "size": 6717,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogMetadataRequest.cs",
+          "crlfCount": 0,
+          "lfCount": 81
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteCall.cs",
+          "untracked": false,
+          "sha256": "4905c4975bda8dfd689888d91f6aa1a50a2b30abc9c656212a2bb18bd05fba4f",
+          "size": 5200,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteCall.cs",
+          "crlfCount": 0,
+          "lfCount": 91
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteScope.cs",
+          "untracked": false,
+          "sha256": "4dbb291e18b119822486a983670dd9ef9845cb499f8e8d6dfd7f99f07618cfea",
+          "size": 3012,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteScope.cs",
+          "crlfCount": 0,
+          "lfCount": 70
+        },
+        {
+          "path": "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+          "untracked": false,
+          "sha256": "fd41ba021479ab775b5a05c0d7fa403e53607f111d04bdc690c78a3e23aed964",
+          "size": 34037,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+          "crlfCount": 0,
+          "lfCount": 434
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationClient.cs",
+          "untracked": true,
+          "sha256": "65213e6daad3be9b14b97be486e6a8601a16b0287e997e6fb6ca6c9a4904d1c2",
+          "size": 2992,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationClient.cs",
+          "crlfCount": 0,
+          "lfCount": 48
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationCredential.cs",
+          "untracked": true,
+          "sha256": "caab14122a11021d832e4ab54b11bf064a903d2504d68f31ed8a45afeee74669",
+          "size": 701,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationCredential.cs",
+          "crlfCount": 0,
+          "lfCount": 16
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationFiles.cs",
+          "untracked": true,
+          "sha256": "4e2e6e0fe12b301ec8d51875fa8bb30be98760e306c9356c82b38163c5a80602",
+          "size": 8140,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationFiles.cs",
+          "crlfCount": 0,
+          "lfCount": 153
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationOptions.cs",
+          "untracked": true,
+          "sha256": "c76882fe9687e207e58add58ef6c8bb12d983c5fb9ff4337dc9cc25c1a5a23fa",
+          "size": 612,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationOptions.cs",
+          "crlfCount": 0,
+          "lfCount": 12
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationRequest.cs",
+          "untracked": true,
+          "sha256": "cb818a9478b5f540345d95ab614585dce0c7dcc5c16ad39e096956b92081f8a7",
+          "size": 903,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationRequest.cs",
+          "crlfCount": 0,
+          "lfCount": 14
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationResult.cs",
+          "untracked": true,
+          "sha256": "13c7e2b5dfabe24e5d9dde6db82ed853848add32eb66db808207c118cfd3db41",
+          "size": 755,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationResult.cs",
+          "crlfCount": 0,
+          "lfCount": 9
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationServiceCollectionExtensions.cs",
+          "untracked": true,
+          "sha256": "eb39527e02dc79c0eef98edb8eb9b87b7137d529d7313b5c59690ecc2475927b",
+          "size": 3431,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationServiceCollectionExtensions.cs",
+          "crlfCount": 0,
+          "lfCount": 51
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationWorker.cs",
+          "untracked": true,
+          "sha256": "f79c9a29c0c8a66b104f5337babe759f810f44ac744d7c0e53213cf1ebe9d917",
+          "size": 9248,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/CatalogInvocation/CatalogInvocationWorker.cs",
+          "crlfCount": 0,
+          "lfCount": 150
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/ProjectionDeliveryCompletionObserver.cs",
+          "untracked": true,
+          "sha256": "f1fccd772230b817aa8e69c6c66b9fa8542dbb544ade7db625dcd2649b2c3a34",
+          "size": 9164,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/ProjectionDeliveryCompletionObserver.cs",
+          "crlfCount": 0,
+          "lfCount": 119
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/ProjectionDeliveryCutoverObserver.cs",
+          "untracked": true,
+          "sha256": "b2d8428b8f772f3295b66e4794d931b8eb7baba9844af5baf928129540d11ee6",
+          "size": 11401,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/ProjectionDeliveryCutoverObserver.cs",
+          "crlfCount": 0,
+          "lfCount": 163
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/AtomicNativeMetadataInspectionPolicy.cs",
+          "untracked": true,
+          "sha256": "d5897a35f4fac2b123d3d5eb4c6b86bd894d3cd0cc562b6b315140c893cbd342",
+          "size": 1272,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/AtomicNativeMetadataInspectionPolicy.cs",
+          "crlfCount": 0,
+          "lfCount": 25
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs",
+          "untracked": true,
+          "sha256": "fb19e7542d274eeca37ada24db7a29720dc91250dfea603192368aa5a438c8e0",
+          "size": 9102,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs",
+          "crlfCount": 0,
+          "lfCount": 131
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/StreamsController.cs",
+          "untracked": false,
+          "sha256": "8c21238174a3a43e6dbc4d915d20d10418a77108ecd7c56301c5773d8bc4aced",
+          "size": 39011,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs",
+          "crlfCount": 0,
+          "lfCount": 741
+        },
+        {
+          "path": "src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+          "untracked": false,
+          "sha256": "a836383eb18f9617b9a4bd24b385882d7dadf29f96e4be559c148aec763f0152",
+          "size": 2312,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+          "crlfCount": 0,
+          "lfCount": 55
+        },
+        {
+          "path": "src/Hexalith.EventStore/Program.cs",
+          "untracked": false,
+          "sha256": "14319be3e4ccf0286766b29237789090825ce38d10cef66e3e314f11d417fe1c",
+          "size": 4824,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/src/Hexalith.EventStore/Program.cs",
+          "crlfCount": 0,
+          "lfCount": 113
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/RouteCatalogCanonicalOrderingTests.cs",
+          "untracked": true,
+          "sha256": "ad91770a4f7121d71ba4a66918410329dca6dd04ac3309a624afc157d9a1ecd5",
+          "size": 1664,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Routing/RouteCatalogCanonicalOrderingTests.cs",
+          "crlfCount": 0,
+          "lfCount": 26
+        },
+        {
+          "path": "tests/Hexalith.EventStore.DomainService.Tests/BoundOwnerMetadataCaptureHandler.cs",
+          "untracked": true,
+          "sha256": "df7211c9fa161a5e241429f7e10aabba6421480a95e19ad714f4f3f3985d8d5e",
+          "size": 2475,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/BoundOwnerMetadataCaptureHandler.cs",
+          "crlfCount": 0,
+          "lfCount": 43
+        },
+        {
+          "path": "tests/Hexalith.EventStore.DomainService.Tests/BoundOwnerNativeSourceMetadataReaderTests.cs",
+          "untracked": true,
+          "sha256": "abfe37013077d41bd6eafc96d9cab8c41ecbb30d2d3ddcb5af8a024fa7c3dc47",
+          "size": 3367,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/BoundOwnerNativeSourceMetadataReaderTests.cs",
+          "crlfCount": 0,
+          "lfCount": 54
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Actors/AggregateActorGetEventsTests.cs",
+          "untracked": false,
+          "sha256": "8373e1a30d61604e59bca8a229e903abbf50ff5f56a1433171ddf64d35f436ab",
+          "size": 47171,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Actors/AggregateActorGetEventsTests.cs",
+          "crlfCount": 0,
+          "lfCount": 843
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Authentication/WorkloadBindingAuthorityTests.Configuration.cs",
+          "untracked": false,
+          "sha256": "b0fe520af88e049265b2ae3994409f3f734d91f50345e56457168c2893d8b0d2",
+          "size": 3232,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Authentication/WorkloadBindingAuthorityTests.Configuration.cs",
+          "crlfCount": 0,
+          "lfCount": 58
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs",
+          "untracked": true,
+          "sha256": "5cb1c498cc19728db1ed5cad97dda22003d9ba63fafc4fb4160c811d8480c9fe",
+          "size": 12789,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs",
+          "crlfCount": 0,
+          "lfCount": 220
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs",
+          "untracked": false,
+          "sha256": "e84d46018d2ff945a4ec74e287e5a1a2eb3d03c1530c29292f7e4de8c6e0f862",
+          "size": 67342,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs",
+          "crlfCount": 0,
+          "lfCount": 1199
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/CatalogConstructorCompatibilityTests.cs",
+          "untracked": true,
+          "sha256": "e34555b247cfd428d34fd24dde23a81974450380e1fb5110a30b19aea7435222",
+          "size": 2615,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/CatalogConstructorCompatibilityTests.cs",
+          "crlfCount": 0,
+          "lfCount": 50
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs",
+          "untracked": true,
+          "sha256": "04ed5d3dba7a739227db163177090759463398694e530c6b88d40fd3cd83e59d",
+          "size": 2983,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs",
+          "crlfCount": 0,
+          "lfCount": 64
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/DirectTenantSourceVersionTests.cs",
+          "untracked": false,
+          "sha256": "a7561d13bf644c008427314f69786605c84242b98d5bbe4ef644be46d00ca819",
+          "size": 4926,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DirectTenantSourceVersionTests.cs",
+          "crlfCount": 0,
+          "lfCount": 59
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchFixture.cs",
+          "untracked": true,
+          "sha256": "0d832747cfa232e33966b9d8e9ef65b09c6a49e006a71fd3624a1607654a11d9",
+          "size": 5716,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchFixture.cs",
+          "crlfCount": 0,
+          "lfCount": 83
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchTests.cs",
+          "untracked": true,
+          "sha256": "af1fdebde58c7d2b2c89b6e86f5472e50d912f934f6e6bb33cbd8212138e3e5f",
+          "size": 39088,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchTests.cs",
+          "crlfCount": 0,
+          "lfCount": 565
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataStreamFeatureProvider.cs",
+          "untracked": true,
+          "sha256": "0f4216433c7be5e6fc82285e33f8189e3e732effe299eb627082f752e067c627",
+          "size": 716,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataStreamFeatureProvider.cs",
+          "crlfCount": 0,
+          "lfCount": 19
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataTestResult.cs",
+          "untracked": true,
+          "sha256": "635ed5aa98d7ebd4b5c631f2a847d56096ea394aa117284a9d82286ca131e631",
+          "size": 359,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataTestResult.cs",
+          "crlfCount": 0,
+          "lfCount": 10
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataTestTransport.cs",
+          "untracked": true,
+          "sha256": "7ae7756a1c2cdbd925723144b355a8376d28af3b3b5746ce3d261205d16bc80a",
+          "size": 490,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataTestTransport.cs",
+          "crlfCount": 0,
+          "lfCount": 9
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs",
+          "untracked": true,
+          "sha256": "7a70707ca8a7e4bb7848666d1694b1e889b93850363e961eba269b74337f2678",
+          "size": 10084,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs",
+          "crlfCount": 0,
+          "lfCount": 192
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/HostValidatedCatalogBytesMemoTests.cs",
+          "untracked": true,
+          "sha256": "868f33a5ed2d61f6ec50b058b05f28bb6b78a9302ad9f3577896ce20f307b9f1",
+          "size": 9030,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HostValidatedCatalogBytesMemoTests.cs",
+          "crlfCount": 0,
+          "lfCount": 178
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/LocalLeaseReleaseSchedulingTests.cs",
+          "untracked": true,
+          "sha256": "1f6740671a0b22f14da2fe34be713526d96861c344e6f0f15ff06987c6cd5bf0",
+          "size": 15573,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/LocalLeaseReleaseSchedulingTests.cs",
+          "crlfCount": 0,
+          "lfCount": 305
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/ObservedAuxiliaryMembershipTests.cs",
+          "untracked": true,
+          "sha256": "96a192cd813d349dea1c18de141512508c01d79c37118d6ea2df40067f15161a",
+          "size": 2511,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ObservedAuxiliaryMembershipTests.cs",
+          "crlfCount": 0,
+          "lfCount": 40
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/ObservedInventoryDigestTests.cs",
+          "untracked": true,
+          "sha256": "1c71910b2e36622277dc1e6cf4a58f6ffbdef313842045199bdc6fa94ddc6043",
+          "size": 8088,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ObservedInventoryDigestTests.cs",
+          "crlfCount": 0,
+          "lfCount": 117
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/PromotedTenantSourceVersionTests.cs",
+          "untracked": false,
+          "sha256": "751f47ed61715019a5af5757a54d1ae9297a77169450f7cf001ef8b5f23487d9",
+          "size": 6079,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/PromotedTenantSourceVersionTests.cs",
+          "crlfCount": 0,
+          "lfCount": 88
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDecodeScopeTests.cs",
+          "untracked": true,
+          "sha256": "2e09069580919459e8a7334fb3a12b0946c09eb2cf5d6be8c0671cf2aadacfbf",
+          "size": 10814,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDecodeScopeTests.cs",
+          "crlfCount": 0,
+          "lfCount": 202
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs",
+          "untracked": true,
+          "sha256": "796b7d22beb50f543612c05359124b9cdb5651a89b6fc051f9a5b243bca38d23",
+          "size": 12877,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs",
+          "crlfCount": 0,
+          "lfCount": 221
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Testing.Tests/CatalogInvocationTests.cs",
+          "untracked": true,
+          "sha256": "afe5893c23f51e14f30aa4a3819b036084299e0059d5907065f498e12c10207a",
+          "size": 12591,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/CatalogInvocationTests.cs",
+          "crlfCount": 0,
+          "lfCount": 200
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+          "untracked": false,
+          "sha256": "97f27af22ef6a9aa92b23109b8e0071bb6445c8622f9ecad01f2a42bf29a3376",
+          "size": 925,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+          "crlfCount": 0,
+          "lfCount": 26
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCompletionObserverTests.cs",
+          "untracked": true,
+          "sha256": "c718b5cace4214135ba3bb344cb9d104c87dc55a2efba1d3a7a60406334bc626",
+          "size": 12298,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCompletionObserverTests.cs",
+          "crlfCount": 0,
+          "lfCount": 148
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCutoverObserverTests.cs",
+          "untracked": true,
+          "sha256": "9ee9d05c6325ef3fdcb2b2b45936bc48410f907f13bf343cf05779fac20f3edc",
+          "size": 11712,
+          "rawCopy": "raw-changes/references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/ProjectionDeliveryCutoverObserverTests.cs",
+          "crlfCount": 0,
+          "lfCount": 159
+        }
+      ]
+    },
+    {
+      "repository": "references/Hexalith.Folders",
+      "revision": "0e976ae267c2bad0f9559f41e87b52e00c3acc2e",
+      "detached": true,
+      "patch": "patches/Hexalith.Folders.patch",
+      "patchSha256": "c50a58a33124ad2dd6d7b26f4f5bb4cfe150aee87b46c89803ae686a50cf7d37",
+      "trackedChangedCount": 6,
+      "untrackedSourceCount": 11,
+      "sourceFiles": [
+        {
+          "path": "src/Hexalith.Folders.Server/FolderDomainProcessor.cs",
+          "untracked": false,
+          "sha256": "5b4649f8496028cf785c88e12e3806ab215e4703527fc9aafc908ea5f3f74871",
+          "size": 88062,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/FolderDomainProcessor.cs",
+          "crlfCount": 0,
+          "lfCount": 1826
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs",
+          "untracked": true,
+          "sha256": "fb146fc8194cfd05d8bd1406d0959bd768b2922b2728d8743fe89d8c54ebc314",
+          "size": 3143,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs",
+          "crlfCount": 0,
+          "lfCount": 50
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs",
+          "untracked": true,
+          "sha256": "f061b65fad6fcadb9eceeaaf9a72398832ef85a6363071691d9c5aea6b4b2265",
+          "size": 2307,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadataDiagnostics.cs",
+          "crlfCount": 0,
+          "lfCount": 47
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FoldersServerHostComposition.cs",
+          "untracked": false,
+          "sha256": "ddf301704d8cb5768dd94e94291968ff458b899bad90c6adcfa7f32ce5fa2261",
+          "size": 8255,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs",
+          "crlfCount": 0,
+          "lfCount": 145
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+          "untracked": false,
+          "sha256": "99a917d9b60fe3291e3912cc7f618b93812232bf1192f8c4f6b58d1b34d57e50",
+          "size": 4858,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+          "crlfCount": 0,
+          "lfCount": 47
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs",
+          "untracked": false,
+          "sha256": "44df6979dcad56f49636761e3a640dd4040adb52d767d4f964dc9c45a8495f52",
+          "size": 11126,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/OperationalStatusProjectionHandler.cs",
+          "crlfCount": 0,
+          "lfCount": 192
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs",
+          "untracked": true,
+          "sha256": "0bdbce9f97705bfe1ad1d1cb02c453d944392e8b1f2bcb7246258e420c1b4661",
+          "size": 4276,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders.Server/OrganizationAclOperationalSource.cs",
+          "crlfCount": 0,
+          "lfCount": 56
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs",
+          "untracked": false,
+          "sha256": "a3d97f32cb711e12c60772b818d7e0d674a410a18ca8a4faf5385395d637adfb",
+          "size": 19276,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs",
+          "crlfCount": 0,
+          "lfCount": 388
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/GatewayOrganizationStreamSequenceReader.cs",
+          "untracked": true,
+          "sha256": "e520ad93a2bf2c8eb825180cb56e2b1534847a45bf56878c045a75b0a29f4634",
+          "size": 1582,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/src/Hexalith.Folders/Authorization/GatewayOrganizationStreamSequenceReader.cs",
+          "crlfCount": 0,
+          "lfCount": 26
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs",
+          "untracked": true,
+          "sha256": "cd972c118c53af3982e2d7904bf2e2d2b0f4ae8f17b5adbd73fb8ce52c592db3",
+          "size": 611,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/DiagnosticCompositionAssertionIssuer.cs",
+          "crlfCount": 0,
+          "lfCount": 14
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs",
+          "untracked": true,
+          "sha256": "e31f2732bfb57de5c84566cfe7652a1904407a1079c558b722c7667589ef8978",
+          "size": 3465,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs",
+          "crlfCount": 0,
+          "lfCount": 64
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+          "untracked": false,
+          "sha256": "465c8816edaea9a61191d9dc2dfa49a176772f7e1cd827851d90d60b6298f2d0",
+          "size": 3190,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+          "crlfCount": 0,
+          "lfCount": 53
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs",
+          "untracked": true,
+          "sha256": "6dacb8cbf3cce2471f77d5e16faef2824b7151978ddec02d0750d3d54506f605",
+          "size": 11664,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/OrganizationOperationalProjectionTests.cs",
+          "crlfCount": 0,
+          "lfCount": 171
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs",
+          "untracked": true,
+          "sha256": "6f64f25663005676dcc90e7c877b58d387a89807ed31940553a70a8e289389f1",
+          "size": 11132,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/ParallelPermissionObservationTests.cs",
+          "crlfCount": 0,
+          "lfCount": 200
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs",
+          "untracked": true,
+          "sha256": "314739655d6018df96900ada82a685f078412b6c8c3887b6888771b70d705640",
+          "size": 621,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/PermissionObservationSequenceReader.cs",
+          "crlfCount": 0,
+          "lfCount": 13
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Authorization/GatewayOrganizationStreamSequenceReaderTests.cs",
+          "untracked": true,
+          "sha256": "e6d2fb0cce5a3e65835bc5e03d5e573307b0f27b0289b0225f0f2ba88ab23157",
+          "size": 2325,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Tests/Authorization/GatewayOrganizationStreamSequenceReaderTests.cs",
+          "crlfCount": 0,
+          "lfCount": 48
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Authorization/OwnerMetadataReaderStub.cs",
+          "untracked": true,
+          "sha256": "2539221b14d641efc36d3bd2c18c183ff5e6546ff9ffde4f8f8912d24f6d661b",
+          "size": 1214,
+          "rawCopy": "raw-changes/references/Hexalith.Folders/tests/Hexalith.Folders.Tests/Authorization/OwnerMetadataReaderStub.cs",
+          "crlfCount": 0,
+          "lfCount": 25
+        }
+      ]
+    },
+    {
+      "repository": "references/Hexalith.FrontComposer",
+      "revision": "8479a7c5396fc42964618d99f8079219f4665a9c",
+      "detached": true,
+      "patch": "patches/Hexalith.FrontComposer.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.McpCli",
+      "revision": "e1fa6d5ab50270add568c77abc328382f926bdbd",
+      "detached": true,
+      "patch": "patches/Hexalith.McpCli.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Memories",
+      "revision": "e8956eb5c1bd49297f86702f9606eb9b013bc2f1",
+      "detached": true,
+      "patch": "patches/Hexalith.Memories.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Parties",
+      "revision": "8059ce0b8d5dbc75e4d7ecc96e0bddfa9590cd0d",
+      "detached": true,
+      "patch": "patches/Hexalith.Parties.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Platform",
+      "revision": "25dde45c71bf3de89577612660afc43494a6a951",
+      "detached": true,
+      "patch": "patches/Hexalith.Platform.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    },
+    {
+      "repository": "references/Hexalith.Tenants",
+      "revision": "4d0d599879767196928e1c265622483a62b457ae",
+      "detached": true,
+      "patch": "patches/Hexalith.Tenants.patch",
+      "patchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trackedChangedCount": 0,
+      "untrackedSourceCount": 0,
+      "sourceFiles": []
+    }
+  ],
+  "sharedSourceCopiedBack": false,
+  "trackingOrIndexChangesPerformed": false,
+  "untrackedTaskSourceIncluded": true,
+  "rawChangedSourceIncluded": true,
+  "patchScope": [
+    "src",
+    "tests",
+    "Props",
+    "tools/qualification",
+    "*.props",
+    "*.targets",
+    "*.slnx",
+    "global.json",
+    "nuget.config",
+    "AGENTS.md",
+    ".editorconfig",
+    ".gitattributes"
+  ],
+  "qualificationAccepted": false,
+  "live60Started": false,
+  "pending": [
+    "User-coordinated quiet runtime interval",
+    "Fresh same-source three-group aggregate and cleanup",
+    "Parent final review"
+  ]
+}
