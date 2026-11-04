@@ -1,0 +1,95 @@
+{
+  "kind": "bounded-read-only-current-owned-native-telemetry-settings",
+  "observedUtc": "2026-11-04T16:39:37.702898+00:00",
+  "sourceManifestSha256": "1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa",
+  "provider": "live-63/full-replay",
+  "nativeSettings": [
+    {
+      "appId": "eventstore",
+      "pid": 86768,
+      "startTicks": "295975",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "aab624ba015f4ccfbe2d4a52031022cec80c8aadec63555ffce2c0eaa37c8384",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    },
+    {
+      "appId": "folders",
+      "pid": 87049,
+      "startTicks": "296045",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "75224aa005dd128ed51e247cf1fc2ae9181af6a466ca09ff6d907477808c1b15",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    },
+    {
+      "appId": "folders-workers",
+      "pid": 87146,
+      "startTicks": "296067",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "705f6be1001a4d50dc142593a5014edbb801548cfa6d881c3c6304da21d70d32",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    },
+    {
+      "appId": "projects",
+      "pid": 86848,
+      "startTicks": "296000",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "4eb99bf7af5c141f9d529d96ff195482610abb53aa3be1c267709446ba8d2675",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    },
+    {
+      "appId": "projects-workers",
+      "pid": 86939,
+      "startTicks": "296023",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "705f6be1001a4d50dc142593a5014edbb801548cfa6d881c3c6304da21d70d32",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    },
+    {
+      "appId": "tenants",
+      "pid": 86694,
+      "startTicks": "295952",
+      "nativeBinarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "configurationSha256": "4b18af6a45ad8f44ebab185ed99d914ff9a06f2cbe41c2acdbac291f25b31993",
+      "tracingSectionPresent": false,
+      "apiLoggingConfigurationPresent": false,
+      "apiLoggingFlagPresent": false,
+      "otelEndpointPresent": true,
+      "otelTracesEndpointPresent": false
+    }
+  ],
+  "readOnly": true,
+  "newRuntimeOrInstrumentationStarted": false,
+  "sourceChanged": false,
+  "versionedSourceInterpretation": {
+    "inferenceNotRuntimeExportProof": true,
+    "daprVersion": "1.18.7",
+    "effectiveRootSamplingRate": "1",
+    "apiLoggingEnabled": false,
+    "sampler": "ParentBased(TraceIDRatioBased(rate))",
+    "configurationSource": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/config/configuration.go",
+    "samplerSource": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/diagnostics/tracing_sampler.go",
+    "exporterSetupSource": "https://raw.githubusercontent.com/dapr/dapr/v1.18.7/pkg/runtime/runtime.go"
+  },
+  "wholeChainPrivacyAccepted": false,
+  "nativeExporterEmissionTested": false
+}

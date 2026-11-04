@@ -1,0 +1,29 @@
+{
+  "observedUtc": "2026-11-04T16:25:29.964559+00:00",
+  "sharedProjectsHead": "9c3c28f4a54cd95efc3bfcc55bd2424b881c3525",
+  "isolatedSourceRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "checkpoint": "../sqlite-startup-ordering-cancellation-20261104/commands.json",
+  "sourceManifestSha256": "1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa",
+  "buildInputCount": 16670,
+  "mismatches": [],
+  "live62ManifestEqual": true,
+  "live62DuplicateNative": {
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "197.360"
+  },
+  "live62DuplicateReport": {
+    "result": "passed",
+    "matrixCompleted": true,
+    "ownedSidecarsAbsent": true,
+    "preexistingResourcesPreserved": true,
+    "privateMaterialRemoved": true,
+    "testAssemblyUnchanged": true
+  },
+  "acceptance": false,
+  "note": "Interrupted coordinator requires independent exact recovery. Historical duplicate success cannot qualify a new coordinator. Whole-chain denial observability and timing tolerance remain unresolved."
+}

@@ -1,0 +1,57 @@
+{
+  "observedUtc": "2026-11-04T17:01:26.308215+00:00",
+  "database": "/home/administrator/.aspire/dashboard/runs/20261104T164547335Z/dashboard.db",
+  "databaseSha256": "cbf93a9513c75f20eecb4c652933d95536eec0c6fe9751f4d8e587d9b6ad3951",
+  "databaseMetadataUnchanged": true,
+  "queryOnly": true,
+  "sql": "SELECT s.kind,s.start_time_ticks,s.end_time_ticks,r.resource_name FROM telemetry_spans s JOIN telemetry_resources r ON r.resource_id=s.resource_id WHERE s.trace_id=?",
+  "nativeXml": "../live-63/main/server.xml",
+  "nativeXmlSha256": "e3f8ab9ec7d56f54efb00115e1f7ef3078f03642200299f14b3edffe35626bea",
+  "nativeMethod": "GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+  "nativeTestResult": "Pass",
+  "sourceManifestSha256": "1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa",
+  "observations": [
+    {
+      "outcome": "denied",
+      "traceIdFromNativeXml": "0e49e99328f1d4e5012ad05395b66094",
+      "exportedSpanCount": 9,
+      "spanKinds": [
+        3
+      ],
+      "resources": [
+        "eventstore-dapr-cli"
+      ],
+      "allSpansInsideExactNativeTestWindow": true,
+      "outerServerSpanPresent": false
+    },
+    {
+      "outcome": "absent",
+      "traceIdFromNativeXml": "63ede78f34a43789bd0091c96f45323a",
+      "exportedSpanCount": 4,
+      "spanKinds": [
+        3
+      ],
+      "resources": [
+        "eventstore-dapr-cli"
+      ],
+      "allSpansInsideExactNativeTestWindow": true,
+      "outerServerSpanPresent": false
+    },
+    {
+      "outcome": "foreign-only",
+      "traceIdFromNativeXml": "00db049377b837029e2f1cf4e455be7d",
+      "exportedSpanCount": 4,
+      "spanKinds": [
+        3
+      ],
+      "resources": [
+        "eventstore-dapr-cli"
+      ],
+      "allSpansInsideExactNativeTestWindow": true,
+      "outerServerSpanPresent": false
+    }
+  ],
+  "outerResponseTimingEstablished": false,
+  "scope": "Exported native spans from the source-bound real-owner component test; not outer request durations or a timing-acceptance sample.",
+  "wholeChainPrivacyAccepted": false
+}
