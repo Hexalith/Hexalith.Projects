@@ -1,0 +1,118 @@
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -185,6 +185,39 @@
+         self.assertNotIn(protected, json.dumps(facts))
+         self.assertEqual(facts["closedFacts"], sorted(["ExceptionTypeSha256=" + hashlib.sha256(b"HttpRequestException").hexdigest(), "ReasonSha256=" + hashlib.sha256(b"assertion-missing").hexdigest()]))
+         self.assertEqual(len(facts["templateSha256"][0]), 64)
++
++    def test_native_resolver_failures_keep_only_closed_facts_across_real_console_formats(self):
++        protected = "protected-tenant-and-private-path"
++        message = ("[INIT_COMPONENT_FAILURE]: initialization error occurred for nr (sqlite/v1): "
++                   "failed to perform migrations: failed to get connection: database is locked (5) (SQLITE_BUSY) " + protected)
++        native = {"time": "2026-11-04T13:00:00Z", "level": "error", "msg": message,
++                  "scope": "dapr.runtime", "type": "log", "app_id": protected, "ver": "1.18.7"}
++        logfmt = 'time="2026-11-04T13:00:00Z" level=error msg=' + json.dumps(message) + ' scope=dapr.runtime type=log app_id=' + protected
++        expected = ["SqliteBusy", "SqliteNameResolutionInitializationFailed", "SqliteNameResolutionMigrationsFailed"]
++        for raw in (json.dumps(native), logfmt, json.dumps({"logs": [{"content": logfmt}]}),
++                    json.dumps({"logs": [{"content": json.dumps(native)}]}),
++                    json.dumps({"ignored": protected}) + "\n" + json.dumps(native)):
++            with self.subTest(format=raw[:30]):
++                facts = LAUNCHER.safe_log_facts(raw)
++                self.assertEqual(facts["nativeStartupFacts"], expected)
++                self.assertNotIn(protected, json.dumps(facts))
++
++    def test_native_resolver_facts_require_the_exact_native_scope_severity_and_initialization(self):
++        valid = {"scope": "dapr.runtime", "type": "log", "level": "error",
++                 "msg": "[INIT_COMPONENT_FAILURE]: initialization error occurred for nr (sqlite/v1): SQLITE_LOCKED"}
++        self.assertEqual(LAUNCHER.safe_log_facts(json.dumps(valid))["nativeStartupFacts"],
++                         ["SqliteLocked", "SqliteNameResolutionInitializationFailed"])
++        for key, value in (("scope", "application"), ("type", "payload"), ("level", "info"),
++                           ("msg", "SQLITE_BUSY database is locked"), ("msg", "[INIT_COMPONENT_FAILURE]: nr (mdns/v1): SQLITE_BUSY")):
++            with self.subTest(key=key, value=value):
++                self.assertEqual(LAUNCHER.safe_log_facts(json.dumps(dict(valid, **{key: value})))["nativeStartupFacts"], [])
++        for raw in ('time="unterminated', "unstructured SQLITE_BUSY", "{not-json}", "", "[]"):
++            self.assertEqual(LAUNCHER.safe_log_facts(raw)["nativeStartupFacts"], [])
++
++    def test_native_resolver_success_is_separate_from_any_initialization_failure(self):
++        success = {"scope": "dapr.runtime", "type": "log", "level": "info", "msg": "Initialized name resolution to sqlite"}
++        self.assertEqual(LAUNCHER.safe_log_facts(json.dumps(success))["nativeStartupFacts"], ["SqliteNameResolutionInitialized"])
++        self.assertEqual(LAUNCHER.safe_log_facts(json.dumps(dict(success, level="error")))["nativeStartupFacts"], [])
+ 
+     def test_foreign_ownership_and_removal_failure_never_prevent_later_cleanup(self):
+         report = {"result": "passed", "cleanup": []}
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -13,6 +13,7 @@
+ from pathlib import Path
+ import re
+ import secrets
++import shlex
+ import shutil
+ import signal
+ import socket
+@@ -934,9 +935,30 @@
+     templates = set()
+     facts = set()
+     assemblies = set()
++    native = set()
++
++    def inspect_native(value):
++        # These are observations of the selected native runtime, never authority or readiness.
++        if (value.get("scope") != "dapr.runtime" or value.get("type") != "log"
++                or not isinstance(value.get("msg"), str)):
++            return
++        message = value["msg"]
++        if value.get("level") == "info" and message == "Initialized name resolution to sqlite":
++            native.add("SqliteNameResolutionInitialized")
++        if (value.get("level") not in {"error", "fatal"} or "[INIT_COMPONENT_FAILURE]" not in message
++                or "nr (sqlite/v1)" not in message):
++            return
++        native.add("SqliteNameResolutionInitializationFailed")
++        if "failed to perform migrations" in message:
++            native.add("SqliteNameResolutionMigrationsFailed")
++        if re.search(r"\bSQLITE_BUSY\b", message):
++            native.add("SqliteBusy")
++        if re.search(r"\bSQLITE_LOCKED\b", message):
++            native.add("SqliteLocked")
+ 
+     def inspect(value):
+         if isinstance(value, dict):
++            inspect_native(value)
+             template = value.get("{OriginalFormat}")
+             if isinstance(template, str):
+                 templates.add(hashlib.sha256(template.encode()).hexdigest())
+@@ -948,6 +970,12 @@
+             for item in value:
+                 inspect(item)
+         elif isinstance(value, str):
++            if value.startswith("time="):
++                try:
++                    fields = dict(item.split("=", 1) for item in shlex.split(value) if "=" in item)
++                    inspect_native(fields)
++                except ValueError:
++                    pass
+             for assembly in re.findall(r"Could not load file or assembly '([^']+)'", value):
+                 if re.fullmatch(r"[A-Za-z0-9_., =-]{1,256}", assembly):
+                     assemblies.add(assembly)
+@@ -960,8 +988,10 @@
+     try:
+         inspect(json.loads(raw))
+     except ValueError:
+-        pass
+-    return {"templateSha256": sorted(templates), "closedFacts": sorted(facts), "missingAssemblies": sorted(assemblies)}
++        for line in raw.splitlines():
++            inspect(line)
++    return {"templateSha256": sorted(templates), "closedFacts": sorted(facts), "missingAssemblies": sorted(assemblies),
++            "nativeStartupFacts": sorted(native)}
+ 
+ 
+ def verify_source_references() -> dict:
+@@ -2379,7 +2409,7 @@
+                              "tenants-dapr-cli", "eventstore-dapr-cli", "projects-dapr-cli", "projects-workers-dapr-cli",
+                              "folders-dapr-cli", "folders-workers-dapr-cli"):
+                 try:
+-                    logs = execute(["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--tail", "1000", "--non-interactive"], env=env, timeout=15)
++                    logs = execute(["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--tail", "1000", "--include-hidden", "--non-interactive"], env=env, timeout=15)
+                     report.setdefault("runtimeLogFacts", {})[resource] = safe_log_facts(logs)
+                     report["runtimeFailureTypes"][resource] = sorted(set(re.findall(r"(?:[A-Za-z_][A-Za-z0-9_]*\.)*[A-Za-z_][A-Za-z0-9_]*Exception", logs)))
+                     report.setdefault("runtimeDenialReasons", {})[resource] = sorted({hashlib.sha256(value.encode()).hexdigest() for value in re.findall(r'(?:Reason=|"Reason":")(\w[\w-]*)', logs)})

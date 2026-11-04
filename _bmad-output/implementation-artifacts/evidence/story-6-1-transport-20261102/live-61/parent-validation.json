@@ -1,0 +1,54 @@
+{
+  "observedUtc": "2026-11-04T14:16:51.406027+00:00",
+  "sourceManifestSha256": "8fa65ff58accfffb2d699dfedba5d8bb9cd6ac649e7a749fa5e903a4c12a6b9a",
+  "groups": {
+    "duplicate": {
+      "result": "passed",
+      "tests": [
+        {
+          "total": "1",
+          "passed": "1",
+          "failed": "0",
+          "skipped": "0"
+        }
+      ],
+      "matrixCompleted": true,
+      "runtimeCleanupVerified": true,
+      "externalPreserved": true
+    },
+    "full-replay": {
+      "result": "passed",
+      "tests": [
+        {
+          "total": "1",
+          "passed": "1",
+          "failed": "0",
+          "skipped": "0"
+        }
+      ],
+      "matrixCompleted": true,
+      "runtimeCleanupVerified": true,
+      "externalPreserved": true
+    },
+    "main": {
+      "result": "failed",
+      "tests": null,
+      "matrixCompleted": false,
+      "runtimeCleanupVerified": true,
+      "externalPreserved": true
+    }
+  },
+  "aggregateAccepted": false,
+  "mainFailure": {
+    "missingPeer": "projects-workers",
+    "nativeFacts": [
+      "SqliteBusy",
+      "SqliteNameResolutionInitializationFailed",
+      "SqliteNameResolutionMigrationsFailed"
+    ],
+    "featureNativeTestsExecuted": false,
+    "fullRegressionsExecuted": false
+  },
+  "lockReleasedAndMetadataPreserved": true,
+  "qualificationExitCode": 1
+}

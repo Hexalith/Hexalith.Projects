@@ -1,0 +1,208 @@
+{
+  "createdUtc": "2026-11-04T14:53:19.851789+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "previousSourceManifestSha256": "af99f6c3702e297d42b100e4c31ed8fe14880631d09cb8d11508b996b46f598d",
+  "baselineSourceManifestSha256": "8fa65ff58accfffb2d699dfedba5d8bb9cd6ac649e7a749fa5e903a4c12a6b9a",
+  "sourceManifestSha256": "1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa",
+  "inputCount": 16670,
+  "changedFiles": [
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DaprSqliteDiscoveryInitializationHealthCheck.cs",
+      "beforeSha256": null,
+      "afterSha256": "6cce627d4a7be214199479da91ded0231efeeaf39ec7cf36411dfa210ffc0071"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.SqliteStartup.cs",
+      "beforeSha256": null,
+      "afterSha256": "0dc9845d1a1ca28652f693a0d63ad6935a31c79f6775406ab0c6a3ef2c788f31"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.cs",
+      "beforeSha256": "99de0d26ec89d57f11bc6d314d5a81e4e2f68cbccf0ee11682a1b2063b1a36f4",
+      "afterSha256": "ce53b2a8c5a83346e65e34547e81aa91c9b0d4095f8dbc4ef48027aaa6786fca"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentSqliteDiscoveryStartupSubscriber.cs",
+      "beforeSha256": null,
+      "afterSha256": "9d2f337763ffa8032cf2a1779d58eaf19277b69a6be2aa80f10f30987c2528f1"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/Configuration/DevelopmentSqliteDiscoveryStartupTests.cs",
+      "beforeSha256": null,
+      "afterSha256": "4708f1276a0c860125741bd1d3d41a365cb9e563e9995bdb104bbc28d4512b75"
+    },
+    {
+      "path": "src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs",
+      "beforeSha256": "c6e0de63632f726114fb4ca679c4e3c92fb126cb5bca11ebf653fee663cc4364",
+      "afterSha256": "b471a2541546842cf6b99f82371a6e10c75f3a66be5c786d0c61218ed7e7c2d8"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs",
+      "beforeSha256": "404ecd85c8d60717db767aaa83369f499d3e76e0d0d0e9bf129b9b5a0b9a6571",
+      "afterSha256": "69c808c34888f0b4285161d6edf04064eae2d5ed1555b89a1ffab1db0737430e"
+    }
+  ],
+  "changedSincePreviousCheckpoint": [
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/Configuration/DevelopmentSqliteDiscoveryStartupTests.cs"
+  ],
+  "selectedPatchSha256": "e5dd4bf75624723f8b2a41d8d0871095173cc79369d6cecec7eb80e9c1585c39",
+  "patchReproducesAllSelectedBytes": true,
+  "sharedSourceChanged": false,
+  "runtimeStarted": false,
+  "runtimeVerification": "Pending; focused/model controls do not establish native provider startup.",
+  "privacyAcceptance": "Open pending explicit policy decision; no visibility/audit contract has been invented.",
+  "timingTolerance": "Unspecified/unaccepted; metric categories do not establish duration equivalence.",
+  "startupOrdering": {
+    "order": [
+      "tenants",
+      "eventstore",
+      "projects",
+      "projects-workers",
+      "folders",
+      "folders-workers"
+    ],
+    "signal": "Exact native app_id/scope/type/level/message in actual ResourceLoggerService console after genuine resolver Init; initial AppHost console history only.",
+    "notAuthority": true,
+    "doesNotAssertCurrentProcessOrOngoingMembership": true,
+    "normalAspireHealthAndWaitAnnotations": true,
+    "actualToolkitBeforeStartVerified": true,
+    "actualCanonicalPlatformCommandRewriteVerified": true,
+    "cycleCheckIncludesCanonicalOwnerPreparationDependencies": true,
+    "unsafeTenantsLastOrderRejected": true,
+    "tenantPlacement": "Tenants first is required by actual owner-preparation/start dependencies; Tenants-last is cyclic and is not eligible for runtime.",
+    "budgetsAndResolverSettingsChanged": false,
+    "schemaOrMembershipWrittenByHelper": false,
+    "noDependencyOrVersionChanges": true
+  },
+  "lifecycleSources": [
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogComponentObserver.cs",
+      "lines": [
+        41,
+        44
+      ],
+      "fact": "BeforeResourceStarted awaits owner and generated executable dependencies."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogOwnerReadObserver.cs",
+      "lines": [
+        269
+      ],
+      "fact": "Owner-read preparation awaits actual selected executable dependencies."
+    },
+    {
+      "path": "references/Hexalith.Platform/DaprSelfHostedMtls.cs",
+      "lines": [
+        136,
+        138
+      ],
+      "fact": "Canonical BeforeStart adapter changes effective last ExecutableAnnotation from CLI to selected native daprd."
+    }
+  ],
+  "selectedPackages": {
+    "DaprRuntime": "1.18.7",
+    "DaprComponentsContrib": "1.18.6",
+    "moderncSqlite": "1.34.5",
+    "Aspire.Hosting": "13.6.4",
+    "CommunityToolkit.Aspire.Hosting.Dapr": "13.6.2-beta.959"
+  },
+  "mappingPreparationExitCode": 0,
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-sqlite-cancel-mapping-ltb6ou6e/source-mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-sqlite-cancel-mapping-ltb6ou6e/source-mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-sqlite-cancel-mapping-ltb6ou6e/source-mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-sqlite-cancel-mapping-ltb6ou6e/source-mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-sqlite-cancel-mapping-ltb6ou6e/source-mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "046de6a48fd97bde3f206413a075736ec918684b700398d9e7f3b6cf82c70d33",
+    "Configuration": "Debug"
+  },
+  "finalBuild": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "command": "build-final-sdk-command.json",
+    "log": "build-final-sdk.log"
+  },
+  "finalFocusedNative": {
+    "total": "13",
+    "passed": "13",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "0.309",
+    "exitCode": 0,
+    "xml": "controls-final.xml",
+    "command": "controls-final-command.json"
+  },
+  "cancellationPrecision": "The waiting check must fault with cancellation before any late success is emitted. A bounded 2s test wait fails if it hangs; this changes no runtime/operation budget.",
+  "retainedUnchangedCompositionChecks": {
+    "checkpoint": "../sqlite-startup-ordering-lifecycle-20261104/commands.json",
+    "sourceManifestSha256": "af99f6c3702e297d42b100e4c31ed8fe14880631d09cb8d11508b996b46f598d",
+    "relevantProductionAndRootTestSourceHashesUnchanged": true,
+    "builds": {
+      "build-final-sdk": {
+        "exitCode": 0,
+        "warnings": 0,
+        "errors": 0,
+        "command": "build-final-sdk-command.json",
+        "log": "build-final-sdk.log"
+      },
+      "build-final-apphost": {
+        "exitCode": 0,
+        "warnings": 0,
+        "errors": 0,
+        "command": "build-final-apphost-command.json",
+        "log": "build-final-apphost.log"
+      },
+      "build-final-topology": {
+        "exitCode": 0,
+        "warnings": 0,
+        "errors": 0,
+        "command": "build-final-topology-command.json",
+        "log": "build-final-topology.log"
+      }
+    },
+    "rootNative": {
+      "total": "28",
+      "passed": "28",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "0.491",
+      "exitCode": 0,
+      "xml": "topology-final.xml",
+      "command": "topology-final-command.json"
+    }
+  },
+  "diffChecks": [
+    {
+      "repository": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "manifestStillMatchesAfterControls": true,
+  "mappingRemovedExactly": true,
+  "assemblySha256": {
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/bin/Debug/net10.0/Hexalith.EventStore.AppHost.Tests.dll": "900dc1225eb7c8692bd1962ca1a46364eddcfd9c5bff00f4157ea7f31afd5e4a",
+    "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.Projects.AppHost.dll": "f93492051c849f3534a0d8ffffaab4935c0bd578faa93539a0142a863d423f5b",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll": "4accb54bd2a7cf066ce6da5ee569be33ac1f6e140f37e59c2f3a5c23c27290e7"
+  }
+}

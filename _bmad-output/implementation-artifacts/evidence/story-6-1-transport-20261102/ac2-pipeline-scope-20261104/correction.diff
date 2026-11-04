@@ -1,0 +1,14 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -465,8 +465,10 @@
+         builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
+         WebApplication app = builder.Build();
+         if (denialObserver is not null)
++        {
+             app.Use(async (context, next) => { denialObserver.BindGatewayRequest(context); await next(context).ConfigureAwait(false); });
+-        app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
++            app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
++        }
+         app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+     }

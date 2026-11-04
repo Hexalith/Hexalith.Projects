@@ -1,0 +1,30 @@
+{
+  "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "command": [
+    "dotnet",
+    "build",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/Hexalith.EventStore.AppHost.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore"
+  ],
+  "mapping": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-sqlite-order-mapping-d1l90dyk/source-mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-sqlite-order-mapping-d1l90dyk/source-mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-sqlite-order-mapping-d1l90dyk/source-mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-sqlite-order-mapping-d1l90dyk/source-mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-sqlite-order-mapping-d1l90dyk/source-mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "046de6a48fd97bde3f206413a075736ec918684b700398d9e7f3b6cf82c70d33",
+    "Configuration": "Debug"
+  },
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "HexalithBuildsRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds",
+    "UseHexalithProjectReferences": "true",
+    "UseNuGetDeps": "false",
+    "EnablePrivateCatalogInvocationProof": "true"
+  }
+}

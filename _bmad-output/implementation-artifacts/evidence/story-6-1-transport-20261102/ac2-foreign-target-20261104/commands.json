@@ -1,0 +1,67 @@
+{
+  "createdUtc": "2026-11-04T13:51:55.073934+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "sourceManifestSha256": "8fa65ff58accfffb2d699dfedba5d8bb9cd6ac649e7a749fa5e903a4c12a6b9a",
+  "previousSourceManifestSha256": "a2117a9c2f5e99f0776675507a661e914263637f1f76d0341b6f3564c971718e",
+  "inputCount": 16666,
+  "changedFiles": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "beforeSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "afterSha256": "db984532fb8505e51c2eb875e8aa5ab9c3aeae7ea073071aa0e6e423f2071b3f"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "afterSha256": "b203e0b6acf4fcc650d747cd5278c8e855246bbdabf3bec99a76a5ac270310ff"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "beforeSha256": "f274a20516bd846c9e12ffc04860f8ad1d1b448d40d642afc2b05562f405375e",
+      "afterSha256": "75c67cc1d7206f4a992a313831ef1118c3d94fdfe33d7d0d60350d2ca2ce2a19"
+    }
+  ],
+  "selectedPatchSha256": "3014c5c8a9a935830e9a19420fab51725fa5a808efeb5e15b576f5286980f4a7",
+  "patchReproducesAllSelectedBytes": true,
+  "mappingPreparationExitCode": 0,
+  "finalBuild": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "build-final.log",
+    "command": "build-command.json"
+  },
+  "finalFocusedNative": {
+    "exitCode": 0,
+    "total": "5",
+    "passed": "5",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "1.205",
+    "xml": "focused-final.xml",
+    "command": "test-command-final.json"
+  },
+  "assemblySha256": "001d7d099eeb014ed3ab27b98606df3dea436491f76c9afb368ca20699c271a1",
+  "mappingRemovedExactly": true,
+  "crossTenantTargetScope": "Well-formed identity persisted only in another Tenant, requested within unchanged authorized primary Tenant/catalog.",
+  "authorityAndCatalogBehaviorChanged": false,
+  "outerLogBinding": "Exact actual gateway span; nested owner SDK logs are outside this explicitly selected scope.",
+  "realOwnerTestExecution": "Pending the fresh full Server regression project in the final coordinator.",
+  "timingTolerance": "Still unspecified/unaccepted; metric categories do not prove duration equivalence.",
+  "sharedSourceChanged": false,
+  "selectedPatch": "selected-change.diff",
+  "rawBefore": "raw-before",
+  "rawAfter": "raw-after",
+  "sourceManifest": "source-manifest.json",
+  "earlierPartialCandidate": {
+    "patch": "candidate-selected-change.diff",
+    "rawBefore": "candidate-raw-before",
+    "rawAfter": "candidate-raw-after",
+    "sourceManifest": "candidate-source-manifest.json",
+    "sourceRecord": "source-record.json",
+    "scope": "Earlier one-file foreign-target candidate before the exact outer-span log correction; not the final verified source."
+  },
+  "canonicalExportIndependentlyAppliedAndVerified": true
+}

@@ -1,0 +1,66 @@
+{
+  "createdUtc": "2026-11-04T14:40:23.492835+00:00",
+  "status": "requires-specification-decision",
+  "basis": "Source inspection; this packet is not a runtime-disclosure measurement.",
+  "storyRequirement": "Denied, absent and cross-Tenant Projects must be indistinguishable in status, headers, body shape, timing category, logs and telemetry.",
+  "sourceConflict": {
+    "sdkDocumentedPolicy": "SafeDenialQueryRouter permits cause-specific internal-only log/SIEM signals; callers receive a common not-found shape.",
+    "actualOwnerPath": [
+      "Projects DelegatedProjectFolderDirectory submits the protected Folder target as AggregateId.",
+      "QueriesController.SubmitBoundOwnerAuthorityAsync mediates the authenticated owner query.",
+      "SubmitQueryHandler logs QueryReceived EventId 1210 with target/Tenant; the router logs the nested query category.",
+      "Standard HTTP instrumentation retains extra owner-hop observations for an existing denied Project."
+    ],
+    "existingPrivacyGuard": "RequestLogPrivacyOptionsFactory floors ASP.NET request diagnostics; it is not a whole-query cross-hop privacy contract."
+  },
+  "sources": [
+    {
+      "path": "_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md",
+      "section": "Acceptance Criterion 2"
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Folders/DelegatedProjectFolderDirectory.cs",
+      "method": "RefreshFolderReferenceAsync"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs",
+      "method": "SubmitBoundOwnerAuthorityAsync"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Pipeline/SubmitQueryHandler.cs",
+      "eventId": 1210
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Queries/SafeDenialQueryRouter.cs",
+      "section": "Internal-only SIEM log comment"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs",
+      "methods": [
+        "GuardRequestDiagnostics",
+        "ShouldTraceHttpRequest"
+      ]
+    }
+  ],
+  "options": [
+    {
+      "id": "strict_internal_privacy",
+      "meaning": "Preserve the current broad AC2 reading: a generic owning-SDK policy must hide correlated per-request owner-hop log/trace differences before acceptance. Retain required metadata-only audit and safe aggregate health evidence.",
+      "effect": "Requires a defined generic propagation/export/visibility contract and fresh proof, beyond field redaction alone."
+    },
+    {
+      "id": "restricted_operator_diagnostics",
+      "meaning": "Explicitly scope indistinguishability to caller-visible responses/diagnostics; allow necessary metadata-only owner-hop diagnostics only to authorized platform/operator audiences.",
+      "effect": "Requires human-approved AC2 scope wording, actual collector/reader access-control evidence and immutable metadata allowlists. No payload/name/path/secret disclosure is allowed."
+    },
+    {
+      "id": "keep_open",
+      "meaning": "Keep whole-chain observability acceptance open while finishing startup repair and functional proof.",
+      "effect": "Story 6.1 remains in progress; outer-only equality cannot satisfy the broader clause."
+    }
+  ],
+  "separateOpenInput": "Response-time side-channel tolerance remains undefined under test-design-progress.md:154 (R-604/R-610).",
+  "policyChanged": false,
+  "currentWorkContinues": "Parent-verified final startup source is frozen for fresh live-62 functional qualification. This independent lane is explicitly limited; no observability policy or timing contract has changed.",
+  "updatedUtc": "2026-11-04T14:58:20.228118+00:00"
+}

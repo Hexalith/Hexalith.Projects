@@ -192,6 +192,12 @@ The [retained packet](evidence/story-6-1-enumeration-20261102/README.md) binds P
 
 The baseline authenticated launcher exited 1 before AppHost/resource allocation. Its controls passed 63/63 and cleanup preserved existing resources. A direct source-preparation retry exited 2 with `HXW009`: pinned Builds file `Props/Directory.Packages.props` at `4456dfb7869a307d009038c6b8523a9b6c0a732e` cannot be read from the root-declared Builds repository. Ordinary source builds also retain Conversations' missing nested import and Tenants/Conversations source-compatibility/mapping failures. Exact commands, outputs and limits are in the packet. This run did not reach the earlier route-catalog/mTLS failures. AC7 and authenticated persisted AC1–3/5–6 remain unaccepted; Story 6.1 remains in progress. Both production-authority validators and whitespace checks pass.
 
+### Focused acceptance follow-up — 2026-11-04
+
+The canonical spec's latest continuation supersedes older source-preparation blockers without accepting the feature. The [current isolated test packet](evidence/story-6-1-transport-20261102/ac2-pipeline-scope-20261104/commands.json) adds safe-denial response-header, selected SDK-log, server-activity and HTTP metric-category comparisons, plus controls against ambient/nested observation substitution. Its mapped Debug build has zero warnings/errors; five non-Dapr methods passed with zero failures/errors/skips/not-run. The real-owner method was excluded and cross-Tenant observability remains unrun. Timing-category metric equality supplies no response-time side-channel guarantee; the test plan leaves tolerance unspecified.
+
+Parent independently verified native XML, current test assembly, all four source/raw-copy changes and the complete 16,666-input manifest `38344f0b6f1f0ef44396e22c7fca34d7a5ac3f951bd3a7eac3745cdd3d9131c8`. [Preparation and validation receipts](evidence/story-6-1-resume-20261104/focused-checkpoint-validation.json) retain the current limits. No fresh distributed runtime started: the approved canonical handoff requires user-confirmed quiet runtime coordination after earlier external-resource changes. Missing real-owner/cross-Tenant and timing evidence, a fresh full aggregate/regressions and remaining workflow review keep Story 6.1 in progress.
+
 ## Change Log
 
 | Date | Change |

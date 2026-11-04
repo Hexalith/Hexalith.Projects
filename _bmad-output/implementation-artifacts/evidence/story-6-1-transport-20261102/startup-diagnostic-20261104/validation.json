@@ -1,0 +1,115 @@
+{
+  "createdUtc": "2026-11-04T13:47:37.448279+00:00",
+  "diagnosticOnly": true,
+  "qualifiedGroupProduced": false,
+  "nativeFeatureTestStarted": false,
+  "sourceManifestSha256": "a2117a9c2f5e99f0776675507a661e914263637f1f76d0341b6f3564c971718e",
+  "sourceUnchangedThroughCleanup": true,
+  "controls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 112,
+    "passed": 112,
+    "failed": 0,
+    "skipped": 0
+  },
+  "strictDiscoverySixPeersPassed": true,
+  "nativeConsoleFormats": {
+    "tenants-dapr-cli": {
+      "nativeLogfmtLines": 84,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    },
+    "eventstore-dapr-cli": {
+      "nativeLogfmtLines": 86,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    },
+    "projects-dapr-cli": {
+      "nativeLogfmtLines": 85,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    },
+    "projects-workers-dapr-cli": {
+      "nativeLogfmtLines": 88,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    },
+    "folders-dapr-cli": {
+      "nativeLogfmtLines": 84,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    },
+    "folders-workers-dapr-cli": {
+      "nativeLogfmtLines": 84,
+      "nestedNativeJsonStrings": 0,
+      "directNativeJsonObjects": 0,
+      "daprCliPrefixLines": 0
+    }
+  },
+  "live60CauseStillUnknown": true,
+  "nativeSqliteFailureObservedInThisAttempt": false,
+  "wrapperIntentionalSentinel": {
+    "site": "verify_discovery wrapper, outside its saved original observe_discovery retry loop",
+    "exceptionType": "RuntimeError",
+    "outerLauncherFailure": "Startup-only diagnostic intentionally refuses qualification after actual strict discovery; no feature native test selected.",
+    "graphCaptureCount": 1,
+    "insideDiscoveryRetryLoop": false
+  },
+  "exactOwnedCleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "bc93dfd1533286c418009a163fd11e50944b7cc789adab23c13a195bd5a53b98",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "9b20a88ce8e206bf417eaa9de3e959e3d06bbcce33f76779ced08d3776e8a18c",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "606e96467f5753a5770e2a654bca873fe7b8339e85f5c3da0af9b1b80d99bf4d",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-e94e50d66c619682eeab3961-redishost",
+      "containerId": "abdd541796bc3dd07a9a723141499dc3f82e111b75b35452a1c23a4e24df8956",
+      "removed": true,
+      "absenceVerified": true
+    }
+  ],
+  "ownedSidecarsAbsent": true,
+  "privateRuntimeMaterialRemoved": true,
+  "externalResourcesPreserved": true,
+  "admissionReleasedWithMetadataPreserved": true,
+  "rawConsoleDirectoryRetainedOwnerPrivate": "/tmp/story61-native-startup-private-xeuhypmh",
+  "scriptSha256": "85240ef890e60f452545155b7d0bf2e848b81c0a381de7359c50c4220afe0ab8",
+  "wrapperSha256": "53dcef056c7bf9f8c248b3cc61aca37a65c94cfef55e790f1750fbb369ec8e9d",
+  "scope": "This provider could start; no runtime fix, live-60 cause or qualifying feature group is inferred."
+}

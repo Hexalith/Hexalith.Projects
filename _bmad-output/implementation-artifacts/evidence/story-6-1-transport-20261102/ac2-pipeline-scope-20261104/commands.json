@@ -1,0 +1,200 @@
+{
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "previousSourceManifestSha256": "a020aa325f17aa724ba7752b1f70b99d0a778507ef00c64c7c23a1a789c0a2ed",
+  "originalSourceManifestSha256": "b54edcdc7c47dc7eedf968b037b6e5c3b686607bb740d1d9e927c26090ada492",
+  "sourceManifestSha256": "38344f0b6f1f0ef44396e22c7fca34d7a5ac3f951bd3a7eac3745cdd3d9131c8",
+  "inputCount": 16666,
+  "correctionChangedInputs": [
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs"
+  ],
+  "cumulativeChangedInputs": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "currentSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "currentSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "currentSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "action": "modified",
+      "originalSha256": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+      "previousCheckpointSha256": "a068397f43c5cb25860107f3d7dd7d8ba93d1399fe89c04c0709eddf6a7b68f6",
+      "currentSha256": "f274a20516bd846c9e12ffc04860f8ad1d1b448d40d642afc2b05562f405375e",
+      "crlfOnly": true
+    }
+  ],
+  "patchesReproduceExactSelectedBytes": true,
+  "selectedPatchSha256": "231e1c3e978221752a8c1287af90387f4c33fe94af7866a6471f5bf10c15befe",
+  "correctionPatchSha256": "25613238c15230ae27a794e198fe9884e716ccff3df5a751395430f848605766",
+  "change": "Scope CorrelationIdMiddleware to the selected denial observer branch, preserving the prior uninstrumented gateway fixture pipeline.",
+  "distributedRuntimeStarted": false,
+  "sharedSourceChanged": false,
+  "qualificationAccepted": false,
+  "createdUtc": "2026-11-04T04:47:20.108729+00:00",
+  "mappingPreparationExitCode": 0,
+  "focusedBuild": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "build.log",
+    "command": "build-command.json"
+  },
+  "native": {
+    "exitCode": 0,
+    "total": "5",
+    "passed": "5",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "1.622",
+    "xml": "focused.xml",
+    "command": "test-command.json",
+    "selectedMethods": [
+      "SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories",
+      "DenialObserverCreatesIndependentTracesUnderAnAmbientActivity",
+      "UnboundNestedServerObservationsCannotCompleteAGatewayRequest",
+      "NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+      "FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch"
+    ]
+  },
+  "revisions": {
+    ".": "98efe700b60cacfe0b3cc3cb0c134e0902419b4c",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Builds": "d2a430c988462a634674a69c562ea4afd1f06ef4",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Conversations": "77c33177d7458e7a63d115eda9cf35b6485fb510",
+    "references/Hexalith.EventStore": "a3dbec2f8b6150a3ee33dcbfc2b6bf2fec274625",
+    "references/Hexalith.Folders": "0e976ae267c2bad0f9559f41e87b52e00c3acc2e",
+    "references/Hexalith.FrontComposer": "8479a7c5396fc42964618d99f8079219f4665a9c",
+    "references/Hexalith.McpCli": "e1fa6d5ab50270add568c77abc328382f926bdbd",
+    "references/Hexalith.Memories": "e8956eb5c1bd49297f86702f9606eb9b013bc2f1",
+    "references/Hexalith.Parties": "8059ce0b8d5dbc75e4d7ecc96e0bddfa9590cd0d",
+    "references/Hexalith.Platform": "25dde45c71bf3de89577612660afc43494a6a951",
+    "references/Hexalith.Tenants": "4d0d599879767196928e1c265622483a62b457ae"
+  },
+  "testAssemblySha256": "4cc1f10fcfc6df3f47fcff5d8a297d1b181d4e2b22d8371e93b7bd2ef2c73ba8",
+  "sourceUnchangedThroughFinalVerification": true,
+  "gitDiffCheckExitCode": 0,
+  "commands": {
+    "prepare-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "run",
+        "--project",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping",
+        "--output",
+        "json"
+      ],
+      "workspace": "/tmp/story61-ac2-scope-mapping-up2zjc69",
+      "distributedRuntimeStarted": false
+    },
+    "build-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true",
+        "--no-restore",
+        "-p:BuildProjectReferences=false"
+      ],
+      "mapping": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-ac2-scope-mapping-up2zjc69/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "9a14e1592b8dddd7d277844619906a916dd6597d9588d80cee720dd95fae5bc8",
+        "Configuration": "Debug"
+      },
+      "environment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "HexalithBuildsRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds"
+      }
+    },
+    "test-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-method",
+        "*SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories",
+        "-method",
+        "*DenialObserverCreatesIndependentTracesUnderAnAmbientActivity",
+        "-method",
+        "*UnboundNestedServerObservationsCannotCompleteAGatewayRequest",
+        "-method",
+        "*NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+        "-method",
+        "*FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/ac2-pipeline-scope-20261104/focused.xml"
+      ],
+      "selectedMethods": [
+        "SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories",
+        "DenialObserverCreatesIndependentTracesUnderAnAmbientActivity",
+        "UnboundNestedServerObservationsCannotCompleteAGatewayRequest",
+        "NamedQueryClientUsesFixtureReceiverAndRealWorkloadAssertion",
+        "FolderFixtureRequiresCommittedGenerationBeforeOwnerDispatch"
+      ],
+      "daprEndpointsProvided": false,
+      "optInDaprMethodSelected": false
+    }
+  },
+  "mappingCleanup": {
+    "path": "/tmp/story61-ac2-scope-mapping-up2zjc69",
+    "ownerPrivateAndLinkFreeVerified": true,
+    "removed": true
+  },
+  "limits": [
+    "The always-run HTTP receiver deliberately returns canonical safe-denial; it does not prove real owner authority.",
+    "The augmented real owner/Folder test remains opt-in and was not run here; it requires the owned Dapr lane.",
+    "Cross-Tenant observability comparison is not covered by this focused packet.",
+    "HTTP duration-metric category equivalence does not establish response-time side-channel tolerance."
+  ],
+  "timingAuthority": {
+    "file": "_bmad-output/test-artifacts/test-design/test-design-progress.md",
+    "line": 154,
+    "text": "Token/session lifetime and response-timing side-channel tolerance are not specified. Track under R-604 and R-610 without inventing thresholds."
+  },
+  "optInDaprMethodSelected": false,
+  "quietRuntimeConfirmation": "Still required before any fresh complete distributed three-group run; no answer supplied in this portion.",
+  "sharedSourceCopyback": false,
+  "gitMutations": false
+}

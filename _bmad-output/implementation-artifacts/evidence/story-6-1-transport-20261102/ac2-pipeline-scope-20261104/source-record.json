@@ -1,0 +1,51 @@
+{
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "previousSourceManifestSha256": "a020aa325f17aa724ba7752b1f70b99d0a778507ef00c64c7c23a1a789c0a2ed",
+  "originalSourceManifestSha256": "b54edcdc7c47dc7eedf968b037b6e5c3b686607bb740d1d9e927c26090ada492",
+  "sourceManifestSha256": "38344f0b6f1f0ef44396e22c7fca34d7a5ac3f951bd3a7eac3745cdd3d9131c8",
+  "inputCount": 16666,
+  "correctionChangedInputs": [
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs"
+  ],
+  "cumulativeChangedInputs": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "currentSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "currentSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "action": "added",
+      "originalSha256": null,
+      "previousCheckpointSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "currentSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "action": "modified",
+      "originalSha256": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+      "previousCheckpointSha256": "a068397f43c5cb25860107f3d7dd7d8ba93d1399fe89c04c0709eddf6a7b68f6",
+      "currentSha256": "f274a20516bd846c9e12ffc04860f8ad1d1b448d40d642afc2b05562f405375e",
+      "crlfOnly": true
+    }
+  ],
+  "patchesReproduceExactSelectedBytes": true,
+  "selectedPatchSha256": "231e1c3e978221752a8c1287af90387f4c33fe94af7866a6471f5bf10c15befe",
+  "correctionPatchSha256": "25613238c15230ae27a794e198fe9884e716ccff3df5a751395430f848605766",
+  "change": "Scope CorrelationIdMiddleware to the selected denial observer branch, preserving the prior uninstrumented gateway fixture pipeline.",
+  "distributedRuntimeStarted": false,
+  "sharedSourceChanged": false,
+  "qualificationAccepted": false
+}

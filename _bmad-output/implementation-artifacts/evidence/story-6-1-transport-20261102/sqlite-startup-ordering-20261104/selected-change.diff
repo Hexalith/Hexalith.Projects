@@ -1,0 +1,387 @@
+--- /dev/null
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DaprSqliteDiscoveryInitializationHealthCheck.cs
+@@ -0,0 +1,107 @@
++using System.Globalization;
++using System.Text.Json;
++using Aspire.Hosting.ApplicationModel;
++using Microsoft.Extensions.Diagnostics.HealthChecks;
++
++namespace Hexalith.EventStore.Aspire;
++
++/// <summary>Observes a real selected native sidecar's initial SQLite resolver result without accessing or modifying the registry.</summary>
++/// <remarks>This is initial startup history in the current AppHost's console stream, not a current-process,
++/// ongoing membership or authorization assertion. Independent current process/socket/registry checks remain required.</remarks>
++/// <param name="logs">The AppHost's genuine resource console stream.</param>
++/// <param name="model">The actual generated resource model.</param>
++/// <param name="resourceName">The selected executable resource name.</param>
++/// <param name="appId">Its declared Dapr identity.</param>
++internal sealed class DaprSqliteDiscoveryInitializationHealthCheck(
++    ResourceLoggerService logs, DistributedApplicationModel model, string resourceName, string appId) : IHealthCheck
++{
++    /// <inheritdoc/>
++    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        var resources = model.Resources.OfType<ExecutableResource>().Where(resource => resource.Name == resourceName).ToArray();
++        if (resources.Length != 1) return HealthCheckResult.Unhealthy("NativeSqliteSidecarUnconfirmed");
++        await foreach (var batch in logs.WatchAsync(resources[0]).WithCancellation(cancellationToken).ConfigureAwait(false))
++        {
++            foreach (var line in batch)
++            {
++                cancellationToken.ThrowIfCancellationRequested();
++                var fields = ParseNativeRecord(line.Content);
++                if (fields is null || fields.GetValueOrDefault("app_id") != appId
++                    || fields.GetValueOrDefault("scope") != "dapr.runtime" || fields.GetValueOrDefault("type") != "log") continue;
++                if (fields.GetValueOrDefault("level") == "info" && fields.GetValueOrDefault("msg") == "Initialized name resolution to sqlite")
++                {
++                    cancellationToken.ThrowIfCancellationRequested();
++                    return HealthCheckResult.Healthy("NativeSqliteInitialRegistrationObserved");
++                }
++                if (fields.GetValueOrDefault("level") is "error" or "fatal"
++                    && fields.GetValueOrDefault("msg") is { } message && message.Contains("[INIT_COMPONENT_FAILURE]", StringComparison.Ordinal)
++                    && message.Contains("nr (sqlite/v1)", StringComparison.Ordinal))
++                    return HealthCheckResult.Unhealthy("NativeSqliteInitializationFailed");
++            }
++        }
++        return HealthCheckResult.Unhealthy("NativeSqliteInitializationUnconfirmed");
++    }
++
++    /// <summary>Reads bounded native JSON/logfmt fields without treating embedded application text as a native record.</summary>
++    internal static Dictionary<string, string>? ParseNativeRecord(string text)
++    {
++        if (text.Length > 16384) return null;
++        // ResourceLoggerService.CreateLogLines prefixes its actual native console entries with
++        // Aspire's closed ConsoleLogsTimestampFormat before returning the observed content.
++        int separator = text.IndexOf(' ');
++        if (separator is > 0 and <= 33 && DateTimeOffset.TryParseExact(text[..separator],
++            "yyyy-MM-dd'T'HH:mm:ss.fffffffK", CultureInfo.InvariantCulture, DateTimeStyles.None, out var timestamp)
++            && timestamp.Offset == TimeSpan.Zero)
++            text = text[(separator + 1)..];
++        Dictionary<string, string> fields = new(StringComparer.Ordinal);
++        try
++        {
++            if (text.StartsWith('{'))
++            {
++                using JsonDocument document = JsonDocument.Parse(text);
++                foreach (var field in document.RootElement.EnumerateObject())
++                    if (field.Value.ValueKind != JsonValueKind.String || !fields.TryAdd(field.Name, field.Value.GetString()!)) return null;
++                return fields;
++            }
++            if (!text.StartsWith("time=", StringComparison.Ordinal)) return null;
++            int offset = 0;
++            while (offset < text.Length)
++            {
++                while (offset < text.Length && char.IsWhiteSpace(text[offset])) offset++;
++                if (offset == text.Length) break;
++                int start = offset;
++                while (offset < text.Length && text[offset] != '=' && !char.IsWhiteSpace(text[offset])) offset++;
++                if (offset == start || offset == text.Length || text[offset] != '=') return null;
++                string key = text[start..offset];
++                offset++;
++                if (offset == text.Length) return null;
++                start = offset;
++                string value;
++                if (text[offset] == '"')
++                {
++                    offset++;
++                    bool closed = false;
++                    while (offset < text.Length)
++                    {
++                        char item = text[offset++];
++                        if (item == '\\') { if (offset == text.Length) return null; offset++; }
++                        else if (item == '"') { closed = true; break; }
++                    }
++                    if (!closed) return null;
++                    value = JsonSerializer.Deserialize<string>(text[start..offset])!;
++                    if (offset < text.Length && !char.IsWhiteSpace(text[offset])) return null;
++                }
++                else
++                {
++                    while (offset < text.Length && !char.IsWhiteSpace(text[offset])) offset++;
++                    value = text[start..offset];
++                }
++                if (!fields.TryAdd(key, value)) return null;
++            }
++            return fields;
++        }
++        catch (JsonException) { return null; }
++        catch (InvalidOperationException) { return null; }
++    }
++}
+--- /dev/null
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.SqliteStartup.cs
+@@ -0,0 +1,60 @@
++using Aspire.Hosting;
++using Aspire.Hosting.ApplicationModel;
++using Aspire.Hosting.Eventing;
++using Aspire.Hosting.Lifecycle;
++using CommunityToolkit.Aspire.Hosting.Dapr;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Diagnostics.HealthChecks;
++using Microsoft.Extensions.Hosting;
++
++namespace Hexalith.EventStore.Aspire;
++
++public static partial class DevelopmentRouteCatalogAspireExtensions
++{
++    /// <summary>Orders genuine local sidecar initialization against one explicitly selected SQLite discovery registry.</summary>
++    /// <remarks>The existing native resolver performs every migration and registration. This startup-only gate
++    /// observes its initialization result; it does not grant authority or replace process/socket/membership verification.</remarks>
++    /// <param name="builder">The local Development AppHost.</param>
++    /// <param name="peers">The actual sidecar owners, in startup order.</param>
++    /// <returns>The existing builder.</returns>
++    public static IDistributedApplicationBuilder AddEventStoreDevelopmentSqliteStartupOrdering(
++        this IDistributedApplicationBuilder builder, params IResourceBuilder<ProjectResource>[] peers)
++    {
++        ArgumentNullException.ThrowIfNull(builder);
++        ArgumentNullException.ThrowIfNull(peers);
++        if (builder.ExecutionContext.IsPublishMode || !builder.Environment.IsDevelopment()
++            || peers.Length < 2 || peers.Any(peer => peer is null)
++            || peers.Select(peer => peer.Resource.Name).Distinct(StringComparer.Ordinal).Count() != peers.Length)
++            throw new InvalidOperationException("SQLite startup ordering requires distinct real local Development peers.");
++
++        string? registry = null;
++        List<(ProjectResource Owner, string ResourceName, string AppId, string HealthKey)> selected = [];
++        foreach (var peer in peers)
++        {
++            if (!builder.Resources.Contains(peer.Resource))
++                throw new InvalidOperationException("A selected SQLite peer does not belong to this AppHost.");
++            var options = Sidecar(peer.Resource).Annotations.OfType<DaprSidecarOptionsAnnotation>().Single().Options;
++            var resolver = ReadYamlOrJson(options.Config ?? throw new InvalidOperationException("An explicit discovery configuration is required."))
++                ["spec"]?["nameResolution"];
++            string? connection = resolver?["configuration"]?["connectionString"]?.GetValue<string>();
++            if (resolver?["component"]?.GetValue<string>() != "sqlite" || resolver?["version"]?.GetValue<string>() != "v1"
++                || string.IsNullOrWhiteSpace(connection) || registry is not null && registry != connection)
++                throw new InvalidOperationException("The selected peers must use the same explicit SQLite v1 discovery registry.");
++            registry = connection;
++            selected.Add((peer.Resource, peer.Resource.Name + "-dapr-cli", AppId(peer.Resource), "sqlite-discovery-startup-" + peer.Resource.Name));
++        }
++        if (selected.Select(peer => peer.AppId).Distinct(StringComparer.Ordinal).Count() != peers.Length)
++            throw new InvalidOperationException("SQLite startup ordering requires distinct actual Dapr application identities.");
++
++        foreach (var peer in selected)
++        {
++            builder.Services.AddHealthChecks().Add(new HealthCheckRegistration(peer.HealthKey,
++                services => new DaprSqliteDiscoveryInitializationHealthCheck(
++                    services.GetRequiredService<ResourceLoggerService>(), services.GetRequiredService<DistributedApplicationModel>(),
++                    peer.ResourceName, peer.AppId), HealthStatus.Unhealthy, tags: []));
++        }
++        builder.Services.AddSingleton<IDistributedApplicationEventingSubscriber>(
++            new DevelopmentSqliteDiscoveryStartupSubscriber(builder, selected.Select(peer => (peer.Owner, peer.ResourceName, peer.HealthKey)).ToArray()));
++        return builder;
++    }
++}
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.cs
+@@ -18,7 +18,7 @@
+ namespace Hexalith.EventStore.Aspire;
+ 
+ /// <summary>Opt-in, local Development catalog composition using real compiled owners and independently observing SDK hosts.</summary>
+-public static class DevelopmentRouteCatalogAspireExtensions
++public static partial class DevelopmentRouteCatalogAspireExtensions
+ {
+     /// <summary>Retains a receiver's existing closed allow inventory, binding each explicitly selected caller to its actual resource.</summary>
+     public static DevelopmentRouteCatalogReceiver CaptureEventStoreDevelopmentReceiver(this IResourceBuilder<ProjectResource> project,
+--- /dev/null
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentSqliteDiscoveryStartupSubscriber.cs
+@@ -0,0 +1,42 @@
++using Aspire.Hosting;
++using Aspire.Hosting.ApplicationModel;
++using Aspire.Hosting.Eventing;
++using Aspire.Hosting.Lifecycle;
++
++namespace Hexalith.EventStore.Aspire;
++
++/// <summary>Attaches ordinary Aspire health/dependency annotations after the integration creates real native sidecars.</summary>
++/// <param name="builder">The owning AppHost builder.</param>
++/// <param name="peers">The exact generated sidecars and registered health checks.</param>
++internal sealed class DevelopmentSqliteDiscoveryStartupSubscriber(
++    IDistributedApplicationBuilder builder, IReadOnlyList<(ProjectResource Owner, string ResourceName, string HealthKey)> peers)
++    : IDistributedApplicationEventingSubscriber
++{
++    /// <inheritdoc/>
++    public Task SubscribeAsync(IDistributedApplicationEventing eventing, DistributedApplicationExecutionContext executionContext, CancellationToken cancellationToken)
++    {
++        _ = eventing.Subscribe<BeforeStartEvent>((startup, _) =>
++        {
++            ConfigureModel(startup.Model);
++            return Task.CompletedTask;
++        });
++        return Task.CompletedTask;
++    }
++
++    /// <summary>Requires one actual executable per selected owner and preserves all existing dependencies.</summary>
++    internal void ConfigureModel(DistributedApplicationModel model)
++    {
++        ExecutableResource? previous = null;
++        foreach (var peer in peers)
++        {
++            var actual = model.Resources.OfType<ExecutableResource>().Where(resource => resource.Name == peer.ResourceName).ToArray();
++            if (actual.Length != 1) throw new InvalidOperationException("A selected SQLite sidecar is missing or ambiguous.");
++            if (!actual[0].Annotations.OfType<ResourceRelationshipAnnotation>().Any(relation => relation.Type == "Parent" && ReferenceEquals(relation.Resource, peer.Owner))
++                || Path.GetFileName(actual[0].Command) is not ("daprd" or "daprd.exe"))
++                throw new InvalidOperationException("SQLite startup readiness requires each actual owner's native daprd executable.");
++            var resource = builder.CreateResourceBuilder(actual[0]).WithHealthCheck(peer.HealthKey);
++            if (previous is not null) resource.WaitFor(builder.CreateResourceBuilder(previous));
++            previous = actual[0];
++        }
++    }
++}
+--- /dev/null
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/Configuration/DevelopmentSqliteDiscoveryStartupTests.cs
+@@ -0,0 +1,145 @@
++using System.Text.Json;
++using Aspire.Hosting;
++using Aspire.Hosting.ApplicationModel;
++using Aspire.Hosting.Eventing;
++using Aspire.Hosting.Lifecycle;
++using CommunityToolkit.Aspire.Hosting.Dapr;
++using Hexalith.EventStore.Aspire;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Diagnostics.HealthChecks;
++using Microsoft.Extensions.Logging;
++
++namespace Hexalith.EventStore.AppHost.Tests.Configuration;
++
++/// <summary>Verifies actual SDK console observation and toolkit-generated startup dependencies without starting processes.</summary>
++public sealed class DevelopmentSqliteDiscoveryStartupTests
++{
++    private const string Ready = "time=\"2026-11-04T14:00:00Z\" level=info msg=\"Initialized name resolution to sqlite\" app_id=peer scope=dapr.runtime type=log ver=1.18.7";
++
++    /// <summary>A running resource or arbitrary text cannot release the native SQLite startup gate.</summary>
++    [Fact(Timeout = 30000)]
++    public async Task ActualResourceConsoleReleasesOnlyItsNativeInitializationAsync()
++    {
++        ExecutableResource native = new("peer-dapr-cli", "/model/daprd", ".");
++        using ResourceLoggerService logs = new();
++        DaprSqliteDiscoveryInitializationHealthCheck check = new(logs, new DistributedApplicationModel(new IResource[] { native }), native.Name, "peer");
++        Task<HealthCheckResult> waiting = check.CheckHealthAsync(new(), TestContext.Current.CancellationToken);
++        waiting.IsCompleted.ShouldBeFalse();
++        logs.GetLogger(native).LogInformation("{NativeLine}", Ready);
++        (await waiting).Status.ShouldBe(HealthStatus.Healthy);
++    }
++
++    /// <summary>Refuses other peers, non-native records, malformed records, missing proof and actual initialization failure.</summary>
++    [Theory(Timeout = 30000)]
++    [InlineData("foreign")]
++    [InlineData("scope")]
++    [InlineData("severity")]
++    [InlineData("duplicate")]
++    [InlineData("payload")]
++    [InlineData("missing")]
++    [InlineData("failed")]
++    public async Task IncompleteOrForeignNativeEvidenceCannotReleaseStartupAsync(string scenario)
++    {
++        ExecutableResource native = new("peer-dapr-cli", "/model/daprd", ".");
++        using ResourceLoggerService logs = new();
++        string line = scenario switch
++        {
++            "foreign" => Ready.Replace("app_id=peer", "app_id=foreign", StringComparison.Ordinal),
++            "scope" => Ready.Replace("scope=dapr.runtime", "scope=application", StringComparison.Ordinal),
++            "severity" => Ready.Replace("level=info", "level=error", StringComparison.Ordinal),
++            "duplicate" => Ready + " app_id=peer",
++            "payload" => "application-message=" + JsonSerializer.Serialize(Ready),
++            "failed" => Ready.Replace("level=info", "level=error", StringComparison.Ordinal).Replace("Initialized name resolution to sqlite", "[INIT_COMPONENT_FAILURE]: nr (sqlite/v1): SQLITE_BUSY", StringComparison.Ordinal),
++            _ => "unrelated native startup message",
++        };
++        logs.GetLogger(native).LogInformation("{NativeLine}", line);
++        logs.Complete(native);
++        DaprSqliteDiscoveryInitializationHealthCheck check = new(logs, new DistributedApplicationModel(new IResource[] { native }), native.Name, "peer");
++        (await check.CheckHealthAsync(new(), TestContext.Current.CancellationToken)).Status.ShouldBe(HealthStatus.Unhealthy);
++    }
++
++    /// <summary>Cancellation wins over buffered success and cancels an ongoing console observation.</summary>
++    [Theory(Timeout = 30000)]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task CanceledObservationNeverAcceptsBufferedOrLateSuccessAsync(bool buffered)
++    {
++        ExecutableResource native = new("peer-dapr-cli", "/model/daprd", ".");
++        using ResourceLoggerService logs = new();
++        using CancellationTokenSource cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
++        if (buffered) logs.GetLogger(native).LogInformation("{NativeLine}", Ready);
++        DaprSqliteDiscoveryInitializationHealthCheck check = new(logs, new DistributedApplicationModel(new IResource[] { native }), native.Name, "peer");
++        if (buffered) await cancellation.CancelAsync();
++        Task<HealthCheckResult> waiting = check.CheckHealthAsync(new(), cancellation.Token);
++        await cancellation.CancelAsync();
++        logs.GetLogger(native).LogInformation("{NativeLine}", Ready);
++        await Should.ThrowAsync<OperationCanceledException>(async () => await waiting);
++    }
++
++    /// <summary>Registers after actual toolkit rendering and adds only the declared native readiness chain.</summary>
++    [Fact(Timeout = 30000)]
++    public async Task ToolkitGeneratedNativeExecutablesReceiveAcyclicOrderedHealthDependenciesAsync()
++    {
++        string directory = Directory.CreateTempSubdirectory("sqlite-startup-model-").FullName;
++        try
++        {
++            string path = Path.Combine(directory, "discovery.json");
++            await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new { spec = new { nameResolution = new
++            { component = "sqlite", version = "v1", configuration = new { connectionString = Path.Combine(directory, "registry.sqlite") } } } }), TestContext.Current.CancellationToken);
++            var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { DisableDashboard = true, AllowUnsecuredTransport = true });
++            builder.Environment.EnvironmentName = "Development";
++            builder.Configuration["DcpPublisher:CliPath"] = Path.Combine(directory, "model-only-dcp-not-started");
++            builder.Configuration["DcpPublisher:DashboardPath"] = Path.Combine(directory, "model-only-dashboard-not-started");
++            builder.AddDapr(options => options.DaprPath = Path.Combine(directory, "daprd"));
++            string[] names = ["eventstore", "projects", "projects-workers", "folders", "folders-workers", "tenants"];
++            var peers = names.Select(name => builder.AddProject<EventStoreProjectMetadata>(name)
++                .WithDaprSidecar(sidecar => sidecar.WithOptions(new DaprSidecarOptions { AppId = name, Config = path }))).ToArray();
++            // These are the supported profile's selected owner waits after canonical catalog composition.
++            peers[0].WaitForStart(peers[5]);
++            peers[1].WaitForStart(peers[0]).WaitForStart(peers[5]);
++            peers[3].WaitForStart(peers[5]);
++            builder.AddEventStoreDevelopmentSqliteStartupOrdering(peers);
++            await using var application = builder.Build();
++            var eventing = application.Services.GetRequiredService<IDistributedApplicationEventing>();
++            foreach (var subscriber in application.Services.GetServices<IDistributedApplicationEventingSubscriber>().Where(subscriber =>
++                subscriber.GetType().Name == "DaprDistributedApplicationLifecycleHook" || subscriber is DevelopmentSqliteDiscoveryStartupSubscriber))
++                await subscriber.SubscribeAsync(eventing, builder.ExecutionContext, TestContext.Current.CancellationToken);
++            await eventing.PublishAsync(new BeforeStartEvent(application.Services, application.Services.GetRequiredService<DistributedApplicationModel>()), TestContext.Current.CancellationToken);
++            var model = application.Services.GetRequiredService<DistributedApplicationModel>();
++            var native = peers.Select(peer => model.Resources.OfType<ExecutableResource>().Single(resource => resource.Name == peer.Resource.Name + "-dapr-cli")).ToArray();
++            for (int index = 0; index < native.Length; index++)
++            {
++                native[index].Annotations.OfType<HealthCheckAnnotation>().Single().Key.ShouldBe("sqlite-discovery-startup-" + peers[index].Resource.Name);
++                var prior = native[index].Annotations.OfType<WaitAnnotation>().Where(wait => native.Contains(wait.Resource)).ToArray();
++                prior.Length.ShouldBe(index == 0 ? 0 : 1);
++                if (index > 0) { prior[0].Resource.ShouldBeSameAs(native[index - 1]); prior[0].WaitType.ShouldBe(WaitType.WaitUntilHealthy); }
++            }
++            native[3].Annotations.OfType<WaitAnnotation>().ShouldContain(wait => ReferenceEquals(wait.Resource, peers[5].Resource) && wait.WaitType == WaitType.WaitUntilStarted);
++            var edges = model.Resources.Select(resource => new { resource.Name, Waits = resource.Annotations.OfType<WaitAnnotation>()
++                .Select(wait => new { wait.Resource.Name, Type = wait.WaitType.ToString() }).ToArray() }).ToArray();
++            TestContext.Current.TestOutputHelper!.WriteLine(JsonSerializer.Serialize(edges));
++            HashSet<IResource> finished = [], visiting = [];
++            foreach (var resource in model.Resources) Visit(resource);
++            void Visit(IResource resource)
++            {
++                if (finished.Contains(resource)) return;
++                visiting.Add(resource).ShouldBeTrue("The actual toolkit-generated wait graph must be acyclic.");
++                foreach (var wait in resource.Annotations.OfType<WaitAnnotation>()) Visit(wait.Resource);
++                visiting.Remove(resource);
++                finished.Add(resource);
++            }
++            File.Exists(Path.Combine(directory, "registry.sqlite")).ShouldBeFalse();
++        }
++        finally { Directory.Delete(directory, recursive: true); }
++    }
++
++    /// <summary>Unselected profiles cannot silently gain the new gate.</summary>
++    [Fact]
++    public void ProductionCannotEnableDevelopmentSqliteOrdering()
++    {
++        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { DisableDashboard = true });
++        builder.Environment.EnvironmentName = "Production";
++        Should.Throw<InvalidOperationException>(() => builder.AddEventStoreDevelopmentSqliteStartupOrdering([]));
++        builder.Resources.ShouldBeEmpty();
++    }
++}
+--- a/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs
++++ b/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs
+@@ -105,6 +105,7 @@
+         DevelopmentRouteCatalogComposition catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
+             [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
+             receivers, statePath, options, isolation);
++        builder.AddEventStoreDevelopmentSqliteStartupOrdering(gateway, projects, projectsWorkers, folders, foldersWorkers, tenants);
+         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
+         WriteReceipt(privateDirectory, "catalog-plane.json", new
+         {

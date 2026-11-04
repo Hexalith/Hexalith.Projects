@@ -1,0 +1,98 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+@@ -109,7 +109,7 @@
+     internal void RecordLog<TState>(string category, LogLevel level, EventId eventId, TState state, Exception? exception)
+     {
+         if (!LogCategories.Contains(category, StringComparer.Ordinal) || Activity.Current is not { } activity
+-            || !_logs.TryGetValue(activity.TraceId, out var entries)) return;
++            || !IsBoundGatewaySpan(activity) || !_logs.TryGetValue(activity.TraceId, out var entries)) return;
+         var fields = state is IEnumerable<KeyValuePair<string, object?>> structured ? structured : [];
+         entries.Enqueue(JsonSerializer.Serialize(new
+         {
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+@@ -56,6 +56,8 @@
+             nested.TraceId.ShouldBe(request.TraceId);
+             nested.SpanId.ShouldNotBe(request.SpanId);
+             duration.Record(0.1, new("http.route", "api/v1/queries"), new("http.response.status_code", 404));
++            observer.RecordLog(ProjectReadDenialObserver.LogCategories[0], Microsoft.Extensions.Logging.LogLevel.Information,
++                new Microsoft.Extensions.Logging.EventId(1210), new Dictionary<string, object?> { ["AggregateId"] = "nested-owner-target" }, null);
+         }
+         using CancellationTokenSource cancellation = new();
+         await cancellation.CancelAsync();
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -164,6 +164,8 @@
+         string? http = Environment.GetEnvironmentVariable("STORY61_DAPR_HTTP_ENDPOINT"), grpc = Environment.GetEnvironmentVariable("STORY61_DAPR_GRPC_ENDPOINT");
+         Assert.SkipUnless(http is not null && grpc is not null, "Requires the isolated Story 6.1 Dapr source lane.");
+         string tenant = "gw-" + Guid.NewGuid().ToString("N");
++        string foreignTenant = tenant + "-foreign";
++        const string foreignOnlyProject = "foreign-only-project";
+         using RSA ownerKey = RSA.Create(2048);
+         var transport = new GatewayFixtureLocalRoutes();
+         var heads = new GatewayFixtureOwnerHeads();
+@@ -208,11 +210,11 @@
+             if (domain == "folders") declared.QueryTypes.ShouldContain(FolderOwnerReadQuery.QueryType);
+             if (domain == "projects")
+             {
+-                foreach (string id in new[] { "project-a", "project-b" })
++                foreach (var (targetTenant, id) in new[] { (tenant, "project-a"), (tenant, "project-b"), (foreignTenant, foreignOnlyProject) })
+                 {
+                     ProjectionRequest seed = SupportedProjectReadFixture.Request(id);
+-                    seed = seed with { TenantId = tenant, Events = seed.Events.Select(item => item with
+-                        { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", tenant, StringComparison.Ordinal)) }).ToArray() };
++                    seed = seed with { TenantId = targetTenant, Events = seed.Events.Select(item => item with
++                        { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", targetTenant, StringComparison.Ordinal)) }).ToArray() };
+                     using HttpRequestMessage dispatch = dapr.CreateInvokeMethodRequest("projects", "project/v2", new ProjectionDispatchRequest(seed,
+                         ["project-reads"], "gateway-seed-" + id, metadata.CatalogFingerprint!));
+                     using HttpResponseMessage projected = await platform.SendAsync(dispatch, TestContext.Current.CancellationToken);
+@@ -298,9 +300,49 @@
+             FolderAccessPrincipalKind.User, "actor-1", "read_metadata", "actor-1", "corr", "task", "revoke", "digest", 3, now), TestContext.Current.CancellationToken);
+         heads.Set(tenant, "folder-project-a", 3);
+         client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, projectUser: true));
++        IReadModelStore projectsStore = projects.Services.GetRequiredService<IReadModelStore>();
++        (await projectsStore.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
++            ProjectReadModelKeys.Detail(tenant, foreignOnlyProject), TestContext.Current.CancellationToken)).Value.ShouldBeNull();
++        ProjectReadModel foreignModel = (await projectsStore.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
++            ProjectReadModelKeys.Detail(foreignTenant, foreignOnlyProject), TestContext.Current.CancellationToken)).Value!;
++        foreignModel.ShouldNotBeNull(); foreignModel.TenantId.ShouldBe(foreignTenant); foreignModel.ProjectId.ShouldBe(foreignOnlyProject);
++        ProjectReadIndex foreignIndex = (await projectsStore.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
++            ProjectReadModelKeys.Index(foreignTenant), TestContext.Current.CancellationToken)).Value!;
++        foreignIndex.ShouldNotBeNull(); foreignIndex.TenantId.ShouldBe(foreignTenant); foreignIndex.ProjectIds.ShouldBe([foreignOnlyProject]);
++        string[] foreignKeys = [ProjectReadModelKeys.Detail(foreignTenant, foreignOnlyProject), ProjectReadModelKeys.Index(foreignTenant)];
++        async Task<(byte[] Bytes, string ETag)[]> ForeignStateAsync()
++        {
++            List<(byte[], string)> values = [];
++            foreach (string key in foreignKeys)
++            {
++                using HttpResponseMessage state = await stateClient.GetAsync("/v1.0/state/statestore/" + Uri.EscapeDataString(key), TestContext.Current.CancellationToken).ConfigureAwait(false);
++                state.EnsureSuccessStatusCode();
++                byte[] bytes = await state.Content.ReadAsByteArrayAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
++                bytes.ShouldNotBeEmpty(); state.Headers.TryGetValues("ETag", out var versions).ShouldBeTrue();
++                string version = versions!.Single(); version.ShouldNotBeNullOrWhiteSpace();
++                values.Add((bytes, version));
++            }
++            return values.ToArray();
++        }
++        var foreignBefore = await ForeignStateAsync();
+         var denied = await ObserveDenialAsync(client, Open(new GetProjectQuery()), denialObserver);
+         var absent = await ObserveDenialAsync(client, Open(new GetProjectQuery(), "absent"), denialObserver);
++        var foreignOnly = await ObserveDenialAsync(client, Open(new GetProjectQuery(), foreignOnlyProject), denialObserver);
+         AssertSameDenialObservations(denied, absent);
++        AssertSameDenialObservations(absent, foreignOnly);
++        var foreignAfter = await ForeignStateAsync();
++        foreignAfter.Length.ShouldBe(foreignBefore.Length);
++        for (int i = 0; i < foreignBefore.Length; i++)
++        {
++            foreignAfter[i].Bytes.ShouldBe(foreignBefore[i].Bytes);
++            foreignAfter[i].ETag.ShouldBe(foreignBefore[i].ETag);
++        }
++        output.WriteLine("Actual real-owner denial observations: " + JsonSerializer.Serialize(new
++        {
++            DeniedTrace = denied.Trace.ToString(), AbsentTrace = absent.Trace.ToString(), ForeignOnlyTrace = foreignOnly.Trace.ToString(),
++            absent.Headers, absent.Logs, MetricCategory = absent.Metric, ServerActivity = absent.Activity,
++            ForeignStateByteAndETagComparisons = foreignBefore.Length,
++        }));
+         (await ReadAsync<ProjectListPage>(client, List(new()))).Items.Single().ProjectId.ShouldBe("project-b");
+         heads.Outage = true;
+         ProjectListPage outage = await ReadAsync<ProjectListPage>(client, List(new()));

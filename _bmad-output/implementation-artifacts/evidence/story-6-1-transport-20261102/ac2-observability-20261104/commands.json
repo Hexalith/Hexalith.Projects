@@ -1,0 +1,229 @@
+{
+  "createdUtc": "2026-11-04T04:44:28.271956+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "b54edcdc7c47dc7eedf968b037b6e5c3b686607bb740d1d9e927c26090ada492",
+  "sourceManifestSha256": "a020aa325f17aa724ba7752b1f70b99d0a778507ef00c64c7c23a1a789c0a2ed",
+  "baselineInputCount": 16663,
+  "currentInputCount": 16666,
+  "changedFiles": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs",
+      "action": "added",
+      "beforeSha256": null,
+      "afterSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "action": "added",
+      "beforeSha256": null,
+      "afterSha256": "712cceb2767950b01b3a1497a3d426084b7e465927bea0ab9394b7fcbc08af92",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "action": "added",
+      "beforeSha256": null,
+      "afterSha256": "e2e18abf448914a7dc89c3bc054b553b967a6fb424d9ebb49f6169d9c66a8f03",
+      "crlfOnly": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "action": "modified",
+      "beforeSha256": "20179b387635bf0dd73df6564e4f16cb40db8702e603135f479b45decd893420",
+      "afterSha256": "a068397f43c5cb25860107f3d7dd7d8ba93d1399fe89c04c0709eddf6a7b68f6",
+      "crlfOnly": true
+    }
+  ],
+  "patchSha256": "cea1a287217acb15e4ddd18163fc43ffa1e3883fc60705a83314c71a4766161f",
+  "patchReproducesAllChangedBytes": true,
+  "mappingPreparationExitCode": 0,
+  "initialDependencyBuild": {
+    "exitCode": 1,
+    "errors": 4,
+    "reason": "CA2007 in new helper await expressions; corrected without suppression",
+    "log": "build.log"
+  },
+  "finalFocusedBuild": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "build-final.log",
+    "commandReference": "build-focused-command.json"
+  },
+  "initialNative": {
+    "passed": 2,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "xml": "denial-observability.xml",
+    "reason": "Test incorrectly required a response correlation header that the existing exception path clears; header absence is now preserved and compared, and any present correlation header must equal the body correlation."
+  },
+  "finalNative": {
+    "exitCode": 0,
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "0.751",
+    "xml": "denial-observability-final.xml",
+    "tests": [
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.DenialObserverCreatesIndependentTracesUnderAnAmbientActivity",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.UnboundNestedServerObservationsCannotCompleteAGatewayRequest",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories"
+    ]
+  },
+  "testAssemblySha256": "2fef8a373d512862acddc5d64bf17d54a8c1a341d2c516b94fd6cf28d407d105",
+  "revisions": {
+    ".": "98efe700b60cacfe0b3cc3cb0c134e0902419b4c",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Builds": "d2a430c988462a634674a69c562ea4afd1f06ef4",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Conversations": "77c33177d7458e7a63d115eda9cf35b6485fb510",
+    "references/Hexalith.EventStore": "a3dbec2f8b6150a3ee33dcbfc2b6bf2fec274625",
+    "references/Hexalith.Folders": "0e976ae267c2bad0f9559f41e87b52e00c3acc2e",
+    "references/Hexalith.FrontComposer": "8479a7c5396fc42964618d99f8079219f4665a9c",
+    "references/Hexalith.McpCli": "e1fa6d5ab50270add568c77abc328382f926bdbd",
+    "references/Hexalith.Memories": "e8956eb5c1bd49297f86702f9606eb9b013bc2f1",
+    "references/Hexalith.Parties": "8059ce0b8d5dbc75e4d7ecc96e0bddfa9590cd0d",
+    "references/Hexalith.Platform": "25dde45c71bf3de89577612660afc43494a6a951",
+    "references/Hexalith.Tenants": "4d0d599879767196928e1c265622483a62b457ae"
+  },
+  "commands": {
+    "prepare-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "run",
+        "--project",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/story61-ac2-mapping-17w76fuo/source-mapping",
+        "--output",
+        "json"
+      ],
+      "workspace": "/tmp/story61-ac2-mapping-17w76fuo",
+      "runtimeStarted": false
+    },
+    "build-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "mapping": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "e173f2be1cd540b7c9176866892987e4bb2297895cf61699eef313784d7f1b1a",
+        "Configuration": "Debug"
+      },
+      "environment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "HexalithBuildsRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds"
+      }
+    },
+    "build-focused-command.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true",
+        "--no-restore",
+        "-p:BuildProjectReferences=false"
+      ],
+      "environment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "HexalithBuildsRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds"
+      },
+      "mapping": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-ac2-mapping-17w76fuo/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "e173f2be1cd540b7c9176866892987e4bb2297895cf61699eef313784d7f1b1a",
+        "Configuration": "Debug"
+      }
+    },
+    "test-command-final.json": {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-method",
+        "*SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories",
+        "-method",
+        "*DenialObserverCreatesIndependentTracesUnderAnAmbientActivity",
+        "-method",
+        "*UnboundNestedServerObservationsCannotCompleteAGatewayRequest",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/ac2-observability-20261104/denial-observability-final.xml"
+      ],
+      "environment": {
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      },
+      "daprEndpointsProvided": false
+    }
+  },
+  "coverage": [
+    "Actual HTTP SDK gateway routing, safe 404 exception response, complete response headers, structured SDK logs, standard server activity and http.server.request.duration dimensions for two already-canonicalized owner refusals.",
+    "Distinct per-request traces under an ambient Activity.",
+    "Earlier unbound nested server Activity and HTTP metric observations cannot satisfy a gateway request."
+  ],
+  "limits": [
+    "The always-run HTTP receiver deliberately returns canonical safe-denial; it does not prove real owner authority.",
+    "The augmented real owner/Folder test remains opt-in and was not run here; it requires the owned Dapr lane.",
+    "Cross-Tenant observability comparison is not covered by this focused packet.",
+    "HTTP duration-metric category equivalence does not establish response-time side-channel tolerance."
+  ],
+  "timingAuthority": {
+    "file": "_bmad-output/test-artifacts/test-design/test-design-progress.md",
+    "line": 154,
+    "text": "Token/session lifetime and response-timing side-channel tolerance are not specified. Track under R-604 and R-610 without inventing thresholds."
+  },
+  "distributedRuntimeStarted": false,
+  "liveQualificationAccepted": false,
+  "quietRuntimeConfirmation": "still required before the fresh complete three-group run; not received in this implementation portion",
+  "sharedSourceChanged": false,
+  "sourceCopyback": false,
+  "gitMutations": false,
+  "mappingWorkspaceCleanup": {
+    "path": "/tmp/story61-ac2-mapping-17w76fuo",
+    "ownerPrivateDirectoryVerified": true,
+    "symlinksAbsent": true,
+    "removed": true
+  }
+}
