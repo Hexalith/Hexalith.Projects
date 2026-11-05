@@ -1,0 +1,5 @@
+fix(auth): isolate relayed credentials by sign-in session and tenant
+
+Bind owner-managed credentials to local session, stable subject and current tenant.
+Revalidate captured providers and revoke only the signed-out session.
+Cover concurrent sessions, expiry, cookie round trips and reconnect behavior.

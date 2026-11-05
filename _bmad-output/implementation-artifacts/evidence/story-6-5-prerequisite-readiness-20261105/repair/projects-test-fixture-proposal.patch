@@ -1,0 +1,23 @@
+--- a/tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs
++++ b/tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs
+@@ -119,7 +119,7 @@
+         await using (provider.ConfigureAwait(true))
+         {
+             provider.GetRequiredService<FrontComposerUserTokenStore>()
+-                .Set("user-1", "relayed-access-token", DateTimeOffset.UtcNow.AddMinutes(5));
++                .Set(new FrontComposerTokenSession("projects-ui-test-session", "user-1", "tenant-a"), "relayed-access-token", DateTimeOffset.UtcNow.AddMinutes(5));
+             IHttpContextAccessor accessor = provider.GetRequiredService<IHttpContextAccessor>();
+             using HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(clientName);
+ 
+@@ -232,7 +232,10 @@
+     private static DefaultHttpContext AuthenticatedContext(string subject)
+         => new()
+         {
+-            User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", subject)], authenticationType: "test")),
++            User = new ClaimsPrincipal(new ClaimsIdentity([
++                new Claim("sub", subject),
++                new Claim("eventstore:current-tenant", "tenant-a"),
++                new Claim(FrontComposerTokenSession.ClaimType, "projects-ui-test-session")], authenticationType: "test")),
+         };
+ 
+     private static string ReadProjectFile(params string[] segments)

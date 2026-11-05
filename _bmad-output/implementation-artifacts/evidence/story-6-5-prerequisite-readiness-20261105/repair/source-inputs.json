@@ -1,0 +1,106 @@
+{
+  "projects_head": "b9a890e38044d23affe6b5d403d4b2a69b6edf34",
+  "frontcomposer_base": "4c24c287cde520631e960a322413bee804f7c3d4",
+  "frontcomposer_repaired_commit": null,
+  "scope": "verified uncommitted source working tree; no commit or gitlink update authorized",
+  "patch": "owner-source.patch",
+  "patch_sha256": "cfca262eb860a4cb99efe6d5e76da401cc0ab58f88eb001d262e1eb9724d4d62",
+  "files": [
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerAuthenticationServiceExtensions.cs",
+      "sha256": "8b0bd911882ead39e9e5f1ccb9b5f28c731301d541e6dd0174219baab4bea23c",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerTokenRelayServiceExtensions.cs",
+      "sha256": "5cd18919dbc10f3833c6b1b021091e0bb946c069ba51639156d7b183a7a7766a",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerAccessTokenProvider.cs",
+      "sha256": "7f23047ebeca9a9792637868b8e20f5b85621065e1407cbcb872f94b48b374b0",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerClaimExtractor.cs",
+      "sha256": "b551a20d1a0478989fe35082a444881d196b4e5e1e50420215b45d782e3b0d6e",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerGatewayAuthorizationHandler.cs",
+      "sha256": "b1bf6a3c4603514b52e4a8c6743ac2f52cc6d209201936c61e5b32eb00a60ac5",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerTokenSession.cs",
+      "sha256": "660f143261a5f214bdd969e6571559d3ed7e7f3c0d087d14163988bfbef62dac",
+      "new": true
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerUserTokenStore.cs",
+      "sha256": "b578c5bcf9093326d96f50bb053e10323f3961ef223fab49053a86e15e7597b2",
+      "new": false
+    },
+    {
+      "path": "src/Hexalith.FrontComposer.Shell/Services/Auth/ServerCircuitUserContextAccessor.cs",
+      "sha256": "2acf7cf37e3ea83a220911790f337471ac9ebfc66adccf5f4bc273102a90a90f",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerAuthenticationServiceExtensionsTests.cs",
+      "sha256": "f817434c38e7043ff360010279d245086089ae41041ad301961ce59d01e8e5cf",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs",
+      "sha256": "0c8e86b86d0c2f7f4e97c4ee8ae5aa67a101417cc94c899039ff70bbd7ca71b7",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs",
+      "sha256": "4e7d7063416ef308846f2da4da192edf7a9faefdea03fbc9490a62d578800ff4",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/AuthRedactionStressTests.cs",
+      "sha256": "7232436783a4c5bce97d784bf42316001161ab1f19afe6d0c067e4ed39dbec7d",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/CredentialEchoHandler.cs",
+      "sha256": "2d639571dd3c8277ec0e48698807ae482624965da282e671081195f79f42e4c4",
+      "new": true
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerAccessTokenProviderTests.cs",
+      "sha256": "23755f5f8c3012afc9f38ad6e6498c4e96ceeb0b473a2eaea70f8ea444164b24",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerCredentialIsolationTests.cs",
+      "sha256": "b2ec99b9e772de15ad87cb1965fb47aaf8e9074adb6788b11c8765a017577a26",
+      "new": true
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerUserTokenStoreTests.cs",
+      "sha256": "f95aff52fac48c7b58ae0c81e8a777e8aeea4b5c45547f8edbbc9501c7b43909",
+      "new": false
+    },
+    {
+      "path": "tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/MutableCircuitAuthenticationStateProvider.cs",
+      "sha256": "6acf60cc135f7c24ad8c33bd95e8f2acdca18e8da104ddf305e2c83c86a3e977",
+      "new": true
+    }
+  ],
+  "binaries": {
+    "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll": "0bd685b3a0ae0f0ccfc5db2373fedd7caf1b9036494a772e092b9c0f8f70ba80",
+    "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.dll": "e9e2947fb585c4ff333a41e220d2f65b7d48f5f37e02627ddf155b3728f4d318"
+  },
+  "dependencies": {
+    "Hexalith.EventStore": "5df9640657dff0125b656f450a59e989485195dc",
+    "Hexalith.Tenants": "cfb5d1ae93bbe3f2a5f96a08a14affdf8b8f9103",
+    "Hexalith.Conversations": "9a5c684de5ee4876448faa26737f6afd36cf33e7",
+    "Hexalith.Platform": "692cd6d025032f04f68ce302f02839d746f85ee9",
+    "Hexalith.Builds": "fc2122240a39f03628c04fa8433e5eece90b8b4c"
+  }
+}

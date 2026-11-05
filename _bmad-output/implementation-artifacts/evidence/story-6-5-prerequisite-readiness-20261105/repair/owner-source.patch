@@ -1,0 +1,1436 @@
+diff --git a/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerAuthenticationServiceExtensions.cs b/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerAuthenticationServiceExtensions.cs
+index d267baa7..d554f004 100644
+--- a/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerAuthenticationServiceExtensions.cs
++++ b/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerAuthenticationServiceExtensions.cs
+@@ -121,14 +121,14 @@ public static class FrontComposerAuthenticationServiceExtensions {
+         async Task signOut(HttpContext context) {
+             string? returnUrl = context.Request.Query["returnUrl"];
+             string sanitized = FrontComposerReturnUrl.Sanitize(returnUrl);
+-            string? userId = ResolveStableUserId(context.User, options);
++            string? sessionId = FrontComposerTokenSession.ResolveSessionId(context.User);
+             await context.SignOutAsync(
+                 GetSignInScheme(options),
+                 new AuthenticationProperties { RedirectUri = sanitized })
+                 .ConfigureAwait(false);
+ 
+-            if (userId is not null) {
+-                context.RequestServices.GetService<FrontComposerUserTokenStore>()?.Remove(userId);
++            if (sessionId is not null) {
++                context.RequestServices.GetService<FrontComposerUserTokenStore>()?.RemoveSession(sessionId);
+             }
+         }
+ 
+@@ -329,23 +329,4 @@ public static class FrontComposerAuthenticationServiceExtensions {
+             _ => "Hexalith.FrontComposer.Cookie",
+         };
+ 
+-    private static string? ResolveStableUserId(ClaimsPrincipal? user, FrontComposerAuthenticationOptions options) {
+-        if (user?.Identity?.IsAuthenticated != true) {
+-            return null;
+-        }
+-
+-        string? stable = user.FindFirstValue("sub") ?? user.FindFirstValue(ClaimTypes.NameIdentifier);
+-        if (!string.IsNullOrWhiteSpace(stable)) {
+-            return stable;
+-        }
+-
+-        foreach (string claimType in options.UserClaimTypes) {
+-            string? value = user.FindFirstValue(claimType);
+-            if (!string.IsNullOrWhiteSpace(value)) {
+-                return value;
+-            }
+-        }
+-
+-        return null;
+-    }
+ }
+diff --git a/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerTokenRelayServiceExtensions.cs b/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerTokenRelayServiceExtensions.cs
+index a2bb1142..6e0a6ec1 100644
+--- a/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerTokenRelayServiceExtensions.cs
++++ b/src/Hexalith.FrontComposer.Shell/Extensions/FrontComposerTokenRelayServiceExtensions.cs
+@@ -1,4 +1,5 @@
+-using System.Globalization;
++using System.Security.Claims;
++using System.Security.Cryptography;
+ 
+ using Hexalith.FrontComposer.Shell.Options;
+ using Hexalith.FrontComposer.Shell.Services.Auth;
+@@ -10,23 +11,24 @@ using Microsoft.AspNetCore.Http;
+ using Microsoft.Extensions.DependencyInjection;
+ using Microsoft.Extensions.DependencyInjection.Extensions;
+ using Microsoft.Extensions.Hosting;
++using Microsoft.Extensions.Options;
+ 
+ namespace Hexalith.FrontComposer.Shell.Extensions;
+ 
+ /// <summary>
+-/// Registration helpers for circuit-safe, per-user bearer-token relay from a FrontComposer Blazor
++/// Registration helpers for circuit-safe, per-session bearer-token relay from a FrontComposer Blazor
+ /// Server host. Generic framework infrastructure: a domain module supplies only which provider and
+ /// which gateways to authorize, never the relay plumbing itself.
+ /// </summary>
+ public static class FrontComposerTokenRelayServiceExtensions {
+     /// <summary>
+-    /// The OIDC challenge scheme the relay hooks to capture access tokens. Matches the default
++    /// The default OIDC challenge scheme. Relay configuration follows the selected scheme in
+     /// <see cref="FrontComposerOpenIdConnectOptions.ChallengeScheme"/>.
+     /// </summary>
+     public const string OidcChallengeScheme = "Hexalith.FrontComposer.Oidc";
+ 
+     /// <summary>
+-    /// Registers the circuit-safe token relay services and captures the user's access token on each
++    /// Registers the circuit-safe token relay services and captures the session's access token on each
+     /// OIDC sign-in. Call after <c>AddHexalithFrontComposerAuthentication</c>. HTTPS-metadata
+     /// enforcement is relaxed only in the Development environment (local Keycloak over http);
+     /// every other environment keeps it enforced.
+@@ -35,35 +37,58 @@ public static class FrontComposerTokenRelayServiceExtensions {
+         ArgumentNullException.ThrowIfNull(services);
+ 
+         _ = services.AddHttpContextAccessor();
++        _ = services.AddOptions<FrontComposerAuthenticationOptions>();
+         services.TryAddSingleton(TimeProvider.System);
+         services.TryAddSingleton<FrontComposerUserTokenStore>();
+         services.TryAddSingleton<CircuitServicesAccessor>();
+         _ = services.AddScoped<CircuitHandler, FrontComposerCircuitServicesHandler>();
+         _ = services.AddTransient<FrontComposerGatewayAuthorizationHandler>();
+ 
+-        // Keep tokens for relay and capture the access token into the per-user store when the
+-        // authorization code is validated. RequireHttpsMetadata is relaxed only for local-dev http
++        // Keep tokens for relay and capture the access token into the per-session store when the
++        // final authentication ticket is received. RequireHttpsMetadata is relaxed only for local-dev http
+         // Keycloak (Development); production/staging keep metadata over https enforced.
+-        _ = services.AddOptions<OpenIdConnectOptions>(OidcChallengeScheme)
+-            .Configure<FrontComposerUserTokenStore, TimeProvider, IHostEnvironment>((options, tokenStore, timeProvider, environment) => {
++        _ = services.AddSingleton<IConfigureOptions<OpenIdConnectOptions>>(provider =>
++        {
++            FrontComposerUserTokenStore tokenStore = provider.GetRequiredService<FrontComposerUserTokenStore>();
++            IHostEnvironment environment = provider.GetRequiredService<IHostEnvironment>();
++            FrontComposerAuthenticationOptions authentication = provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>().Value;
++            return new ConfigureNamedOptions<OpenIdConnectOptions>(authentication.OpenIdConnect.ChallengeScheme, options =>
++            {
+                 options.RequireHttpsMetadata = !environment.IsDevelopment();
+                 options.SaveTokens = true;
+ 
+-                Func<TokenValidatedContext, Task>? previous = options.Events.OnTokenValidated;
+-                options.Events.OnTokenValidated = async context => {
++                Func<TicketReceivedContext, Task>? previous = options.Events.OnTicketReceived;
++                options.Events.OnTicketReceived = async context => {
+                     if (previous is not null) {
+                         await previous(context).ConfigureAwait(false);
+                     }
+ 
+-                    string? token = context.TokenEndpointResponse?.AccessToken;
+-                    string? userId = context.Principal?.FindFirst("sub")?.Value
+-                        ?? context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+-                    DateTimeOffset? expiresAtUtc = ResolveTokenExpiry(context, timeProvider);
+-                    if (!string.IsNullOrEmpty(token) && userId is not null && expiresAtUtc.HasValue) {
+-                        tokenStore.Set(userId, token, expiresAtUtc.Value);
++                    // Never accept a provider-supplied local session identifier.
++                    if (context.Principal is not { } principal || principal.Identity is not ClaimsIdentity identity
++                        || !identity.IsAuthenticated || context.Result is not null)
++                    {
++                        return;
++                    }
++
++                    foreach (ClaimsIdentity claimsIdentity in principal.Identities)
++                    {
++                        foreach (Claim claim in claimsIdentity.FindAll(FrontComposerTokenSession.ClaimType).ToArray())
++                        {
++                            claimsIdentity.RemoveClaim(claim);
++                        }
++                    }
++
++                    identity.AddClaim(new Claim(FrontComposerTokenSession.ClaimType, Convert.ToHexString(RandomNumberGenerator.GetBytes(32))));
++                    FrontComposerTokenSession? session = FrontComposerTokenSession.Resolve(principal, authentication);
++                    string? token = context.Properties?.GetTokenValue(authentication.TokenRelay.AccessTokenName);
++                    DateTimeOffset? expiresAtUtc = ResolveTokenExpiry(context);
++                    if (!string.IsNullOrWhiteSpace(token) && session is not null && expiresAtUtc.HasValue)
++                    {
++                        tokenStore.Set(session, token, expiresAtUtc.Value);
+                     }
+                 };
+             });
++        });
+ 
+         return services;
+     }
+@@ -74,24 +99,11 @@ public static class FrontComposerTokenRelayServiceExtensions {
+         return builder.AddHttpMessageHandler<FrontComposerGatewayAuthorizationHandler>();
+     }
+ 
+-    private static DateTimeOffset? ResolveTokenExpiry(TokenValidatedContext context, TimeProvider timeProvider) {
++    private static DateTimeOffset? ResolveTokenExpiry(TicketReceivedContext context)
++    {
+         string? expiresAt = context.Properties?.GetTokenValue("expires_at");
+-        if (!string.IsNullOrWhiteSpace(expiresAt)
+-            && DateTimeOffset.TryParse(
+-                expiresAt,
+-                CultureInfo.InvariantCulture,
+-                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+-                out DateTimeOffset parsed)) {
+-            return parsed.ToUniversalTime();
+-        }
+-
+-        string? expiresIn = context.TokenEndpointResponse?.ExpiresIn;
+-        if (!string.IsNullOrWhiteSpace(expiresIn)
+-            && int.TryParse(expiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out int seconds)
+-            && seconds > 0) {
+-            return timeProvider.GetUtcNow().AddSeconds(seconds);
+-        }
+-
+-        return null;
++        return DateTimeOffset.TryParse(expiresAt, System.Globalization.CultureInfo.InvariantCulture,
++            System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
++            out DateTimeOffset expiry) ? expiry : null;
+     }
+ }
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerAccessTokenProvider.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerAccessTokenProvider.cs
+index 0e5214f5..65065e88 100644
+--- a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerAccessTokenProvider.cs
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerAccessTokenProvider.cs
+@@ -81,82 +81,54 @@ public sealed class FrontComposerAccessTokenProvider(
+             return current.TokenRelay.HostAccessTokenProvider;
+         }
+ 
+-        string? httpToken = null;
+-        ClaimsPrincipal? principal = null;
+-        if (httpContextAccessor.HttpContext is { } context) {
+-            httpToken = await ReadHttpContextTokenAsync(context, current).ConfigureAwait(false);
+-            principal = context.User;
+-        }
+-
+-        principal ??= await ReadCircuitPrincipalAsync().ConfigureAwait(false);
+-        string? userId = ResolveUserId(principal, current);
+-        if (userId is not null) {
+-            return ct => {
+-                ct.ThrowIfCancellationRequested();
+-                return ValueTask.FromResult(tokenStore.TryGet(userId, out string accessToken) ? accessToken : null);
+-            };
+-        }
+-
+-        return string.IsNullOrWhiteSpace(httpToken)
+-            ? null
+-            : ct => {
+-                ct.ThrowIfCancellationRequested();
+-                return ValueTask.FromResult<string?>(httpToken);
+-            };
++        AuthenticationStateProvider? capturedState = circuitServicesAccessor.Services?.GetService<AuthenticationStateProvider>();
++        ClaimsPrincipal? principal = await FrontComposerTokenSession.ReadPrincipalAsync(httpContextAccessor, circuitServicesAccessor).ConfigureAwait(false);
++        FrontComposerTokenSession? session = FrontComposerTokenSession.Resolve(principal, current);
++        // Always return a bound delegate. A null capture lets reconnect fall back to ambient identity.
++        return async ct =>
++        {
++            ct.ThrowIfCancellationRequested();
++            ClaimsPrincipal? user = capturedState is not null
++                ? (await capturedState.GetAuthenticationStateAsync().ConfigureAwait(false)).User
++                : principal;
++            return session is not null
++                && session == FrontComposerTokenSession.Resolve(user, current)
++                && tokenStore.TryGet(session, out string accessToken) ? accessToken : null;
++        };
+     }
+ 
+-    private async Task<string?> ReadHttpContextOrCircuitTokenAsync(FrontComposerAuthenticationOptions current) {
+-        ClaimsPrincipal? principal = null;
+-        if (httpContextAccessor.HttpContext is { } context) {
+-            string? httpToken = await ReadHttpContextTokenAsync(context, current).ConfigureAwait(false);
+-            if (!string.IsNullOrWhiteSpace(httpToken)) {
+-                return httpToken;
+-            }
+-
+-            principal = context.User;
++    private async Task<string?> ReadHttpContextOrCircuitTokenAsync(FrontComposerAuthenticationOptions current)
++    {
++        ClaimsPrincipal? principal = await FrontComposerTokenSession.ReadPrincipalAsync(httpContextAccessor, circuitServicesAccessor).ConfigureAwait(false);
++        FrontComposerTokenSession? session = FrontComposerTokenSession.Resolve(principal, current);
++        if (session is not null)
++        {
++            return tokenStore.TryGet(session, out string token) ? token : null;
+         }
+ 
+-        principal ??= await ReadCircuitPrincipalAsync().ConfigureAwait(false);
+-        string? userId = ResolveUserId(principal, current);
+-        return userId is not null && tokenStore.TryGet(userId, out string circuitToken)
+-            ? circuitToken
+-            : null;
+-    }
+-
+-    private static async Task<string?> ReadHttpContextTokenAsync(
+-        HttpContext context,
+-        FrontComposerAuthenticationOptions current)
+-        => string.IsNullOrWhiteSpace(current.TokenRelay.AuthenticationScheme)
+-            ? await context.GetTokenAsync(current.TokenRelay.AccessTokenName).ConfigureAwait(false)
+-            : await context.GetTokenAsync(current.TokenRelay.AuthenticationScheme, current.TokenRelay.AccessTokenName).ConfigureAwait(false);
+-
+-    private async Task<ClaimsPrincipal?> ReadCircuitPrincipalAsync() {
+-        if (circuitServicesAccessor.Services?.GetService<AuthenticationStateProvider>() is not { } provider) {
++        // Server circuits must never recover a revoked, expired or unbound token from cookie properties.
++        if (current.TokenRelay.CircuitTokenSourceEnabled || circuitServicesAccessor.Services is not null
++            || principal?.HasClaim(c => c.Type == FrontComposerTokenSession.ClaimType) == true)
++        {
+             return null;
+         }
+ 
+-        AuthenticationState state = await provider.GetAuthenticationStateAsync().ConfigureAwait(false);
+-        return state.User;
+-    }
+-
+-    private static string? ResolveUserId(ClaimsPrincipal? user, FrontComposerAuthenticationOptions current) {
+-        if (user?.Identity?.IsAuthenticated != true) {
++        if (httpContextAccessor.HttpContext is not { } context)
++        {
+             return null;
+         }
+ 
+-        string? stable = user.FindFirstValue("sub") ?? user.FindFirstValue(ClaimTypes.NameIdentifier);
+-        if (!string.IsNullOrWhiteSpace(stable)) {
+-            return stable;
+-        }
+-
+-        foreach (string claimType in current.UserClaimTypes) {
+-            string? value = user.FindFirstValue(claimType);
+-            if (!string.IsNullOrWhiteSpace(value)) {
+-                return value;
+-            }
++        AuthenticateResult result = await context.AuthenticateAsync(current.TokenRelay.AuthenticationScheme).ConfigureAwait(false);
++        if (!result.Succeeded || result.Principal?.Identity?.IsAuthenticated != true
++            || (result.Properties?.GetTokenValue("expires_at") is { } expiresAt
++                && (!DateTimeOffset.TryParse(expiresAt, System.Globalization.CultureInfo.InvariantCulture,
++                    System.Globalization.DateTimeStyles.AssumeUniversal, out DateTimeOffset expiry)
++                    || expiry <= tokenStore.UtcNow)))
++        {
++            return null;
+         }
+ 
+-        return null;
++        return result.Properties?.GetTokenValue(current.TokenRelay.AccessTokenName);
+     }
+ 
+     private static string BoundedProviderKind(FrontComposerAuthenticationProviderKind providerKind)
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerClaimExtractor.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerClaimExtractor.cs
+index e3ab07f4..8273bbee 100644
+--- a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerClaimExtractor.cs
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerClaimExtractor.cs
+@@ -20,6 +20,10 @@ internal static class FrontComposerClaimExtractor {
+         return FrontComposerClaimExtractionResult.Success(tenant.Value, user.Value);
+     }
+ 
++    /// <summary>Validates only the configured current-Tenant segment for credential binding.</summary>
++    internal static string? ExtractTenant(ClaimsPrincipal? principal, IReadOnlyList<string> aliases)
++        => principal?.Identity?.IsAuthenticated == true ? ExtractSegment(principal, aliases).Value : null;
++
+     private static SegmentResult ExtractSegment(ClaimsPrincipal principal, IReadOnlyList<string> aliases) {
+         List<(string Alias, string Value)> found = [];
+         foreach (string alias in aliases) {
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerGatewayAuthorizationHandler.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerGatewayAuthorizationHandler.cs
+index 8cd1630d..be8a2b45 100644
+--- a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerGatewayAuthorizationHandler.cs
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerGatewayAuthorizationHandler.cs
+@@ -1,6 +1,10 @@
+ using System.Net.Http.Headers;
+ using System.Security.Claims;
+ 
++using Hexalith.FrontComposer.Shell.Options;
++
++using Microsoft.Extensions.Options;
++
+ using Microsoft.AspNetCore.Components.Authorization;
+ using Microsoft.AspNetCore.Http;
+ 
+@@ -8,22 +12,24 @@ namespace Hexalith.FrontComposer.Shell.Services.Auth;
+ 
+ /// <summary>
+ /// Attaches the signed-in user's access token as a bearer header on outbound gateway requests.
+-/// Resolves the current principal from <see cref="IHttpContextAccessor"/> during server-side render
+-/// and from the circuit's <see cref="AuthenticationStateProvider"/> (via
+-/// <see cref="CircuitServicesAccessor"/>) during interactive circuit activity. Anonymous requests are
++/// Resolves the active circuit's <see cref="AuthenticationStateProvider"/> (via
++/// <see cref="CircuitServicesAccessor"/>), falling back to <see cref="IHttpContextAccessor"/> during
++/// server-side rendering. Anonymous requests are
+ /// left untouched, so the gateway returns 401 and the UI surfaces the sign-in state.
+ /// </summary>
+ public sealed class FrontComposerGatewayAuthorizationHandler(
+     IHttpContextAccessor httpContextAccessor,
+     CircuitServicesAccessor circuitServicesAccessor,
+-    FrontComposerUserTokenStore tokenStore) : DelegatingHandler {
++    FrontComposerUserTokenStore tokenStore,
++    IOptions<FrontComposerAuthenticationOptions> options) : DelegatingHandler {
+     /// <inheritdoc />
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
+         ArgumentNullException.ThrowIfNull(request);
+ 
+         if (request.Headers.Authorization is null) {
+-            string? userId = await ResolveUserIdAsync().ConfigureAwait(false);
+-            if (userId is not null && tokenStore.TryGet(userId, out string token)) {
++            ClaimsPrincipal? principal = await FrontComposerTokenSession.ReadPrincipalAsync(httpContextAccessor, circuitServicesAccessor).ConfigureAwait(false);
++            FrontComposerTokenSession? session = FrontComposerTokenSession.Resolve(principal, options.Value);
++            if (session is not null && tokenStore.TryGet(session, out string token)) {
+                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+             }
+         }
+@@ -31,17 +37,4 @@ public sealed class FrontComposerGatewayAuthorizationHandler(
+         return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+     }
+ 
+-    private async Task<string?> ResolveUserIdAsync() {
+-        ClaimsPrincipal? user = httpContextAccessor.HttpContext?.User;
+-        if (user?.Identity?.IsAuthenticated != true) {
+-            if (circuitServicesAccessor.Services?.GetService(typeof(AuthenticationStateProvider)) is AuthenticationStateProvider provider) {
+-                AuthenticationState state = await provider.GetAuthenticationStateAsync().ConfigureAwait(false);
+-                user = state.User;
+-            }
+-        }
+-
+-        return user?.Identity?.IsAuthenticated == true
+-            ? user.FindFirstValue("sub") ?? user.FindFirstValue(ClaimTypes.NameIdentifier)
+-            : null;
+-    }
+ }
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerUserTokenStore.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerUserTokenStore.cs
+index 18fbf28b..25058bd6 100644
+--- a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerUserTokenStore.cs
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerUserTokenStore.cs
+@@ -1,69 +1,91 @@
+ using System.Collections.Concurrent;
+-using Microsoft.AspNetCore.Http;
+ 
+ namespace Hexalith.FrontComposer.Shell.Services.Auth;
+ 
+ /// <summary>
+-/// Process-wide store of per-user access tokens captured at OIDC sign-in. Keyed by the authenticated
+-/// user's stable identifier (the <c>sub</c>/NameIdentifier claim). It lets a Blazor Server circuit —
+-/// which has no <see cref="HttpContext"/> — relay the signed-in user's bearer token to a downstream
+-/// gateway. Tokens are overwritten on each sign-in and removed on sign-out.
++/// Process-wide store of access tokens bound to a server-generated sign-in session, stable subject
++/// and current Tenant. Circuits share credentials only within that exact authenticated session.
++/// Sign-out revokes that session; every read checks expiry.
+ /// </summary>
+ public sealed class FrontComposerUserTokenStore {
+-    private readonly ConcurrentDictionary<string, StoredToken> _tokens = new(StringComparer.Ordinal);
++    private readonly ConcurrentDictionary<FrontComposerTokenSession, StoredToken> _tokens = new();
+     private readonly TimeProvider _timeProvider;
+ 
+     /// <summary>Initializes a new instance of the <see cref="FrontComposerUserTokenStore"/> class.</summary>
+     public FrontComposerUserTokenStore(TimeProvider? timeProvider = null)
+         => _timeProvider = timeProvider ?? TimeProvider.System;
+ 
+-    /// <summary>Stores (or overwrites) the access token for the given user id.</summary>
+-    public void Set(string userId, string accessToken, DateTimeOffset expiresAtUtc) {
+-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
++    /// <summary>Gets the current time from the credential store clock.</summary>
++    internal DateTimeOffset UtcNow => _timeProvider.GetUtcNow();
++
++    /// <summary>Stores (or overwrites) the access token for the exact session binding.</summary>
++    public void Set(FrontComposerTokenSession session, string accessToken, DateTimeOffset expiresAtUtc) {
++        ArgumentNullException.ThrowIfNull(session);
+         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
+ 
+         DateTimeOffset now = _timeProvider.GetUtcNow();
++        // Unique sign-ins must not retain expired bearer strings from abandoned sessions forever.
++        foreach ((FrontComposerTokenSession key, StoredToken stored) in _tokens)
++        {
++            if (stored.ExpiresAtUtc <= now)
++            {
++                RemoveExact(key, stored);
++            }
++        }
++
+         if (expiresAtUtc <= now) {
+-            RemoveIfExpired(userId, now);
++            RemoveIfExpired(session, now);
+             return;
+         }
+ 
+-        _tokens[userId] = new StoredToken(accessToken, expiresAtUtc);
++        _tokens[session] = new StoredToken(accessToken, expiresAtUtc);
+     }
+ 
+-    /// <summary>Reads the stored access token for the given user id, if any.</summary>
+-    public bool TryGet(string userId, out string accessToken) {
+-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
++    /// <summary>Reads the stored access token for the exact session binding, if any.</summary>
++    public bool TryGet(FrontComposerTokenSession session, out string accessToken) {
++        ArgumentNullException.ThrowIfNull(session);
+ 
+-        if (_tokens.TryGetValue(userId, out StoredToken? stored)) {
++        if (_tokens.TryGetValue(session, out StoredToken? stored)) {
+             if (stored.ExpiresAtUtc > _timeProvider.GetUtcNow()) {
+                 accessToken = stored.AccessToken;
+                 return true;
+             }
+ 
+-            RemoveExact(userId, stored);
++            RemoveExact(session, stored);
+         }
+ 
+         accessToken = string.Empty;
+         return false;
+     }
+ 
+-    /// <summary>Removes the stored access token for the given user id (sign-out).</summary>
+-    public void Remove(string userId) {
+-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+-        _ = _tokens.TryRemove(userId, out _);
++    /// <summary>Removes the stored access token for the exact session binding (sign-out).</summary>
++    public void Remove(FrontComposerTokenSession session) {
++        ArgumentNullException.ThrowIfNull(session);
++        _ = _tokens.TryRemove(session, out _);
++    }
++
++    /// <summary>Revokes the entire sign-in even when its current Tenant claims have changed.</summary>
++    internal void RemoveSession(string sessionId)
++    {
++        foreach ((FrontComposerTokenSession session, StoredToken stored) in _tokens)
++        {
++            if (string.Equals(session.SessionId, sessionId, StringComparison.Ordinal))
++            {
++                RemoveExact(session, stored);
++            }
++        }
+     }
+ 
+-    private void RemoveIfExpired(string userId, DateTimeOffset now) {
+-        if (_tokens.TryGetValue(userId, out StoredToken? stored)
++    private void RemoveIfExpired(FrontComposerTokenSession session, DateTimeOffset now) {
++        if (_tokens.TryGetValue(session, out StoredToken? stored)
+             && stored.ExpiresAtUtc <= now) {
+-            RemoveExact(userId, stored);
++            RemoveExact(session, stored);
+         }
+     }
+ 
+-    private void RemoveExact(string userId, StoredToken token)
+-        => ((ICollection<KeyValuePair<string, StoredToken>>)_tokens)
+-            .Remove(new KeyValuePair<string, StoredToken>(userId, token));
++    private void RemoveExact(FrontComposerTokenSession session, StoredToken token)
++        => ((ICollection<KeyValuePair<FrontComposerTokenSession, StoredToken>>)_tokens)
++            .Remove(new KeyValuePair<FrontComposerTokenSession, StoredToken>(session, token));
+ 
+     private sealed class StoredToken {
+         public StoredToken(string accessToken, DateTimeOffset expiresAtUtc) {
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/ServerCircuitUserContextAccessor.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/ServerCircuitUserContextAccessor.cs
+index 610ba356..43fae1e2 100644
+--- a/src/Hexalith.FrontComposer.Shell/Services/Auth/ServerCircuitUserContextAccessor.cs
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/ServerCircuitUserContextAccessor.cs
+@@ -68,24 +68,16 @@ public sealed class ServerCircuitUserContextAccessor(
+         return result;
+     }
+ 
+-    // Mirrors FrontComposerGatewayAuthorizationHandler.ResolveUserIdAsync: prefer the request's
+-    // HttpContext principal (server-side render / prerender); when absent (interactive circuit),
+-    // read the circuit's AuthenticationStateProvider published by FrontComposerCircuitServicesHandler.
+-    // Only a synchronously completed auth-state task is read to avoid sync-over-async on this sync
+-    // surface; in a connected circuit the state is resolved before component lifecycle runs.
+-    private ClaimsPrincipal? ResolvePrincipal() {
+-        ClaimsPrincipal? user = httpContextAccessor.HttpContext?.User;
+-        if (user?.Identity?.IsAuthenticated == true) {
+-            return user;
+-        }
+-
+-        if (circuitServicesAccessor.Services?.GetService<AuthenticationStateProvider>() is { } provider) {
++    // Use the same circuit-first authority as the credential resolver. A retained HttpContext may
++    // belong to an earlier request and must not override an active circuit, including anonymous state.
++    private ClaimsPrincipal? ResolvePrincipal()
++    {
++        if (circuitServicesAccessor.Services?.GetService<AuthenticationStateProvider>() is { } provider)
++        {
+             Task<AuthenticationState> stateTask = provider.GetAuthenticationStateAsync();
+-            if (stateTask.IsCompletedSuccessfully) {
+-                return stateTask.Result.User;
+-            }
++            return stateTask.IsCompletedSuccessfully ? stateTask.Result.User : null;
+         }
+ 
+-        return user;
++        return httpContextAccessor.HttpContext?.User;
+     }
+ }
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerAuthenticationServiceExtensionsTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerAuthenticationServiceExtensionsTests.cs
+index 3e7a4dcc..38f5ce0d 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerAuthenticationServiceExtensionsTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerAuthenticationServiceExtensionsTests.cs
+@@ -7,6 +7,7 @@ using Hexalith.FrontComposer.Shell.Services.Auth;
+ using Hexalith.FrontComposer.Shell.Tests.Infrastructure.Telemetry;
+ 
+ using Microsoft.AspNetCore.Authentication;
++using Microsoft.AspNetCore.DataProtection;
+ using Microsoft.AspNetCore.Builder;
+ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+ using Microsoft.AspNetCore.Http;
+@@ -15,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
+ using Microsoft.Extensions.Hosting;
+ using Microsoft.Extensions.Logging;
+ using Microsoft.Extensions.Options;
+-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+ 
+ using Shouldly;
+ 
+@@ -173,27 +173,166 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+         FakeTimeProvider time = new(now);
+         ServiceCollection services = new();
+         services.AddSingleton<TimeProvider>(time);
++        services.AddOptions<FrontComposerAuthenticationOptions>().Configure(options => {
++            options.TenantClaimTypes.Add("eventstore:current-tenant");
++            options.UserClaimTypes.Add("sub");
++        });
+         services.AddSingleton<IHostEnvironment>(new TestHostEnvironment());
+         _ = services.AddHexalithFrontComposerTokenRelay();
+ 
+         await using ServiceProvider provider = services.BuildServiceProvider();
+         OpenIdConnectOptions oidc = BuildOpenIdConnectOptions(provider);
+-        TokenValidatedContext context = BuildTokenValidatedContext(provider, oidc, "user-1", "opaque-token", expiresIn: "60");
++        TicketReceivedContext context = BuildTicketReceivedContext(provider, oidc, "user-1", "opaque-token", expiresIn: "60");
+ 
+-        await oidc.Events.OnTokenValidated(context);
++        await oidc.Events.OnTicketReceived(context);
+ 
+         FrontComposerUserTokenStore store = provider.GetRequiredService<FrontComposerUserTokenStore>();
+-        store.TryGet("user-1", out string token).ShouldBeTrue();
++        store.TryGet(FrontComposerTokenSession.Resolve(context.Principal, provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>().Value)!, out string token).ShouldBeTrue();
+         (token == "opaque-token").ShouldBeTrue("the OIDC relay should store the access token before expiry");
+         time.Advance(TimeSpan.FromSeconds(61));
+-        store.TryGet("user-1", out _).ShouldBeFalse();
++        store.TryGet(FrontComposerTokenSession.Resolve(context.Principal, provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>().Value)!, out _).ShouldBeFalse();
++    }
++
++    [Fact]
++    public async Task OidcSignIns_GenerateDistinctLocalSessions_AndRejectMissingCredentialAuthority()
++    {
++        ServiceCollection services = new();
++        services.AddSingleton<IHostEnvironment>(new TestHostEnvironment());
++        services.AddOptions<FrontComposerAuthenticationOptions>().Configure(options =>
++        {
++            options.TenantClaimTypes.Add("eventstore:current-tenant");
++            options.UserClaimTypes.Add("sub");
++        });
++        _ = services.AddHexalithFrontComposerTokenRelay();
++        await using ServiceProvider provider = services.BuildServiceProvider();
++        OpenIdConnectOptions oidc = BuildOpenIdConnectOptions(provider);
++        FrontComposerAuthenticationOptions options = provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>().Value;
++        FrontComposerUserTokenStore store = provider.GetRequiredService<FrontComposerUserTokenStore>();
++        TicketReceivedContext a = BuildTicketReceivedContext(provider, oidc, "shared", "token-a", "60");
++        TicketReceivedContext b = BuildTicketReceivedContext(provider, oidc, "shared", "token-b", "60");
++        ((System.Security.Claims.ClaimsIdentity)a.Principal!.Identity!).AddClaim(new(FrontComposerTokenSession.ClaimType, "incoming-session"));
++        ((System.Security.Claims.ClaimsIdentity)b.Principal!.Identity!).AddClaim(new(FrontComposerTokenSession.ClaimType, "incoming-session"));
++        await oidc.Events.OnTicketReceived(a);
++        await oidc.Events.OnTicketReceived(b);
++        FrontComposerTokenSession sessionA = FrontComposerTokenSession.Resolve(a.Principal, options)!;
++        FrontComposerTokenSession sessionB = FrontComposerTokenSession.Resolve(b.Principal, options)!;
++        sessionA.SessionId.ShouldNotBe(sessionB.SessionId);
++        sessionA.SessionId.ShouldNotBe("incoming-session");
++        store.TryGet(sessionA, out string first).ShouldBeTrue();
++        store.TryGet(sessionB, out string second).ShouldBeTrue();
++        (first == "token-a" && second == "token-b").ShouldBeTrue();
++
++        foreach ((string token, string expiry) in new[] { ("", "60"), ("missing-expiry", ""), ("expired", "0") })
++        {
++            TicketReceivedContext missing = BuildTicketReceivedContext(provider, oidc, "shared", token, expiry);
++            await oidc.Events.OnTicketReceived(missing);
++            store.TryGet(FrontComposerTokenSession.Resolve(missing.Principal, options)!, out _).ShouldBeFalse();
++        }
++        TicketReceivedContext denied = BuildTicketReceivedContext(provider, oidc, "shared", "denied", "60");
++        ((System.Security.Claims.ClaimsIdentity)denied.Principal!.Identity!).AddClaim(new("eventstore:current-tenant", "ambiguous"));
++        await oidc.Events.OnTicketReceived(denied);
++        FrontComposerTokenSession.Resolve(denied.Principal, options).ShouldBeNull();
++    }
++
++    [Fact]
++    public async Task TokenRelay_UsesConfiguredScheme_AndTenantAddedAtFinalTicketCallback()
++    {
++        const string scheme = "Custom.Oidc";
++        ServiceCollection services = new();
++        services.AddSingleton<IHostEnvironment>(new TestHostEnvironment());
++        services.AddOptions<FrontComposerAuthenticationOptions>().Configure(options =>
++        {
++            options.OpenIdConnect.ChallengeScheme = scheme;
++            options.TenantClaimTypes.Add("eventstore:current-tenant");
++            options.UserClaimTypes.Add("sub");
++        });
++        services.Configure<OpenIdConnectOptions>(scheme, options => options.Events.OnTicketReceived = context =>
++        {
++            ((System.Security.Claims.ClaimsIdentity)context.Principal!.Identity!).AddClaim(new("eventstore:current-tenant", "late-tenant"));
++            return Task.CompletedTask;
++        });
++        _ = services.AddHexalithFrontComposerTokenRelay();
++        await using ServiceProvider provider = services.BuildServiceProvider();
++        OpenIdConnectOptions oidc = new();
++        foreach (IConfigureOptions<OpenIdConnectOptions> setup in provider.GetServices<IConfigureOptions<OpenIdConnectOptions>>())
++        {
++            if (setup is IConfigureNamedOptions<OpenIdConnectOptions> named)
++            {
++                named.Configure(scheme, oidc);
++            }
++        }
++        TicketReceivedContext context = BuildTicketReceivedContext(provider, oidc, "shared", "late-token", "60");
++        System.Security.Claims.ClaimsIdentity identity = (System.Security.Claims.ClaimsIdentity)context.Principal!.Identity!;
++        identity.RemoveClaim(identity.FindFirst("eventstore:current-tenant")!);
++        await oidc.Events.OnTicketReceived(context);
++        FrontComposerTokenSession session = FrontComposerTokenSession.Resolve(context.Principal,
++            provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>().Value)!;
++        session.TenantId.ShouldBe("late-tenant");
++        provider.GetRequiredService<FrontComposerUserTokenStore>().TryGet(session, out string token).ShouldBeTrue();
++        (token == "late-token").ShouldBeTrue();
++    }
++
++    [Fact]
++    public async Task ProtectedCookieRoundTrip_IsolatesSameSubjectSessions_AndRevokesOnlySignedOutSession()
++    {
++        ServiceCollection services = new();
++        services.AddSingleton<IHostEnvironment>(new TestHostEnvironment());
++        services.AddLogging();
++        services.AddDataProtection().UseEphemeralDataProtectionProvider();
++        _ = services.AddHexalithFrontComposerServerSecurity(options => options.UseKeycloak(
++            new Uri("https://identity.test/realms/demo"), "client", "secret", "eventstore:current-tenant", "sub"));
++        await using ServiceProvider provider = services.BuildServiceProvider();
++        OpenIdConnectOptions oidc = BuildOpenIdConnectOptions(provider);
++        IOptions<FrontComposerAuthenticationOptions> options = provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>();
++        FrontComposerUserTokenStore store = provider.GetRequiredService<FrontComposerUserTokenStore>();
++        List<string> cookies = [];
++        foreach (string token in new[] { "first-token", "second-token" })
++        {
++            using IServiceScope signInScope = provider.CreateScope();
++            TicketReceivedContext ticket = BuildTicketReceivedContext(signInScope.ServiceProvider, oidc, "shared", token, "60");
++            await oidc.Events.OnTicketReceived(ticket);
++            DefaultHttpContext signIn = new() { RequestServices = signInScope.ServiceProvider };
++            signIn.Request.Scheme = "https";
++            await signIn.SignInAsync(options.Value.OpenIdConnect.SignInScheme, ticket.Principal!, ticket.Properties);
++            cookies.Add(signIn.Response.Headers.SetCookie.ToString().Split(';')[0]);
++        }
++
++        using IServiceScope firstScope = provider.CreateScope();
++        using IServiceScope secondScope = provider.CreateScope();
++        DefaultHttpContext first = new() { RequestServices = firstScope.ServiceProvider };
++        first.Request.Headers.Cookie = cookies[0];
++        AuthenticateResult firstTicket = await first.AuthenticateAsync(options.Value.OpenIdConnect.SignInScheme);
++        firstTicket.Succeeded.ShouldBeTrue();
++        first.User = firstTicket.Principal!;
++        DefaultHttpContext second = new() { RequestServices = secondScope.ServiceProvider };
++        second.Request.Headers.Cookie = cookies[1];
++        AuthenticateResult secondTicket = await second.AuthenticateAsync(options.Value.OpenIdConnect.SignInScheme);
++        secondTicket.Succeeded.ShouldBeTrue();
++        second.User = secondTicket.Principal!;
++        FrontComposerTokenSession firstSession = FrontComposerTokenSession.Resolve(first.User, options.Value)!;
++        FrontComposerTokenSession secondSession = FrontComposerTokenSession.Resolve(second.User, options.Value)!;
++        firstSession.SessionId.ShouldNotBe(secondSession.SessionId);
++        FrontComposerAccessTokenProvider tokens = new(new HttpContextAccessor { HttpContext = first },
++            new CircuitServicesAccessor(), store, options,
++            Microsoft.Extensions.Logging.Abstractions.NullLogger<FrontComposerAccessTokenProvider>.Instance);
++        Func<CancellationToken, ValueTask<string?>> captured = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken))!;
++        ((await captured(TestContext.Current.CancellationToken)) == "first-token").ShouldBeTrue();
++        RouteEndpoint logout = BuildEndpoint(provider, options.Value.Redirect.LogoutPath);
++        await logout.RequestDelegate!(first);
++        first.Response.Headers.SetCookie.ToString().ShouldContain("expires=");
++        (await captured(TestContext.Current.CancellationToken)).ShouldBeNull();
++        store.TryGet(firstSession, out _).ShouldBeFalse();
++        store.TryGet(secondSession, out string retained).ShouldBeTrue();
++        (retained == "second-token").ShouldBeTrue();
+     }
+ 
+     [Fact]
+     public async Task SignOutEndpoint_RemovesStoredTokenForCurrentUser() {
+         FrontComposerUserTokenStore store = new();
+         const string token = "sign-out-token";
+-        store.Set("user-1", token, DateTimeOffset.UtcNow.AddMinutes(5));
++        FrontComposerTokenSession sibling = new("session-2", "user-1", "other");
++        store.Set(sibling, "sibling-token", DateTimeOffset.UtcNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), token, DateTimeOffset.UtcNow.AddMinutes(5));
+         RecordingAuthenticationService auth = new();
+         await using ServiceProvider provider = BuildEndpointProvider(store, auth, userClaimType: "email");
+         RouteEndpoint endpoint = BuildEndpoint(provider, "/authentication/sign-out");
+@@ -201,12 +340,27 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+             RequestServices = provider,
+             User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity([
+                 new System.Security.Claims.Claim("sub", "user-1"),
++                new System.Security.Claims.Claim(FrontComposerTokenSession.ClaimType, "session-1"),
++                new System.Security.Claims.Claim("tenant_id", "acme"),
+             ], "Test")),
+         };
+ 
++        FrontComposerAccessTokenProvider tokenProvider = new(
++            new HttpContextAccessor { HttpContext = context }, new CircuitServicesAccessor(), store,
++            provider.GetRequiredService<IOptions<FrontComposerAuthenticationOptions>>(),
++            Microsoft.Extensions.Logging.Abstractions.NullLogger<FrontComposerAccessTokenProvider>.Instance);
++        Func<CancellationToken, ValueTask<string?>> captured = (await tokenProvider.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken))!;
++        ((await captured(TestContext.Current.CancellationToken)) == token).ShouldBeTrue();
++
++        context.User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(context.User.Claims, "Test"));
++        System.Security.Claims.ClaimsIdentity changed = (System.Security.Claims.ClaimsIdentity)context.User.Identity!;
++        changed.RemoveClaim(changed.FindFirst("tenant_id")!);
++        changed.AddClaim(new("tenant_id", "changed-tenant"));
+         await endpoint.RequestDelegate!(context);
+ 
+-        store.TryGet("user-1", out _).ShouldBeFalse();
++        (await captured(TestContext.Current.CancellationToken)).ShouldBeNull();
++        store.TryGet(sibling, out _).ShouldBeTrue();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out _).ShouldBeFalse();
+         auth.SignOutCount.ShouldBe(1);
+     }
+ 
+@@ -214,7 +368,7 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+     public async Task SignOutEndpoint_RemovesStoredTokenByStableSubject_WhenUserAliasDiffers() {
+         FrontComposerUserTokenStore store = new();
+         const string token = "subject-token";
+-        store.Set("subject-1", token, DateTimeOffset.UtcNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "subject-1", "acme"), token, DateTimeOffset.UtcNow.AddMinutes(5));
+         RecordingAuthenticationService auth = new();
+         await using ServiceProvider provider = BuildEndpointProvider(store, auth);
+         RouteEndpoint endpoint = BuildEndpoint(provider, "/authentication/sign-out");
+@@ -223,12 +377,14 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+             User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity([
+                 new System.Security.Claims.Claim("email", "alice@example.test"),
+                 new System.Security.Claims.Claim("sub", "subject-1"),
++                new System.Security.Claims.Claim(FrontComposerTokenSession.ClaimType, "session-1"),
++                new System.Security.Claims.Claim("tenant_id", "acme"),
+             ], "Test")),
+         };
+ 
+         await endpoint.RequestDelegate!(context);
+ 
+-        store.TryGet("subject-1", out _).ShouldBeFalse();
++        store.TryGet(new FrontComposerTokenSession("session-1", "subject-1", "acme"), out _).ShouldBeFalse();
+         auth.SignOutCount.ShouldBe(1);
+     }
+ 
+@@ -261,7 +417,9 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+     public async Task SignOutEndpoint_KeepsStoredToken_WhenSignOutFails() {
+         FrontComposerUserTokenStore store = new();
+         const string token = "sign-out-token";
+-        store.Set("user-1", token, DateTimeOffset.UtcNow.AddMinutes(5));
++        FrontComposerTokenSession sibling = new("session-2", "user-1", "other");
++        store.Set(sibling, "sibling-token", DateTimeOffset.UtcNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), token, DateTimeOffset.UtcNow.AddMinutes(5));
+         RecordingAuthenticationService auth = new() { ThrowOnSignOut = true };
+         await using ServiceProvider provider = BuildEndpointProvider(store, auth);
+         RouteEndpoint endpoint = BuildEndpoint(provider, "/authentication/sign-out");
+@@ -269,12 +427,14 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+             RequestServices = provider,
+             User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity([
+                 new System.Security.Claims.Claim("sub", "user-1"),
++                new System.Security.Claims.Claim(FrontComposerTokenSession.ClaimType, "session-1"),
++                new System.Security.Claims.Claim("tenant_id", "acme"),
+             ], "Test")),
+         };
+ 
+         _ = await Should.ThrowAsync<InvalidOperationException>(() => endpoint.RequestDelegate!(context));
+ 
+-        store.TryGet("user-1", out string stored).ShouldBeTrue();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out string stored).ShouldBeTrue();
+         (stored == token).ShouldBeTrue("token eviction should happen only after the sign-out operation succeeds");
+         auth.SignOutCount.ShouldBe(1);
+     }
+@@ -327,7 +487,7 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+         return oidc;
+     }
+ 
+-    private static TokenValidatedContext BuildTokenValidatedContext(
++    private static TicketReceivedContext BuildTicketReceivedContext(
+         IServiceProvider provider,
+         OpenIdConnectOptions oidc,
+         string userId,
+@@ -340,13 +500,18 @@ public sealed class FrontComposerAuthenticationServiceExtensionsTests {
+             typeof(Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectHandler));
+         System.Security.Claims.ClaimsPrincipal principal = new(new System.Security.Claims.ClaimsIdentity([
+             new System.Security.Claims.Claim("sub", userId),
++            new System.Security.Claims.Claim("eventstore:current-tenant", "acme"),
+         ], "Test"));
+-        TokenValidatedContext validated = new(context, scheme, oidc, principal, new AuthenticationProperties()) {
+-            TokenEndpointResponse = new OpenIdConnectMessage {
+-                AccessToken = accessToken,
+-                ExpiresIn = expiresIn,
+-            },
+-        };
++        AuthenticationProperties properties = new();
++        List<AuthenticationToken> tokens = [new() { Name = "access_token", Value = accessToken }];
++        if (int.TryParse(expiresIn, out int seconds))
++        {
++            DateTimeOffset now = provider.GetRequiredService<TimeProvider>().GetUtcNow();
++            tokens.Add(new() { Name = "expires_at", Value = now.AddSeconds(seconds).ToString("O", System.Globalization.CultureInfo.InvariantCulture) });
++        }
++        properties.StoreTokens(tokens);
++        TicketReceivedContext validated = new(context, scheme, oidc,
++            new AuthenticationTicket(principal, properties, scheme.Name));
+         return validated;
+     }
+ 
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs
+index 4237b2b9..c01b6ce7 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs
+@@ -50,14 +50,15 @@ public sealed class FrontComposerServerSecurityServiceExtensionsTests {
+     public async Task GatewayAuthorizationHandler_AttachesBearerForAuthenticatedUserWithStoredToken() {
+         FrontComposerUserTokenStore store = new();
+         const string token = "access-token-1";
+-        store.Set("user-1", token, DateTimeOffset.UtcNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), token, DateTimeOffset.UtcNow.AddMinutes(5));
+         HttpContextAccessor httpContextAccessor = new() {
+             HttpContext = new DefaultHttpContext {
+-                User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1")], "test")),
++                User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1"), new Claim(FrontComposerTokenSession.ClaimType, "session-1"), new Claim("tenant_id", "acme")], "test")),
+             },
+         };
+         CapturingHandler inner = new();
+-        FrontComposerGatewayAuthorizationHandler handler = new(httpContextAccessor, new CircuitServicesAccessor(), store) {
++        FrontComposerGatewayAuthorizationHandler handler = new(httpContextAccessor, new CircuitServicesAccessor(), store,
++            Microsoft.Extensions.Options.Options.Create(new Hexalith.FrontComposer.Shell.Options.FrontComposerAuthenticationOptions { TenantClaimTypes = { "tenant_id" } })) {
+             InnerHandler = inner,
+         };
+         using HttpMessageInvoker invoker = new(handler);
+@@ -76,7 +77,8 @@ public sealed class FrontComposerServerSecurityServiceExtensionsTests {
+             HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) },
+         };
+         CapturingHandler inner = new();
+-        FrontComposerGatewayAuthorizationHandler handler = new(httpContextAccessor, new CircuitServicesAccessor(), store) {
++        FrontComposerGatewayAuthorizationHandler handler = new(httpContextAccessor, new CircuitServicesAccessor(), store,
++            Microsoft.Extensions.Options.Options.Create(new Hexalith.FrontComposer.Shell.Options.FrontComposerAuthenticationOptions { TenantClaimTypes = { "tenant_id" } })) {
+             InnerHandler = inner,
+         };
+         using HttpMessageInvoker invoker = new(handler);
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs
+index d458df0e..c0fde37b 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs
+@@ -436,16 +436,17 @@ public sealed class ProjectionSubscriptionServiceTests {
+     public async Task Subscribe_CapturesCircuitTokenProvider_ForSignalRReconnectAfterCircuitContextClears() {
+         DateTimeOffset now = new(2026, 7, 5, 12, 0, 0, TimeSpan.Zero);
+         FrontComposerUserTokenStore store = new(new FixedTimeProvider(now));
+-        store.Set("user-1", "stored-token", now.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), "stored-token", now.AddMinutes(5));
+         CircuitServicesAccessor circuitServices = new() {
+             Services = new ServiceCollection()
+                 .AddScoped<AuthenticationStateProvider>(_ => new StubAuthenticationStateProvider(
+-                    new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1")], "Test"))))
++                    new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1"), new Claim(FrontComposerTokenSession.ClaimType, "session-1"), new Claim("tenant_id", "acme")], "Test"))))
+                 .BuildServiceProvider(),
+         };
+         FrontComposerAuthenticationOptions authOptions = new();
+         authOptions.CustomBrokered.Enabled = true;
+         authOptions.UserClaimTypes.Add("sub");
++        authOptions.TenantClaimTypes.Add("tenant_id");
+         FrontComposerAccessTokenProvider tokenProvider = new(
+             new HttpContextAccessor(),
+             circuitServices,
+@@ -469,11 +470,14 @@ public sealed class ProjectionSubscriptionServiceTests {
+             userContextAccessor: new MutableUserContextAccessor("acme", "user-1"));
+ 
+         await sut.SubscribeAsync("orders", "acme", TestContext.Current.CancellationToken);
++        store.Set(new FrontComposerTokenSession("session-2", "user-1", "other"), "other-session-token", now.AddMinutes(5));
+         circuitServices.Services = null;
+ 
+         string? token = await connection.AccessTokenProvider!(TestContext.Current.CancellationToken);
+ 
+-        (token == "stored-token").ShouldBeTrue("SignalR reconnect token acquisition should not depend on ambient circuit services");
++        (token == "stored-token").ShouldBeTrue("SignalR reconnect must retain its original session after another sign-in");
++        store.Remove(new FrontComposerTokenSession("session-1", "user-1", "acme"));
++        _ = await Should.ThrowAsync<FrontComposerAuthenticationException>(() => connection.AccessTokenProvider!(TestContext.Current.CancellationToken).AsTask());
+     }
+ 
+     [Fact]
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/AuthRedactionStressTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/AuthRedactionStressTests.cs
+index 0883c32a..1d939e47 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/AuthRedactionStressTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/AuthRedactionStressTests.cs
+@@ -87,6 +87,7 @@ public sealed class AuthRedactionStressTests {
+         options.TokenRelay.HostAccessTokenProvider = _ => throw root;
+         options.TenantClaimTypes.Add("tenant_id");
+         options.UserClaimTypes.Add("sub");
++        options.TenantClaimTypes.Add("tenant_id");
+ 
+         CapturingLogger<FrontComposerAccessTokenProvider> logger = new();
+         FrontComposerAccessTokenProvider sut = new(
+@@ -111,16 +112,17 @@ public sealed class AuthRedactionStressTests {
+     [Fact]
+     public async Task CircuitTokenFallback_DoesNotLogJwtShapedAccessToken() {
+         FrontComposerUserTokenStore store = new(new FixedTimeProvider(new DateTimeOffset(2026, 7, 5, 12, 0, 0, TimeSpan.Zero)));
+-        store.Set("alice", JwtShaped, new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
++        store.Set(new FrontComposerTokenSession("session-1", "alice", "acme"), JwtShaped, new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
+         CircuitServicesAccessor circuitServices = new() {
+             Services = new ServiceCollection()
+                 .AddScoped<AuthenticationStateProvider>(_ => new StubAuthenticationStateProvider(
+-                    Principal(new Claim("sub", "alice"))))
++                    Principal(new Claim("sub", "alice"), new Claim(FrontComposerTokenSession.ClaimType, "session-1"), new Claim("tenant_id", "acme"))))
+                 .BuildServiceProvider(),
+         };
+         FrontComposerAuthenticationOptions options = new();
+         options.OpenIdConnect.Enabled = true;
+         options.UserClaimTypes.Add("sub");
++        options.TenantClaimTypes.Add("tenant_id");
+         CapturingLogger<FrontComposerAccessTokenProvider> logger = new();
+         FrontComposerAccessTokenProvider sut = new(
+             new HttpContextAccessor(),
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerAccessTokenProviderTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerAccessTokenProviderTests.cs
+index b6538e88..61a39a2b 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerAccessTokenProviderTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerAccessTokenProviderTests.cs
+@@ -115,11 +115,11 @@ public sealed class FrontComposerAccessTokenProviderTests {
+     [Fact]
+     public async Task GetAccessTokenAsync_ReadsCircuitTokenStore_WhenHttpContextIsAbsent_AndHostProviderUnconfigured() {
+         FrontComposerUserTokenStore store = new(new FakeTimeProvider(new DateTimeOffset(2026, 7, 5, 12, 0, 0, TimeSpan.Zero)));
+-        store.Set("user-1", "circuit-token", new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), "circuit-token", new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
+         CircuitServicesAccessor circuitServices = new() {
+             Services = new ServiceCollection()
+                 .AddScoped<AuthenticationStateProvider>(_ => new StubAuthenticationStateProvider(
+-                    new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1")], "Test"))))
++                    new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "user-1"), new Claim(FrontComposerTokenSession.ClaimType, "session-1"), new Claim("tenant_id", "acme")], "Test"))))
+                 .BuildServiceProvider(),
+         };
+         FrontComposerAccessTokenProvider sut = Build(
+@@ -130,6 +130,7 @@ public sealed class FrontComposerAccessTokenProviderTests {
+                 options.OpenIdConnect.ClientSecret = "secret";
+                 options.OpenIdConnect.Audience = "api";
+                 options.UserClaimTypes.Add("sub");
++                options.TenantClaimTypes.Add("tenant_id");
+             },
+             circuitServices: circuitServices,
+             tokenStore: store);
+@@ -140,15 +141,15 @@ public sealed class FrontComposerAccessTokenProviderTests {
+     }
+ 
+     [Fact]
+-    public async Task GetAccessTokenAsync_UsesStableSubjectKey_ForCircuitTokenStoreLookup() {
++    public async Task GetAccessTokenAsync_UsesSessionAndStableSubject_WhenDisplayAliasDiffers() {
+         FrontComposerUserTokenStore store = new(new FakeTimeProvider(new DateTimeOffset(2026, 7, 5, 12, 0, 0, TimeSpan.Zero)));
+-        store.Set("subject-1", "subject-token", new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
++        store.Set(new FrontComposerTokenSession("session-1", "subject-1", "acme"), "subject-token", new DateTimeOffset(2026, 7, 5, 12, 5, 0, TimeSpan.Zero));
+         CircuitServicesAccessor circuitServices = new() {
+             Services = new ServiceCollection()
+                 .AddScoped<AuthenticationStateProvider>(_ => new StubAuthenticationStateProvider(
+                     new ClaimsPrincipal(new ClaimsIdentity([
+                         new Claim("email", "alice@example.test"),
+-                        new Claim("sub", "subject-1"),
++                        new Claim("sub", "subject-1"), new Claim(FrontComposerTokenSession.ClaimType, "session-1"), new Claim("tenant_id", "acme"),
+                     ], "Test"))))
+                 .BuildServiceProvider(),
+         };
+@@ -160,6 +161,7 @@ public sealed class FrontComposerAccessTokenProviderTests {
+                 options.OpenIdConnect.ClientSecret = "secret";
+                 options.OpenIdConnect.Audience = "api";
+                 options.UserClaimTypes.Add("email");
++                options.TenantClaimTypes.Add("tenant_id");
+             },
+             circuitServices: circuitServices,
+             tokenStore: store);
+@@ -205,6 +207,7 @@ public sealed class FrontComposerAccessTokenProviderTests {
+         options.OpenIdConnect.Audience = "api";
+         options.TenantClaimTypes.Add("tenant_id");
+         options.UserClaimTypes.Add("sub");
++                options.TenantClaimTypes.Add("tenant_id");
+         FrontComposerAccessTokenProvider sut = new(
+             http,
+             new CircuitServicesAccessor(),
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerUserTokenStoreTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerUserTokenStoreTests.cs
+index 501b5313..7310ede9 100644
+--- a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerUserTokenStoreTests.cs
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerUserTokenStoreTests.cs
+@@ -13,9 +13,9 @@ public sealed class FrontComposerUserTokenStoreTests {
+         FakeTimeProvider time = new(FixedNow);
+         FrontComposerUserTokenStore store = new(time);
+ 
+-        store.Set("user-1", SensitiveToken, FixedNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), SensitiveToken, FixedNow.AddMinutes(5));
+ 
+-        bool found = store.TryGet("user-1", out string token);
++        bool found = store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out string token);
+ 
+         found.ShouldBeTrue();
+         (token == SensitiveToken).ShouldBeTrue("the stored value should be returned before expiry");
+@@ -25,23 +25,23 @@ public sealed class FrontComposerUserTokenStoreTests {
+     public void TryGet_EvictsExpiredToken() {
+         FakeTimeProvider time = new(FixedNow);
+         FrontComposerUserTokenStore store = new(time);
+-        store.Set("user-1", SensitiveToken, FixedNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), SensitiveToken, FixedNow.AddMinutes(5));
+ 
+         time.Advance(TimeSpan.FromMinutes(6));
+ 
+-        store.TryGet("user-1", out _).ShouldBeFalse();
+-        store.TryGet("user-1", out _).ShouldBeFalse();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out _).ShouldBeFalse();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out _).ShouldBeFalse();
+     }
+ 
+     [Fact]
+     public void Set_RejectsAlreadyExpiredToken_WithoutRemovingUnexpiredEntry() {
+         FakeTimeProvider time = new(FixedNow);
+         FrontComposerUserTokenStore store = new(time);
+-        store.Set("user-1", SensitiveToken, FixedNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), SensitiveToken, FixedNow.AddMinutes(5));
+ 
+-        store.Set("user-1", "expired-token", FixedNow.AddTicks(-1));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), "expired-token", FixedNow.AddTicks(-1));
+ 
+-        store.TryGet("user-1", out string token).ShouldBeTrue();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out string token).ShouldBeTrue();
+         (token == SensitiveToken).ShouldBeTrue("an already-expired incoming token should not evict a valid stored token");
+     }
+ 
+@@ -49,13 +49,13 @@ public sealed class FrontComposerUserTokenStoreTests {
+     public void TryGet_ExpiredCleanup_DoesNotRemoveFreshReplacementToken() {
+         FakeTimeProvider time = new(FixedNow);
+         FrontComposerUserTokenStore store = new(time);
+-        store.Set("user-1", SensitiveToken, FixedNow.AddMinutes(5));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), SensitiveToken, FixedNow.AddMinutes(5));
+         time.Advance(TimeSpan.FromMinutes(6));
+-        time.BeforeNextRead = () => store.Set("user-1", "fresh-token", FixedNow.AddMinutes(10));
++        time.BeforeNextRead = () => store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), "fresh-token", FixedNow.AddMinutes(10));
+ 
+-        store.TryGet("user-1", out _).ShouldBeFalse();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out _).ShouldBeFalse();
+ 
+-        store.TryGet("user-1", out string token).ShouldBeTrue();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out string token).ShouldBeTrue();
+         (token == "fresh-token").ShouldBeTrue("expired cleanup should remove only the stale entry it observed");
+     }
+ 
+@@ -64,12 +64,26 @@ public sealed class FrontComposerUserTokenStoreTests {
+         FakeTimeProvider time = new(FixedNow);
+         FrontComposerUserTokenStore store = new(time);
+ 
+-        store.Remove("user-1");
+-        store.Set("user-1", SensitiveToken, FixedNow.AddMinutes(5));
+-        store.Remove("user-1");
+-        store.Remove("user-1");
++        store.Remove(new FrontComposerTokenSession("session-1", "user-1", "acme"));
++        store.Set(new FrontComposerTokenSession("session-1", "user-1", "acme"), SensitiveToken, FixedNow.AddMinutes(5));
++        store.Remove(new FrontComposerTokenSession("session-1", "user-1", "acme"));
++        store.Remove(new FrontComposerTokenSession("session-1", "user-1", "acme"));
+ 
+-        store.TryGet("user-1", out _).ShouldBeFalse();
++        store.TryGet(new FrontComposerTokenSession("session-1", "user-1", "acme"), out _).ShouldBeFalse();
++    }
++
++    [Fact]
++    public void Set_PurgesExpiredAbandonedSessions_WhenAnotherSessionSignsIn()
++    {
++        FakeTimeProvider time = new(FixedNow);
++        FrontComposerUserTokenStore store = new(time);
++        store.Set(new("abandoned", "shared", "acme"), SensitiveToken, FixedNow.AddMinutes(1));
++        time.Advance(TimeSpan.FromMinutes(1));
++        store.Set(new("new-session", "shared", "acme"), "new-token", FixedNow.AddMinutes(5));
++        // Verify retention without looking up the expired key (which would itself perform cleanup).
++        object entries = typeof(FrontComposerUserTokenStore).GetField("_tokens",
++            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(store)!;
++        ((System.Collections.ICollection)entries).Count.ShouldBe(1);
+     }
+ 
+     private sealed class FakeTimeProvider(DateTimeOffset utcNow) : TimeProvider {
+diff --git a/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerTokenSession.cs b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerTokenSession.cs
+new file mode 100644
+index 00000000..b04f3064
+--- /dev/null
++++ b/src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerTokenSession.cs
+@@ -0,0 +1,69 @@
++using System.Security.Claims;
++
++using Hexalith.FrontComposer.Shell.Options;
++
++using Microsoft.AspNetCore.Components.Authorization;
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.DependencyInjection;
++
++namespace Hexalith.FrontComposer.Shell.Services.Auth;
++
++/// <summary>Identifies one authenticated sign-in and its credential authority.</summary>
++/// <param name="SessionId">The opaque, server-generated sign-in identifier.</param>
++/// <param name="UserId">The authenticated stable subject.</param>
++/// <param name="TenantId">The validated current Tenant.</param>
++public sealed record FrontComposerTokenSession(string SessionId, string UserId, string TenantId)
++{
++    /// <summary>The local claim persisted in the protected authentication ticket.</summary>
++    public const string ClaimType = "hexalith:frontcomposer:token-session";
++
++    /// <summary>Resolves the exact session binding, rejecting ambiguous or absent authority.</summary>
++    internal static FrontComposerTokenSession? Resolve(ClaimsPrincipal? principal, FrontComposerAuthenticationOptions options)
++    {
++        string? sessionId = ResolveSessionId(principal);
++        if (sessionId is null)
++        {
++            return null;
++        }
++
++        string? tenant = FrontComposerClaimExtractor.ExtractTenant(principal, [.. options.TenantClaimTypes]);
++        Claim[] subjects = principal!.Claims.Where(c => c.Type is "sub" or ClaimTypes.NameIdentifier).ToArray();
++        string? subject;
++        if (subjects.Length == 0)
++        {
++            subject = FrontComposerClaimExtractor.Extract(principal, [.. options.TenantClaimTypes], [.. options.UserClaimTypes]).UserId;
++        }
++        else
++        {
++            // OIDC subjects are opaque strings, not application identifier segments. Preserve colons.
++            subject = subjects[0].Value;
++            if (string.IsNullOrWhiteSpace(subject) || subjects.GroupBy(c => c.Type).Any(group => group.Count() != 1)
++                || subjects.Any(c => !string.Equals(c.Value, subject, StringComparison.Ordinal)))
++            {
++                return null;
++            }
++        }
++
++        return tenant is not null && subject is not null ? new(sessionId, subject, tenant) : null;
++    }
++
++    /// <summary>Reads the sign-in identifier independently of mutable Tenant/user claims for revocation.</summary>
++    internal static string? ResolveSessionId(ClaimsPrincipal? principal)
++    {
++        Claim[] sessions = principal?.FindAll(ClaimType).ToArray() ?? [];
++        return principal?.Identity?.IsAuthenticated == true && sessions.Length == 1
++            && !string.IsNullOrWhiteSpace(sessions[0].Value) ? sessions[0].Value : null;
++    }
++
++    /// <summary>Prefers the active circuit over a potentially stale request context.</summary>
++    internal static async Task<ClaimsPrincipal?> ReadPrincipalAsync(
++        IHttpContextAccessor httpContextAccessor, CircuitServicesAccessor circuitServicesAccessor)
++    {
++        if (circuitServicesAccessor.Services?.GetService<AuthenticationStateProvider>() is { } provider)
++        {
++            return (await provider.GetAuthenticationStateAsync().ConfigureAwait(false)).User;
++        }
++
++        return httpContextAccessor.HttpContext?.User;
++    }
++}
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/CredentialEchoHandler.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/CredentialEchoHandler.cs
+new file mode 100644
+index 00000000..4e7f1ed9
+--- /dev/null
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/CredentialEchoHandler.cs
+@@ -0,0 +1,12 @@
++using System.Net;
++
++namespace Hexalith.FrontComposer.Shell.Tests.Services.Auth;
++
++internal sealed class CredentialEchoHandler : HttpMessageHandler
++{
++    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
++        => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
++        {
++            Content = new StringContent(request.Headers.Authorization?.Parameter ?? string.Empty),
++        });
++}
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerCredentialIsolationTests.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerCredentialIsolationTests.cs
+new file mode 100644
+index 00000000..d8f86c1f
+--- /dev/null
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerCredentialIsolationTests.cs
+@@ -0,0 +1,203 @@
++using System.Security.Claims;
++
++using Hexalith.FrontComposer.Contracts.Diagnostics;
++using Hexalith.FrontComposer.Shell.Options;
++using Hexalith.FrontComposer.Shell.Services.Auth;
++
++using Microsoft.AspNetCore.Components.Authorization;
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Logging.Abstractions;
++using Microsoft.Extensions.Options;
++using Microsoft.Extensions.Time.Testing;
++
++using Shouldly;
++
++namespace Hexalith.FrontComposer.Shell.Tests.Services.Auth;
++
++public sealed class FrontComposerCredentialIsolationTests
++{
++    [Theory]
++    [InlineData("shared", "tenant-b")]
++    [InlineData("shared", "tenant-a")]
++    [InlineData("other", "tenant-b")]
++    public async Task ConcurrentCircuits_RelayOnlyTheirSessionCredential(string secondSubject, string secondTenant)
++    {
++        FakeTimeProvider time = new();
++        FrontComposerUserTokenStore store = new(time);
++        FrontComposerTokenSession a = new("session-a", "shared", "tenant-a");
++        FrontComposerTokenSession b = new("session-b", secondSubject, secondTenant);
++        store.Set(a, "token-a", time.GetUtcNow().AddMinutes(5));
++        store.Set(b, "token-b", time.GetUtcNow().AddMinutes(5));
++        CircuitServicesAccessor circuits = new();
++        // A stale request from B must not override the active A circuit.
++        HttpContextAccessor http = new() { HttpContext = new DefaultHttpContext { User = Principal(b) } };
++        IOptions<FrontComposerAuthenticationOptions> options = Options();
++        FrontComposerAccessTokenProvider tokens = Provider(http, circuits, store, options);
++        using HttpMessageInvoker gateway = Gateway(http, circuits, store, options);
++        async Task verify(FrontComposerTokenSession session, string expected)
++        {
++            using ServiceProvider services = Services(Principal(session));
++            circuits.Services = services;
++            await Task.Yield();
++            ServerCircuitUserContextAccessor userContext = new(http, circuits, options,
++                NullLogger<ServerCircuitUserContextAccessor>.Instance);
++            userContext.TenantId.ShouldBe(session.TenantId);
++            userContext.UserId.ShouldBe(session.UserId);
++            Func<CancellationToken, ValueTask<string?>> captured = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))!;
++            for (int i = 0; i < 10; i++)
++            {
++                using HttpRequestMessage request = new(HttpMethod.Get, "https://gateway.invalid/query");
++                using HttpResponseMessage response = await gateway.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
++                ((await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)) == expected).ShouldBeTrue();
++                ((await tokens.GetAccessTokenAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)) == expected).ShouldBeTrue();
++                await Task.Yield();
++            }
++            circuits.Services = null;
++            ((await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)) == expected).ShouldBeTrue();
++        }
++        await Task.WhenAll(verify(a, "token-a"), verify(b, "token-b"));
++    }
++
++    [Theory]
++    [InlineData("missing-session")]
++    [InlineData("unknown-session")]
++    [InlineData("other-tenant")]
++    [InlineData("other-user")]
++    [InlineData("anonymous")]
++    [InlineData("duplicate-tenant")]
++    [InlineData("conflicting-tenant")]
++    [InlineData("missing-tenant")]
++    [InlineData("duplicate-session")]
++    [InlineData("duplicate-subject")]
++    public async Task InvalidBinding_CannotRecoverAnExistingCredential(string scenario)
++    {
++        FrontComposerTokenSession session = new("session-a", "shared", "tenant-a");
++        FrontComposerUserTokenStore store = new();
++        store.Set(session, "token-a", DateTimeOffset.UtcNow.AddMinutes(5));
++        ClaimsPrincipal user = Principal(session);
++        ClaimsIdentity identity = (ClaimsIdentity)user.Identity!;
++        switch (scenario)
++        {
++            case "missing-session": identity.RemoveClaim(identity.FindFirst(FrontComposerTokenSession.ClaimType)!); break;
++            case "unknown-session": user = Principal(session with { SessionId = "unknown" }); break;
++            case "other-tenant": user = Principal(session with { TenantId = "tenant-b" }); break;
++            case "other-user": user = Principal(session with { UserId = "other" }); break;
++            case "anonymous": user = new ClaimsPrincipal(new ClaimsIdentity(identity.Claims)); break;
++            case "duplicate-tenant": identity.AddClaim(new("tenant_id", "tenant-a")); break;
++            case "conflicting-tenant": identity.AddClaim(new("current_tenant", "tenant-b")); break;
++            case "missing-tenant": identity.RemoveClaim(identity.FindFirst("tenant_id")!); break;
++            case "duplicate-session": identity.AddClaim(new(FrontComposerTokenSession.ClaimType, "session-a")); break;
++            case "duplicate-subject": identity.AddClaim(new("sub", "shared")); break;
++        }
++        using ServiceProvider services = Services(user);
++        CircuitServicesAccessor circuits = new() { Services = services };
++        HttpContextAccessor http = new() { HttpContext = new DefaultHttpContext { User = Principal(session) } };
++        IOptions<FrontComposerAuthenticationOptions> options = Options();
++        using HttpMessageInvoker gateway = Gateway(http, circuits, store, options);
++        using HttpRequestMessage request = new(HttpMethod.Get, "https://gateway.invalid/query");
++        using HttpResponseMessage response = await gateway.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
++        (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeEmpty();
++        FrontComposerAccessTokenProvider tokens = Provider(http, circuits, store, options);
++        FrontComposerAuthenticationException error = await Should.ThrowAsync<FrontComposerAuthenticationException>(() => tokens.GetAccessTokenAsync(TestContext.Current.CancellationToken).AsTask());
++        error.DiagnosticId.ShouldBe(FcDiagnosticIds.HFC2013_AuthenticationTokenRelayFailed);
++        error.Message.ShouldNotContain("token-a");
++        Func<CancellationToken, ValueTask<string?>> captured = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))!;
++        circuits.Services = Services(Principal(session));
++        (await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeNull();
++        ((IDisposable)circuits.Services).Dispose();
++    }
++
++    [Fact]
++    public async Task CapturedProvider_RechecksExpiryAndRevocation_WithoutAdoptingAmbientSession()
++    {
++        FakeTimeProvider time = new();
++        FrontComposerUserTokenStore store = new(time);
++        FrontComposerTokenSession a = new("session-a", "shared", "tenant-a");
++        FrontComposerTokenSession b = new("session-b", "shared", "tenant-b");
++        store.Set(a, "token-a", time.GetUtcNow().AddMinutes(1));
++        store.Set(b, "token-b", time.GetUtcNow().AddMinutes(5));
++        using ServiceProvider servicesA = Services(Principal(a));
++        using ServiceProvider servicesB = Services(Principal(b));
++        CircuitServicesAccessor circuits = new() { Services = servicesA };
++        HttpContextAccessor http = new();
++        FrontComposerAccessTokenProvider tokens = Provider(http, circuits, store, Options());
++        Func<CancellationToken, ValueTask<string?>> captured = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))!;
++        circuits.Services = servicesB;
++        ((await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)) == "token-a").ShouldBeTrue();
++        time.Advance(TimeSpan.FromMinutes(1));
++        (await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeNull();
++        circuits.Services = servicesA;
++        _ = await Should.ThrowAsync<FrontComposerAuthenticationException>(() => tokens.GetAccessTokenAsync(TestContext.Current.CancellationToken).AsTask());
++        using HttpMessageInvoker gateway = Gateway(http, circuits, store, Options());
++        using HttpRequestMessage request = new(HttpMethod.Get, "https://gateway.invalid/query");
++        using HttpResponseMessage response = await gateway.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
++        (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeEmpty();
++        circuits.Services = servicesB;
++        ((await tokens.GetAccessTokenAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)) == "token-b").ShouldBeTrue();
++        Func<CancellationToken, ValueTask<string?>> capturedB = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))!;
++        store.Remove(b);
++        (await capturedB(TestContext.Current.CancellationToken)).ShouldBeNull();
++    }
++
++    [Fact]
++    public async Task CapturedProvider_RejectsLaterTenantOrAuthenticationStateChanges()
++    {
++        FrontComposerTokenSession a = new("session-a", "shared", "tenant-a");
++        FrontComposerUserTokenStore store = new();
++        store.Set(a, "token-a", DateTimeOffset.UtcNow.AddMinutes(5));
++        using ServiceProvider services = Services(Principal(a));
++        MutableCircuitAuthenticationStateProvider state = (MutableCircuitAuthenticationStateProvider)services.GetRequiredService<AuthenticationStateProvider>();
++        CircuitServicesAccessor circuits = new() { Services = services };
++        FrontComposerAccessTokenProvider tokens = Provider(new HttpContextAccessor(), circuits, store, Options());
++        Func<CancellationToken, ValueTask<string?>> captured = (await tokens.CaptureCurrentUserAccessTokenProviderAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))!;
++        state.Principal = Principal(a with { TenantId = "tenant-b" });
++        (await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeNull();
++        state.Principal = new ClaimsPrincipal(new ClaimsIdentity());
++        (await captured(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldBeNull();
++    }
++
++    [Fact]
++    public async Task OpaqueSubject_WithColon_RemainsSeparateFromApplicationUserAlias()
++    {
++        FrontComposerTokenSession session = new("opaque-session", "issuer:user", "tenant-a");
++        FrontComposerUserTokenStore store = new();
++        store.Set(session, "opaque-token", DateTimeOffset.UtcNow.AddMinutes(5));
++        ClaimsPrincipal principal = Principal(session);
++        ((ClaimsIdentity)principal.Identity!).AddClaim(new("email", "alice@example.test"));
++        IOptions<FrontComposerAuthenticationOptions> options = Options();
++        options.Value.UserClaimTypes.Clear();
++        options.Value.UserClaimTypes.Add("email");
++        using ServiceProvider services = Services(principal);
++        CircuitServicesAccessor circuits = new() { Services = services };
++        HttpContextAccessor http = new();
++        FrontComposerAccessTokenProvider provider = Provider(http, circuits, store, options);
++        ((await provider.GetAccessTokenAsync(TestContext.Current.CancellationToken)) == "opaque-token").ShouldBeTrue();
++        ServerCircuitUserContextAccessor userContext = new(http, circuits, options,
++            NullLogger<ServerCircuitUserContextAccessor>.Instance);
++        userContext.UserId.ShouldBe("alice@example.test");
++        userContext.TenantId.ShouldBe("tenant-a");
++    }
++
++    private static ClaimsPrincipal Principal(FrontComposerTokenSession session) => new(new ClaimsIdentity([
++        new Claim("sub", session.UserId), new Claim("tenant_id", session.TenantId),
++        new Claim(FrontComposerTokenSession.ClaimType, session.SessionId)], "Test"));
++
++    private static ServiceProvider Services(ClaimsPrincipal principal) => new ServiceCollection()
++        .AddSingleton<AuthenticationStateProvider>(new MutableCircuitAuthenticationStateProvider(principal)).BuildServiceProvider();
++
++    private static IOptions<FrontComposerAuthenticationOptions> Options() => Microsoft.Extensions.Options.Options.Create(
++        new FrontComposerAuthenticationOptions
++        {
++            TenantClaimTypes = { "tenant_id", "current_tenant" }, UserClaimTypes = { "sub" },
++            TokenRelay = { CircuitTokenSourceEnabled = true },
++        });
++
++    private static FrontComposerAccessTokenProvider Provider(HttpContextAccessor http, CircuitServicesAccessor circuits,
++        FrontComposerUserTokenStore store, IOptions<FrontComposerAuthenticationOptions> options)
++        => new(http, circuits, store, options, NullLogger<FrontComposerAccessTokenProvider>.Instance);
++
++    private static HttpMessageInvoker Gateway(HttpContextAccessor http, CircuitServicesAccessor circuits,
++        FrontComposerUserTokenStore store, IOptions<FrontComposerAuthenticationOptions> options)
++        => new(new FrontComposerGatewayAuthorizationHandler(http, circuits, store, options) { InnerHandler = new CredentialEchoHandler() });
++}
+diff --git a/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/MutableCircuitAuthenticationStateProvider.cs b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/MutableCircuitAuthenticationStateProvider.cs
+new file mode 100644
+index 00000000..94be6397
+--- /dev/null
++++ b/tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/MutableCircuitAuthenticationStateProvider.cs
+@@ -0,0 +1,12 @@
++using System.Security.Claims;
++
++using Microsoft.AspNetCore.Components.Authorization;
++
++namespace Hexalith.FrontComposer.Shell.Tests.Services.Auth;
++
++internal sealed class MutableCircuitAuthenticationStateProvider(ClaimsPrincipal principal) : AuthenticationStateProvider
++{
++    public ClaimsPrincipal Principal { get; set; } = principal;
++
++    public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(Principal));
++}

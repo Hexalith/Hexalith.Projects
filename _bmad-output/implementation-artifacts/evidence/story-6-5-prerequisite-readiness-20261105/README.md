@@ -1,8 +1,10 @@
 # Story 6.5 prerequisite readiness — 2026-11-05
 
-**Result: blocked by FrontComposer session credential isolation.** DW-1 remains open. Story 6.1 is accepted; its absence is no longer the blocker. No Story 6.5 implementation session was dispatched.
+**Current result (2026-11-06): ready for a separate Story 6.5 implementation request in the verified source checkout. DW-1 remains closed for the unchanged owner repair.** The authorized synthetic-fixture migration builds and passes 12/12 authentication composition cases; the spec is refreshed against delivered contracts. [Final readiness, exact commands, native XML and source references](readiness-final/README.md). Spec approval/dispatch and sprint status are unchanged; no Story 6.5 implementation was performed.
 
-## Source and accepted inputs
+**Initial result (historical, before the repair below): blocked by FrontComposer session credential isolation.** DW-1 remained open. Story 6.1 was accepted; its absence was no longer the blocker. The following original reproduction and limitations are preserved.
+
+## Source and accepted inputs (initial assessment)
 
 Projects is clean at `fb538a23201b419d1329d06faf2cd2b290ff8991` before this documentation/evidence update. FrontComposer is clean at `4c24c287cde520631e960a322413bee804f7c3d4`. Its locally known `origin/main` contains four further commits; none changes the authentication sources under investigation. No fetch, dependency update, branch change, staging, commit or push was performed. SDK: `10.0.403`. Exact linked source hashes are in [source-inputs.json](source-inputs.json).
 
@@ -51,3 +53,21 @@ This proves cross-session credential substitution at the relay boundary. It does
 FrontComposer must provide credentials bound to the authenticated session/circuit and current Tenant, covering same-subject concurrent sessions, distinct users, missing/expired credentials, sign-out and the captured provider. Reuse its existing authentication/relay tests, including `FrontComposerAccessTokenProviderTests` and `FrontComposerServerSecurityServiceExtensionsTests`; extend them for the failing isolation case. A Projects-owned token store/provider would duplicate platform authentication plumbing and is outside the approved story boundary. No sibling-module edits were authorized by this 6.5 dispatch.
 
 After that owner repair is available and focused tests prove the seam, record its accepting revision/tests in DW-1 and the 6.5 prerequisites, close DW-1, and finish Build planning/readiness before dispatch. The eventual adapter plan must use actual `src/Hexalith.Projects.UI/Diagnostics/` paths (the old `Services/` map is stale), SDK `IEventStoreGatewayClient.SubmitQueryAsync<T>` and the delivered response DTOs. List enumeration and each row have separate snapshots; open/context/start are separate supported results and must not be merged into invented coherence. Advisory results have their own evaluation/incomplete fields, no AD-32 context admission authority. Existing audit/maintenance and legacy detail fan-out must not become the supported path.
+
+## Verified owner repair and current readiness — 2026-11-05
+
+The explicitly authorized FrontComposer repair supersedes the initial credential blocker above. The owner Debug/source suite passes 114/114 with no failures/errors/skips, including concurrent same-subject sessions across and within Tenants, distinct users, missing/expired authority, protected-cookie round trips, sign-out and captured SignalR reconnect providers. Projects UI source also builds with zero warnings/errors under the correct Platform-selected Projects source mapping. Exact source baseline plus uncommitted repair, commands, native XML, seven resolved review findings and limits are retained in [repair/README.md](repair/README.md).
+
+DW-1 closes for that verified checkout; the unchanged FrontComposer base/gitlink alone is not repaired and no clean repaired commit is claimed. Story 6.5 stays blocked: its stale adapter map and combined-snapshot assumptions require planning correction, and its old subject-only authentication test fixture fails compilation until the prepared scope-limited migration is authorized/applied. No 6.5 implementation or sprint-status edit occurred. The parent failing harness and all original receipts remain historical and unchanged.
+
+
+## Completed consumer/spec readiness — 2026-11-06
+
+The final readiness result supersedes the earlier planning/fixture blockers while preserving their historical receipts. The retained fixture proposal was applied exactly; the existing UI test project now builds in Debug/source mode with the established Platform-selected Projects mapping, with zero warnings/errors. Its built xUnit assembly passes all 12 authentication composition cases, with zero failures/errors/skips/not-run. All 17 owner repair source/test files, owner patch and prior tested owner assemblies retain their verified hashes; DW-1 is not reopened.
+
+The refreshed spec uses actual Diagnostics adapters and existing authentication, the SDK query client and delivered contracts. List/page, row, open, context and Conversation-start authority remain separate; advisory evaluation/incompleteness never supplies admission. [Final packet](readiness-final/README.md) distinguishes readiness from future browser, supported-handler, independent-admission, persisted no-domain-write and accessibility acceptance. The spec is a complete draft for a separate approval/implementation request, and the blocked sprint entry remains untouched. No runtime feature work, sibling source edit, commit, push, branch or dependency update occurred.
+
+
+## Subsequent publication — 2026-11-06
+
+The later user request to push all changes authorized publication of this completed work. FrontComposer repair is now committed and pushed as `f577f958ed1c043eec7feabc4885f59d48428818`; fresh owner 114/114 and Projects authentication composition 12/12 checks pass, with clean Debug/source builds. Earlier uncommitted-checkout statements remain historical. See [the publication record](publication/README.md). DW-1 remains done; no Story 6.5 implementation or sprint-status edit occurred.

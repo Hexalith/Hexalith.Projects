@@ -1,0 +1,16 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.FrontComposer.Shell.Tests
+  Discovered:  Hexalith.FrontComposer.Shell.Tests
+  Starting:    Hexalith.FrontComposer.Shell.Tests
+    Hexalith.FrontComposer.Shell.Tests.Infrastructure.EventStore.ProjectionSubscriptionServiceTests.Subscribe_CapturesCircuitTokenProvider_ForSignalRReconnectAfterCircuitContextClears [FAIL]
+      Hexalith.FrontComposer.Shell.Services.Auth.FrontComposerAuthenticationException : HFC2013: EventStore access token provider returned an empty token.
+      Stack Trace:
+        src/Hexalith.FrontComposer.Shell/Infrastructure/EventStore/EventStoreAccessTokenGuard.cs(20,0): at Hexalith.FrontComposer.Shell.Infrastructure.EventStore.EventStoreAccessTokenGuard.GetRequiredTokenAsync(Func`2 provider, Boolean requireAccessToken, CancellationToken cancellationToken)
+        src/Hexalith.FrontComposer.Shell/Infrastructure/EventStore/ProjectionSubscriptionService.cs(831,0): at Hexalith.FrontComposer.Shell.Infrastructure.EventStore.ProjectionSubscriptionService.GetConnectionAccessTokenAsync(CancellationToken cancellationToken)
+        tests/Hexalith.FrontComposer.Shell.Tests/Infrastructure/EventStore/ProjectionSubscriptionServiceTests.cs(480,0): at Hexalith.FrontComposer.Shell.Tests.Infrastructure.EventStore.ProjectionSubscriptionServiceTests.Subscribe_CapturesCircuitTokenProvider_ForSignalRReconnectAfterCircuitContextClears()
+        --- End of stack trace from previous location ---
+  Finished:    Hexalith.FrontComposer.Shell.Tests (ID = 'a4a713cfa244db5b8d97ac953b3232463d299f4b4d97b8bcbfa9cfcacf943618')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.FrontComposer.Shell.Tests  Total: 101, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.320s

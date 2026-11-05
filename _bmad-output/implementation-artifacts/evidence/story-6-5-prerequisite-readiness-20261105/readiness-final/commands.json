@@ -1,0 +1,217 @@
+[
+  {
+    "name": "prerequisite-authority-before",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.5"
+    ],
+    "started_utc": "2026-11-05T23:00:11.101185+00:00",
+    "ended_utc": "2026-11-05T23:00:11.162874+00:00",
+    "exit_code": 0,
+    "stdout": "prerequisite-authority-before.stdout",
+    "stderr": "prerequisite-authority-before.stderr"
+  },
+  {
+    "name": "fixture-patch-check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/projects-test-fixture-proposal.patch"
+    ],
+    "started_utc": "2026-11-05T23:00:11.180793+00:00",
+    "ended_utc": "2026-11-05T23:00:11.182419+00:00",
+    "exit_code": 0,
+    "stdout": "fixture-patch-check.stdout",
+    "stderr": "fixture-patch-check.stderr"
+  },
+  {
+    "name": "fixture-patch-apply",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "apply",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/projects-test-fixture-proposal.patch"
+    ],
+    "started_utc": "2026-11-05T23:00:17.622803+00:00",
+    "ended_utc": "2026-11-05T23:00:17.625441+00:00",
+    "exit_code": 0,
+    "stdout": "fixture-patch-apply.stdout",
+    "stderr": "fixture-patch-apply.stderr"
+  },
+  {
+    "name": "projects-ui-tests-build",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "env",
+      "AfterMicrosoftNETSdkTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+      "Configuration=Debug",
+      "CustomAfterDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+      "CustomAfterMicrosoftCommonProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+      "CustomBeforeDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+      "HEXALITH_SOURCE_MAPPING_HASH=18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+      "MSBUILDDISABLENODEREUSE=1",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "started_utc": "2026-11-05T23:00:17.655302+00:00",
+    "ended_utc": "2026-11-05T23:00:24.688428+00:00",
+    "exit_code": 0,
+    "stdout": "projects-ui-tests-build.stdout",
+    "stderr": "projects-ui-tests-build.stderr"
+  },
+  {
+    "name": "projects-auth-composition",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll",
+      "-class",
+      "*ProjectsUiAuthenticationCompositionTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/readiness-final/projects-auth-composition.xml"
+    ],
+    "started_utc": "2026-11-05T23:00:48.456881+00:00",
+    "ended_utc": "2026-11-05T23:00:48.802661+00:00",
+    "exit_code": 0,
+    "stdout": "projects-auth-composition.stdout",
+    "stderr": "projects-auth-composition.stderr"
+  },
+  {
+    "name": "source-inputs",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/readiness-final/verify-inputs.py"
+    ],
+    "started_utc": "2026-11-05T23:02:01.728398+00:00",
+    "ended_utc": "2026-11-05T23:02:02.395488+00:00",
+    "exit_code": 0,
+    "stdout": "source-inputs.stdout",
+    "stderr": "source-inputs.stderr"
+  },
+  {
+    "name": "fixture-patch-reverse-check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "apply",
+      "--reverse",
+      "--check",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/projects-test-fixture-proposal.patch"
+    ],
+    "started_utc": "2026-11-05T23:02:02.413657+00:00",
+    "ended_utc": "2026-11-05T23:02:02.415994+00:00",
+    "exit_code": 0,
+    "stdout": "fixture-patch-reverse-check.stdout",
+    "stderr": "fixture-patch-reverse-check.stderr"
+  },
+  {
+    "name": "sdk-version",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "--version"
+    ],
+    "started_utc": "2026-11-05T23:05:58.527504+00:00",
+    "ended_utc": "2026-11-05T23:05:58.624418+00:00",
+    "exit_code": 0,
+    "stdout": "sdk-version.stdout",
+    "stderr": "sdk-version.stderr"
+  },
+  {
+    "name": "prerequisite-authority-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.5"
+    ],
+    "started_utc": "2026-11-05T23:05:58.643259+00:00",
+    "ended_utc": "2026-11-05T23:05:58.704914+00:00",
+    "exit_code": 0,
+    "stdout": "prerequisite-authority-final.stdout",
+    "stderr": "prerequisite-authority-final.stderr"
+  },
+  {
+    "name": "prerequisite-index-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "started_utc": "2026-11-05T23:05:58.722959+00:00",
+    "ended_utc": "2026-11-05T23:05:58.784856+00:00",
+    "exit_code": 0,
+    "stdout": "prerequisite-index-final.stdout",
+    "stderr": "prerequisite-index-final.stderr"
+  },
+  {
+    "name": "source-inputs-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/readiness-final/verify-inputs.py"
+    ],
+    "started_utc": "2026-11-05T23:05:58.803661+00:00",
+    "ended_utc": "2026-11-05T23:05:59.450700+00:00",
+    "exit_code": 0,
+    "stdout": "source-inputs-final.stdout",
+    "stderr": "source-inputs-final.stderr"
+  },
+  {
+    "name": "projects-diff-check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "started_utc": "2026-11-05T23:06:49.018164+00:00",
+    "ended_utc": "2026-11-05T23:06:49.094895+00:00",
+    "exit_code": 0,
+    "stdout": "projects-diff-check.stdout",
+    "stderr": "projects-diff-check.stderr"
+  },
+  {
+    "name": "final-validation",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/readiness-final/verify-readiness.py"
+    ],
+    "started_utc": "2026-11-05T23:06:49.112738+00:00",
+    "ended_utc": "2026-11-05T23:06:49.212604+00:00",
+    "exit_code": 0,
+    "stdout": "final-validation.stdout",
+    "stderr": "final-validation.stderr"
+  },
+  {
+    "name": "spec-token-count",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "/home/administrator/.cache/uv/archive-v0/IIL5IbwUYPsgnCwR/bin/python",
+      "-c",
+      "from pathlib import Path; import tiktoken; p=Path(\"_bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md\"); n=len(tiktoken.get_encoding(\"o200k_base\").encode(p.read_text())); print(\"o200k_base tokens:\", n); assert 900 <= n <= 1600"
+    ],
+    "started_utc": "2026-11-05T23:06:49.231120+00:00",
+    "ended_utc": "2026-11-05T23:06:49.436081+00:00",
+    "exit_code": 0,
+    "stdout": "spec-token-count.stdout",
+    "stderr": "spec-token-count.stderr"
+  }
+]

@@ -1,0 +1,6 @@
+[main f577f958] fix(auth): isolate relayed credentials by sign-in session and tenant
+ 17 files changed, 692 insertions(+), 230 deletions(-)
+ create mode 100644 src/Hexalith.FrontComposer.Shell/Services/Auth/FrontComposerTokenSession.cs
+ create mode 100644 tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/CredentialEchoHandler.cs
+ create mode 100644 tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/FrontComposerCredentialIsolationTests.cs
+ create mode 100644 tests/Hexalith.FrontComposer.Shell.Tests/Services/Auth/MutableCircuitAuthenticationStateProvider.cs

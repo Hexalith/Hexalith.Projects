@@ -1,0 +1,26 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.FrontComposer.Shell.Tests
+  Discovered:  Hexalith.FrontComposer.Shell.Tests
+  Starting:    Hexalith.FrontComposer.Shell.Tests
+    Hexalith.FrontComposer.Shell.Tests.Extensions.FrontComposerServerSecurityServiceExtensionsTests.AddHexalithFrontComposerTokenRelay_RegistersCircuitSafeRelayServices [FAIL]
+      System.InvalidOperationException : Unable to resolve service for type 'Microsoft.Extensions.Options.IOptions`1[Hexalith.FrontComposer.Shell.Options.FrontComposerAuthenticationOptions]' while attempting to activate 'Hexalith.FrontComposer.Shell.Services.Auth.FrontComposerGatewayAuthorizationHandler'.
+      Stack Trace:
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+           at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
+           at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+           at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+           at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+           at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+           at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+        tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs(46,0): at Hexalith.FrontComposer.Shell.Tests.Extensions.FrontComposerServerSecurityServiceExtensionsTests.AddHexalithFrontComposerTokenRelay_RegistersCircuitSafeRelayServices()
+        tests/Hexalith.FrontComposer.Shell.Tests/Extensions/FrontComposerServerSecurityServiceExtensionsTests.cs(46,0): at Hexalith.FrontComposer.Shell.Tests.Extensions.FrontComposerServerSecurityServiceExtensionsTests.AddHexalithFrontComposerTokenRelay_RegistersCircuitSafeRelayServices()
+        --- End of stack trace from previous location ---
+  Finished:    Hexalith.FrontComposer.Shell.Tests (ID = 'a4a713cfa244db5b8d97ac953b3232463d299f4b4d97b8bcbfa9cfcacf943618')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.FrontComposer.Shell.Tests  Total: 114, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.353s

@@ -1,0 +1,200 @@
+[
+  {
+    "name": "owner-build",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "started_utc": "2026-11-05T23:29:48.514114+00:00",
+    "ended_utc": "2026-11-05T23:30:14.877472+00:00",
+    "exit_code": 0,
+    "stdout": "owner-build.stdout",
+    "stderr": "owner-build.stderr"
+  },
+  {
+    "name": "owner-commitlint",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "node_modules/.bin/commitlint",
+      "--edit",
+      "/tmp/hexalith-story65-push-liaicl2j/frontcomposer-commit.txt"
+    ],
+    "started_utc": "2026-11-05T23:30:26.200996+00:00",
+    "ended_utc": "2026-11-05T23:30:26.654476+00:00",
+    "exit_code": 0,
+    "stdout": "owner-commitlint.stdout",
+    "stderr": "owner-commitlint.stderr"
+  },
+  {
+    "name": "projects-commitlint",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "node_modules/.bin/commitlint",
+      "--edit",
+      "/tmp/hexalith-story65-push-liaicl2j/projects-commit.txt"
+    ],
+    "started_utc": "2026-11-05T23:30:26.690305+00:00",
+    "ended_utc": "2026-11-05T23:30:26.964638+00:00",
+    "exit_code": 0,
+    "stdout": "projects-commitlint.stdout",
+    "stderr": "projects-commitlint.stderr"
+  },
+  {
+    "name": "owner-auth",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll",
+      "-class",
+      "*FrontComposerCredentialIsolationTests",
+      "-class",
+      "*FrontComposerUserTokenStoreTests",
+      "-class",
+      "*FrontComposerAccessTokenProviderTests",
+      "-class",
+      "*FrontComposerServerSecurityServiceExtensionsTests",
+      "-class",
+      "*FrontComposerAuthenticationServiceExtensionsTests",
+      "-class",
+      "*AuthRedactionStressTests",
+      "-class",
+      "*ProjectionSubscriptionServiceTests",
+      "-class",
+      "*AuthBoundaryTests",
+      "-class",
+      "*ServerCircuitUserContextAccessorTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/publication/owner-auth.xml"
+    ],
+    "started_utc": "2026-11-05T23:30:35.756404+00:00",
+    "ended_utc": "2026-11-05T23:30:36.574367+00:00",
+    "exit_code": 0,
+    "stdout": "owner-auth.stdout",
+    "stderr": "owner-auth.stderr"
+  },
+  {
+    "name": "owner-commit",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "git",
+      "commit",
+      "--file",
+      "/tmp/hexalith-story65-push-liaicl2j/frontcomposer-commit.txt"
+    ],
+    "started_utc": "2026-11-05T23:30:47.330400+00:00",
+    "ended_utc": "2026-11-05T23:30:47.989763+00:00",
+    "exit_code": 0,
+    "stdout": "owner-commit.stdout",
+    "stderr": "owner-commit.stderr"
+  },
+  {
+    "name": "owner-push",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "git",
+      "push",
+      "origin",
+      "main"
+    ],
+    "started_utc": "2026-11-05T23:30:54.035765+00:00",
+    "ended_utc": "2026-11-05T23:30:56.493083+00:00",
+    "exit_code": 0,
+    "stdout": "owner-push.stdout",
+    "stderr": "owner-push.stderr"
+  },
+  {
+    "name": "projects-ui-build",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "env",
+      "AfterMicrosoftNETSdkTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+      "Configuration=Debug",
+      "CustomAfterDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+      "CustomAfterMicrosoftCommonProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+      "CustomBeforeDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+      "HEXALITH_SOURCE_MAPPING_HASH=18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+      "MSBUILDDISABLENODEREUSE=1",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "started_utc": "2026-11-05T23:30:55.211302+00:00",
+    "ended_utc": "2026-11-05T23:31:19.048594+00:00",
+    "exit_code": 0,
+    "stdout": "projects-ui-build.stdout",
+    "stderr": "projects-ui-build.stderr"
+  },
+  {
+    "name": "projects-auth",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll",
+      "-class",
+      "*ProjectsUiAuthenticationCompositionTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/publication/projects-auth.xml"
+    ],
+    "started_utc": "2026-11-05T23:31:44.630597+00:00",
+    "ended_utc": "2026-11-05T23:31:44.954299+00:00",
+    "exit_code": 0,
+    "stdout": "projects-auth.stdout",
+    "stderr": "projects-auth.stderr"
+  },
+  {
+    "name": "authority",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.5"
+    ],
+    "started_utc": "2026-11-05T23:31:44.973903+00:00",
+    "ended_utc": "2026-11-05T23:31:45.037230+00:00",
+    "exit_code": 0,
+    "stdout": "authority.stdout",
+    "stderr": "authority.stderr"
+  },
+  {
+    "name": "authority-index",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "started_utc": "2026-11-05T23:32:35.511317+00:00",
+    "ended_utc": "2026-11-05T23:32:35.575373+00:00",
+    "exit_code": 0,
+    "stdout": "authority-index.stdout",
+    "stderr": "authority-index.stderr"
+  },
+  {
+    "name": "projects-commitlint-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "node_modules/.bin/commitlint",
+      "--edit",
+      "/tmp/hexalith-story65-push-liaicl2j/projects-commit.txt"
+    ],
+    "started_utc": "2026-11-05T23:32:55.357003+00:00",
+    "ended_utc": "2026-11-05T23:32:55.541005+00:00",
+    "exit_code": 0,
+    "stdout": "projects-commitlint-final.stdout",
+    "stderr": "projects-commitlint-final.stderr"
+  }
+]

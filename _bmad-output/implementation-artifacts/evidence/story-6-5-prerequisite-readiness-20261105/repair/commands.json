@@ -1,0 +1,453 @@
+[
+  {
+    "name": "apphost-baseline-attempt",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "aspire",
+      "start",
+      "--non-interactive",
+      "--apphost",
+      "src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj"
+    ],
+    "exit_code": 2,
+    "output": "apphost-startup.txt",
+    "result": "AppHost build failed: EventStore.Client GenerateDepsFile IOException from concurrent source contexts; no AppHost started"
+  },
+  {
+    "name": "apphost-stop-after-failure",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "aspire",
+      "stop",
+      "--non-interactive",
+      "--apphost",
+      "src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj"
+    ],
+    "exit_code": 0,
+    "output": "apphost-stop.txt"
+  },
+  {
+    "name": "shell-source-build",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "src/Hexalith.FrontComposer.Shell/Hexalith.FrontComposer.Shell.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "shell-source-build.txt"
+  },
+  {
+    "name": "shell-tests-build",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "shell-tests-build.txt"
+  },
+  {
+    "name": "isolation-tests-build",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 1,
+    "output": "isolation-tests-build.txt"
+  },
+  {
+    "name": "isolation-tests-build-2",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "isolation-tests-build-2.txt"
+  },
+  {
+    "name": "focused-auth",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll",
+      "-class",
+      "*FrontComposerCredentialIsolationTests",
+      "-class",
+      "*FrontComposerUserTokenStoreTests",
+      "-class",
+      "*FrontComposerAccessTokenProviderTests",
+      "-class",
+      "*FrontComposerServerSecurityServiceExtensionsTests",
+      "-class",
+      "*FrontComposerAuthenticationServiceExtensionsTests",
+      "-class",
+      "*AuthRedactionStressTests",
+      "-class",
+      "*ProjectionSubscriptionServiceTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/focused-auth.xml"
+    ],
+    "exit_code": 1,
+    "output": "focused-auth.txt"
+  },
+  {
+    "name": "isolation-tests-build-3",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "isolation-tests-build-3.txt"
+  },
+  {
+    "name": "prepare-consumer-source-mapping",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story65-credential-repair-source-mapping",
+      "--output",
+      "json"
+    ],
+    "exit_code": 0,
+    "output": "prepare-consumer-source-mapping.txt"
+  },
+  {
+    "name": "focused-auth-2",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll",
+      "-class",
+      "*FrontComposerCredentialIsolationTests",
+      "-class",
+      "*FrontComposerUserTokenStoreTests",
+      "-class",
+      "*FrontComposerAccessTokenProviderTests",
+      "-class",
+      "*FrontComposerServerSecurityServiceExtensionsTests",
+      "-class",
+      "*FrontComposerAuthenticationServiceExtensionsTests",
+      "-class",
+      "*AuthRedactionStressTests",
+      "-class",
+      "*ProjectionSubscriptionServiceTests",
+      "-class",
+      "*AuthBoundaryTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/focused-auth-2.xml"
+    ],
+    "exit_code": 0,
+    "output": "focused-auth-2.txt"
+  },
+  {
+    "name": "ui-source-build",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "env",
+      "AfterMicrosoftNETSdkTargets=/tmp/story65-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+      "Configuration=Debug",
+      "CustomAfterDirectoryBuildTargets=/tmp/story65-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+      "CustomAfterMicrosoftCommonProps=/tmp/story65-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildProps=/tmp/story65-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+      "CustomBeforeDirectoryBuildTargets=/tmp/story65-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+      "HEXALITH_SOURCE_MAPPING_HASH=dcf6a256852f8d852812e671c2ae0745070cea6dd83f446e021ce6c922730f74",
+      "MSBUILDDISABLENODEREUSE=1",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "exit_code": 1,
+    "output": "ui-source-build.txt"
+  },
+  {
+    "name": "prepare-projects-source-mapping",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story65-projects-credential-repair-source-mapping",
+      "--output",
+      "json"
+    ],
+    "exit_code": 0,
+    "output": "prepare-projects-source-mapping.txt"
+  },
+  {
+    "name": "isolation-tests-build-4",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "isolation-tests-build-4.txt"
+  },
+  {
+    "name": "ui-source-build-2",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "env",
+      "AfterMicrosoftNETSdkTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+      "Configuration=Debug",
+      "CustomAfterDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+      "CustomAfterMicrosoftCommonProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+      "CustomBeforeDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+      "HEXALITH_SOURCE_MAPPING_HASH=18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+      "MSBUILDDISABLENODEREUSE=1",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "exit_code": 1,
+    "output": "ui-source-build-2.txt"
+  },
+  {
+    "name": "isolation-tests-build-5",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "isolation-tests-build-5.txt"
+  },
+  {
+    "name": "focused-auth-3",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll",
+      "-class",
+      "*FrontComposerCredentialIsolationTests",
+      "-class",
+      "*FrontComposerUserTokenStoreTests",
+      "-class",
+      "*FrontComposerAccessTokenProviderTests",
+      "-class",
+      "*FrontComposerServerSecurityServiceExtensionsTests",
+      "-class",
+      "*FrontComposerAuthenticationServiceExtensionsTests",
+      "-class",
+      "*AuthRedactionStressTests",
+      "-class",
+      "*ProjectionSubscriptionServiceTests",
+      "-class",
+      "*AuthBoundaryTests",
+      "-class",
+      "*ServerCircuitUserContextAccessorTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/focused-auth-3.xml"
+    ],
+    "exit_code": 1,
+    "output": "focused-auth-3.txt"
+  },
+  {
+    "name": "prerequisite-authority-before",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.5"
+    ],
+    "exit_code": 0,
+    "output": "prerequisite-authority-before.txt"
+  },
+  {
+    "name": "owner-final-build",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exit_code": 0,
+    "output": "owner-final-build.txt"
+  },
+  {
+    "name": "owner-final-auth",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.FrontComposer.Shell.Tests/bin/Debug/net10.0/Hexalith.FrontComposer.Shell.Tests.dll",
+      "-class",
+      "*FrontComposerCredentialIsolationTests",
+      "-class",
+      "*FrontComposerUserTokenStoreTests",
+      "-class",
+      "*FrontComposerAccessTokenProviderTests",
+      "-class",
+      "*FrontComposerServerSecurityServiceExtensionsTests",
+      "-class",
+      "*FrontComposerAuthenticationServiceExtensionsTests",
+      "-class",
+      "*AuthRedactionStressTests",
+      "-class",
+      "*ProjectionSubscriptionServiceTests",
+      "-class",
+      "*AuthBoundaryTests",
+      "-class",
+      "*ServerCircuitUserContextAccessorTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/owner-final-auth.xml"
+    ],
+    "exit_code": 0,
+    "output": "owner-final-auth.txt"
+  },
+  {
+    "name": "ui-source-only",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "env",
+      "AfterMicrosoftNETSdkTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+      "Configuration=Debug",
+      "CustomAfterDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+      "CustomAfterMicrosoftCommonProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildProps=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+      "CustomBeforeDirectoryBuildTargets=/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "DOTNET_CLI_USE_MSBUILD_SERVER=0",
+      "HEXALITH_SOURCE_MAPPING_HASH=18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+      "MSBUILDDISABLENODEREUSE=1",
+      "dotnet",
+      "build",
+      "src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "exit_code": 0,
+    "output": "ui-source-only.txt"
+  },
+  {
+    "name": "owner-diff-check",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "output": "owner-diff-check.txt"
+  },
+  {
+    "name": "prerequisite-authority-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.5"
+    ],
+    "exit_code": 0,
+    "output": "prerequisite-authority-final.txt"
+  },
+  {
+    "name": "prerequisite-index-final",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "exit_code": 0,
+    "output": "prerequisite-index-final.txt"
+  },
+  {
+    "name": "projects-diff-check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "output": "projects-diff-check.txt"
+  },
+  {
+    "name": "documentation-final-check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "output": "documentation-final-check.txt"
+  }
+]
