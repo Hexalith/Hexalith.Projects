@@ -4,7 +4,7 @@ type: 'feature'
 created: '2026-08-25'
 status: blocked
 baseline_revision: dffdd677e0058240d5951f507cbd2b159b9643a5
-blocked_by: ['6.1', '6.2', '6.3', '6.4']
+blocked_by: ['DW-1']
 review_loop_iteration: 0
 followup_review_recommended: false
 context:
@@ -121,3 +121,14 @@ No implementation session started, no production or test files changed, and no i
 ### Approved prerequisite correction — 2026-11-02
 
 Jerome approved E1–E7 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md). Only the frozen prerequisite gate is renegotiated above; product/security/UI acceptance remains unchanged. The old separate prerequisite_record/hash/G-4 ceremony in the dated August log and Auto Run Result is historical. Current blocking condition is ordinary dependency acceptance: Story 6.1 is unaccepted and usable FrontComposer authentication/current-Tenant/per-circuit relay evidence must be recorded in DW-1. Story 6.4 is done. DW-1 stays open; no implementation or UI acceptance follows from this correction.
+
+
+### Current prerequisite readiness — 2026-11-05
+
+Story 6.1 is now accepted; Stories 6.2–6.4 remain done. This supersedes earlier factual statements in this document that 6.1 is unaccepted, without changing the approved prerequisite gate or product/security criteria. Full accepting revisions, historical test references and current checks are in [the readiness packet](evidence/story-6-5-prerequisite-readiness-20261105/README.md) and DW-1.
+
+**Current blocker:** FrontComposer `4c24c287cde520631e960a322413bee804f7c3d4` stores credentials under the subject alone. An executable using unchanged owner relay sources proves that, after another Tenant session signs in with the same subject, the original circuit relays the second session's credential. Three initial-session/second-session/distinct-user controls pass; the session-isolation invariant fails (executable exit 1, build exit 0 with zero warnings/errors). This is a controlled, network-free boundary reproduction, not a live disclosure claim.
+
+The server-authentication/current-Tenant APIs exist, but the credential seam does not satisfy the no-token-bleed requirement. The correction belongs to FrontComposer; a Projects-owned token store would duplicate platform plumbing. DW-1 stays open and Story 6.5 blocked. No implementation session was dispatched, no sibling implementation changed, and sprint status was not edited. The UI test-project build separately stops on the missing Platform-selected Conversations source mapping; its exact command/output and narrower executed reproduction are retained in the packet.
+
+Planning handoff: actual adapters live in `src/Hexalith.Projects.UI/Diagnostics/`; accepted open/context/start results have separate snapshots and cannot be merged into an invented coherent result. A future Build planning pass must use those delivered semantics after the owner credential repair passes focused checks. No replacement draft was advanced or implementation approval requested while the prerequisite remains unsatisfied.

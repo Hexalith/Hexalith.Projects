@@ -1,0 +1,24 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/tmp/story65-auth-isolation-retained-20261105/AuthIsolation.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:FrontComposerAuthRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Shell/Services/Auth"
+    ],
+    "exit_code": 0,
+    "output": "build.txt"
+  },
+  {
+    "command": [
+      "dotnet",
+      "/tmp/story65-auth-isolation-retained-20261105/bin/Debug/net10.0/AuthIsolation.dll"
+    ],
+    "exit_code": 1,
+    "output": "run.txt"
+  }
+]
