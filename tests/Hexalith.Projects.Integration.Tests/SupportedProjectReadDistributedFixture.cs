@@ -820,6 +820,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             request.Headers.Authorization = new("Bearer", token);
             BindStatusScope(request, tenant);
             using HttpResponseMessage status = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
+            // Scope, credential and ambiguity refusals are deterministic; retrying them only hides the cause.
+            Require(status.StatusCode is not (HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized
+                    or HttpStatusCode.Forbidden or HttpStatusCode.Conflict),
+                "Fixture command status read refused: " + type + " (HTTP " + (int)status.StatusCode + ").");
             if (status.StatusCode == HttpStatusCode.OK)
             {
                 using JsonDocument body = JsonDocument.Parse(await status.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));

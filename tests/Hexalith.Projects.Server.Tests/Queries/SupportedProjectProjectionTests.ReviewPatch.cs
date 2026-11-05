@@ -13,16 +13,20 @@ using Xunit;
 public sealed partial class SupportedProjectProjectionTests
 {
     /// <summary>Every catalogued rejection validates identity and enum content before advancing persisted evidence.</summary>
-    /// <param name="fault">The malformed rejection field.</param>
+    /// <param name="fault">The malformed or missing rejection field.</param>
     [Theory]
     [InlineData("tenant")]
     [InlineData("project")]
     [InlineData("reason")]
-    public async Task RejectionNoOpWithForeignIdentityOrUndefinedReasonCannotAdvanceSequence(string fault)
+    [InlineData("missing-tenant")]
+    [InlineData("missing-project")]
+    [InlineData("missing-reason")]
+    public async Task RejectionNoOpWithInvalidOrMissingContentCannotAdvanceSequence(string fault)
     {
+        // ProjectCreationRejected carries no ProjectId, so the project faults do not apply to it.
         foreach (Type type in ProjectReadProjectionHandler.NoOpEventTypes.Where(type => type != typeof(ProjectChatBotAuthorityRejected)
             && type.Name.EndsWith("Rejected", StringComparison.Ordinal)
-            && (fault != "project" || type != typeof(ProjectCreationRejected))))
+            && (fault is not ("project" or "missing-project") || type != typeof(ProjectCreationRejected))))
         {
             SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
             await fixture.SeedAsync("project-a");
@@ -30,7 +34,12 @@ public sealed partial class SupportedProjectProjectionTests
             JsonObject content = JsonNode.Parse(item.Payload)!.AsObject();
             if (fault == "tenant") { content["tenantId"] = "foreign-tenant"; }
             else if (fault == "project") { content["projectId"] = JsonSerializer.SerializeToNode(new ProjectId("foreign-project"), SupportedProjectReadFixture.Json); }
-            else { content["reason"] = 999; }
+            else if (fault == "reason") { content["reason"] = 999; }
+            else
+            {
+                string field = fault switch { "missing-tenant" => "tenantId", "missing-project" => "projectId", _ => "reason" };
+                content.Remove(field).ShouldBeTrue($"{type.Name} must serialize its required {field} field.");
+            }
             item = item with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
             (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [item]), "invalid-rejection", TestContext.Current.CancellationToken))
                 .Status.ShouldBe(ProjectionDispatchStatus.Failed);

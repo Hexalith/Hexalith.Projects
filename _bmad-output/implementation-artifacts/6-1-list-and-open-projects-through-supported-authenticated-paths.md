@@ -4,7 +4,7 @@ story_key: 6-1-list-and-open-projects-through-supported-authenticated-paths
 epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
-status: review
+status: done
 blocked_by: []
 baseline_commit: 90e481c
 traceability:
@@ -22,7 +22,7 @@ estimate: M
 
 # Story 6.1: List and Open Projects Through Supported Authenticated Paths
 
-Status: review
+Status: done
 
 **Current authority:** [approved entry correction](../planning-artifacts/sprint-change-proposal-2026-11-01.md), applied 2026-11-02. The dated July/August gate decisions in the Change Log are historical.
 
@@ -79,7 +79,7 @@ Code review 2026-11-05 covered chunk G1 only: production `src/`, `git diff --ign
 - [x] [Review][Patch] The intent adapter's comment says "preserving null", but its options drop nulls; the options are also a hand copy of the processor's. Fix the comment and share one options instance [src/Hexalith.Projects.Server/ProjectsIntentAdapters.cs:35]
 - [x] [Review][Patch] The fold parses each payload twice; deserialize from the `JsonDocument` it already parsed [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:274]
 - [x] [Review][Patch] Remove the unused `using` directives in the new `*Payload.cs` record files [src/Hexalith.Projects.Server/ArchiveProjectPayload.cs:3]
-- [ ] [Verification] Confirm the Server.Tests package-mode build; the attempted Release build is blocked at restore by NU1109 (Tenants.Client 7.0.0 requires EventStore >=4.0.4 while Projects selects 3.133.0).
+- [x] [Verification] Confirm the Server.Tests package-mode build; the attempted Release build is blocked at restore by NU1109 (Tenants.Client 7.0.0 requires EventStore >=4.0.4 while Projects selects 3.133.0). Deferred 2026-11-05 to the package-mode NU1109 entry in `deferred-work.md`; it is a package/platform gate, not a Story 6.1 criterion.
 - [x] [Verification] Run fresh authenticated distributed AC7 verification: all 11 cases across three independent providers, Integration 222/222 and Server 1,378/1,378 pass at current frozen source. Parent criterion acceptance and workflow review remain pending; status stays in-progress.
 - [x] [Review][Defer] Advisory resolution still offers Active folderless (quarantined) Projects as candidates [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:168] — deferred: pre-existing. The file was last changed at ded1e70, outside this diff. `ProjectAdvisoryQueryTests.Review4.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls` expects `SingleCandidate`. This contradicts PRD §2.4/NFR-4 and these Dev Notes. Resolution is Story 6.4 scope (medium).
 
@@ -108,6 +108,41 @@ Rejected findings, 24 in total. "False" means the claimed problem does not occur
 - Low: the mTLS receipt `CreateNew` collision. It can only happen if a private directory is reused, and the launcher allocates a fresh one each run.
 - False: removing the page-level aggregation. Task 1 and the Dev Notes require the page snapshot to describe enumeration only.
 - False: Archived folderless Projects not quarantined. PRD §2.4 quarantines only Active folderless Projects.
+
+Code review 2026-11-05 (second pass) covered the code committed after the G1 findings were recorded: `git diff --ignore-cr-at-eol a6c415f..19a0548`, excluding `_bmad-output/` evidence and submodule pointers. That diff is 33 files and 1,547 lines across production `src/`, Server and Integration tests, and the qualification launcher. Sibling EventStore, Folders and Tenants code in the same window was out of scope. Four layers ran and none failed: Blind Hunter, Edge Case Hunter, Verification Gap and Acceptance Auditor. Of their 39 findings, 13 survived and were grouped into 8 entries; the other 26 were rejected. Jerome resolved the three decisions on 2026-11-05: one became a deferral and two became patches, which makes five patches and three deferrals.
+
+- [x] [Review][Defer] Quarantine recovery replaces every cause-specific action with `ResolveNeedsAttention`, including for in-flight creations (every `CreateProject` emits `ProjectFolderCreationPending` with `Retryable: true`) and for stale quarantined snapshots [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:320] — deferred: Jerome decided 2026-11-05 to fold this into the per-cause AD-32 recovery-mapping DW entry so all recovery codes are designed together. Only the Administrator inventory is affected.
+- [x] [Review][Patch] When the header is valid but `IsValid` fails, keep the validated `ProjectFolder` reference and omit only the file and memory references. The snapshot stays Partial with the omission declared, and `ConfirmedFolderReplacementKeepsEnumerationCompleteAndReadsPartial` must be updated to assert the kept Folder reference (Jerome decided 2026-11-05) [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:223]
+- [x] [Review][Patch] Add a reconciliation record to the Dev Agent Record. It maps acceptance manifest `fd22b043…` to Projects `39aa170` (byte-identical to the tested patch) and pins `19a0548`: Tenants `cfb5d1a` and Folders `e88c940` match their patches apart from trailing blank lines, while EventStore `5df9640` adds the untested test-only `d9498bb15` and the nested Builds/Platform pointer moves `7b248e03b`/`0245c39c2`. Replace the stale "No Git mutation occurred" wording. No rerun (Jerome decided 2026-11-05) [_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md]
+- [x] [Review][Patch] Add a regression test: a later event whose `OccurredAt` precedes `CreatedAt` must fold `Completed`, leave `UnavailableProjectIds` empty, and list a Complete page with that row Unavailable. This locks G1 decision (a) against a regression to a fold-time `IsHeaderValid` check [tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.ReviewPatch.cs:21]
+- [x] [Review][Patch] Add `missing-tenant`, `missing-project` (not for `ProjectCreationRejected`) and `missing-reason` cases to the rejection no-op theory. Each must fail and leave `Sequence` at 2 [tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.ReviewPatch.cs:17]
+- [x] [Review][Patch] Make the fixture command-status poll fail immediately on deterministic refusals (HTTP 400, 401, 403 and 409), instead of retrying a scope refusal 240 times and then reporting a misleading durable-completion timeout. It still retries 404, 429 and 5xx. That is narrower than the bootstrap poll, because the controller can rate-limit [tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs:822]
+- [x] [Review][Defer] The fallback outside quarantine maps every non-Complete snapshot to `Retry`. That includes Archived folderless Projects, Folders that are `Unauthorized` or `Archived`, and Partial snapshots with references that are owner-unverified or point at another Folder. Retrying fixes none of these, and the new Archived-folderless and Folder-replacement tests do not assert recovery actions [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:321] — deferred: pre-existing (517976e); this needs a per-cause AD-32 recovery mapping.
+- [x] [Review][Defer] The package-mode Server.Tests build is still unconfirmed (NU1109: Tenants.Client 7.0.0 requires EventStore >=4.0.4 while Projects selects 3.133.0). The story nevertheless claims full acceptance, and no DW entry tracks the gate [Directory.Packages.props:7] — deferred: package/platform gate, tracked in the ledger rather than by reopening the story.
+
+Second-pass rejected findings, 26 in total. "False" means the claimed problem does not occur; "low" means it is real but not worth fixing:
+- False: the bound `tenants-bootstrap-source` grant "restricts nothing". It is not meant to restrict anything. `WorkloadBindingAuthority.PermitsBindings` requires binding counts to match, so the unbound `tenants-bootstrap` grant cannot satisfy a bound request. The new grant only enables the bound `platform:global-administrators` read. The unbound `stream-read` predates this diff.
+- Low: `AllowUnbound` is overwritten by a later `WithEnvironment` call. This is the existing Folder-grant pattern; Aspire applies callbacks in order, and the topology test pins `false`.
+- False (reported twice): keep `IsHeaderValid` in the fold. That is option (b), which Jerome rejected in G1. Read-time `IsHeaderValid` (executor:214,301) blanks the header fields and marks the row Unavailable, with no Tenant-wide blackout.
+- False (reported twice): the worker catalog test disappears in package mode. That was the approved G1 patch: the test uses source-only APIs and throws when the source symbol is absent.
+- Low: the topology test does not assert the `OwnerSourceRead` variables. A misconfiguration fails loudly at the live bootstrap source read.
+- Low (reported twice): the compilation-profile check does not prove the Tenants helper was compiled. A missing helper fails loudly at the bootstrap source read and can never produce a passing qualification.
+- Low (reported twice): the AppHost root probes have no `<Error>` when neither root exists. That only happens in non-standard layouts, and the fix adds a guard.
+- Low (reported twice): the observer relies on listener order, and a missing completion gate times out. This is test-only, and `DenialObserverWaitsForBlockedProviderExportBeforeSnapshot` fails if the order changes.
+- Low: the `SendHumanAsync` scope headers and the activate route have no dedicated control. Qualification-6 exercised them, 11/11.
+- Low: `HostedBootstrapSourceMatches` uses a `"system"` literal and assumes a single page. A fresh isolated stream holds one or two events.
+- Low: the fixture helper controls compile only under `SUPPORTED_PROJECT_READ_DISTRIBUTED`. They test that lane's own fixture and run in its local Integration lane (222/222).
+- Low: the owner-source directory check is duplicated, read with `!`, and never checked for emptiness. The launcher always allocates a fresh directory.
+- False: the rejection theory can pass vacuously. `SupportedProjectProjectionTests.cs:25-26` pins the exact no-op catalog.
+- Low: there are no negative cases for the launcher parent directory, `foreignTenant`, or unchanged maintenance headers. These would be extra tests for unlikely inputs.
+- Low: the Windows `shared` and `symlink` branches. The lane is Linux-only.
+- False: the shared `JsonSerializerOptions` instance can be mutated. The class is internal, no caller mutates it, and System.Text.Json freezes options on first use.
+- False: the topology variable names are inverted and only one composition path is proven. `previous*` correctly names the environment with the removed assignments restored, and that composition is the AppHost's actual one.
+- Rejected: the Dev Notes still forbid the sibling and enrollment changes that were later approved. The only fix is editing the spec.
+- Low: case-variant duplicate keys inside nested objects. Reaching this needs corrupted persisted events, because the writer serializes through System.Text.Json; the fix adds a recursive scan.
+- False: a umask strips owner bits from the custody directory. Real umasks never remove owner bits, and an unwritable directory would fail loudly at the first IPC write.
+- Low: no gate evaluates the sibling-layout MSBuild probes. That layout is non-default, the G1 packet recorded a one-off probe pass, and a gate needs a synthetic-workspace harness.
+- Note on a grouped finding: the claim that the Folder-replacement test's `PrepareRebuildAsync(...).ShouldNotBeNull()` check is weak is false. That method throws `DomainProjectionRebuildRejectedException` on any rejection, so a non-null result proves the rebuild was accepted. The test's missing recovery-action assertion belongs to the deferral above.
 
 ## Dev Notes
 
@@ -305,6 +340,7 @@ Patch implementation is complete, while current AC7 acceptance, package-mode bui
 | 2026-11-04 | Applied the approved denial-privacy/timing policies, completed reviewed repairs and final same-source acceptance of 11 distributed cases, 196 Integration tests and 1,368 Server tests with independent telemetry/cleanup proof; source remains isolated and later release gates unchanged. |
 | 2026-11-05 | Code review of chunk G1 (production `src/`, 47a1ffd..bc545fd): 3 decisions resolved, 14 patches left as action items, 1 deferred, 24 rejected. The high-severity fold-time `IsValid` Tenant-list blackout is open, so status returns to in-progress. Chunks G2–G4 are still unreviewed. |
 | 2026-11-05 | Implemented fourteen G1 review patches and the current SDK evidence-fixture adaptation; local Integration 196/196 and Server 1,328/1,328 pass with live cases excluded. Fresh distributed bootstrap/catalog and package NU1109 blockers keep Story 6.1 in progress. |
+| 2026-11-05 | Second-pass code review of `a6c415f..19a0548`. 3 decisions resolved: 1 deferred, 2 became patches. 5 patches applied, 3 deferred (2 new DW entries and the quarantine item folded into one of them), 26 rejected. Focused local Server 1,335/1,335 and Integration 222/222 pass; the distributed lane was not rerun. The commit reconciliation is recorded. Status set to done. |
 
 
 ### Bootstrap authority follow-up and required replan — 2026-11-05
@@ -381,4 +417,25 @@ Story/spec/sprint remain **in-progress** until parent acceptance and review. The
 
 All seven criteria are verified at final source `fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22` (17,083 inputs), with three-layer review resolved and no deferred finding. Fresh qualification-6 passes all 11 cases across three independent providers, full runtime Integration 222/222 and Server 1,378/1,378. Default-policy full Folders passes 1,424/1,424; full SDK passes 1,381 with one existing opt-in live-content skip; selected helper 34/34 and launcher 122/122 pass. Exact source/head/command/XML/patch and state/restart/replay/cursor/revocation evidence is retained in the [final acceptance map](evidence/story-6-1-platform-maintenance-20261105/parent-review/README.md).
 
-Current query-only telemetry and console audits verify safe denial under the approved timing/count/observed-window limits, including active log/exemplar channels and six exact native peer bindings. All runtime/private diagnostic material and the review mapping are removed with exact custody receipts. Feature acceptance is complete; Build synchronizes story/sprint to review. Package-mode NU1109 remains a separate unrerun release obligation under approved E1–E7 readiness; no package, production or 6.7 migration acceptance is inferred. No Git mutation occurred. Earlier source-scoped failures and pending handoffs remain historical evidence.
+Current query-only telemetry and console audits verify safe denial under the approved timing/count/observed-window limits, including active log/exemplar channels and six exact native peer bindings. All runtime/private diagnostic material and the review mapping are removed with exact custody receipts. Feature acceptance is complete; Build synchronizes story/sprint to review. Package-mode NU1109 remains a separate unrerun release obligation under approved E1–E7 readiness; no package, production or 6.7 migration acceptance is inferred. No Git mutation occurred during acceptance; the later commits are reconciled in the second-pass review record below. Earlier source-scoped failures and pending handoffs remain historical evidence.
+
+
+### Second-pass review patches and commit reconciliation — 2026-11-05
+
+The second-pass code review of `a6c415f..19a0548` resolved three decisions: one became a deferral and two became patches. All five patches are applied:
+- When reference validation fails but the header is valid, open now keeps the validated Project Folder reference and omits only file and memory references, still declared as Partial.
+- A clock-skew regression test pins the read-time degradation that G1 decision (a) chose.
+- Missing-field cases now cover every catalogued rejection no-op.
+- The fixture status poll now fails at once on deterministic refusals.
+- The commit reconciliation below is recorded.
+
+The other two deferrals are a per-cause AD-32 recovery mapping, which now includes the quarantine branch, and the package-mode NU1109 gate. Both are in `deferred-work.md`.
+
+The [focused verification packet](evidence/story-6-1-review-pass2-20261105/README.md) binds Projects `19a0548` plus the four-file uncommitted patch. Debug/source builds under the Platform source mapping have zero warnings and zero errors. The local Server lane passes **1,335/1,335** and the local Integration lane **222/222**, with no failures, errors, skips or not-run tests. Both lanes exclude the same live selectors as the earlier parent verification, so they add no AC7 coverage. The distributed lane was not rerun. Its qualification-6 receipts stay bound to manifest `fd22b043…`, and its matrix does not exercise the changed path where reference validation fails.
+
+**Commit reconciliation.** Whitespace-insensitive patch-id comparisons show what landed:
+- Projects `39aa170` equals the tested `Projects.patch` exactly, with no other non-evidence changes.
+- The Tenants pin `cfb5d1a` and the Folders pin `e88c940` in `19a0548` equal their tested patches.
+- The EventStore pin `5df9640` equals its tested patch on all 30 patched files. It also adds the test-only commit `d9498bb15` (`DomainServiceTrustBoundaryTests.cs`, `CatalogInvocationTests.cs`) and nested Builds/Platform pointer moves (`7b248e03b`, `0245c39c2`). Those nested submodules are not initialized in the umbrella, so its builds use the root-declared Builds and Platform.
+
+As Jerome decided, those EventStore test classes were not rerun. With all decision and patch findings resolved and the remaining items tracked as DW entries, the review sets Story 6.1 to **done** under the close-on-own-ACs rule. Package-mode NU1109, the 6.7 migration equivalence, Story 8.9 load testing and the Story 8.11 release remain separate gates. These review edits and patches are uncommitted.

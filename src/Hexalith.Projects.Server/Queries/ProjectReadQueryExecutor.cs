@@ -220,7 +220,8 @@ public sealed class ProjectReadQueryExecutor(
             valid ? detail.CreatedAt : default, valid ? detail.UpdatedAt : default,
             descriptive && valid && !quarantined ? detail.Setup ?? ProjectSetup.Empty : null,
             descriptive && valid && !quarantined ? detail.SetupMetadata : null,
-            referencesValid ? quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState) : [], Snapshot(model, folderState));
+            !valid ? [] : quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState, referencesValid),
+            Snapshot(model, folderState));
         if (descriptive && !await audit.RecordAsync(query, true, 1,
             OpenObservation(model, scope, projectAuthorization, folderState), quarantined, cancellationToken).ConfigureAwait(false))
         {
@@ -321,7 +322,7 @@ public sealed class ProjectReadQueryExecutor(
             : state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
     }
 
-    private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState)
+    private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState, bool linksValid)
     {
         bool folderCurrent = folderState == ReferenceState.Included;
         List<ProjectReadReference> result = [];
@@ -330,6 +331,10 @@ public sealed class ProjectReadQueryExecutor(
             result.Add(new("ProjectFolder", folder.FolderId, null, null, descriptive && folderCurrent ? folder.DisplayName : null,
                 folderState, SafeReason(folderState), folder.ObservedAt));
         }
+
+        // The header check already validated the Project Folder. Invalid links are omitted
+        // together and declared through the References snapshot component.
+        if (!linksValid) { return result; }
 
         result.AddRange(detail.FileReferences.OrderBy(item => item.FileReferenceId, StringComparer.Ordinal).Select(item =>
             new ProjectReadReference("FileReference", item.FolderId, item.FileReferenceId, null, null,

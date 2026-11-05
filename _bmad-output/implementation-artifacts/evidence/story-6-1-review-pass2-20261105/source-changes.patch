@@ -1,0 +1,135 @@
+diff --git a/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs b/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs
+index 896b959..2d1b57d 100644
+--- a/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs
++++ b/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs
+@@ -220,7 +220,8 @@ public sealed class ProjectReadQueryExecutor(
+             valid ? detail.CreatedAt : default, valid ? detail.UpdatedAt : default,
+             descriptive && valid && !quarantined ? detail.Setup ?? ProjectSetup.Empty : null,
+             descriptive && valid && !quarantined ? detail.SetupMetadata : null,
+-            referencesValid ? quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState) : [], Snapshot(model, folderState));
++            !valid ? [] : quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState, referencesValid),
++            Snapshot(model, folderState));
+         if (descriptive && !await audit.RecordAsync(query, true, 1,
+             OpenObservation(model, scope, projectAuthorization, folderState), quarantined, cancellationToken).ConfigureAwait(false))
+         {
+@@ -321,7 +322,7 @@ public sealed class ProjectReadQueryExecutor(
+             : state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
+     }
+ 
+-    private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState)
++    private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState, bool linksValid)
+     {
+         bool folderCurrent = folderState == ReferenceState.Included;
+         List<ProjectReadReference> result = [];
+@@ -331,6 +332,10 @@ public sealed class ProjectReadQueryExecutor(
+                 folderState, SafeReason(folderState), folder.ObservedAt));
+         }
+ 
++        // The header check already validated the Project Folder. Invalid links are omitted
++        // together and declared through the References snapshot component.
++        if (!linksValid) { return result; }
++
+         result.AddRange(detail.FileReferences.OrderBy(item => item.FileReferenceId, StringComparer.Ordinal).Select(item =>
+             new ProjectReadReference("FileReference", item.FolderId, item.FileReferenceId, null, null,
+                 ReferenceState.Unavailable, "OwnerReadUnverified", item.ObservedAt)));
+diff --git a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
+index 12f8b8c..072e669 100644
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
+@@ -820,6 +820,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
+             request.Headers.Authorization = new("Bearer", token);
+             BindStatusScope(request, tenant);
+             using HttpResponseMessage status = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
++            // Scope, credential and ambiguity refusals are deterministic; retrying them only hides the cause.
++            Require(status.StatusCode is not (HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized
++                    or HttpStatusCode.Forbidden or HttpStatusCode.Conflict),
++                "Fixture command status read refused: " + type + " (HTTP " + (int)status.StatusCode + ").");
+             if (status.StatusCode == HttpStatusCode.OK)
+             {
+                 using JsonDocument body = JsonDocument.Parse(await status.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));
+diff --git a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.ReviewPatch.cs b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.ReviewPatch.cs
+index 4398375..89b6e03 100644
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.ReviewPatch.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.ReviewPatch.cs
+@@ -13,16 +13,20 @@ using Xunit;
+ public sealed partial class SupportedProjectProjectionTests
+ {
+     /// <summary>Every catalogued rejection validates identity and enum content before advancing persisted evidence.</summary>
+-    /// <param name="fault">The malformed rejection field.</param>
++    /// <param name="fault">The malformed or missing rejection field.</param>
+     [Theory]
+     [InlineData("tenant")]
+     [InlineData("project")]
+     [InlineData("reason")]
+-    public async Task RejectionNoOpWithForeignIdentityOrUndefinedReasonCannotAdvanceSequence(string fault)
++    [InlineData("missing-tenant")]
++    [InlineData("missing-project")]
++    [InlineData("missing-reason")]
++    public async Task RejectionNoOpWithInvalidOrMissingContentCannotAdvanceSequence(string fault)
+     {
++        // ProjectCreationRejected carries no ProjectId, so the project faults do not apply to it.
+         foreach (Type type in ProjectReadProjectionHandler.NoOpEventTypes.Where(type => type != typeof(ProjectChatBotAuthorityRejected)
+             && type.Name.EndsWith("Rejected", StringComparison.Ordinal)
+-            && (fault != "project" || type != typeof(ProjectCreationRejected))))
++            && (fault is not ("project" or "missing-project") || type != typeof(ProjectCreationRejected))))
+         {
+             SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+             await fixture.SeedAsync("project-a");
+@@ -30,7 +34,12 @@ public sealed partial class SupportedProjectProjectionTests
+             JsonObject content = JsonNode.Parse(item.Payload)!.AsObject();
+             if (fault == "tenant") { content["tenantId"] = "foreign-tenant"; }
+             else if (fault == "project") { content["projectId"] = JsonSerializer.SerializeToNode(new ProjectId("foreign-project"), SupportedProjectReadFixture.Json); }
+-            else { content["reason"] = 999; }
++            else if (fault == "reason") { content["reason"] = 999; }
++            else
++            {
++                string field = fault switch { "missing-tenant" => "tenantId", "missing-project" => "projectId", _ => "reason" };
++                content.Remove(field).ShouldBeTrue($"{type.Name} must serialize its required {field} field.");
++            }
+             item = item with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
+             (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [item]), "invalid-rejection", TestContext.Current.CancellationToken))
+                 .Status.ShouldBe(ProjectionDispatchStatus.Failed);
+diff --git a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.ReviewPatch.cs b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.ReviewPatch.cs
+index 5e3adf9..2c47117 100644
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.ReviewPatch.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.ReviewPatch.cs
+@@ -51,13 +51,38 @@ public sealed partial class SupportedProjectReadTests
+             fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken));
+         opened.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+         opened.Snapshot.Components.ShouldContain(component => component.Name == "References" && !component.Included);
+-        opened.References.ShouldBeEmpty();
++        ProjectReadReference folder = opened.References.ShouldHaveSingleItem();
++        folder.ReferenceKind.ShouldBe("ProjectFolder");
++        folder.FolderId.ShouldBe("replacement-folder");
++        folder.ReferenceState.ShouldBe(ReferenceState.Included);
++        folder.FileReferenceId.ShouldBeNull();
+         fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(before);
+         (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(etag);
+         fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a"))!.UnavailableProjectIds.ShouldBeEmpty();
+         (await fixture.Projection.PrepareRebuildAsync(request, "replacement-replay", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+     }
+ 
++    /// <summary>Clock-skewed history degrades only its own row at read time instead of blacking out the Tenant list.</summary>
++    [Fact]
++    public async Task SkewedEventTimestampDegradesOnlyItsRowAtReadTime()
++    {
++        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
++        await fixture.SeedAsync("project-a");
++        ProjectSetupUpdated skewed = new("tenant-a", "project-a", ProjectSetup.Empty,
++            "actor-1", "setup", "task", "setup", "setup", SupportedProjectReadFixture.EventTime.AddSeconds(-5));
++        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [SupportedProjectReadFixture.Event(skewed, 3, 102)]),
++            "skewed", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        ProjectReadModel persisted = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
++        persisted.Sequence.ShouldBe(3);
++        persisted.Freshness.ShouldBe(EvidenceFreshnessState.Current);
++        fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a"))!.UnavailableProjectIds.ShouldBeEmpty();
++        ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
++            fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
++        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
++        page.Items.Single().ProjectId.ShouldBe("project-a");
++        page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
++    }
++
+     /// <summary>Administrator inventory selection cannot disclose an ordinarily bound Project.</summary>
+     [Fact]
+     public async Task AdministratorQuarantineOpenOfBoundProjectFailsSafely()

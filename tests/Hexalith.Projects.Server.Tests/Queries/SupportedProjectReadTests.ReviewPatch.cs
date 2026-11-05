@@ -51,11 +51,36 @@ public sealed partial class SupportedProjectReadTests
             fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken));
         opened.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
         opened.Snapshot.Components.ShouldContain(component => component.Name == "References" && !component.Included);
-        opened.References.ShouldBeEmpty();
+        ProjectReadReference folder = opened.References.ShouldHaveSingleItem();
+        folder.ReferenceKind.ShouldBe("ProjectFolder");
+        folder.FolderId.ShouldBe("replacement-folder");
+        folder.ReferenceState.ShouldBe(ReferenceState.Included);
+        folder.FileReferenceId.ShouldBeNull();
         fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(before);
         (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(etag);
         fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a"))!.UnavailableProjectIds.ShouldBeEmpty();
         (await fixture.Projection.PrepareRebuildAsync(request, "replacement-replay", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+    }
+
+    /// <summary>Clock-skewed history degrades only its own row at read time instead of blacking out the Tenant list.</summary>
+    [Fact]
+    public async Task SkewedEventTimestampDegradesOnlyItsRowAtReadTime()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync("project-a");
+        ProjectSetupUpdated skewed = new("tenant-a", "project-a", ProjectSetup.Empty,
+            "actor-1", "setup", "task", "setup", "setup", SupportedProjectReadFixture.EventTime.AddSeconds(-5));
+        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [SupportedProjectReadFixture.Event(skewed, 3, 102)]),
+            "skewed", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+        ProjectReadModel persisted = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+        persisted.Sequence.ShouldBe(3);
+        persisted.Freshness.ShouldBe(EvidenceFreshnessState.Current);
+        fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a"))!.UnavailableProjectIds.ShouldBeEmpty();
+        ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
+            fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
+        page.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        page.Items.Single().ProjectId.ShouldBe("project-a");
+        page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
     }
 
     /// <summary>Administrator inventory selection cannot disclose an ordinarily bound Project.</summary>
