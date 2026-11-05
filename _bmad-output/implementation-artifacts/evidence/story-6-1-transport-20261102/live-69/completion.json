@@ -1,0 +1,127 @@
+{
+  "completedUtc": "2026-11-04T22:57:43.026738+00:00",
+  "workflowComplete": true,
+  "sourceManifestSha256": "a7ce136a2d29382e591dcd3535f79d6d4483831baab47c2b9ca4e17128ad029d",
+  "all16697CurrentInputsStillMatch": true,
+  "isolatedSourceRoot": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "specStatus": "done",
+  "storyStatus": "review",
+  "sprintStatus": "review",
+  "originalSpecBaselinePreserved": true,
+  "nativeAcceptance": {
+    "distributedCases": 11,
+    "freshProviderGroups": 3,
+    "integration": 196,
+    "server": 1368,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "review": {
+    "layers": 3,
+    "findings": 19,
+    "resolved": 15,
+    "refuted": 2,
+    "deferred": 2,
+    "patchGroups": 12,
+    "loopIterations": 0
+  },
+  "preClosureAuditFlagsResolvedByThisReceipt": true,
+  "allExactCleanupAndExternalPreservationVerified": true,
+  "originalAdmissionReleased": true,
+  "noRuntimeRemains": true,
+  "noSourceCopybackStagingCommitPushPublication": true,
+  "localCommitCreated": false,
+  "localCommitOmittedReason": "The session retains the user restriction on staging/commits and source copyback, which overrides the workflow default.",
+  "releaseAndDeferredGatesUnchanged": true,
+  "onlyTrackedSharedChanges": [
+    "_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md",
+    "_bmad-output/implementation-artifacts/deferred-work.md",
+    "_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md",
+    "_bmad-output/implementation-artifacts/sprint-status.yaml"
+  ],
+  "verificationChecks": [
+    {
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.1"
+      ],
+      "exitCode": 0,
+      "output": "PASS: Story 6.1 is within production authority"
+    },
+    {
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]"
+    },
+    {
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Folders",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "artifactSha256": {
+    "_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md": "f4bdf61ffa9aaa6b8aa24cf7793f9fc351c7008744ee98d5b3578a03cb78395e",
+    "_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md": "ac46e2f91e5d075fa1ae4105f4a338810572b4cb0b87a51f8c373e1838358365",
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": "5c0f3a2758e30ff150cff31ec33d8e9eaae8c6ceaf40338d45b43556bd48e7ec",
+    "_bmad-output/implementation-artifacts/deferred-work.md": "a569923cbcd11fd967f6faeef334783f93d8f6e192e2b1661819cec1b079d9bb",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-69/parent-validation.json": "50593e43df8e4411c93d0fb27fba8f1ff14fe28a5c2af628f29d0e6c86d15da1",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-69/final-verification-supplement.json": "d15ca1b9cbddd55a2decb3e8785f940a1e525441d14ab17f06f36998487a0a77",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/review-20261104/resolution.json": "1f66e345e679f0324ee0ec897569bec1594494a36a6a3cf1266c58cc9a102f4b",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/review-20261104/triage.json": "303c80442daafbd3246ab85195291f73f1cd4535ec950d7614eb6de2fa5cdd03",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-69/run.json": "98b212b57ff22ced49b5682f72e1d982b0fba2dc3fa3749fb4c0f75f86edc4a9",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-69/runtime-admission.json": "89526616c8903eaa138bbb25a5917565de849e8af0c2cda8cf5d9c78e108b87e"
+  },
+  "finalDiffFile": "/tmp/story61-review-zeex2mfu.diff",
+  "finalDiffSha256": "3c10cd72305458e0dd6f648911cf2a37dcfb8db4062dadf65c521523c0cda6e6",
+  "acceptedLimits": [
+    "Aggregate metric operation-count inference remains.",
+    "50ms is a bounded minimum; slower/fault variation and production/load timing privacy remain outside this proof.",
+    "Console silence covers the retained observed intervals, not every possible infrastructure fault."
+  ],
+  "nextAction": "bmad-walkthrough"
+}

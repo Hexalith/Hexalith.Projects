@@ -7,7 +7,10 @@ using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 
@@ -176,6 +179,66 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
         return DomainProjectionHandlerResult.Retryable("projection-concurrency");
     }
 
+    private static bool HasRequiredContent(JsonElement content, Type type)
+    {
+        if (content.ValueKind != JsonValueKind.Object) { return false; }
+        Dictionary<string, JsonElement> fields = new(StringComparer.OrdinalIgnoreCase);
+        foreach (JsonProperty property in content.EnumerateObject())
+            if (!fields.TryAdd(property.Name, property.Value)) { return false; }
+        string[] required = type.Name switch
+        {
+            nameof(ProjectCreated) => ["name", "lifecycle"],
+            nameof(ProjectSetupUpdated) => ["setup"],
+            nameof(ProjectFolderSet) => ["folderId", "folderMetadata"],
+            nameof(ProjectFolderCreationPending) => ["displayNameIntent", "reasonCode", "retryable"],
+            nameof(FileReferenceLinked) => ["fileReferenceId", "folderId", "fileMetadata"],
+            nameof(FileReferenceUnlinked) => ["fileReferenceId"],
+            nameof(MemoryLinked) => ["memoryReferenceId", "memoryMetadata"],
+            nameof(MemoryUnlinked) => ["memoryReferenceId"],
+            nameof(ProjectArchived) or nameof(ProjectRestored) => ["lifecycle"],
+            nameof(ProjectResolutionConfirmed) => ["conversationId"],
+            nameof(ProjectChatBotAuthorityGranted) => ["principalId", "operation", "actorClass", "origin", "grantId", "expiresAt"],
+            nameof(ProjectChatBotAuthorityRevoked) => ["principalId", "operation", "actorClass", "origin", "grantId"],
+            nameof(ProjectChatBotAuthorityRejected) => ["reasonCode"],
+            nameof(ProjectReferenceLinkRejected) or nameof(ProjectReferenceUnlinkRejected) => ["tenantId", "projectId", "referenceKind", "referenceId", "reason"],
+            nameof(ProjectCreationRejected) => ["tenantId", "reason"],
+            _ => ["tenantId", "projectId", "reason"],
+        };
+        if (typeof(IProjectEvent).IsAssignableFrom(type)) required = [.. required, "tenantId", "projectId", "occurredAt"];
+        return required.All(name => fields.TryGetValue(name, out JsonElement field)
+            && field.ValueKind is not (JsonValueKind.Null or JsonValueKind.Undefined)
+            && (field.ValueKind != JsonValueKind.String || !string.IsNullOrWhiteSpace(field.GetString())));
+    }
+
+    private static bool ValidKnownContent(object value, string tenant, string aggregate, long sequence)
+    {
+        if (value is IProjectEvent project && project.OccurredAt == default) { return false; }
+        if (value is ProjectChatBotAuthorityGranted grant && (grant.ExpiresAt == default || grant.ExpiresAt <= grant.OccurredAt)) { return false; }
+        if (value is ProjectCreated { Lifecycle: not ProjectLifecycle.Active }
+            or ProjectArchived { Lifecycle: not ProjectLifecycle.Archived }
+            or ProjectRestored { Lifecycle: not ProjectLifecycle.Active }) { return false; }
+        if (value.GetType().GetProperty("Reason")?.GetValue(value) is ReferenceState reason && !Enum.IsDefined(reason)) { return false; }
+        if (value.GetType().GetProperty("TenantId")?.GetValue(value) is string scope && scope != tenant) { return false; }
+        if (value.GetType().GetProperty("ProjectId")?.GetValue(value) is ProjectId identity && identity.Value != aggregate) { return false; }
+        if (Irrelevant.ContainsKey(value.GetType().FullName!)) { return true; }
+        try
+        {
+            // Validate only this event's persisted content. A duplicate predates later reference
+            // observations, so replaying it onto today's detail would incorrectly rewind its lifetime.
+            IProjectEvent known = (IProjectEvent)value;
+            ProjectDetailItem baseline = new(tenant, aggregate, "Project", null, null, null,
+                value is FileReferenceLinked file ? new(file.FolderId, null, ReferenceState.Included, null, known.OccurredAt) : null,
+                [], [], ProjectLifecycle.Active, known.OccurredAt, known.OccurredAt, sequence);
+            ProjectDetailItem? preview = (value is ProjectCreated ? ProjectDetailProjection.Empty : ProjectDetailProjection.Seed(baseline))
+                .Apply([new ProjectProjectionEnvelope(tenant, sequence, known)]).Get(tenant, aggregate);
+            return preview is not null && ProjectPersistedDetailValidator.IsValid(preview);
+        }
+        catch (Exception error) when (error is ArgumentException or InvalidOperationException or NullReferenceException)
+        {
+            return false;
+        }
+    }
+
     private static ReadModelBatchConcurrency Concurrency(string? etag)
         => string.IsNullOrEmpty(etag) ? ReadModelBatchConcurrency.CreateOnly : ReadModelBatchConcurrency.Match(etag);
 
@@ -208,6 +271,8 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
             object? value;
             try
             {
+                using JsonDocument content = JsonDocument.Parse(item.Payload);
+                if (!HasRequiredContent(content.RootElement, type)) { return failed; }
                 value = JsonSerializer.Deserialize(item.Payload, type, JsonOptions);
             }
             catch (JsonException)
@@ -220,6 +285,8 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
             {
                 return failed;
             }
+
+            if (!ValidKnownContent(value, request.TenantId, request.AggregateId, item.SequenceNumber)) { return failed; }
 
             if (item.SequenceNumber <= current.Sequence)
             {
@@ -250,7 +317,7 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
                 {
                     return failed;
                 }
-                if (detail is null)
+                if (detail is null || !ProjectPersistedDetailValidator.IsValid(detail))
                 {
                     return failed;
                 }

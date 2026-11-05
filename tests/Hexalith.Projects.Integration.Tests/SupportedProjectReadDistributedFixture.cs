@@ -44,7 +44,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private readonly RSA _userKey = RSA.Create();
     private readonly object _userSigning = new();
     private readonly SemaphoreSlim _readEvidence = new(1, 1);
-    private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(45) };
+    private readonly HttpClient _http;
     private static readonly JsonSerializerOptions Json = JsonSerializerOptions.Web;
     private readonly DateTimeOffset _startedAt = DateTimeOffset.UtcNow;
     private static CancellationToken Cancellation => TestContext.Current.CancellationToken;
@@ -62,6 +62,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Loads only the managed launcher configuration and synthetic user signer.</summary>
     internal SupportedProjectReadDistributedFixture()
     {
+        _http = new(new SupportedProjectReadTimingHandler(new HttpClientHandler(), ObserveDenialHeadersAsync)) { Timeout = TimeSpan.FromSeconds(45) };
         string? configuration = Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_CONFIG");
         string? endpoints = Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_ENDPOINTS");
         Assert.True(configuration is not null && endpoints is not null, "Run the managed supported-read launcher; missing owned resources cannot qualify.");
@@ -78,11 +79,11 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     /// <summary>Signs a synthetic public credential using trust distinct from workload trust.</summary>
-    internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false)
+    internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false, bool projectAdministrator = false)
     {
         List<Claim> claims = [new("sub", tenant == ForeignTenant ? "foreign-actor" : "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant),
             new("azp", chatbot ? "chatbot" : "operator-web"), new("eventstore:surface", chatbot ? "agent" : "ui"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
-            new("scope", "projects.read projects.list"), new("projects:role", chatbot ? "ProjectUser" : "TenantOperator")];
+            new("scope", "projects.read projects.list"), new("projects:role", projectAdministrator ? "TenantProjectAdministrator" : chatbot ? "ProjectUser" : "TenantOperator")];
         foreach (string permission in new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
             "create_folder", "manage_folder_access", "manage_organization_acl" }) claims.Add(new("eventstore:permission", permission));
         if (inspection) claims.Add(new("eventstore:permission", "projects:inspect_descriptive_metadata"));
@@ -183,6 +184,21 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 Require(head >= 2, "The real Folder actor head was not advanced by persisted commands.");
             }
         }
+        if (Setting("Scenario") == "main")
+        {
+            foreach (string project in new[] { "legacy-a", "legacy-b" })
+            {
+                string created = await CommandAsync(Tenant, "projects", project, "Hexalith.Projects.Commands.CreateProject", new
+                {
+                    Name = "Legacy project " + project, Description = "Restricted legacy description",
+                    SetupMetadata = "Restricted legacy setup reference",
+                }, Tenant).ConfigureAwait(false);
+                using CancellationTokenSource readiness = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+                readiness.CancelAfter(TimeSpan.FromSeconds(30));
+                await ProjectPersistedStreamAsync(Tenant, project, created, readiness.Token).ConfigureAwait(false);
+                await WaitForSeedNamedDeliveryAsync(Tenant, "projects", project, created, _seedStreams[(Tenant, project)], readiness.Token).ConfigureAwait(false);
+            }
+        }
         foreach (string domain in new[] { "projects", "folders" })
         {
             using JsonDocument catalog = await MetadataAsync(domain).ConfigureAwait(false);
@@ -226,9 +242,9 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     /// <summary>Requires protected success through the real public query gateway.</summary>
-    internal async Task<T> ReadAsync<T>(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool tenantActor = false)
+    internal async Task<T> ReadAsync<T>(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool tenantActor = false, bool projectAdministrator = false, bool quarantine = false)
     {
-        using HttpResponseMessage response = await QueryAsync(open, chatbot, inspection, list, project, tenant, tenantActor: tenantActor).ConfigureAwait(false);
+        using HttpResponseMessage response = await QueryAsync(open, chatbot, inspection, list, project, tenant, tenantActor: tenantActor, projectAdministrator: projectAdministrator, quarantine: quarantine).ConfigureAwait(false);
         Require(response.StatusCode == HttpStatusCode.OK, "Supported read returned HTTP " + (int)response.StatusCode + ".");
         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
         T value = result!.Payload.Deserialize<T>(Json)!;
@@ -243,22 +259,22 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     /// <summary>Sends one supported list/open request without forwarding human credentials downstream.</summary>
-    internal Task<HttpResponseMessage> QueryAsync(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool inspectionPermission = true, CancellationToken? cancellationToken = null, bool tenantActor = false)
+    internal Task<HttpResponseMessage> QueryAsync(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool inspectionPermission = true, CancellationToken? cancellationToken = null, bool tenantActor = false, bool projectAdministrator = false, bool quarantine = false)
     {
         string targetTenant = tenant ?? Tenant;
-        object input = open ? new GetProjectQuery(inspection) : list ?? new ListProjectsQuery(InspectDescriptiveMetadata: inspection);
+        object input = open ? new GetProjectQuery(inspection, quarantine) : list ?? new ListProjectsQuery(InspectDescriptiveMetadata: inspection, IncludeQuarantined: quarantine);
         var query = new SubmitQueryRequest(targetTenant, "projects", open ? project : "projects", open ? GetProjectQuery.QueryType : ListProjectsQuery.QueryType,
             Payload: JsonSerializer.SerializeToElement(input, input.GetType(), Json));
-        return SendHumanAsync("api/v1/queries", query, HumanToken(tenantActor ? targetTenant : Tenant, chatbot, inspection && inspectionPermission,
-            foreignTransportGrant: targetTenant == ForeignTenant), cancellationToken);
+        return SendHumanAsync("api/v1/queries", query, HumanToken(tenantActor ? targetTenant : Tenant, chatbot, (inspection || quarantine) && inspectionPermission,
+            foreignTransportGrant: targetTenant == ForeignTenant, projectAdministrator: projectAdministrator), cancellationToken);
     }
 
     /// <summary>Requires a metadata-free safe denial and returns its correlation-independent shape.</summary>
     internal async Task<string> SafeDenialAsync(string project = "project-a", string? tenant = null, bool inspection = false,
-        bool open = true, ListProjectsQuery? list = null, bool chatbot = true, bool inspectionPermission = true)
+        bool open = true, ListProjectsQuery? list = null, bool chatbot = true, bool inspectionPermission = true, bool projectAdministrator = false, bool quarantine = false)
     {
         using HttpResponseMessage response = await QueryAsync(open: open, project: project, tenant: tenant, inspection: inspection,
-            list: list, chatbot: chatbot, inspectionPermission: inspectionPermission).ConfigureAwait(false);
+            list: list, chatbot: chatbot, inspectionPermission: inspectionPermission, projectAdministrator: projectAdministrator, quarantine: quarantine).ConfigureAwait(false);
         return await SafeProblemAsync(response).ConfigureAwait(false);
     }
 
@@ -293,7 +309,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             "projects:tenant-access:" + tenant, "projection:folders:tenant-access:" + tenant, "projection:folders:organization-permissions:" + tenant,
             "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b",
             "projects-conversation-start-setup||" + tenant + ":projects:project-a", "projects-conversation-start-setup||" + tenant + ":projects:project-b",
-        }).ToArray();
+        }).Concat(Setting("Scenario") == "main" ? new[] { "legacy-a", "legacy-b" }.SelectMany(project => new[]
+        {
+            ProjectReadModelKeys.Detail(Tenant, project), "projects-conversation-start-setup||" + Tenant + ":projects:" + project,
+        }) : []).ToArray();
         List<SupportedProjectReadStateSnapshot> result = [.. await ObserveRequiredSnapshotAsync(requiredKeys, StatesAsync, allowIncomplete).ConfigureAwait(false)];
         string[] domainKeys = (await RedisAsync("--scan").ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Where(key => IsOwnedDomainKey(key, Tenant, ForeignTenant)).Order(StringComparer.Ordinal).ToArray();
@@ -482,11 +501,11 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
     /// <summary>Requires this operation's new durable audit with the exact disclosure class/count.</summary>
-    internal async Task VerifyDurableAuditDeltaAsync(string[] before, bool open, int count)
+    internal async Task VerifyDurableAuditDeltaAsync(string[] before, bool open, int count, bool quarantine = false)
     {
         string[] keys = await AuditKeysAsync().ConfigureAwait(false);
         string[] added = keys.Except(before, StringComparer.Ordinal).ToArray();
-        Require(added.Length == 1, "The inspected operation did not persist exactly one new audit.");
+        Require(added.Length == (quarantine ? count : 1), "The inspected operation did not persist the required distinct durable audits.");
         string[] exclusions = ProtectedValues().ToArray();
         foreach (string key in keys)
         {
@@ -495,10 +514,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             Require(IsSafeAudit(audit.RootElement, _startedAt, DateTimeOffset.UtcNow, exclusions), "Audit metadata violates the closed privacy contract.");
             string surrogate = audit.RootElement.GetProperty("requestSurrogate").GetString()!;
             Require(key == "projects:read-audit:v1:" + surrogate, "Audit key does not match its surrogate.");
-            if (key == added[0])
+            if (added.Contains(key, StringComparer.Ordinal))
                 Require(audit.RootElement.GetProperty("outcome").GetString() == "Inspection"
-                    && audit.RootElement.GetProperty("projectCount").GetInt32() == count
-                    && audit.RootElement.GetProperty("fieldClass").GetString() == (open ? "ProjectNameDescriptionSetupReferenceLabels" : "ProjectName"),
+                    && audit.RootElement.GetProperty("projectCount").GetInt32() == (quarantine ? 1 : count)
+                    && audit.RootElement.GetProperty("fieldClass").GetString() == (open && !quarantine ? "ProjectNameDescriptionSetupReferenceLabels" : "ProjectName"),
                     "The inspected operation audit has the wrong disclosure class/count.");
             Require((await RedisAsync("TTL", key).ConfigureAwait(false)).Trim() == "-1", "Required audit must have durable retention without an expiry.");
         }
@@ -522,7 +541,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     private IEnumerable<string> ProtectedValues() => new[] { Tenant, ForeignTenant, "actor-1", "foreign-actor", "project-a", "project-b", "folder-project",
-        "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
+        "legacy-a", "legacy-b", "Legacy project", "Restricted legacy description", "Restricted legacy setup reference", "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
         Setting("UserIssuer"), Setting("UserKeyPath"), Setting("CertificatePassword"), Setting("EventStoreSecret"), Setting("ProjectsSecret"),
         Setting("ChannelToken"), Setting("ReceiptKey"), Setting("OwnerPrivateKey"), Setting("OwnerPublicKey"), HumanToken(Tenant) };
 
@@ -1447,6 +1466,17 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Headers.Add("X-Correlation-Id", Unique());
         return await _http.SendAsync(request, cancellationToken ?? Cancellation).ConfigureAwait(false);
+    }
+
+    private Task ObserveDenialHeadersAsync(TimeSpan elapsed)
+    {
+        Require(elapsed >= TimeSpan.FromMilliseconds(50), "Public safe denial sent response headers before the50ms total-duration floor.");
+        return AppendReadEvidenceAsync(_readEvidence, Path.Combine(Evidence, "query-denial-timing.jsonl"), JsonSerializer.Serialize(new
+        {
+            observedAt = DateTimeOffset.UtcNow, httpStatus = 404, minimumGatewayDurationMilliseconds = 50,
+            responseHeadersElapsedMilliseconds = elapsed.TotalMilliseconds,
+            scope = "Actual distributed public query response headers; residual slow/fault variation remains.",
+        }, Json) + Environment.NewLine, CancellationToken.None);
     }
 
     private async Task WaitForTenantAuthorityAsync(string key, string tenant, string actor, StreamReadPage source,

@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-05",
+  "userAuthorization": "push changes",
+  "projectsBaseline": "4740a1e2040ad2a237e24c6fdf43a0050d540eb5",
+  "eventstoreCommit": "2dca77cc2f22a9b85e4fcc3f8e18cbcaa532b135",
+  "commands": {
+    "eventstoreServerBuild": "dotnet build tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0",
+    "eventstoreFocusedTests": "dotnet tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll -class '*ReadDiagnosticsPrivacyTests' -class '*ReadQueryDenialTimingTests' -class '*NativeSourceReadDiagnosticsTests' -class '*RequestLogPrivacyTests' -class '*StreamsControllerTests' -xml /tmp/story61-sdk-push-tests.xml",
+    "eventstoreAspireBuild": "dotnet build src/Hexalith.EventStore.Aspire/Hexalith.EventStore.Aspire.csproj --configuration Debug --no-restore -m:1 -p:BuildProjectReferences=false -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0",
+    "eventstoreAppHostBroadBuild": "dotnet build tests/Hexalith.EventStore.AppHost.Tests/Hexalith.EventStore.AppHost.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0",
+    "eventstoreAppHostFocusedBuild": "dotnet build tests/Hexalith.EventStore.AppHost.Tests/Hexalith.EventStore.AppHost.Tests.csproj --configuration Debug --no-restore -m:1 -p:BuildProjectReferences=false -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0",
+    "projectsBroadBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0",
+    "launcherTests": "python3 -m unittest discover -s tests/tools -p test_supported_project_reads_launcher.py",
+    "projectsPinnedBroadBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "projectsFocusedTestBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -p:BuildProjectReferences=false -p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "projectsContractsBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -p:BuildProjectReferences=false -p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "projectsServerBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -p:BuildProjectReferences=false -p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "projectsContractsTestBuild": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj --configuration Debug --no-restore -m:1 -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -p:BuildProjectReferences=false -p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "gitWhitespacePolicyTests": "python3 -m unittest discover -s tests/tools -p test_git_whitespace_policy.py"
+  },
+  "eventstoreFocusedTotals": {
+    "total": "192",
+    "passed": "192",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0"
+  },
+  "launcherTests": {
+    "total": 119,
+    "passed": 119
+  },
+  "focusedBuildsPassed": [
+    "EventStore.Server.Tests",
+    "EventStore.Aspire",
+    "Projects.Contracts",
+    "Projects.Server"
+  ],
+  "broadBuildLimitations": [
+    "Projects missing Conversations nested Builds import (MSB4019); root Builds pin exposes required Platform source mapping and stale Tenants references.",
+    "Projects focused Server.Tests missing Conversations.EventStoreExtensions project.assets.json (NETSDK1004).",
+    "EventStore AppHost.Tests has stale /tmp/hexalith-sibling-resolution-20261101 package cache paths (MSB3030, CS0006).",
+    "Projects.Contracts.Tests cannot resolve previously restored Hexalith.Commons.Serialization 2.30.10 (NETSDK1064); no freshly compiled Contracts.Tests run is claimed."
+  ],
+  "finalDistributedRunRepeated": false,
+  "historicalDistributedAcceptance": "../story-6-1-transport-20261102/live-69/run.json",
+  "historicalEvidenceUnmodified": true,
+  "sourceFilesTransferred": 48,
+  "projectsTransferredFilesEqualIsolatedFinalSource": true,
+  "upstreamPreserved": true,
+  "eventstoreResolution": "Keep current canonical Tenant/platform authorization, metadata-only enrollment, native batches and lease admission. Apply privacy changes from the recorded 2c13c030753bcf1687c167af7912ae3878016604 synchronization snapshot; propagate the protected flag through all four current diagnostic branches.",
+  "foldersResolution": "No source changes since the recorded snapshot; preserve current parent-declared Folders revision.",
+  "privateArtifactsExcluded": [
+    "../story-6-1-transport-20261102/live-64/main/server.xml",
+    "../story-6-1-transport-20261102/live-64/main/server.log"
+  ],
+  "commitlint": "All three exact Conventional Commit candidates passed the owning pinned @commitlint/cli 21.2.4 configuration; commit hooks remain enabled.",
+  "gitWhitespacePolicyTests": {
+    "total": 5,
+    "passed": 5
+  },
+  "immutableArtifactAttributes": "Only historical selected.patch* captures and the named failed-test XML are exempt from whitespace normalization; their original bytes remain intact."
+}

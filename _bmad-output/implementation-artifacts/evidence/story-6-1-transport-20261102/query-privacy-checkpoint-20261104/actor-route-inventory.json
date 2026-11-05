@@ -1,0 +1,84 @@
+{
+  "kind": "actual-installed-sdk-actor-route-inventory",
+  "assetsSha256": "0f98f767377312bc2a9e586d23dcad8efe61e3ba12cc1bdbfb421c2969c95035",
+  "actualPackageCoordinates": [
+    "Dapr.Actors/1.19.0",
+    "Dapr.Actors.AspNetCore/1.19.0"
+  ],
+  "pdbChecksumVerifiedSourceCommit": "05f093ad5ee38de377872fee9021010fe5b6dc35",
+  "primarySources": [
+    "https://raw.githubusercontent.com/dapr/dotnet-sdk/05f093ad5ee38de377872fee9021010fe5b6dc35/src/Dapr.Actors/DaprHttpInteractor.cs",
+    "https://raw.githubusercontent.com/dapr/dotnet-sdk/05f093ad5ee38de377872fee9021010fe5b6dc35/src/Dapr.Actors/Constants.cs",
+    "https://raw.githubusercontent.com/dapr/dotnet-sdk/05f093ad5ee38de377872fee9021010fe5b6dc35/src/Dapr.Actors.AspNetCore/ActorsEndpointRouteBuilderExtensions.cs"
+  ],
+  "observedApiFacts": {
+    "outboundActorMethodVerb": "PUT",
+    "outboundMethodSource": "requestMessageHeader.MethodName",
+    "inboundMapPut": "actors/{actorTypeName}/{actorId}/method/{methodName}",
+    "readMethods": [
+      "GetStreamMetadataAsync",
+      "InspectSourceProofAsync",
+      "InspectSourceMetadataPairAsync"
+    ],
+    "actualInboundRouteMatchesPrivacyPredicate": true
+  },
+  "commands": [
+    [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "DaprHttpInteractor",
+      "--package",
+      "Dapr.Actors@1.19.0",
+      "--all",
+      "-m",
+      "InvokeActorMethodWithRemotingAsync",
+      "-s",
+      "Methods,Source",
+      "-n",
+      "90"
+    ],
+    [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "Dapr.Actors.Constants",
+      "--package",
+      "Dapr.Actors@1.19.0",
+      "--all",
+      "-m",
+      "ActorMethodRelativeUrlFormat",
+      "-s",
+      "Signature,Source",
+      "-n",
+      "35"
+    ],
+    [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "Microsoft.AspNetCore.Builder.ActorsEndpointRouteBuilderExtensions",
+      "--package",
+      "Dapr.Actors.AspNetCore@1.19.0",
+      "--all",
+      "-m",
+      "MapActorMethodEndpoint",
+      "-s",
+      "Source",
+      "-n",
+      "90"
+    ]
+  ],
+  "sourceChanged": false,
+  "versionsChanged": false,
+  "nativeExporterProof": false,
+  "limits": [
+    "Installed API/source inventory, not a fresh actual actor callback or native privacy run."
+  ]
+}

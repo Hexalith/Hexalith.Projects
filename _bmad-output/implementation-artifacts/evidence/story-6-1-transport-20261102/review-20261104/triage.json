@@ -1,0 +1,143 @@
+{
+  "createdUtc": "2026-11-04T20:25:43.815342+00:00",
+  "diffFile": "/tmp/story61-review-p3113mhb.diff",
+  "sourceManifestSha256": "84a27cc01d4741e02ac3a0d8ec8c587af6bb6e6eaf6c586abed41686a425a1e7",
+  "allThreeLayersReportedBeforeTriage": true,
+  "findings": [
+    {
+      "id": "BR-01",
+      "verdict": "high",
+      "route": "patch/G1",
+      "location": "Query record constructors/deconstruction",
+      "evidence": "The original one-/four-argument constructors and Deconstruct overloads disappear from the public v1 records. Restore those existing signatures and explicitly select JSON construction; compiled and deconstructing callers otherwise break."
+    },
+    {
+      "id": "BR-02",
+      "verdict": "high",
+      "route": "patch/G2",
+      "location": "Pending legacy Folder identifier",
+      "evidence": "ProjectPersistedDetailValidator permits a Pending reference with a retained FolderId; FolderStateAsync correctly treats it as Pending, but IsQuarantined tests only null. Tenant-role ordinary reads can expose that legacy row outside the administrator inventory. Require the persisted accepted Included binding."
+    },
+    {
+      "id": "BR-03",
+      "verdict": "medium",
+      "route": "patch/G3",
+      "location": "Malformed known duplicate",
+      "evidence": "Fold deserializes and checks identity, then skips duplicate content. A ProjectCreated with matching identities but missing Name reaches the skip and preserves Current. Validate required known-event shape before duplicate acceptance without rejecting optional/additive fields."
+    },
+    {
+      "id": "BR-04",
+      "verdict": "high",
+      "route": "patch/G4",
+      "location": "Omitted linked source inputs",
+      "evidence": "source_manifest selects src/tests/props/targets but omits linked Platform root C# files and consumed module/platform manifests. The AppHost explicitly compiles both DaprSelfHostedMtls root helpers. Extend the existing manifest and mutation controls; do not create another inventory."
+    },
+    {
+      "id": "BR-05",
+      "verdict": "medium",
+      "route": "patch/G5",
+      "location": "Persisted quarantine coverage",
+      "evidence": "The eleven actual distributed rows never select IncludeQuarantined/InspectQuarantined. In-memory coverage cannot prove the new gateway role/audit/persistence branch. Extend the existing inspection/audit-fault row with real quarantine controls while retaining all eleven rows and original budgets."
+    },
+    {
+      "id": "BR-06",
+      "verdict": "false",
+      "route": "reject",
+      "location": "Historical failure packets",
+      "evidence": "Fresh canonical live-65 contains actual passing three-group native XML, Integration196 and Server1348 plus independent parent validation at source84a27cc0. Old failed packets are retained history, not reused completion evidence; the isolated review diff predates these evidence additions."
+    },
+    {
+      "id": "BR-07",
+      "verdict": "false",
+      "route": "reject",
+      "location": "Allegedly new production admission serialization",
+      "evidence": "The owner-repository before diff already has _localAdmission.WaitAsync around AcquireCoreAsync and the same finally Release. The changed private release/decode behavior does not introduce that production serialization."
+    },
+    {
+      "id": "BR-08",
+      "verdict": "maybe-false",
+      "route": "defer/unverified-medium",
+      "location": "Noncooperative no-catchup drain",
+      "evidence": "WaitForCatchUp=false has no outer catch-up bound and the new finally drains both tasks. An indefinitely noncooperative Organization source could delay an already selected Folder failure; the supported lane uses bounded Dapr sources and the500ms enabled catch-up wrapper. A concrete supported noncooperative source/caller reproduction and its ownership/lease contract are needed before changing drain semantics or inventing another timeout."
+    },
+    {
+      "id": "BR-09",
+      "verdict": "medium",
+      "route": "defer/pre-existing",
+      "location": "Idle issuer TLS handshake",
+      "evidence": "The reviewer reproduced shutdown blocking on an idle non-TLS peer. Baseline47a1ffd already uses HTTPServer, wraps the listening socket for TLS and calls server.shutdown identically. This lifecycle defect is pre-existing; record it separately without changing this story's runtime protocol."
+    },
+    {
+      "id": "BR-10",
+      "verdict": "medium",
+      "route": "patch/G6",
+      "location": "Post-restart runtime flags",
+      "evidence": "projects_process_identity and restart validation rebind processes/binaries but do not rerun the existing finite process-environment option census. Record and verify the restarted Projects options against the initial mode; use the existing read-only helper."
+    },
+    {
+      "id": "EG-01",
+      "verdict": "high",
+      "route": "patch/G7",
+      "location": "Detached native diagnostic completion",
+      "evidence": "Observe/ObservePair explicitly suppress ExecutionContext flow when attaching a continuation. ExecuteSynchronously is not a guarantee of running in the original request context; queued completion can emit resource hashes/Exists/sequences without the privacy scope. Capture protection before detaching and omit identifying diagnostics for protected reads; retain ordinary diagnostics."
+    },
+    {
+      "id": "EG-02",
+      "verdict": "high",
+      "route": "patch/G1",
+      "location": "GetProjectQuery deleted signatures",
+      "evidence": "The public record has only its expanded constructor and generated two-value deconstruction. The old bool constructor and one-value deconstruction are absent. Same root cause as BR-01."
+    },
+    {
+      "id": "EG-03",
+      "verdict": "high",
+      "route": "patch/G1",
+      "location": "ListProjectsQuery deleted signatures",
+      "evidence": "The public record has only its expanded constructor and generated five-value deconstruction. The original four-argument constructor/four-value deconstruction are absent. Same root cause as BR-01."
+    },
+    {
+      "id": "EG-04",
+      "verdict": "medium",
+      "route": "patch/G3",
+      "location": "Malformed no-op grant",
+      "evidence": "The finite no-op grant type has required PrincipalId/Operation/expiry fields, but matching TenantId/ProjectId alone deserialize and advance Current. Validate required known content before the no-op/duplicate branches while retaining valid harmless additions and optional historical fields."
+    },
+    {
+      "id": "VG-01",
+      "verdict": "medium",
+      "route": "patch/G8",
+      "location": "Multirow quarantine audit test",
+      "evidence": "Pre-verified regression gap: the successful inventory test pages one row per request, so auditing rows.Take(1) would pass. Add a two-row successful page and require two distinct persisted one-Project inspection records."
+    },
+    {
+      "id": "VG-02",
+      "verdict": "medium",
+      "route": "patch/G9",
+      "location": "Nonempty quarantine SetupMetadata test",
+      "evidence": "Pre-verified regression gap: successful quarantine-open fixtures seed null SetupMetadata, so removing its quarantine suppression would pass. Populate nonempty legacy metadata and assert serialized omission plus unchanged persisted bytes/ETags."
+    },
+    {
+      "id": "PA-01",
+      "verdict": "medium",
+      "route": "patch/G10",
+      "location": "SupportedProjectProjectionTests.OlderValidDuplicatePreservesLaterFolderObservation",
+      "evidence": "Parent patch audit: replaying ProjectCreated would pass the superseded flawed validator because it already used ProjectDetailProjection.Empty. Refine the control to replay an older Folder/reference update after a later reference observation, so rewinding the current detail lifetime would be detected. Production event-local validation is already correct."
+    },
+    {
+      "id": "PA-02",
+      "verdict": "medium",
+      "route": "patch/G11",
+      "location": "cleanup_resources exact missing-container response parser",
+      "evidence": "Live66 full replay passed1/1 but cleanup retained recovery because Docker emits a leading blank line before the exact missing captured-ID error. A read-only exact-ID probe proves the old fullmatch rejects it and outer-whitespace stripping matches; a successful complete listing confirms absence. Strip only outer whitespace, preserve the anchored exact-ID/fresh-listing proof and all negative error controls; launcher119/119 pass."
+    },
+    {
+      "id": "PA-03",
+      "verdict": "medium",
+      "route": "patch/G12",
+      "location": "ProjectReadAuthorityFixture.SeedAsync foreign metadata and matching HTTP assertion",
+      "evidence": "Live67 exposes an invalid shared foreign-tenant seed: Foreign secret description violates the existing canonical metadata blocklist, now correctly enforced by projection validation. Forty-four cases fail at projected.Status; the intentional exceptional-cleanup case fails during the same aborted fixture startup. Replace only the matching seed/assertion text with safe distinctive metadata, preserve populated foreign controls and all production validation, then rerun fresh qualification."
+    }
+  ],
+  "parentPatchAuditFindingCount": 3,
+  "resolutionReceipt": "resolution.json"
+}

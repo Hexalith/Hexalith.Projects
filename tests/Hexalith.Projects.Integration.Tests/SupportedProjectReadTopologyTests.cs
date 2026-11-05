@@ -2,9 +2,13 @@ namespace Hexalith.Projects.Integration.Tests;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Eventing;
+using global::Aspire.Hosting.Lifecycle;
 using CommunityToolkit.Aspire.Hosting.Dapr;
+using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.AppHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Nodes;
 using Shouldly;
 using YamlDotNet.Serialization;
@@ -255,6 +259,70 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
             environment["DAPR_CONTROLPLANE_NAMESPACE"].ShouldBe("default");
             environment["DAPR_CERT_KEY"].ShouldBe("structural-issuer.key");
         }
+    }
+
+    /// <summary>Checks actual toolkit, canonical Platform native rewrite and startup subscriber ordering without starting processes.</summary>
+    [Fact(Timeout = 30000)]
+    public async Task SqliteOrderingObservesCanonicalNativeCommandRewriteAsync()
+    {
+        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { DisableDashboard = true, AllowUnsecuredTransport = true });
+        builder.Environment.EnvironmentName = "Development";
+        Dictionary<string, string?> inputs = ValidInputs();
+        string root = TestRepositoryRoot.Find();
+        string directory = Path.GetDirectoryName(inputs["Projects:SupportedReads:CertificatePath"])!;
+        inputs["Dapr:Mtls:CertificateDirectory"] = Path.Combine(directory, "mtls");
+        builder.Configuration.AddInMemoryCollection(inputs);
+        builder.Configuration["DcpPublisher:CliPath"] = Path.Combine(directory, "model-only-dcp-not-started");
+        builder.Configuration["DcpPublisher:DashboardPath"] = Path.Combine(directory, "model-only-dashboard-not-started");
+        string modeledCli = Path.Combine(directory, "dapr");
+        builder.AddDapr(options => options.DaprPath = modeledCli);
+        string fixture = Path.Combine(root, "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
+        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddProject("eventstore", fixture), builder.AddProject("tenants", fixture),
+            builder.AddProject("projects", fixture), builder.AddProject("projects-workers", fixture), Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+        string runtimeHome = Path.Combine(directory, "structural-runtime-not-executed");
+        string nativePath = Path.Combine(runtimeHome, ".dapr", "bin", OperatingSystem.IsWindows() ? "daprd.exe" : "daprd");
+        Directory.CreateDirectory(Path.GetDirectoryName(nativePath)!);
+        await File.WriteAllTextAsync(nativePath, "structural placeholder; never executed", TestContext.Current.CancellationToken);
+        var peers = new[] { "tenants", "eventstore", "projects", "projects-workers", "folders", "folders-workers" }.Select(name =>
+            builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == name))).ToArray();
+        foreach (var peer in peers)
+        {
+            var sidecar = peer.Resource.Annotations.OfType<DaprSidecarAnnotation>().Single().Sidecar;
+            var annotation = sidecar.Annotations.OfType<DaprSidecarOptionsAnnotation>().Single();
+            sidecar.Annotations[sidecar.Annotations.IndexOf(annotation)] = new DaprSidecarOptionsAnnotation(annotation.Options with { RuntimePath = runtimeHome });
+            foreach (var wait in peer.Resource.Annotations.OfType<WaitAnnotation>().Where(wait => wait.WaitType == WaitType.WaitUntilHealthy
+                && peers.Any(selected => ReferenceEquals(selected.Resource, wait.Resource))).ToArray())
+            { peer.Resource.Annotations.Remove(wait); peer.WaitForStart(builder.CreateResourceBuilder(wait.Resource)); }
+        }
+        var owned = DaprSelfHostedMtls.AddLocalApplicationInfrastructure(builder, root,
+            Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents", "sentry.yaml"), inputs["Projects:SupportedReads:IsolationId"]!);
+        _directories.Add(owned.RunDirectory);
+        builder.AddEventStoreDevelopmentSqliteStartupOrdering(peers);
+        await using var application = builder.Build();
+        var eventing = application.Services.GetRequiredService<IDistributedApplicationEventing>();
+        List<string> order = [];
+        foreach (var subscriber in application.Services.GetServices<IDistributedApplicationEventingSubscriber>().Where(subscriber => subscriber.GetType().Name is
+            "DaprDistributedApplicationLifecycleHook" or "DaprSelfHostedMtlsSubscriber" or "DevelopmentSqliteDiscoveryStartupSubscriber"))
+        {
+            string name = subscriber.GetType().Name;
+            order.Add(name);
+            if (name is "DaprSelfHostedMtlsSubscriber" or "DevelopmentSqliteDiscoveryStartupSubscriber")
+                eventing.Subscribe<BeforeStartEvent>((startup, _) =>
+                {
+                    foreach (var peer in peers)
+                    {
+                        var actual = startup.Model.Resources.OfType<ExecutableResource>().Single(resource => resource.Name == peer.Resource.Name + "-dapr-cli");
+                        string expected = name == "DaprSelfHostedMtlsSubscriber" ? modeledCli : nativePath;
+                        actual.Annotations.OfType<ExecutableAnnotation>().Last().Command.ShouldBe(expected);
+                        actual.Command.ShouldBe(expected);
+                    }
+                    return Task.CompletedTask;
+                });
+            await subscriber.SubscribeAsync(eventing, builder.ExecutionContext, TestContext.Current.CancellationToken);
+        }
+        order.ShouldBe(["DaprDistributedApplicationLifecycleHook", "DaprSelfHostedMtlsSubscriber", "DevelopmentSqliteDiscoveryStartupSubscriber"]);
+        await eventing.PublishAsync(new BeforeStartEvent(application.Services, application.Services.GetRequiredService<DistributedApplicationModel>()), TestContext.Current.CancellationToken);
+        TestContext.Current.TestOutputHelper!.WriteLine(System.Text.Json.JsonSerializer.Serialize(new { SubscriberOrder = order, NativeRewrites = peers.Length }));
     }
 
     private Dictionary<string, string?> ValidInputs()

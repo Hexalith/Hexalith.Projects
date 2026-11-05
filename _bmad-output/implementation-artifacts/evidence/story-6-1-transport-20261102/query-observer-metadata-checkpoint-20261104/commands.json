@@ -1,0 +1,169 @@
+{
+  "createdUtc": "2026-11-04T18:33:20.185623+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "77bb5446bed26dde64568abfe9f50a20fc966b3dadf8a03421c17f63e241eab9",
+  "sourceManifestSha256": "9daa209da26a2577401ade828ba69a5eadae03176fe7faae25ad796570f8410a",
+  "inputCount": 16683,
+  "changedFiles": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs",
+      "beforeSha256": "e16eb19edb91d4f363eb7d3436ed84485760151d72814db04e5f0aeaf9412edc",
+      "afterSha256": "21f0e3675f532507991a93b1a791a7f0b41656fe00136f86962c2fbfef5d2ea8"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "beforeSha256": "8b4672bbbc95b43921f5034d81b4dfc4cae2b3aacfddbb1361a0b075c654a8e3",
+      "afterSha256": "8f28e25ba9e8a275d60a7c90381e3b4e08f9c47776ed9126792520e4e9ecbe8d"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadThrowingDiagnosticValue.cs",
+      "beforeSha256": null,
+      "afterSha256": "d53022152a107b0adb9d85e846e3aa39cdb7072706215efcde610dd7cb786a6e"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "ad472128e1063d4f0520d026e681b9d8c40ccec018bfbd0a4a2af23a9e33af44",
+      "afterSha256": "0278182bd4b102d4c5f6961eb7aebe188bb3a66ef568396cf22c6584a7ed840a"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "beforeSha256": "c1a302a7248b946525fcba3977f95036328682126bcf90eb02f030a2dcaa8f0d",
+      "afterSha256": "9a81c79d47e83e3dae990990caa87a78b9b0a60218b6d44ab828123a8ba55533"
+    }
+  ],
+  "onlySelectedInputsChanged": true,
+  "sdkServiceSourceUnchanged": true,
+  "selectedPatchSha256": "15d2de1e13a941d805a11c57a07c32c1983fc9f4c221986a67c8894cdd98f2d5",
+  "patchReproducesAllSelectedBytes": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "exitCode": 0,
+      "artifact": "query-observer-metadata-build-final.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-observer-metadata-root-final.xml"
+      ],
+      "exitCode": 0,
+      "artifact": "query-observer-metadata-root-final.xml"
+    }
+  ],
+  "nativeResults": {
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "1.224"
+  },
+  "assemblySha256": "3e971116b9cacc44b6ee6aa32bf4fd7de5e923a05a43989c352176e54e9992ca",
+  "sourceMappingEnvironment": {
+    "status": "prepared",
+    "outcome": {
+      "exitCode": "Success",
+      "phase": "None",
+      "category": "None",
+      "ruleId": null
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 25dde45c71bf3de89577612660afc43494a6a951 has no local v<SemVer> release tag.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds' is staged d2a430c988462a634674a69c562ea4afd1f06ef4, checked out d2a430c988462a634674a69c562ea4afd1f06ef4, dirty; Platform 25dde45c71bf3de89577612660afc43494a6a951 pins 4456dfb7869a307d009038c6b8523a9b6c0a732e.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261104165739 is outside Platform range [4.43.0, 5.0.0-0) at '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ],
+    "buildPreparation": {
+      "workspace": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping",
+      "mode": "source",
+      "mappingHash": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+        "Configuration": "Debug"
+      }
+    }
+  },
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "failedAttemptsRetained": [
+    "query-observer-metadata-build-2.log (two nullable test assertion errors)",
+    "query-observer-metadata-root.xml (new exporter control initially read encoded span record as an object)"
+  ],
+  "renderingPolicy": "All records/keys/scopes/messages/full exceptions retained. Scalars remain typed; arbitrary CLR values retain runtime type/provider text with explicit conversion/formatter failure markers. Span tag/event/link values use the same policy; no output/category filtering.",
+  "evidenceHandling": "Existing unsafe metadata status assertion no longer appends response bodies. Failed64 raw bytes remain unchanged and owner-private; see sanitized custody receipt, never raw token-bearing artifacts.",
+  "sharedSourceChanged": false,
+  "distributedRuntimeStarted": false,
+  "privacyAcceptance": false,
+  "timingToleranceAccepted": false,
+  "next": "Approved one-source real-owner-only diagnostic using existing normal startup/profile/six-peer/cleanup guards, intentionally non-qualifying; then fresh full aggregate still required."
+}

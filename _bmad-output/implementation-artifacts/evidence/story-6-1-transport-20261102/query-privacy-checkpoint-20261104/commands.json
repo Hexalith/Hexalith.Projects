@@ -1,0 +1,263 @@
+{
+  "createdUtc": "2026-11-04T17:30:01.939078+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa",
+  "sourceManifestSha256": "81c7b581e1029ce38bee441071847addbe9d5a137169e1c101225f3cb164a2f3",
+  "inputCount": 16682,
+  "changedFiles": [
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs",
+      "beforeSha256": "ea18a101699f8d1e06592b0b0170c26df6ab4a2b95334fcdeee901fac7b63a8b",
+      "afterSha256": "0175a7b4e47813cfa3e0b6f0c80b1b67d162c2faeff6f1caaecd26d9c1916bd2"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs",
+      "beforeSha256": "1a958fee1cf9c17a6a746dae08731b6f2d2e3738e258ce3ce6fab9e268eaf3b6",
+      "afterSha256": "de05e0d9c10c294280bde3ec550cd0624f546eb279775b5b8d29700a1cdee95d"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs",
+      "beforeSha256": "ada3eb114fd20fa35fadbca956c6b63cae8d769262b15a94a1a81e70350392e9",
+      "afterSha256": "2111e0716d518af240dc0de13218f1bcdc5e4726b1be2531bed3046bee2a29ca"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacy.cs",
+      "beforeSha256": null,
+      "afterSha256": "3f5468845435f3be21dd9e04b6a3f817ffa795d1446180adab18bf2d4fe918b6"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyExtensions.cs",
+      "beforeSha256": null,
+      "afterSha256": "1f6b22afbdd42619d8f96362265923fc093639e8963233d39ee0f335067d5c33"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs",
+      "beforeSha256": null,
+      "afterSha256": "d82bb3a4b2427808ce698e907857a32d957a14cb925a03bdb68a8d34154b7563"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyScope.cs",
+      "beforeSha256": null,
+      "afterSha256": "863df368e4954a4483e3507921721a591c5ed484b455f54465cf58e9c124b7e8"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadBoundaryDiagnostics.cs",
+      "beforeSha256": null,
+      "afterSha256": "351d59945755b410432477445696c4a3fc3cf5a9a636a78b5f11b51fe12a34c5"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/RequestLogPrivacyTests.cs",
+      "beforeSha256": "52e138e2fdefecb80bfc92ddecfd68e0a222f638f826497c126c1b77f93294cc",
+      "afterSha256": "fb7638bb8ddbac22e31e30477038d12f6d8c52171469f4fe7b538d179ce7812e"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyTests.cs",
+      "beforeSha256": null,
+      "afterSha256": "1abad6f45aa48b0c7247030da34f5eddb6392640d7fce4721c3b1e3a42dfd0ca"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyCollection.cs",
+      "beforeSha256": null,
+      "afterSha256": "be0222b83b5e46993682f9c0d35267bbf6fd67ddfc8aefafb6e8ee5631c3f421"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyLogExporter.cs",
+      "beforeSha256": null,
+      "afterSha256": "117ed2d160311d1a4e0b40adfb6ae8fafacd13855bed40a0eb4a0f5890d8d839"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyTraceExporter.cs",
+      "beforeSha256": null,
+      "afterSha256": "7768d19175929dbb3123392f1aa24a4980c2b7ac90ea3a40ea4c647ba84b9331"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "beforeSha256": "db984532fb8505e51c2eb875e8aa5ab9c3aeae7ea073071aa0e6e423f2071b3f",
+      "afterSha256": "5465ed3fdf0b95d45326c83cf046528fdc77c210d59498da995e5508aaa550e8"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs",
+      "beforeSha256": "b913115a7378825f1febfdda7ccfd9864e1d016bbd159c36536f61d5bca43f88",
+      "afterSha256": "e16eb19edb91d4f363eb7d3436ed84485760151d72814db04e5f0aeaf9412edc"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogProvider.cs",
+      "beforeSha256": null,
+      "afterSha256": "69dce4bcd9707ae75363ba6a6613adca504dc93bd712ccf5594ff9be95299c67"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialTraceExporter.cs",
+      "beforeSha256": null,
+      "afterSha256": "f1d1a2ef881a0f930d465a7ebf0d6f0d999afaad4820a80241e910b695cfb2ec"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTelemetryCollection.cs",
+      "beforeSha256": null,
+      "afterSha256": "b875c3dbd3e827139e6d2918a40b12c147344da2d4f3d84b442e54c0181513ab"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "beforeSha256": "75c67cc1d7206f4a992a313831ef1118c3d94fdfe33d7d0d60350d2ca2ce2a19",
+      "afterSha256": "d2c922c80ad97dd0aea8d1ef677084228de0906c97b34f4f029292ea864d45fd"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "b203e0b6acf4fcc650d747cd5278c8e855246bbdabf3bec99a76a5ac270310ff",
+      "afterSha256": "fbfeb057fa3ab9d80118e72d7a00f4f8b57664c46b012c2b31016e4efa768116"
+    }
+  ],
+  "onlySelectedInputsChanged": true,
+  "selectedPatchSha256": "376b98669392aed8fe3add6e5086b4be7ca18ef735ce18eba2ea402c978ec282",
+  "patchReproducesAllSelectedBytes": true,
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+    "Configuration": "Debug"
+  },
+  "nativeResults": [
+    {
+      "artifact": "query-privacy-tests-3.xml",
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "seconds": "0.504"
+    },
+    {
+      "artifact": "query-privacy-root-tests-final.xml",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "seconds": "1.284"
+    },
+    {
+      "artifact": "query-privacy-host-security.xml",
+      "total": 46,
+      "passed": 46,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "seconds": "1.852"
+    }
+  ],
+  "commands": [
+    [
+      "python3",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+      "dotnet",
+      "build",
+      "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "*ReadDiagnosticsPrivacyTests",
+      "-class",
+      "*RequestLogPrivacyTests",
+      "-xml",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/query-privacy-tests-3.xml"
+    ],
+    [
+      "python3",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+      "dotnet",
+      "build",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1"
+    ],
+    [
+      "python3",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+      "dotnet",
+      "build",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--no-restore",
+      "-p:BuildProjectReferences=false"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*SupportedProjectGatewayHttpTests",
+      "-method-",
+      "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "-xml",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/query-privacy-root-tests-final.xml"
+    ],
+    [
+      "dotnet",
+      "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "*HttpHostSecurityTests",
+      "-class",
+      "*WorkloadGatewayControllerTests",
+      "-class",
+      "*DomainServiceWorkloadAssertionHandlerTests",
+      "-xml",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/query-privacy-host-security.xml"
+    ]
+  ],
+  "assemblySha256": {
+    "SdkServerTests": "b82b5e4e73eaaa5104d4e3216b3de3c375b466c6b5caad86788d72a18a7fab6b",
+    "ServiceDefaults": "9999216ea0d69faec27ab7deb8ab8919767261a350ece57be85ad2e02e808270",
+    "ProjectsServerTests": "79c3ab91c270de308af14e24f66701f94fa6cd22ab2ee2684fa41fc186ec3299"
+  },
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "sharedSourceChanged": false,
+  "distributedRuntimeStarted": false,
+  "localInProcessHttpFixtureHostsStartedAndDisposed": true,
+  "privacyAcceptance": false,
+  "timingToleranceAccepted": false,
+  "remaining": [
+    "Augmented real-owner/foreign-only identity test with12 interleaved timing samples has not run at this source.",
+    "Final native Dapr exporter/log/exemplar proof at this source is pending.",
+    "Numeric timing tolerance and measurement acceptance remain unspecified.",
+    "Current-source full regression/qualification and parent workflow review remain pending."
+  ],
+  "limits": [
+    "Pre-context Kestrel Connections/Transport sub-Warning chatter is omitted globally; warnings/errors and ordinary business diagnostics remain.",
+    "Known protected request logs/traces are omitted; unsupported pre-context warning/error faults have not been exhaustively proven equivalent.",
+    "Coarse aggregate metric operation counts remain and count-based traffic inference is accepted by the user.",
+    "Original passing live-63 remains its own earlier-source functional evidence; no providers were reused."
+  ]
+}

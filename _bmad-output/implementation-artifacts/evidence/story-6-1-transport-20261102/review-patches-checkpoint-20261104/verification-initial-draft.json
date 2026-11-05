@@ -1,0 +1,91 @@
+{
+  "selectedFiles": {
+    "src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs": "2e734520e96474e33e604411de0165347d5e3a46535e6383b6512158423d631e",
+    "src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs": "272ff8b696e19c948f01e10af8c534e6f0cb2713731804d0bff0eecc4cf76761",
+    "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs": "407f87783f7fcfd4780a3a12f31b8c5a21e9f828767dbdaf9b2110c6ffe9ea4a",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs": "e899d136152815c0dd4ca61ccf9fa50de437375989750fe8ad6dd6c1b4cf8be1",
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectReadQueryCompatibilityTests.cs": "ce321b108f0b2a2f64d3062b93951d24be886e9c99fec07e2fedb32891823997",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.cs": "7ff51bdd5e808814a189f062d90c0b9ab2b2d63f424cfa4e524c0971e7a03b7a",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs": "3d525333a09080919da5f817bb7940ffbcb32d663e19961b30a509202a2f484b",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.DeferredVisibility.cs": "67e5fd0ec1d1a3244026ccc4c3244f02a4d3888011de90a4931190130b952aa6",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "40d85380aa44c3bb870432f882a3aadd24ea3804a5b3ebaf8dad632b16166dc0",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs": "bc573ccf6a8fa1538d556f7eb6aa1f0d607f9c5b5d24076fd06a1aa85c052700",
+    "tools/qualification/run_supported_project_reads.py": "27539f14e28f527b26c2aa0246459972cdc88519bf1083e141c4c373b6b7881f",
+    "tests/tools/test_supported_project_reads_launcher.py": "d0be5c41cef232b51867b5e74226fbeaf89749a0cd2b38250258f76e102c63d2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "fe69504c1a5fd649171f5d646085bc8574d756ff2851b285594b1d67154c38da",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "fd40a48d8a14acb8e393e4419d5a21df538c2d01ad21725105f315ebde8e146d",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "e31684583b844b2afb8e80adaedfdde277f567398ae3c4c14392b8ca3c055379"
+  },
+  "sourceManifestCount": 69262,
+  "sourceManifestSha256": "5e0aa804e40a941365da9febfd83cf1992eaa65b54512e422061802829f8e27c",
+  "tests": {
+    "Contracts": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "3",
+        "skipped": "0",
+        "time": "0.109",
+        "total": "3"
+      }
+    ],
+    "RootProjectionAndRead": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "133",
+        "skipped": "0",
+        "time": "0.767",
+        "total": "133"
+      }
+    ],
+    "SdkNativeDiagnosticsAndStreams": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "122",
+        "skipped": "0",
+        "time": "1.214",
+        "total": "122"
+      }
+    ],
+    "DistributedFixtureEvidence": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "83",
+        "skipped": "0",
+        "time": "1.648",
+        "total": "83"
+      }
+    ]
+  },
+  "launcherControls": {
+    "total": 119,
+    "failed": 0
+  },
+  "allFourRelevantBuilds": {
+    "passed": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "nativeRuntimeStarted": false,
+  "fullSuitesRun": false,
+  "runtimeOnlyExcludedMethod": "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+  "retainedInitialRootSelection": {
+    "total": 136,
+    "passed": 133,
+    "failedMissingOwnedRuntime": 3,
+    "artifact": "root-focused.xml"
+  },
+  "retainedInitialBuildErrors": [
+    "server-build.log",
+    "server-build-2.log"
+  ],
+  "distributedMainQuarantineExecution": "pending parent full verification",
+  "lineEndings": "task-touched Projects C# CRLF; EventStore C# LF"
+}

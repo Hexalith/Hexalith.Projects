@@ -1,0 +1,925 @@
+--- a/src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs
++++ b/src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs
+@@ -1,10 +1,21 @@
+ namespace Hexalith.Projects.Contracts.Queries;
++
++using System.Text.Json.Serialization;
+ 
+ /// <summary>Opens one Project bound to the envelope target, without paging.</summary>
+ /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
+ /// <param name="InspectQuarantined">Requests the narrowly scoped Administrator inspection of an unbound Active Project.</param>
++[method: JsonConstructor]
+ public sealed record GetProjectQuery(bool InspectDescriptiveMetadata = false, bool InspectQuarantined = false)
+ {
++    /// <summary>Preserves the original constructor signature for existing consumers.</summary>
++    /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
++    public GetProjectQuery(bool InspectDescriptiveMetadata) : this(InspectDescriptiveMetadata, false) { }
++
++    /// <summary>Preserves the original positional deconstruction signature.</summary>
++    /// <param name="InspectDescriptiveMetadata">The descriptive inspection selection.</param>
++    public void Deconstruct(out bool InspectDescriptiveMetadata) => InspectDescriptiveMetadata = this.InspectDescriptiveMetadata;
++
+     /// <summary>The supported query discriminator.</summary>
+     public const string QueryType = "Hexalith.Projects.Queries.GetProject.v1";
+ }
+--- a/src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs
++++ b/src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs
+@@ -1,4 +1,6 @@
+ namespace Hexalith.Projects.Contracts.Queries;
++
++using System.Text.Json.Serialization;
+ 
+ /// <summary>Lists authorized Projects; authority comes exclusively from the authenticated envelope.</summary>
+ /// <param name="LifecycleState">Optional Active or Archived lifecycle filter.</param>
+@@ -6,6 +8,7 @@
+ /// <param name="PageSize">The requested number of rows, from one through 200.</param>
+ /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
+ /// <param name="IncludeQuarantined">Selects the separately audited Administrator inventory of unbound Active Projects.</param>
++[method: JsonConstructor]
+ public sealed record ListProjectsQuery(
+     string? LifecycleState = null,
+     string? Cursor = null,
+@@ -13,6 +16,27 @@
+     bool InspectDescriptiveMetadata = false,
+     bool IncludeQuarantined = false)
+ {
++    /// <summary>Preserves the original constructor signature for existing consumers.</summary>
++    /// <param name="LifecycleState">The lifecycle filter.</param>
++    /// <param name="Cursor">The opaque continuation.</param>
++    /// <param name="PageSize">The requested page size.</param>
++    /// <param name="InspectDescriptiveMetadata">The descriptive inspection selection.</param>
++    public ListProjectsQuery(string? LifecycleState, string? Cursor, int PageSize, bool InspectDescriptiveMetadata)
++        : this(LifecycleState, Cursor, PageSize, InspectDescriptiveMetadata, false) { }
++
++    /// <summary>Preserves the original positional deconstruction signature.</summary>
++    /// <param name="LifecycleState">The lifecycle filter.</param>
++    /// <param name="Cursor">The opaque continuation.</param>
++    /// <param name="PageSize">The requested page size.</param>
++    /// <param name="InspectDescriptiveMetadata">The descriptive inspection selection.</param>
++    public void Deconstruct(out string? LifecycleState, out string? Cursor, out int PageSize, out bool InspectDescriptiveMetadata)
++    {
++        LifecycleState = this.LifecycleState;
++        Cursor = this.Cursor;
++        PageSize = this.PageSize;
++        InspectDescriptiveMetadata = this.InspectDescriptiveMetadata;
++    }
++
+     /// <summary>The supported query discriminator.</summary>
+     public const string QueryType = "Hexalith.Projects.Queries.ListProjects.v1";
+ 
+--- a/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs
++++ b/src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs
+@@ -247,7 +247,8 @@
+             && binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;
+ 
+     private static bool IsQuarantined(ProjectDetailItem detail)
+-        => detail.Lifecycle == ProjectLifecycle.Active && detail.ProjectFolder?.FolderId is null;
++        => detail.Lifecycle == ProjectLifecycle.Active
++            && detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: not null };
+ 
+     private async Task<ProjectAuthorizationResult?> AuthorizeProjectAsync(QueryEnvelope query, ProjectReadModel model, CancellationToken cancellationToken)
+     {
+--- a/src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs
++++ b/src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs
+@@ -7,7 +7,10 @@
+ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.DomainService;
+ using Hexalith.Projects.Contracts.Events;
++using Hexalith.Projects.Aggregates.Project;
+ using Hexalith.Projects.Contracts.Models;
++using Hexalith.Projects.Contracts.Identifiers;
++using Hexalith.Projects.Contracts.Ui;
+ using Hexalith.Projects.Projections.ProjectDetail;
+ using Hexalith.Projects.Projections.ProjectList;
+ 
+@@ -176,6 +179,66 @@
+         return DomainProjectionHandlerResult.Retryable("projection-concurrency");
+     }
+ 
++    private static bool HasRequiredContent(JsonElement content, Type type)
++    {
++        if (content.ValueKind != JsonValueKind.Object) { return false; }
++        Dictionary<string, JsonElement> fields = new(StringComparer.OrdinalIgnoreCase);
++        foreach (JsonProperty property in content.EnumerateObject())
++            if (!fields.TryAdd(property.Name, property.Value)) { return false; }
++        string[] required = type.Name switch
++        {
++            nameof(ProjectCreated) => ["name", "lifecycle"],
++            nameof(ProjectSetupUpdated) => ["setup"],
++            nameof(ProjectFolderSet) => ["folderId", "folderMetadata"],
++            nameof(ProjectFolderCreationPending) => ["displayNameIntent", "reasonCode", "retryable"],
++            nameof(FileReferenceLinked) => ["fileReferenceId", "folderId", "fileMetadata"],
++            nameof(FileReferenceUnlinked) => ["fileReferenceId"],
++            nameof(MemoryLinked) => ["memoryReferenceId", "memoryMetadata"],
++            nameof(MemoryUnlinked) => ["memoryReferenceId"],
++            nameof(ProjectArchived) or nameof(ProjectRestored) => ["lifecycle"],
++            nameof(ProjectResolutionConfirmed) => ["conversationId"],
++            nameof(ProjectChatBotAuthorityGranted) => ["principalId", "operation", "actorClass", "origin", "grantId", "expiresAt"],
++            nameof(ProjectChatBotAuthorityRevoked) => ["principalId", "operation", "actorClass", "origin", "grantId"],
++            nameof(ProjectChatBotAuthorityRejected) => ["reasonCode"],
++            nameof(ProjectReferenceLinkRejected) or nameof(ProjectReferenceUnlinkRejected) => ["tenantId", "projectId", "referenceKind", "referenceId", "reason"],
++            nameof(ProjectCreationRejected) => ["tenantId", "reason"],
++            _ => ["tenantId", "projectId", "reason"],
++        };
++        if (typeof(IProjectEvent).IsAssignableFrom(type)) required = [.. required, "tenantId", "projectId", "occurredAt"];
++        return required.All(name => fields.TryGetValue(name, out JsonElement field)
++            && field.ValueKind is not (JsonValueKind.Null or JsonValueKind.Undefined)
++            && (field.ValueKind != JsonValueKind.String || !string.IsNullOrWhiteSpace(field.GetString())));
++    }
++
++    private static bool ValidKnownContent(object value, string tenant, string aggregate, long sequence)
++    {
++        if (value is IProjectEvent project && project.OccurredAt == default) { return false; }
++        if (value is ProjectChatBotAuthorityGranted grant && (grant.ExpiresAt == default || grant.ExpiresAt <= grant.OccurredAt)) { return false; }
++        if (value is ProjectCreated { Lifecycle: not ProjectLifecycle.Active }
++            or ProjectArchived { Lifecycle: not ProjectLifecycle.Archived }
++            or ProjectRestored { Lifecycle: not ProjectLifecycle.Active }) { return false; }
++        if (value.GetType().GetProperty("Reason")?.GetValue(value) is ReferenceState reason && !Enum.IsDefined(reason)) { return false; }
++        if (value.GetType().GetProperty("TenantId")?.GetValue(value) is string scope && scope != tenant) { return false; }
++        if (value.GetType().GetProperty("ProjectId")?.GetValue(value) is ProjectId identity && identity.Value != aggregate) { return false; }
++        if (Irrelevant.ContainsKey(value.GetType().FullName!)) { return true; }
++        try
++        {
++            // Validate only this event's persisted content. A duplicate predates later reference
++            // observations, so replaying it onto today's detail would incorrectly rewind its lifetime.
++            IProjectEvent known = (IProjectEvent)value;
++            ProjectDetailItem baseline = new(tenant, aggregate, "Project", null, null, null,
++                value is FileReferenceLinked file ? new(file.FolderId, null, ReferenceState.Included, null, known.OccurredAt) : null,
++                [], [], ProjectLifecycle.Active, known.OccurredAt, known.OccurredAt, sequence);
++            ProjectDetailItem? preview = (value is ProjectCreated ? ProjectDetailProjection.Empty : ProjectDetailProjection.Seed(baseline))
++                .Apply([new ProjectProjectionEnvelope(tenant, sequence, known)]).Get(tenant, aggregate);
++            return preview is not null && ProjectPersistedDetailValidator.IsValid(preview);
++        }
++        catch (Exception error) when (error is ArgumentException or InvalidOperationException or NullReferenceException)
++        {
++            return false;
++        }
++    }
++
+     private static ReadModelBatchConcurrency Concurrency(string? etag)
+         => string.IsNullOrEmpty(etag) ? ReadModelBatchConcurrency.CreateOnly : ReadModelBatchConcurrency.Match(etag);
+ 
+@@ -208,6 +271,8 @@
+             object? value;
+             try
+             {
++                using JsonDocument content = JsonDocument.Parse(item.Payload);
++                if (!HasRequiredContent(content.RootElement, type)) { return failed; }
+                 value = JsonSerializer.Deserialize(item.Payload, type, JsonOptions);
+             }
+             catch (JsonException)
+@@ -220,6 +285,8 @@
+             {
+                 return failed;
+             }
++
++            if (!ValidKnownContent(value, request.TenantId, request.AggregateId, item.SequenceNumber)) { return failed; }
+ 
+             if (item.SequenceNumber <= current.Sequence)
+             {
+@@ -250,7 +317,7 @@
+                 {
+                     return failed;
+                 }
+-                if (detail is null)
++                if (detail is null || !ProjectPersistedDetailValidator.IsValid(detail))
+                 {
+                     return failed;
+                 }
+--- /dev/null
++++ b/tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectReadQueryCompatibilityTests.cs
+@@ -0,0 +1,42 @@
++namespace Hexalith.Projects.Contracts.Tests.Queries;
++
++using System.Text.Json;
++using Hexalith.Projects.Contracts.Queries;
++using Shouldly;
++using Xunit;
++
++/// <summary>Retains the original binary/source positional APIs and additive JSON flags.</summary>
++public sealed class ProjectReadQueryCompatibilityTests
++{
++    [Fact]
++    public void OriginalConstructorsAndDeconstructionRemainAvailable()
++    {
++        typeof(GetProjectQuery).GetConstructor([typeof(bool)]).ShouldNotBeNull();
++        GetProjectQuery open = new(true);
++        open.Deconstruct(out bool inspect);
++        inspect.ShouldBeTrue();
++        open.InspectQuarantined.ShouldBeFalse();
++        typeof(ListProjectsQuery).GetConstructor([typeof(string), typeof(string), typeof(int), typeof(bool)]).ShouldNotBeNull();
++        ListProjectsQuery list = new("Active", "opaque", 12, true);
++        var (lifecycle, cursor, size, descriptive) = list;
++        lifecycle.ShouldBe("Active"); cursor.ShouldBe("opaque"); size.ShouldBe(12); descriptive.ShouldBeTrue();
++        list.IncludeQuarantined.ShouldBeFalse();
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public void JsonSelectsExpandedConstructorAndMissingFlagsRetainDefaults(bool expanded)
++    {
++        string openJson = expanded ? "{\"inspectDescriptiveMetadata\":true,\"inspectQuarantined\":true}" : "{\"inspectDescriptiveMetadata\":true}";
++        GetProjectQuery open = JsonSerializer.Deserialize<GetProjectQuery>(openJson, JsonSerializerOptions.Web)!;
++        open.InspectDescriptiveMetadata.ShouldBeTrue(); open.InspectQuarantined.ShouldBe(expanded);
++        JsonSerializer.Deserialize<GetProjectQuery>(JsonSerializer.Serialize(open, JsonSerializerOptions.Web), JsonSerializerOptions.Web).ShouldBe(open);
++        string listJson = "{\"lifecycleState\":\"Active\",\"cursor\":\"opaque\",\"pageSize\":12,\"inspectDescriptiveMetadata\":true" + (expanded ? ",\"includeQuarantined\":true}" : "}");
++        ListProjectsQuery list = JsonSerializer.Deserialize<ListProjectsQuery>(listJson, JsonSerializerOptions.Web)!;
++        list.ShouldBe(new("Active", "opaque", 12, true, expanded));
++        JsonSerializer.Deserialize<ListProjectsQuery>(JsonSerializer.Serialize(list, JsonSerializerOptions.Web), JsonSerializerOptions.Web).ShouldBe(list);
++        JsonSerializer.Deserialize<GetProjectQuery>("{}", JsonSerializerOptions.Web).ShouldBe(new GetProjectQuery());
++        JsonSerializer.Deserialize<ListProjectsQuery>("{}", JsonSerializerOptions.Web).ShouldBe(new ListProjectsQuery());
++    }
++}
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.cs
+@@ -1,6 +1,8 @@
+ namespace Hexalith.Projects.Server.Tests.Queries;
+ 
+ using System.Text.Json;
++using System.Text.Json.Nodes;
++using Hexalith.Projects.Contracts.Identifiers;
+ using Hexalith.EventStore.Client.Projections;
+ using Hexalith.EventStore.Client.Discovery;
+ using Microsoft.Extensions.DependencyInjection;
+@@ -33,8 +35,9 @@
+         {
+             InMemoryReadModelStore incremental = new();
+             ProjectionEventDto created = SupportedProjectReadFixture.Request("project-a").Events[0];
+-            ProjectionEventDto harmless = new(noOp.FullName!,
+-                "{\"tenantId\":\"tenant-a\",\"projectId\":\"project-a\"}"u8.ToArray(),
++            JsonObject content = JsonSerializer.SerializeToNode(ValidNoOp(noOp), noOp, JsonSerializerOptions.Web)!.AsObject();
++            content["futureHarmlessMetadata"] = "compatible";
++            ProjectionEventDto harmless = new(noOp.FullName!, JsonSerializer.SerializeToUtf8Bytes(content),
+                 "json", 2, SupportedProjectReadFixture.EventTime, "projection", "harmless", "actor-1", 101);
+             ProjectReadProjectionHandler handler = new(incremental, incremental);
+             (await handler.ProjectAsync(new("tenant-a", "projects", "project-a", [created]),
+@@ -54,6 +57,105 @@
+             JsonSerializer.Serialize(replay.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+                 ProjectReadModelKeys.Detail("tenant-a", "project-a"))).ShouldBe(JsonSerializer.Serialize(after));
+         }
++    }
++
++    [Fact]
++    public async Task OlderValidDuplicatePreservesLaterFolderObservation()
++    {
++        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
++        ProjectionRequest request = SupportedProjectReadFixture.Request("project-a");
++        ProjectFolderSet older = new("tenant-a", "project-a", "folder-a", new("Folder"), "actor", "correlation", "task", "folder", "folder", SupportedProjectReadFixture.EventTime.AddSeconds(1));
++        FileReferenceLinked later = new("tenant-a", "project-a", "file-a", "folder-a", new("Later file"), "actor", "correlation", "task", "file", "file", SupportedProjectReadFixture.EventTime.AddSeconds(2));
++        request = request with { Events = [request.Events[0], SupportedProjectReadFixture.Event(older, 2, 101), SupportedProjectReadFixture.Event(later, 3, 102)] };
++        (await fixture.Projection.ProjectAsync(request, "later-reference", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!
++            .Detail!.FileReferences.Single().ObservedAt.ShouldBeGreaterThan(older.OccurredAt);
++        byte[] before = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
++        (await fixture.Projection.ProjectAsync(request with { Events = [request.Events[1]] }, "older-duplicate", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.AlreadyCompleted);
++        fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a")).ShouldBe(before);
++    }
++
++    [Fact]
++    public async Task OlderCreatedJsonRetainsOptionalAndAdditiveCompatibility()
++    {
++        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
++        ProjectionEventDto created = SupportedProjectReadFixture.Request("project-a").Events[0];
++        JsonObject content = JsonNode.Parse(created.Payload)!.AsObject();
++        foreach (string optional in new[] { "description", "setupMetadata", "actorPrincipalId", "correlationId", "taskId", "idempotencyKey", "idempotencyFingerprint" }) content.Remove(optional);
++        content["futureHarmlessMetadata"] = "compatible";
++        created = created with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
++        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [created]), "historical-created", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [created]), "historical-duplicate", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.AlreadyCompleted);
++    }
++
++    [Theory]
++    [InlineData(false, "name")]
++    [InlineData(false, "lifecycle")]
++    [InlineData(false, "occurredAt")]
++    [InlineData(false, "empty-name")]
++    [InlineData(false, "invalid-lifecycle")]
++    [InlineData(false, "default-occurredAt")]
++    [InlineData(false, "unsafe-name")]
++    [InlineData(true, "principalId")]
++    [InlineData(true, "operation")]
++    [InlineData(true, "expiresAt")]
++    [InlineData(true, "empty-principalId")]
++    [InlineData(true, "default-expiresAt")]
++    public async Task MalformedKnownDuplicateCannotPreserveCurrent(bool noOp, string field)
++        => await RejectMalformedKnownAsync(noOp, field, duplicate: true);
++
++    [Theory]
++    [InlineData("principalId")]
++    [InlineData("grantId")]
++    [InlineData("expiresAt")]
++    [InlineData("empty-principalId")]
++    [InlineData("default-expiresAt")]
++    public async Task MalformedKnownNoOpCannotAdvanceCurrent(string field)
++        => await RejectMalformedKnownAsync(noOp: true, field, duplicate: false);
++
++    private static async Task RejectMalformedKnownAsync(bool noOp, string field, bool duplicate)
++    {
++        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync().ConfigureAwait(false);
++        await fixture.SeedAsync("project-a").ConfigureAwait(false);
++        ProjectionEventDto item = noOp
++            ? SupportedProjectReadFixture.Event(ValidNoOp(typeof(ProjectChatBotAuthorityGranted)), duplicate ? 2 : 3, duplicate ? 101 : 102)
++            : SupportedProjectReadFixture.Request("project-a").Events[0];
++        JsonObject content = JsonNode.Parse(item.Payload)!.AsObject();
++        switch (field)
++        {
++            case "empty-name": content["name"] = " "; break;
++            case "invalid-lifecycle": content["lifecycle"] = 999; break;
++            case "default-occurredAt": content["occurredAt"] = default(DateTimeOffset); break;
++            case "unsafe-name": content["name"] = "/private/resource/path"; break;
++            case "empty-principalId": content["principalId"] = " "; break;
++            case "default-expiresAt": content["expiresAt"] = default(DateTimeOffset); break;
++            default: content.Remove(field); break;
++        }
++        item = item with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
++        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [item]), "malformed-known", TestContext.Current.CancellationToken).ConfigureAwait(false)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
++        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
++        model.Sequence.ShouldBe(2);
++        model.Freshness.ShouldBe(EvidenceFreshnessState.Unavailable);
++    }
++
++    private static object ValidNoOp(Type type)
++    {
++        ProjectId project = new("project-a");
++        DateTimeOffset at = SupportedProjectReadFixture.EventTime;
++        return type.Name switch
++        {
++            nameof(ProjectChatBotAuthorityGranted) => new ProjectChatBotAuthorityGranted("tenant-a", "project-a", "principal", "RecordGovernedNote", "human", "Ui", "grant", at.AddMinutes(1), "actor", null!, null!, null!, null!, at),
++            nameof(ProjectChatBotAuthorityRevoked) => new ProjectChatBotAuthorityRevoked("tenant-a", "project-a", "principal", "RecordGovernedNote", "human", "Ui", "grant", "actor", null!, null!, null!, null!, at),
++            nameof(ProjectChatBotAuthorityRejected) => new ProjectChatBotAuthorityRejected("denied"),
++            nameof(ProjectCreationRejected) => new ProjectCreationRejected("tenant-a", ReferenceState.Unauthorized),
++            nameof(ProjectArchiveRejected) => new ProjectArchiveRejected(project, "tenant-a", ReferenceState.Unauthorized),
++            nameof(ProjectRestoreRejected) => new ProjectRestoreRejected(project, "tenant-a", ReferenceState.Unauthorized),
++            nameof(ProjectSetupUpdateRejected) => new ProjectSetupUpdateRejected(project, "tenant-a", ReferenceState.Unauthorized),
++            nameof(ProjectReferenceLinkRejected) => new ProjectReferenceLinkRejected(project, "tenant-a", "folder", "folder-a", ReferenceState.Unauthorized),
++            nameof(ProjectReferenceUnlinkRejected) => new ProjectReferenceUnlinkRejected(project, "tenant-a", "folder", "folder-a", ReferenceState.Unauthorized),
++            nameof(ProjectResolutionConfirmationRejected) => new ProjectResolutionConfirmationRejected(project, "tenant-a", ReferenceState.Unauthorized),
++            _ => throw new InvalidOperationException("Unclassified no-op test fixture."),
++        };
+     }
+ 
+     [Theory]
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs
+@@ -2,6 +2,7 @@
+ 
+ using System.Text.Json;
+ using Hexalith.Projects.Contracts.Queries;
++using Hexalith.Projects.Contracts.Models;
+ using Hexalith.Projects.Contracts.Ui;
+ using Hexalith.Projects.Server.Projections.ProjectReads;
+ using Hexalith.Projects.Server.Queries;
+@@ -71,6 +72,50 @@
+         (await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(Cursor: first.Cursor, PageSize: 1)),
+             TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
+         fixture.Store.Count.ShouldBe(before + 2);
++        string[] priorAudits = fixture.AuditStore.Keys.ToArray();
++        ProjectListPage multi = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
++            fixture.Query(new ListProjectsQuery(PageSize: 2, IncludeQuarantined: true), correlation: "inventory-multirow"),
++            TestContext.Current.CancellationToken));
++        multi.Items.Select(row => row.ProjectId).ShouldBe(["legacy-a", "legacy-b"]);
++        string[] added = fixture.AuditStore.Keys.Except(priorAudits, StringComparer.Ordinal).ToArray();
++        added.Length.ShouldBe(2);
++        added.Distinct(StringComparer.Ordinal).Count().ShouldBe(2);
++        added.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)
++            .ShouldAllBe(record => record.Outcome == "Inspection" && record.ProjectCount == 1 && record.FieldClass == "ProjectName");
++        fixture.Store.Count.ShouldBe(before + 4);
++    }
++
++    [Fact]
++    public async Task PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads()
++    {
++        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true, administrator: true);
++        await fixture.SeedAsync("legacy-pending", folder: false);
++        string key = ProjectReadModelKeys.Detail("tenant-a", "legacy-pending");
++        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
++        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, model with
++        {
++            Detail = model.Detail! with
++            {
++                SetupMetadata = "Restricted historical setup",
++                ProjectFolder = new ProjectFolderReference("historical-folder", "Historical label", ReferenceState.Pending, "pending", SupportedProjectReadFixture.EventTime),
++            },
++        });
++        byte[] before = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key)!;
++        string? etag = (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag;
++        SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()),
++            TestContext.Current.CancellationToken)).Items.ShouldBeEmpty();
++        (await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "legacy-pending"), TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
++        GetProjectResponse inspected = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
++            fixture.Query(new GetProjectQuery(InspectQuarantined: true), "legacy-pending", "pending-inspect"), TestContext.Current.CancellationToken));
++        inspected.Name.ShouldBe("Project legacy-pending");
++        inspected.Description.ShouldBeNull(); inspected.Setup.ShouldBeNull(); inspected.SetupMetadata.ShouldBeNull();
++        inspected.References.Single().FolderId.ShouldBe("historical-folder");
++        inspected.References.Single().ReferenceState.ShouldBe(ReferenceState.Pending);
++        inspected.References.Single().DisplayName.ShouldBeNull();
++        JsonSerializer.Serialize(inspected).ShouldNotContain("Restricted historical setup");
++        fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(before);
++        (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(etag);
++        fixture.Folders.Reads.ShouldBe(0);
+     }
+ 
+     [Fact]
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.DeferredVisibility.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.DeferredVisibility.cs
+@@ -34,6 +34,11 @@
+         }
+ 
+         string key = ProjectReadModelKeys.Detail("tenant-a", "legacy-project");
++        ProjectReadModel legacy = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
++        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, legacy with
++        {
++            Detail = legacy.Detail! with { SetupMetadata = "Legacy restricted setup reference" },
++        });
+         ReadModelEntry<ProjectReadModel> before = await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken);
+         byte[] beforeBytes = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key)!;
+         int count = fixture.Store.Count;
+@@ -50,6 +55,7 @@
+         inspected.Description.ShouldBeNull();
+         inspected.Setup.ShouldBeNull();
+         inspected.SetupMetadata.ShouldBeNull();
++        JsonSerializer.Serialize(inspected).ShouldNotContain("Legacy restricted setup reference");
+         inspected.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+         inspected.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
+         if (pendingReceipt)
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
+@@ -79,11 +79,11 @@
+     }
+ 
+     /// <summary>Signs a synthetic public credential using trust distinct from workload trust.</summary>
+-    internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false)
++    internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false, bool projectAdministrator = false)
+     {
+         List<Claim> claims = [new("sub", tenant == ForeignTenant ? "foreign-actor" : "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant),
+             new("azp", chatbot ? "chatbot" : "operator-web"), new("eventstore:surface", chatbot ? "agent" : "ui"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
+-            new("scope", "projects.read projects.list"), new("projects:role", chatbot ? "ProjectUser" : "TenantOperator")];
++            new("scope", "projects.read projects.list"), new("projects:role", projectAdministrator ? "TenantProjectAdministrator" : chatbot ? "ProjectUser" : "TenantOperator")];
+         foreach (string permission in new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
+             "create_folder", "manage_folder_access", "manage_organization_acl" }) claims.Add(new("eventstore:permission", permission));
+         if (inspection) claims.Add(new("eventstore:permission", "projects:inspect_descriptive_metadata"));
+@@ -184,6 +184,21 @@
+                 Require(head >= 2, "The real Folder actor head was not advanced by persisted commands.");
+             }
+         }
++        if (Setting("Scenario") == "main")
++        {
++            foreach (string project in new[] { "legacy-a", "legacy-b" })
++            {
++                string created = await CommandAsync(Tenant, "projects", project, "Hexalith.Projects.Commands.CreateProject", new
++                {
++                    Name = "Legacy project " + project, Description = "Restricted legacy description",
++                    SetupMetadata = "Restricted legacy setup reference",
++                }, Tenant).ConfigureAwait(false);
++                using CancellationTokenSource readiness = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
++                readiness.CancelAfter(TimeSpan.FromSeconds(30));
++                await ProjectPersistedStreamAsync(Tenant, project, created, readiness.Token).ConfigureAwait(false);
++                await WaitForSeedNamedDeliveryAsync(Tenant, "projects", project, created, _seedStreams[(Tenant, project)], readiness.Token).ConfigureAwait(false);
++            }
++        }
+         foreach (string domain in new[] { "projects", "folders" })
+         {
+             using JsonDocument catalog = await MetadataAsync(domain).ConfigureAwait(false);
+@@ -227,9 +242,9 @@
+     }
+ 
+     /// <summary>Requires protected success through the real public query gateway.</summary>
+-    internal async Task<T> ReadAsync<T>(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool tenantActor = false)
+-    {
+-        using HttpResponseMessage response = await QueryAsync(open, chatbot, inspection, list, project, tenant, tenantActor: tenantActor).ConfigureAwait(false);
++    internal async Task<T> ReadAsync<T>(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool tenantActor = false, bool projectAdministrator = false, bool quarantine = false)
++    {
++        using HttpResponseMessage response = await QueryAsync(open, chatbot, inspection, list, project, tenant, tenantActor: tenantActor, projectAdministrator: projectAdministrator, quarantine: quarantine).ConfigureAwait(false);
+         Require(response.StatusCode == HttpStatusCode.OK, "Supported read returned HTTP " + (int)response.StatusCode + ".");
+         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
+         T value = result!.Payload.Deserialize<T>(Json)!;
+@@ -244,22 +259,22 @@
+     }
+ 
+     /// <summary>Sends one supported list/open request without forwarding human credentials downstream.</summary>
+-    internal Task<HttpResponseMessage> QueryAsync(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool inspectionPermission = true, CancellationToken? cancellationToken = null, bool tenantActor = false)
++    internal Task<HttpResponseMessage> QueryAsync(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool inspectionPermission = true, CancellationToken? cancellationToken = null, bool tenantActor = false, bool projectAdministrator = false, bool quarantine = false)
+     {
+         string targetTenant = tenant ?? Tenant;
+-        object input = open ? new GetProjectQuery(inspection) : list ?? new ListProjectsQuery(InspectDescriptiveMetadata: inspection);
++        object input = open ? new GetProjectQuery(inspection, quarantine) : list ?? new ListProjectsQuery(InspectDescriptiveMetadata: inspection, IncludeQuarantined: quarantine);
+         var query = new SubmitQueryRequest(targetTenant, "projects", open ? project : "projects", open ? GetProjectQuery.QueryType : ListProjectsQuery.QueryType,
+             Payload: JsonSerializer.SerializeToElement(input, input.GetType(), Json));
+-        return SendHumanAsync("api/v1/queries", query, HumanToken(tenantActor ? targetTenant : Tenant, chatbot, inspection && inspectionPermission,
+-            foreignTransportGrant: targetTenant == ForeignTenant), cancellationToken);
++        return SendHumanAsync("api/v1/queries", query, HumanToken(tenantActor ? targetTenant : Tenant, chatbot, (inspection || quarantine) && inspectionPermission,
++            foreignTransportGrant: targetTenant == ForeignTenant, projectAdministrator: projectAdministrator), cancellationToken);
+     }
+ 
+     /// <summary>Requires a metadata-free safe denial and returns its correlation-independent shape.</summary>
+     internal async Task<string> SafeDenialAsync(string project = "project-a", string? tenant = null, bool inspection = false,
+-        bool open = true, ListProjectsQuery? list = null, bool chatbot = true, bool inspectionPermission = true)
++        bool open = true, ListProjectsQuery? list = null, bool chatbot = true, bool inspectionPermission = true, bool projectAdministrator = false, bool quarantine = false)
+     {
+         using HttpResponseMessage response = await QueryAsync(open: open, project: project, tenant: tenant, inspection: inspection,
+-            list: list, chatbot: chatbot, inspectionPermission: inspectionPermission).ConfigureAwait(false);
++            list: list, chatbot: chatbot, inspectionPermission: inspectionPermission, projectAdministrator: projectAdministrator, quarantine: quarantine).ConfigureAwait(false);
+         return await SafeProblemAsync(response).ConfigureAwait(false);
+     }
+ 
+@@ -294,7 +309,10 @@
+             "projects:tenant-access:" + tenant, "projection:folders:tenant-access:" + tenant, "projection:folders:organization-permissions:" + tenant,
+             "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b",
+             "projects-conversation-start-setup||" + tenant + ":projects:project-a", "projects-conversation-start-setup||" + tenant + ":projects:project-b",
+-        }).ToArray();
++        }).Concat(Setting("Scenario") == "main" ? new[] { "legacy-a", "legacy-b" }.SelectMany(project => new[]
++        {
++            ProjectReadModelKeys.Detail(Tenant, project), "projects-conversation-start-setup||" + Tenant + ":projects:" + project,
++        }) : []).ToArray();
+         List<SupportedProjectReadStateSnapshot> result = [.. await ObserveRequiredSnapshotAsync(requiredKeys, StatesAsync, allowIncomplete).ConfigureAwait(false)];
+         string[] domainKeys = (await RedisAsync("--scan").ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries)
+             .Where(key => IsOwnedDomainKey(key, Tenant, ForeignTenant)).Order(StringComparer.Ordinal).ToArray();
+@@ -483,11 +501,11 @@
+         .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+ 
+     /// <summary>Requires this operation's new durable audit with the exact disclosure class/count.</summary>
+-    internal async Task VerifyDurableAuditDeltaAsync(string[] before, bool open, int count)
++    internal async Task VerifyDurableAuditDeltaAsync(string[] before, bool open, int count, bool quarantine = false)
+     {
+         string[] keys = await AuditKeysAsync().ConfigureAwait(false);
+         string[] added = keys.Except(before, StringComparer.Ordinal).ToArray();
+-        Require(added.Length == 1, "The inspected operation did not persist exactly one new audit.");
++        Require(added.Length == (quarantine ? count : 1), "The inspected operation did not persist the required distinct durable audits.");
+         string[] exclusions = ProtectedValues().ToArray();
+         foreach (string key in keys)
+         {
+@@ -496,10 +514,10 @@
+             Require(IsSafeAudit(audit.RootElement, _startedAt, DateTimeOffset.UtcNow, exclusions), "Audit metadata violates the closed privacy contract.");
+             string surrogate = audit.RootElement.GetProperty("requestSurrogate").GetString()!;
+             Require(key == "projects:read-audit:v1:" + surrogate, "Audit key does not match its surrogate.");
+-            if (key == added[0])
++            if (added.Contains(key, StringComparer.Ordinal))
+                 Require(audit.RootElement.GetProperty("outcome").GetString() == "Inspection"
+-                    && audit.RootElement.GetProperty("projectCount").GetInt32() == count
+-                    && audit.RootElement.GetProperty("fieldClass").GetString() == (open ? "ProjectNameDescriptionSetupReferenceLabels" : "ProjectName"),
++                    && audit.RootElement.GetProperty("projectCount").GetInt32() == (quarantine ? 1 : count)
++                    && audit.RootElement.GetProperty("fieldClass").GetString() == (open && !quarantine ? "ProjectNameDescriptionSetupReferenceLabels" : "ProjectName"),
+                     "The inspected operation audit has the wrong disclosure class/count.");
+             Require((await RedisAsync("TTL", key).ConfigureAwait(false)).Trim() == "-1", "Required audit must have durable retention without an expiry.");
+         }
+@@ -523,7 +541,7 @@
+     }
+ 
+     private IEnumerable<string> ProtectedValues() => new[] { Tenant, ForeignTenant, "actor-1", "foreign-actor", "project-a", "project-b", "folder-project",
+-        "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
++        "legacy-a", "legacy-b", "Legacy project", "Restricted legacy description", "Restricted legacy setup reference", "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
+         Setting("UserIssuer"), Setting("UserKeyPath"), Setting("CertificatePassword"), Setting("EventStoreSecret"), Setting("ProjectsSecret"),
+         Setting("ChannelToken"), Setting("ReceiptKey"), Setting("OwnerPrivateKey"), Setting("OwnerPublicKey"), HumanToken(Tenant) };
+ 
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs
+@@ -110,6 +110,40 @@
+         ProjectListPage inspectedList = await fixture.ReadAsync<ProjectListPage>(chatbot: false, inspection: true);
+         inspectedList.Items.Count.ShouldBe(2);
+         await fixture.VerifyDurableAuditDeltaAsync(auditBeforeList, open: false, count: 2);
++        ProjectListPage ordinaryOperator = await fixture.ReadAsync<ProjectListPage>(chatbot: false);
++        ordinaryOperator.Items.Select(item => item.ProjectId).ShouldBe(["project-a", "project-b"]);
++        foreach (string legacy in new[] { "legacy-a", "legacy-b" })
++        {
++            (await fixture.SafeDenialAsync(project: legacy, chatbot: false)).ShouldBe(absent);
++            (await fixture.SafeDenialAsync(project: legacy)).ShouldBe(absent);
++            await fixture.SafeDenialAsync(project: legacy, chatbot: false, inspection: true, quarantine: true);
++            await fixture.SafeDenialAsync(project: legacy, chatbot: false, quarantine: true, projectAdministrator: true, inspectionPermission: false);
++        }
++        await fixture.SafeDenialAsync(open: false, chatbot: false, inspection: true, quarantine: true);
++        await fixture.SafeDenialAsync(open: false, chatbot: false, quarantine: true, projectAdministrator: true, inspectionPermission: false);
++        string[] auditBeforeInventory = await fixture.AuditKeysAsync();
++        ProjectListPage inventory = await fixture.ReadAsync<ProjectListPage>(chatbot: false, projectAdministrator: true, quarantine: true);
++        inventory.Items.Select(item => item.ProjectId).ShouldBe(["legacy-a", "legacy-b"]);
++        inventory.Items.ShouldAllBe(item => item.Name != null && item.ProjectFolderAvailability == ReferenceState.Pending
++            && item.Snapshot.ResponseState == AdmissionResponseState.Unavailable);
++        inventory.HasMore.ShouldBeFalse(); inventory.Cursor.ShouldBeNull();
++        await fixture.VerifyDurableAuditDeltaAsync(auditBeforeInventory, open: false, count: 2, quarantine: true);
++        foreach (string legacy in new[] { "legacy-a", "legacy-b" })
++        {
++            string[] auditBeforeQuarantineOpen = await fixture.AuditKeysAsync();
++            GetProjectResponse quarantine = await fixture.ReadAsync<GetProjectResponse>(open: true, project: legacy, chatbot: false, projectAdministrator: true, quarantine: true);
++            quarantine.Name.ShouldBe("Legacy project " + legacy);
++            quarantine.Description.ShouldBeNull(); quarantine.Setup.ShouldBeNull(); quarantine.SetupMetadata.ShouldBeNull();
++            ProjectReadReference receipt = quarantine.References.Single();
++            receipt.ReferenceKind.ShouldBe("ProjectFolder"); receipt.ReferenceState.ShouldBe(ReferenceState.Pending);
++            receipt.FolderId.ShouldBeNull(); receipt.FileReferenceId.ShouldBeNull(); receipt.MemoryReferenceId.ShouldBeNull();
++            receipt.DisplayName.ShouldBeNull(); receipt.ReasonCode.ShouldBe("ReferenceUnavailable");
++            quarantine.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
++            quarantine.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
++            string serialized = System.Text.Json.JsonSerializer.Serialize(quarantine);
++            Assert.True(!serialized.Contains("Restricted legacy", StringComparison.Ordinal), "Quarantine open disclosed legacy descriptive metadata.");
++            await fixture.VerifyDurableAuditDeltaAsync(auditBeforeQuarantineOpen, open: true, count: 1, quarantine: true);
++        }
+         await fixture.AssertUnchangedAsync(before);
+         await CompleteAsync("inspection-permission-and-durable-metadata-only-audit");
+ 
+@@ -119,6 +153,9 @@
+             await fixture.VerifyAuditWriteFaultAsync();
+             await fixture.VerifyInspectedAuditRefusalAsync(open: true);
+             await fixture.VerifyInspectedAuditRefusalAsync(open: false);
++            await fixture.SafeDenialAsync(open: false, chatbot: false, projectAdministrator: true, quarantine: true);
++            foreach (string legacy in new[] { "legacy-a", "legacy-b" })
++                await fixture.SafeDenialAsync(project: legacy, chatbot: false, projectAdministrator: true, quarantine: true);
+         }
+         finally { await fixture.RestoreAuditStorageAsync(); }
+         await fixture.WaitForAuthorizedRecoveryAsync("audit-storage");
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -561,7 +561,7 @@
+     repositories = [ROOT, *(path for path in (ROOT / "references").iterdir() if (path / ".git").exists())]
+     for repository in repositories:
+         paths = execute(["git", "-C", str(repository), "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--",
+-                         "src", "tests", "Props", "tools/qualification", "*.props", "*.targets", "*.slnx", "global.json", "nuget.config", "AGENTS.md", ".editorconfig", ".gitattributes"]).split("\0")
++                         "src", "tests", "Props", "tools/qualification", "DaprSelfHostedMtls.cs", "DaprSelfHostedMtlsSubscriber.cs", "module/hexalith.module-manifest.v2.json", "hexalith-platform.json", "*.props", "*.targets", "*.slnx", "global.json", "nuget.config", "AGENTS.md", ".editorconfig", ".gitattributes"]).split("\0")
+         for relative in sorted(set(paths)):
+             path = repository / relative
+             if relative and path.is_file():
+@@ -861,7 +861,10 @@
+         raise RuntimeError("Projects server does not belong to this isolated Development fixture.")
+     if process_start(wrapper) != wrapper_start or process_start(pid) != started:
+         raise RuntimeError("Projects process identity changed during observation.")
+-    return {"resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
++    mode = observe_runtime_modes(graph, owned, apps=("projects",))["projects"]
++    if (mode["pid"], mode["startTicks"], mode["wrapperPid"], mode["wrapperStartTicks"]) != (pid, started, wrapper, wrapper_start):
++        raise RuntimeError("Projects process changed during runtime mode rebinding.")
++    return {"runtimeMode": mode, "resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
+             "pid": pid, "startTicks": started,
+             "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+             "assemblySha256": hashlib.sha256(Path(str(binary) + ".dll").read_bytes()).hexdigest()}
+@@ -935,6 +938,8 @@
+         raise RuntimeError("Projects start retained an original process identity.")
+     if any(before[key] != after[key] for key in ("resourceName", "binarySha256", "assemblySha256")):
+         raise RuntimeError("Projects resource or Debug binary changed during restart.")
++    if any(before["runtimeMode"][key] != after["runtimeMode"][key] for key in ("environment", "options")):
++        raise RuntimeError("Projects actual runtime mode changed during restart.")
+     observation["stage"] = "rediscovery"
+     guard()
+     observation["discovery"] = refresh_owned_endpoints(owned, graph)
+@@ -1682,10 +1687,11 @@
+     return result
+ 
+ 
+-def observe_runtime_modes(graph: dict, owned: dict) -> dict:
++def observe_runtime_modes(graph: dict, owned: dict, *, apps=None) -> dict:
+     """Read finite options only from each exact owned native server, preserving its process identity."""
+     result = {}
+-    for app, relative in RUNTIME_PROJECTS.items():
++    for app in (RUNTIME_PROJECTS if apps is None else apps):
++        relative = RUNTIME_PROJECTS[app]
+         resource = [value for value in graph["resources"] if value.get("displayName") == app]
+         if len(resource) != 1:
+             raise RuntimeError("A native scenario peer is missing or ambiguous.")
+@@ -1791,6 +1797,11 @@
+                 or any(not isinstance(item.get(key), str) or not item[key].isdigit() for key in ("startTicks", "launcherStartTicks"))
+                 or any(not re.fullmatch(r"[0-9a-f]{64}", item.get(key, "")) for key in ("binarySha256", "assemblySha256"))):
+             raise RuntimeError("The actual Projects restart process/binary observations are incomplete.")
++        mode = item.get("runtimeMode")
++        if (not isinstance(mode, dict) or any(mode.get(key) != initial_mode.get(key) for key in ("environment", "options"))
++                or any(mode.get(key) != item.get(other) for key, other in (("pid", "pid"), ("startTicks", "startTicks"),
++                    ("wrapperPid", "launcherPid"), ("wrapperStartTicks", "launcherStartTicks"), ("assemblySha256", "assemblySha256")))):
++            raise RuntimeError("Projects restart changed its actual native runtime options or their process binding.")
+     if (any(before[key] != after[key] for key in ("resourceName", "binarySha256", "assemblySha256"))
+             or any((before[pid], before[start]) == (after[pid], after[start]) for pid, start in (("pid", "startTicks"), ("launcherPid", "launcherStartTicks")))
+             or any(before[key] != initial_mode.get(other) for key, other in (("pid", "pid"), ("startTicks", "startTicks"), ("launcherPid", "wrapperPid"), ("launcherStartTicks", "wrapperStartTicks"), ("assemblySha256", "assemblySha256")))):
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -594,10 +594,44 @@
+             LAUNCHER.stop_owned_apphost(owned, lambda *_args, **_kwargs: self.fail("Replacement session stop"))
+ 
+ 
++class SupportedReadSourceManifestControls(unittest.TestCase):
++    def test_linked_platform_helpers_and_consumed_manifests_bind_actual_bytes(self):
++        import subprocess
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            platform = root / "references/Hexalith.Platform"
++            platform.mkdir(parents=True)
++            for repository in (root, platform):
++                subprocess.run(["git", "init", "-q", str(repository)], check=True, capture_output=True)
++            inputs = [root / "module/hexalith.module-manifest.v2.json", platform / "module/hexalith.module-manifest.v2.json",
++                      platform / "DaprSelfHostedMtls.cs", platform / "DaprSelfHostedMtlsSubscriber.cs", platform / "hexalith-platform.json"]
++            for path in inputs:
++                path.parent.mkdir(parents=True, exist_ok=True)
++                path.write_text("original")
++            archived = platform / "module/archived-evidence/NotABuildInput.cs"
++            archived.parent.mkdir(parents=True)
++            archived.write_text("historical")
++            with patch.object(LAUNCHER, "ROOT", root):
++                initial = LAUNCHER.source_manifest()
++                self.assertNotIn(str(archived.relative_to(root)), initial)
++                archived.write_text("changed historical evidence")
++                self.assertEqual(initial, LAUNCHER.source_manifest())
++                for path in inputs:
++                    name = str(path.relative_to(root))
++                    self.assertIn(name, initial)
++                    path.write_text("mutated")
++                    changed = LAUNCHER.source_manifest()
++                    self.assertNotEqual(initial[name], changed[name])
++                    self.assertEqual(set(initial), set(changed))
++                    path.write_text("original")
++
++
+ class SupportedReadProjectsRestartControls(unittest.TestCase):
+     def identity(self, pid=301, wrapper=201, started="100"):
+         return {"resourceName": "projects-owned", "launcherPid": wrapper, "launcherStartTicks": started,
+-                "pid": pid, "startTicks": started, "binarySha256": "a" * 64, "assemblySha256": "b" * 64}
++                "pid": pid, "startTicks": started, "binarySha256": "a" * 64, "assemblySha256": "b" * 64,
++                "runtimeMode": {"environment": "Development", "options": {**LAUNCHER.RUNTIME_FLAGS,
++                    "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"}}}
+ 
+     def restart(self, commands, observation, *, identities=None, gone=True, guards=True, fail=None):
+         before, after = self.identity(), self.identity(302, 202, "200")
+@@ -694,7 +728,8 @@
+         resource = {"displayName": "projects", "resourceType": "Project", "name": "projects-owned",
+                     "properties": {"project.path": str(project), "executable.pid": 201}}
+         expected = {"NAMESPACE": "scope", "EventStore__DomainService__AppId": "projects", "XDG_DATA_HOME": "/private/data-projects",
+-                    "ASPNETCORE_ENVIRONMENT": "Development"}
++                    "ASPNETCORE_ENVIRONMENT": "Development", **LAUNCHER.RUNTIME_FLAGS,
++                    "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"}
+         for changed in (None, *expected):
+             environment = {**expected, **({changed: "foreign"} if changed else {})}
+             def contents(path):
+@@ -725,6 +760,14 @@
+             with self.subTest(unchanged=unchanged), self.assertRaises(RuntimeError):
+                 self.restart([], observation, identities=[before, before, unchanged])
+             self.assertFalse(observation["completed"])
++
++    def test_restart_refuses_changed_runtime_option_after_start(self):
++        before, after = self.identity(), self.identity(302, 202, "200")
++        after["runtimeMode"]["options"][next(iter(LAUNCHER.RUNTIME_FLAGS))] = "changed"
++        observation = {}
++        with self.assertRaises(RuntimeError):
++            self.restart([], observation, identities=[before, before, after])
++        self.assertFalse(observation["completed"])
+ 
+     def test_old_process_observation_error_is_not_exit(self):
+         with patch.object(LAUNCHER, "process_start", side_effect=PermissionError("unobservable")), self.assertRaises(PermissionError):
+@@ -1686,8 +1729,9 @@
+         if scenario == "main":
+             mode = report["runtimeModes"]["projects"]
+             before = {"resourceName": "projects", "pid": mode["pid"], "startTicks": mode["startTicks"], "launcherPid": mode["wrapperPid"],
+-                      "launcherStartTicks": mode["wrapperStartTicks"], "assemblySha256": mode["assemblySha256"], "binarySha256": "e" * 64}
++                      "launcherStartTicks": mode["wrapperStartTicks"], "assemblySha256": mode["assemblySha256"], "binarySha256": "e" * 64, "runtimeMode": json.loads(json.dumps(mode))}
+             after = {**before, "pid": before["pid"] + 100, "startTicks": "999", "launcherPid": before["launcherPid"] + 100, "launcherStartTicks": "998"}
++            after["runtimeMode"] = {**mode, "pid": after["pid"], "startTicks": after["startTicks"], "wrapperPid": after["launcherPid"], "wrapperStartTicks": after["launcherStartTicks"]}
+             report["projectsRestart"] = {"resource": "projects", "action": "restart", "completed": True, "stage": "completed", "oldProcessExited": True,
+                                           "endpointsRediscovered": True, "appHostPid": session["appHostPid"], "appHostStartTicks": session["appHostStartTicks"],
+                                           "configurationSha256": session["configurationSha256"], "before": before, "after": after, "discovery": self.discovery()}
+@@ -1815,12 +1859,13 @@
+         report = self.report("main", {"source": "a" * 64});peer = next(row for row in report["discoveryAfterReads"]["ownedSidecars"] if row["appId"] == "projects")
+         peer.update(pid=9999, startTicks="7777");report["projectsRestart"]["discovery"] = json.loads(json.dumps(report["discoveryAfterReads"]))
+         LAUNCHER.require_owned_group_report(report, "main")
+-        for mode in ["receipt-missing", "foreign-session", "old-process", "changed-binary", "wrong-census"]:
++        for mode in ["receipt-missing", "foreign-session", "old-process", "changed-binary", "changed-option", "wrong-census"]:
+             invalid = json.loads(json.dumps(report))
+             if mode == "receipt-missing": invalid.pop("projectsRestart")
+             elif mode == "foreign-session": invalid["projectsRestart"]["appHostPid"] += 1
+             elif mode == "old-process": invalid["projectsRestart"]["after"] = invalid["projectsRestart"]["before"]
+             elif mode == "changed-binary": invalid["projectsRestart"]["after"]["assemblySha256"] = "f" * 64
++            elif mode == "changed-option": invalid["projectsRestart"]["after"]["runtimeMode"]["options"][next(iter(LAUNCHER.RUNTIME_FLAGS))] = "changed"
+             else: invalid["projectsRestart"]["discovery"] = self.discovery()
+             with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_owned_group_report(invalid, "main")
+ 
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs
+@@ -22,14 +22,17 @@
+     /// <param name="environment">The actual hosting environment.</param>
+     /// <param name="logger">The actual host logger.</param>
+     /// <param name="cancellationToken">The original request cancellation.</param>
++    /// <param name="protectedRead">The protection decision captured from the actual request before context suppression.</param>
+     /// <returns>The unchanged original task.</returns>
+     internal static Task<SourceProofInspection> Observe(Task<SourceProofInspection> inspection, AggregateIdentity identity,
+         bool recheck, IConfiguration? configuration, IOptions<RouteCatalogHostOptions>? options,
+-        IHostEnvironment? environment, ILogger logger, CancellationToken cancellationToken)
++        IHostEnvironment? environment, ILogger logger, CancellationToken cancellationToken, bool protectedRead = false)
+     {
++        // Capture this decision in the request before any detached completion can lose its ExecutionContext.
++        bool omitDiagnostics = protectedRead;
+         try
+         {
+-            if (!Enabled(configuration, options?.Value, environment)) return inspection;
++            if (omitDiagnostics || !Enabled(configuration, options?.Value, environment)) return inspection;
+             string tenant = Hash(identity.TenantId), domain = Hash(identity.Domain), aggregate = Hash(identity.AggregateId);
+             string phase = recheck ? "recheck" : "initial";
+             long started = Stopwatch.GetTimestamp();
+@@ -72,14 +75,17 @@
+     /// <param name="environment">The actual hosting environment.</param>
+     /// <param name="logger">The actual host logger.</param>
+     /// <param name="cancellationToken">The original request cancellation.</param>
++    /// <param name="protectedRead">The protection decision captured from the actual request before context suppression.</param>
+     /// <returns>The unchanged original task.</returns>
+     internal static Task<SourceProofInspectionPair> ObservePair(Task<SourceProofInspectionPair> inspection, AggregateIdentity identity,
+         IConfiguration? configuration, IOptions<RouteCatalogHostOptions>? options, IHostEnvironment? environment,
+-        ILogger logger, CancellationToken cancellationToken)
++        ILogger logger, CancellationToken cancellationToken, bool protectedRead = false)
+     {
++        // Capture this decision in the request before any detached completion can lose its ExecutionContext.
++        bool omitDiagnostics = protectedRead;
+         try
+         {
+-            if (!Enabled(configuration, options?.Value, environment)) return inspection;
++            if (omitDiagnostics || !Enabled(configuration, options?.Value, environment)) return inspection;
+             string tenant = Hash(identity.TenantId), domain = Hash(identity.Domain), aggregate = Hash(identity.AggregateId);
+             long started = Stopwatch.GetTimestamp();
+             logger.LogInformation("Private native metadata pair started: TenantHash={TenantHash}, DomainHash={DomainHash}, AggregateHash={AggregateHash}, ScopedDecodeReuseConfigured={ScopedDecodeReuseConfigured}, SerializeLocalLeaseReleaseConfigured={SerializeLocalLeaseReleaseConfigured}, RetainValidatedCatalogBytesConfigured={RetainValidatedCatalogBytesConfigured}",
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs
+@@ -145,6 +145,7 @@
+             }
+         }
+ 
++        bool protectedNativeRead = workloadOnly || Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacy.IsProtectedRequest(HttpContext);
+         try {
+             var identity = new AggregateIdentity(request.Tenant, request.Domain, request.AggregateId!);
+             IAggregateActor actor = actorProxyFactory.CreateActorProxy<IAggregateActor>(
+@@ -163,13 +164,13 @@
+                     try
+                     {
+                         metadataPair = await NativeSourceReadDiagnostics.ObservePair(actor.InspectSourceMetadataPairAsync(), identity,
+-                            configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false);
++                            configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+                     }
+                     catch (NotSupportedException) { return StatusCode(StatusCodes.Status503ServiceUnavailable); }
+                     native = metadataPair?.Initial;
+                 }
+                 else native = await NativeSourceReadDiagnostics.Observe(actor.InspectSourceProofAsync(), identity, recheck: false,
+-                    configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false);
++                    configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+                 if (native is not { Status: SourceProofInspectionStatus.Available, Erased: false, Proof: { Erased: false } proof }
+                     || !SourceProofCodec.IsValid(proof, identity, native.CurrentSequence, proof.RetainedFloor))
+                     return StatusCode(StatusCodes.Status503ServiceUnavailable);
+@@ -193,7 +194,7 @@
+                 // Compare the whole observation, including incarnation, prefix, retention and erasure.
+                 SourceProofInspection? final = metadataPair is not null ? metadataPair.Final
+                     : await NativeSourceReadDiagnostics.Observe(actor.InspectSourceProofAsync(), identity, recheck: true,
+-                        configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false);
++                        configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+                 if (final != native)
+                     return StatusCode(StatusCodes.Status503ServiceUnavailable);
+                 cancellationToken.ThrowIfCancellationRequested();
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs
+@@ -5,6 +5,8 @@
+ using Hexalith.EventStore.Server.Tests.TestUtilities;
+ using Hexalith.EventStore.Server.Tests.Routing;
+ using Hexalith.EventStore.ServiceDefaults.Routing;
++using Hexalith.EventStore.ServiceDefaults;
++using Microsoft.AspNetCore.Http;
+ 
+ using Microsoft.AspNetCore.Builder;
+ using Microsoft.Extensions.Configuration;
+@@ -204,6 +206,52 @@
+ #endif
+     }
+ 
++    /// <summary>Detached completions cannot restore identifiers after the captured request privacy decision.</summary>
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(false, true)]
++    [InlineData(true, false)]
++    [InlineData(true, true)]
++    public async Task CompletionOutsideOriginalExecutionContextRetainsCapturedPrivacy(bool pair, bool protect)
++    {
++        var entries = new List<LogEntry>();
++        DefaultHttpContext context = new();
++        context.Request.Method = "POST";
++        context.Request.Path = protect ? "/api/v1/streams/read/workload" : "/ordinary";
++        bool captured = ReadDiagnosticsPrivacy.IsProtectedRequest(context);
++        var identity = new AggregateIdentity("private-tenant", "private-domain", "private-aggregate");
++        var value = new SourceProofInspection(SourceProofInspectionStatus.Available, true, 17, false, null);
++        Task completion;
++        if (pair)
++        {
++            TaskCompletionSource<SourceProofInspectionPair> source = new();
++            NativeSourceReadDiagnostics.ObservePair(source.Task, identity,
++                new ConfigurationBuilder().AddInMemoryCollection(PrivateSettings()).Build(), Options.Create(PrivateOptions()),
++                DevelopmentEnvironment(), new TestLogger<NativeSourceReadDiagnosticsTests>(entries), CancellationToken.None, captured).ShouldBeSameAs(source.Task);
++            context.Request.Path = "/ordinary";
++            using (ExecutionContext.SuppressFlow()) completion = Task.Run(() => source.SetResult(new(value, value)));
++            await completion;
++            (await source.Task).Initial.ShouldBeSameAs(value);
++        }
++        else
++        {
++            TaskCompletionSource<SourceProofInspection> source = new();
++            NativeSourceReadDiagnostics.Observe(source.Task, identity, false,
++                new ConfigurationBuilder().AddInMemoryCollection(PrivateSettings()).Build(), Options.Create(PrivateOptions()),
++                DevelopmentEnvironment(), new TestLogger<NativeSourceReadDiagnosticsTests>(entries), CancellationToken.None, captured).ShouldBeSameAs(source.Task);
++            context.Request.Path = "/ordinary";
++            using (ExecutionContext.SuppressFlow()) completion = Task.Run(() => source.SetResult(value));
++            await completion;
++            (await source.Task).ShouldBeSameAs(value);
++        }
++#if DEBUG
++        entries.Count.ShouldBe(protect ? 0 : 2);
++        if (!protect) entries[1].Message.ShouldContain(pair ? "InitialSequence=17" : "CurrentSequence=17");
++#else
++        entries.ShouldBeEmpty();
++#endif
++    }
++
+     private static Dictionary<string, string?> PrivateSettings() => new()
+     {
+         ["EventStore:Testing:NativeSourceReadDiagnostics:Enabled"] = "true",

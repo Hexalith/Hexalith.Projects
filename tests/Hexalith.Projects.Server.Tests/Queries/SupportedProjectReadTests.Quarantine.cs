@@ -2,6 +2,7 @@ namespace Hexalith.Projects.Server.Tests.Queries;
 
 using System.Text.Json;
 using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
@@ -71,6 +72,50 @@ public sealed partial class SupportedProjectReadTests
         (await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(Cursor: first.Cursor, PageSize: 1)),
             TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
         fixture.Store.Count.ShouldBe(before + 2);
+        string[] priorAudits = fixture.AuditStore.Keys.ToArray();
+        ProjectListPage multi = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
+            fixture.Query(new ListProjectsQuery(PageSize: 2, IncludeQuarantined: true), correlation: "inventory-multirow"),
+            TestContext.Current.CancellationToken));
+        multi.Items.Select(row => row.ProjectId).ShouldBe(["legacy-a", "legacy-b"]);
+        string[] added = fixture.AuditStore.Keys.Except(priorAudits, StringComparer.Ordinal).ToArray();
+        added.Length.ShouldBe(2);
+        added.Distinct(StringComparer.Ordinal).Count().ShouldBe(2);
+        added.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)
+            .ShouldAllBe(record => record.Outcome == "Inspection" && record.ProjectCount == 1 && record.FieldClass == "ProjectName");
+        fixture.Store.Count.ShouldBe(before + 4);
+    }
+
+    [Fact]
+    public async Task PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true, administrator: true);
+        await fixture.SeedAsync("legacy-pending", folder: false);
+        string key = ProjectReadModelKeys.Detail("tenant-a", "legacy-pending");
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
+        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, model with
+        {
+            Detail = model.Detail! with
+            {
+                SetupMetadata = "Restricted historical setup",
+                ProjectFolder = new ProjectFolderReference("historical-folder", "Historical label", ReferenceState.Pending, "pending", SupportedProjectReadFixture.EventTime),
+            },
+        });
+        byte[] before = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key)!;
+        string? etag = (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag;
+        SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()),
+            TestContext.Current.CancellationToken)).Items.ShouldBeEmpty();
+        (await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "legacy-pending"), TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
+        GetProjectResponse inspected = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
+            fixture.Query(new GetProjectQuery(InspectQuarantined: true), "legacy-pending", "pending-inspect"), TestContext.Current.CancellationToken));
+        inspected.Name.ShouldBe("Project legacy-pending");
+        inspected.Description.ShouldBeNull(); inspected.Setup.ShouldBeNull(); inspected.SetupMetadata.ShouldBeNull();
+        inspected.References.Single().FolderId.ShouldBe("historical-folder");
+        inspected.References.Single().ReferenceState.ShouldBe(ReferenceState.Pending);
+        inspected.References.Single().DisplayName.ShouldBeNull();
+        JsonSerializer.Serialize(inspected).ShouldNotContain("Restricted historical setup");
+        fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(before);
+        (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(etag);
+        fixture.Folders.Reads.ShouldBe(0);
     }
 
     [Fact]

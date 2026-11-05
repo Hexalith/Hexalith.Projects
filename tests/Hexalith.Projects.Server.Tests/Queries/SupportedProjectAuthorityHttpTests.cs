@@ -104,7 +104,7 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         {
             var foreign = before.Single(item => item.Key == Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(fixture.ForeignTenant, "project-a"));
             System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign project project-a");
-            System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign secret description");
+            System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign private description");
         }
         fixture.Routes.ChangeTarget = target;
         fixture.Routes.ChangeQuery = query => fault switch

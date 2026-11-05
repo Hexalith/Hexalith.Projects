@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import base64
 import contextlib
+import datetime
 import hashlib
 import http.server
 import ipaddress
@@ -13,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shlex
 import shutil
 import signal
 import socket
@@ -359,6 +361,191 @@ def execute(command: list[str], *, env: dict[str, str] | None = None, timeout: i
     return result.stdout
 
 
+def utc_time(value: str) -> datetime.datetime:
+    if not isinstance(value, str) or len(value) > 64:
+        raise ValueError("UTC timestamp is missing or malformed.")
+    parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None or parsed.utcoffset() != datetime.timedelta():
+        raise ValueError("Timestamp is not UTC.")
+    return parsed
+
+
+def real_owner_request_windows(path: Path) -> list[dict]:
+    """Bind the existing fifteen observations to the actual passing native method and UTC interval."""
+    name = "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures"
+    tests = [test for test in ET.parse(path).getroot().iter("test") if test.get("name") == name]
+    if len(tests) != 1 or tests[0].get("result") != "Pass":
+        raise RuntimeError("The passing real-owner native method is missing or ambiguous.")
+    test = tests[0]
+    marker = "Actual real-owner denial observations: "
+    rows = [line[len(marker):] for line in (test.findtext("output") or "").splitlines() if line.startswith(marker)]
+    if len(rows) != 1:
+        raise RuntimeError("The real-owner observation output is missing or ambiguous.")
+    value = json.loads(rows[0])
+    expected = {value.get(kind + "Trace"): kind for kind in ("Denied", "Absent", "ForeignOnly")}
+    samples = value.get("BoundedInterleavedTimingSamples")
+    if (len(expected) != 3 or not isinstance(samples, list) or len(samples) != 12
+            or {(row.get("Round"), row.get("Kind")) for row in samples if isinstance(row, dict)}
+                != {(round, kind) for round in range(4) for kind in ("Denied", "Absent", "ForeignOnly")}):
+        raise RuntimeError("The bounded real-owner observations are incomplete.")
+    for row in samples:
+        if row.get("Trace") in expected:
+            raise RuntimeError("A real-owner observation trace was reused.")
+        expected[row.get("Trace")] = row["Kind"]
+    windows = value.get("RequestWindows")
+    if not isinstance(windows, list) or len(windows) != 15:
+        raise RuntimeError("The real-owner UTC windows are incomplete.")
+    begin, finish = utc_time(test.get("start-rtf")), utc_time(test.get("finish-rtf"))
+    result, seen, previous = [], set(), begin
+    for window in windows:
+        trace = window.get("Trace")
+        if not isinstance(trace, str) or re.fullmatch(r"[0-9a-f]{32}", trace) is None or trace in seen or trace not in expected:
+            raise RuntimeError("A real-owner UTC window has a substituted trace.")
+        start, end = utc_time(window.get("StartUtc")), utc_time(window.get("EndUtc"))
+        if not begin <= previous <= start < end <= finish:
+            raise RuntimeError("A real-owner UTC window is outside its native method or overlaps another observation.")
+        result.append({"trace": trace, "kind": expected[trace], "startUtc": start.isoformat(), "endUtc": end.isoformat()})
+        previous = end
+        seen.add(trace)
+    if seen != set(expected):
+        raise RuntimeError("A real-owner UTC window is missing.")
+    return result
+
+
+def native_log_fields(raw: str) -> dict:
+    if raw.lstrip().startswith("{"):
+        value = json.loads(raw)
+        return value if isinstance(value, dict) else {}
+    return dict(item.split("=", 1) for item in shlex.split(raw) if "=" in item)
+
+
+def native_console_coverage(raw: str, resource: str, app: str, windows: list[dict], started: datetime.datetime, captured: datetime.datetime) -> dict:
+    """Never turn an empty, trimmed, unbound or unparseable CLI snapshot into native silence proof."""
+    facts = {"coverageVerified": False, "allRetainedRowsRequested": True, "cliTailApplied": False,
+             "cliSequenceAndDroppedCountAvailable": False, "maxBacklogRows": 10000}
+    try:
+        value = json.loads(raw)
+        rows = value["logs"]
+        if not isinstance(rows, list) or not rows:
+            raise ValueError("EmptySnapshot")
+        facts["rows"] = len(rows)
+        if len(rows) >= 10000:
+            raise ValueError("BacklogBoundReached")
+        timestamps, startup = [], []
+        for row in rows:
+            if (not isinstance(row, dict) or row.get("resourceName") != resource
+                    or not isinstance(row.get("content"), str) or type(row.get("isError")) is not bool):
+                raise ValueError("UnboundConsoleRow")
+            stamp = utc_time(row.get("timestamp"))
+            timestamps.append(stamp)
+            # This message is emitted once by the real native resolver during startup.
+            if "SqliteNameResolutionInitialized" in safe_log_facts(row["content"])["nativeStartupFacts"]:
+                fields = native_log_fields(row["content"])
+                if fields.get("app_id") == app and stamp >= started - datetime.timedelta(seconds=1):
+                    startup.append(stamp)
+        first = utc_time(windows[0]["startUtc"])
+        if (started > first or not startup or min(startup) > first or min(timestamps) > first
+                or utc_time(windows[-1]["endUtc"]) > captured or max(timestamps) > captured):
+            raise ValueError("CurrentProcessStartupCoverageMissing")
+        facts.update(coverageVerified=True, earliestUtc=min(timestamps).isoformat(), latestUtc=max(timestamps).isoformat(),
+                     retainedCurrentProcessStartup=True,
+                     windowCounts=[sum(utc_time(window["startUtc"]) <= stamp <= utc_time(window["endUtc"]) for stamp in timestamps)
+                                   for window in windows],
+                     rowsFromFirstObservation=sum(stamp >= first for stamp in timestamps))
+    except (ValueError, TypeError, KeyError, AttributeError):
+        # Details and payload stay private. The finite reason is sufficient to refuse coverage.
+        facts["refusal"] = "SnapshotCoverageUnproven"
+    return facts
+
+
+def native_console_peers(owned: dict, configurations: dict) -> dict:
+    """Use the existing exact namespace census plus actual native config and start identity."""
+    if not owns_current_apphost(owned):
+        raise RuntimeError("Native console capture AppHost ownership changed.")
+    census, peers = owned_sidecar_census(owned["_isolation"]), {}
+    for pid, item in census.items():
+        arguments, app = item["arguments"], item["appId"]
+        if (app not in READ_APPS or app in peers or not arguments or not arguments[0].endswith("/daprd")
+                or "--config" not in arguments or arguments[arguments.index("--config") + 1] != str(configurations[app])):
+            raise RuntimeError("Native console peer ownership or configuration differs.")
+        if process_start(int(pid)) != item["start"]:
+            raise RuntimeError("Native console peer process was replaced.")
+        environment = dict(field.split(b"=", 1) for field in Path("/proc", pid, "environ").read_bytes().split(b"\0") if b"=" in field)
+        service = environment.get(b"OTEL_SERVICE_NAME", b"").decode()
+        attributes = [field.partition("=") for field in environment.get(b"OTEL_RESOURCE_ATTRIBUTES", b"").decode().split(",")]
+        instances = [value for key, separator, value in attributes if key == "service.instance.id" and separator]
+        if service != app + "-dapr-cli" or len(instances) != 1 or re.fullmatch(r"[a-z0-9]{8}", instances[0]) is None:
+            raise RuntimeError("Native console OTEL resource identity is missing, ambiguous or outside the finite owned shape.")
+        peers[app] = {"pid": int(pid), "startTicks": item["start"], "otelServiceName": service,
+                      "otelServiceInstanceId": instances[0],
+                      "binarySha256": hashlib.sha256(Path(arguments[0]).read_bytes()).hexdigest()}
+    if set(peers) != READ_APPS:
+        raise RuntimeError("Native console capture requires exactly the six owned peers.")
+    return peers
+
+
+def capture_native_console(owned: dict, configuration: Path, registry: Path, env: dict, evidence: Path, report: dict) -> None:
+    """One bounded read-only snapshot per peer after Server tests, before ordinary exact teardown."""
+    windows = real_owner_request_windows(evidence / "server.xml")
+    configurations, receipts = receiver_configurations(configuration, registry, owned["_isolation"])
+    before = native_console_peers(owned, configurations)
+    discovery = report["discoveryAfterReads"]
+    expected = {row["appId"]: (row["pid"], row["startTicks"]) for row in discovery["ownedSidecars"]}
+    if ({app: (item["pid"], item["startTicks"]) for app, item in before.items()} != expected
+            or sorted({item["binarySha256"] for item in before.values()}) != discovery["daprdSha256"]):
+        raise RuntimeError("Native console peers differ from the qualified current discovery census.")
+    boot = int(next(line.split()[1] for line in Path("/proc/stat").read_text().splitlines() if line.startswith("btime ")))
+    ticks = os.sysconf("SC_CLK_TCK")
+    diagnostic = Path(tempfile.mkdtemp(prefix="supported-project-reads-native-console-"))
+    diagnostic.chmod(0o700)
+    private_identity(diagnostic, directory=True)
+    facts = {"version": 1, "directory": str(diagnostic), "directoryIdentity": private_identity(diagnostic, directory=True),
+             "rawRetention": "owner-private-native-console-only", "maxBytesPerPeer": 1024 * 1024,
+             "sourceManifestSha256": report["sourceManifestSha256"],
+             "nativeServerXmlSha256": hashlib.sha256((evidence / "server.xml").read_bytes()).hexdigest(),
+             "appHostSession": report["ownedAppHostSession"], "requestWindows": windows,
+             "configurationSha256": {app: receipts["identities"][str(path)]["sha256"] for app, path in sorted(configurations.items())},
+             "peers": before, "captures": {}, "coverageVerified": False, "privacyEqualityAccepted": False,
+             "limits": "CLI omits sequence/dropped-row metadata; startup retention and below-bound snapshots qualify only the observed UTC console interval. No causal attribution or fault/load equivalence is inferred."}
+    report["nativeConsoleEvidence"] = facts
+    try:
+        for app in sorted(READ_APPS):
+            resource = app + "-dapr-cli"
+            command = ["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--timestamps", "--include-hidden", "--non-interactive"]
+            report["commands"].append(command)
+            began = datetime.datetime.now(datetime.timezone.utc)
+            output = execute(command, env=env, timeout=15)
+            ended = datetime.datetime.now(datetime.timezone.utc)
+            encoded = output.encode()
+            truncated = len(encoded) > facts["maxBytesPerPeer"]
+            path = diagnostic / (app + ".json")
+            with path.open("xb") as stream:
+                path.chmod(0o600)
+                stream.write(encoded[:facts["maxBytesPerPeer"]])
+            identity = private_identity(path)
+            started = datetime.datetime.fromtimestamp(boot + int(before[app]["startTicks"]) / ticks, datetime.timezone.utc)
+            capture = {"identity": identity, "bytes": path.stat().st_size, "truncated": truncated,
+                       "captureStartUtc": began.isoformat(), "captureEndUtc": ended.isoformat(), "processStartUtc": started.isoformat()}
+            if truncated:
+                capture.update(coverageVerified=False, refusal="RawByteBoundReached")
+            else:
+                capture.update(native_console_coverage(output, resource, app, windows, started, ended))
+            facts["captures"][app] = capture
+        current_configurations, current_receipts = receiver_configurations(configuration, registry, owned["_isolation"])
+        if (native_console_peers(owned, current_configurations) != before
+                or current_configurations != configurations or current_receipts != receipts):
+            raise RuntimeError("Native console source/process/configuration changed during capture.")
+        if private_identity(diagnostic, directory=True) != facts["directoryIdentity"]:
+            raise RuntimeError("Native console private directory was replaced.")
+        for app, capture in facts["captures"].items():
+            if private_identity(diagnostic / (app + ".json")) != capture["identity"]:
+                raise RuntimeError("Native console private raw file was replaced.")
+        facts["ownershipVerifiedBeforeAndAfter"] = True
+        facts["coverageVerified"] = all(item["coverageVerified"] for item in facts["captures"].values())
+    finally:
+        (evidence / "native-console.json").write_text(json.dumps(facts, indent=2) + "\n")
+
+
 def b64url(value: bytes) -> str:
     return base64.urlsafe_b64encode(value).decode().rstrip("=")
 
@@ -374,7 +561,7 @@ def source_manifest() -> dict[str, str]:
     repositories = [ROOT, *(path for path in (ROOT / "references").iterdir() if (path / ".git").exists())]
     for repository in repositories:
         paths = execute(["git", "-C", str(repository), "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--",
-                         "src", "tests", "Props", "tools/qualification", "*.props", "*.targets", "*.slnx", "global.json", "nuget.config", "AGENTS.md", ".editorconfig", ".gitattributes"]).split("\0")
+                         "src", "tests", "Props", "tools/qualification", "DaprSelfHostedMtls.cs", "DaprSelfHostedMtlsSubscriber.cs", "module/hexalith.module-manifest.v2.json", "hexalith-platform.json", "*.props", "*.targets", "*.slnx", "global.json", "nuget.config", "AGENTS.md", ".editorconfig", ".gitattributes"]).split("\0")
         for relative in sorted(set(paths)):
             path = repository / relative
             if relative and path.is_file():
@@ -674,7 +861,10 @@ def projects_process_identity(owned: dict, graph: dict) -> dict:
         raise RuntimeError("Projects server does not belong to this isolated Development fixture.")
     if process_start(wrapper) != wrapper_start or process_start(pid) != started:
         raise RuntimeError("Projects process identity changed during observation.")
-    return {"resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
+    mode = observe_runtime_modes(graph, owned, apps=("projects",))["projects"]
+    if (mode["pid"], mode["startTicks"], mode["wrapperPid"], mode["wrapperStartTicks"]) != (pid, started, wrapper, wrapper_start):
+        raise RuntimeError("Projects process changed during runtime mode rebinding.")
+    return {"runtimeMode": mode, "resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
             "pid": pid, "startTicks": started,
             "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
             "assemblySha256": hashlib.sha256(Path(str(binary) + ".dll").read_bytes()).hexdigest()}
@@ -748,6 +938,8 @@ def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observa
         raise RuntimeError("Projects start retained an original process identity.")
     if any(before[key] != after[key] for key in ("resourceName", "binarySha256", "assemblySha256")):
         raise RuntimeError("Projects resource or Debug binary changed during restart.")
+    if any(before["runtimeMode"][key] != after["runtimeMode"][key] for key in ("environment", "options")):
+        raise RuntimeError("Projects actual runtime mode changed during restart.")
     observation["stage"] = "rediscovery"
     guard()
     observation["discovery"] = refresh_owned_endpoints(owned, graph)
@@ -876,8 +1068,8 @@ def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: 
             # inspection/removal. Only Docker's exact missing-ID response plus a fresh
             # successful complete listing can prove that race; all other failures retain recovery.
             missing = (isinstance(container_id, str) and re.fullmatch(r"[0-9a-f]{64}", container_id)
-                and re.fullmatch(r"(?:\[\]\s*)?Error(?: response from daemon)?: No such (?:object|container): "
-                                 + re.escape(container_id) + r"\s*", getattr(failure, "command_output", "")))
+                and re.fullmatch(r"(?:\[\]\s*)?(?:Error(?: response from daemon)?: No such (?:object|container): |error: no such object: )"
+                                 + re.escape(container_id) + r"\s*", getattr(failure, "command_output", "").strip()))
             try:
                 absent = bool(missing) and container_id not in container_listing()
             except BaseException:
@@ -934,9 +1126,30 @@ def safe_log_facts(raw: str) -> dict:
     templates = set()
     facts = set()
     assemblies = set()
+    native = set()
+
+    def inspect_native(value):
+        # These are observations of the selected native runtime, never authority or readiness.
+        if (value.get("scope") != "dapr.runtime" or value.get("type") != "log"
+                or not isinstance(value.get("msg"), str)):
+            return
+        message = value["msg"]
+        if value.get("level") == "info" and message == "Initialized name resolution to sqlite":
+            native.add("SqliteNameResolutionInitialized")
+        if (value.get("level") not in {"error", "fatal"} or "[INIT_COMPONENT_FAILURE]" not in message
+                or "nr (sqlite/v1)" not in message):
+            return
+        native.add("SqliteNameResolutionInitializationFailed")
+        if "failed to perform migrations" in message:
+            native.add("SqliteNameResolutionMigrationsFailed")
+        if re.search(r"\bSQLITE_BUSY\b", message):
+            native.add("SqliteBusy")
+        if re.search(r"\bSQLITE_LOCKED\b", message):
+            native.add("SqliteLocked")
 
     def inspect(value):
         if isinstance(value, dict):
+            inspect_native(value)
             template = value.get("{OriginalFormat}")
             if isinstance(template, str):
                 templates.add(hashlib.sha256(template.encode()).hexdigest())
@@ -948,6 +1161,12 @@ def safe_log_facts(raw: str) -> dict:
             for item in value:
                 inspect(item)
         elif isinstance(value, str):
+            if value.startswith("time="):
+                try:
+                    fields = dict(item.split("=", 1) for item in shlex.split(value) if "=" in item)
+                    inspect_native(fields)
+                except ValueError:
+                    pass
             for assembly in re.findall(r"Could not load file or assembly '([^']+)'", value):
                 if re.fullmatch(r"[A-Za-z0-9_., =-]{1,256}", assembly):
                     assemblies.add(assembly)
@@ -960,8 +1179,10 @@ def safe_log_facts(raw: str) -> dict:
     try:
         inspect(json.loads(raw))
     except ValueError:
-        pass
-    return {"templateSha256": sorted(templates), "closedFacts": sorted(facts), "missingAssemblies": sorted(assemblies)}
+        for line in raw.splitlines():
+            inspect(line)
+    return {"templateSha256": sorted(templates), "closedFacts": sorted(facts), "missingAssemblies": sorted(assemblies),
+            "nativeStartupFacts": sorted(native)}
 
 
 def verify_source_references() -> dict:
@@ -1466,10 +1687,11 @@ def source_dependency_graph(observations: dict) -> dict:
     return result
 
 
-def observe_runtime_modes(graph: dict, owned: dict) -> dict:
+def observe_runtime_modes(graph: dict, owned: dict, *, apps=None) -> dict:
     """Read finite options only from each exact owned native server, preserving its process identity."""
     result = {}
-    for app, relative in RUNTIME_PROJECTS.items():
+    for app in (RUNTIME_PROJECTS if apps is None else apps):
+        relative = RUNTIME_PROJECTS[app]
         resource = [value for value in graph["resources"] if value.get("displayName") == app]
         if len(resource) != 1:
             raise RuntimeError("A native scenario peer is missing or ambiguous.")
@@ -1575,6 +1797,11 @@ def require_projects_restart_receipt(value: dict, session: dict, initial_mode: d
                 or any(not isinstance(item.get(key), str) or not item[key].isdigit() for key in ("startTicks", "launcherStartTicks"))
                 or any(not re.fullmatch(r"[0-9a-f]{64}", item.get(key, "")) for key in ("binarySha256", "assemblySha256"))):
             raise RuntimeError("The actual Projects restart process/binary observations are incomplete.")
+        mode = item.get("runtimeMode")
+        if (not isinstance(mode, dict) or any(mode.get(key) != initial_mode.get(key) for key in ("environment", "options"))
+                or any(mode.get(key) != item.get(other) for key, other in (("pid", "pid"), ("startTicks", "startTicks"),
+                    ("wrapperPid", "launcherPid"), ("wrapperStartTicks", "launcherStartTicks"), ("assemblySha256", "assemblySha256")))):
+            raise RuntimeError("Projects restart changed its actual native runtime options or their process binding.")
     if (any(before[key] != after[key] for key in ("resourceName", "binarySha256", "assemblySha256"))
             or any((before[pid], before[start]) == (after[pid], after[start]) for pid, start in (("pid", "startTicks"), ("launcherPid", "launcherStartTicks")))
             or any(before[key] != initial_mode.get(other) for key, other in (("pid", "pid"), ("startTicks", "startTicks"), ("launcherPid", "wrapperPid"), ("launcherStartTicks", "wrapperStartTicks"), ("assemblySha256", "assemblySha256")))):
@@ -1808,17 +2035,40 @@ def forward_owned_launcher_signal(child, identity: dict, signum: int) -> None:
     child.send_signal(signum)
 
 
+def owned_launcher_exit_started(child, identity: dict) -> bool:
+    """Observe only the captured child's kernel exit transition; this never authorizes a signal."""
+    if identity.get("pid") != child.pid or identity.get("command") != child.args:
+        return False
+    try:
+        process = Path("/proc", str(child.pid))
+        before = process.joinpath("stat").read_text().rsplit(")", 1)[1].split()
+        arguments = process.joinpath("cmdline").read_bytes()
+        after = process.joinpath("stat").read_text().rsplit(")", 1)[1].split()
+        # Linux PF_EXITING is set before exit_mm clears cmdline, before waitpid can
+        # reap the child. Empty argv alone never establishes this transition.
+        return (process.stat().st_uid == os.getuid() and not arguments
+                and before[19] == after[19] == identity.get("startTicks")
+                and int(before[6]) & 0x00000004 != 0 and int(after[6]) & 0x00000004 != 0)
+    except (OSError, ValueError, IndexError):
+        return False
+
+
 def wait_owned_launcher(child, identity: dict, interrupted: dict, *, cleanup_wait_seconds: float = 900) -> int:
     deadline = None
     while child.poll() is None:
+        exiting = False
         if not owned_launcher_identity_matches(child, identity):
             if child.poll() is not None:
                 break
-            raise RuntimeError("Active child completion/cleanup is unknown; preserved material must be recovered by exact ownership.")
-        if interrupted.get("requested"):
+            exiting = owned_launcher_exit_started(child, identity)
+            if not exiting:
+                if child.poll() is not None:
+                    break
+                raise RuntimeError("Active child completion/cleanup is unknown; preserved material must be recovered by exact ownership.")
+        if interrupted.get("requested") or exiting:
             deadline = deadline or time.monotonic() + cleanup_wait_seconds
             if time.monotonic() >= deadline:
-                raise RuntimeError("Interrupted child cleanup completion is unproved; no later group may start.")
+                raise RuntimeError("Interrupted or exiting child cleanup completion is unproved; no later group may start.")
         time.sleep(.05)
     return child.wait()
 
@@ -2327,6 +2577,7 @@ def main() -> int:
                 report["regressions"][lane] = require_complete_native_results(lane_results)
                 if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
                     raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
+            capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
         if hashlib.sha256(assembly.read_bytes()).hexdigest() != report["testAssemblySha256"]:
             raise RuntimeError("The selected native test assembly changed during verification.")
         report["testAssemblyUnchanged"] = True
@@ -2356,7 +2607,7 @@ def main() -> int:
                              "tenants-dapr-cli", "eventstore-dapr-cli", "projects-dapr-cli", "projects-workers-dapr-cli",
                              "folders-dapr-cli", "folders-workers-dapr-cli"):
                 try:
-                    logs = execute(["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--tail", "1000", "--non-interactive"], env=env, timeout=15)
+                    logs = execute(["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--tail", "1000", "--include-hidden", "--non-interactive"], env=env, timeout=15)
                     report.setdefault("runtimeLogFacts", {})[resource] = safe_log_facts(logs)
                     report["runtimeFailureTypes"][resource] = sorted(set(re.findall(r"(?:[A-Za-z_][A-Za-z0-9_]*\.)*[A-Za-z_][A-Za-z0-9_]*Exception", logs)))
                     report.setdefault("runtimeDenialReasons", {})[resource] = sorted({hashlib.sha256(value.encode()).hexdigest() for value in re.findall(r'(?:Reason=|"Reason":")(\w[\w-]*)', logs)})

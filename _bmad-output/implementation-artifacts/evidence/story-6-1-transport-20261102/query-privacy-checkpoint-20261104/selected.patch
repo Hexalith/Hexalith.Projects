@@ -1,0 +1,1349 @@
+diff --git a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs
+index 9412e6f..39f2f3c 100644
+--- a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs
+@@ -25,6 +25,7 @@ public static class EventStoreHttpHostSecurityExtensions
+     public static IServiceCollection AddEventStoreHttpHostSecurity(this IServiceCollection services)
+     {
+         ArgumentNullException.ThrowIfNull(services);
++        services.AddEventStoreReadDiagnosticsPrivacy();
+         if (services.Any(static descriptor => descriptor.ServiceType == typeof(EventStoreHttpEndpointSource)))
+         {
+             return services;
+diff --git a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs
+index 6cf05d0..1d2a811 100644
+--- a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs
+@@ -63,7 +63,7 @@ public static class Extensions {
+         // Hosting request-start/finish Information records include the raw query string.
+         // Enforce the floor after all post-configuration so Console/OTel
+         // overrides cannot accidentally export capability tokens or other query values.
+-        builder.Services.Replace(ServiceDescriptor.Transient<IOptionsFactory<LoggerFilterOptions>, RequestLogPrivacyOptionsFactory>());
++        builder.Services.AddEventStoreReadDiagnosticsPrivacy();
+ 
+         IOpenTelemetryBuilder telemetry = builder.Services.AddOpenTelemetry();
+         _ = telemetry
+@@ -101,23 +101,28 @@ public static class Extensions {
+ 
+     /// <summary>Applies the request diagnostic floor after caller configuration and before options validation.</summary>
+     /// <param name="options">The fully configured filter rules.</param>
+-    internal static void GuardRequestDiagnostics(LoggerFilterOptions options)
++    internal static void GuardRequestDiagnostics(LoggerFilterOptions options, IHttpContextAccessor accessor)
+     {
+         for (int index = 0; index < options.Rules.Count; index++) {
+             LoggerFilterRule rule = options.Rules[index];
+             options.Rules[index] = new LoggerFilterRule(rule.ProviderName, rule.CategoryName, rule.LogLevel,
+                 (provider, category, level) =>
+-                    AllowsRequestDiagnostic(category, level)
++                    AllowsRequestDiagnostic(category, level, accessor)
+                     && (rule.Filter?.Invoke(provider, category, level) ?? true));
+         }
+         // Lowest precedence preserves stricter thresholds and existing global predicates.
+         options.Rules.Insert(0, new LoggerFilterRule(null, null, options.MinLevel,
+-            static (_, category, level) => AllowsRequestDiagnostic(category, level)));
++            (_, category, level) => AllowsRequestDiagnostic(category, level, accessor)));
+     }
+ 
+-    private static bool AllowsRequestDiagnostic(string? category, LogLevel level)
+-        => level >= LogLevel.Warning
+-            || category?.StartsWith("Microsoft.AspNetCore.Hosting.Diagnostics", StringComparison.OrdinalIgnoreCase) != true;
++    private static bool AllowsRequestDiagnostic(string? category, LogLevel level, IHttpContextAccessor accessor)
++        => !ReadDiagnosticsPrivacyScope.IsActive
++            && (accessor.HttpContext is not { } context || !ReadDiagnosticsPrivacy.IsProtectedExecution(context))
++            && (level >= LogLevel.Warning
++                || (category?.StartsWith("Microsoft.AspNetCore.Hosting.Diagnostics", StringComparison.OrdinalIgnoreCase) != true
++                    // Connection acceptance precedes HttpContext creation; verbose records disclose private subrequest topology.
++                    && category?.StartsWith("Microsoft.AspNetCore.Server.Kestrel.Connections", StringComparison.OrdinalIgnoreCase) != true
++                    && category?.StartsWith("Microsoft.AspNetCore.Server.Kestrel.Transport", StringComparison.OrdinalIgnoreCase) != true));
+ 
+     public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder {
+         ArgumentNullException.ThrowIfNull(builder);
+diff --git a/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadBoundaryDiagnostics.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadBoundaryDiagnostics.cs
+new file mode 100644
+index 0000000..4a579d6
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadBoundaryDiagnostics.cs
+@@ -0,0 +1,42 @@
++using System.Diagnostics;
++
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.Logging;
++
++namespace Hexalith.EventStore.ServiceDefaults;
++
++/// <summary>Emits one finite public-query completion without inherited identity-bearing scopes or trace links.</summary>
++internal static partial class ReadBoundaryDiagnostics
++{
++    /// <summary>The sole category used for the common query boundary record.</summary>
++    internal const string Category = "Hexalith.EventStore.QueryBoundary";
++
++    /// <summary>Observes final status after exception handling and clears ambient logging scopes for the record.</summary>
++    /// <param name="context">The completed public request.</param>
++    /// <param name="loggers">The real host logger factory.</param>
++    /// <returns>Completion of the actual provider emission.</returns>
++    internal static Task CompleteAsync(HttpContext context, ILoggerFactory loggers)
++    {
++        string? correlation = context.Items["CorrelationId"] as string;
++        if (string.IsNullOrEmpty(correlation) || correlation.Length > 128 || !correlation.All(static value => char.IsAsciiLetterOrDigit(value) || value == '-'))
++        {
++            correlation = ActivityTraceId.CreateRandom().ToHexString();
++        }
++        int status = context.Response.StatusCode;
++        ILogger logger = loggers.CreateLogger(Category);
++        string safeCorrelation = correlation;
++        // Provider scopes can otherwise append arbitrary application data to an entirely safe log state.
++        if (ExecutionContext.IsFlowSuppressed())
++        {
++            return Task.Run(() => Completed(logger, safeCorrelation, status));
++        }
++        using (ExecutionContext.SuppressFlow())
++        {
++            return Task.Run(() => Completed(logger, safeCorrelation, status));
++        }
++    }
++
++    [LoggerMessage(EventId = 5510, Level = LogLevel.Information,
++        Message = "Query boundary completed: CorrelationId={CorrelationId}, StatusCode={StatusCode}, Category=QueryBoundary")]
++    private static partial void Completed(ILogger logger, string correlationId, int statusCode);
++}
+diff --git a/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacy.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacy.cs
+new file mode 100644
+index 0000000..0f3e165
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacy.cs
+@@ -0,0 +1,48 @@
++using Microsoft.AspNetCore.Http;
++
++namespace Hexalith.EventStore.ServiceDefaults;
++
++/// <summary>Classifies the shared read endpoints whose execution details can reveal protected resource existence.</summary>
++public static class ReadDiagnosticsPrivacy
++{
++    private static readonly object _protectedRequestKey = new();
++
++    /// <summary>Retains protection through path rewriting until the request's own Items are disposed.</summary>
++    /// <param name="context">The actual protected request.</param>
++    internal static void MarkProtectedRequest(HttpContext context) => context.Items[_protectedRequestKey] = true;
++
++    /// <summary>Tests either the original protected classification or the request's sticky local marker.</summary>
++    /// <param name="context">The actual incoming or re-executing request.</param>
++    /// <returns>Whether detailed diagnostics remain protected for this request.</returns>
++    internal static bool IsProtectedExecution(HttpContext context)
++        => context.Items.ContainsKey(_protectedRequestKey) || IsProtectedRequest(context);
++
++    /// <summary>Tests the finite SDK read surface without inspecting caller credentials or request bodies.</summary>
++    /// <param name="context">The actual incoming HTTP request.</param>
++    /// <returns>Whether detailed request and subrequest diagnostics must be omitted.</returns>
++    public static bool IsProtectedRequest(HttpContext context)
++    {
++        ArgumentNullException.ThrowIfNull(context);
++        string path = (context.Request.Path.Value ?? string.Empty).TrimEnd('/');
++        if (HttpMethods.IsPost(context.Request.Method)
++            && (IsPublicQuery(context) || path.Equals("/query", StringComparison.OrdinalIgnoreCase)
++                || path.Equals("/api/v1/queries/owner-authority/workload", StringComparison.OrdinalIgnoreCase)
++                || path.Equals("/api/v1/streams/read/workload", StringComparison.OrdinalIgnoreCase)))
++        {
++            return true;
++        }
++
++        return (HttpMethods.IsPut(context.Request.Method) || HttpMethods.IsPost(context.Request.Method))
++            && path.StartsWith("/actors/", StringComparison.OrdinalIgnoreCase)
++            && (path.EndsWith("/method/GetStreamMetadataAsync", StringComparison.OrdinalIgnoreCase)
++                || path.EndsWith("/method/InspectSourceProofAsync", StringComparison.OrdinalIgnoreCase)
++                || path.EndsWith("/method/InspectSourceMetadataPairAsync", StringComparison.OrdinalIgnoreCase));
++    }
++
++    /// <summary>Identifies the public boundary that receives one uniform completion record.</summary>
++    /// <param name="context">The actual incoming HTTP request.</param>
++    /// <returns>Whether the request is a public query submission.</returns>
++    internal static bool IsPublicQuery(HttpContext context)
++        => HttpMethods.IsPost(context.Request.Method)
++            && (context.Request.Path.Value ?? string.Empty).TrimEnd('/').Equals("/api/v1/queries", StringComparison.OrdinalIgnoreCase);
++}
+diff --git a/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyExtensions.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyExtensions.cs
+new file mode 100644
+index 0000000..ef6a0c3
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyExtensions.cs
+@@ -0,0 +1,37 @@
++using Microsoft.AspNetCore.Hosting;
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.DependencyInjection.Extensions;
++using Microsoft.Extensions.Logging;
++using Microsoft.Extensions.Options;
++
++using OpenTelemetry.Instrumentation.AspNetCore;
++
++namespace Hexalith.EventStore.ServiceDefaults;
++
++/// <summary>Installs source-side read privacy in both standard telemetry and independently composed SDK HTTP hosts.</summary>
++public static class ReadDiagnosticsPrivacyExtensions
++{
++    /// <summary>Protects the shared read surface before authentication, routing, exception handling, or domain work.</summary>
++    /// <param name="services">The host's real service collection.</param>
++    /// <returns>The same service collection.</returns>
++    public static IServiceCollection AddEventStoreReadDiagnosticsPrivacy(this IServiceCollection services)
++    {
++        ArgumentNullException.ThrowIfNull(services);
++        if (services.Any(static descriptor => descriptor.ImplementationType == typeof(ReadDiagnosticsPrivacyStartupFilter)))
++        {
++            return services;
++        }
++
++        services.AddHttpContextAccessor();
++        services.Replace(ServiceDescriptor.Transient<IOptionsFactory<LoggerFilterOptions>, RequestLogPrivacyOptionsFactory>());
++        services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupFilter, ReadDiagnosticsPrivacyStartupFilter>());
++        services.PostConfigure<AspNetCoreTraceInstrumentationOptions>(static options =>
++        {
++            Func<HttpContext, bool>? existing = options.Filter;
++            options.Filter = context => !ReadDiagnosticsPrivacyScope.IsActive && !ReadDiagnosticsPrivacy.IsProtectedExecution(context)
++                && (existing?.Invoke(context) ?? true);
++        });
++        return services;
++    }
++}
+diff --git a/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyScope.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyScope.cs
+new file mode 100644
+index 0000000..48149d9
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyScope.cs
+@@ -0,0 +1,32 @@
++namespace Hexalith.EventStore.ServiceDefaults;
++
++/// <summary>Retains local privacy across path re-execution and asynchronous descendants without a wire field.</summary>
++internal sealed class ReadDiagnosticsPrivacyScope : IDisposable
++{
++    private static readonly AsyncLocal<bool> _active = new();
++    private readonly bool _previous;
++    private bool _disposed;
++
++    private ReadDiagnosticsPrivacyScope()
++    {
++        _previous = _active.Value;
++        _active.Value = true;
++    }
++
++    /// <summary>Gets whether this execution context is processing or draining protected read work.</summary>
++    internal static bool IsActive => _active.Value;
++
++    /// <summary>Protects the current execution and descendants, preserving the previous local context.</summary>
++    /// <returns>The scope that restores its own caller when disposed.</returns>
++    internal static IDisposable Begin() => new ReadDiagnosticsPrivacyScope();
++
++    /// <inheritdoc/>
++    public void Dispose()
++    {
++        if (!_disposed)
++        {
++            _active.Value = _previous;
++            _disposed = true;
++        }
++    }
++}
+diff --git a/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs
+new file mode 100644
+index 0000000..3440965
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs
+@@ -0,0 +1,49 @@
++using System.Diagnostics;
++
++using Microsoft.AspNetCore.Builder;
++using Microsoft.AspNetCore.Hosting;
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.Logging;
++
++using OpenTelemetry;
++
++namespace Hexalith.EventStore.ServiceDefaults;
++
++/// <summary>Omits protected read diagnostics before the application's authentication and exception middleware.</summary>
++/// <param name="loggers">The real host logger factory.</param>
++internal sealed class ReadDiagnosticsPrivacyStartupFilter(ILoggerFactory loggers) : IStartupFilter
++{
++    /// <inheritdoc/>
++    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
++    {
++        ArgumentNullException.ThrowIfNull(next);
++        return builder =>
++        {
++            builder.Use(async (context, following) =>
++            {
++                if (!ReadDiagnosticsPrivacy.IsProtectedExecution(context))
++                {
++                    await following(context).ConfigureAwait(false);
++                    return;
++                }
++
++                ReadDiagnosticsPrivacy.MarkProtectedRequest(context);
++                using IDisposable privacy = ReadDiagnosticsPrivacyScope.Begin();
++                // Standard unsampled context also suppresses native Dapr child spans; no privacy wire field is introduced.
++                if (Activity.Current is { } request)
++                {
++                    request.IsAllDataRequested = false;
++                    request.ActivityTraceFlags &= ~ActivityTraceFlags.Recorded;
++                }
++                if (ReadDiagnosticsPrivacy.IsPublicQuery(context))
++                {
++                    context.Response.OnCompleted(() => ReadBoundaryDiagnostics.CompleteAsync(context, loggers));
++                }
++
++                using IDisposable suppression = SuppressInstrumentationScope.Begin();
++                await following(context).ConfigureAwait(false);
++            });
++            next(builder);
++        };
++    }
++}
+diff --git a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs
+index f12dd24..92953a3 100644
+--- a/before/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs
++++ b/after/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs
+@@ -1,5 +1,6 @@
+ using Microsoft.Extensions.Logging;
+ using Microsoft.Extensions.Options;
++using Microsoft.AspNetCore.Http;
+ 
+ namespace Hexalith.EventStore.ServiceDefaults;
+ 
+@@ -7,13 +8,15 @@ namespace Hexalith.EventStore.ServiceDefaults;
+ /// <param name="configurations">The registered logging configurations.</param>
+ /// <param name="postConfigurations">The registered logging post-configurations.</param>
+ /// <param name="validations">The registered logging validations.</param>
++/// <param name="accessor">The current request used by the source-side read privacy policy.</param>
+ internal sealed class RequestLogPrivacyOptionsFactory(
+     IEnumerable<IConfigureOptions<LoggerFilterOptions>> configurations,
+     IEnumerable<IPostConfigureOptions<LoggerFilterOptions>> postConfigurations,
+-    IEnumerable<IValidateOptions<LoggerFilterOptions>> validations) : IOptionsFactory<LoggerFilterOptions>
++    IEnumerable<IValidateOptions<LoggerFilterOptions>> validations,
++    IHttpContextAccessor accessor) : IOptionsFactory<LoggerFilterOptions>
+ {
+     private readonly OptionsFactory<LoggerFilterOptions> _factory = new(configurations,
+-        postConfigurations.Append(new PostConfigureOptions<LoggerFilterOptions>(null, Extensions.GuardRequestDiagnostics)),
++        postConfigurations.Append(new PostConfigureOptions<LoggerFilterOptions>(null, options => Extensions.GuardRequestDiagnostics(options, accessor))),
+         validations);
+ 
+     /// <inheritdoc/>
+diff --git a/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyCollection.cs b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyCollection.cs
+new file mode 100644
+index 0000000..bf6bc64
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyCollection.cs
+@@ -0,0 +1,7 @@
++namespace Hexalith.EventStore.Server.Tests.Telemetry;
++
++/// <summary>Serializes the privacy fixtures that observe process-wide console and telemetry providers.</summary>
++[CollectionDefinition("ReadDiagnosticsPrivacy", DisableParallelization = true)]
++public sealed class ReadDiagnosticsPrivacyCollection
++{
++}
+diff --git a/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyTests.cs b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyTests.cs
+new file mode 100644
+index 0000000..1ae3c0b
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadDiagnosticsPrivacyTests.cs
+@@ -0,0 +1,316 @@
++using System.Diagnostics;
++using System.Globalization;
++using System.Net;
++using System.Net.Http.Json;
++
++using Hexalith.EventStore.Middleware;
++using Hexalith.EventStore.ServiceDefaults;
++
++using Microsoft.AspNetCore.Builder;
++using Microsoft.AspNetCore.Hosting;
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Logging;
++using Microsoft.Extensions.Options;
++
++using OpenTelemetry;
++using OpenTelemetry.Logs;
++using OpenTelemetry.Trace;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Telemetry;
++
++/// <summary>Exercises the real shared-host privacy registration and actual provider/exporter output.</summary>
++[Collection("ReadDiagnosticsPrivacy")]
++public sealed class ReadDiagnosticsPrivacyTests
++{
++    /// <summary>Hosting-level unhandled-exception output remains private after the execution scope unwinds on a rewritten path.</summary>
++    [Fact]
++    public async Task RealHostingFailureAfterPathRewriteOmitsProtectedException()
++    {
++        const string secret = "protected-unhandled-query-exception";
++        using StringWriter console = new(CultureInfo.InvariantCulture);
++        TextWriter previous = Console.Out;
++        using ReadPrivacyLogExporter logs = new();
++        try
++        {
++            Console.SetOut(console);
++            WebApplicationBuilder builder = WebApplication.CreateBuilder();
++            builder.Configuration["urls"] = "http://127.0.0.1:0";
++            builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] = null;
++            builder.Logging.ClearProviders();
++            builder.ConfigureOpenTelemetry();
++            builder.Logging.AddOpenTelemetry(options => options.AddProcessor(new SimpleLogRecordExportProcessor(logs)));
++            WebApplication app = builder.Build();
++            await using var lifetime = app.ConfigureAwait(true);
++            app.UseMiddleware<CorrelationIdMiddleware>();
++            app.MapPost("/api/v1/queries", (HttpContext context) =>
++            {
++                context.Request.Path = "/rewritten-unhandled";
++                throw new InvalidOperationException(secret);
++            });
++            app.MapGet("/ordinary", (ILoggerFactory factory) =>
++            {
++                factory.CreateLogger("Privacy.Probe").LogInformation("ordinary-after-hosting-failure");
++                return Results.Ok();
++            });
++            await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++            using HttpClient client = new() { BaseAddress = new(app.Urls.Single()) };
++            Task boundary = logs.ExpectBoundary("unhandled-control");
++            using HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/queries");
++            request.Headers.Add(CorrelationIdMiddleware.HeaderName, "unhandled-control");
++            using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
++            response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
++            await boundary.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken).ConfigureAwait(true);
++            using HttpResponseMessage ordinary = await client.GetAsync("/ordinary", TestContext.Current.CancellationToken).ConfigureAwait(true);
++            ordinary.EnsureSuccessStatusCode();
++            await app.StopAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++            string.Join('\n', logs.Records).ShouldNotContain(secret);
++            logs.Records.ShouldContain(record => record.StartsWith("Hexalith.EventStore.QueryBoundary|", StringComparison.Ordinal)
++                && record.Contains("StatusCode=500", StringComparison.Ordinal));
++            logs.Records.ShouldContain(record => record.Contains("ordinary-after-hosting-failure", StringComparison.Ordinal));
++        }
++        finally
++        {
++            Console.SetOut(previous);
++        }
++        console.ToString().ShouldNotContain(secret);
++        console.ToString().ShouldContain("ordinary-after-hosting-failure");
++    }
++
++    /// <summary>Cancellation retains its exact token, omits rewritten-path details and restores the calling execution.</summary>
++    [Fact]
++    public async Task CanceledPipelineRestoresPrivacyAndInstrumentationScopes()
++    {
++        using ReadPrivacyLogExporter logs = new();
++        WebApplicationBuilder builder = WebApplication.CreateBuilder();
++        builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] = null;
++        builder.Logging.ClearProviders();
++        builder.ConfigureOpenTelemetry();
++        builder.Logging.AddOpenTelemetry(options => options.AddProcessor(new SimpleLogRecordExportProcessor(logs)));
++        WebApplication app = builder.Build();
++        await using var lifetime = app.ConfigureAwait(true);
++        using CancellationTokenSource cancellation = new();
++        await cancellation.CancelAsync().ConfigureAwait(true);
++        ApplicationBuilder pipeline = new(app.Services);
++        IStartupFilter filter = app.Services.GetServices<IStartupFilter>()
++            .Single(value => value.GetType().Name == "ReadDiagnosticsPrivacyStartupFilter");
++        ILogger logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Privacy.Probe");
++        filter.Configure(application => application.Run(context =>
++        {
++            context.Request.Path = "/rewritten-cancellation";
++            logger.LogCritical("protected-canceled-cause");
++            return Task.FromCanceled(cancellation.Token);
++        }))(pipeline);
++        DefaultHttpContext context = new() { RequestServices = app.Services };
++        context.Request.Method = "POST";
++        context.Request.Path = "/api/v1/queries";
++        IHttpContextAccessor accessor = app.Services.GetRequiredService<IHttpContextAccessor>();
++        accessor.HttpContext = context;
++        try
++        {
++            OperationCanceledException canceled = await Should.ThrowAsync<OperationCanceledException>(() => pipeline.Build()(context)).ConfigureAwait(true);
++            canceled.CancellationToken.ShouldBe(cancellation.Token);
++            ReadDiagnosticsPrivacyScope.IsActive.ShouldBeFalse();
++            Sdk.SuppressInstrumentation.ShouldBeFalse();
++        }
++        finally
++        {
++            accessor.HttpContext = null;
++        }
++        logger.LogInformation("ordinary-after-cancellation");
++        string.Join('\n', logs.Records).ShouldNotContain("protected-canceled-cause");
++        logs.Records.ShouldContain(record => record.Contains("ordinary-after-cancellation", StringComparison.Ordinal));
++    }
++
++    /// <summary>Routing-equivalent case and trailing-slash aliases retain privacy; unrelated methods/routes retain diagnostics.</summary>
++    [Theory]
++    [InlineData("POST", "/api/v1/queries", true)]
++    [InlineData("POST", "/API/V1/QUERIES/", true)]
++    [InlineData("POST", "/query/", true)]
++    [InlineData("POST", "/api/v1/queries/owner-authority/workload/", true)]
++    [InlineData("POST", "/api/v1/streams/read/workload", true)]
++    [InlineData("PUT", "/actors/AggregateActor/opaque/method/InspectSourceMetadataPairAsync", true)]
++    [InlineData("POST", "/ACTORS/AggregateActor/opaque/METHOD/GetStreamMetadataAsync/", true)]
++    [InlineData("PUT", "/actors/AggregateActor/opaque/method/InspectSourceProofAsync", true)]
++    [InlineData("GET", "/api/v1/queries", false)]
++    [InlineData("POST", "/api/v1/commands", false)]
++    [InlineData("PUT", "/actors/AggregateActor/opaque/method/SubmitCommandAsync", false)]
++    [InlineData("POST", "/api/v1/queries/owner-authority/workload-extra", false)]
++    public void FiniteReadSurfaceMatchesActualRoutingAliases(string method, string path, bool expected)
++    {
++        DefaultHttpContext context = new();
++        context.Request.Method = method;
++        context.Request.Path = path;
++        ReadDiagnosticsPrivacy.IsProtectedRequest(context).ShouldBe(expected);
++    }
++
++    /// <summary>Distinct owner branches, early admission refusal, and exceptions emit only a common boundary record.</summary>
++    /// <param name="publicPath">A routing-equivalent public query path.</param>
++    [Theory]
++    [InlineData("/api/v1/queries")]
++    [InlineData("/API/V1/QUERIES/")]
++    public async Task RealProvidersOmitWholeReadSubtreesAndKeepUniformCompletion(string publicPath)
++    {
++        const string secret = "protected-tenant-project-and-owner-cause";
++        using StringWriter console = new(CultureInfo.InvariantCulture);
++        TextWriter previous = Console.Out;
++        using ReadPrivacyLogExporter logs = new();
++        using ReadPrivacyTraceExporter traces = new();
++        using ActivitySource probe = new("Privacy.Probe");
++        List<string> propagated = [];
++        int nestedCalls = 0;
++        TaskCompletionSource drainRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
++        Task? drain = null;
++        try
++        {
++            Console.SetOut(console);
++            WebApplicationBuilder ownerBuilder = WebApplication.CreateBuilder();
++            ownerBuilder.Configuration["urls"] = "http://127.0.0.1:0";
++            ownerBuilder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] = null;
++            ownerBuilder.Logging.ClearProviders();
++            ownerBuilder.ConfigureOpenTelemetry();
++            ownerBuilder.Logging.AddOpenTelemetry(options => options.AddProcessor(new SimpleLogRecordExportProcessor(logs)));
++            WebApplication owner = ownerBuilder.Build();
++            await using var ownerLifetime = owner.ConfigureAwait(true);
++            owner.MapPost("/query", (HttpContext context, ILoggerFactory factory) =>
++            {
++                nestedCalls++;
++                propagated.Add(context.Request.Headers["traceparent"].ToString());
++                factory.CreateLogger("Privacy.Probe").LogError(new InvalidOperationException(secret), "Owner cause {Resource}", secret);
++                using Activity? detail = probe.StartActivity("owner-branch-" + secret);
++                return Results.NotFound();
++            });
++            await owner.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++            using HttpClient ownerClient = new() { BaseAddress = new(owner.Urls.Single()) };
++
++            WebApplicationBuilder builder = WebApplication.CreateBuilder();
++            builder.Configuration["urls"] = "http://127.0.0.1:0";
++            builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] = null;
++            builder.Logging.ClearProviders();
++            builder.ConfigureOpenTelemetry();
++            builder.Services.AddEventStoreReadDiagnosticsPrivacy();
++            builder.Services.AddEventStoreReadDiagnosticsPrivacy();
++            builder.Services.Count(descriptor => descriptor.ImplementationType?.Name == "ReadDiagnosticsPrivacyStartupFilter").ShouldBe(1);
++            builder.Services.PostConfigure<LoggerFilterOptions>(options =>
++            {
++                foreach (string provider in new[] { "Console", "OpenTelemetry" })
++                {
++                    options.Rules.Add(new(provider, "Privacy.Probe", LogLevel.Trace, static (_, _, _) => true));
++                    options.Rules.Add(new(provider, "Microsoft.AspNetCore.Server.Kestrel.Connections", LogLevel.Trace, static (_, _, _) => true));
++                    options.Rules.Add(new(provider, "Microsoft.AspNetCore.Server.Kestrel.Transport", LogLevel.Trace, static (_, _, _) => true));
++                }
++            });
++            builder.Logging.AddOpenTelemetry(options => options.AddProcessor(new SimpleLogRecordExportProcessor(logs)));
++            builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing.AddSource("Privacy.Probe")
++                .SetSampler(new AlwaysOnSampler()).AddProcessor(new SimpleActivityExportProcessor(traces)));
++            WebApplication app = builder.Build();
++            await using var appLifetime = app.ConfigureAwait(true);
++            app.UseMiddleware<CorrelationIdMiddleware>();
++            app.UseExceptionHandler(new ExceptionHandlerOptions
++            {
++                ExceptionHandlingPath = "/error-reexecuted",
++                AllowStatusCode404Response = true,
++            });
++            app.MapPost("/error-reexecuted", (HttpContext context, ILoggerFactory factory) =>
++            {
++                context.Request.Path.Value.ShouldBe("/error-reexecuted");
++                factory.CreateLogger("Privacy.Probe").LogError("Re-executed cause {Identity}", secret);
++                using Activity? rewritten = probe.StartActivity("rewritten-branch-" + secret);
++                return Results.NotFound();
++            });
++            app.Use(async (context, next) =>
++            {
++                if (context.Request.Headers.ContainsKey("Early-Refusal"))
++                {
++                    context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger("Privacy.Probe")
++                        .LogCritical("Admission cause {Identity}", secret);
++                    context.Response.StatusCode = StatusCodes.Status404NotFound;
++                    return;
++                }
++                await next(context).ConfigureAwait(true);
++            });
++            app.MapPost("/api/v1/queries", async (HttpContext context, ILoggerFactory factory) =>
++            {
++                int branch = (await context.Request.ReadFromJsonAsync<int>(TestContext.Current.CancellationToken).ConfigureAwait(true));
++                ILogger logger = factory.CreateLogger("Privacy.Probe");
++                using IDisposable? scope = logger.BeginScope("Private scope {Resource}", secret);
++                for (LogLevel level = LogLevel.Trace; level <= LogLevel.Critical; level++)
++                    logger.Log(level, "Protected detail {Resource}", secret);
++                using Activity? detail = probe.StartActivity("root-branch-" + secret);
++                if (branch == 2)
++                {
++                    IHttpContextAccessor accessor = context.RequestServices.GetRequiredService<IHttpContextAccessor>();
++                    drain = Task.Run(async () =>
++                    {
++                        await drainRelease.Task.ConfigureAwait(true);
++                        accessor.HttpContext.ShouldBeNull();
++                        logger.LogCritical("Async drained cause {Identity}", secret);
++                        using Activity? late = probe.StartActivity("drained-branch-" + secret);
++                    });
++                }
++                for (int call = 0; call < branch; call++)
++                {
++                    using HttpResponseMessage response = await ownerClient.PostAsJsonAsync("/query", 0, TestContext.Current.CancellationToken).ConfigureAwait(true);
++                    response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
++                }
++                if (branch == 3) throw new InvalidOperationException(secret);
++                return Results.NotFound();
++            });
++            app.MapGet("/ordinary", (ILoggerFactory factory) =>
++            {
++                factory.CreateLogger("Privacy.Probe").LogInformation("ordinary-log-visible");
++                factory.CreateLogger("Microsoft.AspNetCore.Server.Kestrel.Connections").LogWarning("ordinary-transport-warning-visible");
++                using Activity? activity = probe.StartActivity("ordinary-trace-visible");
++                return Results.Ok();
++            });
++            await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++            using HttpClient client = new() { BaseAddress = new(app.Urls.Single()) };
++            logs.Records.Clear(); traces.Records.Clear();
++            for (int branch = 0; branch <= 4; branch++)
++            {
++                string correlation = "privacy-" + branch.ToString(CultureInfo.InvariantCulture);
++                Task completion = logs.ExpectBoundary(correlation);
++                using HttpRequestMessage request = new(HttpMethod.Post, publicPath) { Content = JsonContent.Create(branch) };
++                request.Headers.Add(CorrelationIdMiddleware.HeaderName, correlation);
++                if (branch == 4) request.Headers.Add("Early-Refusal", "true");
++                using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
++                response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
++                await completion.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken).ConfigureAwait(true);
++            }
++            nestedCalls.ShouldBe(6);
++            propagated.Count.ShouldBe(6);
++            propagated.ShouldAllBe(value => value.Length == 55 && value.EndsWith("-00", StringComparison.Ordinal));
++            logs.Records.Count.ShouldBe(5);
++            logs.Records.ShouldAllBe(record => record.StartsWith("Hexalith.EventStore.QueryBoundary|", StringComparison.Ordinal)
++                && record.Contains("StatusCode=404", StringComparison.Ordinal)
++                && record.EndsWith("|TraceId=00000000000000000000000000000000|SpanId=0000000000000000", StringComparison.Ordinal));
++            // The five initiating external-client spans are outside the service boundary; no service subtree is exported.
++            traces.Records.Count.ShouldBe(5);
++            traces.Records.ShouldAllBe(record => record.Contains("System.Net.Http", StringComparison.Ordinal));
++            string readLogs = string.Join('\n', logs.Records), readTraces = string.Join('\n', traces.Records);
++            readLogs.ShouldNotContain(secret); readTraces.ShouldNotContain(secret);
++            using HttpResponseMessage ordinary = await client.GetAsync("/ordinary", TestContext.Current.CancellationToken).ConfigureAwait(true);
++            ordinary.EnsureSuccessStatusCode();
++            logs.Records.ShouldContain(record => record.Contains("ordinary-log-visible", StringComparison.Ordinal));
++            logs.Records.ShouldContain(record => record.Contains("ordinary-transport-warning-visible", StringComparison.Ordinal));
++            traces.Records.ShouldContain(record => record.Contains("ordinary-trace-visible", StringComparison.Ordinal));
++            await app.StopAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++            drainRelease.TrySetResult();
++            await drain!.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken).ConfigureAwait(true);
++            string.Join('\n', logs.Records).ShouldNotContain(secret);
++            string.Join('\n', traces.Records).ShouldNotContain(secret);
++            await owner.StopAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
++        }
++        finally
++        {
++            drainRelease.TrySetResult();
++            if (drain is not null) await drain.WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(true);
++            Console.SetOut(previous);
++        }
++        console.ToString().ShouldNotContain(secret);
++        console.ToString().ShouldContain("Query boundary completed");
++        console.ToString().ShouldContain("ordinary-log-visible");
++    }
++}
+diff --git a/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyLogExporter.cs b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyLogExporter.cs
+new file mode 100644
+index 0000000..bce85cd
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyLogExporter.cs
+@@ -0,0 +1,50 @@
++using System.Collections.Concurrent;
++using System.Text;
++
++using OpenTelemetry;
++using OpenTelemetry.Logs;
++
++namespace Hexalith.EventStore.Server.Tests.Telemetry;
++
++/// <summary>Snapshots every emitted log field and scope at the real OpenTelemetry export boundary.</summary>
++internal sealed class ReadPrivacyLogExporter : BaseExporter<LogRecord>
++{
++    private readonly ConcurrentDictionary<string, TaskCompletionSource> _boundaries = new(StringComparer.Ordinal);
++
++    /// <summary>Gets all actual exported records without category or trace filtering.</summary>
++    internal ConcurrentQueue<string> Records { get; } = new();
++
++    /// <summary>Registers the completion record expected for one actual request.</summary>
++    internal Task ExpectBoundary(string correlation)
++        => _boundaries.GetOrAdd(correlation, static _ => new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
++
++    /// <inheritdoc/>
++    public override ExportResult Export(in Batch<LogRecord> batch)
++    {
++        foreach (LogRecord record in batch)
++        {
++            StringBuilder text = new();
++            text.Append(record.CategoryName).Append('|').Append(record.LogLevel).Append('|').Append(record.EventId.Id)
++                .Append('|').Append(record.FormattedMessage).Append('|').Append(record.Body).Append('|').Append(record.Exception);
++            string? correlation = null;
++            foreach (KeyValuePair<string, object?> field in record.Attributes ?? [])
++            {
++                text.Append('|').Append(field.Key).Append('=').Append(field.Value);
++                if (field.Key == "CorrelationId") correlation = field.Value?.ToString();
++            }
++            record.ForEachScope(static (scope, snapshot) =>
++            {
++                foreach (KeyValuePair<string, object?> field in scope)
++                    snapshot.Append('|').Append(field.Key).Append('=').Append(field.Value);
++            }, text);
++            text.Append("|TraceId=").Append(record.TraceId).Append("|SpanId=").Append(record.SpanId);
++            Records.Enqueue(text.ToString());
++            if (record.CategoryName == "Hexalith.EventStore.QueryBoundary" && correlation is not null
++                && _boundaries.TryGetValue(correlation, out TaskCompletionSource? complete))
++            {
++                complete.TrySetResult();
++            }
++        }
++        return ExportResult.Success;
++    }
++}
+diff --git a/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyTraceExporter.cs b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyTraceExporter.cs
+new file mode 100644
+index 0000000..449af1f
+--- /dev/null
++++ b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadPrivacyTraceExporter.cs
+@@ -0,0 +1,29 @@
++using System.Collections.Concurrent;
++using System.Diagnostics;
++using System.Text.Json;
++
++using OpenTelemetry;
++
++namespace Hexalith.EventStore.Server.Tests.Telemetry;
++
++/// <summary>Snapshots every actual exported span before its Activity is disposed.</summary>
++internal sealed class ReadPrivacyTraceExporter : BaseExporter<Activity>
++{
++    /// <summary>Gets all exported spans, with no test-side request or source filtering.</summary>
++    internal ConcurrentQueue<string> Records { get; } = new();
++
++    /// <inheritdoc/>
++    public override ExportResult Export(in Batch<Activity> batch)
++    {
++        foreach (Activity activity in batch)
++        {
++            Records.Enqueue(JsonSerializer.Serialize(new
++            {
++                activity.OperationName, activity.Kind, activity.Status,
++                Source = activity.Source.Name, activity.Tags, activity.Events,
++                Links = activity.Links.Select(static link => new { Trace = link.Context.TraceId.ToString(), Span = link.Context.SpanId.ToString(), link.Tags }),
++            }));
++        }
++        return ExportResult.Success;
++    }
++}
+diff --git a/before/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/RequestLogPrivacyTests.cs b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/RequestLogPrivacyTests.cs
+index 0951877..e0861f3 100644
+--- a/before/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/RequestLogPrivacyTests.cs
++++ b/after/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/RequestLogPrivacyTests.cs
+@@ -21,6 +21,7 @@ using Shouldly;
+ namespace Hexalith.EventStore.Server.Tests.Telemetry;
+ 
+ /// <summary>Exercises real request logs through the shared Console and OpenTelemetry providers.</summary>
++[Collection("ReadDiagnosticsPrivacy")]
+ public sealed class RequestLogPrivacyTests
+ {
+     /// <summary>The no-rule fallback retains the caller's global minimum level.</summary>
+@@ -110,7 +111,7 @@ public sealed class RequestLogPrivacyTests
+         using RequestPrivacyLogExporter exporter = new();
+         try
+         {
+-            // Server.Tests is assembly-serialized. Restore the process writer even on failure.
++            // The nonparallel privacy collection owns the process writer; restore it even on failure.
+             Console.SetOut(console);
+             WebApplicationBuilder builder = WebApplication.CreateBuilder();
+             builder.WebHost.UseTestServer();
+diff --git a/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogProvider.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogProvider.cs
+new file mode 100644
+index 0000000..a7b1f5d
+--- /dev/null
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogProvider.cs
+@@ -0,0 +1,21 @@
++#if HEXALITH_SOURCE_FIXTURE
++namespace Hexalith.Projects.Server.Tests.Queries;
++
++using Microsoft.Extensions.Logging;
++
++/// <summary>Owns one host's real logging scopes while forwarding every emitted record.</summary>
++/// <param name="observer">The complete observation sink.</param>
++internal sealed class ProjectReadDenialLogProvider(ProjectReadDenialObserver observer) : ILoggerProvider, ISupportExternalScope
++{
++    private IExternalScopeProvider _scopes = new LoggerExternalScopeProvider();
++
++    /// <inheritdoc/>
++    public ILogger CreateLogger(string categoryName) => new ProjectReadDenialLogger(categoryName, observer, () => _scopes);
++
++    /// <inheritdoc/>
++    public void SetScopeProvider(IExternalScopeProvider scopeProvider) => _scopes = scopeProvider;
++
++    /// <inheritdoc/>
++    public void Dispose() { }
++}
++#endif
+diff --git a/before/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs
+index 9265ec8..e876198 100644
+--- a/before/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs
+@@ -6,16 +6,18 @@ using Microsoft.Extensions.Logging;
+ /// <summary>Forwards actual SDK log state to the request-scoped denial observer.</summary>
+ /// <param name="category">The framework-provided logger category.</param>
+ /// <param name="observer">The test's observation sink.</param>
+-internal sealed class ProjectReadDenialLogger(string category, ProjectReadDenialObserver observer) : ILogger
++/// <param name="scopes">This host's actual external logging scopes.</param>
++internal sealed class ProjectReadDenialLogger(string category, ProjectReadDenialObserver observer,
++    Func<IExternalScopeProvider> scopes) : ILogger
+ {
+     /// <inheritdoc/>
+-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
++    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => scopes().Push(state);
+ 
+     /// <inheritdoc/>
+     public bool IsEnabled(LogLevel logLevel) => true;
+ 
+     /// <inheritdoc/>
+     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+-        => observer.RecordLog(category, logLevel, eventId, state, exception);
++        => observer.RecordLog(category, logLevel, eventId, state, exception, scopes(), formatter(state, exception));
+ }
+ #endif
+diff --git a/before/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+index 20445cd..2485cb9 100644
+--- a/before/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+@@ -9,29 +9,30 @@ using System.Text.Json;
+ using Microsoft.AspNetCore.Http;
+ using Microsoft.Extensions.Logging;
+ 
+-/// <summary>Captures actual SDK logs and standard server metric/activity classifications by trace.</summary>
+-internal sealed class ProjectReadDenialObserver : ILoggerProvider
++/// <summary>Captures every emitted provider record and exported span during each actual gateway observation.</summary>
++internal sealed class ProjectReadDenialObserver : IDisposable
+ {
+-    private readonly ConcurrentDictionary<ActivityTraceId, ConcurrentQueue<string>> _logs = new();
++    private readonly ConcurrentQueue<string> _logs = new();
++    private readonly ConcurrentQueue<string> _traces = new();
++    private readonly ConcurrentDictionary<ActivityTraceId, (int Logs, int Traces)> _starts = new();
++    private readonly ConcurrentDictionary<string, TaskCompletionSource> _boundaries = new(StringComparer.Ordinal);
+     private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource<(double Duration, string Category)>> _metrics = new();
+-    private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource<string>> _activities = new();
++    private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource> _activities = new();
+     private readonly ConcurrentDictionary<ActivityTraceId, ActivitySpanId> _gatewaySpans = new();
+     private readonly ActivityListener _activityListener;
+     private readonly MeterListener _meterListener;
+     private const string GatewayRequestMarker = "story61.actual-gateway-request";
+ 
+-    /// <summary>Gets SDK categories that can classify a supported handler refusal.</summary>
+-    internal static string[] LogCategories { get; } =
+-    [
+-        "Hexalith.EventStore.Queries.HandlerAwareQueryRouter",
+-        "Hexalith.EventStore.Server.Queries.SafeDenialQueryRouter",
+-        "Hexalith.EventStore.Server.Pipeline.SubmitQueryHandler",
+-        "Hexalith.EventStore.ErrorHandling.QueryNotFoundExceptionHandler",
+-    ];
++    /// <summary>Gets the common source-owned category used by the substitution control.</summary>
++    internal static string[] LogCategories { get; } = ["Hexalith.EventStore.QueryBoundary"];
+ 
+-    /// <summary>Enables actual hosting instruments without installing application telemetry policy.</summary>
++    /// <summary>Gets the actual exporter installed on the real SDK tracer provider.</summary>
++    internal ProjectReadDenialTraceExporter TraceExporter { get; }
++
++    /// <summary>Observes exact outer completion and metrics without treating raw Activity flags as export proof.</summary>
+     internal ProjectReadDenialObserver()
+     {
++        TraceExporter = new(this);
+         _activityListener = new ActivityListener
+         {
+             ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
+@@ -39,13 +40,7 @@ internal sealed class ProjectReadDenialObserver : ILoggerProvider
+             ActivityStopped = activity =>
+             {
+                 if (activity.OperationName == "Microsoft.AspNetCore.Hosting.HttpRequestIn" && IsBoundGatewaySpan(activity)
+-                    && _activities.TryGetValue(activity.TraceId, out var completion))
+-                    completion.TrySetResult(JsonSerializer.Serialize(new
+-                    {
+-                        activity.OperationName, activity.Kind, activity.Status,
+-                        Tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray(),
+-                        Events = activity.Events.Select(item => new { item.Name, Tags = item.Tags.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray() }).ToArray(),
+-                    }));
++                    && _activities.TryGetValue(activity.TraceId, out TaskCompletionSource? completion)) completion.TrySetResult();
+             },
+         };
+         ActivitySource.AddActivityListener(_activityListener);
+@@ -69,22 +64,24 @@ internal sealed class ProjectReadDenialObserver : ILoggerProvider
+         _meterListener.Start();
+     }
+ 
+-    /// <summary>Begins an independent trace so concurrent HTTP fixtures cannot supply this test's observations.</summary>
++    /// <summary>Begins an independent trace and a complete provider/exporter observation window.</summary>
+     internal Activity BeginRequest()
+     {
+         Activity activity = new Activity("story61-denial-observation").SetIdFormat(ActivityIdFormat.W3C)
+             .SetParentId(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.Recorded).Start();
+-        _logs[activity.TraceId] = new();
++        _starts[activity.TraceId] = (_logs.Count, _traces.Count);
++        _boundaries[activity.TraceId.ToString()] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         _metrics[activity.TraceId] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         _activities[activity.TraceId] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         return activity;
+     }
+ 
+-    /// <summary>Marks only the actual outer gateway activity whose trace was registered by this request.</summary>
++    /// <summary>Marks the actual registered outer request for completion and duration measurement.</summary>
+     internal void BindGatewayRequest(HttpContext context)
+     {
+-        if (context.Request.Path != "/api/v1/queries" || Activity.Current is not { } activity
+-            || !_metrics.ContainsKey(activity.TraceId)) return;
++        if (context.Request.Path != "/api/v1/queries" || Activity.Current is not { } activity || !_metrics.ContainsKey(activity.TraceId)) return;
++        if (!context.Request.Headers["traceparent"].ToString().EndsWith("-01", StringComparison.Ordinal))
++            throw new InvalidOperationException("The external observation must enter the real gateway with sampled trace context.");
+         if (!_gatewaySpans.TryAdd(activity.TraceId, activity.SpanId))
+             throw new InvalidOperationException("A denial observation must bind exactly one actual gateway server span.");
+         activity.SetCustomProperty(GatewayRequestMarker, true);
+@@ -94,39 +91,68 @@ internal sealed class ProjectReadDenialObserver : ILoggerProvider
+         => activity.GetCustomProperty(GatewayRequestMarker) is true
+             && _gatewaySpans.TryGetValue(activity.TraceId, out ActivitySpanId span) && span == activity.SpanId;
+ 
+-    /// <summary>Returns the real server measurement and tags, without a response-latency threshold.</summary>
++    /// <summary>Returns the real measurement and dimensions without a timing threshold.</summary>
+     internal Task<(double Duration, string Category)> MetricAsync(ActivityTraceId trace, CancellationToken cancellationToken)
+         => _metrics[trace].Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
+ 
+-    /// <summary>Returns the real server activity outcome, tags and events.</summary>
+-    internal Task<string> ActivityAsync(ActivityTraceId trace, CancellationToken cancellationToken)
+-        => _activities[trace].Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
++    /// <summary>Returns every actual exported span after the outer request ends.</summary>
++    internal async Task<string> ActivityAsync(ActivityTraceId trace, CancellationToken cancellationToken)
++    {
++        await _activities[trace].Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken).ConfigureAwait(false);
++        return JsonSerializer.Serialize(_traces.ToArray().Skip(_starts[trace].Traces));
++    }
+ 
+-    /// <summary>Gets unmodified structured SDK log fields for this request.</summary>
+-    internal string[] Logs(ActivityTraceId trace) => _logs[trace].ToArray();
++    /// <summary>Returns all emitted logs, including unexpected categories and unbound traces.</summary>
++    internal string[] Logs(ActivityTraceId trace) => _logs.ToArray().Skip(_starts[trace].Logs).ToArray();
++
++    /// <summary>Waits for actual final-status emission before returning the complete log window.</summary>
++    internal async Task<string[]> LogsAsync(ActivityTraceId trace, CancellationToken cancellationToken)
++    {
++        await _boundaries[trace.ToString()].Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken).ConfigureAwait(false);
++        return Logs(trace);
++    }
+ 
+-    /// <summary>Records structured SDK state from only the selected request trace.</summary>
+-    internal void RecordLog<TState>(string category, LogLevel level, EventId eventId, TState state, Exception? exception)
++    /// <summary>Snapshots every provider record, exception and scope without category or trace filtering.</summary>
++    internal void RecordLog<TState>(string category, LogLevel level, EventId eventId, TState state, Exception? exception,
++        IExternalScopeProvider? scopes = null, string? message = null)
+     {
+-        if (!LogCategories.Contains(category, StringComparer.Ordinal) || Activity.Current is not { } activity
+-            || !IsBoundGatewaySpan(activity) || !_logs.TryGetValue(activity.TraceId, out var entries)) return;
+-        var fields = state is IEnumerable<KeyValuePair<string, object?>> structured ? structured : [];
+-        entries.Enqueue(JsonSerializer.Serialize(new
++        KeyValuePair<string, object?>[] fields = state is IEnumerable<KeyValuePair<string, object?>> structured ? structured.ToArray() : [];
++        List<KeyValuePair<string, object?>> scopeValues = [];
++        scopes?.ForEachScope(static (scope, values) =>
++        {
++            if (scope is IEnumerable<KeyValuePair<string, object?>> entries) values.AddRange(entries);
++            else values.Add(new("Scope", scope?.ToString()));
++        }, scopeValues);
++        _logs.Enqueue(JsonSerializer.Serialize(new
+         {
+-            Category = category, Level = level, eventId.Id,
++            Category = category, Level = level, eventId.Id, Message = message ?? state?.ToString(),
+             State = fields.OrderBy(field => field.Key, StringComparer.Ordinal).ToArray(),
+-            ExceptionType = exception?.GetType().FullName, ExceptionMessage = exception?.Message,
++            Scopes = scopeValues.OrderBy(field => field.Key, StringComparer.Ordinal).ToArray(),
++            Trace = Activity.Current?.TraceId.ToString(), Span = Activity.Current?.SpanId.ToString(),
++            ExceptionType = exception?.GetType().FullName, ExceptionMessage = exception?.ToString(),
+         }));
++        string? correlation = fields.FirstOrDefault(field => field.Key == "CorrelationId").Value?.ToString();
++        if (category == "Hexalith.EventStore.QueryBoundary" && eventId.Id == 5510 && correlation is not null
++            && _boundaries.TryGetValue(correlation, out TaskCompletionSource? completion)) completion.TrySetResult();
+     }
+ 
+-    /// <inheritdoc/>
+-    public ILogger CreateLogger(string categoryName) => new ProjectReadDenialLogger(categoryName, this);
++    /// <summary>Snapshots every actual exported Activity without omitting sources or child spans.</summary>
++    internal void RecordExportedActivity(Activity activity)
++        => _traces.Enqueue(JsonSerializer.Serialize(new
++        {
++            Source = activity.Source.Name, activity.OperationName, activity.Kind, activity.Status,
++            Trace = activity.TraceId.ToString(), Span = activity.SpanId.ToString(), Parent = activity.ParentSpanId.ToString(),
++            Tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray(),
++            Events = activity.Events.Select(item => new { item.Name, Tags = item.Tags.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray() }).ToArray(),
++            Links = activity.Links.Select(link => new { Trace = link.Context.TraceId.ToString(), Span = link.Context.SpanId.ToString(), link.Tags }).ToArray(),
++        }));
+ 
+     /// <inheritdoc/>
+     public void Dispose()
+     {
+         _meterListener.Dispose();
+         _activityListener.Dispose();
++        TraceExporter.Dispose();
+     }
+ }
+ #endif
+diff --git a/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialTraceExporter.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialTraceExporter.cs
+new file mode 100644
+index 0000000..c5db411
+--- /dev/null
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialTraceExporter.cs
+@@ -0,0 +1,18 @@
++#if HEXALITH_SOURCE_FIXTURE
++namespace Hexalith.Projects.Server.Tests.Queries;
++
++using System.Diagnostics;
++using OpenTelemetry;
++
++/// <summary>Forwards every span from the real SDK tracer provider's export boundary.</summary>
++/// <param name="observer">The complete observation sink.</param>
++internal sealed class ProjectReadDenialTraceExporter(ProjectReadDenialObserver observer) : BaseExporter<Activity>
++{
++    /// <inheritdoc/>
++    public override ExportResult Export(in Batch<Activity> batch)
++    {
++        foreach (Activity activity in batch) observer.RecordExportedActivity(activity);
++        return ExportResult.Success;
++    }
++}
++#endif
+diff --git a/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTelemetryCollection.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTelemetryCollection.cs
+new file mode 100644
+index 0000000..106580d
+--- /dev/null
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTelemetryCollection.cs
+@@ -0,0 +1,11 @@
++#if HEXALITH_SOURCE_FIXTURE
++namespace Hexalith.Projects.Server.Tests.Queries;
++
++using Xunit;
++
++/// <summary>Serializes the source fixtures that inspect process-wide real telemetry providers.</summary>
++[CollectionDefinition("ProjectReadTelemetry", DisableParallelization = true)]
++public sealed class ProjectReadTelemetryCollection
++{
++}
++#endif
+diff --git a/before/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+index c6e2212..8079b66 100644
+--- a/before/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+@@ -13,10 +13,13 @@ using Hexalith.EventStore.Client.Gateway;
+ using Hexalith.EventStore.Contracts.Queries;
+ using Hexalith.EventStore.Middleware;
+ using Hexalith.EventStore.Server.Queries;
++using Hexalith.EventStore.ServiceDefaults;
+ using Hexalith.Projects.Contracts.Queries;
+ using Microsoft.AspNetCore.Builder;
+ using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Logging;
+ using Shouldly;
++using OpenTelemetry;
+ using Xunit;
+ 
+ public sealed partial class SupportedProjectGatewayHttpTests
+@@ -63,7 +66,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
+         await cancellation.CancelAsync();
+         await Should.ThrowAsync<OperationCanceledException>(() => observer.MetricAsync(request.TraceId, cancellation.Token));
+         await Should.ThrowAsync<OperationCanceledException>(() => observer.ActivityAsync(request.TraceId, cancellation.Token));
+-        observer.Logs(request.TraceId).ShouldBeEmpty();
++        observer.Logs(request.TraceId).Length.ShouldBe(1, "Unbound nested log evidence must remain observable even though it cannot complete the root request.");
+     }
+ 
+     /// <summary>Exercises the actual SDK HTTP boundary independently of Dapr and domain authority fixtures.</summary>
+@@ -71,8 +74,12 @@ public sealed partial class SupportedProjectGatewayHttpTests
+     public async Task SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories()
+     {
+         const string tenant = "denial-observability";
++        using ProjectReadDenialObserver observer = new();
+         var receiverBuilder = WebApplication.CreateBuilder();
+         receiverBuilder.Configuration["urls"] = "http://127.0.0.1:0";
++        receiverBuilder.ConfigureOpenTelemetry();
++        receiverBuilder.Logging.AddProvider(new ProjectReadDenialLogProvider(observer));
++        receiverBuilder.Logging.AddFilter<ProjectReadDenialLogProvider>(static (_, _) => true);
+         WebApplication receiver = receiverBuilder.Build();
+         await using var receiverLifetime = receiver.ConfigureAwait(true);
+         List<string> received = [];
+@@ -86,7 +93,6 @@ public sealed partial class SupportedProjectGatewayHttpTests
+         var routes = new GatewayFixtureLocalRoutes();
+         routes.Add("projects", receiver);
+         using RSA ownerKey = RSA.Create(2048);
+-        using ProjectReadDenialObserver observer = new();
+         WebApplication gateway = await StartGatewayAsync("http://127.0.0.1:1", "http://127.0.0.1:1", routes, ownerKey, tenant, observer);
+         await using var gatewayLifetime = gateway.ConfigureAwait(true);
+         gateway.Services.GetRequiredService<IQueryRouter>().ShouldBeOfType<Hexalith.EventStore.Queries.HandlerAwareQueryRouter>();
+@@ -107,16 +113,17 @@ public sealed partial class SupportedProjectGatewayHttpTests
+         routes.HumanBearerForwarded.ShouldBeFalse();
+     }
+ 
+-    private static async Task<(ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity)> ObserveDenialAsync(
++    private static async Task<(ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity, double Duration)> ObserveDenialAsync(
+         HttpClient client, SubmitQueryRequest query, ProjectReadDenialObserver observer)
+     {
+         using Activity trace = observer.BeginRequest();
+-        using HttpResponseMessage response = await client.PostAsJsonAsync("/api/v1/queries", query, TestContext.Current.CancellationToken).ConfigureAwait(false);
++        using HttpResponseMessage response = await SubmitObservedQueryAsync(client, query, trace.TraceId).ConfigureAwait(false);
+         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+         response.Content.Headers.ContentType!.MediaType.ShouldBe("application/problem+json");
+         using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false));
+         string correlation = body.RootElement.GetProperty("correlationId").GetString()!;
+         CorrelationIdMiddleware.IsValidIdentifier(correlation).ShouldBeTrue();
++        correlation.ShouldBe(trace.TraceId.ToString());
+         if (response.Headers.TryGetValues(CorrelationIdMiddleware.HeaderName, out var correlationHeaders))
+             correlationHeaders.ShouldBe([correlation]);
+         string canonicalBody = JsonSerializer.Serialize(body.RootElement.EnumerateObject().Where(property => property.Name != "correlationId")
+@@ -137,40 +144,55 @@ public sealed partial class SupportedProjectGatewayHttpTests
+         double.IsFinite(measurement.Duration).ShouldBeTrue();
+         measurement.Duration.ShouldBeGreaterThan(0);
+         string activity = await observer.ActivityAsync(trace.TraceId, TestContext.Current.CancellationToken).ConfigureAwait(false);
+-        string[] logs = observer.Logs(trace.TraceId).Select(log => NormalizeDenialLog(log, query, correlation)).ToArray();
+-        logs.Length.ShouldBe(3);
++        string[] logs = (await observer.LogsAsync(trace.TraceId, TestContext.Current.CancellationToken).ConfigureAwait(false))
++            .Select(log => NormalizeDenialLog(log, correlation)).ToArray();
++        logs.Length.ShouldBe(1);
+         activity.ShouldNotBeNullOrWhiteSpace();
+-        return (trace.TraceId, canonicalBody, JsonSerializer.Serialize(headers.OrderBy(header => header.Key, StringComparer.Ordinal)), logs, measurement.Category, activity);
++        return (trace.TraceId, canonicalBody, JsonSerializer.Serialize(headers.OrderBy(header => header.Key, StringComparer.Ordinal)), logs, measurement.Category, activity, measurement.Duration);
++    }
++
++    private static async Task<HttpResponseMessage> SubmitObservedQueryAsync(HttpClient client, SubmitQueryRequest query, ActivityTraceId trace)
++    {
++        using HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/queries") { Content = JsonContent.Create(query) };
++        request.Headers.Add(CorrelationIdMiddleware.HeaderName, trace.ToString());
++        // The initiating test client is outside the service chain. The real gateway separately requires incoming sampled (-01) context.
++        using IDisposable initiatingClientOnly = SuppressInstrumentationScope.Begin();
++        return await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(false);
+     }
+ 
+-    private static string NormalizeDenialLog(string log, SubmitQueryRequest query, string correlation)
++    private static string NormalizeDenialLog(string log, string correlation)
+     {
+         JsonObject entry = JsonNode.Parse(log)!.AsObject();
++        entry["Category"]!.GetValue<string>().ShouldBe("Hexalith.EventStore.QueryBoundary");
++        entry["Id"]!.GetValue<int>().ShouldBe(5510);
++        entry["Message"]!.GetValue<string>().ShouldBe($"Query boundary completed: CorrelationId={correlation}, StatusCode=404, Category=QueryBoundary");
++        entry["Message"] = "Query boundary completed: CorrelationId=[request-correlation], StatusCode=404, Category=QueryBoundary";
++        entry["Scopes"]!.AsArray().ShouldBeEmpty();
++        entry["Trace"].ShouldBeNull(); entry["Span"].ShouldBeNull();
++        entry["ExceptionType"].ShouldBeNull(); entry["ExceptionMessage"].ShouldBeNull();
++        entry["State"]!.AsArray().Select(field => field!["Key"]!.GetValue<string>()).Order(StringComparer.Ordinal)
++            .ShouldBe(new[] { "CorrelationId", "StatusCode", "{OriginalFormat}" }.Order(StringComparer.Ordinal));
+         foreach (JsonNode? field in entry["State"]!.AsArray())
+         {
+             string name = field!["Key"]!.GetValue<string>();
+-            string? expected = name switch { "TenantId" => query.Tenant, "AggregateId" => query.AggregateId, "CorrelationId" => correlation, _ => null };
+-            if (expected is null) continue;
+-            field["Value"]!.GetValue<string>().ShouldBe(expected, "Only this request's actual supplied coordinates may be normalized.");
+-            field["Value"] = "[request-coordinate]";
++            if (name == "StatusCode") field["Value"]!.GetValue<int>().ShouldBe(404);
++            if (name != "CorrelationId") continue;
++            field["Value"]!.GetValue<string>().ShouldBe(correlation, "Only the exact source-owned request correlation may be normalized.");
++            field["Value"] = "[request-correlation]";
+         }
+         return entry.ToJsonString();
+     }
+ 
+     private static void AssertSameDenialObservations(
+-        (ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity) first,
+-        (ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity) second)
++        (ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity, double Duration) first,
++        (ActivityTraceId Trace, string Body, string Headers, string[] Logs, string Metric, string Activity, double Duration) second)
+     {
+         first.Trace.ShouldNotBe(second.Trace);
+         first.Body.ShouldBe(second.Body);
+         first.Headers.ShouldBe(second.Headers);
+         first.Logs.ShouldBe(second.Logs);
+-        first.Logs.Length.ShouldBe(3);
+-        first.Logs.ShouldContain(log => log.Contains("QueryReceived", StringComparison.Ordinal));
+-        first.Logs.ShouldContain(log => log.Contains("QueryHandlerRouting", StringComparison.Ordinal));
+-        first.Logs.ShouldContain(log => log.Contains("Query not found", StringComparison.Ordinal));
+-        first.Logs.ShouldAllBe(log => !log.Contains("SafeDenialForbidden", StringComparison.Ordinal)
+-            && !log.Contains("SafeDenialMissingProjectionState", StringComparison.Ordinal));
++        first.Logs.Length.ShouldBe(1);
++        first.Logs.Single().ShouldContain("Query boundary completed");
+         // Standard duration metric dimensions classify both outcomes as the same HTTP 404.
+         // Response-time side-channel tolerance is unspecified; durations are deliberately not compared.
+         first.Metric.ShouldBe(second.Metric);
+@@ -179,6 +201,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
+         dimensions["http.response.status_code"].ShouldBe("404");
+         dimensions["http.route"].ShouldBe("api/v1/queries");
+         first.Activity.ShouldBe(second.Activity);
++        first.Activity.ShouldBe("[]", "No service-chain span may be emitted; the initiating external test client was excluded at its own source only.");
+     }
+ }
+ #endif
+diff --git a/before/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs b/after/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+index 5a8043d..bb7783f 100644
+--- a/before/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/after/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -35,6 +35,7 @@ using Hexalith.EventStore.Server.DomainServices;
+ using Hexalith.EventStore.Server.Pipeline;
+ using Hexalith.EventStore.Server.Queries;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.ServiceDefaults;
+ using Hexalith.EventStore.ServiceDefaults.Routing;
+ using Hexalith.Folders;
+ using Hexalith.Folders.Aggregates.Folder;
+@@ -54,11 +55,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
+ using Microsoft.Extensions.Logging;
+ using Microsoft.Extensions.Options;
+ using Microsoft.IdentityModel.Tokens;
++using OpenTelemetry;
++using OpenTelemetry.Trace;
+ using Shouldly;
+ using Xunit;
+ 
+ /// <summary>Local bound-signing source lane: real gateway/SDK/owner HTTP and Dapr persistence; loopback replaces service discovery only.</summary>
+ /// <param name="output">The native per-test output for closed transport observations.</param>
++[Collection("ProjectReadTelemetry")]
+ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
+ {
+     private const string Issuer = "story61-bound-signing";
+@@ -170,16 +174,16 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+         var transport = new GatewayFixtureLocalRoutes();
+         var heads = new GatewayFixtureOwnerHeads();
+         DateTimeOffset now = DateTimeOffset.UtcNow;
+-        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now, tenant).ConfigureAwait(true);
++        using ProjectReadDenialObserver denialObserver = new();
++        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now, tenant, denialObserver).ConfigureAwait(true);
+         await using var foldersLifetime = folders.ConfigureAwait(true);
+         transport.Add("folders", folders);
+-        WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport).ConfigureAwait(true);
++        WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport, denialObserver).ConfigureAwait(true);
+         await using var conversationsLifetime = conversations.ConfigureAwait(true);
+         transport.Add("conversations", conversations);
+-        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now).ConfigureAwait(true);
++        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now, denialObserver).ConfigureAwait(true);
+         await using var projectsLifetime = projects.ConfigureAwait(true);
+         transport.Add("projects", projects);
+-        using ProjectReadDenialObserver denialObserver = new();
+         WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant, denialObserver).ConfigureAwait(true);
+         await using var gatewayLifetime = gateway.ConfigureAwait(true);
+         transport.Add("eventstore", gateway);
+@@ -330,6 +334,19 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+         var foreignOnly = await ObserveDenialAsync(client, Open(new GetProjectQuery(), foreignOnlyProject), denialObserver);
+         AssertSameDenialObservations(denied, absent);
+         AssertSameDenialObservations(absent, foreignOnly);
++        List<object> timingSamples = [];
++        for (int round = 0; round < 4; round++)
++        {
++            for (int offset = 0; offset < 3; offset++)
++            {
++                int selected = (round + offset) % 3;
++                string kind = selected == 0 ? "Denied" : selected == 1 ? "Absent" : "ForeignOnly";
++                string project = selected == 0 ? "project-a" : selected == 1 ? "absent" : foreignOnlyProject;
++                var observed = await ObserveDenialAsync(client, Open(new GetProjectQuery(), project), denialObserver);
++                AssertSameDenialObservations(absent, observed);
++                timingSamples.Add(new { Round = round, Kind = kind, observed.Duration, Trace = observed.Trace.ToString() });
++            }
++        }
+         var foreignAfter = await ForeignStateAsync();
+         foreignAfter.Length.ShouldBe(foreignBefore.Length);
+         for (int i = 0; i < foreignBefore.Length; i++)
+@@ -342,6 +359,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+             DeniedTrace = denied.Trace.ToString(), AbsentTrace = absent.Trace.ToString(), ForeignOnlyTrace = foreignOnly.Trace.ToString(),
+             absent.Headers, absent.Logs, MetricCategory = absent.Metric, ServerActivity = absent.Activity,
+             ForeignStateByteAndETagComparisons = foreignBefore.Length,
++            BoundedInterleavedTimingSamples = timingSamples,
++            TimingScope = "Existing real-owner component fixture; no distributed, load or constant-time acceptance.",
++            TimingToleranceAccepted = false,
+         }));
+         (await ReadAsync<ProjectListPage>(client, List(new()))).Items.Single().ProjectId.ShouldBe("project-b");
+         heads.Outage = true;
+@@ -384,7 +404,8 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+         await conversations.StopAsync(TestContext.Current.CancellationToken); await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
+     }
+ 
+-    private static WebApplicationBuilder Builder(string workload, string http, string grpc, GatewayFixtureLocalRoutes routes)
++    private static WebApplicationBuilder Builder(string workload, string http, string grpc, GatewayFixtureLocalRoutes routes,
++        ProjectReadDenialObserver? observer = null)
+     {
+         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
+         builder.Configuration["urls"] = "http://127.0.0.1:0";
+@@ -396,15 +417,22 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+             ["Authentication:WorkloadIssuer:Workload"] = workload,
+         });
+         builder.Logging.ClearProviders().AddConsole().SetMinimumLevel(LogLevel.Error);
++        builder.ConfigureOpenTelemetry();
++        if (observer is not null)
++        {
++            builder.Logging.AddProvider(new ProjectReadDenialLogProvider(observer));
++            builder.Logging.AddFilter<ProjectReadDenialLogProvider>(static (_, _) => true);
++        }
+         builder.Services.AddSingleton(_ => new DaprClientBuilder().UseHttpEndpoint(http).UseGrpcEndpoint(grpc).Build());
+         builder.Services.AddHttpContextAccessor(); builder.Services.AddAuthorization(); builder.Services.AddEventStoreWorkloadAssertionIssuer();
+         builder.Services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
+         return builder;
+     }
+ 
+-    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now)
++    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now,
++        ProjectReadDenialObserver? observer = null)
+     {
+-        var builder = Builder("projects", http, grpc, routes);
++        var builder = Builder("projects", http, grpc, routes, observer);
+         builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
+         builder.Services.AddProjectsServer(); builder.Services.AddProjectsServerRuntimeInfrastructure();
+         builder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(now.AddSeconds(1)));
+@@ -413,9 +441,10 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+     }
+ 
+-    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant)
++    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant,
++        ProjectReadDenialObserver? observer = null)
+     {
+-        var builder = Builder("folders", http, grpc, routes);
++        var builder = Builder("folders", http, grpc, routes, observer);
+         builder.Services.AddFoldersProductionAuthentication(builder.Configuration, builder.Environment);
+         builder.Services.AddFoldersServer(); builder.Services.AddEventStoreReadModelStore();
+         GatewayFixtureCatalogComposition.AddFolderReceiver(builder, tenant, includeAdvisoryQueries: true);
+@@ -437,9 +466,10 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+     }
+ 
+-    private static async Task<WebApplication> StartConversationsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes)
++    private static async Task<WebApplication> StartConversationsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes,
++        ProjectReadDenialObserver? observer = null)
+     {
+-        var builder = Builder("conversations", http, grpc, routes);
++        var builder = Builder("conversations", http, grpc, routes, observer);
+         builder.Services.AddEventStoreReadModelStore();
+         builder.Services.AddSingleton<GatewayFixtureConversationTenants>();
+         builder.Services.AddSingleton<ITenantProjectionStore>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
+@@ -462,12 +492,11 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
+     private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant,
+         ProjectReadDenialObserver? denialObserver = null)
+     {
+-        var builder = Builder("eventstore", http, grpc, routes);
++        var builder = Builder("eventstore", http, grpc, routes, denialObserver);
+         if (denialObserver is not null)
+         {
+-            builder.Logging.AddProvider(denialObserver);
+-            foreach (string category in ProjectReadDenialObserver.LogCategories)
+-                builder.Logging.AddFilter<ProjectReadDenialObserver>(category, LogLevel.Debug);
++            builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing.AddSource("*")
++                .AddProcessor(new SimpleActivityExportProcessor(denialObserver.TraceExporter)));
+         }
+         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
+          builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType + "," + GetConversationAdvisoryMetadataQuery.QueryType;

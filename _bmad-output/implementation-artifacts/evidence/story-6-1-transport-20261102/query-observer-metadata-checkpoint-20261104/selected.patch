@@ -1,0 +1,194 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialLogger.cs
+@@ -18,6 +18,11 @@
+ 
+     /// <inheritdoc/>
+     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+-        => observer.RecordLog(category, logLevel, eventId, state, exception, scopes(), formatter(state, exception));
++    {
++        string message;
++        try { message = formatter(state, exception); }
++        catch (Exception error) { message = "[formatter-failed:" + error.GetType().FullName + "]"; }
++        observer.RecordLog(category, logLevel, eventId, state, exception, scopes(), message);
++    }
+ }
+ #endif
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+@@ -111,8 +111,12 @@
+     internal async Task<string> ActivityAsync(ActivityTraceId trace, CancellationToken cancellationToken)
+     {
+         await _activities[trace].Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken).ConfigureAwait(false);
+-        return JsonSerializer.Serialize(_traces.ToArray().Skip(_starts[trace].Traces));
+-    }
++        return ExportedActivities(trace);
++    }
++
++    /// <summary>Returns every exporter record in the window without weakening the separate root completion gate.</summary>
++    internal string ExportedActivities(ActivityTraceId trace)
++        => JsonSerializer.Serialize(_traces.ToArray().Skip(_starts[trace].Traces));
+ 
+     /// <summary>Returns all emitted logs, including unexpected categories and unbound traces.</summary>
+     internal string[] Logs(ActivityTraceId trace) => _logs.ToArray().Skip(_starts[trace].Logs).ToArray();
+@@ -133,30 +137,59 @@
+         scopes?.ForEachScope(static (scope, values) =>
+         {
+             if (scope is IEnumerable<KeyValuePair<string, object?>> entries) values.AddRange(entries);
+-            else values.Add(new("Scope", scope?.ToString()));
++            else values.Add(new("Scope", scope));
+         }, scopeValues);
+         _logs.Enqueue(JsonSerializer.Serialize(new
+         {
+-            Category = category, Level = level, eventId.Id, Message = message ?? state?.ToString(),
+-            State = fields.OrderBy(field => field.Key, StringComparer.Ordinal).ToArray(),
+-            Scopes = scopeValues.OrderBy(field => field.Key, StringComparer.Ordinal).ToArray(),
++            Category = category, Level = level, eventId.Id, Message = message ?? RenderProviderValue(state),
++            State = fields.OrderBy(field => field.Key, StringComparer.Ordinal).Select(field => new { field.Key, Value = SnapshotLogValue(field.Value) }).ToArray(),
++            Scopes = scopeValues.OrderBy(field => field.Key, StringComparer.Ordinal).Select(field => new { field.Key, Value = SnapshotLogValue(field.Value) }).ToArray(),
+             Trace = Activity.Current?.TraceId.ToString(), Span = Activity.Current?.SpanId.ToString(),
+-            ExceptionType = exception?.GetType().FullName, ExceptionMessage = exception?.ToString(),
++            ExceptionType = exception?.GetType().FullName, ExceptionMessage = RenderProviderValue(exception),
+         }));
+         string? correlation = fields.FirstOrDefault(field => field.Key == "CorrelationId").Value?.ToString();
+         if (category == "Hexalith.EventStore.QueryBoundary" && eventId.Id == 5510 && correlation is not null
+             && _boundaries.TryGetValue(correlation, out TaskCompletionSource? completion)) completion.TrySetResult();
+     }
+ 
++    // Preserve provider text for arbitrary CLR state instead of serializing executable endpoint/reflection graphs.
++    private static object? SnapshotLogValue(object? value)
++    {
++        try
++        {
++            return value switch
++            {
++                null or string or bool or byte or sbyte or short or ushort or int or uint or long or ulong
++                    or decimal or DateTime or DateTimeOffset or Guid => value,
++                float number when float.IsFinite(number) => number,
++                double number when double.IsFinite(number) => number,
++                JsonElement element when element.ValueKind != JsonValueKind.Undefined => element.Clone(),
++                _ => new { Type = value.GetType().FullName, Text = RenderProviderValue(value) },
++            };
++        }
++        catch (Exception error)
++        {
++            return new { Type = value?.GetType().FullName, RenderingFailure = error.GetType().FullName };
++        }
++    }
++
++    /// <summary>Retains an explicit marker when a provider value cannot render itself.</summary>
++    internal static string? RenderProviderValue(object? value)
++    {
++        if (value is null) return null;
++        try { return Convert.ToString(value, CultureInfo.InvariantCulture); }
++        catch (Exception error) { return "[rendering-failed:" + error.GetType().FullName + "]"; }
++    }
++
+     /// <summary>Snapshots every actual exported Activity without omitting sources or child spans.</summary>
+     internal void RecordExportedActivity(Activity activity)
+         => _traces.Enqueue(JsonSerializer.Serialize(new
+         {
+             Source = activity.Source.Name, activity.OperationName, activity.Kind, activity.Status,
+             Trace = activity.TraceId.ToString(), Span = activity.SpanId.ToString(), Parent = activity.ParentSpanId.ToString(),
+-            Tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray(),
+-            Events = activity.Events.Select(item => new { item.Name, Tags = item.Tags.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray() }).ToArray(),
+-            Links = activity.Links.Select(link => new { Trace = link.Context.TraceId.ToString(), Span = link.Context.SpanId.ToString(), link.Tags }).ToArray(),
++            Tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).Select(tag => new { tag.Key, Value = SnapshotLogValue(tag.Value) }).ToArray(),
++            Events = activity.Events.Select(item => new { item.Name, Tags = item.Tags.OrderBy(tag => tag.Key, StringComparer.Ordinal).Select(tag => new { tag.Key, Value = SnapshotLogValue(tag.Value) }).ToArray() }).ToArray(),
++            Links = activity.Links.Select(link => new { Trace = link.Context.TraceId.ToString(), Span = link.Context.SpanId.ToString(), Tags = link.Tags?.OrderBy(tag => tag.Key, StringComparer.Ordinal).Select(tag => new { tag.Key, Value = SnapshotLogValue(tag.Value) }).ToArray() }).ToArray(),
+         }));
+ 
+     /// <inheritdoc/>
+--- /dev/null
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadThrowingDiagnosticValue.cs
+@@ -0,0 +1,10 @@
++#if HEXALITH_SOURCE_FIXTURE
++namespace Hexalith.Projects.Server.Tests.Queries;
++
++/// <summary>Proves that unsupported provider values remain visible as explicit failures.</summary>
++internal sealed class ProjectReadThrowingDiagnosticValue
++{
++    /// <inheritdoc/>
++    public override string ToString() => throw new InvalidOperationException("diagnostic-render-control");
++}
++#endif
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+@@ -20,6 +20,7 @@
+ using Microsoft.Extensions.Logging;
+ using Shouldly;
+ using OpenTelemetry;
++using OpenTelemetry.Trace;
+ using Xunit;
+ 
+ public sealed partial class SupportedProjectGatewayHttpTests
+@@ -44,6 +45,59 @@
+         second.TraceId.ShouldNotBe(ambient.TraceId);
+         second.TraceId.ShouldNotBe(firstTrace);
+         observer.Logs(second.TraceId).ShouldBeEmpty();
++    }
++
++    /// <summary>Retains real provider output for non-scalar endpoint metadata without perturbing ordinary requests.</summary>
++    [Fact]
++    public void DenialObserverRetainsProviderMetadataScopesAndExceptionsWithoutSerializingExecutableGraphs()
++    {
++        using ProjectReadDenialObserver observer = new();
++        using Activity trace = observer.BeginRequest();
++        using ILoggerFactory factory = LoggerFactory.Create(logging => logging.AddProvider(new ProjectReadDenialLogProvider(observer)));
++        ILogger logger = factory.CreateLogger("ordinary-endpoint-metadata");
++        var metadata = new { Metadata = typeof(SupportedProjectGatewayHttpTests).GetMethod(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity))! };
++        using IDisposable? scope = logger.BeginScope(new Dictionary<string, object?> { ["EndpointMetadata"] = metadata });
++        logger.LogWarning(new InvalidOperationException("ordinary-provider-control"), "Endpoint {Metadata} handled {Status}", metadata, 200);
++        string[] records = observer.Logs(trace.TraceId);
++        records.Length.ShouldBe(1);
++        using JsonDocument record = JsonDocument.Parse(records[0]);
++        JsonElement root = record.RootElement;
++        root.GetProperty("Category").GetString().ShouldBe("ordinary-endpoint-metadata");
++        root.GetProperty("Message").GetString()!.ShouldContain(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity));
++        root.GetProperty("ExceptionMessage").GetString()!.ShouldContain("ordinary-provider-control");
++        var state = root.GetProperty("State").EnumerateArray().ToDictionary(field => field.GetProperty("Key").GetString()!, field => field.GetProperty("Value"));
++        state["Metadata"].GetProperty("Type").GetString().ShouldNotBeNullOrWhiteSpace();
++        state["Metadata"].GetProperty("Text").GetString()!.ShouldContain(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity));
++        state["Status"].GetInt32().ShouldBe(200);
++        root.GetProperty("Scopes")[0].GetProperty("Value").GetProperty("Text").GetString()!.ShouldContain(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity));
++        Should.Throw<ShouldAssertException>(() => NormalizeDenialLog(records[0], trace.TraceId.ToString()));
++        logger.LogWarning("Unrenderable diagnostic {Value}", new ProjectReadThrowingDiagnosticValue());
++        string[] afterFailure = observer.Logs(trace.TraceId);
++        afterFailure.Length.ShouldBe(2);
++        afterFailure[1].ShouldContain("formatter-failed:System.InvalidOperationException");
++        afterFailure[1].ShouldContain("rendering-failed:System.InvalidOperationException");
++        afterFailure[1].ShouldContain(nameof(ProjectReadThrowingDiagnosticValue));
++
++        using ActivitySource source = new("story61-provider-metadata-control");
++        using TracerProvider provider = Sdk.CreateTracerProviderBuilder().AddSource(source.Name)
++            .AddProcessor(new SimpleActivityExportProcessor(observer.TraceExporter)).Build();
++        using (Activity span = source.StartActivity("ordinary-exported-span", ActivityKind.Internal, trace.Context,
++                   tags: new ActivityTagsCollection { ["Metadata"] = metadata, ["Unrenderable"] = new ProjectReadThrowingDiagnosticValue() },
++                   links: [new ActivityLink(trace.Context, new ActivityTagsCollection { ["Metadata"] = metadata })])!)
++        {
++            span.ShouldNotBeNull();
++            span.AddEvent(new ActivityEvent("ordinary-exported-event", tags: new ActivityTagsCollection { ["Metadata"] = metadata }));
++        }
++        using JsonDocument exported = JsonDocument.Parse(observer.ExportedActivities(trace.TraceId));
++        exported.RootElement.GetArrayLength().ShouldBe(1);
++        using JsonDocument exportedRecord = JsonDocument.Parse(exported.RootElement[0].GetString()!);
++        JsonElement exportedSpan = exportedRecord.RootElement;
++        exportedSpan.GetProperty("Tags").GetArrayLength().ShouldBe(2);
++        exportedSpan.GetProperty("Events")[0].GetProperty("Tags")[0].GetProperty("Value").GetProperty("Text").GetString()!
++            .ShouldContain(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity));
++        exportedSpan.GetProperty("Links")[0].GetProperty("Tags")[0].GetProperty("Value").GetProperty("Text").GetString()!
++            .ShouldContain(nameof(DenialObserverCreatesIndependentTracesUnderAnAmbientActivity));
++        exported.RootElement.ToString().ShouldContain("rendering-failed:System.InvalidOperationException");
+     }
+ 
+     /// <summary>Rejects an earlier nested server observation even when it shares the registered trace and HTTP categories.</summary>
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -207,7 +207,7 @@
+             using HttpRequestMessage metadataRequest = dapr.CreateInvokeMethodRequest(domain, "admin/operational-index-metadata",
+                 new AdminOperationalIndexMetadata.Request([domain]) { AppId = domain, ServiceVersion = "v1" });
+             using HttpResponseMessage metadataResponse = await platform.SendAsync(metadataRequest, TestContext.Current.CancellationToken);
+-            metadataResponse.StatusCode.ShouldBe(HttpStatusCode.OK, domain + ": " + await metadataResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
++            metadataResponse.StatusCode.ShouldBe(HttpStatusCode.OK, domain + ": OperationalIndexMetadata");
+             AdminOperationalIndexMetadata.Response metadata = (await metadataResponse.Content.ReadFromJsonAsync<AdminOperationalIndexMetadata.Response>(TestContext.Current.CancellationToken))!;
+             var declared = metadata.Domains.Single(item => item.Domain == domain);
+             await dapr.SaveStateAsync("statestore", "admin:query-types:" + domain, declared.QueryTypes, cancellationToken: TestContext.Current.CancellationToken);

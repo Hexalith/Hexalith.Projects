@@ -1,0 +1,281 @@
+{
+  "createdUtc": "2026-11-04T19:36:17.302247+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "045be45a8105a12286ba44de95013c2776d6196a7af43e51116b5d02a5268a03",
+  "sourceManifestSha256": "84a27cc01d4741e02ac3a0d8ec8c587af6bb6e6eaf6c586abed41686a425a1e7",
+  "inputCount": 16686,
+  "changedFiles": [
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs",
+      "beforeSha256": "d82bb3a4b2427808ce698e907857a32d957a14cb925a03bdb68a8d34154b7563",
+      "afterSha256": "585fa7a368b960f9b90798a97a068f4831ad121e6d99c189e5666104b7db71e4"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadQueryDenialTiming.cs",
+      "beforeSha256": null,
+      "afterSha256": "a1bb38d5d0fb4e5da97897c6df058f3cb2ce3d2f6c61eb388bb3f20e89f37044"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Telemetry/ReadQueryDenialTimingTests.cs",
+      "beforeSha256": null,
+      "afterSha256": "3b4eadbea0af1196b3f02f6abe0a6278191ba0168209107d7523c5ebfd7a54a5"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs",
+      "beforeSha256": "d42b83b35571658ae99aed00579a41b4a6734517670bb8fd349c735c94a6f873",
+      "afterSha256": "1f91b1234ce532213c4e53406d0ed98e20edc4ff39cd8e27ef4d9ce053d1f7c0"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTimingHandler.cs",
+      "beforeSha256": null,
+      "afterSha256": "43fc5ca8066b14b45d4bc27ac5175fb564d6062a4595e26dab5e1e0d73321faf"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "2955442fe8a3d05e575eb09b11ce6f2d74545b5cf104cbc2871b93d542929da2",
+      "afterSha256": "affbc00276269e4201c11272d1fb8cdd9ea6a4718c19ca6293dd2f4ed4d82972"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "beforeSha256": "9a81c79d47e83e3dae990990caa87a78b9b0a60218b6d44ab828123a8ba55533",
+      "afterSha256": "910fcff1ce3cf5661fd4b84a9695a01a377ca8bed02e448305c038b4ff8e0b47"
+    }
+  ],
+  "onlySelectedInputsChanged": true,
+  "selectedPatchSha256": "ee28b7def18242a8fdc12cbed71b9ff2bbd8553627e483cfeb386a43c00ef45a",
+  "patchReproducesAllSelectedBytes": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "exitCode": 0,
+      "artifact": "query-denial-floor-sdk-build-final.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*ReadQueryDenialTimingTests",
+        "-class",
+        "*ReadDiagnosticsPrivacyTests",
+        "-class",
+        "*RequestLogPrivacyTests",
+        "-class",
+        "*HttpHostSecurityTests",
+        "-class",
+        "*WorkloadGatewayControllerTests",
+        "-class",
+        "*DomainServiceWorkloadAssertionHandlerTests",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-denial-floor-sdk-final.xml"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "exitCode": 0,
+      "artifact": "query-denial-floor-root-build.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-denial-floor-root.xml"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "exitCode": 0,
+      "artifact": "query-denial-floor-integration-build.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class",
+        "*SupportedProjectReadEvidenceTests",
+        "-class",
+        "*SupportedProjectReadFixtureTopologyTests",
+        "-class",
+        "*SupportedProjectReadTopologyTests",
+        "-class",
+        "*SupportedProjectReadConcurrencyTests",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-denial-floor-integration.xml"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "nativeResults": [
+    {
+      "artifact": "query-denial-floor-sdk-final.xml",
+      "total": "88",
+      "passed": "88",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "2.781"
+    },
+    {
+      "artifact": "query-denial-floor-root.xml",
+      "total": "6",
+      "passed": "6",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "1.295"
+    },
+    {
+      "artifact": "query-denial-floor-integration.xml",
+      "total": "126",
+      "passed": "126",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "1.729"
+    }
+  ],
+  "assemblySha256": {
+    "SdkServerTests": "3353b7c27e07ec9f76703aa3f1600483e7f1edea1ef0a1ec60415c3950db2b64",
+    "ServiceDefaults": "bb43356dcccae5a971c675e03a49176cc854cbc2c2d01d4831fcc9b56156d94c",
+    "ProjectsServerTests": "9885c25b66e769688f422d2288fbbac87221fd0bbad32fbccb352f2052098fef",
+    "ProjectsIntegrationTests": "792ce430a2db016216e94057a0a43d43b7c23b16fd741b904c915a5c0671ba7d"
+  },
+  "sourceMappingEnvironment": {
+    "status": "prepared",
+    "outcome": {
+      "exitCode": "Success",
+      "phase": "None",
+      "category": "None",
+      "ruleId": null
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 25dde45c71bf3de89577612660afc43494a6a951 has no local v<SemVer> release tag.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds' is staged d2a430c988462a634674a69c562ea4afd1f06ef4, checked out d2a430c988462a634674a69c562ea4afd1f06ef4, dirty; Platform 25dde45c71bf3de89577612660afc43494a6a951 pins 4456dfb7869a307d009038c6b8523a9b6c0a732e.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261104165739 is outside Platform range [4.43.0, 5.0.0-0) at '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ],
+    "buildPreparation": {
+      "workspace": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping",
+      "mode": "source",
+      "mappingHash": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+        "Configuration": "Debug"
+      }
+    }
+  },
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "policy": "User-approved50ms minimum total public POST/api/v1/queries safe404 gateway duration. Monotonic admission, remaining-only asynchronous OnStarting gate, cancellation/original token and existing deadlines preserved. Slower/faulted replies may vary; no constant-time/load/production guarantee.",
+  "measurement": "SDK real loopback ResponseHeadersRead/StartAsync/body controls plus fake-time remaining/no-extra/cancel/non404 controls. Real-owner observes actual server metric and client completion>=50ms; real distributed handler measures transport headers without changing original45s HttpClient timeout/body buffering.",
+  "failedAttemptRetained": {
+    "artifacts": [
+      "query-denial-floor-sdk-failed.xml",
+      "query-denial-floor-sdk-failed.log"
+    ],
+    "passed": 87,
+    "failed": 1,
+    "cause": "Unsupported backward wall shift on existing FakeTimeProvider10.11.0 changed GetTimestamp basis. Exact inspected GetTimestamp delegates to GetUtcNow().Ticks. Invalid fake adjustment removed; no custom clock/dependency or runtime policy change."
+  },
+  "newPackageOrVersionChange": false,
+  "sharedSourceChanged": false,
+  "distributedRuntimeStarted": false,
+  "featureAcceptance": false,
+  "remaining": [
+    "Wholly fresh same-source three-group aggregate with complete individual Integration/Server regressions.",
+    "Actual final-source real-owner/distributed timing/native console/span/metric-link evidence and exact cleanup/external preservation.",
+    "Parent independent acceptance and remaining build workflow review."
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "createdUtc": "2026-11-04T17:53:53.062102+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "81c7b581e1029ce38bee441071847addbe9d5a137169e1c101225f3cb164a2f3",
+  "sourceManifestSha256": "77bb5446bed26dde64568abfe9f50a20fc966b3dadf8a03421c17f63e241eab9",
+  "inputCount": 16682,
+  "changedFiles": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "beforeSha256": "5465ed3fdf0b95d45326c83cf046528fdc77c210d59498da995e5508aaa550e8",
+      "afterSha256": "8b4672bbbc95b43921f5034d81b4dfc4cae2b3aacfddbb1361a0b075c654a8e3"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "fbfeb057fa3ab9d80118e72d7a00f4f8b57664c46b012c2b31016e4efa768116",
+      "afterSha256": "ad472128e1063d4f0520d026e681b9d8c40ccec018bfbd0a4a2af23a9e33af44"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "beforeSha256": "d2c922c80ad97dd0aea8d1ef677084228de0906c97b34f4f029292ea864d45fd",
+      "afterSha256": "c1a302a7248b946525fcba3977f95036328682126bcf90eb02f030a2dcaa8f0d"
+    },
+    {
+      "path": "tests/tools/test_supported_project_reads_launcher.py",
+      "beforeSha256": "f86d8254c520fcaec14b84f3065f56879b5a9ab54c4ef7ed278f786fd34023e5",
+      "afterSha256": "513311796b6f789231948c5c16381e559521b3267b1181646f6a428281224395"
+    },
+    {
+      "path": "tools/qualification/run_supported_project_reads.py",
+      "beforeSha256": "afc17a17604b4d345765ffa3e2e2b746f83ab9199477a1fa5916aa6be5b2515f",
+      "afterSha256": "4d716e6270b4a4d69fa65720d6a339c05e9a1ff19e49f40fd5bf9129bcbade96"
+    }
+  ],
+  "onlySelectedInputsChanged": true,
+  "patchReproducesAllSelectedBytes": true,
+  "selectedPatchSha256": "50d8b9a2f8abf6f7bbc2a862cf82fd5322acc7d6c0bfb22b9d6765a39df550ee",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "exitCode": 0,
+      "artifact": "query-native-console-build.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-native-console-root.xml"
+      ],
+      "exitCode": 0,
+      "artifact": "query-native-console-root.xml"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests/tools/test_supported_project_reads_launcher.py"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "exitCode": 0,
+      "total": 117,
+      "passed": 117,
+      "artifact": "query-native-console-controls.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests.tools.test_supported_project_reads_launcher.NativeConsoleEvidenceTests.test_capture_retains_only_bounded_private_raw_and_checks_identity_after_all_six_reads"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "exitCode": 1,
+      "artifact": "query-native-console-controls-failed.log",
+      "cause": "New cutoff checks correctly refused a historical synthetic UTC window earlier than the real current boot; fixture now supplies its own boot epoch."
+    }
+  ],
+  "nativeResults": {
+    "total": "5",
+    "passed": "5",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "1.266"
+  },
+  "assemblySha256": "b2fa53eb067b6890c12ee415ef07381cf5c2e56f79acb44bbbdac55a6e584c99",
+  "sourceMappingEnvironment": {
+    "status": "prepared",
+    "outcome": {
+      "exitCode": "Success",
+      "phase": "None",
+      "category": "None",
+      "ruleId": null
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 25dde45c71bf3de89577612660afc43494a6a951 has no local v<SemVer> release tag.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds' is staged d2a430c988462a634674a69c562ea4afd1f06ef4, checked out d2a430c988462a634674a69c562ea4afd1f06ef4, dirty; Platform 25dde45c71bf3de89577612660afc43494a6a951 pins 4456dfb7869a307d009038c6b8523a9b6c0a732e.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261104165739 is outside Platform range [4.43.0, 5.0.0-0) at '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ],
+    "buildPreparation": {
+      "workspace": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping",
+      "mode": "source",
+      "mappingHash": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+        "Configuration": "Debug"
+      }
+    }
+  },
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "primarySourceBindings": [
+    {
+      "version": "Aspire CLI 13.6.4+c89352703f78ae46de90fbf751ed8b52b77b89bf",
+      "url": "https://raw.githubusercontent.com/dotnet/aspire/v13.6.4/src/Aspire.Cli/Commands/LogsCommand.cs",
+      "artifact": "LogsCommand.cs",
+      "sha256": "30cd9d287884f43a0286b0f57e963d31d57b51c0f11fce51075873bcfd94928c",
+      "facts": "Non-follow snapshot with omitted Tail/Search requests all available console rows. --timestamps adds parsed UTC timestamp; JSON drops original line numbers."
+    },
+    {
+      "version": "Aspire.Hosting 13.6.4",
+      "url": "https://raw.githubusercontent.com/dotnet/aspire/v13.6.4/src/Aspire.Hosting/ApplicationModel/ResourceLoggerService.cs",
+      "artifact": "ResourceLoggerService.cs",
+      "sha256": "03ff6ab1da5087915d12e34d21b9161aa44551f82d0af69580cc965f57168370",
+      "facts": "GetAllAsync combines in-memory and console service rows; internal bounded buffers retain at most10000. Retained current native startup and below-bound output are required; no dropped-count metadata is inferred."
+    }
+  ],
+  "sharedSourceChanged": false,
+  "distributedRuntimeStarted": false,
+  "privacyAcceptance": false,
+  "timingToleranceAccepted": false,
+  "captureScope": "Only post-main-Server, pre-teardown read-only CLI snapshots of exact six qualified native peers. Raw retained owner-private <=1MiB/peer. No feature calls/profile/version/logging/sampling/deadline/cleanup changes.",
+  "limits": [
+    "Snapshot coverage can be refused; an empty or incomplete CLI buffer cannot prove silence.",
+    "The public receipt never accepts privacy equality; raw emitted console contents require independent comparison at the recorded15 UTC windows.",
+    "No causal attribution, fault/load equivalence, or timing threshold is inferred. Native traces/logs/OTLP exemplars remain to be verified on fresh final-source runtime."
+  ]
+}

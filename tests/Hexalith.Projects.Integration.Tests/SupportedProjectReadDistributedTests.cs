@@ -110,6 +110,40 @@ public sealed class SupportedProjectReadDistributedTests(ITestOutputHelper outpu
         ProjectListPage inspectedList = await fixture.ReadAsync<ProjectListPage>(chatbot: false, inspection: true);
         inspectedList.Items.Count.ShouldBe(2);
         await fixture.VerifyDurableAuditDeltaAsync(auditBeforeList, open: false, count: 2);
+        ProjectListPage ordinaryOperator = await fixture.ReadAsync<ProjectListPage>(chatbot: false);
+        ordinaryOperator.Items.Select(item => item.ProjectId).ShouldBe(["project-a", "project-b"]);
+        foreach (string legacy in new[] { "legacy-a", "legacy-b" })
+        {
+            (await fixture.SafeDenialAsync(project: legacy, chatbot: false)).ShouldBe(absent);
+            (await fixture.SafeDenialAsync(project: legacy)).ShouldBe(absent);
+            await fixture.SafeDenialAsync(project: legacy, chatbot: false, inspection: true, quarantine: true);
+            await fixture.SafeDenialAsync(project: legacy, chatbot: false, quarantine: true, projectAdministrator: true, inspectionPermission: false);
+        }
+        await fixture.SafeDenialAsync(open: false, chatbot: false, inspection: true, quarantine: true);
+        await fixture.SafeDenialAsync(open: false, chatbot: false, quarantine: true, projectAdministrator: true, inspectionPermission: false);
+        string[] auditBeforeInventory = await fixture.AuditKeysAsync();
+        ProjectListPage inventory = await fixture.ReadAsync<ProjectListPage>(chatbot: false, projectAdministrator: true, quarantine: true);
+        inventory.Items.Select(item => item.ProjectId).ShouldBe(["legacy-a", "legacy-b"]);
+        inventory.Items.ShouldAllBe(item => item.Name != null && item.ProjectFolderAvailability == ReferenceState.Pending
+            && item.Snapshot.ResponseState == AdmissionResponseState.Unavailable);
+        inventory.HasMore.ShouldBeFalse(); inventory.Cursor.ShouldBeNull();
+        await fixture.VerifyDurableAuditDeltaAsync(auditBeforeInventory, open: false, count: 2, quarantine: true);
+        foreach (string legacy in new[] { "legacy-a", "legacy-b" })
+        {
+            string[] auditBeforeQuarantineOpen = await fixture.AuditKeysAsync();
+            GetProjectResponse quarantine = await fixture.ReadAsync<GetProjectResponse>(open: true, project: legacy, chatbot: false, projectAdministrator: true, quarantine: true);
+            quarantine.Name.ShouldBe("Legacy project " + legacy);
+            quarantine.Description.ShouldBeNull(); quarantine.Setup.ShouldBeNull(); quarantine.SetupMetadata.ShouldBeNull();
+            ProjectReadReference receipt = quarantine.References.Single();
+            receipt.ReferenceKind.ShouldBe("ProjectFolder"); receipt.ReferenceState.ShouldBe(ReferenceState.Pending);
+            receipt.FolderId.ShouldBeNull(); receipt.FileReferenceId.ShouldBeNull(); receipt.MemoryReferenceId.ShouldBeNull();
+            receipt.DisplayName.ShouldBeNull(); receipt.ReasonCode.ShouldBe("ReferenceUnavailable");
+            quarantine.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+            quarantine.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
+            string serialized = System.Text.Json.JsonSerializer.Serialize(quarantine);
+            Assert.True(!serialized.Contains("Restricted legacy", StringComparison.Ordinal), "Quarantine open disclosed legacy descriptive metadata.");
+            await fixture.VerifyDurableAuditDeltaAsync(auditBeforeQuarantineOpen, open: true, count: 1, quarantine: true);
+        }
         await fixture.AssertUnchangedAsync(before);
         await CompleteAsync("inspection-permission-and-durable-metadata-only-audit");
 
@@ -119,6 +153,9 @@ public sealed class SupportedProjectReadDistributedTests(ITestOutputHelper outpu
             await fixture.VerifyAuditWriteFaultAsync();
             await fixture.VerifyInspectedAuditRefusalAsync(open: true);
             await fixture.VerifyInspectedAuditRefusalAsync(open: false);
+            await fixture.SafeDenialAsync(open: false, chatbot: false, projectAdministrator: true, quarantine: true);
+            foreach (string legacy in new[] { "legacy-a", "legacy-b" })
+                await fixture.SafeDenialAsync(project: legacy, chatbot: false, projectAdministrator: true, quarantine: true);
         }
         finally { await fixture.RestoreAuditStorageAsync(); }
         await fixture.WaitForAuthorizedRecoveryAsync("audit-storage");

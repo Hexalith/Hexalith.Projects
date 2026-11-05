@@ -105,6 +105,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
         DevelopmentRouteCatalogComposition catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
             [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
             receivers, statePath, options, isolation);
+        builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, projectsWorkers, folders, foldersWorkers);
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
         WriteReceipt(privateDirectory, "catalog-plane.json", new
         {

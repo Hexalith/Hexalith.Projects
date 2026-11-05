@@ -1,0 +1,97 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+@@ -147,9 +147,9 @@
+             Trace = Activity.Current?.TraceId.ToString(), Span = Activity.Current?.SpanId.ToString(),
+             ExceptionType = exception?.GetType().FullName, ExceptionMessage = RenderProviderValue(exception),
+         }));
+-        string? correlation = fields.FirstOrDefault(field => field.Key == "CorrelationId").Value?.ToString();
+-        if (category == "Hexalith.EventStore.QueryBoundary" && eventId.Id == 5510 && correlation is not null
+-            && _boundaries.TryGetValue(correlation, out TaskCompletionSource? completion)) completion.TrySetResult();
++        object? correlation = fields.FirstOrDefault(field => field.Key == "CorrelationId").Value;
++        if (category == "Hexalith.EventStore.QueryBoundary" && eventId.Id == 5510 && correlation is string identifier
++            && _boundaries.TryGetValue(identifier, out TaskCompletionSource? completion)) completion.TrySetResult();
+     }
+ 
+     // Preserve provider text for arbitrary CLR state instead of serializing executable endpoint/reflection graphs.
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+@@ -49,7 +49,7 @@
+ 
+     /// <summary>Retains real provider output for non-scalar endpoint metadata without perturbing ordinary requests.</summary>
+     [Fact]
+-    public void DenialObserverRetainsProviderMetadataScopesAndExceptionsWithoutSerializingExecutableGraphs()
++    public async Task DenialObserverRetainsProviderMetadataScopesAndExceptionsWithoutSerializingExecutableGraphs()
+     {
+         using ProjectReadDenialObserver observer = new();
+         using Activity trace = observer.BeginRequest();
+@@ -78,6 +78,18 @@
+         afterFailure[1].ShouldContain("rendering-failed:System.InvalidOperationException");
+         afterFailure[1].ShouldContain(nameof(ProjectReadThrowingDiagnosticValue));
+ 
++        ILogger counterfeit = factory.CreateLogger("Hexalith.EventStore.QueryBoundary");
++        counterfeit.Log(LogLevel.Information, new EventId(5510),
++            new Dictionary<string, object?> { ["CorrelationId"] = new ProjectReadThrowingDiagnosticValue() }, null,
++            static (_, _) => "counterfeit boundary control");
++        string[] afterCorrelation = observer.Logs(trace.TraceId);
++        afterCorrelation.Length.ShouldBe(3);
++        afterCorrelation[2].ShouldContain("rendering-failed:System.InvalidOperationException");
++        Should.Throw<ShouldAssertException>(() => NormalizeDenialLog(afterCorrelation[2], trace.TraceId.ToString()));
++        using CancellationTokenSource cancellation = new();
++        await cancellation.CancelAsync();
++        await Should.ThrowAsync<OperationCanceledException>(() => observer.LogsAsync(trace.TraceId, cancellation.Token));
++
+         using ActivitySource source = new("story61-provider-metadata-control");
+         using TracerProvider provider = Sdk.CreateTracerProviderBuilder().AddSource(source.Name)
+             .AddProcessor(new SimpleActivityExportProcessor(observer.TraceExporter)).Build();
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -123,8 +123,20 @@
+             configurations = {app: Path(temporary) / (app + ".configuration.json") for app in LAUNCHER.READ_APPS}
+             census = {str(index + 1): {"appId": app, "start": "123", "arguments": [str(binary), "--config", str(configurations[app])]}
+                       for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
+-            with patch.object(LAUNCHER, "owns_current_apphost", return_value=True), patch.object(LAUNCHER, "owned_sidecar_census", return_value=census), patch.object(LAUNCHER, "process_start", return_value="123"):
+-                self.assertEqual(set(LAUNCHER.native_console_peers({"_isolation": "owned"}, configurations)), LAUNCHER.READ_APPS)
++            read_bytes = Path.read_bytes
++            def native_environment(path):
++                if str(path).startswith("/proc/") and path.name == "environ":
++                    app = census[path.parent.name]["appId"]
++                    return ("OTEL_SERVICE_NAME=" + app + "-dapr-cli\0OTEL_RESOURCE_ATTRIBUTES=service.instance.id=abcdefgh,private.unrelated=do-not-publish\0PRIVATE_UNRELATED=do-not-publish").encode()
++                return read_bytes(path)
++            with patch.object(LAUNCHER.Path, "read_bytes", native_environment), patch.object(LAUNCHER, "owns_current_apphost", return_value=True), patch.object(LAUNCHER, "owned_sidecar_census", return_value=census), patch.object(LAUNCHER, "process_start", return_value="123"):
++                observed = LAUNCHER.native_console_peers({"_isolation": "owned"}, configurations)
++                self.assertEqual(set(observed), LAUNCHER.READ_APPS)
++                self.assertNotIn("do-not-publish", json.dumps(observed))
++                self.assertTrue(all(peer["otelServiceName"] == app + "-dapr-cli" and peer["otelServiceInstanceId"] == "abcdefgh" for app, peer in observed.items()))
++                for identity in (b"", b"OTEL_SERVICE_NAME=foreign\0OTEL_RESOURCE_ATTRIBUTES=service.instance.id=abcdefgh", b"OTEL_SERVICE_NAME=eventstore-dapr-cli\0OTEL_RESOURCE_ATTRIBUTES=service.instance.id=private/path", b"OTEL_SERVICE_NAME=eventstore-dapr-cli\0OTEL_RESOURCE_ATTRIBUTES=service.instance.id=abcdefgh,service.instance.id=abcdefgh"):
++                    with self.subTest(otel=identity[:20]), patch.object(LAUNCHER.Path, "read_bytes", lambda path: identity if str(path).startswith("/proc/") else read_bytes(path)):
++                        with self.assertRaises(RuntimeError): LAUNCHER.native_console_peers({"_isolation": "owned"}, configurations)
+                 for mutation in ("missing", "duplicate", "foreign-config", "replaced", "foreign-apphost"):
+                     with self.subTest(mutation=mutation):
+                         changed = json.loads(json.dumps(census))
+@@ -141,7 +153,7 @@
+                 self.write_native(base / "server.xml")
+                 configurations = {app: base / (app + ".configuration.json") for app in LAUNCHER.READ_APPS}
+                 receipts = {"identities": {str(path): {"sha256": "a" * 64} for path in configurations.values()}}
+-                peers = {app: {"pid": index + 1, "startTicks": "1", "binarySha256": "b" * 64} for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
++                peers = {app: {"pid": index + 1, "startTicks": "1", "binarySha256": "b" * 64, "otelServiceName": app + "-dapr-cli", "otelServiceInstanceId": "abcdefgh"} for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
+                 owned = {"_isolation": "owned"}
+                 report = {"sourceManifestSha256": "c" * 64, "ownedAppHostSession": {"appHostPid": 99}, "commands": [],
+                           "discoveryAfterReads": {"ownedSidecars": [{"appId": app, **peer} for app, peer in peers.items()], "daprdSha256": ["b" * 64]}}
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -470,7 +470,14 @@
+             raise RuntimeError("Native console peer ownership or configuration differs.")
+         if process_start(int(pid)) != item["start"]:
+             raise RuntimeError("Native console peer process was replaced.")
+-        peers[app] = {"pid": int(pid), "startTicks": item["start"],
++        environment = dict(field.split(b"=", 1) for field in Path("/proc", pid, "environ").read_bytes().split(b"\0") if b"=" in field)
++        service = environment.get(b"OTEL_SERVICE_NAME", b"").decode()
++        attributes = [field.partition("=") for field in environment.get(b"OTEL_RESOURCE_ATTRIBUTES", b"").decode().split(",")]
++        instances = [value for key, separator, value in attributes if key == "service.instance.id" and separator]
++        if service != app + "-dapr-cli" or len(instances) != 1 or re.fullmatch(r"[a-z0-9]{8}", instances[0]) is None:
++            raise RuntimeError("Native console OTEL resource identity is missing, ambiguous or outside the finite owned shape.")
++        peers[app] = {"pid": int(pid), "startTicks": item["start"], "otelServiceName": service,
++                      "otelServiceInstanceId": instances[0],
+                       "binarySha256": hashlib.sha256(Path(arguments[0]).read_bytes()).hexdigest()}
+     if set(peers) != READ_APPS:
+         raise RuntimeError("Native console capture requires exactly the six owned peers.")

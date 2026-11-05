@@ -1,0 +1,125 @@
+{
+  "resource": "projects",
+  "action": "restart",
+  "completed": true,
+  "stage": "completed",
+  "before": {
+    "runtimeMode": {
+      "wrapperPid": 73737,
+      "wrapperStartTicks": "2146337",
+      "pid": 73991,
+      "startTicks": "2146385",
+      "environment": "Development",
+      "options": {
+        "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+        "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+        "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+        "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+      },
+      "assemblySha256": "afcd53f7b7e6cf31fb5b1c5b5b518c8079f992c091c0bdc1467909d9efd3474c"
+    },
+    "resourceName": "projects-puwbgvwu",
+    "launcherPid": 73737,
+    "launcherStartTicks": "2146337",
+    "pid": 73991,
+    "startTicks": "2146385",
+    "binarySha256": "008b2d5473bfac9659991539efea39cdf7de85a3eb384be2b8dfac370da5d2b1",
+    "assemblySha256": "afcd53f7b7e6cf31fb5b1c5b5b518c8079f992c091c0bdc1467909d9efd3474c"
+  },
+  "appHostPid": 71471,
+  "appHostStartTicks": "2145746",
+  "configurationSha256": "eabd7407a255768b39f6f25de0903c004b5cb63e866808e3616e3d9e6b2a043f",
+  "oldProcessExited": true,
+  "after": {
+    "runtimeMode": {
+      "wrapperPid": 45952,
+      "wrapperStartTicks": "2173101",
+      "pid": 46137,
+      "startTicks": "2173146",
+      "environment": "Development",
+      "options": {
+        "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+        "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+        "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+        "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+      },
+      "assemblySha256": "afcd53f7b7e6cf31fb5b1c5b5b518c8079f992c091c0bdc1467909d9efd3474c"
+    },
+    "resourceName": "projects-puwbgvwu",
+    "launcherPid": 45952,
+    "launcherStartTicks": "2173101",
+    "pid": 46137,
+    "startTicks": "2173146",
+    "binarySha256": "008b2d5473bfac9659991539efea39cdf7de85a3eb384be2b8dfac370da5d2b1",
+    "assemblySha256": "afcd53f7b7e6cf31fb5b1c5b5b518c8079f992c091c0bdc1467909d9efd3474c"
+  },
+  "discovery": {
+    "resolver": "sqlite",
+    "version": "v1",
+    "alphaTestInfrastructureOnly": true,
+    "daprdSha256": [
+      "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+    ],
+    "configurationSha256": {
+      "eventstore": "7dc7f6f4d5bea56617c8c3809c37f5a666add5b841e8071f1c35466a6ddb906b",
+      "folders": "61ce862afa3a2c3c3d61d31f5458d0f8b8fd11f01a6cfe8846d06d1667346bd1",
+      "folders-workers": "ab0dac2cf6cde1261055dd9b828c9f5867b72934d96cd6ebf72c353fc9ef0f8e",
+      "projects": "2703083b0103baebb0bb2ee7b405c72f276fc9420443f4525e31f3da84e29df6",
+      "projects-workers": "ab0dac2cf6cde1261055dd9b828c9f5867b72934d96cd6ebf72c353fc9ef0f8e",
+      "tenants": "5485d5bd175b04b71d8a1c3fa0f809c03d9270c27b906d82c88525c22a10b5a0"
+    },
+    "registryIdentitySha256": "a5bf74718bf1e295a39fc578929176c1a70e05e47918cdef87be852fab5998ee",
+    "ownedSidecars": [
+      {
+        "appId": "eventstore",
+        "pid": 73659,
+        "namespaceVerified": true,
+        "startTicks": "2146311",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders",
+        "pid": 73940,
+        "namespaceVerified": true,
+        "startTicks": "2146381",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders-workers",
+        "pid": 74158,
+        "namespaceVerified": true,
+        "startTicks": "2146404",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects",
+        "pid": 73735,
+        "namespaceVerified": true,
+        "startTicks": "2146337",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects-workers",
+        "pid": 73836,
+        "namespaceVerified": true,
+        "startTicks": "2146359",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "tenants",
+        "pid": 73559,
+        "namespaceVerified": true,
+        "startTicks": "2146288",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      }
+    ],
+    "observationsRequired": 1
+  },
+  "endpointsRediscovered": true
+}

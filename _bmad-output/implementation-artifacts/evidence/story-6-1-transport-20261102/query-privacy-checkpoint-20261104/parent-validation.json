@@ -1,0 +1,48 @@
+{
+  "observedUtc": "2026-11-04T17:35:20.381528+00:00",
+  "inputCount": 16682,
+  "sourceManifestSha256": "81c7b581e1029ce38bee441071847addbe9d5a137169e1c101225f3cb164a2f3",
+  "currentSourceMismatches": [],
+  "changedPathsExactlySelected": true,
+  "selectedCount": 20,
+  "selectedPatchSha256": "376b98669392aed8fe3add6e5086b4be7ca18ef735ce18eba2ea402c978ec282",
+  "temporaryPatchApplyCommand": [
+    "git",
+    "apply",
+    "-p2",
+    "selected.patch"
+  ],
+  "patchReproducesAllSelectedBytes": true,
+  "nativeResultsIndependentlyParsed": [
+    {
+      "artifact": "query-privacy-tests-3.xml",
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    {
+      "artifact": "query-privacy-root-tests-final.xml",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    {
+      "artifact": "query-privacy-host-security.xml",
+      "total": 46,
+      "passed": 46,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  ],
+  "privacyAcceptance": false,
+  "finalDistributedVerificationPending": true,
+  "timingToleranceAccepted": false
+}

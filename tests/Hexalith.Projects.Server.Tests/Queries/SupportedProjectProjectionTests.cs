@@ -1,6 +1,8 @@
 namespace Hexalith.Projects.Server.Tests.Queries;
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Discovery;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +35,9 @@ public sealed partial class SupportedProjectProjectionTests
         {
             InMemoryReadModelStore incremental = new();
             ProjectionEventDto created = SupportedProjectReadFixture.Request("project-a").Events[0];
-            ProjectionEventDto harmless = new(noOp.FullName!,
-                "{\"tenantId\":\"tenant-a\",\"projectId\":\"project-a\"}"u8.ToArray(),
+            JsonObject content = JsonSerializer.SerializeToNode(ValidNoOp(noOp), noOp, JsonSerializerOptions.Web)!.AsObject();
+            content["futureHarmlessMetadata"] = "compatible";
+            ProjectionEventDto harmless = new(noOp.FullName!, JsonSerializer.SerializeToUtf8Bytes(content),
                 "json", 2, SupportedProjectReadFixture.EventTime, "projection", "harmless", "actor-1", 101);
             ProjectReadProjectionHandler handler = new(incremental, incremental);
             (await handler.ProjectAsync(new("tenant-a", "projects", "project-a", [created]),
@@ -54,6 +57,105 @@ public sealed partial class SupportedProjectProjectionTests
             JsonSerializer.Serialize(replay.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName,
                 ProjectReadModelKeys.Detail("tenant-a", "project-a"))).ShouldBe(JsonSerializer.Serialize(after));
         }
+    }
+
+    [Fact]
+    public async Task OlderValidDuplicatePreservesLaterFolderObservation()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        ProjectionRequest request = SupportedProjectReadFixture.Request("project-a");
+        ProjectFolderSet older = new("tenant-a", "project-a", "folder-a", new("Folder"), "actor", "correlation", "task", "folder", "folder", SupportedProjectReadFixture.EventTime.AddSeconds(1));
+        FileReferenceLinked later = new("tenant-a", "project-a", "file-a", "folder-a", new("Later file"), "actor", "correlation", "task", "file", "file", SupportedProjectReadFixture.EventTime.AddSeconds(2));
+        request = request with { Events = [request.Events[0], SupportedProjectReadFixture.Event(older, 2, 101), SupportedProjectReadFixture.Event(later, 3, 102)] };
+        (await fixture.Projection.ProjectAsync(request, "later-reference", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+        fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!
+            .Detail!.FileReferences.Single().ObservedAt.ShouldBeGreaterThan(older.OccurredAt);
+        byte[] before = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+        (await fixture.Projection.ProjectAsync(request with { Events = [request.Events[1]] }, "older-duplicate", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.AlreadyCompleted);
+        fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a")).ShouldBe(before);
+    }
+
+    [Fact]
+    public async Task OlderCreatedJsonRetainsOptionalAndAdditiveCompatibility()
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        ProjectionEventDto created = SupportedProjectReadFixture.Request("project-a").Events[0];
+        JsonObject content = JsonNode.Parse(created.Payload)!.AsObject();
+        foreach (string optional in new[] { "description", "setupMetadata", "actorPrincipalId", "correlationId", "taskId", "idempotencyKey", "idempotencyFingerprint" }) content.Remove(optional);
+        content["futureHarmlessMetadata"] = "compatible";
+        created = created with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
+        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [created]), "historical-created", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [created]), "historical-duplicate", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.AlreadyCompleted);
+    }
+
+    [Theory]
+    [InlineData(false, "name")]
+    [InlineData(false, "lifecycle")]
+    [InlineData(false, "occurredAt")]
+    [InlineData(false, "empty-name")]
+    [InlineData(false, "invalid-lifecycle")]
+    [InlineData(false, "default-occurredAt")]
+    [InlineData(false, "unsafe-name")]
+    [InlineData(true, "principalId")]
+    [InlineData(true, "operation")]
+    [InlineData(true, "expiresAt")]
+    [InlineData(true, "empty-principalId")]
+    [InlineData(true, "default-expiresAt")]
+    public async Task MalformedKnownDuplicateCannotPreserveCurrent(bool noOp, string field)
+        => await RejectMalformedKnownAsync(noOp, field, duplicate: true);
+
+    [Theory]
+    [InlineData("principalId")]
+    [InlineData("grantId")]
+    [InlineData("expiresAt")]
+    [InlineData("empty-principalId")]
+    [InlineData("default-expiresAt")]
+    public async Task MalformedKnownNoOpCannotAdvanceCurrent(string field)
+        => await RejectMalformedKnownAsync(noOp: true, field, duplicate: false);
+
+    private static async Task RejectMalformedKnownAsync(bool noOp, string field, bool duplicate)
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync().ConfigureAwait(false);
+        await fixture.SeedAsync("project-a").ConfigureAwait(false);
+        ProjectionEventDto item = noOp
+            ? SupportedProjectReadFixture.Event(ValidNoOp(typeof(ProjectChatBotAuthorityGranted)), duplicate ? 2 : 3, duplicate ? 101 : 102)
+            : SupportedProjectReadFixture.Request("project-a").Events[0];
+        JsonObject content = JsonNode.Parse(item.Payload)!.AsObject();
+        switch (field)
+        {
+            case "empty-name": content["name"] = " "; break;
+            case "invalid-lifecycle": content["lifecycle"] = 999; break;
+            case "default-occurredAt": content["occurredAt"] = default(DateTimeOffset); break;
+            case "unsafe-name": content["name"] = "/private/resource/path"; break;
+            case "empty-principalId": content["principalId"] = " "; break;
+            case "default-expiresAt": content["expiresAt"] = default(DateTimeOffset); break;
+            default: content.Remove(field); break;
+        }
+        item = item with { Payload = JsonSerializer.SerializeToUtf8Bytes(content) };
+        (await fixture.Projection.ProjectAsync(new("tenant-a", "projects", "project-a", [item]), "malformed-known", TestContext.Current.CancellationToken).ConfigureAwait(false)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+        model.Sequence.ShouldBe(2);
+        model.Freshness.ShouldBe(EvidenceFreshnessState.Unavailable);
+    }
+
+    private static object ValidNoOp(Type type)
+    {
+        ProjectId project = new("project-a");
+        DateTimeOffset at = SupportedProjectReadFixture.EventTime;
+        return type.Name switch
+        {
+            nameof(ProjectChatBotAuthorityGranted) => new ProjectChatBotAuthorityGranted("tenant-a", "project-a", "principal", "RecordGovernedNote", "human", "Ui", "grant", at.AddMinutes(1), "actor", null!, null!, null!, null!, at),
+            nameof(ProjectChatBotAuthorityRevoked) => new ProjectChatBotAuthorityRevoked("tenant-a", "project-a", "principal", "RecordGovernedNote", "human", "Ui", "grant", "actor", null!, null!, null!, null!, at),
+            nameof(ProjectChatBotAuthorityRejected) => new ProjectChatBotAuthorityRejected("denied"),
+            nameof(ProjectCreationRejected) => new ProjectCreationRejected("tenant-a", ReferenceState.Unauthorized),
+            nameof(ProjectArchiveRejected) => new ProjectArchiveRejected(project, "tenant-a", ReferenceState.Unauthorized),
+            nameof(ProjectRestoreRejected) => new ProjectRestoreRejected(project, "tenant-a", ReferenceState.Unauthorized),
+            nameof(ProjectSetupUpdateRejected) => new ProjectSetupUpdateRejected(project, "tenant-a", ReferenceState.Unauthorized),
+            nameof(ProjectReferenceLinkRejected) => new ProjectReferenceLinkRejected(project, "tenant-a", "folder", "folder-a", ReferenceState.Unauthorized),
+            nameof(ProjectReferenceUnlinkRejected) => new ProjectReferenceUnlinkRejected(project, "tenant-a", "folder", "folder-a", ReferenceState.Unauthorized),
+            nameof(ProjectResolutionConfirmationRejected) => new ProjectResolutionConfirmationRejected(project, "tenant-a", ReferenceState.Unauthorized),
+            _ => throw new InvalidOperationException("Unclassified no-op test fixture."),
+        };
     }
 
     [Theory]

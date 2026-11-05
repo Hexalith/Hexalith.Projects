@@ -1,0 +1,204 @@
+{
+  "sourceManifestSha256": "86f695ad11b134cfff9bbaf00344a3c6c522a4eb2962066f0216cff3e95ee000",
+  "inputCount": 16697,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "innerBuildCwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "log": "contracts-build.log",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "innerBuildCwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "log": "server-build-4.log",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "innerBuildCwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "log": "sdk-server-build.log",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "innerBuildCwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "log": "integration-build-2.log",
+      "exitCode": 0
+    },
+    {
+      "role": "Contracts",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll",
+        "-class",
+        "*ProjectReadQueryCompatibilityTests",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/review-fixes/contracts.xml"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "artifact": "contracts.xml",
+      "log": "contracts.log",
+      "exitCode": 0
+    },
+    {
+      "role": "Root",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectProjectionTests",
+        "-class",
+        "*SupportedProjectReadTests",
+        "-method-",
+        "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-result-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/review-fixes/root-focused-2.xml"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "artifact": "root-focused-2.xml",
+      "log": "root-focused-2.log",
+      "exitCode": 0
+    },
+    {
+      "role": "SDK",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "*NativeSourceReadDiagnosticsTests",
+        "-class",
+        "*StreamsControllerTests",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/review-fixes/sdk-focused.xml"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.EventStore",
+      "artifact": "sdk-focused.xml",
+      "log": "sdk-focused.log",
+      "exitCode": 0
+    },
+    {
+      "role": "Fixture",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class",
+        "*SupportedProjectReadEvidenceTests",
+        "-result-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/review-fixes/integration-fixture-2.xml"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "artifact": "integration-fixture-2.xml",
+      "log": "integration-fixture-2.log",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests/tools/test_supported_project_reads_launcher.py"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "log": "launcher-controls-2.log",
+      "passed": 119,
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "log": "duplicate-control/build.log",
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-method",
+        "*OlderValidDuplicatePreservesLaterFolderObservation",
+        "-result-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/review-duplicate-control/test.xml"
+      ],
+      "cwd": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+      "artifact": "duplicate-control/test.xml",
+      "log": "duplicate-control/test.log",
+      "passed": 1,
+      "exitCode": 0
+    }
+  ],
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+    "Configuration": "Debug"
+  },
+  "helperSha256": "8a502cff1976784bed8a83aecfca656551c40a2c4966c9bf7501c37b21fe8485",
+  "pythonLineEndingOnlyRestoration": [
+    {
+      "path": "tools/qualification/run_supported_project_reads.py",
+      "beforeSha256": "41bb075efeaece903a7b3ce5e1bf081ba0b9bb525f7db9fd3d6a2498ffedb6a1",
+      "afterSha256": "0465b0ae253c77757ddbfaa45de5f2040810c205169f69d7d37c745785ad3e35",
+      "onlyLineEndingsChanged": true
+    },
+    {
+      "path": "tests/tools/test_supported_project_reads_launcher.py",
+      "beforeSha256": "38b2e54962c6eb76690db9c059193ef8fa29aa1228e04ab45d8e9e35076232ac",
+      "afterSha256": "b038448f6f94580e1014b191d03f43170e7db7125e266419897a70597d2ac0a3",
+      "onlyLineEndingsChanged": true
+    }
+  ],
+  "focusedArtifactSourceLimit": "Original focused selections at341553fd before line-ending restoration; final regression control at86f695ad. Production C# edits unchanged between these checks; original artifacts and exact failed receipts retained. Full fresh verification at final source still required."
+}

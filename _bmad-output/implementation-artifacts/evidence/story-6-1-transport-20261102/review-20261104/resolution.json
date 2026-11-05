@@ -1,0 +1,156 @@
+{
+  "completedUtc": "2026-11-04T22:54:54.093503+00:00",
+  "sourceManifestSha256": "a7ce136a2d29382e591dcd3535f79d6d4483831baab47c2b9ca4e17128ad029d",
+  "reviewLayers": 3,
+  "allOriginalFindingsPreservedBeforeGrouping": true,
+  "reviewLoopIteration": 0,
+  "findings": [
+    {
+      "id": "BR-01",
+      "verdict": "high",
+      "route": "patch/G1",
+      "status": "resolved",
+      "evidence": "Original query constructors/deconstruction and JSON controls pass 3/3 in the repair checkpoint; complete current Server 1,368 pass. Restored existing signatures add no supported public surface."
+    },
+    {
+      "id": "BR-02",
+      "verdict": "high",
+      "route": "patch/G2",
+      "status": "resolved",
+      "evidence": "Current PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads and full persisted quarantine inspection/audit row pass."
+    },
+    {
+      "id": "BR-03",
+      "verdict": "medium",
+      "route": "patch/G3",
+      "status": "resolved",
+      "evidence": "Current malformed known duplicate/no-op and valid optional/additive/older-delivery controls pass in complete Server XML; strict projection validation is preserved."
+    },
+    {
+      "id": "BR-04",
+      "verdict": "high",
+      "route": "patch/G4",
+      "status": "resolved",
+      "evidence": "Current launcher 119 controls include actual linked helper/consumed-manifest mutation checks; final parent audit matches every 16,697 current input."
+    },
+    {
+      "id": "BR-05",
+      "verdict": "medium",
+      "route": "patch/G5",
+      "status": "resolved",
+      "evidence": "The current actual main inspection/audit-fault row passes with both real legacy histories, role/inspection gating, narrow pending receipt, distinct durable audits and audit failure refusal; all 11 original cases remain."
+    },
+    {
+      "id": "BR-06",
+      "verdict": "false",
+      "route": "reject",
+      "status": "refuted",
+      "evidence": "Fresh canonical live-65 contains actual passing three-group native XML, Integration196 and Server1348 plus independent parent validation at source84a27cc0. Old failed packets are retained history, not reused completion evidence; the isolated review diff predates these evidence additions."
+    },
+    {
+      "id": "BR-07",
+      "verdict": "false",
+      "route": "reject",
+      "status": "refuted",
+      "evidence": "The owner-repository before diff already has _localAdmission.WaitAsync around AcquireCoreAsync and the same finally Release. The changed private release/decode behavior does not introduce that production serialization."
+    },
+    {
+      "id": "BR-08",
+      "verdict": "maybe-false",
+      "route": "defer/unverified-medium",
+      "status": "deferred",
+      "evidence": "Retained distinct pre-existing/unverified evidence and appended canonical deferred-work entry; no duplicate entry or unsupported policy change."
+    },
+    {
+      "id": "BR-09",
+      "verdict": "medium",
+      "route": "defer/pre-existing",
+      "status": "deferred",
+      "evidence": "Retained distinct pre-existing/unverified evidence and appended canonical deferred-work entry; no duplicate entry or unsupported policy change."
+    },
+    {
+      "id": "BR-10",
+      "verdict": "medium",
+      "route": "patch/G6",
+      "status": "resolved",
+      "evidence": "Current actual Projects restart receipt rebinds effective runtime modes to initial options and exact process identity; strict scenario validation passes."
+    },
+    {
+      "id": "EG-01",
+      "verdict": "high",
+      "route": "patch/G7",
+      "status": "resolved",
+      "evidence": "SDK detached native diagnostic/controller controls pass 122/122 in the repair checkpoint with those inputs unchanged; current 15 request traces export no spans, linked logs or metric exemplars and all six covered native consoles are silent."
+    },
+    {
+      "id": "EG-02",
+      "verdict": "high",
+      "route": "patch/G1",
+      "status": "resolved",
+      "evidence": "Original query constructors/deconstruction and JSON controls pass 3/3 in the repair checkpoint; complete current Server 1,368 pass. Restored existing signatures add no supported public surface."
+    },
+    {
+      "id": "EG-03",
+      "verdict": "high",
+      "route": "patch/G1",
+      "status": "resolved",
+      "evidence": "Original query constructors/deconstruction and JSON controls pass 3/3 in the repair checkpoint; complete current Server 1,368 pass. Restored existing signatures add no supported public surface."
+    },
+    {
+      "id": "EG-04",
+      "verdict": "medium",
+      "route": "patch/G3",
+      "status": "resolved",
+      "evidence": "Current malformed known duplicate/no-op and valid optional/additive/older-delivery controls pass in complete Server XML; strict projection validation is preserved."
+    },
+    {
+      "id": "VG-01",
+      "verdict": "medium",
+      "route": "patch/G8",
+      "status": "resolved",
+      "evidence": "Current AdministratorInventoryAuditsEveryReturnedProjectAndBindsCursorToInventory passes its two-row distinct durable one-Project audit assertions."
+    },
+    {
+      "id": "VG-02",
+      "verdict": "medium",
+      "route": "patch/G9",
+      "status": "resolved",
+      "evidence": "Current TenantCanInspectFolderlessHistoryWithoutChangingProjectState passes with nonempty legacy SetupMetadata omitted and original bytes/ETags retained."
+    },
+    {
+      "id": "PA-01",
+      "verdict": "medium",
+      "route": "patch/G10",
+      "status": "resolved",
+      "evidence": "Current OlderValidDuplicatePreservesLaterFolderObservation passes the older FolderSet after later FileReferenceLinked replay with unchanged model bytes."
+    },
+    {
+      "id": "PA-02",
+      "verdict": "medium",
+      "route": "patch/G11",
+      "status": "resolved",
+      "evidence": "Current launcher 119 controls preserve exact missing-ID anchoring/fresh complete listing and negative cases; all 12 actual captured containers and owned processes are absent with all original cleanups passing."
+    },
+    {
+      "id": "PA-03",
+      "verdict": "medium",
+      "route": "patch/G12",
+      "status": "resolved",
+      "evidence": "The two matching safe foreign-metadata sample literals preserve production validation and populated foreign controls; all 1,368 current Server tests pass, including all 45 prior fixture/teardown failures."
+    }
+  ],
+  "counts": {
+    "resolved": 15,
+    "refuted": 2,
+    "deferred": 2
+  },
+  "patchGroupsResolved": 12,
+  "finalDiffFile": "/tmp/story61-review-zeex2mfu.diff",
+  "finalDiffSha256": "3c10cd72305458e0dd6f648911cf2a37dcfb8db4062dadf65c521523c0cda6e6",
+  "actualIndexTouched": false,
+  "parentAuditSha256": "50593e43df8e4411c93d0fb27fba8f1ff14fe28a5c2af628f29d0e6c86d15da1",
+  "finalVerificationSupplementSha256": "d15ca1b9cbddd55a2decb3e8785f940a1e525441d14ab17f06f36998487a0a77",
+  "fullVerificationAfterLastPatchPassed": true,
+  "originalFailedReceiptsPreserved": true,
+  "next": "step-05-present.md"
+}

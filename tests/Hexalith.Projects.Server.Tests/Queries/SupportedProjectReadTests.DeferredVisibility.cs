@@ -34,6 +34,11 @@ public sealed partial class SupportedProjectReadTests
         }
 
         string key = ProjectReadModelKeys.Detail("tenant-a", "legacy-project");
+        ProjectReadModel legacy = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
+        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, legacy with
+        {
+            Detail = legacy.Detail! with { SetupMetadata = "Legacy restricted setup reference" },
+        });
         ReadModelEntry<ProjectReadModel> before = await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken);
         byte[] beforeBytes = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key)!;
         int count = fixture.Store.Count;
@@ -50,6 +55,7 @@ public sealed partial class SupportedProjectReadTests
         inspected.Description.ShouldBeNull();
         inspected.Setup.ShouldBeNull();
         inspected.SetupMetadata.ShouldBeNull();
+        JsonSerializer.Serialize(inspected).ShouldNotContain("Legacy restricted setup reference");
         inspected.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         inspected.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
         if (pendingReceipt)

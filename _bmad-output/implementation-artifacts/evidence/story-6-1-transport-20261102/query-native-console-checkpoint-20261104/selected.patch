@@ -1,0 +1,398 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs
+@@ -15,6 +15,7 @@
+     private readonly ConcurrentQueue<string> _logs = new();
+     private readonly ConcurrentQueue<string> _traces = new();
+     private readonly ConcurrentDictionary<ActivityTraceId, (int Logs, int Traces)> _starts = new();
++    private readonly ConcurrentDictionary<ActivityTraceId, Activity> _requests = new();
+     private readonly ConcurrentDictionary<string, TaskCompletionSource> _boundaries = new(StringComparer.Ordinal);
+     private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource<(double Duration, string Category)>> _metrics = new();
+     private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource> _activities = new();
+@@ -70,11 +71,22 @@
+         Activity activity = new Activity("story61-denial-observation").SetIdFormat(ActivityIdFormat.W3C)
+             .SetParentId(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.Recorded).Start();
+         _starts[activity.TraceId] = (_logs.Count, _traces.Count);
++        _requests[activity.TraceId] = activity;
+         _boundaries[activity.TraceId.ToString()] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         _metrics[activity.TraceId] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         _activities[activity.TraceId] = new(TaskCreationOptions.RunContinuationsAsynchronously);
+         return activity;
+     }
++
++    /// <summary>Gets completed UTC windows for source-bound native console comparisons.</summary>
++    internal object[] CompletedRequestWindows()
++        => _requests.Values.OrderBy(activity => activity.StartTimeUtc).Select(activity =>
++        {
++            if (activity.Duration <= TimeSpan.Zero)
++                throw new InvalidOperationException("An observation window has not completed.");
++            return (object)new { Trace = activity.TraceId.ToString(), StartUtc = activity.StartTimeUtc,
++                EndUtc = activity.StartTimeUtc + activity.Duration };
++        }).ToArray();
+ 
+     /// <summary>Marks the actual registered outer request for completion and duration measurement.</summary>
+     internal void BindGatewayRequest(HttpContext context)
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs
+@@ -38,7 +38,9 @@
+             observer.Logs(firstTrace).ShouldBeEmpty();
+         }
+         Activity.Current.ShouldBeSameAs(ambient);
++        observer.CompletedRequestWindows().Length.ShouldBe(1);
+         using Activity second = observer.BeginRequest();
++        Should.Throw<InvalidOperationException>(() => observer.CompletedRequestWindows());
+         second.TraceId.ShouldNotBe(ambient.TraceId);
+         second.TraceId.ShouldNotBe(firstTrace);
+         observer.Logs(second.TraceId).ShouldBeEmpty();
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -360,6 +360,7 @@
+             absent.Headers, absent.Logs, MetricCategory = absent.Metric, ServerActivity = absent.Activity,
+             ForeignStateByteAndETagComparisons = foreignBefore.Length,
+             BoundedInterleavedTimingSamples = timingSamples,
++            RequestWindows = denialObserver.CompletedRequestWindows(),
+             TimingScope = "Existing real-owner component fixture; no distributed, load or constant-time acceptance.",
+             TimingToleranceAccepted = false,
+         }));
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -36,6 +36,137 @@
+ 
+ def resources(*names):
+     return [{"name": name, "id": container_id(name)} for name in names]
++
++
++class NativeConsoleEvidenceTests(unittest.TestCase):
++    def windows(self):
++        return [{"trace": format(index + 1, "032x"), "kind": ("Denied", "Absent", "ForeignOnly")[index % 3],
++                 "startUtc": f"2026-11-03T20:00:{index + 1:02d}+00:00", "endUtc": f"2026-11-03T20:00:{index + 1:02d}.100000+00:00"}
++                for index in range(15)]
++
++    def native_output(self, app="eventstore"):
++        message = 'time="2026-11-03T19:59:50Z" level=info msg="Initialized name resolution to sqlite" scope=dapr.runtime type=log app_id=' + app
++        return json.dumps({"logs": [{"resourceName": app + "-dapr-cli", "timestamp": "2026-11-03T19:59:50Z",
++                                     "content": message, "isError": False}]})
++
++    def write_native(self, path):
++        windows = self.windows()
++        observations = {kind + "Trace": windows[index]["trace"] for index, kind in enumerate(("Denied", "Absent", "ForeignOnly"))}
++        observations.update(RequestWindows=[{"Trace": row["trace"], "StartUtc": row["startUtc"], "EndUtc": row["endUtc"]} for row in windows],
++                            BoundedInterleavedTimingSamples=[{"Round": index // 3, "Kind": row["kind"], "Trace": row["trace"]}
++                                                            for index, row in enumerate(windows[3:])])
++        root = ET.Element("assemblies")
++        test = ET.SubElement(root, "test", name="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
++                             result="Pass", **{"start-rtf": "2026-11-03T19:59:00Z", "finish-rtf": "2026-11-03T20:01:00Z"})
++        ET.SubElement(test, "output").text = "Actual real-owner denial observations: " + json.dumps(observations)
++        ET.ElementTree(root).write(path)
++        return observations
++
++    def test_windows_require_exact_passing_native_method_and_all_distinct_bounded_requests(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            path = Path(temporary) / "server.xml"
++            self.write_native(path)
++            self.assertEqual(LAUNCHER.real_owner_request_windows(path), self.windows())
++            for mutation in ("method", "failed", "duplicate", "overlap", "outside", "missing", "wrong-kind", "non-utc"):
++                with self.subTest(mutation=mutation):
++                    value = self.write_native(path)
++                    tree = ET.parse(path)
++                    test = tree.getroot().find("test")
++                    if mutation == "method": test.set("name", "substitute")
++                    elif mutation == "failed": test.set("result", "Fail")
++                    elif mutation == "duplicate": value["RequestWindows"][-1]["Trace"] = value["RequestWindows"][0]["Trace"]
++                    elif mutation == "overlap": value["RequestWindows"][-1]["StartUtc"] = value["RequestWindows"][0]["StartUtc"]
++                    elif mutation == "outside": value["RequestWindows"][-1]["EndUtc"] = "2026-11-03T20:01:01Z"
++                    elif mutation == "missing": value["RequestWindows"].pop()
++                    elif mutation == "wrong-kind": value["BoundedInterleavedTimingSamples"][0]["Kind"] = "Other"
++                    elif mutation == "non-utc": value["RequestWindows"][0]["StartUtc"] = "2026-11-03T20:00:01"
++                    test.find("output").text = "Actual real-owner denial observations: " + json.dumps(value)
++                    tree.write(path)
++                    with self.assertRaises((RuntimeError, ValueError)): LAUNCHER.real_owner_request_windows(path)
++
++    def test_console_coverage_refuses_empty_unbound_untimed_or_saturated_snapshots(self):
++        began = LAUNCHER.utc_time("2026-11-03T19:59:40Z")
++        valid = json.loads(self.native_output())
++        facts = LAUNCHER.native_console_coverage(json.dumps(valid), "eventstore-dapr-cli", "eventstore", self.windows(), began, LAUNCHER.utc_time("2026-11-03T20:02:00Z"))
++        self.assertTrue(facts["coverageVerified"])
++        self.assertEqual(facts["windowCounts"], [0] * 15)
++        for mutation in ("empty", "wrong-resource", "untimed", "non-utc", "wrong-app", "no-startup", "saturated", "after-request", "future-row"):
++            with self.subTest(mutation=mutation):
++                value = json.loads(self.native_output())
++                if mutation == "empty": value["logs"] = []
++                elif mutation == "wrong-resource": value["logs"][0]["resourceName"] = "foreign-dapr-cli"
++                elif mutation == "untimed": value["logs"][0].pop("timestamp")
++                elif mutation == "non-utc": value["logs"][0]["timestamp"] = "2026-11-03T19:59:50"
++                elif mutation == "wrong-app": value["logs"][0]["content"] = value["logs"][0]["content"].replace("app_id=eventstore", "app_id=foreign")
++                elif mutation == "no-startup": value["logs"][0]["content"] = "synthetic-protected-description"
++                elif mutation == "saturated": value["logs"] *= 10000
++                elif mutation == "after-request": value["logs"][0]["timestamp"] = "2026-11-03T20:00:02Z"
++                elif mutation == "future-row": value["logs"].append(dict(value["logs"][0], timestamp="2026-11-03T20:03:00Z"))
++                result = LAUNCHER.native_console_coverage(json.dumps(value), "eventstore-dapr-cli", "eventstore", self.windows(), began, LAUNCHER.utc_time("2026-11-03T20:02:00Z"))
++                self.assertFalse(result["coverageVerified"])
++                self.assertNotIn("synthetic-protected-description", json.dumps(result))
++        self.assertFalse(LAUNCHER.native_console_coverage(self.native_output(), "eventstore-dapr-cli", "eventstore", self.windows(),
++                                                       LAUNCHER.utc_time("2026-11-03T20:00:02Z"), LAUNCHER.utc_time("2026-11-03T20:02:00Z"))["coverageVerified"])
++
++    def test_console_counts_keep_all_rows_in_each_actual_window_and_following_interval(self):
++        value = json.loads(self.native_output())
++        value["logs"].append(dict(value["logs"][0], timestamp="2026-11-03T20:00:01.050000Z", content="synthetic-private-runtime-record"))
++        value["logs"].append(dict(value["logs"][0], timestamp="2026-11-03T20:00:50Z", content="synthetic-private-drain-record"))
++        facts = LAUNCHER.native_console_coverage(json.dumps(value), "eventstore-dapr-cli", "eventstore", self.windows(), LAUNCHER.utc_time("2026-11-03T19:59:40Z"), LAUNCHER.utc_time("2026-11-03T20:02:00Z"))
++        self.assertEqual(facts["windowCounts"], [1] + [0] * 14)
++        self.assertEqual(facts["rowsFromFirstObservation"], 2)
++        self.assertNotIn("synthetic-private", json.dumps(facts))
++
++    def test_peer_census_refuses_foreign_config_missing_duplicate_or_replaced_native_process(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            binary = Path(temporary) / "daprd"; binary.write_bytes(b"actual-native-control")
++            configurations = {app: Path(temporary) / (app + ".configuration.json") for app in LAUNCHER.READ_APPS}
++            census = {str(index + 1): {"appId": app, "start": "123", "arguments": [str(binary), "--config", str(configurations[app])]}
++                      for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
++            with patch.object(LAUNCHER, "owns_current_apphost", return_value=True), patch.object(LAUNCHER, "owned_sidecar_census", return_value=census), patch.object(LAUNCHER, "process_start", return_value="123"):
++                self.assertEqual(set(LAUNCHER.native_console_peers({"_isolation": "owned"}, configurations)), LAUNCHER.READ_APPS)
++                for mutation in ("missing", "duplicate", "foreign-config", "replaced", "foreign-apphost"):
++                    with self.subTest(mutation=mutation):
++                        changed = json.loads(json.dumps(census))
++                        if mutation == "missing": changed.pop("1")
++                        elif mutation == "duplicate": changed["7"] = changed["1"]
++                        elif mutation == "foreign-config": changed["1"]["arguments"][-1] += ".foreign"
++                        with patch.object(LAUNCHER, "owned_sidecar_census", return_value=changed), patch.object(LAUNCHER, "process_start", return_value="999" if mutation == "replaced" else "123"), patch.object(LAUNCHER, "owns_current_apphost", return_value=mutation != "foreign-apphost"):
++                            with self.assertRaises(RuntimeError): LAUNCHER.native_console_peers({"_isolation": "owned"}, configurations)
++
++    def test_capture_retains_only_bounded_private_raw_and_checks_identity_after_all_six_reads(self):
++        for mode in ("success", "truncated", "replacement", "raw-replaced"):
++            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temporary:
++                base = Path(temporary); raw = base / "raw"; raw.mkdir(mode=0o700)
++                self.write_native(base / "server.xml")
++                configurations = {app: base / (app + ".configuration.json") for app in LAUNCHER.READ_APPS}
++                receipts = {"identities": {str(path): {"sha256": "a" * 64} for path in configurations.values()}}
++                peers = {app: {"pid": index + 1, "startTicks": "1", "binarySha256": "b" * 64} for index, app in enumerate(sorted(LAUNCHER.READ_APPS))}
++                owned = {"_isolation": "owned"}
++                report = {"sourceManifestSha256": "c" * 64, "ownedAppHostSession": {"appHostPid": 99}, "commands": [],
++                          "discoveryAfterReads": {"ownedSidecars": [{"appId": app, **peer} for app, peer in peers.items()], "daprdSha256": ["b" * 64]}}
++                calls = []
++                def execute(command, **kwargs):
++                    calls.append(command)
++                    self.assertEqual(kwargs["timeout"], 15)
++                    self.assertNotIn("--tail", command); self.assertNotIn("--follow", command); self.assertNotIn("--search", command)
++                    if mode == "raw-replaced" and len(calls) == 6:
++                        target = raw / (sorted(LAUNCHER.READ_APPS)[0] + ".json"); target.write_text("substituted")
++                    return "synthetic-private" * 100000 if mode == "truncated" else self.native_output(command[2][:-9])
++                after = {**peers, "eventstore": {**peers["eventstore"], "startTicks": "2"}} if mode == "replacement" else peers
++                with patch.object(LAUNCHER.Path, "read_text", return_value="btime 0\n"), patch.object(LAUNCHER.tempfile, "mkdtemp", return_value=str(raw)), patch.object(LAUNCHER, "receiver_configurations", return_value=(configurations, receipts)), patch.object(LAUNCHER, "native_console_peers", side_effect=[peers, after]), patch.object(LAUNCHER, "execute", side_effect=execute):
++                    if mode in ("replacement", "raw-replaced"):
++                        with self.assertRaises(RuntimeError): LAUNCHER.capture_native_console(owned, base / "discovery.json", base / "discovery.sqlite", {}, base, report)
++                    else: LAUNCHER.capture_native_console(owned, base / "discovery.json", base / "discovery.sqlite", {}, base, report)
++                self.assertEqual(len(calls), 6)
++                self.assertEqual(set(path.name for path in raw.iterdir()), {app + ".json" for app in LAUNCHER.READ_APPS})
++                for path in raw.iterdir():
++                    self.assertLessEqual(path.stat().st_size, 1024 * 1024)
++                    self.assertEqual(path.stat().st_mode & 0o777, 0o600)
++                facts = json.loads((base / "native-console.json").read_text())
++                self.assertEqual(facts["coverageVerified"], mode == "success")
++                self.assertFalse(facts["privacyEqualityAccepted"])
++                self.assertNotIn("synthetic-private", json.dumps(facts))
+ 
+ 
+ class SupportedReadLauncherCleanupTests(unittest.TestCase):
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -5,6 +5,7 @@
+ import argparse
+ import base64
+ import contextlib
++import datetime
+ import hashlib
+ import http.server
+ import ipaddress
+@@ -358,6 +359,184 @@
+         failure.command_output = result.stdout + result.stderr
+         raise failure
+     return result.stdout
++
++
++def utc_time(value: str) -> datetime.datetime:
++    if not isinstance(value, str) or len(value) > 64:
++        raise ValueError("UTC timestamp is missing or malformed.")
++    parsed = datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
++    if parsed.tzinfo is None or parsed.utcoffset() != datetime.timedelta():
++        raise ValueError("Timestamp is not UTC.")
++    return parsed
++
++
++def real_owner_request_windows(path: Path) -> list[dict]:
++    """Bind the existing fifteen observations to the actual passing native method and UTC interval."""
++    name = "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures"
++    tests = [test for test in ET.parse(path).getroot().iter("test") if test.get("name") == name]
++    if len(tests) != 1 or tests[0].get("result") != "Pass":
++        raise RuntimeError("The passing real-owner native method is missing or ambiguous.")
++    test = tests[0]
++    marker = "Actual real-owner denial observations: "
++    rows = [line[len(marker):] for line in (test.findtext("output") or "").splitlines() if line.startswith(marker)]
++    if len(rows) != 1:
++        raise RuntimeError("The real-owner observation output is missing or ambiguous.")
++    value = json.loads(rows[0])
++    expected = {value.get(kind + "Trace"): kind for kind in ("Denied", "Absent", "ForeignOnly")}
++    samples = value.get("BoundedInterleavedTimingSamples")
++    if (len(expected) != 3 or not isinstance(samples, list) or len(samples) != 12
++            or {(row.get("Round"), row.get("Kind")) for row in samples if isinstance(row, dict)}
++                != {(round, kind) for round in range(4) for kind in ("Denied", "Absent", "ForeignOnly")}):
++        raise RuntimeError("The bounded real-owner observations are incomplete.")
++    for row in samples:
++        if row.get("Trace") in expected:
++            raise RuntimeError("A real-owner observation trace was reused.")
++        expected[row.get("Trace")] = row["Kind"]
++    windows = value.get("RequestWindows")
++    if not isinstance(windows, list) or len(windows) != 15:
++        raise RuntimeError("The real-owner UTC windows are incomplete.")
++    begin, finish = utc_time(test.get("start-rtf")), utc_time(test.get("finish-rtf"))
++    result, seen, previous = [], set(), begin
++    for window in windows:
++        trace = window.get("Trace")
++        if not isinstance(trace, str) or re.fullmatch(r"[0-9a-f]{32}", trace) is None or trace in seen or trace not in expected:
++            raise RuntimeError("A real-owner UTC window has a substituted trace.")
++        start, end = utc_time(window.get("StartUtc")), utc_time(window.get("EndUtc"))
++        if not begin <= previous <= start < end <= finish:
++            raise RuntimeError("A real-owner UTC window is outside its native method or overlaps another observation.")
++        result.append({"trace": trace, "kind": expected[trace], "startUtc": start.isoformat(), "endUtc": end.isoformat()})
++        previous = end
++        seen.add(trace)
++    if seen != set(expected):
++        raise RuntimeError("A real-owner UTC window is missing.")
++    return result
++
++
++def native_log_fields(raw: str) -> dict:
++    if raw.lstrip().startswith("{"):
++        value = json.loads(raw)
++        return value if isinstance(value, dict) else {}
++    return dict(item.split("=", 1) for item in shlex.split(raw) if "=" in item)
++
++
++def native_console_coverage(raw: str, resource: str, app: str, windows: list[dict], started: datetime.datetime, captured: datetime.datetime) -> dict:
++    """Never turn an empty, trimmed, unbound or unparseable CLI snapshot into native silence proof."""
++    facts = {"coverageVerified": False, "allRetainedRowsRequested": True, "cliTailApplied": False,
++             "cliSequenceAndDroppedCountAvailable": False, "maxBacklogRows": 10000}
++    try:
++        value = json.loads(raw)
++        rows = value["logs"]
++        if not isinstance(rows, list) or not rows:
++            raise ValueError("EmptySnapshot")
++        facts["rows"] = len(rows)
++        if len(rows) >= 10000:
++            raise ValueError("BacklogBoundReached")
++        timestamps, startup = [], []
++        for row in rows:
++            if (not isinstance(row, dict) or row.get("resourceName") != resource
++                    or not isinstance(row.get("content"), str) or type(row.get("isError")) is not bool):
++                raise ValueError("UnboundConsoleRow")
++            stamp = utc_time(row.get("timestamp"))
++            timestamps.append(stamp)
++            # This message is emitted once by the real native resolver during startup.
++            if "SqliteNameResolutionInitialized" in safe_log_facts(row["content"])["nativeStartupFacts"]:
++                fields = native_log_fields(row["content"])
++                if fields.get("app_id") == app and stamp >= started - datetime.timedelta(seconds=1):
++                    startup.append(stamp)
++        first = utc_time(windows[0]["startUtc"])
++        if (started > first or not startup or min(startup) > first or min(timestamps) > first
++                or utc_time(windows[-1]["endUtc"]) > captured or max(timestamps) > captured):
++            raise ValueError("CurrentProcessStartupCoverageMissing")
++        facts.update(coverageVerified=True, earliestUtc=min(timestamps).isoformat(), latestUtc=max(timestamps).isoformat(),
++                     retainedCurrentProcessStartup=True,
++                     windowCounts=[sum(utc_time(window["startUtc"]) <= stamp <= utc_time(window["endUtc"]) for stamp in timestamps)
++                                   for window in windows],
++                     rowsFromFirstObservation=sum(stamp >= first for stamp in timestamps))
++    except (ValueError, TypeError, KeyError, AttributeError):
++        # Details and payload stay private. The finite reason is sufficient to refuse coverage.
++        facts["refusal"] = "SnapshotCoverageUnproven"
++    return facts
++
++
++def native_console_peers(owned: dict, configurations: dict) -> dict:
++    """Use the existing exact namespace census plus actual native config and start identity."""
++    if not owns_current_apphost(owned):
++        raise RuntimeError("Native console capture AppHost ownership changed.")
++    census, peers = owned_sidecar_census(owned["_isolation"]), {}
++    for pid, item in census.items():
++        arguments, app = item["arguments"], item["appId"]
++        if (app not in READ_APPS or app in peers or not arguments or not arguments[0].endswith("/daprd")
++                or "--config" not in arguments or arguments[arguments.index("--config") + 1] != str(configurations[app])):
++            raise RuntimeError("Native console peer ownership or configuration differs.")
++        if process_start(int(pid)) != item["start"]:
++            raise RuntimeError("Native console peer process was replaced.")
++        peers[app] = {"pid": int(pid), "startTicks": item["start"],
++                      "binarySha256": hashlib.sha256(Path(arguments[0]).read_bytes()).hexdigest()}
++    if set(peers) != READ_APPS:
++        raise RuntimeError("Native console capture requires exactly the six owned peers.")
++    return peers
++
++
++def capture_native_console(owned: dict, configuration: Path, registry: Path, env: dict, evidence: Path, report: dict) -> None:
++    """One bounded read-only snapshot per peer after Server tests, before ordinary exact teardown."""
++    windows = real_owner_request_windows(evidence / "server.xml")
++    configurations, receipts = receiver_configurations(configuration, registry, owned["_isolation"])
++    before = native_console_peers(owned, configurations)
++    discovery = report["discoveryAfterReads"]
++    expected = {row["appId"]: (row["pid"], row["startTicks"]) for row in discovery["ownedSidecars"]}
++    if ({app: (item["pid"], item["startTicks"]) for app, item in before.items()} != expected
++            or sorted({item["binarySha256"] for item in before.values()}) != discovery["daprdSha256"]):
++        raise RuntimeError("Native console peers differ from the qualified current discovery census.")
++    boot = int(next(line.split()[1] for line in Path("/proc/stat").read_text().splitlines() if line.startswith("btime ")))
++    ticks = os.sysconf("SC_CLK_TCK")
++    diagnostic = Path(tempfile.mkdtemp(prefix="supported-project-reads-native-console-"))
++    diagnostic.chmod(0o700)
++    private_identity(diagnostic, directory=True)
++    facts = {"version": 1, "directory": str(diagnostic), "directoryIdentity": private_identity(diagnostic, directory=True),
++             "rawRetention": "owner-private-native-console-only", "maxBytesPerPeer": 1024 * 1024,
++             "sourceManifestSha256": report["sourceManifestSha256"],
++             "nativeServerXmlSha256": hashlib.sha256((evidence / "server.xml").read_bytes()).hexdigest(),
++             "appHostSession": report["ownedAppHostSession"], "requestWindows": windows,
++             "configurationSha256": {app: receipts["identities"][str(path)]["sha256"] for app, path in sorted(configurations.items())},
++             "peers": before, "captures": {}, "coverageVerified": False, "privacyEqualityAccepted": False,
++             "limits": "CLI omits sequence/dropped-row metadata; startup retention and below-bound snapshots qualify only the observed UTC console interval. No causal attribution or fault/load equivalence is inferred."}
++    report["nativeConsoleEvidence"] = facts
++    try:
++        for app in sorted(READ_APPS):
++            resource = app + "-dapr-cli"
++            command = ["aspire", "logs", resource, "--apphost", str(APPHOST), "--format", "Json", "--timestamps", "--include-hidden", "--non-interactive"]
++            report["commands"].append(command)
++            began = datetime.datetime.now(datetime.timezone.utc)
++            output = execute(command, env=env, timeout=15)
++            ended = datetime.datetime.now(datetime.timezone.utc)
++            encoded = output.encode()
++            truncated = len(encoded) > facts["maxBytesPerPeer"]
++            path = diagnostic / (app + ".json")
++            with path.open("xb") as stream:
++                path.chmod(0o600)
++                stream.write(encoded[:facts["maxBytesPerPeer"]])
++            identity = private_identity(path)
++            started = datetime.datetime.fromtimestamp(boot + int(before[app]["startTicks"]) / ticks, datetime.timezone.utc)
++            capture = {"identity": identity, "bytes": path.stat().st_size, "truncated": truncated,
++                       "captureStartUtc": began.isoformat(), "captureEndUtc": ended.isoformat(), "processStartUtc": started.isoformat()}
++            if truncated:
++                capture.update(coverageVerified=False, refusal="RawByteBoundReached")
++            else:
++                capture.update(native_console_coverage(output, resource, app, windows, started, ended))
++            facts["captures"][app] = capture
++        current_configurations, current_receipts = receiver_configurations(configuration, registry, owned["_isolation"])
++        if (native_console_peers(owned, current_configurations) != before
++                or current_configurations != configurations or current_receipts != receipts):
++            raise RuntimeError("Native console source/process/configuration changed during capture.")
++        if private_identity(diagnostic, directory=True) != facts["directoryIdentity"]:
++            raise RuntimeError("Native console private directory was replaced.")
++        for app, capture in facts["captures"].items():
++            if private_identity(diagnostic / (app + ".json")) != capture["identity"]:
++                raise RuntimeError("Native console private raw file was replaced.")
++        facts["ownershipVerifiedBeforeAndAfter"] = True
++        facts["coverageVerified"] = all(item["coverageVerified"] for item in facts["captures"].values())
++    finally:
++        (evidence / "native-console.json").write_text(json.dumps(facts, indent=2) + "\n")
+ 
+ 
+ def b64url(value: bytes) -> str:
+@@ -2380,6 +2559,7 @@
+                 report["regressions"][lane] = require_complete_native_results(lane_results)
+                 if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
+                     raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
++            capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
+         if hashlib.sha256(assembly.read_bytes()).hexdigest() != report["testAssemblySha256"]:
+             raise RuntimeError("The selected native test assembly changed during verification.")
+         report["testAssemblyUnchanged"] = True

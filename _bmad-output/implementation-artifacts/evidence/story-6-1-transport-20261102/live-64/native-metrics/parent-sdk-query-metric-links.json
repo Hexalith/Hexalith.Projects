@@ -1,0 +1,145 @@
+{
+  "observedUtc": "2026-11-04T18:32:23.039325+00:00",
+  "sourceManifestSha256": "77bb5446bed26dde64568abfe9f50a20fc966b3dadf8a03421c17f63e241eab9",
+  "database": "/home/administrator/.aspire/dashboard/runs/20261104T181424585Z/dashboard.db",
+  "databaseSha256": "01503acc960dc9c79440ed91d21c7a365454c6db93097c26acbcc767827d2f97",
+  "databaseMetadataUnchanged": true,
+  "positiveSixOwnedNativeResourceBinding": true,
+  "queryOnly": true,
+  "observations": [
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/streams/read/workload",
+      "httpStatus": "200",
+      "pointCount": 69,
+      "maxHistogramCount": 188,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/streams/read/workload",
+      "httpStatus": "503",
+      "pointCount": 2,
+      "maxHistogramCount": 2,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "200",
+      "pointCount": 34,
+      "maxHistogramCount": 34,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "43b2e26c-995f-4b68-ad6d-1206adc69a47",
+      "route": "/query",
+      "httpStatus": "200",
+      "pointCount": 32,
+      "maxHistogramCount": 32,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries",
+      "httpStatus": "200",
+      "pointCount": 22,
+      "maxHistogramCount": 22,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "vhyaqram",
+      "route": "/query",
+      "httpStatus": "200",
+      "pointCount": 22,
+      "maxHistogramCount": 19,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries",
+      "httpStatus": "404",
+      "pointCount": 9,
+      "maxHistogramCount": 14,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "vhyaqram",
+      "route": "/query",
+      "httpStatus": "404",
+      "pointCount": 10,
+      "maxHistogramCount": 10,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "404",
+      "pointCount": 3,
+      "maxHistogramCount": 3,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "43b2e26c-995f-4b68-ad6d-1206adc69a47",
+      "route": "/query",
+      "httpStatus": "404",
+      "pointCount": 3,
+      "maxHistogramCount": 3,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "vhyaqram",
+      "route": "/query",
+      "httpStatus": "400",
+      "pointCount": 1,
+      "maxHistogramCount": 1,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries",
+      "httpStatus": "400",
+      "pointCount": 1,
+      "maxHistogramCount": 1,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "sdentfcj",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "499",
+      "pointCount": 2,
+      "maxHistogramCount": 2,
+      "exemplarCount": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "5f395171-605c-4096-8770-54bfdb73bed9",
+      "route": "/query",
+      "httpStatus": "200",
+      "pointCount": 2,
+      "maxHistogramCount": 2,
+      "exemplarCount": 0
+    }
+  ],
+  "protectedServerMetricPointsPresent": true,
+  "protectedDedicatedPostRouteExemplarsObserved": 0,
+  "wholeFeatureAccepted": false,
+  "limits": [
+    "Recorded SDK privacy source; overall provider failed later in observer setup before15 component windows.",
+    "Dedicated POST read/query server metrics with positive data only; mixed actor-method buckets are not classified by generic route alone.",
+    "Counts remain observable under accepted policy; no timing or complete native-log acceptance follows."
+  ]
+}

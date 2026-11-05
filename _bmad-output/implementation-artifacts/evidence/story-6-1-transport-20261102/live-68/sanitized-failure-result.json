@@ -1,0 +1,61 @@
+{
+  "observedUtc": "2026-11-04T22:24:21.829045+00:00",
+  "result": "failed",
+  "sourceManifestSha256": "a7ce136a2d29382e591dcd3535f79d6d4483831baab47c2b9ca4e17128ad029d",
+  "nativeScenarios": {
+    "duplicate": [
+      {
+        "total": "1",
+        "passed": "1",
+        "failed": "0",
+        "skipped": "0",
+        "errors": "0",
+        "time": "193.511"
+      }
+    ],
+    "full-replay": [
+      {
+        "total": "1",
+        "passed": "1",
+        "failed": "0",
+        "skipped": "0",
+        "errors": "0",
+        "time": "262.523"
+      }
+    ],
+    "main": [
+      {
+        "total": "1",
+        "passed": "0",
+        "failed": "1",
+        "skipped": "0",
+        "errors": "0",
+        "time": "44.336"
+      }
+    ]
+  },
+  "mainFailedBeforeReadCases": "Protected metadata catalog returned non-OK during seeding; original assertion did not retain status/body.",
+  "concurrentObservedBackendFault": "11 Projects-worker Dapr state-operation failures report circuit breaker open; exact causal relation to catalog response is unproved.",
+  "regressionsExecuted": false,
+  "nativeConsoleCaptured": false,
+  "originalMainPrivateRemovalProved": false,
+  "separateExactRecoveryCompleted": true,
+  "allFourMainCapturedContainersAlreadyAbsent": true,
+  "allOwnedProcessesAndPrivateMaterialRemoved": true,
+  "externalResourcesPreserved": true,
+  "originalFailedReceiptsUnchanged": true,
+  "sourceOrBudgetsChanged": false,
+  "artifactMarkerAudit": {
+    "distributed.xml": {
+      "sha256": "ed29987a9e8a64af782073847f162ed95df5f5b28e34c85c0df6d6c99a8de363",
+      "compactJwtMarkers": 0,
+      "privatePemMarkers": 0
+    },
+    "distributed.log": {
+      "sha256": "3337bebfce09d3816e69af43e3af8bf91d63ec16157ac58acac17af496a00d43",
+      "compactJwtMarkers": 0,
+      "privatePemMarkers": 0
+    }
+  },
+  "aggregateAccepted": false
+}

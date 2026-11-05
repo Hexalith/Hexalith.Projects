@@ -1,0 +1,398 @@
+{
+  "observedUtc": "2026-11-04T22:52:36.856879+00:00",
+  "sourceManifestSha256": "a7ce136a2d29382e591dcd3535f79d6d4483831baab47c2b9ca4e17128ad029d",
+  "all16697CurrentInputsUnchanged": true,
+  "aggregateStrictlyRevalidated": true,
+  "allElevenCasesExecuted": true,
+  "threeFreshProviderGroups": true,
+  "allTwelveOwnedContainersAbsent": true,
+  "allOwnedAppHostsAndCurrentSidecarsAbsent": true,
+  "nativeRegressions": {
+    "integration": [
+      {
+        "total": "196",
+        "passed": "196",
+        "failed": "0",
+        "skipped": "0"
+      }
+    ],
+    "server": [
+      {
+        "total": "1368",
+        "passed": "1368",
+        "failed": "0",
+        "skipped": "0"
+      }
+    ]
+  },
+  "matrixTestAudit": {
+    "Authorized list": {
+      "ListDefaultsToFiftyAndPreservesConversationPolicy": 1,
+      "ChatbotFiltersBeforePagingAndHasNoGaps": 1,
+      "CursorRejectsTamperFilterIdentitySizeAndExpiredReplay": 1,
+      "AuthorizedInvalidPagingIsSafe400Category": 3
+    },
+    "Authorized open": {
+      "CurrentFolderEvidenceControlsEnumerationAndOpen": 3,
+      "NoncurrentPersistedProjectIsUnavailable": 3,
+      "SafeMetadataAndInspectedMetadataHaveDurableAuditOnlyEffects": 1,
+      "AuditFailurePreventsDescriptiveDisclosure": 1,
+      "PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads": 1,
+      "AdministratorInventoryAuditsEveryReturnedProjectAndBindsCursorToInventory": 1,
+      "TenantCanInspectFolderlessHistoryWithoutChangingProjectState": 2
+    },
+    "Denied or absent": {
+      "GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures": 1,
+      "SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories": 1,
+      "AuthorityMismatchWinsOverInvalidPayload": 12
+    },
+    "Rebuild/fault": {
+      "CompleteCatalogClassifiesHarmlessEventsAsDeterministicNoOps": 1,
+      "InvalidDuplicateDeliveryFailsRatherThanBeingSkipped": 3,
+      "IncrementalReplayDuplicateAndRestartPreserveExactGlobalPositions": 1,
+      "MalformedKnownDuplicateCannotPreserveCurrent": 12,
+      "MalformedKnownNoOpCannotAdvanceCurrent": 5,
+      "OlderValidDuplicatePreservesLaterFolderObservation": 1
+    }
+  },
+  "nativeConsole": [
+    {
+      "app": "eventstore",
+      "retainedRows": 180,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    },
+    {
+      "app": "folders",
+      "retainedRows": 192,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    },
+    {
+      "app": "folders-workers",
+      "retainedRows": 159,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    },
+    {
+      "app": "projects",
+      "retainedRows": 229,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    },
+    {
+      "app": "projects-workers",
+      "retainedRows": 352,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    },
+    {
+      "app": "tenants",
+      "retainedRows": 163,
+      "allFifteenWindowCountsZero": true,
+      "rowsFromFirstObservation": 0
+    }
+  ],
+  "componentTimingMs": {
+    "Denied": {
+      "Duration": {
+        "minMs": 51.1948,
+        "medianMs": 51.8375,
+        "maxMs": 52.953
+      },
+      "ResponseDuration": {
+        "minMs": 51.3787,
+        "medianMs": 51.95864999999999,
+        "maxMs": 53.065
+      }
+    },
+    "Absent": {
+      "Duration": {
+        "minMs": 50.9962,
+        "medianMs": 51.30735,
+        "maxMs": 54.2612
+      },
+      "ResponseDuration": {
+        "minMs": 51.1408,
+        "medianMs": 51.403749999999995,
+        "maxMs": 54.455799999999996
+      }
+    },
+    "ForeignOnly": {
+      "Duration": {
+        "minMs": 51.0372,
+        "medianMs": 51.366350000000004,
+        "maxMs": 52.1085
+      },
+      "ResponseDuration": {
+        "minMs": 51.093399999999995,
+        "medianMs": 51.5114,
+        "maxMs": 52.217
+      }
+    }
+  },
+  "distributedPublic404Headers": {
+    "count": 27,
+    "minMs": 348.8378,
+    "medianMs": 368.3855,
+    "maxMs": 3390.9522,
+    "allAtLeast50ms": true,
+    "artifactSha256": "a4ecc5a3db3b564f27e258e53e7980c11c810d9d0aba99a9ae0832e3cbf703b9"
+  },
+  "database": "/home/administrator/.aspire/dashboard/runs/20261104T224357775Z/dashboard.db",
+  "databaseSha256": "c4be760dcf6e0625ae4d21b7c6a20dca6a512c0e9df493ccfea2da295b5df0df",
+  "positiveSixOwnedNativeResourcesBinding": true,
+  "databaseMetadataUnchanged": true,
+  "queryOnly": true,
+  "traceLinkedTelemetry": [
+    {
+      "kind": "Denied",
+      "traceIdFromNativeXml": "641844fecf9fe06eb0f341d2645de9af",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Absent",
+      "traceIdFromNativeXml": "dc3297c6b9528a6c795a726162db3908",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "ForeignOnly",
+      "traceIdFromNativeXml": "cbb6e4b254e7c7ddf80c97830213081d",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Denied",
+      "traceIdFromNativeXml": "b19747f623adf724894ae09460a326a0",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Absent",
+      "traceIdFromNativeXml": "7918e6f3b890aab9fab79e269e89a1a7",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "ForeignOnly",
+      "traceIdFromNativeXml": "09fff9dff7cb74bc0e874377a7ca2ca2",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Absent",
+      "traceIdFromNativeXml": "f0a4d985223fcfc67efcf85f98414231",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "ForeignOnly",
+      "traceIdFromNativeXml": "d2b7152a3fe11cd770ec01d91caea96f",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Denied",
+      "traceIdFromNativeXml": "84d3776578a336019f00709de5badbd6",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "ForeignOnly",
+      "traceIdFromNativeXml": "9c38e82fb445c67758e2c101ec3a3b5d",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Denied",
+      "traceIdFromNativeXml": "61f1d253d9f3cc51beda9c787ceec3cf",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Absent",
+      "traceIdFromNativeXml": "300904834e6bda680bbac5d3dbc9ca45",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Denied",
+      "traceIdFromNativeXml": "ab7c8a5f9ecc19727bec7d6568a05c69",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "Absent",
+      "traceIdFromNativeXml": "5fde7675d02d2077ce90e061cb49aea7",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    },
+    {
+      "kind": "ForeignOnly",
+      "traceIdFromNativeXml": "73cdb7cdd50f8620c0db754e219eb668",
+      "telemetry_spans": 0,
+      "telemetry_logs": 0,
+      "telemetry_metric_exemplars": 0
+    }
+  ],
+  "nativeExportedSpanPositiveControls": {
+    "tenants-dapr-cli": 418,
+    "eventstore-dapr-cli": 31300,
+    "projects-dapr-cli": 921,
+    "projects-workers-dapr-cli": 242,
+    "folders-dapr-cli": 2839,
+    "folders-workers-dapr-cli": 1568
+  },
+  "positiveProtectedMetricDimensionsWithoutExemplars": [
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "200",
+      "points": 40,
+      "maxHistogramCount": 40,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/streams/read/workload",
+      "httpStatus": "503",
+      "points": 3,
+      "maxHistogramCount": 3,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries",
+      "httpStatus": "400",
+      "points": 1,
+      "maxHistogramCount": 1,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries",
+      "httpStatus": "404",
+      "points": 15,
+      "maxHistogramCount": 27,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries",
+      "httpStatus": "200",
+      "points": 26,
+      "maxHistogramCount": 26,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "404",
+      "points": 3,
+      "maxHistogramCount": 3,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/streams/read/workload",
+      "httpStatus": "200",
+      "points": 78,
+      "maxHistogramCount": 212,
+      "exemplars": 0
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qwaruvyt",
+      "route": "api/v1/queries/owner-authority/workload",
+      "httpStatus": "499",
+      "points": 2,
+      "maxHistogramCount": 2,
+      "exemplars": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "akfqghva",
+      "route": "query",
+      "httpStatus": "200",
+      "points": 26,
+      "maxHistogramCount": 23,
+      "exemplars": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "akfqghva",
+      "route": "query",
+      "httpStatus": "400",
+      "points": 1,
+      "maxHistogramCount": 1,
+      "exemplars": 0
+    },
+    {
+      "resource": "projects",
+      "instanceId": "akfqghva",
+      "route": "query",
+      "httpStatus": "404",
+      "points": 15,
+      "maxHistogramCount": 23,
+      "exemplars": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "b4461d36-5a1a-4e4d-8be9-2676c1386911",
+      "route": "query",
+      "httpStatus": "200",
+      "points": 38,
+      "maxHistogramCount": 38,
+      "exemplars": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "b4461d36-5a1a-4e4d-8be9-2676c1386911",
+      "route": "query",
+      "httpStatus": "404",
+      "points": 3,
+      "maxHistogramCount": 3,
+      "exemplars": 0
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "a67092f5-742f-4e9a-b523-13cad3161483",
+      "route": "query",
+      "httpStatus": "200",
+      "points": 2,
+      "maxHistogramCount": 2,
+      "exemplars": 0
+    }
+  ],
+  "protectedDedicatedPostServerSpans": 0,
+  "ordinaryRoutedServerSpanPositiveControl": 1524,
+  "acceptedLimits": [
+    "Aggregate metric operation-count inference remains.",
+    "50ms is a bounded minimum; slower/fault variation and production/load timing privacy remain outside this proof.",
+    "Console silence covers the retained observed intervals, not every possible infrastructure fault."
+  ],
+  "workflowReviewStillRequired": true
+}

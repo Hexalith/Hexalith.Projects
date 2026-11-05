@@ -550,7 +550,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
                 request = request with { TenantId = fixtureTenant, Events = request.Events.Select(item => item with
                     { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", fixtureTenant, StringComparison.Ordinal)
                         .Replace("Project " + id, fixtureTenant == ForeignTenant ? "Foreign project " + id : "Project " + id, StringComparison.Ordinal)
-                        .Replace("Safe description", fixtureTenant == ForeignTenant ? "Foreign secret description" : "Safe description", StringComparison.Ordinal)) }).ToArray() };
+                        .Replace("Safe description", fixtureTenant == ForeignTenant ? "Foreign private description" : "Safe description", StringComparison.Ordinal)) }).ToArray() };
                 var projected = await Projects.Services.GetRequiredService<ProjectReadProjectionHandler>().ProjectAsync(request, "synthetic-seed-" + fixtureTenant + "-" + id, TestContext.Current.CancellationToken).ConfigureAwait(false);
                 projected.Status.ShouldBe(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed);
                 var owner = Folders.Services.GetRequiredService<EventStoreFolderEffectivePermissionsReadModel>();

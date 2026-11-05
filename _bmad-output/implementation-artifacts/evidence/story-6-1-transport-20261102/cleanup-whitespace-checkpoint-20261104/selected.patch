@@ -1,0 +1,21 @@
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -872,6 +872,7 @@
+             ("Error: No such object: " + identity + "\n", True),
+             ("[]\nError response from daemon: No such container: " + identity + "\n", True),
+             ("error: no such object: " + identity + "\n", True),
++            ("\nerror: no such object: " + identity + "\n", True),
+             ("[]\nerror: no such object: " + identity + "\n", True),
+             ("error: no such object: " + container_id("foreign") + "\n", False),
+             ("error: no such object: " + identity[:12] + "\n", False),
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -1069,7 +1069,7 @@
+             # successful complete listing can prove that race; all other failures retain recovery.
+             missing = (isinstance(container_id, str) and re.fullmatch(r"[0-9a-f]{64}", container_id)
+                 and re.fullmatch(r"(?:\[\]\s*)?(?:Error(?: response from daemon)?: No such (?:object|container): |error: no such object: )"
+-                                 + re.escape(container_id) + r"\s*", getattr(failure, "command_output", "")))
++                                 + re.escape(container_id) + r"\s*", getattr(failure, "command_output", "").strip()))
+             try:
+                 absent = bool(missing) and container_id not in container_listing()
+             except BaseException:

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "docker",
+    "inspect",
+    "--format",
+    "{\"id\":{{json .Id}},\"owner\":{{json (index .Config.Labels \"hexalith.supported-reads\")}}}",
+    "b5a2b6cd258f75541d69021c3601a56b4419b19468f09e810fabf5393b5dbe43"
+  ],
+  "exactOwnedId": "b5a2b6cd258f75541d69021c3601a56b4419b19468f09e810fabf5393b5dbe43",
+  "outputSha256": "81551256f4324b5919bad023dafdd1f59e819060cb17359f80c0eb79425bb648",
+  "leadingWhitespace": true,
+  "currentExactParserMatches": false,
+  "outerWhitespaceStrippedParserMatches": true,
+  "freshCompleteListingConfirmsAbsent": true,
+  "mutation": false
+}

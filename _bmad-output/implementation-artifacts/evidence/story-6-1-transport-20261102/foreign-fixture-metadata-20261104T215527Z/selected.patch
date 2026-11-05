@@ -1,0 +1,22 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
+@@ -550,7 +550,7 @@
+                 request = request with { TenantId = fixtureTenant, Events = request.Events.Select(item => item with
+                     { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", fixtureTenant, StringComparison.Ordinal)
+                         .Replace("Project " + id, fixtureTenant == ForeignTenant ? "Foreign project " + id : "Project " + id, StringComparison.Ordinal)
+-                        .Replace("Safe description", fixtureTenant == ForeignTenant ? "Foreign secret description" : "Safe description", StringComparison.Ordinal)) }).ToArray() };
++                        .Replace("Safe description", fixtureTenant == ForeignTenant ? "Foreign private description" : "Safe description", StringComparison.Ordinal)) }).ToArray() };
+                 var projected = await Projects.Services.GetRequiredService<ProjectReadProjectionHandler>().ProjectAsync(request, "synthetic-seed-" + fixtureTenant + "-" + id, TestContext.Current.CancellationToken).ConfigureAwait(false);
+                 projected.Status.ShouldBe(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed);
+                 var owner = Folders.Services.GetRequiredService<EventStoreFolderEffectivePermissionsReadModel>();
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectAuthorityHttpTests.cs
+@@ -104,7 +104,7 @@
+         {
+             var foreign = before.Single(item => item.Key == Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(fixture.ForeignTenant, "project-a"));
+             System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign project project-a");
+-            System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign secret description");
++            System.Text.Encoding.UTF8.GetString(foreign.Bytes).ShouldContain("Foreign private description");
+         }
+         fixture.Routes.ChangeTarget = target;
+         fixture.Routes.ChangeQuery = query => fault switch

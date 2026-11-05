@@ -35,6 +35,7 @@ using Hexalith.EventStore.Server.DomainServices;
 using Hexalith.EventStore.Server.Pipeline;
 using Hexalith.EventStore.Server.Queries;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults;
 using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Folders;
 using Hexalith.Folders.Aggregates.Folder;
@@ -54,12 +55,15 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
 using Shouldly;
 using Xunit;
 
 /// <summary>Local bound-signing source lane: real gateway/SDK/owner HTTP and Dapr persistence; loopback replaces service discovery only.</summary>
 /// <param name="output">The native per-test output for closed transport observations.</param>
-public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
+[Collection("ProjectReadTelemetry")]
+public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
 {
     private const string Issuer = "story61-bound-signing";
     private const string Audience = "configured-read-audience";
@@ -164,20 +168,23 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
         string? http = Environment.GetEnvironmentVariable("STORY61_DAPR_HTTP_ENDPOINT"), grpc = Environment.GetEnvironmentVariable("STORY61_DAPR_GRPC_ENDPOINT");
         Assert.SkipUnless(http is not null && grpc is not null, "Requires the isolated Story 6.1 Dapr source lane.");
         string tenant = "gw-" + Guid.NewGuid().ToString("N");
+        string foreignTenant = tenant + "-foreign";
+        const string foreignOnlyProject = "foreign-only-project";
         using RSA ownerKey = RSA.Create(2048);
         var transport = new GatewayFixtureLocalRoutes();
         var heads = new GatewayFixtureOwnerHeads();
         DateTimeOffset now = DateTimeOffset.UtcNow;
-        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now, tenant).ConfigureAwait(true);
+        using ProjectReadDenialObserver denialObserver = new();
+        WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now, tenant, denialObserver).ConfigureAwait(true);
         await using var foldersLifetime = folders.ConfigureAwait(true);
         transport.Add("folders", folders);
-        WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport).ConfigureAwait(true);
+        WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport, denialObserver).ConfigureAwait(true);
         await using var conversationsLifetime = conversations.ConfigureAwait(true);
         transport.Add("conversations", conversations);
-        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now).ConfigureAwait(true);
+        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now, denialObserver).ConfigureAwait(true);
         await using var projectsLifetime = projects.ConfigureAwait(true);
         transport.Add("projects", projects);
-        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant).ConfigureAwait(true);
+        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant, denialObserver).ConfigureAwait(true);
         await using var gatewayLifetime = gateway.ConfigureAwait(true);
         transport.Add("eventstore", gateway);
         var tenantProjection = new ProjectTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
@@ -200,18 +207,18 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
             using HttpRequestMessage metadataRequest = dapr.CreateInvokeMethodRequest(domain, "admin/operational-index-metadata",
                 new AdminOperationalIndexMetadata.Request([domain]) { AppId = domain, ServiceVersion = "v1" });
             using HttpResponseMessage metadataResponse = await platform.SendAsync(metadataRequest, TestContext.Current.CancellationToken);
-            metadataResponse.StatusCode.ShouldBe(HttpStatusCode.OK, domain + ": " + await metadataResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            metadataResponse.StatusCode.ShouldBe(HttpStatusCode.OK, domain + ": OperationalIndexMetadata");
             AdminOperationalIndexMetadata.Response metadata = (await metadataResponse.Content.ReadFromJsonAsync<AdminOperationalIndexMetadata.Response>(TestContext.Current.CancellationToken))!;
             var declared = metadata.Domains.Single(item => item.Domain == domain);
             await dapr.SaveStateAsync("statestore", "admin:query-types:" + domain, declared.QueryTypes, cancellationToken: TestContext.Current.CancellationToken);
             if (domain == "folders") declared.QueryTypes.ShouldContain(FolderOwnerReadQuery.QueryType);
             if (domain == "projects")
             {
-                foreach (string id in new[] { "project-a", "project-b" })
+                foreach (var (targetTenant, id) in new[] { (tenant, "project-a"), (tenant, "project-b"), (foreignTenant, foreignOnlyProject) })
                 {
                     ProjectionRequest seed = SupportedProjectReadFixture.Request(id);
-                    seed = seed with { TenantId = tenant, Events = seed.Events.Select(item => item with
-                        { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", tenant, StringComparison.Ordinal)) }).ToArray() };
+                    seed = seed with { TenantId = targetTenant, Events = seed.Events.Select(item => item with
+                        { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", targetTenant, StringComparison.Ordinal)) }).ToArray() };
                     using HttpRequestMessage dispatch = dapr.CreateInvokeMethodRequest("projects", "project/v2", new ProjectionDispatchRequest(seed,
                         ["project-reads"], "gateway-seed-" + id, metadata.CatalogFingerprint!));
                     using HttpResponseMessage projected = await platform.SendAsync(dispatch, TestContext.Current.CancellationToken);
@@ -297,9 +304,68 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
             FolderAccessPrincipalKind.User, "actor-1", "read_metadata", "actor-1", "corr", "task", "revoke", "digest", 3, now), TestContext.Current.CancellationToken);
         heads.Set(tenant, "folder-project-a", 3);
         client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, projectUser: true));
-        string denied = await StatusAsync(client, Open(new GetProjectQuery()), HttpStatusCode.NotFound);
-        string absent = await StatusAsync(client, Open(new GetProjectQuery(), "absent"), HttpStatusCode.NotFound);
-        JsonDocument.Parse(denied).RootElement.GetProperty("detail").GetString().ShouldBe(JsonDocument.Parse(absent).RootElement.GetProperty("detail").GetString());
+        IReadModelStore projectsStore = projects.Services.GetRequiredService<IReadModelStore>();
+        (await projectsStore.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Detail(tenant, foreignOnlyProject), TestContext.Current.CancellationToken)).Value.ShouldBeNull();
+        ProjectReadModel foreignModel = (await projectsStore.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Detail(foreignTenant, foreignOnlyProject), TestContext.Current.CancellationToken)).Value!;
+        foreignModel.ShouldNotBeNull(); foreignModel.TenantId.ShouldBe(foreignTenant); foreignModel.ProjectId.ShouldBe(foreignOnlyProject);
+        ProjectReadIndex foreignIndex = (await projectsStore.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Index(foreignTenant), TestContext.Current.CancellationToken)).Value!;
+        foreignIndex.ShouldNotBeNull(); foreignIndex.TenantId.ShouldBe(foreignTenant); foreignIndex.ProjectIds.ShouldBe([foreignOnlyProject]);
+        string[] foreignKeys = [ProjectReadModelKeys.Detail(foreignTenant, foreignOnlyProject), ProjectReadModelKeys.Index(foreignTenant)];
+        async Task<(byte[] Bytes, string ETag)[]> ForeignStateAsync()
+        {
+            List<(byte[], string)> values = [];
+            foreach (string key in foreignKeys)
+            {
+                using HttpResponseMessage state = await stateClient.GetAsync("/v1.0/state/statestore/" + Uri.EscapeDataString(key), TestContext.Current.CancellationToken).ConfigureAwait(false);
+                state.EnsureSuccessStatusCode();
+                byte[] bytes = await state.Content.ReadAsByteArrayAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+                bytes.ShouldNotBeEmpty(); state.Headers.TryGetValues("ETag", out var versions).ShouldBeTrue();
+                string version = versions!.Single(); version.ShouldNotBeNullOrWhiteSpace();
+                values.Add((bytes, version));
+            }
+            return values.ToArray();
+        }
+        var foreignBefore = await ForeignStateAsync();
+        var denied = await ObserveDenialAsync(client, Open(new GetProjectQuery()), denialObserver);
+        var absent = await ObserveDenialAsync(client, Open(new GetProjectQuery(), "absent"), denialObserver);
+        var foreignOnly = await ObserveDenialAsync(client, Open(new GetProjectQuery(), foreignOnlyProject), denialObserver);
+        AssertSameDenialObservations(denied, absent);
+        AssertSameDenialObservations(absent, foreignOnly);
+        List<object> timingSamples = [];
+        for (int round = 0; round < 4; round++)
+        {
+            for (int offset = 0; offset < 3; offset++)
+            {
+                int selected = (round + offset) % 3;
+                string kind = selected == 0 ? "Denied" : selected == 1 ? "Absent" : "ForeignOnly";
+                string project = selected == 0 ? "project-a" : selected == 1 ? "absent" : foreignOnlyProject;
+                var observed = await ObserveDenialAsync(client, Open(new GetProjectQuery(), project), denialObserver);
+                AssertSameDenialObservations(absent, observed);
+                timingSamples.Add(new { Round = round, Kind = kind, observed.Duration, observed.ResponseDuration, Trace = observed.Trace.ToString() });
+            }
+        }
+        var foreignAfter = await ForeignStateAsync();
+        foreignAfter.Length.ShouldBe(foreignBefore.Length);
+        for (int i = 0; i < foreignBefore.Length; i++)
+        {
+            foreignAfter[i].Bytes.ShouldBe(foreignBefore[i].Bytes);
+            foreignAfter[i].ETag.ShouldBe(foreignBefore[i].ETag);
+        }
+        output.WriteLine("Actual real-owner denial observations: " + JsonSerializer.Serialize(new
+        {
+            DeniedTrace = denied.Trace.ToString(), AbsentTrace = absent.Trace.ToString(), ForeignOnlyTrace = foreignOnly.Trace.ToString(),
+            absent.Headers, absent.Logs, MetricCategory = absent.Metric, ServerActivity = absent.Activity,
+            ForeignStateByteAndETagComparisons = foreignBefore.Length,
+            BoundedInterleavedTimingSamples = timingSamples,
+            RequestWindows = denialObserver.CompletedRequestWindows(),
+            TimingScope = "Existing real-owner component fixture; no distributed, load or constant-time acceptance.",
+            MinimumGatewayDenialDurationMilliseconds = 50,
+            MinimumDenialDurationPolicyApplied = true,
+            ConstantTimeAcceptance = false,
+        }));
         (await ReadAsync<ProjectListPage>(client, List(new()))).Items.Single().ProjectId.ShouldBe("project-b");
         heads.Outage = true;
         ProjectListPage outage = await ReadAsync<ProjectListPage>(client, List(new()));
@@ -341,7 +407,8 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
         await conversations.StopAsync(TestContext.Current.CancellationToken); await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
     }
 
-    private static WebApplicationBuilder Builder(string workload, string http, string grpc, GatewayFixtureLocalRoutes routes)
+    private static WebApplicationBuilder Builder(string workload, string http, string grpc, GatewayFixtureLocalRoutes routes,
+        ProjectReadDenialObserver? observer = null)
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -353,15 +420,22 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
             ["Authentication:WorkloadIssuer:Workload"] = workload,
         });
         builder.Logging.ClearProviders().AddConsole().SetMinimumLevel(LogLevel.Error);
+        builder.ConfigureOpenTelemetry();
+        if (observer is not null)
+        {
+            builder.Logging.AddProvider(new ProjectReadDenialLogProvider(observer));
+            builder.Logging.AddFilter<ProjectReadDenialLogProvider>(static (_, _) => true);
+        }
         builder.Services.AddSingleton(_ => new DaprClientBuilder().UseHttpEndpoint(http).UseGrpcEndpoint(grpc).Build());
         builder.Services.AddHttpContextAccessor(); builder.Services.AddAuthorization(); builder.Services.AddEventStoreWorkloadAssertionIssuer();
         builder.Services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
         return builder;
     }
 
-    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now)
+    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now,
+        ProjectReadDenialObserver? observer = null)
     {
-        var builder = Builder("projects", http, grpc, routes);
+        var builder = Builder("projects", http, grpc, routes, observer);
         builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
         builder.Services.AddProjectsServer(); builder.Services.AddProjectsServerRuntimeInfrastructure();
         builder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(now.AddSeconds(1)));
@@ -370,9 +444,10 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant)
+    private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant,
+        ProjectReadDenialObserver? observer = null)
     {
-        var builder = Builder("folders", http, grpc, routes);
+        var builder = Builder("folders", http, grpc, routes, observer);
         builder.Services.AddFoldersProductionAuthentication(builder.Configuration, builder.Environment);
         builder.Services.AddFoldersServer(); builder.Services.AddEventStoreReadModelStore();
         GatewayFixtureCatalogComposition.AddFolderReceiver(builder, tenant, includeAdvisoryQueries: true);
@@ -394,9 +469,10 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static async Task<WebApplication> StartConversationsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes)
+    private static async Task<WebApplication> StartConversationsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes,
+        ProjectReadDenialObserver? observer = null)
     {
-        var builder = Builder("conversations", http, grpc, routes);
+        var builder = Builder("conversations", http, grpc, routes, observer);
         builder.Services.AddEventStoreReadModelStore();
         builder.Services.AddSingleton<GatewayFixtureConversationTenants>();
         builder.Services.AddSingleton<ITenantProjectionStore>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
@@ -416,9 +492,15 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant)
+    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant,
+        ProjectReadDenialObserver? denialObserver = null)
     {
-        var builder = Builder("eventstore", http, grpc, routes);
+        var builder = Builder("eventstore", http, grpc, routes, denialObserver);
+        if (denialObserver is not null)
+        {
+            builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing.AddSource("*")
+                .AddProcessor(new SimpleActivityExportProcessor(denialObserver.TraceExporter)));
+        }
         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
          builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType + "," + GetConversationAdvisoryMetadataQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:0"] = ListProjectsQuery.QueryType;
@@ -455,7 +537,13 @@ public sealed class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
             .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
             .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
-        WebApplication app = builder.Build(); app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+        WebApplication app = builder.Build();
+        if (denialObserver is not null)
+        {
+            app.Use(async (context, next) => { denialObserver.BindGatewayRequest(context); await next(context).ConfigureAwait(false); });
+            app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
+        }
+        app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 

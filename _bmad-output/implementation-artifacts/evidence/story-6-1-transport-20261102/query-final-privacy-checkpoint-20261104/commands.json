@@ -1,0 +1,178 @@
+{
+  "createdUtc": "2026-11-04T18:43:25.081446+00:00",
+  "workspace": "/tmp/story61-isolated-20261103-r5tqvlm3/projects",
+  "baselineSourceManifestSha256": "9daa209da26a2577401ade828ba69a5eadae03176fe7faae25ad796570f8410a",
+  "sourceManifestSha256": "045be45a8105a12286ba44de95013c2776d6196a7af43e51116b5d02a5268a03",
+  "inputCount": 16683,
+  "changedFiles": [
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadDenialObserver.cs",
+      "beforeSha256": "8f28e25ba9e8a275d60a7c90381e3b4e08f9c47776ed9126792520e4e9ecbe8d",
+      "afterSha256": "68e50e53d6a7f3c50c7bfdb1a0095c5dc073981f2c78307f7d399b8c2fa08ff3"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+      "beforeSha256": "0278182bd4b102d4c5f6961eb7aebe188bb3a66ef568396cf22c6584a7ed840a",
+      "afterSha256": "2955442fe8a3d05e575eb09b11ce6f2d74545b5cf104cbc2871b93d542929da2"
+    },
+    {
+      "path": "tests/tools/test_supported_project_reads_launcher.py",
+      "beforeSha256": "513311796b6f789231948c5c16381e559521b3267b1181646f6a428281224395",
+      "afterSha256": "ef3827cfedb98f28c18c840de3355a551e2baba8e5cf3fd883ffbf8e03953ea2"
+    },
+    {
+      "path": "tools/qualification/run_supported_project_reads.py",
+      "beforeSha256": "4d716e6270b4a4d69fa65720d6a339c05e9a1ff19e49f40fd5bf9129bcbade96",
+      "afterSha256": "f090f04969061a55acc42904be3746d580b300935648fc85af9813635651fa02"
+    }
+  ],
+  "onlySelectedInputsChanged": true,
+  "sdkServiceSourceUnchanged": true,
+  "selectedPatchSha256": "dbf14c2f3fe25658f05f484ac64439759cbbf9564640695f448dcd563e456ff1",
+  "patchReproducesAllSelectedBytes": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/story61-query-privacy-build.py",
+        "dotnet",
+        "build",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1"
+      ],
+      "exitCode": 0,
+      "artifact": "query-observer-correlation-build.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/tmp/story61-isolated-20261103-r5tqvlm3/query-observer-correlation-root.xml"
+      ],
+      "exitCode": 0,
+      "artifact": "query-observer-correlation-root.xml"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests/tools/test_supported_project_reads_launcher.py"
+      ],
+      "exitCode": 0,
+      "artifact": "query-final-privacy-controls.log",
+      "total": 117,
+      "passed": 117
+    }
+  ],
+  "nativeResults": {
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "errors": "0",
+    "skipped": "0",
+    "not-run": "0",
+    "time": "1.231"
+  },
+  "assemblySha256": "fbc52261c190b1102928cf2df49c9f1b28efe7ebb9161918674594eb8f57c40a",
+  "sourceMappingEnvironment": {
+    "status": "prepared",
+    "outcome": {
+      "exitCode": "Success",
+      "phase": "None",
+      "category": "None",
+      "ruleId": null
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 25dde45c71bf3de89577612660afc43494a6a951 has no local v<SemVer> release tag.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds' is staged d2a430c988462a634674a69c562ea4afd1f06ef4, checked out d2a430c988462a634674a69c562ea4afd1f06ef4, dirty; Platform 25dde45c71bf3de89577612660afc43494a6a951 pins 4456dfb7869a307d009038c6b8523a9b6c0a732e.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261104165739 is outside Platform range [4.43.0, 5.0.0-0) at '/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/tmp/story61-isolated-20261103-r5tqvlm3/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ],
+    "buildPreparation": {
+      "workspace": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping",
+      "mode": "source",
+      "mappingHash": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story61-query-privacy-mapping-nnf6bfie/source-mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "de1978f3435ece341c2eff46975b16e568546285d0c3ae928ccea2f5afd0cf7b",
+        "Configuration": "Debug"
+      }
+    }
+  },
+  "checks": [
+    {
+      "repository": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "privacyAcceptance": false,
+  "timingToleranceAccepted": false,
+  "sharedSourceChanged": false,
+  "distributedRuntimeStarted": false,
+  "scope": [
+    "CorrelationId completion accepts only an actual string, never renders arbitrary provider state; explicit throwing-key counterfeit boundary remains visible and cannot complete/normalize a denial.",
+    "Existing bounded console peer receipt retains only finite actual native OTEL_SERVICE_NAME and service.instance.id fields for positive persisted dashboard binding. Missing/foreign/ambiguous/invalid identity fails closed; unrelated environment stays private.",
+    "Current source must run wholly fresh final coordinator/full regressions; targeted diagnostic cannot supply an aggregate provider."
+  ],
+  "limits": [
+    "SDK policy cohort unchanged from prior audited checkpoint; positive old64 SDK diagnostics remain separately source-scoped.",
+    "Native console/trace/metric evidence at final source and numeric timing policy remain pending."
+  ]
+}

@@ -1296,3 +1296,11 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Restore full source Server.Tests build compatibility between the current Conversations and EventStore revisions.
   evidence: The mapped Debug `dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -m:1 -p:NuGetAudit=false` fails with 8 Conversations.Server errors for missing EventStore `Checkpointed`, `ITenantProjectionSnapshotStore`, and `TenantProjectionSnapshot`; see `evidence/story-6-1-20261102/server-tests-source-build.log`. The fallback test build uses prebuilt sibling assemblies and cannot establish full source acceptance. No sibling edits were made in Story 6.1.
+
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
+  summary: Unverified medium risk: a noncooperative Organization permission source can hold no-catchup cancellation/drain after a Folder failure.
+  evidence: Review BR-08 identifies the new two-task drain with WaitForCatchUp=false; the supported lane uses bounded Dapr sources and enabled500ms catch-up. Settle with a concrete supported noncooperative source/caller reproduction and its lease/ownership contract before changing cleanup or adding a timeout.
+
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
+  summary: Bound the synthetic issuer TLS handshake so an idle TCP peer cannot block owned launcher shutdown.
+  evidence: Review BR-09 reproduced the hang; baseline47a1ffd02cb3e1cde80bd7697ac1b46fdefda8cc already has the same HTTPServer/listening-socket TLS wrapping/server.shutdown sequence. This is pre-existing lifecycle work, not a new story6.1 regression.

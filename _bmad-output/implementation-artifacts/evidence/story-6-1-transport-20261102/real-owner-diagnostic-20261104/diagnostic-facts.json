@@ -1,0 +1,677 @@
+{
+  "diagnosticOnly": true,
+  "qualificationIntentionallyRefused": true,
+  "sourceManifestSha256": "9daa209da26a2577401ade828ba69a5eadae03176fe7faae25ad796570f8410a",
+  "sourceInputCount": 16683,
+  "featureNativeMatrixInvoked": false,
+  "realOwnerNativeMethodInvoked": true,
+  "continuousWatchersStarted": false,
+  "commands": [
+    [
+      "dotnet",
+      "build",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--artifacts-path",
+      "/tmp/supported-project-reads-private-7lqxpgiu/artifacts"
+    ],
+    [
+      "dotnet",
+      "/tmp/supported-project-reads-private-7lqxpgiu/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/real-owner-diagnostic-20261104/runtime/server.xml"
+    ],
+    [
+      "aspire",
+      "logs",
+      "eventstore-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "folders-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "folders-workers-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "projects-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "projects-workers-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "tenants-dapr-cli",
+      "--apphost",
+      "/tmp/story61-isolated-20261103-r5tqvlm3/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--timestamps",
+      "--include-hidden",
+      "--non-interactive"
+    ]
+  ],
+  "nativeConsoleCaptured": true,
+  "strictDiscovery": {
+    "resolver": "sqlite",
+    "version": "v1",
+    "alphaTestInfrastructureOnly": true,
+    "daprdSha256": [
+      "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+    ],
+    "configurationSha256": {
+      "eventstore": "ac3c16c1c05f82bd44842fd7e57f174c16f839516c587573f4b67c1c7dd0d014",
+      "folders": "18a634f922d2f0e1f4dd5fd25c25fc5da4db009c0000ced12784075feed7a32e",
+      "folders-workers": "11415b133145ad122c978f9ed29fc7713afc5426682a65ffb3527124856d3b64",
+      "projects": "6b04a2a844fc8ad700452cd9aa44f8e3867e0c4ba2bae0250d9c802b0a1e0ce6",
+      "projects-workers": "11415b133145ad122c978f9ed29fc7713afc5426682a65ffb3527124856d3b64",
+      "tenants": "f230b8986a31003167558d4d2ffb9c2a4bc1237fe5208b7c8af03a1752e7d564"
+    },
+    "registryIdentitySha256": "eb117a362624aab5c5ad350f7799408c5d8641b31eafc5224cbf85cf3c934a63",
+    "ownedSidecars": [
+      {
+        "appId": "eventstore",
+        "pid": 98323,
+        "namespaceVerified": true,
+        "startTicks": "1013867",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders",
+        "pid": 98650,
+        "namespaceVerified": true,
+        "startTicks": "1013935",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "folders-workers",
+        "pid": 98741,
+        "namespaceVerified": true,
+        "startTicks": "1013957",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects",
+        "pid": 98446,
+        "namespaceVerified": true,
+        "startTicks": "1013891",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "projects-workers",
+        "pid": 98537,
+        "namespaceVerified": true,
+        "startTicks": "1013913",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      },
+      {
+        "appId": "tenants",
+        "pid": 98108,
+        "namespaceVerified": true,
+        "startTicks": "1013844",
+        "registryAddressVerified": true,
+        "mtlsIdentityVerified": true
+      }
+    ],
+    "observationsRequired": 1
+  },
+  "originalNativeSelectionIntentionallyNotInvoked": [
+    "dotnet",
+    "/tmp/supported-project-reads-private-7lqxpgiu/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+    "-method",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.MainReadsUseActualPersistedOwnersAsync",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/real-owner-diagnostic-20261104/runtime/distributed.xml"
+  ],
+  "serverAssemblySha256": "78f3f61b99e13b97de5a6befd75890f4c8374835acce114c563b6e18200a448e",
+  "nativeResult": [
+    {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "2.574"
+    }
+  ],
+  "requestWindows": [
+    {
+      "trace": "0f8169bd2f1141e263888a5f44e06894",
+      "kind": "Denied",
+      "startUtc": "2026-11-04T18:38:47.136337+00:00",
+      "endUtc": "2026-11-04T18:38:47.160739+00:00"
+    },
+    {
+      "trace": "1dfaef837d1d2fe49027adc681b5fff7",
+      "kind": "Absent",
+      "startUtc": "2026-11-04T18:38:47.160952+00:00",
+      "endUtc": "2026-11-04T18:38:47.166158+00:00"
+    },
+    {
+      "trace": "03634297bbab8b8bd89186f20c07cba3",
+      "kind": "ForeignOnly",
+      "startUtc": "2026-11-04T18:38:47.166182+00:00",
+      "endUtc": "2026-11-04T18:38:47.171043+00:00"
+    },
+    {
+      "trace": "17a4568f19f7dd4d854fa11a24dfc4d9",
+      "kind": "Denied",
+      "startUtc": "2026-11-04T18:38:47.173033+00:00",
+      "endUtc": "2026-11-04T18:38:47.185417+00:00"
+    },
+    {
+      "trace": "46b1ab7e216e9385503b7add0a84be40",
+      "kind": "Absent",
+      "startUtc": "2026-11-04T18:38:47.185729+00:00",
+      "endUtc": "2026-11-04T18:38:47.190629+00:00"
+    },
+    {
+      "trace": "bba5f3937cd96176a2d6a08be0eedbc1",
+      "kind": "ForeignOnly",
+      "startUtc": "2026-11-04T18:38:47.190770+00:00",
+      "endUtc": "2026-11-04T18:38:47.226846+00:00"
+    },
+    {
+      "trace": "d5c6aa8fefa885a81a798a4b6d8dfcec",
+      "kind": "Absent",
+      "startUtc": "2026-11-04T18:38:47.226978+00:00",
+      "endUtc": "2026-11-04T18:38:47.232623+00:00"
+    },
+    {
+      "trace": "28d21ab2855103ee9c8e59704223c42e",
+      "kind": "ForeignOnly",
+      "startUtc": "2026-11-04T18:38:47.232750+00:00",
+      "endUtc": "2026-11-04T18:38:47.237598+00:00"
+    },
+    {
+      "trace": "f290387f3ca90bd262924083d552c72a",
+      "kind": "Denied",
+      "startUtc": "2026-11-04T18:38:47.237695+00:00",
+      "endUtc": "2026-11-04T18:38:47.249406+00:00"
+    },
+    {
+      "trace": "32a5ca494eb6d08e133d2fa5ba140165",
+      "kind": "ForeignOnly",
+      "startUtc": "2026-11-04T18:38:47.249505+00:00",
+      "endUtc": "2026-11-04T18:38:47.254713+00:00"
+    },
+    {
+      "trace": "98656c57e0fb89c2be97de8001cff522",
+      "kind": "Denied",
+      "startUtc": "2026-11-04T18:38:47.254824+00:00",
+      "endUtc": "2026-11-04T18:38:47.268988+00:00"
+    },
+    {
+      "trace": "24c45c327987f100cf5e1b5626025376",
+      "kind": "Absent",
+      "startUtc": "2026-11-04T18:38:47.269103+00:00",
+      "endUtc": "2026-11-04T18:38:47.274333+00:00"
+    },
+    {
+      "trace": "6a66296a0e9cbd25d7e80c6b16ed4b22",
+      "kind": "Denied",
+      "startUtc": "2026-11-04T18:38:47.274452+00:00",
+      "endUtc": "2026-11-04T18:38:47.286339+00:00"
+    },
+    {
+      "trace": "37d1e94486670a388e526425efeb7da3",
+      "kind": "Absent",
+      "startUtc": "2026-11-04T18:38:47.286475+00:00",
+      "endUtc": "2026-11-04T18:38:47.291265+00:00"
+    },
+    {
+      "trace": "b928486fe06a81d9db3fdcf1baf1da04",
+      "kind": "ForeignOnly",
+      "startUtc": "2026-11-04T18:38:47.291365+00:00",
+      "endUtc": "2026-11-04T18:38:47.296193+00:00"
+    }
+  ],
+  "nativeConsoleEvidence": {
+    "version": 1,
+    "directory": "/tmp/supported-project-reads-native-console-hejt9hgt",
+    "directoryIdentity": {
+      "device": 2096,
+      "inode": 107068
+    },
+    "rawRetention": "owner-private-native-console-only",
+    "maxBytesPerPeer": 1048576,
+    "sourceManifestSha256": "9daa209da26a2577401ade828ba69a5eadae03176fe7faae25ad796570f8410a",
+    "nativeServerXmlSha256": "74061e7e951e8aaf84c4de785047b83999af591a997d41b0d111825938a3584c",
+    "appHostSession": {
+      "configurationSha256": "adf36bda526bbe1303e2c5672b63cf06a4d151e81d8d059a96aa6edfb8e3b5a0",
+      "configurationPathSha256": "b32576175d671853ad53af0553f69881c833790f8446252055f8e38e122b4156",
+      "appHostPid": 95952,
+      "appHostStartTicks": "1013297",
+      "cliPid": 74633,
+      "cliStartTicks": "1004591"
+    },
+    "requestWindows": [
+      {
+        "trace": "0f8169bd2f1141e263888a5f44e06894",
+        "kind": "Denied",
+        "startUtc": "2026-11-04T18:38:47.136337+00:00",
+        "endUtc": "2026-11-04T18:38:47.160739+00:00"
+      },
+      {
+        "trace": "1dfaef837d1d2fe49027adc681b5fff7",
+        "kind": "Absent",
+        "startUtc": "2026-11-04T18:38:47.160952+00:00",
+        "endUtc": "2026-11-04T18:38:47.166158+00:00"
+      },
+      {
+        "trace": "03634297bbab8b8bd89186f20c07cba3",
+        "kind": "ForeignOnly",
+        "startUtc": "2026-11-04T18:38:47.166182+00:00",
+        "endUtc": "2026-11-04T18:38:47.171043+00:00"
+      },
+      {
+        "trace": "17a4568f19f7dd4d854fa11a24dfc4d9",
+        "kind": "Denied",
+        "startUtc": "2026-11-04T18:38:47.173033+00:00",
+        "endUtc": "2026-11-04T18:38:47.185417+00:00"
+      },
+      {
+        "trace": "46b1ab7e216e9385503b7add0a84be40",
+        "kind": "Absent",
+        "startUtc": "2026-11-04T18:38:47.185729+00:00",
+        "endUtc": "2026-11-04T18:38:47.190629+00:00"
+      },
+      {
+        "trace": "bba5f3937cd96176a2d6a08be0eedbc1",
+        "kind": "ForeignOnly",
+        "startUtc": "2026-11-04T18:38:47.190770+00:00",
+        "endUtc": "2026-11-04T18:38:47.226846+00:00"
+      },
+      {
+        "trace": "d5c6aa8fefa885a81a798a4b6d8dfcec",
+        "kind": "Absent",
+        "startUtc": "2026-11-04T18:38:47.226978+00:00",
+        "endUtc": "2026-11-04T18:38:47.232623+00:00"
+      },
+      {
+        "trace": "28d21ab2855103ee9c8e59704223c42e",
+        "kind": "ForeignOnly",
+        "startUtc": "2026-11-04T18:38:47.232750+00:00",
+        "endUtc": "2026-11-04T18:38:47.237598+00:00"
+      },
+      {
+        "trace": "f290387f3ca90bd262924083d552c72a",
+        "kind": "Denied",
+        "startUtc": "2026-11-04T18:38:47.237695+00:00",
+        "endUtc": "2026-11-04T18:38:47.249406+00:00"
+      },
+      {
+        "trace": "32a5ca494eb6d08e133d2fa5ba140165",
+        "kind": "ForeignOnly",
+        "startUtc": "2026-11-04T18:38:47.249505+00:00",
+        "endUtc": "2026-11-04T18:38:47.254713+00:00"
+      },
+      {
+        "trace": "98656c57e0fb89c2be97de8001cff522",
+        "kind": "Denied",
+        "startUtc": "2026-11-04T18:38:47.254824+00:00",
+        "endUtc": "2026-11-04T18:38:47.268988+00:00"
+      },
+      {
+        "trace": "24c45c327987f100cf5e1b5626025376",
+        "kind": "Absent",
+        "startUtc": "2026-11-04T18:38:47.269103+00:00",
+        "endUtc": "2026-11-04T18:38:47.274333+00:00"
+      },
+      {
+        "trace": "6a66296a0e9cbd25d7e80c6b16ed4b22",
+        "kind": "Denied",
+        "startUtc": "2026-11-04T18:38:47.274452+00:00",
+        "endUtc": "2026-11-04T18:38:47.286339+00:00"
+      },
+      {
+        "trace": "37d1e94486670a388e526425efeb7da3",
+        "kind": "Absent",
+        "startUtc": "2026-11-04T18:38:47.286475+00:00",
+        "endUtc": "2026-11-04T18:38:47.291265+00:00"
+      },
+      {
+        "trace": "b928486fe06a81d9db3fdcf1baf1da04",
+        "kind": "ForeignOnly",
+        "startUtc": "2026-11-04T18:38:47.291365+00:00",
+        "endUtc": "2026-11-04T18:38:47.296193+00:00"
+      }
+    ],
+    "configurationSha256": {
+      "eventstore": "ac3c16c1c05f82bd44842fd7e57f174c16f839516c587573f4b67c1c7dd0d014",
+      "folders": "18a634f922d2f0e1f4dd5fd25c25fc5da4db009c0000ced12784075feed7a32e",
+      "folders-workers": "11415b133145ad122c978f9ed29fc7713afc5426682a65ffb3527124856d3b64",
+      "projects": "6b04a2a844fc8ad700452cd9aa44f8e3867e0c4ba2bae0250d9c802b0a1e0ce6",
+      "projects-workers": "11415b133145ad122c978f9ed29fc7713afc5426682a65ffb3527124856d3b64",
+      "tenants": "f230b8986a31003167558d4d2ffb9c2a4bc1237fe5208b7c8af03a1752e7d564"
+    },
+    "peers": {
+      "tenants": {
+        "pid": 98108,
+        "startTicks": "1013844",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      },
+      "eventstore": {
+        "pid": 98323,
+        "startTicks": "1013867",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      },
+      "projects": {
+        "pid": 98446,
+        "startTicks": "1013891",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      },
+      "projects-workers": {
+        "pid": 98537,
+        "startTicks": "1013913",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      },
+      "folders": {
+        "pid": 98650,
+        "startTicks": "1013935",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      },
+      "folders-workers": {
+        "pid": 98741,
+        "startTicks": "1013957",
+        "binarySha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+      }
+    },
+    "captures": {
+      "eventstore": {
+        "identity": {
+          "device": 2096,
+          "inode": 107070,
+          "sha256": "069909c59729ef36e4cf663b4c0fafab725b739b0dcadedd17f2c2a198d37503"
+        },
+        "bytes": 52471,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:50.640440+00:00",
+        "captureEndUtc": "2026-11-04T18:38:51.092489+00:00",
+        "processStartUtc": "2026-11-04T18:36:53.670000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 180,
+        "earliestUtc": "2026-11-04T18:36:49.801000+00:00",
+        "latestUtc": "2026-11-04T18:37:01.342000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      },
+      "folders": {
+        "identity": {
+          "device": 2096,
+          "inode": 107072,
+          "sha256": "625eecf058bac5991ea4384db98dc8febcb3f8c58e4f5515a21a9711374649a6"
+        },
+        "bytes": 47482,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:51.098338+00:00",
+        "captureEndUtc": "2026-11-04T18:38:51.524718+00:00",
+        "processStartUtc": "2026-11-04T18:36:54.350000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 165,
+        "earliestUtc": "2026-11-04T18:36:49.804000+00:00",
+        "latestUtc": "2026-11-04T18:36:59.675000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      },
+      "folders-workers": {
+        "identity": {
+          "device": 2096,
+          "inode": 107074,
+          "sha256": "960933b6cb1b9d0d61cb3ad0bb7f2d930bec32448ce9873eb77513c4f9369ef3"
+        },
+        "bytes": 48145,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:51.529519+00:00",
+        "captureEndUtc": "2026-11-04T18:38:51.953109+00:00",
+        "processStartUtc": "2026-11-04T18:36:54.570000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 159,
+        "earliestUtc": "2026-11-04T18:36:49.804000+00:00",
+        "latestUtc": "2026-11-04T18:36:59.885000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      },
+      "projects": {
+        "identity": {
+          "device": 2096,
+          "inode": 107076,
+          "sha256": "038e6a114d2141fde7726cd0d99f783626a6ba2b2dcafde33c47abfcf9591115"
+        },
+        "bytes": 53890,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:51.957652+00:00",
+        "captureEndUtc": "2026-11-04T18:38:52.376828+00:00",
+        "processStartUtc": "2026-11-04T18:36:53.910000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 193,
+        "earliestUtc": "2026-11-04T18:36:49.803000+00:00",
+        "latestUtc": "2026-11-04T18:36:59.265000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      },
+      "projects-workers": {
+        "identity": {
+          "device": 2096,
+          "inode": 107078,
+          "sha256": "559e1b21471b8479d35cc256b3290de56593d1c908b90371d76d918106d29815"
+        },
+        "bytes": 48787,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:52.382145+00:00",
+        "captureEndUtc": "2026-11-04T18:38:52.808026+00:00",
+        "processStartUtc": "2026-11-04T18:36:54.130000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 160,
+        "earliestUtc": "2026-11-04T18:36:49.804000+00:00",
+        "latestUtc": "2026-11-04T18:36:59.481000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      },
+      "tenants": {
+        "identity": {
+          "device": 2096,
+          "inode": 107080,
+          "sha256": "d31e55108ee8fecbf6232ac8bb59652a21c1689dbf00c2760b4d81177df5b715"
+        },
+        "bytes": 47720,
+        "truncated": false,
+        "captureStartUtc": "2026-11-04T18:38:52.812804+00:00",
+        "captureEndUtc": "2026-11-04T18:38:53.238367+00:00",
+        "processStartUtc": "2026-11-04T18:36:53.440000+00:00",
+        "coverageVerified": true,
+        "allRetainedRowsRequested": true,
+        "cliTailApplied": false,
+        "cliSequenceAndDroppedCountAvailable": false,
+        "maxBacklogRows": 10000,
+        "rows": 163,
+        "earliestUtc": "2026-11-04T18:36:49.803000+00:00",
+        "latestUtc": "2026-11-04T18:36:59.107000+00:00",
+        "retainedCurrentProcessStartup": true,
+        "windowCounts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "rowsFromFirstObservation": 0
+      }
+    },
+    "coverageVerified": true,
+    "privacyEqualityAccepted": false,
+    "limits": "CLI omits sequence/dropped-row metadata; startup retention and below-bound snapshots qualify only the observed UTC console interval. No causal attribution or fault/load equivalence is inferred.",
+    "ownershipVerifiedBeforeAndAfter": true
+  },
+  "testAssemblyUnchanged": true,
+  "completedUtc": "2026-11-04T18:39:07.588750+00:00",
+  "sourceUnchanged": true
+}

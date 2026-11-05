@@ -247,7 +247,8 @@ public sealed class ProjectReadQueryExecutor(
             && binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;
 
     private static bool IsQuarantined(ProjectDetailItem detail)
-        => detail.Lifecycle == ProjectLifecycle.Active && detail.ProjectFolder?.FolderId is null;
+        => detail.Lifecycle == ProjectLifecycle.Active
+            && detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: not null };
 
     private async Task<ProjectAuthorizationResult?> AuthorizeProjectAsync(QueryEnvelope query, ProjectReadModel model, CancellationToken cancellationToken)
     {

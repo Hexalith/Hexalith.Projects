@@ -1,0 +1,77 @@
+{
+  "observedUtc": "2026-11-04T21:55:57.270745+00:00",
+  "result": "failed",
+  "sourceManifestSha256": "54652844b78761b83c41642cb3c2503604588ddeb9cb4d9da9bc5c0adabe2d02",
+  "nativeMainResults": {
+    "distributed": [
+      {
+        "total": "1",
+        "passed": "1",
+        "failed": "0",
+        "skipped": "0",
+        "errors": "0",
+        "time": "279.853"
+      }
+    ],
+    "integration": [
+      {
+        "total": "196",
+        "passed": "196",
+        "failed": "0",
+        "skipped": "0",
+        "errors": "0",
+        "time": "2.778"
+      }
+    ],
+    "server": [
+      {
+        "total": "1368",
+        "passed": "1323",
+        "failed": "45",
+        "skipped": "0",
+        "errors": "0",
+        "time": "41.262"
+      }
+    ]
+  },
+  "duplicatePassed": true,
+  "fullReplayPassed": true,
+  "invalidForeignMetadataSeedFailures": 44,
+  "syntheticCleanupFailureDuringFailedStartup": 1,
+  "failedMethods": {
+    "CorrectlySignedWrongRecipientAssertionsAreRejectedByBothReceivers": 2,
+    "InspectionNeedsDistinctPermissionAndDurableMetadataOnlyAuditIncludingUnchangedRetries": 2,
+    "MissingEnrollmentFailsClosedWithoutAnUnboundRetry": 8,
+    "RealFolderAuthorityPreservesFilteringSafeDenialAndHonestDegradation": 4,
+    "BrokerObserverRecordsMissingAndMalformedProfileBeforeRealRejection": 2,
+    "ReceiverObserverRecordsStrippedAndMalformedAssertionsBeforeRealRejection": 4,
+    "DelegatedChatbotListsAndOpensOnlyCurrentFolderAuthorizedProjects": 1,
+    "PublicUserIssuerCannotAuthenticateAtDedicatedWorkloadReceivers": 2,
+    "RevokingLoadedGrantStopsNewIssuanceWhileAnExistingJwtRetainsItsBoundedLifetime": 1,
+    "ReceiverAcceptsOnlyTheConfiguredExpiryAndClockSkewWindow": 4,
+    "ExceptionalTeardownStillAttemptsEveryHostAndDisposesPrivateMaterial": 1,
+    "RealBrokerAndBothRs256ReceiversAuthorizeListOpenAndContinuationWithoutDomainWrites": 1,
+    "AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata": 10,
+    "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites": 3
+  },
+  "cause": "Existing fixture uses Foreign secret description, violating the canonical safe-metadata blocklist; retained stricter projection validation correctly rejects it. Correct the distinctive fixture metadata and its matching assertion.",
+  "nativeConsoleCaptured": false,
+  "allTwelveOwnedContainersAbsent": true,
+  "allOwnedAppHostsAndCurrentSidecarsAbsent": true,
+  "allExactCleanupPrivateRemovalExternalPreservation": true,
+  "cooperativeAdmissionReleasedWithOriginalMetadata": true,
+  "originalArtifactMarkerAudit": {
+    "server.xml": {
+      "sha256": "c49e7d27f4f275efc724d2dab9cf4e0b8ecfb53c6c9fa70c65977d20db1a4a6a",
+      "compactJwtMarkers": 0,
+      "privatePemMarkers": 0
+    },
+    "server.log": {
+      "sha256": "050ceacadc73ac408f2693464c3b01a7de60e78f24c123e45dc5f4c1792edf3b",
+      "compactJwtMarkers": 0,
+      "privatePemMarkers": 0
+    }
+  },
+  "originalReceiptsUnmodified": true,
+  "qualifiesAggregate": false
+}

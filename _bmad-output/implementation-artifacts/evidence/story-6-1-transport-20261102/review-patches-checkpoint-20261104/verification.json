@@ -1,0 +1,102 @@
+{
+  "selectedFiles": {
+    "src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs": "2e734520e96474e33e604411de0165347d5e3a46535e6383b6512158423d631e",
+    "src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs": "272ff8b696e19c948f01e10af8c534e6f0cb2713731804d0bff0eecc4cf76761",
+    "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs": "407f87783f7fcfd4780a3a12f31b8c5a21e9f828767dbdaf9b2110c6ffe9ea4a",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs": "e899d136152815c0dd4ca61ccf9fa50de437375989750fe8ad6dd6c1b4cf8be1",
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectReadQueryCompatibilityTests.cs": "ce321b108f0b2a2f64d3062b93951d24be886e9c99fec07e2fedb32891823997",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectProjectionTests.cs": "7ff51bdd5e808814a189f062d90c0b9ab2b2d63f424cfa4e524c0971e7a03b7a",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.Quarantine.cs": "3d525333a09080919da5f817bb7940ffbcb32d663e19961b30a509202a2f484b",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.DeferredVisibility.cs": "67e5fd0ec1d1a3244026ccc4c3244f02a4d3888011de90a4931190130b952aa6",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "40d85380aa44c3bb870432f882a3aadd24ea3804a5b3ebaf8dad632b16166dc0",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs": "8bea9c091be4253f4112bca137c94ee2e1c17d0c3d43e01b48f1be3b6158ae12",
+    "tools/qualification/run_supported_project_reads.py": "41bb075efeaece903a7b3ce5e1bf081ba0b9bb525f7db9fd3d6a2498ffedb6a1",
+    "tests/tools/test_supported_project_reads_launcher.py": "38b2e54962c6eb76690db9c059193ef8fa29aa1228e04ab45d8e9e35076232ac",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/NativeSourceReadDiagnostics.cs": "fe69504c1a5fd649171f5d646085bc8574d756ff2851b285594b1d67154c38da",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": "fd40a48d8a14acb8e393e4419d5a21df538c2d01ad21725105f315ebde8e146d",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/NativeSourceReadDiagnosticsTests.cs": "e31684583b844b2afb8e80adaedfdde277f567398ae3c4c14392b8ca3c055379"
+  },
+  "sourceManifestCount": 16697,
+  "sourceManifestSha256": "341553fde9cb04f0d118176a3482cd851832b125932ca7cb9c3deb6972271890",
+  "tests": {
+    "Contracts": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "3",
+        "skipped": "0",
+        "time": "0.109",
+        "total": "3"
+      }
+    ],
+    "RootProjectionAndRead": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "133",
+        "skipped": "0",
+        "time": "0.767",
+        "total": "133"
+      }
+    ],
+    "SdkNativeDiagnosticsAndStreams": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "122",
+        "skipped": "0",
+        "time": "1.214",
+        "total": "122"
+      }
+    ],
+    "DistributedFixtureEvidence": [
+      {
+        "errors": "0",
+        "failed": "0",
+        "not-run": "0",
+        "passed": "83",
+        "skipped": "0",
+        "time": "1.638",
+        "total": "83"
+      }
+    ]
+  },
+  "launcherControls": {
+    "total": 119,
+    "failed": 0
+  },
+  "allFourRelevantBuilds": {
+    "passed": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "nativeRuntimeStarted": false,
+  "fullSuitesRun": false,
+  "runtimeOnlyExcludedMethod": "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+  "retainedInitialRootSelection": {
+    "total": 136,
+    "passed": 133,
+    "failedMissingOwnedRuntime": 3,
+    "artifact": "root-focused.xml"
+  },
+  "retainedInitialBuildErrors": [
+    "server-build.log",
+    "server-build-2.log"
+  ],
+  "distributedMainQuarantineExecution": "pending parent full verification",
+  "lineEndings": "task-touched Projects C# CRLF; EventStore C# LF",
+  "artifacts": {
+    "contracts-build.log": "9db2c780a9157c0fb6b2963092fe21bad64a99c5fb86132f5cfb2fa011bc964f",
+    "server-build-4.log": "f5b7996bb317d4122fbd8822792e845fd581acf1d84fbbe74d9e5d81408c9492",
+    "sdk-server-build.log": "2588ff00bacc15bff1cac2b8d1b0280bd7141e493bb38ade127eb9f56e0cfdf8",
+    "integration-build-2.log": "17632e77ba5bea7d954b473b81aec1ef2ed375f2ea908e2a3a5ec9a3a1597efb",
+    "contracts.xml": "947c2ff01488390b22226e6b11fd70961bd2e82286873c34de463922e1160a62",
+    "root-focused-2.xml": "d9b07b1b42b99794bea78e37b34f1a7ec4bdbd728e1839847d90555379f041be",
+    "sdk-focused.xml": "7bf4c8aed93dc76343b6706b1e0d0929a91a554ebefbce30f064db4cae173652",
+    "integration-fixture-2.xml": "5c417dc01af604239195f3d791832caf2a132f7076dd4227dc820a1e817e6aa6",
+    "launcher-controls-2.log": "bea092dfa6f2487af87e760752d75722b82a402b70756decb14e65c606d1fd2c"
+  }
+}
