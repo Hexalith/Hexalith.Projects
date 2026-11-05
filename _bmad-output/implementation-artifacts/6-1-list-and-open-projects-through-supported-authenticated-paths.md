@@ -4,7 +4,7 @@ story_key: 6-1-list-and-open-projects-through-supported-authenticated-paths
 epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
-status: review
+status: in-progress
 blocked_by: []
 baseline_commit: 90e481c
 traceability:
@@ -22,7 +22,7 @@ estimate: M
 
 # Story 6.1: List and Open Projects Through Supported Authenticated Paths
 
-Status: review
+Status: in-progress
 
 **Current authority:** [approved entry correction](../planning-artifacts/sprint-change-proposal-2026-11-01.md), applied 2026-11-02. The dated July/August gate decisions in the Change Log are historical.
 
@@ -52,6 +52,60 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 - [x] Finish/review existing supported contracts, projection/query handlers and composition against AC1–3/5–6. Preserve current Folder-read authority before paging, Safe Metadata defaults, distinct descriptive inspection permission and durable metadata-only audit; audit persistence failure denies disclosure.
 - [x] Classify the complete event catalog explicitly: known relevant events apply; explicitly catalogued harmless additive events are deterministic no-ops proven by compatibility tests. Unknown potentially relevant, corrupt or undecodable events fail projection/rebuild honestly and yield Unavailable; neither blanket skip nor blanket rejection of harmless additions satisfies NFR-10. Verify additive serialization and legacy behavior under AC4. Keep public routing intact and hand the existing comparator to 6.7 for exhaustive migration qualification.
 - [x] Inspect retained receipts and run the existing focused/persisted lane for missing AC7 evidence; record actual commands, commit references, native XML, totals and result report. Do not infer feature acceptance from this readiness correction.
+
+### Review Findings
+
+Code review 2026-11-05 covered chunk G1 only: production `src/`, `git diff --ignore-cr-at-eol 47a1ffd..bc545fd -- src`, 33 files and 1,736 diff lines. The recorded `baseline_commit` 90e481c was 517 commits stale. Four layers ran and none failed: Blind Hunter, Edge Case Hunter, Verification Gap and Acceptance Auditor. Three chunks still need their own reviews: G2 Server/Contracts tests, G3 Integration tests and G4 qualification launcher. The sibling EventStore privacy/timing diff `0ace1545..2dca77cc` was out of scope.
+
+- [x] [Review][Decision] The fold-time `IsValid` gate fails event histories the write side accepts, which empties the whole Tenant list (high). Resolved 2026-11-05 by Jerome: option (a), now a patch below — `ProjectReadProjectionHandler.cs:320` now rejects any detail where `ProjectPersistedDetailValidator.IsValid` is false.
+  - That validator requires each file reference's `FolderId` to equal the Project Folder, and each `ObservedAt` to fall within `[CreatedAt, UpdatedAt]`.
+  - Nothing on the write side enforces either rule. `SetProjectFolder` with `ReplacementConfirmed` keeps the existing file references. `LinkFileReference` never compares the file's Folder with the Project's Folder, in the processor or the aggregate, and it accepts links while the Folder is still Pending. `UpdatedAt` follows each event's `OccurredAt`, so clock skew between replicas can also trip the lifetime check.
+  - Result: the read model stays Unavailable for good, because FullReplay fails at the same event. `index.UnavailableProjectIds` is then non-empty, and every `ListProjects` call for that Tenant returns an empty Unavailable page (AC3/AC4/AC6, NFR-10). Before this diff the fold only checked `detail is null`, and the read-time `referencesValid` check degraded the references instead.
+  - Options: (a) restore the pre-diff fold check and keep validation and degradation at read time (recommended); (b) check only `IsHeaderValid` at fold time, which still leaves its lifetime checks sensitive to clock skew; (c) keep `IsValid` and change the write/projection semantics instead: rebase or drop file references on Folder replacement and keep `UpdatedAt` monotonic, which reaches into other stories.
+  - Whichever option is chosen, add a regression test: link a file, confirm a Folder replacement, then list and open.
+- [x] [Review][Decision] Quarantined rows and quarantined opens advertise `Retry` as their recovery action (medium). Resolved 2026-11-05 by Jerome: use `ResolveNeedsAttention`, now a patch below — `ProjectReadQueryExecutor.cs:320` returns `Retry` for every non-Complete snapshot. Quarantine only ends through FR-8 Administrator Folder binding, so retrying never helps. Choose `ResolveNeedsAttention`, `ContactAdministrator`, or `None` plus a distinct `Quarantined` safe reason for quarantine snapshots.
+- [x] [Review][Decision] `IncludeQuarantined` selects only quarantined rows, despite the "include" name (low). Resolved 2026-11-05 by Jerome: keep the name and sharpen the XML documentation, now a patch below — `ListProjectsQuery.cs:17`. With `true` the response is the Administrator inventory alone, not ordinary results plus quarantined ones, which Web, CLI and MCP authors will likely misread. Rename it before the contract ships (for example `QuarantineInventory`), or keep the name and rely on the XML documentation.
+- [ ] [Review][Patch] Restore the pre-diff fold check (`detail is null` only), keep read-time `IsValid`/`referencesValid` degradation, and add a regression test: link a file, confirm a Folder replacement, then list and open, with the Project shown as Partial and the Tenant list still Complete [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:320]
+- [ ] [Review][Patch] Return `ResolveNeedsAttention` instead of `Retry` as the recovery action on quarantined inventory rows and quarantined opens, with a test [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:320]
+- [ ] [Review][Patch] Sharpen the `IncludeQuarantined` XML documentation: it returns only the Administrator quarantine inventory, never ordinary results plus quarantined ones [src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs:9]
+- [ ] [Review][Patch] The worker catalog test throws in the package-mode CI run [tests/Hexalith.Projects.Server.Tests/ProjectsWorkerCatalogTests.cs:27] — `UseProjectsDevelopmentWorkerSecurity(selected: true)` throws when `SUPPORTED_PROJECT_READ_SOURCE` is undefined, which is the case when CI sets `CI=true`. Server.Tests runs in CI unfiltered. The failure is currently hidden because CI run 41973647780 stops earlier, at "Validate workflow policy regression fixtures". Gate the source-only tests on the source-mode symbol, and confirm the Server.Tests package-mode build.
+- [ ] [Review][Patch] Add a test that an Administrator `InspectQuarantined: true` open of a Folder-bound Project returns safe-denial [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:201]
+- [ ] [Review][Patch] Add a test that a rejection no-op with a foreign tenant, a foreign ProjectId or an undefined `Reason` fails and leaves `Sequence` unchanged [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:221]
+- [ ] [Review][Patch] Add a test that an Archived folderless Project stays in ordinary list/open and stays out of the quarantine inventory [src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:249]
+- [ ] [Review][Patch] Add a test that a payload with case-variant duplicate keys (`name`/`Name`) fails the content gate [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:187]
+- [ ] [Review][Patch] `HasRequiredContent`'s default arm silently gives future catalog types a schema; list the four rejection types explicitly and make the default fail closed [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:205]
+- [ ] [Review][Patch] Remove the dead "optional" catalog-lane branches and the misleading compatibility comment (`Validate` already requires those keys), plus the Tenants bootstrap and `BoundCommand` environment settings duplicated in `SupportedProjectReadDevelopmentInfrastructure` [src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs:240]
+- [ ] [Review][Patch] The AppHost resolves Platform and Builds only under `references/`; add the sibling-layout `Exists` probes that `Directory.Build.props` uses, otherwise sibling-layout Debug builds fail with CS2001 [src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj:8]
+- [ ] [Review][Patch] The intent adapter's comment says "preserving null", but its options drop nulls; the options are also a hand copy of the processor's. Fix the comment and share one options instance [src/Hexalith.Projects.Server/ProjectsIntentAdapters.cs:35]
+- [ ] [Review][Patch] The fold parses each payload twice; deserialize from the `JsonDocument` it already parsed [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:274]
+- [ ] [Review][Patch] Remove the unused `using` directives in the new `*Payload.cs` record files [src/Hexalith.Projects.Server/ArchiveProjectPayload.cs:3]
+- [x] [Review][Defer] Advisory resolution still offers Active folderless (quarantined) Projects as candidates [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:168] — deferred: pre-existing. The file was last changed at ded1e70, outside this diff. `ProjectAdvisoryQueryTests.Review4.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls` expects `SingleCandidate`. This contradicts PRD §2.4/NFR-4 and these Dev Notes. Resolution is Story 6.4 scope (medium).
+
+Rejected findings, 24 in total. "False" means the claimed problem does not occur; "low" means it is real but not worth fixing:
+- False: newly created Projects hidden while their Folder is pending. PRD NFR-4/§2.4 require that no caller-visible Active Project is folderless.
+- False: an empty quarantine inventory page writes no audit. FR-22 requires one inspection event per Project returned, and none are returned.
+- Low: a per-row audit failure partway through a page leaves over-audit records. This fails closed and is rare; fixing it needs batching or compensation.
+- Low: up to 200 sequential audit writes per inventory page. The inventory is legacy-only, and batching needs new SDK surface.
+- False: historical events breaking the new content gate. The event contracts have not changed since they were created, and the writer enforces the same rules, including grant expiry `> now`.
+- False: the `is ProjectId` reflection gap. The main fold loop already checks `IProjectEvent` identity; the `NullReferenceException` filter fails closed.
+- False: the package-mode AppHost profile throwing. The private lane is source-only by design and throws an explicit message.
+- Low: owner-assembly provenance. The check targets load-context substitution, and the Folders adapters are built from the same source in the same build.
+- Low: catalog combined with the anonymous Development bypass fails at request time. It is a Development-only invalid combination, and guarding it adds branching.
+- False: order-dependent security registration. Calling them in the wrong order fails loudly at startup with "scheme already exists".
+- Low: admin flags appear in agent-eligible schemas, and strict unknown-field rejection would break a newer client against an older server. No in-repo serializer or released strict server exists.
+- Low: `AddQualificationResiliency` throws `NullReferenceException` before its friendly error for a malformed baseline. That baseline is controlled by the repository.
+- Low: route literals repeated by hand in the policy bindings.
+- Low: anonymous health endpoints in every environment. Outside the Development lane there is no fallback policy, so behavior does not change.
+- Low: the three hand-maintained payload lists. The existing parity test catches drift.
+- False: `observations.Add` throwing on a duplicate ID. Index IDs are checked for distinctness beforehand; filling the dictionary on every row is negligible.
+- False: requiring both the role and the A-5 permission. With A-5 now present, that satisfies both FR-22 clauses.
+- Rejected: the AC7 lane using Development-catalog security. That is the approved scope extension; changing it would mean editing the spec.
+- False: compiled catalog declarations reaching production. Only in-process Development owners read them, and Projects maps the catalog only in the Development lane.
+- Low: diagnostics and tuning flags in the qualification lane. They affect Development route-catalog plumbing, not list/open semantics.
+- Low: the catalog is not disposed when `Add` throws after composing it. The launcher's owned cleanup removes the private material.
+- Low: the mTLS receipt `CreateNew` collision. It can only happen if a private directory is reused, and the launcher allocates a fresh one each run.
+- False: removing the page-level aggregation. Task 1 and the Dev Notes require the page snapshot to describe enumeration only.
+- False: Archived folderless Projects not quarantined. PRD §2.4 quarantines only Active folderless Projects.
 
 ## Dev Notes
 
@@ -237,3 +291,4 @@ The user-approved 50 ms remaining-only public query 404 gate is applied in the i
 | 2026-11-02 | Recorded a failed route-catalog prototype diagnostic and removed its out-of-scope edits; authenticated Dapr caller identity and enrollment remain external blockers. |
 | 2026-11-02 | Corrected page/row snapshot semantics and completed authority-event documentation; retained passing focused fallback evidence and current source-preparation/build blockers. |
 | 2026-11-04 | Applied the approved denial-privacy/timing policies, completed reviewed repairs and final same-source acceptance of 11 distributed cases, 196 Integration tests and 1,368 Server tests with independent telemetry/cleanup proof; source remains isolated and later release gates unchanged. |
+| 2026-11-05 | Code review of chunk G1 (production `src/`, 47a1ffd..bc545fd): 3 decisions resolved, 14 patches left as action items, 1 deferred, 24 rejected. The high-severity fold-time `IsValid` Tenant-list blackout is open, so status returns to in-progress. Chunks G2–G4 are still unreviewed. |

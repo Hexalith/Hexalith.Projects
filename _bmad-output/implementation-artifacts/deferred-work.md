@@ -1304,3 +1304,9 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Bound the synthetic issuer TLS handshake so an idle TCP peer cannot block owned launcher shutdown.
   evidence: Review BR-09 reproduced the hang; baseline47a1ffd02cb3e1cde80bd7697ac1b46fdefda8cc already has the same HTTPServer/listening-socket TLS wrapping/server.shutdown sequence. This is pre-existing lifecycle work, not a new story6.1 regression.
+
+## Deferred from: code review of 6-1-list-and-open-projects-through-supported-authenticated-paths.md (2026-11-05)
+
+- source_spec: `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
+  summary: Exclude quarantined Active folderless Projects from advisory resolution candidates.
+  evidence: `src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:168` admits a candidate when `detail.ProjectFolder?.FolderId is null`. `ProjectAdvisoryQueryTests.Review4.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls` asserts `SingleCandidate` for folderless and Pending-folder Projects. This contradicts PRD §2.4 and NFR-4 (quarantined Projects are excluded from resolution) and the Story 6.1 Dev Notes. Story 6.1 list/open now applies quarantine; resolution does not. The behavior predates the Story 6.1 diff (last change ded1e70) and belongs to Story 6.4 resolution scope. Verification Gap layer, medium.
