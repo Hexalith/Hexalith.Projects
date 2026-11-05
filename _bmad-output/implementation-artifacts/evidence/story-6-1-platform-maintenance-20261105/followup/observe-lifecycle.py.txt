@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,subprocess,time
+root=Path('/home/administrator/projects/hexalith/projects');folder=root/'references/Hexalith.Folders';out=root/'_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/followup';cmd=['dotnet','tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll','-method','*Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices','-xml',str(out/'folders-lifecycle-diagnostic.xml')]
+child=subprocess.Popen(cmd,cwd=folder,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True);seen=set();rows=[]
+while child.poll() is None:
+ for path in Path('/tmp').glob('lifecycle-observer-*/private.jsonl'):
+  try:
+   for index,line in enumerate(path.read_text().splitlines()):
+    row=json.loads(line)
+    if row.get('processId')!=child.pid or (str(path),index) in seen:continue
+    seen.add((str(path),index));rows.append({k:row[k] for k in ['processId','phase','utc','inFlightRequests'] if k in row})
+  except (OSError,ValueError):pass
+ time.sleep(.002)
+stdout=child.communicate()[0];print(stdout);receipt={'command':cmd,'pid':child.pid,'exitCode':child.returncode,'capturedOnlyExactChildMetadata':True,'rows':rows};(out/'lifecycle-request-order.json').write_text(json.dumps(receipt,indent=2)+'\n');print('shutdown rows with nonzero in-flight:',[r for r in rows if r.get('inFlightRequests',0)>0 and r['phase']!='request_start' and not r['phase'].startswith('request_activity_')]);raise SystemExit(child.returncode)

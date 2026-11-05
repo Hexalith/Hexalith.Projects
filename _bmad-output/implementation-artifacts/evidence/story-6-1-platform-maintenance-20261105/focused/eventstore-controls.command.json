@@ -1,0 +1,38 @@
+{
+  "command": [
+    "dotnet",
+    "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Authorization.AdminTenantAuthorizationFilterTests",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Controllers.AdminProjectionRebuildControllerTests",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Projections.ProjectionDeliveryReconcilerTests",
+    "-class",
+    "Hexalith.EventStore.Server.Tests.Projections.EventStoreProjectionDeliveryHistoryReaderTests",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/focused/eventstore-controls.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+  "exitCode": 0,
+  "environment": "environment.json",
+  "seconds": 1.2541773319244385,
+  "output": "eventstore-controls.txt",
+  "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+  "classes": {
+    "AdminTenantAuthorizationFilterTests": 48,
+    "AdminProjectionRebuildControllerTests": 50,
+    "EventStoreProjectionDeliveryHistoryReaderTests": 13,
+    "ProjectionDeliveryReconcilerTests": 31
+  },
+  "totals": {
+    "total": 142,
+    "passed": 142,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "xml": "eventstore-controls.xml",
+  "xmlSha256": "57b5efb020cc429031ec934281cef7edf0fdd593277a8c7e160b89323fe7edd6"
+}

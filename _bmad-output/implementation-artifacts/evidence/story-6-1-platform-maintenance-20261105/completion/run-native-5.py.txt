@@ -1,0 +1,10 @@
+from pathlib import Path
+import json,os,subprocess,time
+root=Path('/home/administrator/projects/hexalith/projects'); packet=root/'_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105'
+env={'MSBUILDDISABLENODEREUSE':'1','DOTNET_CLI_USE_MSBUILD_SERVER':'0','DOTNET_PROCESSOR_COUNT':'2'}
+cmd=['python3','tools/qualification/run_supported_project_reads.py','--regressions','--timeout','900','--evidence',str(packet/'qualification-5')]
+binding=json.loads((packet/'completion/source-binding.json').read_text()); receipt={'command':cmd,'cwd':str(root),'environment':env,'expectedSourceManifestSha256':binding['sourceManifestSha256'],'startedAtUnix':time.time(),'output':'native-launcher-5.txt'}
+path=packet/'native-launcher-5.command.json';path.write_text(json.dumps(receipt,indent=2)+'\n')
+with (packet/'native-launcher-5.txt').open('wb') as out:
+ r=subprocess.run(cmd,cwd=root,env=os.environ|env,stdout=out,stderr=subprocess.STDOUT)
+receipt.update(exitCode=r.returncode,finishedAtUnix=time.time());path.write_text(json.dumps(receipt,indent=2)+'\n');print('exitCode',r.returncode);print((packet/'native-launcher-5.txt').read_text()[-3000:])

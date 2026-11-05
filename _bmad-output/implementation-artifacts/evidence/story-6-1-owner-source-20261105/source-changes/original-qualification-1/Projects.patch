@@ -1,0 +1,295 @@
+diff --git a/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs b/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs
+index 765172c..8d57466 100644
+--- a/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs
++++ b/src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs
+@@ -103,6 +103,10 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
+             receivers, statePath, options, isolation);
+         builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, projectsWorkers, folders, foldersWorkers);
+         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
++        _ = tenants.WithEnvironment("EventStore__Testing__OwnerSourceRead__Enabled", "true")
++            .WithEnvironment("EventStore__Testing__OwnerSourceRead__Directory", builder.Configuration["Projects:SupportedReads:OwnerSourceReadDirectory"]!)
++            .WithEnvironment("EventStore__Testing__OwnerSourceRead__Mode", "administrator-bootstrap")
++            .WithEnvironment("EventStore__Testing__OwnerSourceRead__GatewayAppId", gateway.Resource.Name);
+         WriteReceipt(privateDirectory, "catalog-plane.json", new
+         {
+             isolationId = isolation, directory = catalog.Directory, rootDigest = catalog.RootDigest,
+diff --git a/src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs b/src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs
+index 7723348..615d807 100644
+--- a/src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs
++++ b/src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs
+@@ -96,6 +96,12 @@ public static class SupportedProjectReadFixtureProfile
+             || (!OperatingSystem.IsWindows() && (File.GetUnixFileMode(invocations)
+                 & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0))
+             throw new InvalidOperationException("Fixture invocations require the exact owner-private IPC directory.");
++        string ownerSource = Required(configuration, Prefix + "OwnerSourceReadDirectory");
++        if (!Path.IsPathFullyQualified(ownerSource) || ownerSource != Path.Combine(privateDirectory, "owner-source-reads")
++            || !Directory.Exists(ownerSource) || new DirectoryInfo(ownerSource).LinkTarget is not null
++            || (!OperatingSystem.IsWindows() && (File.GetUnixFileMode(ownerSource)
++                & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0))
++            throw new InvalidOperationException("Owner source proof requires the exact owner-private IPC directory.");
+         if (!File.Exists(discoveryPath) || privateDirectory != Path.GetDirectoryName(Path.GetFullPath(Required(configuration, Prefix + "CertificatePath"))))
+             throw new InvalidOperationException("Discovery configuration must belong to the private fixture directory.");
+         using JsonDocument discovery = JsonDocument.Parse(File.ReadAllBytes(discoveryPath));
+@@ -241,6 +247,12 @@ public static class SupportedProjectReadFixtureProfile
+         ConfigureClient(tenants, "tenants", tenantsSecret);
+         AddGrant("tenants-bootstrap", "tenants", "TenantsSecret", "eventstore",
+             ["eventstore:command-submit", "eventstore:stream-read"], false);
++        int bootstrapSourceGrant = ordinal;
++        AddGrant("tenants-bootstrap-source", "tenants", "TenantsSecret", "eventstore", ["eventstore:stream-read"], false);
++        string sourceGrant = "Authentication__WorkloadAuthority__Grants__" + bootstrapSourceGrant + "__";
++        _ = authority.WithEnvironment(sourceGrant + "AllowUnbound", "false")
++            .WithEnvironment(sourceGrant + "Bindings__eventstore:bound-tenant__0", "platform:global-administrators")
++            .WithEnvironment(sourceGrant + "Bindings__eventstore:bound-domain__0", "global-administrators");
+         _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__1", "tenants")
+             .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__tenants", Required(configuration, Prefix + "TenantOwnerPublicKey"))
+             .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__tenants", "tenants,global-administrators")
+diff --git a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
+index c93e497..23de4c2 100644
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs
+@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
+ using Hexalith.EventStore.ErrorHandling;
+ using Hexalith.EventStore.Testing;
+ using Hexalith.EventStore.Testing.CatalogInvocation;
++using Hexalith.EventStore.Testing.OwnerSourceRead;
+ using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.Commons.UniqueIds;
+ using Hexalith.EventStore.DomainService;
+@@ -1423,8 +1424,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
+                     }, new JsonSerializerOptions { WriteIndented = true }), Cancellation).ConfigureAwait(false);
+                     await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
+                     StreamReadPage stream = await ReadHostedBootstrapSourceAsync().ConfigureAwait(false);
+-                    Require(stream.Events.Count(item => HostedBootstrapEventMatches(item, message,
+-                        value.GetProperty("CorrelationId").GetString()!, "actor-1")) == 1,
++                    Require(HostedBootstrapSourceMatches(stream, message,
++                        value.GetProperty("CorrelationId").GetString()!, "actor-1"),
+                         "Hosted bootstrap has no exactly bound persisted administrator event.");
+                     using JsonDocument finalReceipt = JsonDocument.Parse(await File.ReadAllBytesAsync(receipt, Cancellation).ConfigureAwait(false));
+                     JsonElement final = finalReceipt.RootElement;
+@@ -1451,13 +1452,16 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
+         throw new InvalidOperationException("Hosted bootstrap did not reach actual durable completion.");
+     }
+ 
+-    /// <summary>Stops at the missing owner SDK capability without issuing a reserved public read or bypassing owner authorization.</summary>
+-    private static Task<StreamReadPage> ReadHostedBootstrapSourceAsync()
+-        // EventStoreGatewayClient's workload transport omits the required X-Hexalith-Scope
+-        // and rejects the retained system identity returned for a platform-scope request.
+-        // The human stream route supports only platform:tenants. An owner SDK repair is required.
+-        => Task.FromException<StreamReadPage>(new NotSupportedException(
+-            "Owner capability required: the EventStore bound-workload SDK does not support platform:global-administrators source reads."));
++    /// <summary>Reads the actual source through the finite SDK helper within the credential-owning Tenants process.</summary>
++    private Task<StreamReadPage> ReadHostedBootstrapSourceAsync()
++        => new OwnerSourceReadClient(Setting("OwnerSourceReadDirectory")).ReadAsync(Cancellation);
++
++    /// <summary>Independently verifies complete retained source identity and exactly one original persisted bootstrap event.</summary>
++    internal static bool HostedBootstrapSourceMatches(StreamReadPage stream, string messageId, string correlationId, string principal)
++        => stream.Tenant == "system" && stream.Domain == "global-administrators" && stream.AggregateId == "global-administrators"
++            && stream.Metadata is { FromSequence: 0, IsTruncated: false, NextContinuationToken: null }
++            && stream.Metadata.EventCount == stream.Events.Count
++            && stream.Events.Count(item => HostedBootstrapEventMatches(item, messageId, correlationId, principal)) == 1;
+ 
+     /// <summary>Accepts only the original exact private submission receipt, preserving a genuinely unknown acknowledgement.</summary>
+     /// <param name="receipt">The actual hosted submission receipt.</param>
+diff --git a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs
+index a87b8f3..b5b28f0 100644
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs
+@@ -685,6 +685,17 @@ public sealed class SupportedProjectReadEvidenceTests
+             "01ARZ3NDEKTSV4RRFFQ69G5FAX", "correlation", "command", DateTimeOffset.UtcNow, "actor-1");
+         bool Matches(StreamReadEvent item) => SupportedProjectReadDistributedFixture.HostedBootstrapEventMatches(item, "command", "correlation", "actor-1");
+         Assert.True(Matches(value));
++        var source = new StreamReadPage("system", "global-administrators", "global-administrators", [value], new(0, null, 1, 1, 1, false, null));
++        bool SourceMatches(StreamReadPage page) => SupportedProjectReadDistributedFixture.HostedBootstrapSourceMatches(page, "command", "correlation", "actor-1");
++        Assert.True(SourceMatches(source));
++        foreach (var invalid in new[]
++        {
++            source with { Tenant = "platform:global-administrators" }, source with { Domain = "tenants" }, source with { AggregateId = "other" },
++            source with { Events = [] }, source with { Events = [value, value], Metadata = source.Metadata with { EventCount = 2 } },
++            source with { Metadata = source.Metadata with { IsTruncated = true } },
++            source with { Metadata = source.Metadata with { NextContinuationToken = new("cursor") } },
++            source with { Metadata = source.Metadata with { FromSequence = 1 } },
++        }) Assert.False(SourceMatches(invalid));
+         foreach (var invalid in new[]
+         {
+             value with { CausationId = "other" }, value with { CorrelationId = "other" }, value with { UserId = "other" },
+diff --git a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs
+index 026b87a..fbcd198 100644
+--- a/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs
++++ b/tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs
+@@ -91,6 +91,24 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
+         Should.Throw<InvalidOperationException>(() => SupportedProjectReadFixtureProfile.Validate(new ConfigurationBuilder().AddInMemoryCollection(inputs).Build()));
+     }
+ 
++    /// <summary>Bootstrap source proof has separate exact private owner custody.</summary>
++    [Theory]
++    [InlineData("missing")]
++    [InlineData("foreign")]
++    [InlineData("symlink")]
++    [InlineData("shared")]
++    public void OwnerSourceReadDirectoryMustBeExactAndPrivate(string fault)
++    {
++        Dictionary<string, string?> inputs = ValidInputs();
++        string path = inputs["Projects:SupportedReads:OwnerSourceReadDirectory"]!;
++        if (fault is "missing" or "symlink") Directory.Delete(path);
++        if (fault == "foreign") inputs["Projects:SupportedReads:OwnerSourceReadDirectory"] = inputs["Projects:SupportedReads:InvocationDirectory"];
++        if (fault == "symlink") Directory.CreateSymbolicLink(path, Path.GetDirectoryName(path)!);
++        if (fault == "shared" && !OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute | UnixFileMode.GroupRead);
++        if (fault == "shared" && OperatingSystem.IsWindows()) return;
++        Should.Throw<InvalidOperationException>(() => SupportedProjectReadFixtureProfile.Validate(new ConfigurationBuilder().AddInMemoryCollection(inputs).Build()));
++    }
++
+     /// <summary>Uses real Folder projects and preserves bound trust, command/project grants and secret parameters.</summary>
+     [Fact]
+     public async Task EnabledProfileComposesRealOwnersAndDistinctTrustAsync()
+@@ -130,13 +148,20 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
+         environment["Authentication__WorkloadAuthority__Grants__3__Operations__0"].ShouldBe("eventstore:owner-authority-query");
+         environment["Authentication__WorkloadAuthority__Grants__4__Operations__0"].ShouldBe("eventstore:command-submit");
+         environment["Authentication__WorkloadAuthority__Grants__4__ClientSecretSha256"].ShouldBe(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(inputs["Projects:SupportedReads:TenantsSecret"]!))));
++        environment["Authentication__WorkloadAuthority__Grants__6__Operations__0"].ShouldBe("eventstore:stream-read");
++        environment["Authentication__WorkloadAuthority__Grants__6__AllowUnbound"].ShouldBe("false");
++        environment["Authentication__WorkloadAuthority__Grants__6__Surface"].ShouldBe("service");
++        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
++        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
++        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
++        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__6__Operations__", StringComparison.Ordinal)).ShouldBe(1);
+         environment["Authentication__WorkloadAuthority__Grants__5__Operations__0"].ShouldBe("eventstore:stream-read");
+         environment["Authentication__WorkloadAuthority__Grants__5__AllowUnbound"].ShouldBe("false");
+-        environment["Authentication__WorkloadAuthority__Grants__5__Surface"].ShouldBe("service");
+-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
+-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
+-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
++        environment["Authentication__WorkloadAuthority__Grants__5__Workload"].ShouldBe("tenants");
++        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__0"].ShouldBe("platform:global-administrators");
++        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-domain__0"].ShouldBe("global-administrators");
+         environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__5__Operations__", StringComparison.Ordinal)).ShouldBe(1);
++        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__5__Bindings__", StringComparison.Ordinal)).ShouldBe(2);
+         var folderEnvironment = await EnvironmentAsync(folders, builder.ExecutionContext);
+         folderEnvironment["Folders__EventStore__OwnerMetadataReads__Enabled"].ShouldBe("true");
+         folderEnvironment["Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled"].ShouldBe("true");
+@@ -356,6 +381,8 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
+         File.WriteAllText(existing, "structural placeholder");
+         string discovery = Path.Combine(directory, "discovery.json");
+         string invocations = Directory.CreateDirectory(Path.Combine(directory, "catalog-invocations")).FullName;
++        string ownerSource = Directory.CreateDirectory(Path.Combine(directory, "owner-source-reads")).FullName;
++        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(ownerSource, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(invocations, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+         File.WriteAllText(discovery, System.Text.Json.JsonSerializer.Serialize(new
+         {
+@@ -369,6 +396,7 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
+             ["Projects:SupportedReads:CertificatePath"] = existing, ["Projects:SupportedReads:TrustBundle"] = existing,
+             ["Projects:SupportedReads:DiscoveryConfiguration"] = discovery,
+             ["Projects:SupportedReads:InvocationDirectory"] = invocations,
++            ["Projects:SupportedReads:OwnerSourceReadDirectory"] = ownerSource,
+             ["Projects:SupportedReads:CatalogDigestKey"] = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)),
+             ["Projects:SupportedReads:Tenant"] = "fixture-tenant", ["Projects:SupportedReads:ForeignTenant"] = "fixture-foreign",
+         };
+diff --git a/tests/tools/test_supported_project_reads_launcher.py b/tests/tools/test_supported_project_reads_launcher.py
+index 7646c20..cd358ed 100644
+--- a/tests/tools/test_supported_project_reads_launcher.py
++++ b/tests/tools/test_supported_project_reads_launcher.py
+@@ -38,6 +38,27 @@ def resources(*names):
+     return [{"name": name, "id": container_id(name)} for name in names]
+ 
+ 
++class OwnerSourceReadCustodyTests(unittest.TestCase):
++    def test_fresh_owner_source_custody_is_private_and_cannot_be_reused(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            private = Path(temporary)
++            directory = LAUNCHER.prepare_owner_source_read_directory(private)
++            self.assertEqual(directory, private / "owner-source-reads")
++            self.assertEqual(directory.stat().st_mode & 0o777, 0o700)
++            with self.assertRaises(FileExistsError): LAUNCHER.prepare_owner_source_read_directory(private)
++
++    def test_owner_source_custody_is_removed_with_owned_private_material(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            private = Path(temporary) / "owned"
++            private.mkdir(mode=0o700)
++            directory = LAUNCHER.prepare_owner_source_read_directory(private)
++            (directory / "actual.request").write_text("private request")
++            report = {"cleanup": [], "result": "passed"}
++            LAUNCHER.cleanup_private_material(private, "reads-test", None, False, report)
++            self.assertTrue(report["privateMaterialRemoved"])
++            self.assertFalse(directory.exists())
++
++
+ class NativeConsoleEvidenceTests(unittest.TestCase):
+     def windows(self):
+         return [{"trace": format(index + 1, "032x"), "kind": ("Denied", "Absent", "ForeignOnly")[index % 3],
+@@ -1708,7 +1729,15 @@ class SupportedReadScenarioGroupTests(unittest.TestCase):
+ 
+     def profile(self):
+         return {project: {"Configuration": "Debug", "Optimize": "false", "DefineConstants": "TRACE;DEBUG;NET10_0", "DebugType": "portable",
+-                          "UseHexalithProjectReferences": "true", "UseNuGetDeps": "false", "EnablePrivateCatalogInvocationProof": "true"} for project in LAUNCHER.COMPILATION_PROJECTS}
++                          "UseHexalithProjectReferences": "true", "UseNuGetDeps": "false", "EnablePrivateCatalogInvocationProof": "true", "EnablePrivateOwnerSourceReadProof": "true"} for project in LAUNCHER.COMPILATION_PROJECTS}
++
++    def test_owner_source_helper_requires_explicit_compilation_selection(self):
++        for selected in (None, "false"):
++            profile = self.profile()
++            values = next(iter(profile.values()))
++            if selected is None: values.pop("EnablePrivateOwnerSourceReadProof")
++            else: values["EnablePrivateOwnerSourceReadProof"] = selected
++            with self.subTest(selected=selected), self.assertRaises(RuntimeError): LAUNCHER.require_compilation_profile(profile)
+ 
+     def report(self, scenario, frozen, regressions=False):
+         index = LAUNCHER.SCENARIO_GROUPS.index(scenario)
+diff --git a/tools/qualification/run_supported_project_reads.py b/tools/qualification/run_supported_project_reads.py
+index a40682e..082c247 100644
+--- a/tools/qualification/run_supported_project_reads.py
++++ b/tools/qualification/run_supported_project_reads.py
+@@ -555,6 +555,15 @@ def sanitized_environment(source) -> dict[str, str]:
+     return {key: value for key, value in source.items() if not key.casefold().replace(":", "__").startswith(prefixes)}
+ 
+ 
++def prepare_owner_source_read_directory(private: Path) -> Path:
++    """Create fresh exact private IPC custody, separately from gateway callbacks."""
++    private_identity(private, directory=True)
++    directory = private / "owner-source-reads"
++    directory.mkdir(mode=0o700)
++    private_identity(directory, directory=True, private_parent=private)
++    return directory
++
++
+ def source_manifest() -> dict[str, str]:
+     """Bind tracked and untracked build inputs, including dirty source dependencies, without copying payloads."""
+     manifest = {}
+@@ -1633,7 +1642,7 @@ COMPILATION_PROJECTS = (
+     "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+     "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+ )
+-COMPILATION_PROPERTIES = ("Configuration", "Optimize", "DefineConstants", "DebugType", "UseHexalithProjectReferences", "UseNuGetDeps", "EnablePrivateCatalogInvocationProof")
++COMPILATION_PROPERTIES = ("Configuration", "Optimize", "DefineConstants", "DebugType", "UseHexalithProjectReferences", "UseNuGetDeps", "EnablePrivateCatalogInvocationProof", "EnablePrivateOwnerSourceReadProof")
+ RUNTIME_PROJECTS = dict(zip(("eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers"), (
+     "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+     "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+@@ -1656,6 +1665,7 @@ def require_compilation_profile(profile: dict) -> None:
+                 or any(not isinstance(value, str) for value in values.values())
+                 or values["Optimize"].lower() != "false" or values["UseHexalithProjectReferences"].lower() != "true"
+                 or values["UseNuGetDeps"].lower() != "false" or values["EnablePrivateCatalogInvocationProof"].lower() != "true"
++                or values["EnablePrivateOwnerSourceReadProof"].lower() != "true"
+                 or "DEBUG" not in values["DefineConstants"].split(";")):
+             raise RuntimeError("A scenario is outside the actual ordinary Debug/source proof mode.")
+ 
+@@ -2323,6 +2333,7 @@ def main() -> int:
+                 "HexalithCommonsRoot": str(ROOT / "references/Hexalith.Commons"),
+                 "HexalithFoldersRoot": str(ROOT / "references/Hexalith.Folders")})
+     env["EnablePrivateCatalogInvocationProof"] = "true"
++    env["EnablePrivateOwnerSourceReadProof"] = "true"
+     env["UseHexalithProjectReferences"] = "true"
+     env["UseNuGetDeps"] = "false"
+     for module in ("EventStore", "Tenants", "Folders", "Commons", "Conversations", "Memories", "FrontComposer", "Parties", "McpCli"):
+@@ -2452,6 +2463,7 @@ def main() -> int:
+         # Initial sidecar syntax only: canonical Platform composition allocates and replaces these.
+         dependencies.update({"PlacementHostAddress": f"127.0.0.1:{free_port()}", "SchedulerHostAddress": f"127.0.0.1:{free_port()}"})
+         (private / "catalog-invocations").mkdir(mode=0o700)
++        owner_source_directory = prepare_owner_source_read_directory(private)
+         fixture = {"IsolationId": isolation, "UserIssuer": user_issuer, "UserKeyPath": str(private / "user.pem"),
+                    "CertificatePath": str(private / "certificate.pfx"), "CertificatePassword": password,
+                    "TrustBundle": str(private / "certificate.pem"), "EventStoreSecret": secrets.token_hex(32),
+@@ -2459,6 +2471,7 @@ def main() -> int:
+                    "TenantsSecret": secrets.token_hex(32), "FoldersSecret": secrets.token_hex(32), "BootstrapPassword": bootstrap_password,
+                    "CatalogDigestKey": base64.b64encode(secrets.token_bytes(32)).decode(),
+                    "InvocationDirectory": str(private / "catalog-invocations"),
++                   "OwnerSourceReadDirectory": str(owner_source_directory),
+                    "ReceiptKey": base64.b64encode(secrets.token_bytes(32)).decode(),
+                    "OwnerPrivateKey": base64.b64encode((private / "owner.der").read_bytes()).decode(),
+                    "OwnerPublicKey": base64.b64encode((private / "owner-public.der").read_bytes()).decode(),

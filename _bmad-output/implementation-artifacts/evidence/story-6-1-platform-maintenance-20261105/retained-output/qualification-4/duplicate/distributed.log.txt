@@ -1,0 +1,22 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync [FAIL]
+      Supported read returned HTTP 403.
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(2309,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.Require(Boolean condition, String message)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(276,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.ReadAsync[T](Boolean open, Boolean chatbot, Boolean inspection, ListProjectsQuery list, String project, String tenant, Boolean tenantActor, Boolean projectAdministrator, Boolean quarantine)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(1239,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.<>c__DisplayClass84_0.<<ObserveBothTenantTruthAsync>g__ObserveTenantAsync|1>d.MoveNext()
+        --- End of stack trace from previous location ---
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(1260,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.ObserveBothTenantTruthAsync(IReadOnlyList`1 tenants, Func`3 list, Func`3 open)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(939,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.VerifyDuplicateDeliveryAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs(23,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync()
+        --- End of stack trace from previous location ---
+      Output:
+        supported-read-scenario-v2|duplicate|E85021AA850BFA3702E9F2D2CC6EA1FB4998AA83BCAFCF9BA984E54F3714DB9D|a127354ae0d0711f786a53d8225bfec0f13fd8495252b712a48a36d8e722295d
+  Finished:    Hexalith.Projects.Integration.Tests (ID = 'bed92732d61ff1214e4fbf660eaa765ee282f30ccf4ebfd4720972d298d265e1')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 103.404s

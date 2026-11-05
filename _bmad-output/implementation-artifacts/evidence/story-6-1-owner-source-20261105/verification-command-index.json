@@ -1,0 +1,1033 @@
+[
+  {
+    "receipt": "focused/client-build-2.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/client-build-2.log.txt"
+  },
+  {
+    "receipt": "focused/client-build-final.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/client-build-final.log.txt"
+  },
+  {
+    "receipt": "focused/client-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 1,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/client-build.log.txt"
+  },
+  {
+    "receipt": "focused/controller-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/controller-build.log.txt"
+  },
+  {
+    "receipt": "focused/controller-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "*StreamsControllerTests",
+      "-class",
+      "*StreamsControllerProtectedDataLeakRegressionTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/streams-controller.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/controller-tests.log.txt"
+  },
+  {
+    "receipt": "focused/helper-build-2.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/helper-build-2.log.txt"
+  },
+  {
+    "receipt": "focused/helper-build-3.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/helper-build-3.log.txt"
+  },
+  {
+    "receipt": "focused/helper-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 1,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/helper-build.log.txt"
+  },
+  {
+    "receipt": "focused/helper-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+      "-class",
+      "*OwnerSourceReadTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/owner-source.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/helper-tests.log.txt"
+  },
+  {
+    "receipt": "focused/integration-full-local.command.json",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class-",
+      "*SupportedProjectReadDistributedTests",
+      "-class-",
+      "*ProjectsLiveE2ETests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/integration-full-local.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/integration-full-local.log.txt"
+  },
+  {
+    "receipt": "focused/launcher-controls-final.command.json",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/launcher-controls-final.log.txt"
+  },
+  {
+    "receipt": "focused/prepare-source.command.json",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story61-owner-build/mapping",
+      "--output",
+      "json"
+    ],
+    "exitCode": 0,
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed."
+  },
+  {
+    "receipt": "focused/projects-build-2.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/projects-build-2.log.txt"
+  },
+  {
+    "receipt": "focused/projects-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/projects-build.log.txt"
+  },
+  {
+    "receipt": "focused/projects-local-tests.command.json",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/projects-read-controls.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/projects-local-tests.log.txt"
+  },
+  {
+    "receipt": "focused/projects-read-controls-2.command.json",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadTopologyTests",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/projects-read-controls-2.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/projects-read-controls-2.log.txt"
+  },
+  {
+    "receipt": "focused/server-build-final.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/server-build-final.log.txt"
+  },
+  {
+    "receipt": "focused/server-full-local.command.json",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class-",
+      "*SupportedProjectAuthorityHttpTests",
+      "-method-",
+      "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+      "-method-",
+      "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+      "-method-",
+      "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/server-full-local.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/server-full-local.log.txt"
+  },
+  {
+    "receipt": "focused/tenants-build-final.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/tenants-build-final.log.txt"
+  },
+  {
+    "receipt": "focused/tenants-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/tenants-build.log.txt"
+  },
+  {
+    "receipt": "focused/tenants-runtime-final.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+      "-class",
+      "*TenantOwnerSourceRuntimeTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/tenants-runtime-final.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/tenants-runtime-final.log.txt"
+  },
+  {
+    "receipt": "focused/tenants-runtime-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+      "-class",
+      "*TenantOwnerSourceRuntimeTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/tenants-runtime.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/tenants-runtime-tests.log.txt"
+  },
+  {
+    "receipt": "focused/workload-stream-tests-final.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Client.Tests.dll",
+      "-class",
+      "*EventStoreGatewayWorkloadClientTests",
+      "-class",
+      "*EventStoreGatewayClientStreamTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/workload-stream-final.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/workload-stream-tests-final.log.txt"
+  },
+  {
+    "receipt": "focused/workload-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Client.Tests.dll",
+      "-class",
+      "*EventStoreGatewayWorkloadClientTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/workload.xml"
+    ],
+    "exitCode": 0,
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+      "Configuration": "Debug"
+    },
+    "evidencePhase": "initial-implementation",
+    "environmentCompleteness": "Historical focused receipt is incomplete: required opt-in/source-reference properties were not retained; not newly executed.",
+    "checkoutVisibleOutput": "retained-output/focused/workload-tests.log.txt"
+  },
+  {
+    "command": [
+      "python3",
+      "tools/qualification/run_supported_project_reads.py",
+      "--regressions",
+      "--timeout",
+      "900",
+      "--evidence",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/qualification-1"
+    ],
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2"
+    },
+    "resultReceipt": "qualification-1/run.json",
+    "status": "failed",
+    "nativeFailure": "Authenticated bootstrap checkpoint reconciliation returned HTTP 403.",
+    "evidencePhase": "initial-implementation",
+    "sourceManifestSha256": "1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60"
+  },
+  {
+    "receipt": "review-corrections/helper-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "helper-build.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/owner-source-tests-final.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+      "-class",
+      "*OwnerSourceReadTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/review-corrections/owner-source.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "owner-source-tests-final.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/prepare-source.command.json",
+    "command": [
+      "dotnet",
+      "run",
+      "--project",
+      "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story61-owner-review/mapping",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src"
+    },
+    "exitCode": 0,
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/projects-bootstrap-binding-tests.command.json",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "*HostedBootstrapEventRequiresExactCommandAndActorBindings",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/review-corrections/projects-bootstrap-binding.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "projects-bootstrap-binding-tests.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/projects-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:EnablePrivateOwnerSourceReadProof=true",
+      "-p:SupportedProjectReadDistributed=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "projects-build.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/tenants-selected-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "tenants-selected-build.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/tenants-selected-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+      "-class",
+      "*TenantOwnerSourceRuntimeTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/review-corrections/tenants-selected.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "true",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "selected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "tenants-selected-tests.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/tenants-unselected-build.command.json",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:EnablePrivateOwnerSourceReadProof=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "false",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "unselected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "tenants-unselected-build.txt",
+    "evidencePhase": "review-corrections"
+  },
+  {
+    "receipt": "review-corrections/tenants-unselected-tests.command.json",
+    "command": [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+      "-class",
+      "*TenantOwnerSourceRuntimeTests",
+      "-xml",
+      "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/review-corrections/tenants-unselected.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "EnablePrivateCatalogInvocationProof": "true",
+      "EnablePrivateOwnerSourceReadProof": "false",
+      "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+      "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+      "Configuration": "Debug"
+    },
+    "environmentReceipt": "unselected-environment.json",
+    "environmentCompleteness": "all explicitly configured build properties retained",
+    "exitCode": 0,
+    "output": "tenants-unselected-tests.txt",
+    "evidencePhase": "review-corrections"
+  }
+]

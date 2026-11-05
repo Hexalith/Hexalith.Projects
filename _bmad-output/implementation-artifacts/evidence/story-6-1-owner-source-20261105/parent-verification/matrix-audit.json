@@ -1,0 +1,222 @@
+{
+  "approved_platform_scope": [
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", storageTenant: \\\"system\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:global-administrators\\\", domain: \\\"global-administrators\\\", storageTenant: \\\"system\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", storageTenant: \\\"platform:tenants\\\", accepted: False)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:global-administrators\\\", domain: \\\"global-administrators\\\", storageTenant: \\\"tenant-a\\\", accepted: False)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", storageTenant: \\\"tenant-a\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", storageTenant: \\\"system\\\", accepted: False)",
+      "result": "Pass"
+    }
+  ],
+  "unsupported_or_conflicting_scope": [
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Platform_mapping_still_requires_exact_domain_and_aggregate(domain: \\\"other\\\", aggregate: \\\"aggregate-1\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Platform_mapping_still_requires_exact_domain_and_aggregate(domain: \\\"tenants\\\", aggregate: \\\"other\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"platform:tenants\\\", domain: \\\"global-administrators\\\", header: null)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"platform:global-administrators\\\", domain: \\\"tenants\\\", header: null)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"platform:other\\\", domain: \\\"other\\\", header: null)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", header: \\\"X-Hexalith-Scope\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", header: \\\"X-Hexalith-Tenant\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", header: \\\"X-Hexalith-Scope\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Unsupported_or_conflicting_stream_scope_refuses_before_credentials(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", header: \\\"X-Hexalith-Tenant\\\")",
+      "result": "Pass"
+    }
+  ],
+  "ordinary_tenant": [
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Workload_calls_attach_assertion_and_use_only_workload_routes",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", storageTenant: \\\"system\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:global-administrators\\\", domain: \\\"global-administrators\\\", storageTenant: \\\"system\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:tenants\\\", domain: \\\"tenants\\\", storageTenant: \\\"platform:tenants\\\", accepted: False)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"platform:global-administrators\\\", domain: \\\"global-administrators\\\", storageTenant: \\\"tenant-a\\\", accepted: False)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", storageTenant: \\\"tenant-a\\\", accepted: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "workload-stream-final",
+      "name": "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests.Stream_scope_mapping_keeps_original_assertion_and_proof_binding(scope: \\\"tenant-a\\\", domain: \\\"timesheets\\\", storageTenant: \\\"system\\\", accepted: False)",
+      "result": "Pass"
+    }
+  ],
+  "selected_owner_host": [
+    {
+      "lane": "tenants-runtime-final",
+      "name": "Hexalith.Tenants.Server.Tests.Authorization.TenantOwnerSourceRuntimeTests.PrivateSourceEnrollmentIsInertByDefaultAndProductionRefuses",
+      "result": "Pass"
+    },
+    {
+      "lane": "tenants-runtime-final",
+      "name": "Hexalith.Tenants.Server.Tests.Authorization.TenantOwnerSourceRuntimeTests.PrivateSourceHelperUsesActualOwnerIssuerKeyAndCatalogTransport(correctTarget: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "tenants-runtime-final",
+      "name": "Hexalith.Tenants.Server.Tests.Authorization.TenantOwnerSourceRuntimeTests.PrivateSourceHelperUsesActualOwnerIssuerKeyAndCatalogTransport(correctTarget: False)",
+      "result": "Pass"
+    }
+  ],
+  "helper_failure_bounds": [
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.PrivateRoundTripNeverSynthesizesSuccessfulProof(fail: False)",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.PrivateRoundTripNeverSynthesizesSuccessfulProof(fail: True)",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"mode\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"scope\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"domain\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"aggregate\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"expired\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"long-deadline\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.FiniteSelectionRefusesBeforeSdkDispatch(fault: \\\"identity\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.CancellationPreventsLateSuccess",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"tenant\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"domain\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"aggregate\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"truncated\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"continuation\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"count\\\")",
+      "result": "Pass"
+    },
+    {
+      "lane": "owner-source",
+      "name": "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests.ResultIdentityAndBoundsRefuse(fault: \\\"oversized\\\")",
+      "result": "Pass"
+    }
+  ]
+}

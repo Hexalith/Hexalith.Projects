@@ -1,0 +1,84 @@
+{
+  "observedUtc": "2026-11-05T16:56:04.751444+00:00",
+  "sourceManifestSha256": "2a5c6333df9a267f5a6132dc908d3218d8ce3f20692f8485525dd51a0a63c005",
+  "originalAudit": "parent-telemetry-validation.json",
+  "databaseSha256": "11ee3c2da639bc195a39d40be1c90d409a155fa6979516acaa7fbbb911b7ee48",
+  "queryOnly": true,
+  "databaseUnchanged": true,
+  "sixOriginalPeerBindings": [
+    {
+      "appId": "eventstore",
+      "resourceId": 7,
+      "serviceName": "eventstore-dapr-cli",
+      "instanceId": "wqsbrqqr",
+      "ordinaryExportedSpans": 31021
+    },
+    {
+      "appId": "folders",
+      "resourceId": 12,
+      "serviceName": "folders-dapr-cli",
+      "instanceId": "rkhuavvk",
+      "ordinaryExportedSpans": 2879
+    },
+    {
+      "appId": "folders-workers",
+      "resourceId": 5,
+      "serviceName": "folders-workers-dapr-cli",
+      "instanceId": "uqcsgtea",
+      "ordinaryExportedSpans": 1570
+    },
+    {
+      "appId": "projects",
+      "resourceId": 9,
+      "serviceName": "projects-dapr-cli",
+      "instanceId": "ykakakpf",
+      "ordinaryExportedSpans": 978
+    },
+    {
+      "appId": "projects-workers",
+      "resourceId": 1,
+      "serviceName": "projects-workers-dapr-cli",
+      "instanceId": "xsdsqhky",
+      "ordinaryExportedSpans": 176
+    },
+    {
+      "appId": "tenants",
+      "resourceId": 3,
+      "serviceName": "tenants-dapr-cli",
+      "instanceId": "vrqbwgrg",
+      "ordinaryExportedSpans": 387
+    }
+  ],
+  "positiveChannelTotals": {
+    "telemetry_spans": 60639,
+    "telemetry_logs": 39374,
+    "telemetry_metric_exemplars": 29599
+  },
+  "protectedMetricResourceChannelControls": [
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "afbf0ca4-9294-433b-bcfb-39fcaa53c21e",
+      "positiveLogs": 3211,
+      "ordinaryMetricExemplars": 2967
+    },
+    {
+      "resource": "Hexalith.Folders",
+      "instanceId": "f41c204b-d653-4bc4-a9c2-063191396332",
+      "positiveLogs": 142,
+      "ordinaryMetricExemplars": 99
+    },
+    {
+      "resource": "eventstore",
+      "instanceId": "qnaebrzj",
+      "positiveLogs": 31736,
+      "ordinaryMetricExemplars": 22108
+    },
+    {
+      "resource": "projects",
+      "instanceId": "mdbcfmhf",
+      "positiveLogs": 1992,
+      "ordinaryMetricExemplars": 1650
+    }
+  ],
+  "interpretation": "Positive current database logs and exemplars distinguish active collection from blanket channel absence; original fifteen protected traces and protected POST dimensions remain zero. Only the recorded source/runtime and observed intervals are covered."
+}

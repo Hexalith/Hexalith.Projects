@@ -1,0 +1,174 @@
+{
+  "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+  "sourceInputs": 17078,
+  "sourceUnchanged": true,
+  "localTotals": {
+    "sdk": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "helper": {
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "tenants-selected": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "integration": {
+      "total": 212,
+      "passed": 212,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "server": {
+      "total": 1331,
+      "passed": 1331,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  },
+  "nativeTotals": [
+    {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  ],
+  "nativeFailure": "Authenticated bootstrap checkpoint reconciliation returned HTTP 403.",
+  "bootstrapSourceProofPassed": true,
+  "nativeAccepted": false,
+  "freshOwnedContainerAbsence": [
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "9e4f0bee869db1f025ed96c8f4938370f141574f3b65a085554c1880f1ac7fba",
+      "absenceVerified": true,
+      "exitCode": 1
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "6eb8a4a999a5097e703c1364aaa74a8e5f443394000e8898c3a53c868b4e1616",
+      "absenceVerified": true,
+      "exitCode": 1
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "8067f58ca13baf90a5d36229d9f6de4a6b700da50d2734c0cd6cb196a57c7915",
+      "absenceVerified": true,
+      "exitCode": 1
+    },
+    {
+      "resource": "reads-dd5d34f1435063afcc31c5d7-redishost",
+      "containerId": "bd664618f91074e4520711dc559c9675f459ea3472c3b5eaa4beff5424f42572",
+      "absenceVerified": true,
+      "exitCode": 1
+    }
+  ],
+  "freshOwnedProcessAbsence": [
+    {
+      "resource": "apphost",
+      "pid": 457596,
+      "startTicks": "2817393",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "aspire-cli",
+      "pid": 441470,
+      "startTicks": "2807862",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "eventstore",
+      "pid": 459479,
+      "startTicks": "2817988",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "folders",
+      "pid": 459951,
+      "startTicks": "2818059",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "folders-workers",
+      "pid": 460050,
+      "startTicks": "2818082",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "projects",
+      "pid": 459769,
+      "startTicks": "2818014",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "projects-workers",
+      "pid": 459863,
+      "startTicks": "2818037",
+      "originalProcessAbsent": true
+    },
+    {
+      "resource": "tenants",
+      "pid": 459349,
+      "startTicks": "2817944",
+      "originalProcessAbsent": true
+    }
+  ],
+  "originalPrivateRemovalPassed": true,
+  "originalExternalPreservationPassed": true,
+  "ownedBuildMappingRemoved": true,
+  "retainedOutputCopiesVerified": 36,
+  "reversePatchChecks": {
+    "Projects": {
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/source-changes/Projects.patch"
+      ],
+      "exitCode": 0
+    },
+    "EventStore": {
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/source-changes/EventStore.patch"
+      ],
+      "exitCode": 0
+    },
+    "Tenants": {
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/source-changes/Tenants.patch"
+      ],
+      "exitCode": 0
+    }
+  },
+  "storyStatus": "in-progress",
+  "remainingOwnerHandoff": "../maintenance-owner-handoff.md"
+}

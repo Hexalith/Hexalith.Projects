@@ -1,0 +1,263 @@
+{
+  "sourceUnchanged": true,
+  "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+  "inputs": 17081,
+  "native": {
+    "qualification-1": {
+      "sourceMatchesCurrent": true,
+      "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+      "bootstrapReconciled": true,
+      "writerActivationHttpStatus": 200,
+      "readinessHttpStatus": 200,
+      "writerSourceFileBindingMatches": true,
+      "totals": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "ownedSidecarsAbsent": true,
+      "preexistingResourcesPreserved": true,
+      "privateMaterialRemoved": true,
+      "externalBaselineStillPreserved": true
+    },
+    "qualification-2": {
+      "sourceMatchesCurrent": true,
+      "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+      "bootstrapReconciled": true,
+      "writerActivationHttpStatus": 200,
+      "readinessHttpStatus": 200,
+      "writerSourceFileBindingMatches": true,
+      "totals": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "ownedSidecarsAbsent": true,
+      "preexistingResourcesPreserved": true,
+      "privateMaterialRemoved": true,
+      "externalBaselineStillPreserved": true
+    }
+  },
+  "containers": [
+    {
+      "attempt": "qualification-1",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "a4b03252ca4c19f7f7d163b2d3416ba511ce0d3519d5e89c4049d4eef375401e"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: a4b03252ca4c19f7f7d163b2d3416ba511ce0d3519d5e89c4049d4eef375401e\n"
+    },
+    {
+      "attempt": "qualification-1",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "653d4d9e7677db663658b188f9e5a77b5b2330d399b135a2d40e6f46d3ce9129"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 653d4d9e7677db663658b188f9e5a77b5b2330d399b135a2d40e6f46d3ce9129\n"
+    },
+    {
+      "attempt": "qualification-1",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "a7f29d5d49627902c77e170341ee6fe4cc5652dedb96c2fca1b9d4c93f463274"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: a7f29d5d49627902c77e170341ee6fe4cc5652dedb96c2fca1b9d4c93f463274\n"
+    },
+    {
+      "attempt": "qualification-1",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "1ff5c357507177c3cd785438c683e7dbb44e15812a7108b5f6fcecbbe7a92cd3"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 1ff5c357507177c3cd785438c683e7dbb44e15812a7108b5f6fcecbbe7a92cd3\n"
+    },
+    {
+      "attempt": "qualification-2",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "7d1f4fb38ed2897c4406ffabf6ee9e589a2e7b2d4dc4f9c37bed316f105fe359"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 7d1f4fb38ed2897c4406ffabf6ee9e589a2e7b2d4dc4f9c37bed316f105fe359\n"
+    },
+    {
+      "attempt": "qualification-2",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "052ab299e08404defdf342711e5af7457adc63de28a8aa4f2713edff6c6fcf31"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 052ab299e08404defdf342711e5af7457adc63de28a8aa4f2713edff6c6fcf31\n"
+    },
+    {
+      "attempt": "qualification-2",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "1a366bf8f8d3d3302f597932270e7312b2257a7161f4622e1d99077f10df2cd6"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 1a366bf8f8d3d3302f597932270e7312b2257a7161f4622e1d99077f10df2cd6\n"
+    },
+    {
+      "attempt": "qualification-2",
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "9b4147ae0f44543fca9adcb965c003fb3b7a0fea76bbaaad9c2b0e560b91bd92"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 9b4147ae0f44543fca9adcb965c003fb3b7a0fea76bbaaad9c2b0e560b91bd92\n"
+    }
+  ],
+  "processes": [
+    {
+      "attempt": "qualification-1",
+      "role": "appHost",
+      "pid": 930630,
+      "originalStartTicks": "3056242",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "attempt": "qualification-1",
+      "role": "cli",
+      "pid": 914417,
+      "originalStartTicks": "3046789",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "attempt": "qualification-2",
+      "role": "appHost",
+      "pid": 1052294,
+      "originalStartTicks": "3111905",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "attempt": "qualification-2",
+      "role": "cli",
+      "pid": 1035046,
+      "originalStartTicks": "3102705",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    }
+  ],
+  "exactAppHostSessionsAbsent": true,
+  "independentSidecarConfigurationAbsence": [
+    {
+      "attempt": "qualification-1",
+      "appId": "tenants",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/tenants.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-1",
+      "appId": "eventstore",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/eventstore.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-1",
+      "appId": "projects",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/projects.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-1",
+      "appId": "projects-workers",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/projects-workers.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-1",
+      "appId": "folders",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/folders.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-1",
+      "appId": "folders-workers",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-CegDjH/folders-workers.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "tenants",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/tenants.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "eventstore",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/eventstore.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "projects",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/projects.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "projects-workers",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/projects-workers.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "folders",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/folders.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    },
+    {
+      "attempt": "qualification-2",
+      "appId": "folders-workers",
+      "originalConfiguration": "/tmp/hexalith-route-catalog-zlwiS7/folders-workers.configuration.json",
+      "configurationAbsentFromEveryActiveSidecar": true
+    }
+  ],
+  "allTwelveCapturedSidecarConfigurationsAbsent": true
+}

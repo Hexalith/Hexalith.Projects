@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "/tmp/story61-owner-review/run.py",
+    "selected",
+    "owner-source-tests",
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+    "-class",
+    "*OwnerSourceReadTests"
+  ],
+  "stage": "Redundant source-mapping preparation interrupted before any test execution; no test result claimed.",
+  "reason": "Focused test was launched before the prerequisite build/preparation completed.",
+  "ownedProcesses": [
+    294565,
+    294587
+  ],
+  "exitCode": 143
+}

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using Hexalith.EventStore.ErrorHandling;
 using Hexalith.EventStore.Testing;
 using Hexalith.EventStore.Testing.CatalogInvocation;
+using Hexalith.EventStore.Testing.OwnerSourceRead;
 using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.Commons.UniqueIds;
 using Hexalith.EventStore.DomainService;
@@ -110,11 +111,11 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         if (inspection) claims.Add(new("eventstore:permission", "projects:inspect_descriptive_metadata"));
         // Admit the negative control through the gateway's coarse tenant check. The current
         // Project/Folder membership remains absent and must produce the same safe refusal.
-        if (foreignTransportGrant) claims.Add(new("eventstore:tenant", foreignTenant));
+        if (foreignTransportGrant && canonical != canonicalForeign) claims.Add(new("eventstore:tenant", foreignTenant));
         if (administrator)
         {
             claims.Add(new("global_admin", "true"));
-            foreach (string permission in new[] { "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read" })
+            foreach (string permission in new[] { "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read", ProjectionDeliveryMaintenanceScopeCatalog.Permission })
                 claims.Add(new("eventstore:permission", permission));
         }
         return claims;
@@ -1423,8 +1424,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                     }, new JsonSerializerOptions { WriteIndented = true }), Cancellation).ConfigureAwait(false);
                     await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
                     StreamReadPage stream = await ReadHostedBootstrapSourceAsync().ConfigureAwait(false);
-                    Require(stream.Events.Count(item => HostedBootstrapEventMatches(item, message,
-                        value.GetProperty("CorrelationId").GetString()!, "actor-1")) == 1,
+                    Require(HostedBootstrapSourceMatches(stream, message,
+                        value.GetProperty("CorrelationId").GetString()!, "actor-1"),
                         "Hosted bootstrap has no exactly bound persisted administrator event.");
                     using JsonDocument finalReceipt = JsonDocument.Parse(await File.ReadAllBytesAsync(receipt, Cancellation).ConfigureAwait(false));
                     JsonElement final = finalReceipt.RootElement;
@@ -1451,13 +1452,20 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         throw new InvalidOperationException("Hosted bootstrap did not reach actual durable completion.");
     }
 
-    /// <summary>Stops at the missing owner SDK capability without issuing a reserved public read or bypassing owner authorization.</summary>
-    private static Task<StreamReadPage> ReadHostedBootstrapSourceAsync()
-        // EventStoreGatewayClient's workload transport omits the required X-Hexalith-Scope
-        // and rejects the retained system identity returned for a platform-scope request.
-        // The human stream route supports only platform:tenants. An owner SDK repair is required.
-        => Task.FromException<StreamReadPage>(new NotSupportedException(
-            "Owner capability required: the EventStore bound-workload SDK does not support platform:global-administrators source reads."));
+    /// <summary>Reads the actual source through the finite SDK helper within the credential-owning Tenants process.</summary>
+    private Task<StreamReadPage> ReadHostedBootstrapSourceAsync()
+        => new OwnerSourceReadClient(Setting("OwnerSourceReadDirectory")).ReadAsync(Cancellation);
+
+    /// <summary>Independently verifies complete retained source identity and exactly one original persisted bootstrap event.</summary>
+    internal static bool HostedBootstrapSourceMatches(StreamReadPage stream, string messageId, string correlationId, string principal)
+        => stream is not null && stream.Events is not null && stream.Tenant == "system"
+            && stream.Domain == "global-administrators" && stream.AggregateId == "global-administrators"
+            && stream.Metadata is { FromSequence: 0, ToSequence: null, IsTruncated: false, NextContinuationToken: null }
+            && stream.Metadata.EventCount == stream.Events.Count
+            && stream.Metadata.LatestSequence == stream.Events.Count
+            && stream.Metadata.LastSequenceReturned == (stream.Events.Count == 0 ? (long?)null : stream.Events.Count)
+            && stream.Events.Select((item, index) => item is not null && item.SequenceNumber == index + 1L).All(valid => valid)
+            && stream.Events.Count(item => HostedBootstrapEventMatches(item, messageId, correlationId, principal)) == 1;
 
     /// <summary>Accepts only the original exact private submission receipt, preserving a genuinely unknown acknowledgement.</summary>
     /// <param name="receipt">The actual hosted submission receipt.</param>
@@ -1503,6 +1511,17 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         catch (JsonException) { return false; }
     }
 
+    /// <summary>Binds only the fixed administrator delivery maintenance route to its explicit scope.</summary>
+    internal static void BindDeliveryMaintenanceScope(HttpRequestMessage request, string route)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (route != "api/v1/admin/projections/" + ProjectionDeliveryMaintenanceScopeCatalog.Route
+            || request.Method != HttpMethod.Post
+            || request.Headers.Contains("X-Hexalith-Scope") || request.Headers.Contains("X-Hexalith-Tenant"))
+            throw new ArgumentException("Administrator delivery maintenance requires its exact route and unmixed scope.", nameof(route));
+        request.Headers.Add("X-Hexalith-Scope", ProjectionDeliveryMaintenanceScopeCatalog.Namespace);
+    }
+
     private async Task<HttpResponseMessage> SendHumanAsync(string route, object body, string token, CancellationToken? cancellationToken = null)
     {
         using HttpRequestMessage request = new(HttpMethod.Post, _endpoints["eventstore"] + "/" + route) { Content = JsonContent.Create(body, options: Json) };
@@ -1511,6 +1530,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             request.Headers.Add("X-Hexalith-Scope", command.Tenant);
         if (body is StreamReadRequest stream && TenantCanonicalizer.IsPlatformScope(stream.Tenant))
             request.Headers.Add("X-Hexalith-Scope", stream.Tenant);
+        if (route == "api/v1/admin/projections/" + ProjectionDeliveryMaintenanceScopeCatalog.Route)
+            BindDeliveryMaintenanceScope(request, route);
         request.Headers.Add("X-Correlation-Id", Unique());
         return await _http.SendAsync(request, cancellationToken ?? Cancellation).ConfigureAwait(false);
     }
@@ -1593,7 +1614,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         bool reconciled = false;
         if (ProjectionDeliveryCutoverObserver.IsLegacySourceCheckpoint(before[checkpointKey].Bytes, bootstrap, dapr.JsonSerializerOptions))
         {
-            using HttpResponseMessage hydration = await SendHumanAsync("api/v1/admin/projections/system/global-administrators/delivery-reconciliation/global-administrators/global-administrators",
+            using HttpResponseMessage hydration = await SendHumanAsync("api/v1/admin/projections/" + ProjectionDeliveryMaintenanceScopeCatalog.Route,
                 new { }, HumanToken(Tenant, chatbot: false, administrator: true), cancellation).ConfigureAwait(false);
             Require(hydration.StatusCode == HttpStatusCode.OK, "Authenticated bootstrap checkpoint reconciliation returned HTTP " + (int)hydration.StatusCode + ".");
             using JsonDocument hydrated = JsonDocument.Parse(await hydration.Content.ReadAsByteArrayAsync(cancellation).ConfigureAwait(false));

@@ -1,0 +1,49 @@
+{
+  "Projects": {
+    "head": "fb6e1dfbe55fcade245da251bc5ff0d645a3456d",
+    "branch": "main",
+    "status": " M .gitattributes\n M _bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md\n M _bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-13.md\n M _bmad-output/implementation-artifacts/sprint-status.yaml\n m references/Hexalith.EventStore\n m references/Hexalith.Folders\n m references/Hexalith.Tenants\n M src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs\n M src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs\n M tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs\n M tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs\n M tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs\n M tests/tools/test_supported_project_reads_launcher.py\n M tools/qualification/run_supported_project_reads.py\n?? _bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/\n?? _bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/\n"
+  },
+  "EventStore": {
+    "head": "bbc165a5cd3a1f21822b4b53daa7fd895883f8a5",
+    "branch": "main",
+    "status": " M src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs\n M src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs\n M src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs\n M src/Hexalith.EventStore.DomainService/DomainServiceNativeSourceCredentials.cs\n M src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs\n M src/Hexalith.EventStore/Authorization/AdminTenantAuthorizationFilter.cs\n M src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.cs\n M tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs\n M tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs\n M tests/Hexalith.EventStore.DomainService.Tests/NativeSourceMetadataCompositionTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Authorization/AdminTenantAuthorizationFilterTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Controllers/AdminProjectionRebuildControllerTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Projections/EventStoreProjectionDeliveryHistoryReaderTests.cs\n?? src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs\n?? src/Hexalith.EventStore.Testing/OwnerSourceRead/\n?? src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs\n?? tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs\n?? tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs\n"
+  },
+  "Tenants": {
+    "head": "8e20524574901d71ad5f4876804c64c3c6c87b88",
+    "branch": "main",
+    "status": " M src/Hexalith.Tenants/Hexalith.Tenants.csproj\n M src/Hexalith.Tenants/Program.cs\n M tests/Hexalith.Tenants.Server.Tests/Authorization/OwnerSourceTargetHttpHandler.cs\n M tests/Hexalith.Tenants.Server.Tests/Authorization/TenantOwnerSourceRuntimeTests.cs\n M tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj\n?? src/Hexalith.Tenants/Authorization/TenantOwnerSourceReadDevelopmentEnrollment.cs\n"
+  },
+  "Folders": {
+    "head": "ff915ec8676f338d1dd536ce49519010f1c9cb07",
+    "branch": "main",
+    "status": " M src/Hexalith.Folders.Server/FoldersDevelopmentOwnerMetadata.cs\n M tests/Hexalith.Folders.Server.Tests/FoldersDevelopmentOwnerMetadataTests.cs\n?? tests/Hexalith.Folders.Server.Tests/OwnerSourceCompositionAssertionIssuer.cs\n"
+  },
+  "Commons": {
+    "head": "11555ace9efcae2928a00122dcba91243e5a8a1a"
+  },
+  "Memories": {
+    "head": "3a62bfe1281cce5fee83caa569d3531175e1944f"
+  },
+  "Platform": {
+    "head": "692cd6d025032f04f68ce302f02839d746f85ee9"
+  },
+  "Parties": {
+    "head": "1d078dd9a794ec5a121343225261f2f0997e95c5"
+  },
+  "AI.Tools": {
+    "head": "1745b6663ad32bb1288167135ed0f979366c53a0"
+  },
+  "Conversations": {
+    "head": "9a5c684de5ee4876448faa26737f6afd36cf33e7"
+  },
+  "Builds": {
+    "head": "fc2122240a39f03628c04fa8433e5eece90b8b4c"
+  },
+  "McpCli": {
+    "head": "f24266b628a2abcfbdc9f0d064e0e4c324d8e7c8"
+  },
+  "FrontComposer": {
+    "head": "4c24c287cde520631e960a322413bee804f7c3d4"
+  }
+}

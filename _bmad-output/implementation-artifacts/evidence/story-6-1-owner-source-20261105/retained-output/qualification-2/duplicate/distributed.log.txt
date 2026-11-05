@@ -1,0 +1,19 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync [FAIL]
+      Authenticated bootstrap checkpoint reconciliation returned HTTP 403.
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(2296,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.Require(Boolean condition, String message)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(1606,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.ActivateFreshDeliveryWriterProtocolAsync(StreamReadPage bootstrap)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(143,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.SeedAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs(22,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync()
+        --- End of stack trace from previous location ---
+      Output:
+        supported-read-scenario-v2|duplicate|BBB2086DC2934322150AA781198140DAFB71612CC9017BFB761B371841D2B80A|4add4fa207a7dad2f6d10e03e9e1e2c122ff020a468062c41c8492caa3a358a3
+  Finished:    Hexalith.Projects.Integration.Tests (ID = '080eaa74062fd70375888c4db895767e75f0529f4ef1236de5bbdc55453d66ea')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 1.608s

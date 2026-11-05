@@ -1,0 +1,18 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync [FAIL]
+      System.InvalidOperationException : Supported fixture command refused: Hexalith.Folders.Commands.CreateFolder (HTTP 500).
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(815,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.CommandAsync(String tenant, String domain, String aggregate, String type, Object payload, String actorTenant)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(187,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.SeedAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs(22,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync()
+        --- End of stack trace from previous location ---
+      Output:
+        supported-read-scenario-v2|duplicate|5DB6EA058FDCDF0EB8A1426B72E3BBA142A84A43A063010FB7CBB9BC2B0241E2|d4086b64c8325ea052bdee6b23dfc33a47cdfec988915941835b3193edd6fdf6
+  Finished:    Hexalith.Projects.Integration.Tests (ID = '4dde541577b05fd9b10de64725130fd9286eff241eb5af425f3e63e0a8683a20')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 14.626s

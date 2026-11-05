@@ -1,0 +1,135 @@
+{
+  "sourceManifestSha256": "1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60",
+  "sourceInputs": 17078,
+  "sourceUnchanged": true,
+  "verifiedNativeXmlTotals": {
+    "workload-stream-final": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "owner-source": {
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "tenants-runtime-final": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "streams-controller": {
+      "total": 131,
+      "passed": 131,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "projects-read-controls-2": {
+      "total": 127,
+      "passed": 127,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "integration-full-local": {
+      "total": 212,
+      "passed": 212,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "server-full-local": {
+      "total": 1331,
+      "passed": 1331,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  },
+  "nativeDistributedTotals": [
+    {
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0"
+    }
+  ],
+  "bootstrapSourceProofVerified": true,
+  "sourcePatchFilesAndHeadsVerified": true,
+  "cleanupReceipt": {
+    "containers": [
+      {
+        "resource": "dapr-scheduler-mtls",
+        "containerId": "503c0a4db4bc88b8208b0af14a529207203ca054522ea7479be59a81d4399351",
+        "command": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{.Id}}",
+          "503c0a4db4bc88b8208b0af14a529207203ca054522ea7479be59a81d4399351"
+        ],
+        "exitCode": 1,
+        "absenceVerified": true
+      },
+      {
+        "resource": "dapr-placement-mtls",
+        "containerId": "6f32a87163c77197ae4c2e1b7c4d25820736760afb6c2496689015d55cfa1e9f",
+        "command": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{.Id}}",
+          "6f32a87163c77197ae4c2e1b7c4d25820736760afb6c2496689015d55cfa1e9f"
+        ],
+        "exitCode": 1,
+        "absenceVerified": true
+      },
+      {
+        "resource": "dapr-sentry",
+        "containerId": "7b6196f7cfe89bc6cbc97ce77707712b31658b508d55e28d85a30fc2697e07ff",
+        "command": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{.Id}}",
+          "7b6196f7cfe89bc6cbc97ce77707712b31658b508d55e28d85a30fc2697e07ff"
+        ],
+        "exitCode": 1,
+        "absenceVerified": true
+      },
+      {
+        "resource": "reads-57b9735167a9ffd9bcef196f-redishost",
+        "containerId": "ab8eea848625071c4ecf600083525654ca1514e56bdcf299ff6c75175b63073e",
+        "command": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{.Id}}",
+          "ab8eea848625071c4ecf600083525654ca1514e56bdcf299ff6c75175b63073e"
+        ],
+        "exitCode": 1,
+        "absenceVerified": true
+      }
+    ],
+    "exactAppHostSessionsAbsent": true,
+    "originalOwnedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "preexistingResourcesPreserved": true
+  }
+}

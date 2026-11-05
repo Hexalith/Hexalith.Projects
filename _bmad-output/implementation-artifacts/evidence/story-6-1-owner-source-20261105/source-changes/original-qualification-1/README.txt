@@ -1,0 +1,1 @@
+Original byte-identical initial source-change bundle. Bound to qualification-1 source manifest 1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60. Its new-file patch headers used absolute paths; use ../qualification-1-relative for a repository-relative representation of the same source. Current corrected source is separately indexed by ../index.json.

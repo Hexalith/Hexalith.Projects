@@ -1,0 +1,117 @@
+{
+  "sourceMatchesAttempt": true,
+  "sourceManifestSha256": "e249cd16697f064a50aa95870532e910188c34431b98b02ed6ecc282d505ff24",
+  "exactAppHostSessionsAbsent": true,
+  "containers": [
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "4d4a72f26b612942221b2a89dcf65e09cb785167541848db5141d47a391afeee"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 4d4a72f26b612942221b2a89dcf65e09cb785167541848db5141d47a391afeee\n"
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "66bc57bb3ee3fdae9b5169bd539e5bda98a92a27751534f722c1b8d69342c1b4"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 66bc57bb3ee3fdae9b5169bd539e5bda98a92a27751534f722c1b8d69342c1b4\n"
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "fed0f8bde26ed99dce89070992ef20d64c515f261df47e3648702213dce4f91f"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: fed0f8bde26ed99dce89070992ef20d64c515f261df47e3648702213dce4f91f\n"
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "4bad717a6e3d00092ec2692c7f391df561af3e5094fcd244e1575f5aaa4a5e45"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: 4bad717a6e3d00092ec2692c7f391df561af3e5094fcd244e1575f5aaa4a5e45\n"
+    }
+  ],
+  "processes": [
+    {
+      "role": "appHost",
+      "pid": 1607789,
+      "originalStartTicks": "3383244",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "role": "cli",
+      "pid": 1592882,
+      "originalStartTicks": "3373944",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    }
+  ],
+  "sidecars": [
+    {
+      "appId": "eventstore",
+      "pid": 1609400,
+      "originalStartTicks": "3383849",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "appId": "folders",
+      "pid": 1609948,
+      "originalStartTicks": "3383919",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "appId": "folders-workers",
+      "pid": 1610053,
+      "originalStartTicks": "3383942",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "appId": "projects",
+      "pid": 1609605,
+      "originalStartTicks": "3383874",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "appId": "projects-workers",
+      "pid": 1609851,
+      "originalStartTicks": "3383897",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    },
+    {
+      "appId": "tenants",
+      "pid": 1609284,
+      "originalStartTicks": "3383805",
+      "currentStartTicks": null,
+      "originalIdentityAbsent": true
+    }
+  ],
+  "originalPrivateMaterialRemoved": true,
+  "originalPreexistingResourcesPreserved": true
+}

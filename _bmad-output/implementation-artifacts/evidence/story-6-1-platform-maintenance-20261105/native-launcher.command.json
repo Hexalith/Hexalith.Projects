@@ -1,0 +1,22 @@
+{
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/qualification-1"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "expectedSourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+  "startedAtUnix": 1793890800.5281613,
+  "output": "native-launcher.txt",
+  "exitCode": 1,
+  "finishedAtUnix": 1793891123.9771886
+}

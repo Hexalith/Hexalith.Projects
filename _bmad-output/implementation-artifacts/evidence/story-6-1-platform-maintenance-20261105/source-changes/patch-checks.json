@@ -1,0 +1,44 @@
+[
+  {
+    "repository": "Projects",
+    "path": "source-changes/Projects.patch",
+    "sha256": "f5c261496bced2e0cb39c9aba3b7db311c5002b85e21637008824d4b3a0b15a9",
+    "reverseApplyCheck": 0,
+    "output": "",
+    "newFiles": [
+      ""
+    ]
+  },
+  {
+    "repository": "EventStore",
+    "path": "source-changes/EventStore.patch",
+    "sha256": "1aa47eaa04c121e69323cc7fd524cf293fbf11da9dc275429647cd6f5ba3420c",
+    "reverseApplyCheck": 0,
+    "output": "",
+    "newFiles": [
+      "src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs",
+      "src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs",
+      "tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs",
+      "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs"
+    ]
+  },
+  {
+    "repository": "Tenants",
+    "path": "source-changes/Tenants.patch",
+    "sha256": "cd68a8bc302e066efa8862eaa6e11e7ace0d52ad610eb8f78d24a0b8edb939b8",
+    "reverseApplyCheck": 0,
+    "output": "",
+    "newFiles": [
+      "src/Hexalith.Tenants/Authorization/TenantOwnerSourceReadDevelopmentEnrollment.cs"
+    ]
+  }
+]

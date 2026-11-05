@@ -1,0 +1,88 @@
+{
+  "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22",
+  "inputs": 17083,
+  "editedOwner": "references/Hexalith.EventStore",
+  "files": [
+    {
+      "path": "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceReader.cs",
+      "sha256": "26e6efcf446a0262957c0e818c67ffff987905c764ac456b935157d9c40db9e5"
+    },
+    {
+      "path": "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs",
+      "sha256": "f9fe21d5217fc896c9a7c2ea8b4dce5586626a871a2d05023c473ced5dfc9aab"
+    },
+    {
+      "path": "src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs",
+      "sha256": "701bf084c8dcf3709aaa3eafe4cf95c9e1fd900f925b2af30105e78a24cf831a"
+    },
+    {
+      "path": "src/Hexalith.EventStore.DomainService/DomainServiceGatewayBoundStreamReadProofSource.cs",
+      "sha256": "94160adbe117d498aa9ca3d817ed1042d00051af7692b089a19934500b62e21d"
+    },
+    {
+      "path": "tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs",
+      "sha256": "fd752ef109ceb2064c2cabbd4bbe9f8df962b308d986d9a6d5ac7580b3e94970"
+    },
+    {
+      "path": "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs",
+      "sha256": "4bf0d6dcf3ca99213512d9712a961a57c2fe3a6eaad38a3b4a0c6b174c9fd69e"
+    },
+    {
+      "path": "docs/operations/projection-delivery-v2-cutover.md",
+      "sha256": "c34c30dc08bb31ed0170f09da4727dd8fcb514c0367bfd7604fc3213e51b8ef3"
+    },
+    {
+      "path": "docs/concepts/projection-delivery.md",
+      "sha256": "7760a01879e3c688badb31d9e296fc571c4d5a3a834c21215591b8194f756da7"
+    }
+  ],
+  "newSourceFiles": [
+    "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceReader.cs"
+  ],
+  "finalBuildReceipts": [
+    "sdk-build-3.command.json",
+    "helper-build.command.json"
+  ],
+  "focusedTests": {
+    "sdk-controls": {
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "helper-controls": {
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    }
+  },
+  "diffCheck": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceReader.cs",
+      "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs",
+      "src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs",
+      "src/Hexalith.EventStore.DomainService/DomainServiceGatewayBoundStreamReadProofSource.cs",
+      "tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs",
+      "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs",
+      "docs/operations/projection-delivery-v2-cutover.md",
+      "docs/concepts/projection-delivery.md"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "exitCode": 0
+  },
+  "reviewMappingPreserved": true,
+  "fullVerification": "Deferred to parent as requested; no wider suites or runtime started.",
+  "earlierFailedBuildsRetained": [
+    "sdk-build.command.json",
+    "sdk-build-2.command.json"
+  ]
+}

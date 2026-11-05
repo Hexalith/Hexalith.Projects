@@ -1,0 +1,1465 @@
+diff --git a/src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs b/src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs
+index fe25542d2..559a1fc95 100644
+--- a/src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs
++++ b/src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs
+@@ -160,6 +160,14 @@ public sealed class EventStoreGatewayClient : IEventStoreGatewayClient {
+     public async Task<StreamReadPage> ReadWorkloadStreamAsync(
+         StreamReadRequest request, CancellationToken cancellationToken = default) {
+         ArgumentNullException.ThrowIfNull(request);
++        bool platformSource = LegacyTenantStorageMap.IsPlatformSourceRead(request.Tenant, request.Domain);
++        bool conflictingTenant = _httpClient.DefaultRequestHeaders.TryGetValues("X-Hexalith-Tenant", out IEnumerable<string>? tenants)
++            && (platformSource || !tenants.SequenceEqual([request.Tenant], StringComparer.Ordinal));
++        if (request.Tenant.StartsWith("platform:", StringComparison.Ordinal) && !platformSource
++            || _httpClient.DefaultRequestHeaders.Contains("X-Hexalith-Scope")
++            || conflictingTenant) {
++            throw new InvalidOperationException("The workload stream scope is unsupported or conflicting.");
++        }
+         string? boundProof = _streamReadProofs is null
+             ? null
+             : await _streamReadProofs.IssueAsync(request, cancellationToken).ConfigureAwait(false);
+@@ -169,7 +177,7 @@ public sealed class EventStoreGatewayClient : IEventStoreGatewayClient {
+         using HttpResponseMessage response = await SendWorkloadAsync(
+             HttpMethod.Post, _options.WorkloadStreamReadPath, request,
+             EventStoreGatewayWorkloadOperations.StreamRead, request.Tenant, cancellationToken,
+-            boundProof).ConfigureAwait(false);
++            boundProof, explicitScope: platformSource ? request.Tenant : null).ConfigureAwait(false);
+         if (!response.IsSuccessStatusCode) {
+             await ThrowGatewayExceptionAsync(response, cancellationToken).ConfigureAwait(false);
+         }
+@@ -177,7 +185,7 @@ public sealed class EventStoreGatewayClient : IEventStoreGatewayClient {
+         StreamReadPage? result = await response.Content
+             .ReadFromJsonAsync<StreamReadPage>(JsonOptions, cancellationToken).ConfigureAwait(false);
+         return result is not null
+-            && string.Equals(result.Tenant, request.Tenant, StringComparison.Ordinal)
++            && string.Equals(result.Tenant, platformSource ? TenantCanonicalizer.ReservedStorageTenant : request.Tenant, StringComparison.Ordinal)
+             && string.Equals(result.Domain, request.Domain, StringComparison.Ordinal)
+             && string.Equals(result.AggregateId, request.AggregateId, StringComparison.Ordinal)
+             ? result
+@@ -186,7 +194,8 @@ public sealed class EventStoreGatewayClient : IEventStoreGatewayClient {
+ 
+     private async Task<HttpResponseMessage> SendWorkloadAsync(
+         HttpMethod method, string path, object? body, string operation, string tenant,
+-        CancellationToken cancellationToken, string? streamReadProof = null, string? boundCommandProof = null) {
++        CancellationToken cancellationToken, string? streamReadProof = null, string? boundCommandProof = null,
++        string? explicitScope = null) {
+         string? assertion = _workloadAssertions is null
+             ? null
+             : body switch {
+@@ -201,6 +210,9 @@ public sealed class EventStoreGatewayClient : IEventStoreGatewayClient {
+ 
+         using var request = new HttpRequestMessage(method, CreateRelativeUri(path));
+         request.Headers.TryAddWithoutValidation("X-Hexalith-Workload-Assertion", assertion);
++        if (explicitScope is not null) {
++            request.Headers.Add("X-Hexalith-Scope", explicitScope);
++        }
+         if (streamReadProof is not null) {
+             request.Headers.TryAddWithoutValidation("X-Hexalith-Bound-Stream-Read-Proof", streamReadProof);
+         }
+diff --git a/src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs b/src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs
+index 940500536..8ea5e8520 100644
+--- a/src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs
++++ b/src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs
+@@ -23,7 +23,10 @@ public interface IEventStoreGatewayClient {
+         string tenant, string messageId, CancellationToken cancellationToken = default)
+         => Task.FromException<CommandStatusQueryResponse?>(new InvalidOperationException("Workload status transport is unavailable."));
+ 
+-    /// <summary>Reads one tenant-bound stream page through the workload-only channel.</summary>
++    /// <summary>Reads one exact tenant-bound stream page through the workload-only channel.</summary>
++    /// <remarks>Approved platform source scopes carry one explicit scope header and accept only their
++    /// historical storage Tenant with unchanged Domain and AggregateId. Assertion and proof remain bound
++    /// to the original public request. Unsupported platform/domain pairs and conflicting scope headers refuse.</remarks>
+     Task<StreamReadPage> ReadWorkloadStreamAsync(
+         StreamReadRequest request, CancellationToken cancellationToken = default)
+         => Task.FromException<StreamReadPage>(new InvalidOperationException("Workload stream transport is unavailable."));
+@@ -74,11 +77,10 @@ public interface IEventStoreGatewayClient {
+     /// <remarks>
+     /// On the human/authority transport, a platform-scope tenant (for example <c>platform:tenants</c>)
+     /// is also sent as the explicit <c>X-Hexalith-Scope</c> header; the returned page carries the
+-    /// retained storage identity. <see cref="EventStoreGatewayClient"/> with
+-    /// <see cref="EventStoreGatewayClientOptions.UseWorkloadTransport"/> sends no scope header and refuses a
+-    /// page whose identity differs from the request, so that client does not support platform-scope reads.
+-    /// The <c>api/v1/streams/read/workload</c> route itself admits them with one exact
+-    /// <c>X-Hexalith-Scope</c> header.
++    /// retained storage identity. With <see cref="EventStoreGatewayClientOptions.UseWorkloadTransport"/>,
++    /// the client delegates to <see cref="ReadWorkloadStreamAsync"/>: only the approved
++    /// platform:tenants/tenants and platform:global-administrators/global-administrators mappings may
++    /// return the reserved storage Tenant, with exact Domain and AggregateId validation.
+     /// </remarks>
+     Task<StreamReadPage> ReadStreamAsync(
+         StreamReadRequest request,
+diff --git a/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs b/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs
+index 42a455775..f491bd44b 100644
+--- a/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs
++++ b/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs
+@@ -57,10 +57,14 @@ internal static class DomainProjectionNativeSourceAdmission
+         original.ClearNativeSourceAdmission();
+         // Hosts without the supported authenticated transport retain unproven generations. No new
+         // registration or owner authority is inferred from a producer hint or a local cursor.
+-        IEventStoreGatewayClient? gateway = services.GetService<IEventStoreGatewayClient>();
+-        if (gateway is null) return original;
+-        var reader = new AuthoritativeEventStreamReader(gateway,
+-            services.GetService<TimeProvider>() ?? TimeProvider.System, requireNativeProof: true);
++        IAuthoritativeEventStreamReader? reader = services.GetService<IAuthoritativeEventStreamReader>();
++        if (reader is null)
++        {
++            IEventStoreGatewayClient? gateway = services.GetService<IEventStoreGatewayClient>();
++            if (gateway is null) return original;
++            reader = new AuthoritativeEventStreamReader(gateway,
++                services.GetService<TimeProvider>() ?? TimeProvider.System, requireNativeProof: true);
++        }
+         AuthoritativeStreamReadResult read = await reader.ReadAsync(identity, cancellationToken).ConfigureAwait(false);
+         // Native read enrollment is independently gated. Its absence must not disable ordinary
+         // projections: the delivered generation remains unproven and cannot authorize metadata.
+diff --git a/src/Hexalith.EventStore.DomainService/DomainServiceNativeSourceCredentials.cs b/src/Hexalith.EventStore.DomainService/DomainServiceNativeSourceCredentials.cs
+index 6cd66aba1..d4f411e04 100644
+--- a/src/Hexalith.EventStore.DomainService/DomainServiceNativeSourceCredentials.cs
++++ b/src/Hexalith.EventStore.DomainService/DomainServiceNativeSourceCredentials.cs
+@@ -24,7 +24,12 @@ internal sealed class DomainServiceNativeSourceCredentials(
+         cancellationToken.ThrowIfCancellationRequested();
+         return operation == EventStoreGatewayWorkloadOperations.StreamRead && requestedDomain == domain
+             && TenantCanonicalizer.TryCanonicalize(tenant, out string canonical) && canonical == tenant
+-            ? issuer.IssueAsync(new WorkloadAssertionRequest(audience, EventStoreGatewayWorkloadOperations.StreamRead), cancellationToken)
++            ? issuer.IssueAsync(new WorkloadAssertionRequest(audience, EventStoreGatewayWorkloadOperations.StreamRead,
++                new Dictionary<string, string>(StringComparer.Ordinal)
++                {
++                    [EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] = tenant,
++                    [EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType] = requestedDomain,
++                }), cancellationToken)
+             : ValueTask.FromResult<string?>(null);
+     }
+ 
+diff --git a/src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs b/src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs
+index 8dbebb705..454d92977 100644
+--- a/src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs
++++ b/src/Hexalith.EventStore.DomainService/EventStoreGatewayWorkloadTransportExtensions.cs
+@@ -15,6 +15,54 @@ namespace Hexalith.EventStore.DomainService;
+ /// <summary>Composes the SDK gateway client's workload command and stream transport for a domain host.</summary>
+ public static class EventStoreGatewayWorkloadTransportExtensions
+ {
++    /// <summary>Registers complete authenticated source reads independently of the host's human gateway client.</summary>
++    /// <remarks>The reader uses the existing host issuer and owner proof key. It exposes no command client,
++    /// grants no authority, and verifies complete native source prefixes through the existing SDK transport.</remarks>
++    /// <param name="services">The host services.</param>
++    /// <param name="domain">The one exact managed source domain.</param>
++    /// <param name="gatewayAudience">The existing receiving workload audience.</param>
++    /// <returns>The independent HTTP builder for supported transport customization.</returns>
++    public static IHttpClientBuilder AddEventStoreGatewayAuthoritativeEventStreamReader(
++        this IServiceCollection services, string domain,
++        string gatewayAudience = EventStoreTrustedEffectSubmissionExtensions.DefaultGatewayAudience)
++    {
++        ArgumentNullException.ThrowIfNull(services);
++        ArgumentException.ThrowIfNullOrWhiteSpace(domain);
++        ArgumentException.ThrowIfNullOrWhiteSpace(gatewayAudience);
++        if (domain != domain.Trim() || domain.Length > 64 || domain.Contains('*', StringComparison.Ordinal)
++            || gatewayAudience != gatewayAudience.Trim())
++            throw new ArgumentException("Configure one exact source domain and gateway audience.");
++        services.TryAddSingleton(TimeProvider.System);
++        services.AddEventStoreWorkloadAssertionIssuer();
++        return services.AddHttpClient("Hexalith.EventStore.AuthoritativeSource", (provider, client) =>
++        {
++            IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
++            string endpoint = configuration["DAPR_HTTP_ENDPOINT"]
++                ?? $"http://localhost:{configuration["DAPR_HTTP_PORT"] ?? "3500"}";
++            if (!Uri.TryCreate(endpoint, UriKind.Absolute, out Uri? address) || address.Scheme != Uri.UriSchemeHttp
++                || !string.IsNullOrEmpty(address.UserInfo) || !string.IsNullOrEmpty(address.Query)
++                || !string.IsNullOrEmpty(address.Fragment) || address.AbsolutePath != "/")
++                throw new InvalidOperationException("The configured local Dapr HTTP endpoint is unavailable.");
++            client.BaseAddress = address;
++        }).AddEventStoreDaprServiceInvocation(provider => provider.GetRequiredService<IConfiguration>(),
++            configuration => configuration["EventStore:Gateway:AppId"] ?? "eventstore",
++            configuration => configuration["DAPR_API_TOKEN"])
++          .AddTypedClient<IAuthoritativeEventStreamReader>((client, provider) =>
++          {
++              IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
++              TimeProvider clock = provider.GetRequiredService<TimeProvider>();
++              var domains = new HashSet<string>([domain], StringComparer.Ordinal);
++              var assertions = new DomainServiceGatewayWorkloadAssertionSource(
++                  provider.GetRequiredService<IWorkloadAssertionIssuer>(), domains, gatewayAudience);
++              var proofs = new DomainServiceGatewayBoundStreamReadProofSource(
++                  configuration["Authentication:WorkloadIssuer:Workload"] ?? string.Empty,
++                  configuration["Authentication:BoundStreamRead:PrivateKey"] ?? string.Empty, domains, clock);
++              var gateway = new EventStoreGatewayClient(client, Options.Create(new EventStoreGatewayClientOptions
++                  { UseWorkloadTransport = true }), assertions, proofs);
++              return new AuthoritativeEventStreamReader(gateway, clock, requireNativeProof: true);
++          });
++    }
++
+     /// <summary>Registers an independent metadata-only workload client without replacing the host's human-command gateway.</summary>
+     /// <remarks>The receiver must explicitly enroll this caller in Authentication:BoundStreamRead:MetadataOnlyCallers.
+     /// The host's own workload issuer and independently provisioned BoundStreamRead private key are required;
+diff --git a/src/Hexalith.EventStore/Authorization/AdminTenantAuthorizationFilter.cs b/src/Hexalith.EventStore/Authorization/AdminTenantAuthorizationFilter.cs
+index 73fd06324..b804804e7 100644
+--- a/src/Hexalith.EventStore/Authorization/AdminTenantAuthorizationFilter.cs
++++ b/src/Hexalith.EventStore/Authorization/AdminTenantAuthorizationFilter.cs
+@@ -22,6 +22,32 @@ public class AdminTenantAuthorizationFilter(ILogger<AdminTenantAuthorizationFilt
+         ArgumentNullException.ThrowIfNull(context);
+         ArgumentNullException.ThrowIfNull(next);
+ 
++        var maintenanceAction = context.ActionDescriptor as ControllerActionDescriptor;
++        PlatformAdmissionDeclaration? maintenance = maintenanceAction is null ? null
++            : ProjectionDeliveryMaintenanceScopeCatalog.ForAction(
++                maintenanceAction.ControllerTypeInfo.FullName!, maintenanceAction.MethodInfo.Name);
++        if (maintenance is not null) {
++            List<string> grants = GetAuthorizedTenantClaims(context);
++            if (!context.HttpContext.Request.Headers.TryGetValue("X-Hexalith-Scope", out var maintenanceScope)
++                || maintenanceScope.Count != 1
++                || !string.Equals(maintenanceScope[0], maintenance.Namespace, StringComparison.Ordinal)
++                || context.RouteData.Values.ContainsKey("tenantId")
++                || context.HttpContext.Request.Query.ContainsKey("tenantId")
++                || context.ActionArguments.ContainsKey("tenantId")
++                || context.HttpContext.Request.Headers.ContainsKey("X-Hexalith-Tenant")
++                || context.HttpContext.User.Identity?.IsAuthenticated != true
++                || context.HttpContext.User.FindAll("eventstore:permission").Count(claim =>
++                    string.Equals(claim.Value, maintenance.RequiredHumanPermission, StringComparison.Ordinal)) != 1
++                || !TenantCanonicalizer.TryCanonicalizeGrants(grants, out _)) {
++                Deny(context, null, grants);
++                return;
++            }
++
++            context.HttpContext.Items[ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey] = maintenance.Namespace;
++            _ = await next().ConfigureAwait(false);
++            return;
++        }
++
+         if (!HasTenantArgument(context)) {
+             _ = await next().ConfigureAwait(false);
+             return;
+diff --git a/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.cs b/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.cs
+index 7a45ae5d5..6166a0d74 100644
+--- a/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.cs
++++ b/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.cs
+@@ -454,7 +454,11 @@ public sealed partial class AdminProjectionRebuildController(
+         ProjectionDeliveryReconciliationResult result = await reconciler
+             .ReconcileFromEventStoreAsync(identity, projectionName, operatorId, cancellationToken)
+             .ConfigureAwait(false);
+-        return result.Status switch {
++        return MapDeliveryReconciliationResult(result);
++    }
++
++    private IActionResult MapDeliveryReconciliationResult(ProjectionDeliveryReconciliationResult result)
++        => result.Status switch {
+             ProjectionDeliveryReconciliationStatus.Completed => Ok(new ProjectionDeliveryReconciliationResponse("Completed", result.ReasonCode, result.PreservedSequence)),
+             ProjectionDeliveryReconciliationStatus.ScopeDenied => ProblemWithReason(
+                 StatusCodes.Status403Forbidden,
+@@ -472,7 +476,6 @@ public sealed partial class AdminProjectionRebuildController(
+                 "Projection delivery reconciliation state is unavailable.",
+                 ProjectionDispatchReasonCodes.DeliveryStateUnavailable),
+         };
+-    }
+ 
+     /// <summary>
+     /// Maps a coordinated erase result to an HTTP outcome, disclosing only the outcome kind, the
+diff --git a/tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs b/tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs
+index c173e69ee..b1a4a9fb9 100644
+--- a/tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs
++++ b/tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs
+@@ -8,12 +8,86 @@ using Hexalith.EventStore.Contracts.Streams;
+ 
+ using Microsoft.Extensions.Options;
+ 
++using NSubstitute;
++
+ using Shouldly;
+ 
+ namespace Hexalith.EventStore.Client.Tests.Gateway;
+ 
+ public sealed class EventStoreGatewayWorkloadClientTests
+ {
++    [Theory]
++    [InlineData("platform:tenants", "tenants", "system", true)]
++    [InlineData("platform:global-administrators", "global-administrators", "system", true)]
++    [InlineData("platform:tenants", "tenants", "platform:tenants", false)]
++    [InlineData("platform:global-administrators", "global-administrators", "tenant-a", false)]
++    [InlineData("tenant-a", "timesheets", "tenant-a", true)]
++    [InlineData("tenant-a", "timesheets", "system", false)]
++    public async Task Stream_scope_mapping_keeps_original_assertion_and_proof_binding(
++        string scope, string domain, string storageTenant, bool accepted)
++    {
++        var original = new StreamReadRequest(scope, domain, "aggregate-1");
++        var assertions = Substitute.For<IEventStoreGatewayWorkloadAssertionSource>();
++        assertions.IssueAsync(EventStoreGatewayWorkloadOperations.StreamRead, scope, domain, Arg.Any<CancellationToken>())
++            .Returns(new ValueTask<string?>("original-assertion"));
++        var proofs = Substitute.For<IEventStoreGatewayStreamReadProofSource>();
++        proofs.IssueAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>())
++            .Returns(new ValueTask<string?>("original-proof"));
++        using var http = new HttpClient(new Handler(message =>
++        {
++            message.Headers.Contains("X-Hexalith-Scope").ShouldBe(scope.StartsWith("platform:", StringComparison.Ordinal));
++            if (scope.StartsWith("platform:", StringComparison.Ordinal)) message.Headers.GetValues("X-Hexalith-Scope").ShouldBe([scope]);
++            message.Headers.Contains("X-Hexalith-Tenant").ShouldBeFalse();
++            message.Headers.GetValues("X-Hexalith-Bound-Stream-Read-Proof").ShouldBe(["original-proof"]);
++            message.Headers.GetValues("X-Hexalith-Workload-Assertion").ShouldBe(["original-assertion"]);
++            JsonSerializer.Deserialize<StreamReadRequest>(message.Content!.ReadAsStringAsync().GetAwaiter().GetResult(),
++                EventStoreGatewayClient.JsonOptions).ShouldBe(original);
++            return StreamResponse(storageTenant, domain, "aggregate-1");
++        })) { BaseAddress = new Uri("https://eventstore.test/") };
++        var gateway = new EventStoreGatewayClient(http, Options.Create(new EventStoreGatewayClientOptions()), assertions, proofs);
++        if (accepted) (await gateway.ReadWorkloadStreamAsync(original)).Tenant.ShouldBe(storageTenant);
++        else await Should.ThrowAsync<EventStoreGatewayException>(() => gateway.ReadWorkloadStreamAsync(original));
++        await proofs.Received(1).IssueAsync(Arg.Is<StreamReadRequest>(request => ReferenceEquals(original, request)), Arg.Any<CancellationToken>());
++        await assertions.Received(1).IssueAsync(EventStoreGatewayWorkloadOperations.StreamRead, scope, domain, Arg.Any<CancellationToken>());
++    }
++
++    [Theory]
++    [InlineData("platform:tenants", "global-administrators", null)]
++    [InlineData("platform:global-administrators", "tenants", null)]
++    [InlineData("platform:other", "other", null)]
++    [InlineData("platform:tenants", "tenants", "X-Hexalith-Scope")]
++    [InlineData("platform:tenants", "tenants", "X-Hexalith-Tenant")]
++    [InlineData("tenant-a", "timesheets", "X-Hexalith-Scope")]
++    [InlineData("tenant-a", "timesheets", "X-Hexalith-Tenant")]
++    public async Task Unsupported_or_conflicting_stream_scope_refuses_before_credentials(
++        string scope, string domain, string? header)
++    {
++        using var http = new HttpClient(new Handler(_ => throw new InvalidOperationException("Unexpected transport")))
++            { BaseAddress = new Uri("https://eventstore.test/") };
++        if (header is not null) http.DefaultRequestHeaders.Add(header, "conflicting-scope");
++        var assertions = Substitute.For<IEventStoreGatewayWorkloadAssertionSource>();
++        var proofs = Substitute.For<IEventStoreGatewayStreamReadProofSource>();
++        var gateway = new EventStoreGatewayClient(http, Options.Create(new EventStoreGatewayClientOptions()), assertions, proofs);
++        await Should.ThrowAsync<InvalidOperationException>(() => gateway.ReadWorkloadStreamAsync(new(scope, domain, "aggregate-1")));
++        await proofs.DidNotReceive().IssueAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>());
++    }
++
++    [Theory]
++    [InlineData("other", "aggregate-1")]
++    [InlineData("tenants", "other")]
++    public async Task Platform_mapping_still_requires_exact_domain_and_aggregate(string domain, string aggregate)
++    {
++        using var http = new HttpClient(new Handler(_ => StreamResponse("system", domain, aggregate)))
++            { BaseAddress = new Uri("https://eventstore.test/") };
++        var gateway = new EventStoreGatewayClient(http, Options.Create(new EventStoreGatewayClientOptions()), new StubAssertions());
++        await Should.ThrowAsync<EventStoreGatewayException>(() => gateway.ReadWorkloadStreamAsync(new("platform:tenants", "tenants", "aggregate-1")));
++    }
++
++    private static HttpResponseMessage StreamResponse(string tenant, string domain, string aggregate)
++        => new(HttpStatusCode.OK) { Content = new StringContent(JsonSerializer.Serialize(new StreamReadPage(
++            tenant, domain, aggregate, [], new(0, null, null, 0, 0, false, null)), EventStoreGatewayClient.JsonOptions),
++            Encoding.UTF8, "application/json") };
++
+     [Fact]
+     public async Task Workload_calls_attach_assertion_and_use_only_workload_routes()
+     {
+diff --git a/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs b/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs
+index 4f3e5ad83..21f685a8c 100644
+--- a/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs
++++ b/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs
+@@ -1,4 +1,6 @@
+ using System.Security.Cryptography;
++using System.Net;
++using System.Net.Http.Json;
+ using System.Text.Json;
+ 
+ using Hexalith.EventStore.Client.Gateway;
+@@ -8,6 +10,9 @@ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.Contracts.Streams;
+ 
+ using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Configuration;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.Testing.Http;
+ using NSubstitute;
+ using Shouldly;
+ 
+@@ -189,9 +194,11 @@ public sealed class DomainProjectionNativeSourceAdmissionTests
+     }
+ 
+     [Theory]
+-    [InlineData(false)]
+-    [InlineData(true)]
+-    public async Task RealRebuildAndReconciliationAdmitUntrustedJsonAndPersistOnlyOriginalProof(bool reconcile)
++    [InlineData(false, false)]
++    [InlineData(true, false)]
++    [InlineData(false, true)]
++    [InlineData(true, true)]
++    public async Task RealRebuildAndReconciliationAdmitUntrustedJsonAndPersistOnlyOriginalProof(bool reconcile, bool selectedReader)
+     {
+         var (request, gateway) = Fixture();
+         request = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(request))!;
+@@ -210,9 +217,13 @@ public sealed class DomainProjectionNativeSourceAdmissionTests
+                 await store.SaveAsync("models", "original-proof", call.Arg<ProjectionRequest>().VerifiedNativeSourceProof.ShouldNotBeNull(), Token);
+                 return DomainProjectionHandlerResult.Completed();
+             });
+-        using var services = new ServiceCollection().AddSingleton<IAsyncDomainProjectionHandler>(handler).AddSingleton(gateway)
++        IEventStoreGatewayClient human = selectedReader ? Substitute.For<IEventStoreGatewayClient>() : gateway;
++        var registrations = new ServiceCollection().AddSingleton<IAsyncDomainProjectionHandler>(handler).AddSingleton(human)
+             .AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelStore>(store)
+-            .AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelBatchStore>(store).BuildServiceProvider();
++            .AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelBatchStore>(store);
++        if (selectedReader) registrations.AddSingleton<IAuthoritativeEventStreamReader>(
++            new AuthoritativeEventStreamReader(gateway, TimeProvider.System, requireNativeProof: true));
++        using var services = registrations.BuildServiceProvider();
+         string fingerprint = Hexalith.EventStore.Client.Projections.ProjectionRouteCatalogFingerprint.Compute("native-service", "v1", [new(Identity.Domain, "native-proof")]);
+         var dispatch = new ProjectionDispatchRequest(request, ["native-proof"], "original-operation", fingerprint);
+         var identity = new DomainProjectionIdentityOptions { AppId = "native-service", ServiceVersion = "v1" };
+@@ -224,6 +235,7 @@ public sealed class DomainProjectionNativeSourceAdmissionTests
+         var changed = dispatch with { Request = request with { Events = [request.Events[0] with { Payload = "{}"u8.ToArray() }] } };
+         await Should.ThrowAsync<ProjectionDispatchValidationException>(() => Invoke(changed));
+         store.Snapshot<NativeSourceProof>("models", "original-proof").ShouldBe(request.NativeSourceProof);
++        if (selectedReader) human.ReceivedCalls().ShouldBeEmpty();
+     }
+ 
+     [Theory]
+@@ -302,6 +314,89 @@ public sealed class DomainProjectionNativeSourceAdmissionTests
+         await gateway.DidNotReceive().ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>());
+     }
+ 
++    [Theory]
++    [InlineData("valid")]
++    [InlineData("payload")]
++    [InlineData("source-replaced")]
++    [InlineData("unavailable")]
++    [InlineData("missing-key")]
++    [InlineData("foreign-domain")]
++    public async Task SelectedNamedWorkloadSourceVerifiesOriginalPrefixWithoutUsingHumanGateway(string scenario)
++    {
++        var (original, source) = Fixture();
++        using RSA key = RSA.Create(2048);
++        var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> {
++            ["DAPR_HTTP_ENDPOINT"] = "http://localhost:3500", ["DAPR_API_TOKEN"] = "sidecar-token",
++            ["EventStore:Gateway:AppId"] = "source-gateway", ["Authentication:WorkloadIssuer:Workload"] = "source-owner",
++            ["Authentication:BoundStreamRead:PrivateKey"] = scenario == "missing-key" ? null : Convert.ToBase64String(key.ExportPkcs8PrivateKey()),
++        }).Build();
++        var assertions = new List<WorkloadAssertionRequest>();
++        IWorkloadAssertionIssuer issuer = Substitute.For<IWorkloadAssertionIssuer>();
++        issuer.IssueAsync(Arg.Any<WorkloadAssertionRequest>(), Arg.Any<CancellationToken>()).Returns(call => {
++            assertions.Add(call.Arg<WorkloadAssertionRequest>());
++            return ValueTask.FromResult<string?>("exact-owner-assertion");
++        });
++        using var transport = new MockHttpMessageHandler(message => {
++            message.RequestUri!.AbsoluteUri.ShouldBe("http://localhost:3500/api/v1/streams/read/workload");
++            message.Headers.Authorization.ShouldBeNull();
++            message.Headers.GetValues("dapr-app-id").Single().ShouldBe("source-gateway");
++            message.Headers.GetValues("dapr-api-token").Single().ShouldBe("sidecar-token");
++            message.Headers.GetValues(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName).Single().ShouldBe("exact-owner-assertion");
++            var query = JsonSerializer.Deserialize<StreamReadRequest>(message.Content!.ReadAsStringAsync().GetAwaiter().GetResult(), JsonSerializerOptions.Web)!;
++            BoundStreamReadProof.Verify(message.Headers.GetValues(BoundStreamReadProof.HeaderName).Single(), query,
++                "source-owner", Convert.ToBase64String(key.ExportSubjectPublicKeyInfo()), DateTimeOffset.UtcNow).ShouldBeTrue();
++            if (scenario == "unavailable") return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
++            StreamReadPage page = source.ReadStreamAsync(query, Token).GetAwaiter().GetResult();
++            if (scenario == "source-replaced") page = page with { Metadata = page.Metadata with {
++                NativeProof = NativeSourceProofCodec.ExtendDigest(NativeSourceProofCodec.CreateSeed(Identity,
++                    "01ARZ3NDEKTSV4RRFFQ69G5FAW"), Identity, 1, original.Events[0].MessageId!,
++                    Convert.ToHexStringLower(SHA256.HashData(original.Events[0].Payload))) } };
++            return new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Create(page) };
++        });
++        IEventStoreGatewayClient human = Substitute.For<IEventStoreGatewayClient>();
++        var services = new ServiceCollection(); services.AddLogging(); services.AddSingleton<IConfiguration>(configuration);
++        services.AddSingleton(issuer); services.AddSingleton(human);
++        services.AddEventStoreGatewayAuthoritativeEventStreamReader(scenario == "foreign-domain" ? "other" : Identity.Domain)
++            .ConfigurePrimaryHttpMessageHandler(() => transport);
++        using var provider = services.BuildServiceProvider();
++        ProjectionRequest request = scenario == "payload" ? original with { Events = [original.Events[0] with { Payload = "{}"u8.ToArray() }] } : original;
++        if (scenario is "payload" or "source-replaced")
++            await Should.ThrowAsync<ProjectionDispatchValidationException>(() => DomainProjectionNativeSourceAdmission.VerifyAsync(provider, request, Token));
++        else {
++            ProjectionRequest admitted = await DomainProjectionNativeSourceAdmission.VerifyAsync(provider, request, Token);
++            if (scenario == "valid") admitted.VerifiedNativeSourceProof.ShouldBe(original.NativeSourceProof);
++            else admitted.VerifiedNativeSourceProof.ShouldBeNull();
++        }
++        human.ReceivedCalls().ShouldBeEmpty();
++        if (scenario is "missing-key" or "foreign-domain") {
++            transport.CallCount.ShouldBe(0); assertions.ShouldBeEmpty();
++        }
++        else {
++            transport.CallCount.ShouldBeGreaterThan(0);
++            assertions.ShouldAllBe(assertion => assertion.Audience == "eventstore"
++                && assertion.Operation == EventStoreWorkloadOperations.GatewayStreamRead && assertion.Bindings != null
++                && assertion.Bindings.Count == 2
++                && assertion.Bindings[EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] == Identity.TenantId
++                && assertion.Bindings[EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType] == Identity.Domain);
++        }
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task ExplicitReaderRefusalOrErrorNeverFallsBackToHumanGateway(bool error)
++    {
++        var (request, human) = Fixture();
++        IAuthoritativeEventStreamReader selected = Substitute.For<IAuthoritativeEventStreamReader>();
++        selected.ReadAsync(Identity, Arg.Any<CancellationToken>()).Returns(_ => error
++            ? Task.FromException<AuthoritativeStreamReadResult>(new InvalidOperationException("selected-reader-failure"))
++            : Task.FromResult(new AuthoritativeStreamReadResult(null, "selected-reader-unavailable")));
++        using var provider = new ServiceCollection().AddSingleton(human).AddSingleton(selected).BuildServiceProvider();
++        if (error) await Should.ThrowAsync<InvalidOperationException>(() => DomainProjectionNativeSourceAdmission.VerifyAsync(provider, request, Token));
++        else (await DomainProjectionNativeSourceAdmission.VerifyAsync(provider, request, Token)).VerifiedNativeSourceProof.ShouldBeNull();
++        human.ReceivedCalls().ShouldBeEmpty();
++    }
++
+     private static (ProjectionRequest, IEventStoreGatewayClient) Fixture(string eventType = "ConversationCreated", byte[]? payload = null, bool protectedPayload = false)
+     {
+         var item = new ProjectionEventDto(eventType, payload ?? "{\"value\":1}"u8.ToArray(), "json", 1,
+diff --git a/tests/Hexalith.EventStore.DomainService.Tests/NativeSourceMetadataCompositionTests.cs b/tests/Hexalith.EventStore.DomainService.Tests/NativeSourceMetadataCompositionTests.cs
+index d649cad52..2f347a112 100644
+--- a/tests/Hexalith.EventStore.DomainService.Tests/NativeSourceMetadataCompositionTests.cs
++++ b/tests/Hexalith.EventStore.DomainService.Tests/NativeSourceMetadataCompositionTests.cs
+@@ -99,7 +99,10 @@ public sealed class NativeSourceMetadataCompositionTests
+             observation.ShouldNotBeNull().Proof.ShouldBe(proof);
+             metadataTransport.CallCount.ShouldBe(1);
+             await issuer.Received(1).IssueAsync(Arg.Is<WorkloadAssertionRequest>(request => request.Audience == "eventstore"
+-                && request.Operation == EventStoreWorkloadOperations.GatewayStreamRead && request.Bindings == null), Arg.Any<CancellationToken>());
++                && request.Operation == EventStoreWorkloadOperations.GatewayStreamRead && request.Bindings != null
++                && request.Bindings.Count == 2
++                && request.Bindings[EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] == identity.TenantId
++                && request.Bindings[EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType] == identity.Domain), Arg.Any<CancellationToken>());
+         }
+         else
+         {
+diff --git a/tests/Hexalith.EventStore.Server.Tests/Authorization/AdminTenantAuthorizationFilterTests.cs b/tests/Hexalith.EventStore.Server.Tests/Authorization/AdminTenantAuthorizationFilterTests.cs
+index 8d8d41e85..4bc467916 100644
+--- a/tests/Hexalith.EventStore.Server.Tests/Authorization/AdminTenantAuthorizationFilterTests.cs
++++ b/tests/Hexalith.EventStore.Server.Tests/Authorization/AdminTenantAuthorizationFilterTests.cs
+@@ -261,6 +261,82 @@ public class AdminTenantAuthorizationFilterTests {
+         context.Result.ShouldBeOfType<ObjectResult>().StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
+     }
+ 
++    [Fact]
++    public async Task MaintenanceWithoutTenantArgument_RequiresExactSeparateAdmission() {
++        ActionExecutingContext context = CreateMaintenanceContext();
++        (await InvokeAsync(CreateFilter(), context)).ShouldBeTrue();
++        context.Result.ShouldBeNull();
++        context.HttpContext.Items[ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey]
++            .ShouldBe(ProjectionDeliveryMaintenanceScopeCatalog.Namespace);
++        context.HttpContext.Items.ContainsKey(AdminPlatformScopeCatalog.ValidatedContextKey).ShouldBeFalse();
++        AdminPlatformScopeCatalog.ForAction(typeof(AdminProjectionRebuildController).FullName!,
++            nameof(AdminProjectionRebuildController.ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync)).ShouldBeNull();
++        ProjectionDeliveryMaintenanceScopeCatalog.ForAction(typeof(AdminProjectionRebuildController).FullName!,
++            nameof(AdminProjectionRebuildController.ReconcileDeliveryFromEventStoreAsync)).ShouldBeNull();
++    }
++
++    [Theory]
++    [InlineData("missing-scope")]
++    [InlineData("duplicate-scope")]
++    [InlineData("wrong-scope")]
++    [InlineData("read-scope")]
++    [InlineData("missing-permission")]
++    [InlineData("duplicate-permission")]
++    [InlineData("read-permission")]
++    [InlineData("foreign-permission")]
++    [InlineData("route")]
++    [InlineData("query")]
++    [InlineData("header")]
++    [InlineData("argument")]
++    [InlineData("reserved-grant")]
++    [InlineData("duplicate-grant")]
++    [InlineData("unauthenticated")]
++    public async Task MaintenanceInvalidAdmission_DeniesBeforeAction(string invalid) {
++        ActionExecutingContext context = CreateMaintenanceContext();
++        switch (invalid) {
++            case "missing-scope": context.HttpContext.Request.Headers.Remove("X-Hexalith-Scope"); break;
++            case "duplicate-scope": context.HttpContext.Request.Headers["X-Hexalith-Scope"] = new Microsoft.Extensions.Primitives.StringValues(
++                [ProjectionDeliveryMaintenanceScopeCatalog.Namespace, ProjectionDeliveryMaintenanceScopeCatalog.Namespace]); break;
++            case "wrong-scope": context.HttpContext.Request.Headers["X-Hexalith-Scope"] = "platform:global-administrators"; break;
++            case "read-scope": context.HttpContext.Request.Headers["X-Hexalith-Scope"] = AdminPlatformScopeCatalog.Namespace; break;
++            case "route": context.RouteData.Values["tenantId"] = "tenant-a"; break;
++            case "query": context.HttpContext.Request.QueryString = QueryString.Create("tenantId", "tenant-a"); break;
++            case "header": context.HttpContext.Request.Headers["X-Hexalith-Tenant"] = "tenant-a"; break;
++            case "argument": context.ActionArguments["tenantId"] = null; break;
++            default:
++                Claim[] claims = invalid switch {
++                    "missing-permission" => [],
++                    "read-permission" => [new Claim("eventstore:permission", AdminPlatformScopeCatalog.ReadPermission)],
++                    "foreign-permission" => [new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission + ":other")],
++                    "duplicate-permission" => [new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission),
++                        new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission)],
++                    "reserved-grant" => [new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission), new Claim("eventstore:tenant", "system")],
++                    "duplicate-grant" => [new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission),
++                        new Claim("eventstore:tenant", "Acme"), new Claim("eventstore:tenant", "acme")],
++                    _ => [new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission)],
++                };
++                context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims,
++                    invalid == "unauthenticated" ? null : "Test"));
++                break;
++        }
++        (await InvokeAsync(CreateFilter(), context)).ShouldBeFalse();
++        context.Result.ShouldBeOfType<ObjectResult>().StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
++        context.HttpContext.Items.ContainsKey(ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey).ShouldBeFalse();
++    }
++
++    private static ActionExecutingContext CreateMaintenanceContext() {
++        ActionExecutingContext context = CreateContext(CreatePrincipal(
++            new Claim("eventstore:permission", ProjectionDeliveryMaintenanceScopeCatalog.Permission),
++            new Claim("eventstore:tenant", "tenant-a")));
++        context.ActionDescriptor = new ControllerActionDescriptor {
++            ControllerTypeInfo = typeof(AdminProjectionRebuildController).GetTypeInfo(),
++            MethodInfo = typeof(AdminProjectionRebuildController).GetMethod(
++                nameof(AdminProjectionRebuildController.ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync))!,
++        };
++        context.HttpContext.Request.Headers["X-Hexalith-Scope"] = ProjectionDeliveryMaintenanceScopeCatalog.Namespace;
++        return context;
++    }
++
+     private static ActionExecutingContext CreatePlatformContext(params Claim[] claims) {
+         ActionExecutingContext context = CreateContext(CreatePrincipal(claims), includeTenantArgument: true);
+         context.ActionDescriptor = new ControllerActionDescriptor {
+diff --git a/tests/Hexalith.EventStore.Server.Tests/Controllers/AdminProjectionRebuildControllerTests.cs b/tests/Hexalith.EventStore.Server.Tests/Controllers/AdminProjectionRebuildControllerTests.cs
+index e01270a9d..466b7c758 100644
+--- a/tests/Hexalith.EventStore.Server.Tests/Controllers/AdminProjectionRebuildControllerTests.cs
++++ b/tests/Hexalith.EventStore.Server.Tests/Controllers/AdminProjectionRebuildControllerTests.cs
+@@ -2,6 +2,7 @@ using System.Security.Claims;
+ using Hexalith.EventStore.Admin.Abstractions.Models.Common;
+ using Hexalith.EventStore.Contracts.Identity;
+ using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.EventStore.Contracts.Streams;
+ using Hexalith.EventStore.Controllers;
+ using Hexalith.EventStore.DomainService;
+@@ -846,6 +847,59 @@ public class AdminProjectionRebuildControllerTests {
+             Arg.Any<CancellationToken>());
+     }
+ 
++    [Theory]
++    [InlineData((int)ProjectionDeliveryReconciliationStatus.Completed, 200)]
++    [InlineData((int)ProjectionDeliveryReconciliationStatus.ScopeDenied, 403)]
++    [InlineData((int)ProjectionDeliveryReconciliationStatus.RebuildRequired, 409)]
++    [InlineData((int)ProjectionDeliveryReconciliationStatus.StateUnavailable, 503)]
++    public async Task PlatformDeliveryMaintenance_UsesOnlyFixedInternalScopeAndExistingOutcomes(
++        int status, int expectedStatus) {
++        IProjectionRebuildCheckpointStore checkpoint = Substitute.For<IProjectionRebuildCheckpointStore>();
++        IProjectionDeliveryReconciler reconciler = Substitute.For<IProjectionDeliveryReconciler>();
++        reconciler.ReconcileFromEventStoreAsync(Arg.Any<AggregateIdentity>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
++            .Returns(new ProjectionDeliveryReconciliationResult((ProjectionDeliveryReconciliationStatus)status, ProjectionDispatchReasonCodes.DeliveryReconciled, 7));
++        using ServiceProvider services = new ServiceCollection().AddSingleton(reconciler).BuildServiceProvider();
++        AdminProjectionRebuildController controller = CreateController(checkpoint, true, serviceProvider: services);
++        controller.HttpContext.Items[ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey] = ProjectionDeliveryMaintenanceScopeCatalog.Namespace;
++        IActionResult result = await controller.ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync(CancellationToken.None);
++        result.ShouldBeAssignableTo<ObjectResult>().StatusCode.ShouldBe(expectedStatus);
++        await reconciler.Received(1).ReconcileFromEventStoreAsync(Arg.Is<AggregateIdentity>(identity =>
++            identity.TenantId == "system" && identity.Domain == "global-administrators" && identity.AggregateId == "global-administrators"),
++            "global-administrators", "operator-1", Arg.Any<CancellationToken>());
++        checkpoint.ReceivedCalls().ShouldBeEmpty();
++        if (result is OkObjectResult ok) {
++            ok.Value.ShouldBeOfType<ProjectionDeliveryReconciliationResponse>().PreservedSequence.ShouldBe(7);
++        }
++    }
++
++    [Theory]
++    [InlineData("non-admin")]
++    [InlineData("missing-operator")]
++    [InlineData("missing-admission")]
++    [InlineData("read-admission")]
++    [InlineData("wrong-admission")]
++    [InlineData("unauthenticated")]
++    public async Task PlatformDeliveryMaintenance_DeniesBeforeAnyStateAccess(string invalid) {
++        IProjectionRebuildCheckpointStore checkpoint = Substitute.For<IProjectionRebuildCheckpointStore>();
++        IProjectionDeliveryReconciler reconciler = Substitute.For<IProjectionDeliveryReconciler>();
++        using ServiceProvider services = new ServiceCollection().AddSingleton(reconciler).BuildServiceProvider();
++        AdminProjectionRebuildController controller = CreateController(checkpoint, invalid != "non-admin", serviceProvider: services);
++        if (invalid != "missing-admission")
++            controller.HttpContext.Items[ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey] = invalid == "wrong-admission"
++                ? "platform:other" : ProjectionDeliveryMaintenanceScopeCatalog.Namespace;
++        if (invalid == "read-admission") {
++            controller.HttpContext.Items.Remove(ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey);
++            controller.HttpContext.Items[AdminPlatformScopeCatalog.ValidatedContextKey] = AdminPlatformScopeCatalog.Namespace;
++        }
++        if (invalid is "missing-operator" or "unauthenticated")
++            controller.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(
++                [new Claim(ClaimTypes.Role, "GlobalAdministrator")], invalid == "unauthenticated" ? null : "test"));
++        IActionResult result = await controller.ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync(CancellationToken.None);
++        result.ShouldBeOfType<ObjectResult>().StatusCode.ShouldBe(403);
++        checkpoint.ReceivedCalls().ShouldBeEmpty();
++        reconciler.ReceivedCalls().ShouldBeEmpty();
++    }
++
+     private static AdminProjectionRebuildController CreateController(
+         IProjectionRebuildCheckpointStore store,
+         bool asGlobalAdmin,
+diff --git a/tests/Hexalith.EventStore.Server.Tests/Projections/EventStoreProjectionDeliveryHistoryReaderTests.cs b/tests/Hexalith.EventStore.Server.Tests/Projections/EventStoreProjectionDeliveryHistoryReaderTests.cs
+index 6823d32b1..92476b9fe 100644
+--- a/tests/Hexalith.EventStore.Server.Tests/Projections/EventStoreProjectionDeliveryHistoryReaderTests.cs
++++ b/tests/Hexalith.EventStore.Server.Tests/Projections/EventStoreProjectionDeliveryHistoryReaderTests.cs
+@@ -236,6 +236,33 @@ public sealed class EventStoreProjectionDeliveryHistoryReaderTests {
+         _ = await aggregate.Received(1).ReadEventsRangeAsync(9_989, 10_000, 1);
+     }
+ 
++    [Theory]
++    [InlineData("tenant")]
++    [InlineData("domain")]
++    [InlineData("aggregate")]
++    [InlineData("sequence")]
++    public async Task RetainedAdministratorHistory_RejectsForeignOrNoncontiguousSource(string invalid) {
++        var identity = new AggregateIdentity("system", "global-administrators", "global-administrators");
++        EventEnvelope envelope = Envelope(1, null) with {
++            TenantId = identity.TenantId, Domain = identity.Domain, AggregateId = identity.AggregateId,
++        };
++        envelope = invalid switch {
++            "tenant" => envelope with { TenantId = "tenant-a" },
++            "domain" => envelope with { Domain = "tenants" },
++            "aggregate" => envelope with { AggregateId = "another" },
++            _ => envelope with { SequenceNumber = 2 },
++        };
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.ReadEventsRangeAsync(0, 1, 1).Returns([envelope]);
++        IActorProxyFactory factory = Substitute.For<IActorProxyFactory>();
++        factory.CreateActorProxy<IAggregateActor>(Arg.Is<ActorId>(id => id.ToString() == identity.ActorId), nameof(AggregateActor)).Returns(actor);
++        IEventPayloadProtectionService protection = Substitute.For<IEventPayloadProtectionService>();
++        var reader = new EventStoreProjectionDeliveryHistoryReader(factory, protection, Options.Create(new EventStoreActorOptions()));
++        await Should.ThrowAsync<ProjectionDeliveryHistoryValidationException>(() => reader.ReadAsync(identity, 1));
++        actor.ReceivedCalls().Select(call => call.GetMethodInfo().Name).ShouldBe([nameof(IAggregateActor.ReadEventsRangeAsync)]);
++        protection.ReceivedCalls().ShouldBeEmpty();
++    }
++
+     private static EventStoreProjectionDeliveryHistoryReader CreateReader(
+         IAggregateActor aggregate,
+         IEventPayloadProtectionService protection) {
+diff --git a/src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs b/src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs
+new file mode 100644
+index 000000000..6f1b3c006
+--- /dev/null
++++ b/src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs
+@@ -0,0 +1,27 @@
++namespace Hexalith.EventStore.Contracts.Routing;
++
++/// <summary>Declares the fixed human maintenance scope for retained administrator delivery state.</summary>
++public static class ProjectionDeliveryMaintenanceScopeCatalog
++{
++    /// <summary>The explicit namespace for administrator delivery reconciliation.</summary>
++    public const string Namespace = "platform:global-administrators-delivery-reconciliation";
++
++    /// <summary>The exact human permission required for this maintenance operation.</summary>
++    public const string Permission = "admin:reconcile-global-administrators-delivery";
++
++    /// <summary>The sole public route relative to the projection maintenance controller.</summary>
++    public const string Route = "platform/global-administrators/delivery-reconciliation";
++
++    /// <summary>The request-local marker established after maintenance admission succeeds.</summary>
++    public const string ValidatedContextKey = "Hexalith.EventStore.Admin.ValidatedPlatformDeliveryMaintenanceScope";
++
++    /// <summary>Resolves only the compiled administrator delivery maintenance action.</summary>
++    /// <param name="controller">The compiled controller type name.</param>
++    /// <param name="action">The compiled action method name.</param>
++    /// <returns>The exact maintenance admission, or null for another action.</returns>
++    public static PlatformAdmissionDeclaration? ForAction(string controller, string action)
++        => controller == "Hexalith.EventStore.Controllers.AdminProjectionRebuildController"
++            && action == "ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync"
++                ? new PlatformAdmissionDeclaration(Namespace, Permission)
++                : null;
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs
+new file mode 100644
+index 000000000..74387e7c7
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs
+@@ -0,0 +1,41 @@
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Testing.CatalogInvocation;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>One-shot caller for the explicitly selected owner-hosted bootstrap source proof.</summary>
++public sealed class OwnerSourceReadClient
++{
++    private readonly CatalogInvocationFiles _files;
++
++    /// <summary>Captures the existing launcher-owned private IPC directory.</summary>
++    /// <param name="directory">The canonical private directory.</param>
++    public OwnerSourceReadClient(string directory)
++    {
++        ArgumentNullException.ThrowIfNull(directory);
++        _files = new(directory);
++    }
++
++    /// <summary>Reads only the actual complete administrator source; failures never become successful proof.</summary>
++    /// <param name="cancellationToken">The caller's complete deadline.</param>
++    /// <returns>The original bounded SDK stream page.</returns>
++    public async Task<StreamReadPage> ReadAsync(CancellationToken cancellationToken = default)
++    {
++        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
++        deadline.CancelAfter(TimeSpan.FromSeconds(45));
++        deadline.Token.ThrowIfCancellationRequested();
++        string id = Guid.NewGuid().ToString("N");
++        var request = new OwnerSourceReadRequest(id, DateTimeOffset.UtcNow.AddSeconds(45), OwnerSourceReadSelection.Mode,
++            OwnerSourceReadSelection.Scope, OwnerSourceReadSelection.Administrator, OwnerSourceReadSelection.Administrator);
++        await _files.WriteAsync(id, ".request", request, deadline.Token).ConfigureAwait(false);
++        string resultPath = _files.PathFor(id, ".response");
++        while (!File.Exists(resultPath)) await Task.Delay(25, deadline.Token).ConfigureAwait(false);
++        var result = await _files.ReadAsync<OwnerSourceReadResult>(id, ".response", deadline.Token).ConfigureAwait(false);
++        deadline.Token.ThrowIfCancellationRequested();
++        if (DateTimeOffset.UtcNow >= request.ExpiresAt) throw new OperationCanceledException("Private owner source deadline elapsed.");
++        if (result.Id != id || result.Failure is not null || result.Page is null)
++            throw new InvalidOperationException("Private owner source read failed.");
++        OwnerSourceReadSelection.ValidatePage(result.Page);
++        return result.Page;
++    }
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs
+new file mode 100644
+index 000000000..0a1d73d34
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs
+@@ -0,0 +1,34 @@
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Uses the actual Tenants issuer and owner-bound key only for the selected original SDK request.</summary>
++internal sealed class OwnerSourceReadCredentials(IWorkloadAssertionIssuer issuer, string key, TimeProvider clock)
++    : IEventStoreGatewayWorkloadAssertionSource, IEventStoreGatewayStreamReadProofSource
++{
++    /// <inheritdoc/>
++    public ValueTask<string?> IssueAsync(string operation, string tenant, CancellationToken cancellationToken)
++        => ValueTask.FromResult<string?>(null);
++
++    /// <inheritdoc/>
++    public ValueTask<string?> IssueAsync(string operation, string tenant, string domain, CancellationToken cancellationToken)
++        => operation == EventStoreGatewayWorkloadOperations.StreamRead && tenant == OwnerSourceReadSelection.Scope
++            && domain == OwnerSourceReadSelection.Administrator
++            ? issuer.IssueAsync(new("eventstore", operation, new Dictionary<string, string>(StringComparer.Ordinal)
++            {
++                [EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] = tenant,
++                [EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType] = domain,
++            }), cancellationToken)
++            : ValueTask.FromResult<string?>(null);
++
++    /// <inheritdoc/>
++    public ValueTask<string?> IssueAsync(StreamReadRequest request, CancellationToken cancellationToken)
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        return ValueTask.FromResult<string?>(request.Tenant == OwnerSourceReadSelection.Scope
++            && request.Domain == OwnerSourceReadSelection.Administrator && request.AggregateId == OwnerSourceReadSelection.Administrator
++            ? BoundStreamReadProof.Issue(request, "tenants", key, clock.GetUtcNow()) : null);
++    }
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs
+new file mode 100644
+index 000000000..979db85a2
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs
+@@ -0,0 +1,31 @@
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.Options;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Independent SDK client within the real owner; production owner-source registrations are untouched.</summary>
++internal sealed class OwnerSourceReadGateway
++{
++    private readonly EventStoreGatewayClient _client;
++
++    /// <summary>Constructs the SDK with the actual owner issuer, bound key and catalog-fenced HTTP client.</summary>
++    internal OwnerSourceReadGateway(HttpClient http, IWorkloadAssertionIssuer issuer, IConfiguration configuration, TimeProvider clock)
++    {
++        if (configuration["Authentication:WorkloadIssuer:Workload"] != "tenants"
++            || configuration["Authentication:BoundStreamRead:PrivateKey"] is not { Length: > 0 } key)
++            throw new InvalidOperationException("Private owner source requires the actual Tenants identity and bound key.");
++        var credentials = new OwnerSourceReadCredentials(issuer, key, clock);
++        _client = new(http, Options.Create(new EventStoreGatewayClientOptions
++        {
++            UseWorkloadTransport = true, MaxStreamReadResponseBytes = 4 * 1024 * 1024,
++        }), credentials, credentials);
++    }
++
++    /// <summary>Dispatches the unchanged exact public source request through the SDK.</summary>
++    internal Task<StreamReadPage> ReadAsync(StreamReadRequest request, CancellationToken cancellationToken)
++        => _client.ReadWorkloadStreamAsync(request, cancellationToken);
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs
+new file mode 100644
+index 000000000..c87965f5e
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs
+@@ -0,0 +1,12 @@
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Explicit owner-hosted Development selection for the administrator bootstrap source proof.</summary>
++public sealed class OwnerSourceReadOptions
++{
++    /// <summary>Gets or sets the existing owner-private IPC directory.</summary>
++    public string Directory { get; set; } = string.Empty;
++    /// <summary>Gets or sets the exact enrolled EventStore application identity.</summary>
++    public string GatewayAppId { get; set; } = "eventstore";
++    /// <summary>Gets or sets the finite helper mode; no other source operation is admitted.</summary>
++    public string Mode { get; set; } = "administrator-bootstrap";
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs
+new file mode 100644
+index 000000000..829f3ca54
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs
+@@ -0,0 +1,11 @@
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>One bounded owner-source request without caller-supplied credentials or transport coordinates.</summary>
++/// <param name="Id">One-shot request identity.</param>
++/// <param name="ExpiresAt">Absolute operation deadline.</param>
++/// <param name="Mode">The exact administrator-bootstrap mode.</param>
++/// <param name="Scope">The explicit platform source scope.</param>
++/// <param name="Domain">The exact administrator domain.</param>
++/// <param name="AggregateId">The exact administrator aggregate.</param>
++public sealed record OwnerSourceReadRequest(string Id, DateTimeOffset ExpiresAt, string Mode,
++    string Scope, string Domain, string AggregateId);
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs
+new file mode 100644
+index 000000000..8681b5564
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs
+@@ -0,0 +1,9 @@
++using Hexalith.EventStore.Contracts.Streams;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>The actual SDK page, or a sanitized failure without a fabricated successful page.</summary>
++/// <param name="Id">The original one-shot request identity.</param>
++/// <param name="Page">The actual bounded SDK result, absent on failure.</param>
++/// <param name="Failure">A finite failure category, never exception details.</param>
++public sealed record OwnerSourceReadResult(string Id, StreamReadPage? Page, string? Failure);
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs
+new file mode 100644
+index 000000000..aabafb180
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs
+@@ -0,0 +1,46 @@
++using System.Text.Json;
++
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Testing.CatalogInvocation;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Finite source admission and result bounds shared by the private owner and caller.</summary>
++internal static class OwnerSourceReadSelection
++{
++    /// <summary>The only supported public source scope.</summary>
++    internal const string Scope = "platform:global-administrators";
++    /// <summary>The only supported domain and aggregate identity.</summary>
++    internal const string Administrator = "global-administrators";
++    /// <summary>The only supported helper mode.</summary>
++    internal const string Mode = "administrator-bootstrap";
++    /// <summary>The maximum complete stream event count.</summary>
++    internal const int MaximumEvents = 100;
++
++    /// <summary>Refuses any expanded target, helper mode, or deadline.</summary>
++    /// <param name="request">The actual private request.</param>
++    internal static void Validate(OwnerSourceReadRequest request)
++    {
++        ArgumentNullException.ThrowIfNull(request);
++        TimeSpan remaining = request.ExpiresAt - DateTimeOffset.UtcNow;
++        if (request.Mode != Mode || request.Scope != Scope || request.Domain != Administrator
++            || request.AggregateId != Administrator || remaining <= TimeSpan.Zero || remaining > TimeSpan.FromSeconds(45))
++            throw new InvalidOperationException("Private owner source request is outside the finite selection.");
++    }
++
++    /// <summary>Requires the exact complete retained storage stream and bounded serialized result.</summary>
++    /// <param name="page">The actual SDK page.</param>
++    internal static void ValidatePage(StreamReadPage page)
++    {
++        if (page is null || page.Tenant != "system" || page.Domain != Administrator || page.AggregateId != Administrator
++            || page.Events is null || page.Events.Count > MaximumEvents || page.Metadata is null
++            || page.Metadata.FromSequence != 0 || page.Metadata.ToSequence is not null
++            || page.Metadata.EventCount != page.Events.Count || page.Metadata.IsTruncated
++            || page.Metadata.NextContinuationToken is not null
++            || page.Metadata.LatestSequence != page.Events.Count
++            || page.Metadata.LastSequenceReturned != (page.Events.Count == 0 ? (long?)null : page.Events.Count)
++            || page.Events.Where((item, index) => item is null || item.SequenceNumber != index + 1L).Any()
++            || JsonSerializer.SerializeToUtf8Bytes(page, CatalogInvocationFiles.Json).Length > CatalogInvocationFiles.MaximumBytes / 2)
++            throw new InvalidOperationException("Private owner source response identity or bounds refused.");
++    }
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs
+new file mode 100644
+index 000000000..b6d94c34a
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs
+@@ -0,0 +1,59 @@
++using Hexalith.EventStore.Client.Registration;
++using Hexalith.EventStore.ServiceDefaults.Routing;
++using Hexalith.EventStore.Testing.CatalogInvocation;
++
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Hosting;
++using Microsoft.Extensions.Options;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Explicit Debug/Development-only enrollment within the actual Tenants owner.</summary>
++public static class OwnerSourceReadServiceCollectionExtensions
++{
++    /// <summary>Enrolls the finite private SDK helper only when expressly selected.</summary>
++    /// <param name="services">Actual owner services.</param>
++    /// <param name="configuration">Owner-owned configuration.</param>
++    /// <param name="environment">Actual owner host environment.</param>
++    /// <returns>The services.</returns>
++    public static IServiceCollection AddPrivateOwnerSourceRead(this IServiceCollection services,
++        IConfiguration configuration, IHostEnvironment environment)
++    {
++        ArgumentNullException.ThrowIfNull(services);
++        ArgumentNullException.ThrowIfNull(configuration);
++        ArgumentNullException.ThrowIfNull(environment);
++        const string prefix = "EventStore:Testing:OwnerSourceRead";
++        if (!configuration.GetValue<bool>(prefix + ":Enabled")) return services;
++#if !DEBUG
++        throw new InvalidOperationException("Private owner source reads require a Debug build.");
++#else
++        if (!environment.IsDevelopment() || configuration["Authentication:WorkloadIssuer:Workload"] != "tenants")
++            throw new InvalidOperationException("Private owner source reads require the actual Development Tenants owner.");
++        var selection = configuration.GetSection(prefix).Get<OwnerSourceReadOptions>()
++            ?? throw new InvalidOperationException("Missing private owner source selection.");
++        if (selection.Mode != OwnerSourceReadSelection.Mode || selection.GatewayAppId.Length is < 1 or > 64
++            || selection.GatewayAppId.Any(character => !char.IsAsciiLetterLower(character) && !char.IsAsciiDigit(character) && character != '-'))
++            throw new InvalidOperationException("Private owner source selection refused.");
++        _ = new CatalogInvocationFiles(selection.Directory);
++        services.AddHttpClient<OwnerSourceReadGateway>((provider, client) =>
++        {
++            var catalog = provider.GetRequiredService<IOptions<RouteCatalogHostOptions>>().Value;
++            if (catalog is not { DevelopmentFixture: true, Profile: "Development", RequireTechnicalHttpBinding: true })
++                throw new InvalidOperationException("Private owner source requires the real Development catalog.");
++            client.BaseAddress = new Uri(RouteCatalogStateCoordinates.Capture(configuration, catalog).HttpEndpoint);
++            client.Timeout = Timeout.InfiniteTimeSpan;
++        })
++        .AddEventStoreDaprServiceInvocation(selection.GatewayAppId, configuration["DAPR_API_TOKEN"])
++        .AddTypedClient((http, provider) => new OwnerSourceReadGateway(http,
++            provider.GetRequiredService<Hexalith.EventStore.ServiceDefaults.Authentication.IWorkloadAssertionIssuer>(),
++            configuration, provider.GetRequiredService<TimeProvider>()));
++        services.AddSingleton<IHostedService>(provider => new OwnerSourceReadWorker(selection, async (request, token) =>
++        {
++            using var scope = provider.CreateScope();
++            return await scope.ServiceProvider.GetRequiredService<OwnerSourceReadGateway>().ReadAsync(request, token).ConfigureAwait(false);
++        }));
++        return services;
++#endif
++    }
++}
+diff --git a/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs
+new file mode 100644
+index 000000000..dd487e25e
+--- /dev/null
++++ b/src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs
+@@ -0,0 +1,58 @@
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Testing.CatalogInvocation;
++
++using Microsoft.Extensions.Hosting;
++
++namespace Hexalith.EventStore.Testing.OwnerSourceRead;
++
++/// <summary>Finite private source proof worker hosted only inside the credential-owning process.</summary>
++internal sealed class OwnerSourceReadWorker(OwnerSourceReadOptions selection,
++    Func<StreamReadRequest, CancellationToken, Task<StreamReadPage>> read) : BackgroundService
++{
++    private readonly CatalogInvocationFiles _files = new(selection.Directory);
++
++    /// <inheritdoc/>
++    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
++    {
++        while (!stoppingToken.IsCancellationRequested)
++        {
++            foreach (string path in _files.Pending())
++            {
++                string id = Path.GetFileNameWithoutExtension(path);
++                _files.Claim(id);
++                using var operation = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
++                operation.CancelAfter(TimeSpan.FromSeconds(45));
++                OwnerSourceReadResult result;
++                try
++                {
++                    var request = await _files.ReadAsync<OwnerSourceReadRequest>(id, ".working", operation.Token).ConfigureAwait(false);
++                    if (request.Id != id) throw new InvalidOperationException("Mismatched private owner source identity.");
++                    result = new(id, await InvokeAsync(request, operation.Token).ConfigureAwait(false), null);
++                }
++                catch (Exception exception) when (!stoppingToken.IsCancellationRequested)
++                {
++                    result = new(id, null, exception.GetType().Name);
++                }
++                try { await _files.WriteAsync(id, ".response", result, operation.Token).ConfigureAwait(false); }
++                catch (OperationCanceledException) when (!stoppingToken.IsCancellationRequested) { }
++            }
++            await Task.Delay(25, stoppingToken).ConfigureAwait(false);
++        }
++    }
++
++    /// <summary>Admits only the exact bootstrap stream and propagates actual SDK failures and deadlines.</summary>
++    internal async Task<StreamReadPage> InvokeAsync(OwnerSourceReadRequest request, CancellationToken hostToken)
++    {
++        OwnerSourceReadSelection.Validate(request);
++        _ = _files.PathFor(request.Id, ".working");
++        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(hostToken);
++        deadline.CancelAfter(request.ExpiresAt - DateTimeOffset.UtcNow);
++        deadline.Token.ThrowIfCancellationRequested();
++        StreamReadPage page = await read(new(request.Scope, request.Domain, request.AggregateId,
++            PageSize: OwnerSourceReadSelection.MaximumEvents), deadline.Token).ConfigureAwait(false);
++        deadline.Token.ThrowIfCancellationRequested();
++        if (DateTimeOffset.UtcNow >= request.ExpiresAt) throw new OperationCanceledException("Private owner source deadline elapsed.");
++        OwnerSourceReadSelection.ValidatePage(page);
++        return page;
++    }
++}
+diff --git a/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs b/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs
+new file mode 100644
+index 000000000..78c1d321f
+--- /dev/null
++++ b/src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs
+@@ -0,0 +1,56 @@
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Routing;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Server.Projections;
++
++using Microsoft.AspNetCore.Mvc;
++
++namespace Hexalith.EventStore.Controllers;
++
++public sealed partial class AdminProjectionRebuildController
++{
++    /// <summary>Reconciles only retained global-administrator delivery evidence using authoritative history.</summary>
++    /// <param name="cancellationToken">Cancels the maintenance operation.</param>
++    /// <returns>The existing reconciliation outcome without dispatching or appending domain events.</returns>
++    [HttpPost(ProjectionDeliveryMaintenanceScopeCatalog.Route)]
++    [ProducesResponseType(typeof(ProjectionDeliveryReconciliationResponse), StatusCodes.Status200OK)]
++    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden, "application/problem+json")]
++    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict, "application/problem+json")]
++    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable, "application/problem+json")]
++    public async Task<IActionResult> ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync(
++        CancellationToken cancellationToken)
++    {
++        IActionResult? authFailure = EnsureGlobalAdministrator();
++        if (authFailure is not null) return authFailure;
++        if (User.Identity?.IsAuthenticated != true
++            || !HttpContext.Items.TryGetValue(ProjectionDeliveryMaintenanceScopeCatalog.ValidatedContextKey, out object? admission)
++            || !string.Equals(admission as string, ProjectionDeliveryMaintenanceScopeCatalog.Namespace, StringComparison.Ordinal))
++        {
++            return ProblemWithReason(StatusCodes.Status403Forbidden, "Forbidden",
++                "Explicit administrator delivery maintenance admission is required.", StreamReplayReasonCodes.ForbiddenRole);
++        }
++
++        string? operatorId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
++            ?? User.FindFirst("sub")?.Value
++            ?? User.Identity?.Name;
++        if (string.IsNullOrWhiteSpace(operatorId))
++        {
++            return ProblemWithReason(StatusCodes.Status403Forbidden, "Forbidden",
++                "An attributable operator identity is required.", StreamReplayReasonCodes.ForbiddenRole);
++        }
++
++        IProjectionDeliveryReconciler? reconciler = serviceProvider?.GetService<IProjectionDeliveryReconciler>()
++            ?? HttpContext.RequestServices.GetService<IProjectionDeliveryReconciler>();
++        if (reconciler is null)
++        {
++            return ProblemWithReason(StatusCodes.Status503ServiceUnavailable, "Service Unavailable",
++                "Projection delivery reconciliation capability is not available.", StreamReplayReasonCodes.ServiceUnavailable);
++        }
++
++        ProjectionDeliveryReconciliationResult result = await reconciler.ReconcileFromEventStoreAsync(
++            new AggregateIdentity(TenantCanonicalizer.ReservedStorageTenant, "global-administrators", "global-administrators"),
++            "global-administrators", operatorId, cancellationToken).ConfigureAwait(false);
++        return MapDeliveryReconciliationResult(result);
++    }
++}
+diff --git a/tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs b/tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs
+new file mode 100644
+index 000000000..925c3b13b
+--- /dev/null
++++ b/tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs
+@@ -0,0 +1,84 @@
++using System.Text.Json;
++
++using Dapr.Actors;
++using Dapr.Actors.Client;
++
++using Hexalith.EventStore.Client.Tests.Projections;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Security;
++using Hexalith.EventStore.Server.Actors;
++using Hexalith.EventStore.Server.Configuration;
++using Hexalith.EventStore.Server.Events;
++using Hexalith.EventStore.Server.Projections;
++
++using Microsoft.Extensions.Options;
++
++using NSubstitute;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Projections;
++
++public partial class ProjectionDeliveryReconcilerTests
++{
++    [Fact]
++    public async Task RetainedAdministratorCheckpoint_PersistsOnlyHydratedTechnicalEvidenceAndAttributableWork()
++    {
++        var identity = new AggregateIdentity("system", "global-administrators", "global-administrators");
++        const string projection = "global-administrators";
++        using var backend = new RecordingDaprClient { EnforceTransactionConcurrency = true };
++        var source = new EventEnvelope("01J00000000000000000000000", identity.AggregateId, "GlobalAdministrators",
++            identity.TenantId, identity.Domain, 1, 7, Now, "original-correlation", "original-command", "original-actor",
++            "v1", "Hexalith.Tenants.Contracts.Events.GlobalAdministratorSet", 1, "json", "{\"userId\":\"original-actor\"}"u8.ToArray(), null);
++        string sourceKey = identity.EventStreamKeyPrefix + "1";
++        byte[] sourceBytes = JsonSerializer.SerializeToUtf8Bytes(source, backend.JsonSerializerOptions);
++        byte[] metadataBytes = "{\"currentSequence\":1}"u8.ToArray();
++        backend.SeedByteStore(sourceKey, sourceBytes);
++        backend.SeedByteStore(identity.MetadataKey, metadataBytes);
++        ProjectionDeliveryState legacy = LegacyState(1) with {
++            TenantId = identity.TenantId, Domain = identity.Domain, AggregateId = identity.AggregateId,
++        };
++        string stateKey = ProjectionDeliveryStateKeys.GetStateKey(identity, projection);
++        backend.SeedByteStore(stateKey, JsonSerializer.SerializeToUtf8Bytes(legacy, backend.JsonSerializerOptions));
++        string foreignKey = ProjectionDeliveryStateKeys.GetStateKey(Identity, "order-detail");
++        byte[] foreignBytes = JsonSerializer.SerializeToUtf8Bytes(LegacyState(2), backend.JsonSerializerOptions);
++        backend.SeedByteStore(foreignKey, foreignBytes);
++
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.ReadEventsRangeAsync(0, 1, 1).Returns(_ =>
++            [JsonSerializer.Deserialize<EventEnvelope>(backend.ByteStoreValue(sourceKey), backend.JsonSerializerOptions)!]);
++        IActorProxyFactory factory = Substitute.For<IActorProxyFactory>();
++        factory.CreateActorProxy<IAggregateActor>(Arg.Is<ActorId>(id => id.ToString() == identity.ActorId), nameof(AggregateActor))
++            .Returns(actor);
++        var history = new EventStoreProjectionDeliveryHistoryReader(factory, Substitute.For<IEventPayloadProtectionService>(),
++            Options.Create(new EventStoreActorOptions()));
++        var store = new DaprProjectionDeliveryStateStore(backend, Options.Create(new ProjectionOptions()));
++        ProjectionDeliveryReconciliationResult result = await CreateReconciler(store, history)
++            .ReconcileFromEventStoreAsync(identity, projection, "maintenance-operator");
++
++        result.Status.ShouldBe(ProjectionDeliveryReconciliationStatus.Completed);
++        result.PreservedSequence.ShouldBe(1);
++        ProjectionDeliveryState persisted = (await store.ReadAsync(identity, projection)).State.ShouldNotBeNull();
++        persisted.LastDeliveredSequence.ShouldBe(1);
++        persisted.LastCompletedMessageId.ShouldBe(source.MessageId);
++        persisted.CompletedReceipts.ShouldNotBeNull().Single().MessageId.ShouldBe(source.MessageId);
++        persisted.MigrationProvenance.ShouldBe(ProjectionDeliveryMigrationProvenance.HydratedFromPersistedCheckpoint);
++        ProjectionDeliveryReconciliationWork work = (await store.ReadReconciliationAsync(identity, projection)).ShouldNotBeNull();
++        work.OperatorId.ShouldBe("maintenance-operator");
++        work.TenantId.ShouldBe("system");
++        work.Domain.ShouldBe(projection);
++        work.AggregateId.ShouldBe(projection);
++        work.ProjectionName.ShouldBe(projection);
++        work.ObservedSequence.ShouldBe(1);
++        work.ReasonCode.ShouldBe(ProjectionDispatchReasonCodes.DeliveryReconciled);
++        backend.ByteStoreValue(sourceKey).ShouldBe(sourceBytes);
++        backend.ByteStoreValue(identity.MetadataKey).ShouldBe(metadataBytes);
++        backend.ByteStoreValue(foreignKey).ShouldBe(foreignBytes);
++        backend.TransactionOperations.Select(operation => operation.Key).Order()
++            .ShouldBe(new[] { stateKey, ProjectionDeliveryStateKeys.GetReconciliationKey(identity, projection) }.Order());
++        backend.ExecuteStateTransactionCallCount.ShouldBe(1);
++        backend.SaveByteStateCallCount.ShouldBe(0);
++        actor.ReceivedCalls().Select(call => call.GetMethodInfo().Name).ShouldBe([nameof(IAggregateActor.ReadEventsRangeAsync)]);
++    }
++}
+diff --git a/tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs b/tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs
+new file mode 100644
+index 000000000..e29e0761c
+--- /dev/null
++++ b/tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs
+@@ -0,0 +1,214 @@
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Testing.CatalogInvocation;
++using Hexalith.EventStore.Testing.OwnerSourceRead;
++
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.DependencyInjection;
++using Microsoft.Extensions.Hosting;
++
++using NSubstitute;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Testing.Tests;
++
++/// <summary>Finite owner admission, SDK request identity, bounded IPC and failure propagation.</summary>
++public sealed class OwnerSourceReadTests : IDisposable
++{
++    /// <summary>Gets whether the actual private IPC implementation is supported on this platform.</summary>
++    public static bool LinuxIpcSupported => OperatingSystem.IsLinux();
++
++    private readonly string _directory = Path.Combine(Path.GetTempPath(), "owner-source-tests-" + Guid.NewGuid().ToString("N"));
++
++    /// <summary>Creates only the test-owned private IPC directory.</summary>
++    public OwnerSourceReadTests()
++    {
++        Directory.CreateDirectory(_directory);
++        if (OperatingSystem.IsLinux()) File.SetUnixFileMode(_directory, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
++    }
++
++    /// <summary>Normal hosts have no helper and non-Development or non-owner selection refuses.</summary>
++    [Fact]
++    public void DefaultIsInertAndWrongHostSelectionRefuses()
++    {
++        var services = new ServiceCollection();
++        var environment = Substitute.For<IHostEnvironment>();
++        environment.EnvironmentName.Returns("Production");
++        services.AddPrivateOwnerSourceRead(new ConfigurationBuilder().Build(), environment);
++        services.ShouldBeEmpty();
++        var selected = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
++        {
++            ["EventStore:Testing:OwnerSourceRead:Enabled"] = "true",
++            ["EventStore:Testing:OwnerSourceRead:Directory"] = _directory,
++            ["Authentication:WorkloadIssuer:Workload"] = "tenants",
++        }).Build();
++        Should.Throw<InvalidOperationException>(() => services.AddPrivateOwnerSourceRead(selected, environment));
++        environment.EnvironmentName.Returns("Development");
++        selected["Authentication:WorkloadIssuer:Workload"] = "eventstore";
++        Should.Throw<InvalidOperationException>(() => services.AddPrivateOwnerSourceRead(selected, environment));
++        services.ShouldBeEmpty();
++    }
++
++    /// <summary>Expanded source targets and modes are refused before SDK invocation.</summary>
++    [Theory(Skip = "Private owner-source IPC requires Linux.", SkipUnless = nameof(LinuxIpcSupported))]
++    [InlineData("mode")]
++    [InlineData("scope")]
++    [InlineData("domain")]
++    [InlineData("aggregate")]
++    [InlineData("expired")]
++    [InlineData("long-deadline")]
++    [InlineData("identity")]
++    public async Task FiniteSelectionRefusesBeforeSdkDispatch(string fault)
++    {
++        int calls = 0;
++        using var worker = new OwnerSourceReadWorker(new() { Directory = _directory }, (_, _) => { calls++; return Task.FromResult(Page()); });
++        var request = Request();
++        request = fault switch
++        {
++            "mode" => request with { Mode = "generic-read" },
++            "scope" => request with { Scope = "platform:tenants" },
++            "domain" => request with { Domain = "tenants" },
++            "aggregate" => request with { AggregateId = "other" },
++            "expired" => request with { ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(-1) },
++            "long-deadline" => request with { ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(2) },
++            _ => request with { Id = "../escape" },
++        };
++        await Should.ThrowAsync<Exception>(() => worker.InvokeAsync(request, TestContext.Current.CancellationToken));
++        calls.ShouldBe(0);
++    }
++
++    /// <summary>The worker invokes the SDK's workload method with the original exact finite scope.</summary>
++    [Fact(Skip = "Private owner-source IPC requires Linux.", SkipUnless = nameof(LinuxIpcSupported))]
++    public async Task ActualSdkMethodReceivesExactScopeAndCancellation()
++    {
++        var gateway = Substitute.For<IEventStoreGatewayClient>();
++        gateway.ReadWorkloadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>()).Returns(Page());
++        using var worker = new OwnerSourceReadWorker(new() { Directory = _directory }, gateway.ReadWorkloadStreamAsync);
++        (await worker.InvokeAsync(Request(), TestContext.Current.CancellationToken)).Tenant.ShouldBe("system");
++        await gateway.Received(1).ReadWorkloadStreamAsync(Arg.Is<StreamReadRequest>(request =>
++            request.Tenant == "platform:global-administrators" && request.Domain == "global-administrators"
++            && request.AggregateId == "global-administrators" && request.FromSequence == 0 && request.ToSequence == null
++            && request.ContinuationToken == null && request.Checkpoint == null && request.ProjectionName == null
++            && request.PageSize == 100), Arg.Is<CancellationToken>(token => token.CanBeCanceled));
++    }
++
++    /// <summary>Wrong storage identity, partial history and oversized bytes never become source proof.</summary>
++    [Theory(Skip = "Private owner-source IPC requires Linux.", SkipUnless = nameof(LinuxIpcSupported))]
++    [InlineData("tenant")]
++    [InlineData("domain")]
++    [InlineData("aggregate")]
++    [InlineData("truncated")]
++    [InlineData("continuation")]
++    [InlineData("count")]
++    [InlineData("oversized")]
++    public async Task ResultIdentityAndBoundsRefuse(string fault)
++    {
++        var page = Page();
++        page = fault switch
++        {
++            "tenant" => page with { Tenant = "platform:global-administrators" },
++            "domain" => page with { Domain = "tenants" },
++            "aggregate" => page with { AggregateId = "other" },
++            "truncated" => page with { Metadata = page.Metadata with { IsTruncated = true } },
++            "continuation" => page with { Metadata = page.Metadata with { NextContinuationToken = new("cursor") } },
++            "count" => page with { Metadata = page.Metadata with { EventCount = 1 } },
++            _ => page with
++            {
++                Events = [new(1, "test", new byte[4 * 1024 * 1024], "json", 1, "message", null, null, DateTimeOffset.UtcNow, null)],
++                Metadata = page.Metadata with { EventCount = 1, LatestSequence = 1, LastSequenceReturned = 1 },
++            },
++        };
++        using var worker = new OwnerSourceReadWorker(new() { Directory = _directory }, (_, _) => Task.FromResult(page));
++        await Should.ThrowAsync<InvalidOperationException>(() => worker.InvokeAsync(Request(), TestContext.Current.CancellationToken));
++    }
++
++    /// <summary>Actual private worker responses preserve SDK success and safely propagate its failures.</summary>
++    [Theory(Skip = "Private owner-source IPC requires Linux.", SkipUnless = nameof(LinuxIpcSupported))]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task PrivateRoundTripNeverSynthesizesSuccessfulProof(bool fail)
++    {
++        using var worker = new OwnerSourceReadWorker(new() { Directory = _directory }, (_, _) => fail
++            ? Task.FromException<StreamReadPage>(new IOException("private-sensitive-canary")) : Task.FromResult(Page()));
++        await worker.StartAsync(TestContext.Current.CancellationToken);
++        try
++        {
++            var client = new OwnerSourceReadClient(_directory);
++            if (fail)
++            {
++                var refusal = await Should.ThrowAsync<InvalidOperationException>(() => client.ReadAsync(TestContext.Current.CancellationToken));
++                refusal.ToString().ShouldNotContain("private-sensitive-canary");
++            }
++            else
++            {
++                var page = await client.ReadAsync(TestContext.Current.CancellationToken);
++                page.Tenant.ShouldBe("system");
++                page.Domain.ShouldBe("global-administrators");
++                page.AggregateId.ShouldBe("global-administrators");
++                page.Events.ShouldBeEmpty();
++            }
++        }
++        finally { await worker.StopAsync(TestContext.Current.CancellationToken); }
++    }
++
++    /// <summary>Cancellation and expired private operations cannot return late pages.</summary>
++    [Fact(Skip = "Private owner-source IPC requires Linux.", SkipUnless = nameof(LinuxIpcSupported))]
++    public async Task CancellationPreventsLateSuccess()
++    {
++        using var canceled = new CancellationTokenSource();
++        canceled.Cancel();
++        await Should.ThrowAsync<OperationCanceledException>(() => new OwnerSourceReadClient(_directory).ReadAsync(canceled.Token));
++        using var worker = new OwnerSourceReadWorker(new() { Directory = _directory }, (_, _) => Task.FromResult(Page()));
++        await Should.ThrowAsync<OperationCanceledException>(() => worker.InvokeAsync(Request(), canceled.Token));
++        new CatalogInvocationFiles(_directory).Pending().ShouldBeEmpty();
++    }
++
++    /// <summary>Complete range and sequence validation is portable and does not instantiate Linux IPC.</summary>
++    [Theory]
++    [InlineData("upper-bound")]
++    [InlineData("lower-bound")]
++    [InlineData("omitted-tail")]
++    [InlineData("missing-last")]
++    [InlineData("wrong-last")]
++    [InlineData("gap")]
++    [InlineData("duplicate")]
++    [InlineData("reordered")]
++    [InlineData("zero-position")]
++    [InlineData("negative-position")]
++    [InlineData("empty-tail")]
++    [InlineData("empty-last")]
++    [InlineData("negative-tail")]
++    public void CompleteHistoryRejectsBoundedMissingOrInconsistentPositions(string fault)
++    {
++        StreamReadEvent first = new(1, "test", [], "json", 1, "first", null, null, DateTimeOffset.UtcNow, null);
++        StreamReadEvent second = first with { SequenceNumber = 2, MessageId = "second" };
++        var page = Page() with { Events = [first, second], Metadata = new(0, null, 2, 2, 2, false, null) };
++        OwnerSourceReadSelection.ValidatePage(page);
++        page = fault switch
++        {
++            "upper-bound" => page with { Metadata = page.Metadata with { ToSequence = 2 } },
++            "lower-bound" => page with { Metadata = page.Metadata with { FromSequence = 1 } },
++            "omitted-tail" => page with { Metadata = page.Metadata with { LatestSequence = 3 } },
++            "missing-last" => page with { Metadata = page.Metadata with { LastSequenceReturned = null } },
++            "wrong-last" => page with { Metadata = page.Metadata with { LastSequenceReturned = 1 } },
++            "gap" => page with { Events = [first, second with { SequenceNumber = 3 }] },
++            "duplicate" => page with { Events = [first, second with { SequenceNumber = 1 }] },
++            "reordered" => page with { Events = [second, first] },
++            "zero-position" => page with { Events = [first with { SequenceNumber = 0 }, second] },
++            "negative-position" => page with { Events = [first with { SequenceNumber = -1 }, second] },
++            "empty-tail" => Page() with { Metadata = Page().Metadata with { LatestSequence = 1 } },
++            "empty-last" => Page() with { Metadata = Page().Metadata with { LastSequenceReturned = 1 } },
++            _ => page with { Metadata = page.Metadata with { LatestSequence = -1 } },
++        };
++        Should.Throw<InvalidOperationException>(() => OwnerSourceReadSelection.ValidatePage(page));
++        OwnerSourceReadSelection.ValidatePage(Page());
++    }
++
++    private static StreamReadPage Page() => new("system", "global-administrators", "global-administrators", [], new(0, null, null, 0, 0, false, null));
++    private static OwnerSourceReadRequest Request() => new(Guid.NewGuid().ToString("N"), DateTimeOffset.UtcNow.AddSeconds(40),
++        "administrator-bootstrap", "platform:global-administrators", "global-administrators", "global-administrators");
++
++    /// <summary>Removes only the test-owned private files.</summary>
++    public void Dispose() => Directory.Delete(_directory, recursive: true);
++}

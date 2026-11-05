@@ -1,0 +1,21 @@
+{
+  "signal": "SIGTERM",
+  "target": {
+    "pid": 1227152,
+    "startTicks": "3210826",
+    "command": [
+      "/usr/bin/python3",
+      "/home/administrator/projects/hexalith/projects/tools/qualification/run_supported_project_reads.py",
+      "--scenario",
+      "duplicate",
+      "--timeout",
+      "900",
+      "--evidence",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/qualification-3/duplicate"
+    ]
+  },
+  "ownershipVerifiedImmediatelyBeforeSignal": true,
+  "reason": "Persistent pre-native owned placement /healthz health-check timeouts; every application remains Waiting. This interrupted attempt cannot qualify. Broad suites had overlapped startup and are now finished.",
+  "nativeTestsStarted": false,
+  "atUnix": 1793893111.396993
+}

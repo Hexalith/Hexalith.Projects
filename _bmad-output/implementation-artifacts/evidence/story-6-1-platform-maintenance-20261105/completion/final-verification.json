@@ -1,0 +1,565 @@
+{
+  "sourceMatchesFrozenCompletion": true,
+  "sourceManifestSha256": "2a5c6333df9a267f5a6132dc908d3218d8ce3f20692f8485525dd51a0a63c005",
+  "inputs": 17082,
+  "groups": {
+    "duplicate": {
+      "native": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "sourceMatches": true,
+      "writerRawSourceBindingMatches": true,
+      "bootstrapOriginalSourceAndCutoverChecks": true,
+      "cases": [
+        "duplicate-project-delivery-retains-supported-reads-and-state"
+      ],
+      "containers": [
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "de80d70f4c903f98b1d3d6e6c7cf03380bce20d5bab087cf4d814c64f9f4fa24"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: de80d70f4c903f98b1d3d6e6c7cf03380bce20d5bab087cf4d814c64f9f4fa24\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "832685a35a6a379698536917d584bc27797d835b4c779e87b7cbebcc85b3b80a"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 832685a35a6a379698536917d584bc27797d835b4c779e87b7cbebcc85b3b80a\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "47068ec66b60d6b866b0f467a776bfce6c5742d1a09359aecbafc0062bdffe88"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 47068ec66b60d6b866b0f467a776bfce6c5742d1a09359aecbafc0062bdffe88\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "d2695d496057aac01cb384951dac650d073e0e55b6297e3b8a30eb0e0f8bec38"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: d2695d496057aac01cb384951dac650d073e0e55b6297e3b8a30eb0e0f8bec38\n"
+        }
+      ],
+      "processes": [
+        {
+          "role": "appHost",
+          "pid": 1780519,
+          "originalStartTicks": "3486900",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "cli",
+          "pid": 1765000,
+          "originalStartTicks": "3477655",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "sidecars": [
+        {
+          "role": "eventstore",
+          "pid": 1782329,
+          "originalStartTicks": "3487481",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders",
+          "pid": 1782784,
+          "originalStartTicks": "3487552",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders-workers",
+          "pid": 1782962,
+          "originalStartTicks": "3487578",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects",
+          "pid": 1782405,
+          "originalStartTicks": "3487508",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects-workers",
+          "pid": 1782524,
+          "originalStartTicks": "3487529",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "tenants",
+          "pid": 1782257,
+          "originalStartTicks": "3487458",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "fixturePrivateMaterialRemoved": true,
+      "originalExternalPreservation": true,
+      "independentExternalPreservation": true
+    },
+    "full-replay": {
+      "native": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "sourceMatches": true,
+      "writerRawSourceBindingMatches": true,
+      "bootstrapOriginalSourceAndCutoverChecks": true,
+      "cases": [
+        "full-project-replay-retains-truth-and-invalidates-old-continuation"
+      ],
+      "containers": [
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "8a45d59c560caff368510f6545c79c09d756fc2b3c187d3c1ec78355fece804d"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 8a45d59c560caff368510f6545c79c09d756fc2b3c187d3c1ec78355fece804d\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "2050214c1a65f32e5dd6c752308809b99aa96b2e2b9e7babb718d3000fe696f6"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 2050214c1a65f32e5dd6c752308809b99aa96b2e2b9e7babb718d3000fe696f6\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "2f0633c176bbb57ce47287963befdd033e91e84c6ab5be6752fe5069df7bdff6"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 2f0633c176bbb57ce47287963befdd033e91e84c6ab5be6752fe5069df7bdff6\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "4ab385cc20859f5a5e390eb8a7f6e768b5d1f3fa65f2384c65f701fdadff61ac"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 4ab385cc20859f5a5e390eb8a7f6e768b5d1f3fa65f2384c65f701fdadff61ac\n"
+        }
+      ],
+      "processes": [
+        {
+          "role": "appHost",
+          "pid": 1867112,
+          "originalStartTicks": "3529864",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "cli",
+          "pid": 1852015,
+          "originalStartTicks": "3520723",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "sidecars": [
+        {
+          "role": "eventstore",
+          "pid": 1869098,
+          "originalStartTicks": "3530445",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders",
+          "pid": 1869378,
+          "originalStartTicks": "3530514",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders-workers",
+          "pid": 1869515,
+          "originalStartTicks": "3530536",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects",
+          "pid": 1869172,
+          "originalStartTicks": "3530469",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects-workers",
+          "pid": 1869260,
+          "originalStartTicks": "3530492",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "tenants",
+          "pid": 1869022,
+          "originalStartTicks": "3530421",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "fixturePrivateMaterialRemoved": true,
+      "originalExternalPreservation": true,
+      "independentExternalPreservation": true
+    },
+    "main": {
+      "native": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "sourceMatches": true,
+      "writerRawSourceBindingMatches": true,
+      "bootstrapOriginalSourceAndCutoverChecks": true,
+      "cases": [
+        "authorized-list-continuation-open",
+        "public-user-and-workload-trust-remain-separate",
+        "populated-foreign-tenant-and-absent-safe-denial",
+        "owned-projects-process-restart-retains-reads-continuation-and-state",
+        "inspection-permission-and-durable-metadata-only-audit",
+        "audit-storage-unavailable-blocks-disclosure",
+        "revocation-observes-real-head-and-invalidates-old-continuation",
+        "owned-folder-outage-honest-unavailability-and-recovery",
+        "authenticated-command-and-projection-compatibility"
+      ],
+      "containers": [
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "d4c0b50997174aacb399793ac523012c93758f0d5baa02aaaab94fa6a3e807a7"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: d4c0b50997174aacb399793ac523012c93758f0d5baa02aaaab94fa6a3e807a7\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "bd3b337742be01ee03298ff925cf320565df908ef34b4aa469f272ec15b62b63"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: bd3b337742be01ee03298ff925cf320565df908ef34b4aa469f272ec15b62b63\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "bf2a60fbac5fcd0d6f70dbc027c2ae179c271068ee472a7bf68b3777d4ff9fd3"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: bf2a60fbac5fcd0d6f70dbc027c2ae179c271068ee472a7bf68b3777d4ff9fd3\n"
+        },
+        {
+          "command": [
+            "docker",
+            "inspect",
+            "--type",
+            "container",
+            "84545410c91f50eaea23ac89fc2fc0bc98074798fdae4a8607cd362082d8a768"
+          ],
+          "exitCode": 1,
+          "absent": true,
+          "output": "[]\nError response from daemon: No such container: 84545410c91f50eaea23ac89fc2fc0bc98074798fdae4a8607cd362082d8a768\n"
+        }
+      ],
+      "processes": [
+        {
+          "role": "appHost",
+          "pid": 1993695,
+          "originalStartTicks": "3580049",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "cli",
+          "pid": 1974291,
+          "originalStartTicks": "3570452",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "before-projects",
+          "pid": 1996421,
+          "originalStartTicks": "3580708",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "before-projects-wrapper",
+          "pid": 1996165,
+          "originalStartTicks": "3580657",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "after-projects",
+          "pid": 2049331,
+          "originalStartTicks": "3604412",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "after-projects-wrapper",
+          "pid": 2049262,
+          "originalStartTicks": "3604363",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "sidecars": [
+        {
+          "role": "eventstore",
+          "pid": 1995874,
+          "originalStartTicks": "3580632",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders",
+          "pid": 1996366,
+          "originalStartTicks": "3580701",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "folders-workers",
+          "pid": 1996457,
+          "originalStartTicks": "3580724",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects",
+          "pid": 1996162,
+          "originalStartTicks": "3580657",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "projects-workers",
+          "pid": 1996264,
+          "originalStartTicks": "3580679",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        },
+        {
+          "role": "tenants",
+          "pid": 1995798,
+          "originalStartTicks": "3580608",
+          "currentStartTicks": null,
+          "originalIdentityAbsent": true
+        }
+      ],
+      "fixturePrivateMaterialRemoved": true,
+      "originalExternalPreservation": true,
+      "independentExternalPreservation": true,
+      "regressions": {
+        "Integration": {
+          "total": 222,
+          "passed": 222,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "not-run": 0
+        },
+        "Server": {
+          "total": 1378,
+          "passed": 1378,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "not-run": 0
+        }
+      },
+      "nativeConsoleCustody": {
+        "directory": "/tmp/supported-project-reads-native-console-y97wmtve",
+        "identity": {
+          "device": 2096,
+          "inode": 5292923
+        },
+        "privateIdentitiesUnchanged": true,
+        "coverageVerified": true,
+        "privacyEqualityAccepted": false,
+        "disposition": "Existing launcher retains bounded owner-private raw snapshots for parent review; no raw content copied into this packet."
+      }
+    }
+  },
+  "heads": {
+    "Projects": {
+      "head": "fb6e1dfbe55fcade245da251bc5ff0d645a3456d",
+      "unchanged": true
+    },
+    "EventStore": {
+      "head": "bbc165a5cd3a1f21822b4b53daa7fd895883f8a5",
+      "unchanged": true
+    },
+    "Tenants": {
+      "head": "8e20524574901d71ad5f4876804c64c3c6c87b88",
+      "unchanged": true
+    },
+    "Folders": {
+      "head": "ff915ec8676f338d1dd536ce49519010f1c9cb07",
+      "unchanged": true
+    },
+    "Commons": {
+      "head": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+      "unchanged": true
+    },
+    "Memories": {
+      "head": "3a62bfe1281cce5fee83caa569d3531175e1944f",
+      "unchanged": true
+    },
+    "Platform": {
+      "head": "692cd6d025032f04f68ce302f02839d746f85ee9",
+      "unchanged": true
+    },
+    "Parties": {
+      "head": "1d078dd9a794ec5a121343225261f2f0997e95c5",
+      "unchanged": true
+    },
+    "AI.Tools": {
+      "head": "1745b6663ad32bb1288167135ed0f979366c53a0",
+      "unchanged": true
+    },
+    "Conversations": {
+      "head": "9a5c684de5ee4876448faa26737f6afd36cf33e7",
+      "unchanged": true
+    },
+    "Builds": {
+      "head": "fc2122240a39f03628c04fa8433e5eece90b8b4c",
+      "unchanged": true
+    },
+    "McpCli": {
+      "head": "f24266b628a2abcfbdc9f0d064e0e4c324d8e7c8",
+      "unchanged": true
+    },
+    "FrontComposer": {
+      "head": "4c24c287cde520631e960a322413bee804f7c3d4",
+      "unchanged": true
+    }
+  },
+  "patches": [
+    {
+      "repository": "Projects",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/completion/source-changes/Projects.patch"
+      ],
+      "exitCode": 0,
+      "sha256": "5e5bde48be56d3e7351806410088702acf1ed59e9982b86c858b3d3cae174800"
+    },
+    {
+      "repository": "EventStore",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/completion/source-changes/EventStore.patch"
+      ],
+      "exitCode": 0,
+      "sha256": "8f96b900cb3140b0be910b4167b8d40abc97b6e1572872aeb8e9b06a030e1ceb"
+    },
+    {
+      "repository": "Tenants",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/completion/source-changes/Tenants.patch"
+      ],
+      "exitCode": 0,
+      "sha256": "cd68a8bc302e066efa8862eaa6e11e7ace0d52ad610eb8f78d24a0b8edb939b8"
+    },
+    {
+      "repository": "Folders",
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/completion/source-changes/Folders.patch"
+      ],
+      "exitCode": 0,
+      "sha256": "4c8b2af1c7fb763a7c5c49e8d47ae784f108fad36a2b7ec194ab515e1df8e48e"
+    }
+  ],
+  "exactAppHostSessionsAbsent": true,
+  "result": "passed"
+}

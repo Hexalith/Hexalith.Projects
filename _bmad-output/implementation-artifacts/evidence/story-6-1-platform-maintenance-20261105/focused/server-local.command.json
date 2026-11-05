@@ -1,0 +1,32 @@
+{
+  "command": [
+    "dotnet",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-class-",
+    "*SupportedProjectAuthorityHttpTests",
+    "-method-",
+    "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+    "-method-",
+    "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+    "-method-",
+    "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/focused/server-local.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "exitCode": 0,
+  "environment": "environment.json",
+  "seconds": 19.352669954299927,
+  "output": "server-local.txt",
+  "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+  "totals": {
+    "total": 1331,
+    "passed": 1331,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "xml": "server-local.xml",
+  "xmlSha256": "97b7912b9b3b3b901a97bd6bdd4706fc9da9cf613d9272245a14df5ebafd081c"
+}

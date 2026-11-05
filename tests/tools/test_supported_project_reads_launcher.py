@@ -38,6 +38,27 @@ def resources(*names):
     return [{"name": name, "id": container_id(name)} for name in names]
 
 
+class OwnerSourceReadCustodyTests(unittest.TestCase):
+    def test_fresh_owner_source_custody_is_private_and_cannot_be_reused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            directory = LAUNCHER.prepare_owner_source_read_directory(private)
+            self.assertEqual(directory, private / "owner-source-reads")
+            self.assertEqual(directory.stat().st_mode & 0o777, 0o700)
+            with self.assertRaises(FileExistsError): LAUNCHER.prepare_owner_source_read_directory(private)
+
+    def test_owner_source_custody_is_removed_with_owned_private_material(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary) / "owned"
+            private.mkdir(mode=0o700)
+            directory = LAUNCHER.prepare_owner_source_read_directory(private)
+            (directory / "actual.request").write_text("private request")
+            report = {"cleanup": [], "result": "passed"}
+            LAUNCHER.cleanup_private_material(private, "reads-test", None, False, report)
+            self.assertTrue(report["privateMaterialRemoved"])
+            self.assertFalse(directory.exists())
+
+
 class NativeConsoleEvidenceTests(unittest.TestCase):
     def windows(self):
         return [{"trace": format(index + 1, "032x"), "kind": ("Denied", "Absent", "ForeignOnly")[index % 3],
@@ -1708,7 +1729,15 @@ class SupportedReadScenarioGroupTests(unittest.TestCase):
 
     def profile(self):
         return {project: {"Configuration": "Debug", "Optimize": "false", "DefineConstants": "TRACE;DEBUG;NET10_0", "DebugType": "portable",
-                          "UseHexalithProjectReferences": "true", "UseNuGetDeps": "false", "EnablePrivateCatalogInvocationProof": "true"} for project in LAUNCHER.COMPILATION_PROJECTS}
+                          "UseHexalithProjectReferences": "true", "UseNuGetDeps": "false", "EnablePrivateCatalogInvocationProof": "true", "EnablePrivateOwnerSourceReadProof": "true"} for project in LAUNCHER.COMPILATION_PROJECTS}
+
+    def test_owner_source_helper_requires_explicit_compilation_selection(self):
+        for selected in (None, "false"):
+            profile = self.profile()
+            values = next(iter(profile.values()))
+            if selected is None: values.pop("EnablePrivateOwnerSourceReadProof")
+            else: values["EnablePrivateOwnerSourceReadProof"] = selected
+            with self.subTest(selected=selected), self.assertRaises(RuntimeError): LAUNCHER.require_compilation_profile(profile)
 
     def report(self, scenario, frozen, regressions=False):
         index = LAUNCHER.SCENARIO_GROUPS.index(scenario)

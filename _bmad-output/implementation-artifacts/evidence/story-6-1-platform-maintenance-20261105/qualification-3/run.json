@@ -1,0 +1,60 @@
+{
+  "qualification": "independent-scenario-coordinator",
+  "result": "failed",
+  "matrixCompleted": false,
+  "acceptedEquivalence": false,
+  "productionReadiness": false,
+  "groups": [],
+  "launches": [
+    {
+      "group": "duplicate",
+      "identity": {
+        "pid": 1227152,
+        "startTicks": "3210826",
+        "command": [
+          "/usr/bin/python3",
+          "/home/administrator/projects/hexalith/projects/tools/qualification/run_supported_project_reads.py",
+          "--scenario",
+          "duplicate",
+          "--timeout",
+          "900",
+          "--evidence",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/qualification-3/duplicate"
+        ]
+      },
+      "evidenceDirectory": "duplicate",
+      "complete": true,
+      "exitCode": 1,
+      "childReportSha256": "42df5ebd33bdc7d243eb6056568fc73798a03dfa7156a468d0eaa2f494bc8801",
+      "childCleanup": {
+        "ownedSidecarsAbsent": true,
+        "preexistingResourcesPreserved": true,
+        "privateMaterialRemoved": false,
+        "recoveryMaterialRetained": true
+      },
+      "cleanupCompletionVerified": false
+    }
+  ],
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 122,
+    "passed": 122,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceManifestSha256": "35c93f5d9dca8d90a9b2f745e07431c5cd8d9cdc2f64715d6a74e8f26da436da",
+  "failure": "An interrupted/failed scenario cannot qualify and no later group was started.",
+  "interruption": {
+    "requested": false
+  }
+}

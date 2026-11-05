@@ -91,6 +91,24 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         Should.Throw<InvalidOperationException>(() => SupportedProjectReadFixtureProfile.Validate(new ConfigurationBuilder().AddInMemoryCollection(inputs).Build()));
     }
 
+    /// <summary>Bootstrap source proof has separate exact private owner custody.</summary>
+    [Theory]
+    [InlineData("missing")]
+    [InlineData("foreign")]
+    [InlineData("symlink")]
+    [InlineData("shared")]
+    public void OwnerSourceReadDirectoryMustBeExactAndPrivate(string fault)
+    {
+        Dictionary<string, string?> inputs = ValidInputs();
+        string path = inputs["Projects:SupportedReads:OwnerSourceReadDirectory"]!;
+        if (fault is "missing" or "symlink") Directory.Delete(path);
+        if (fault == "foreign") inputs["Projects:SupportedReads:OwnerSourceReadDirectory"] = inputs["Projects:SupportedReads:InvocationDirectory"];
+        if (fault == "symlink") Directory.CreateSymbolicLink(path, Path.GetDirectoryName(path)!);
+        if (fault == "shared" && !OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute | UnixFileMode.GroupRead);
+        if (fault == "shared" && OperatingSystem.IsWindows()) return;
+        Should.Throw<InvalidOperationException>(() => SupportedProjectReadFixtureProfile.Validate(new ConfigurationBuilder().AddInMemoryCollection(inputs).Build()));
+    }
+
     /// <summary>Uses real Folder projects and preserves bound trust, command/project grants and secret parameters.</summary>
     [Fact]
     public async Task EnabledProfileComposesRealOwnersAndDistinctTrustAsync()
@@ -130,13 +148,20 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         environment["Authentication__WorkloadAuthority__Grants__3__Operations__0"].ShouldBe("eventstore:owner-authority-query");
         environment["Authentication__WorkloadAuthority__Grants__4__Operations__0"].ShouldBe("eventstore:command-submit");
         environment["Authentication__WorkloadAuthority__Grants__4__ClientSecretSha256"].ShouldBe(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(inputs["Projects:SupportedReads:TenantsSecret"]!))));
+        environment["Authentication__WorkloadAuthority__Grants__6__Operations__0"].ShouldBe("eventstore:stream-read");
+        environment["Authentication__WorkloadAuthority__Grants__6__AllowUnbound"].ShouldBe("false");
+        environment["Authentication__WorkloadAuthority__Grants__6__Surface"].ShouldBe("service");
+        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
+        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
+        environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
+        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__6__Operations__", StringComparison.Ordinal)).ShouldBe(1);
         environment["Authentication__WorkloadAuthority__Grants__5__Operations__0"].ShouldBe("eventstore:stream-read");
         environment["Authentication__WorkloadAuthority__Grants__5__AllowUnbound"].ShouldBe("false");
-        environment["Authentication__WorkloadAuthority__Grants__5__Surface"].ShouldBe("service");
-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
-        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
+        environment["Authentication__WorkloadAuthority__Grants__5__Workload"].ShouldBe("tenants");
+        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-tenant__0"].ShouldBe("platform:global-administrators");
+        environment["Authentication__WorkloadAuthority__Grants__5__Bindings__eventstore:bound-domain__0"].ShouldBe("global-administrators");
         environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__5__Operations__", StringComparison.Ordinal)).ShouldBe(1);
+        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__5__Bindings__", StringComparison.Ordinal)).ShouldBe(2);
         var folderEnvironment = await EnvironmentAsync(folders, builder.ExecutionContext);
         folderEnvironment["Folders__EventStore__OwnerMetadataReads__Enabled"].ShouldBe("true");
         folderEnvironment["Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled"].ShouldBe("true");
@@ -356,6 +381,8 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         File.WriteAllText(existing, "structural placeholder");
         string discovery = Path.Combine(directory, "discovery.json");
         string invocations = Directory.CreateDirectory(Path.Combine(directory, "catalog-invocations")).FullName;
+        string ownerSource = Directory.CreateDirectory(Path.Combine(directory, "owner-source-reads")).FullName;
+        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(ownerSource, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(invocations, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         File.WriteAllText(discovery, System.Text.Json.JsonSerializer.Serialize(new
         {
@@ -369,6 +396,7 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
             ["Projects:SupportedReads:CertificatePath"] = existing, ["Projects:SupportedReads:TrustBundle"] = existing,
             ["Projects:SupportedReads:DiscoveryConfiguration"] = discovery,
             ["Projects:SupportedReads:InvocationDirectory"] = invocations,
+            ["Projects:SupportedReads:OwnerSourceReadDirectory"] = ownerSource,
             ["Projects:SupportedReads:CatalogDigestKey"] = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)),
             ["Projects:SupportedReads:Tenant"] = "fixture-tenant", ["Projects:SupportedReads:ForeignTenant"] = "fixture-foreign",
         };

@@ -1,0 +1,64 @@
+{
+  "observedUtc": "2026-11-05T17:03:14.506062+00:00",
+  "repositories": [
+    {
+      "owner": "Projects",
+      "head": "fb6e1dfbe55fcade245da251bc5ff0d645a3456d",
+      "patch": "parent-review/source-changes/Projects.patch",
+      "sha256": "5e5bde48be56d3e7351806410088702acf1ed59e9982b86c858b3d3cae174800",
+      "reverseApplyCheckExitCode": 0,
+      "diffCheckExitCode": 0,
+      "indexMatchesHEAD": true,
+      "untrackedSource": []
+    },
+    {
+      "owner": "EventStore",
+      "head": "bbc165a5cd3a1f21822b4b53daa7fd895883f8a5",
+      "patch": "parent-review/source-changes/EventStore.patch",
+      "sha256": "3998fe467bfd5772b9efd1d9654b9790e4b7bab29d54e4ce4dfe44f02427497d",
+      "reverseApplyCheckExitCode": 0,
+      "diffCheckExitCode": 0,
+      "indexMatchesHEAD": true,
+      "untrackedSource": [
+        "src/Hexalith.EventStore.Contracts/Routing/ProjectionDeliveryMaintenanceScopeCatalog.cs",
+        "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceReader.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs",
+        "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs",
+        "src/Hexalith.EventStore/Controllers/AdminProjectionRebuildController.PlatformDelivery.cs",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.PlatformDelivery.cs",
+        "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs"
+      ]
+    },
+    {
+      "owner": "Tenants",
+      "head": "8e20524574901d71ad5f4876804c64c3c6c87b88",
+      "patch": "parent-review/source-changes/Tenants.patch",
+      "sha256": "cd68a8bc302e066efa8862eaa6e11e7ace0d52ad610eb8f78d24a0b8edb939b8",
+      "reverseApplyCheckExitCode": 0,
+      "diffCheckExitCode": 0,
+      "indexMatchesHEAD": true,
+      "untrackedSource": [
+        "src/Hexalith.Tenants/Authorization/TenantOwnerSourceReadDevelopmentEnrollment.cs"
+      ]
+    },
+    {
+      "owner": "Folders",
+      "head": "ff915ec8676f338d1dd536ce49519010f1c9cb07",
+      "patch": "parent-review/source-changes/Folders.patch",
+      "sha256": "4c8b2af1c7fb763a7c5c49e8d47ae784f108fad36a2b7ec194ab515e1df8e48e",
+      "reverseApplyCheckExitCode": 0,
+      "diffCheckExitCode": 0,
+      "indexMatchesHEAD": true,
+      "untrackedSource": [
+        "tests/Hexalith.Folders.Server.Tests/OwnerSourceCompositionAssertionIssuer.cs"
+      ]
+    }
+  ]
+}

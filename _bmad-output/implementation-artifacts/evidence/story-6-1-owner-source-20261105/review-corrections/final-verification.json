@@ -1,0 +1,41 @@
+{
+  "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+  "sourceInputs": 17078,
+  "sourceUnchangedDuringFocusedCorrections": true,
+  "focusedResults": "results.json",
+  "selectedAndUnselectedTestCompilationProven": true,
+  "diffChecks": {
+    "Projects": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0
+    },
+    "EventStore": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "exitCode": 0
+    },
+    "Tenants": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "exitCode": 0
+    }
+  },
+  "reviewableByteIdenticalOutputCopies": 31,
+  "nativeAcceptanceAtThisSource": false,
+  "historicalNativeSourceManifestSha256": "1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60",
+  "ownedMappingRetainedForParentVerification": "/tmp/story61-owner-review",
+  "cleanupOwner": "Parent explicitly requested this mapping remain available and will remove it after full verification."
+}

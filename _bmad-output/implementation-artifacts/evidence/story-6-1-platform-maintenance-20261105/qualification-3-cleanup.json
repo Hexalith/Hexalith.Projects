@@ -1,0 +1,35 @@
+{
+  "result": "failed",
+  "interruptedSignal": "SIGTERM",
+  "ownedSidecarsAbsent": true,
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": false,
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-7d815357a51f3dd183ba0674-redishost",
+      "containerId": "efd411d3dd8020311fcf70b4311828b8df7013fb97a396cdccd52b3d58631ace",
+      "removed": true,
+      "absenceVerified": true
+    }
+  ],
+  "independentContainerAbsence": [
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--type",
+        "container",
+        "efd411d3dd8020311fcf70b4311828b8df7013fb97a396cdccd52b3d58631ace"
+      ],
+      "exitCode": 1,
+      "absent": true,
+      "output": "[]\nError response from daemon: No such container: efd411d3dd8020311fcf70b4311828b8df7013fb97a396cdccd52b3d58631ace\n"
+    }
+  ],
+  "exactAppHostSessionsAbsent": true
+}

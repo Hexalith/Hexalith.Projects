@@ -1,0 +1,56 @@
+{
+  "Projects": {
+    "head": "fb6e1dfbe55fcade245da251bc5ff0d645a3456d",
+    "ownerRoot": ".",
+    "representation": "Current reviewed source; repository-relative paths. Original qualification-1 source is preserved separately.",
+    "patchSha256": "38c2db0d1b4785a599a2fc4a6ed736d2132565e2bb0471973f9ecacc853ba06a",
+    "files": {
+      ".gitattributes": "ea50598c87671e2c54514bdd75c9011f2798d14260305252efd6e223aadfd474",
+      "src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs": "4a6961fcfda7f54cf2c1f2d855c0078782c9fa0bba5951170fbf4d5d956d41dd",
+      "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "160ed41f2b4fe6b024d8e729329d6db32513e769e554b9eec1312fc2a2fdb5ab",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "3dbb01988bdac0b36b9b1aed616ca6a197f772a50d98ca011474140473191859",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "4316299a4acea7966e0be80ab42ff8da7cd47dc0eb07af167e61a21d302b863e",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "91f69c7a60c42ab386dbecbeb226898d01ec6c7fca0b0527cc1ce2a4a6c66cde",
+      "tests/tools/test_supported_project_reads_launcher.py": "430c7773c9fd54eec7db58b5f41ab9c1fc3207d8569241adc681693f211a5781",
+      "tools/qualification/run_supported_project_reads.py": "9df04175498a36bc0dc1610289762bfa75d10f0bdc1f4e46475b1204cc09cd9a"
+    },
+    "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+  },
+  "EventStore": {
+    "head": "bbc165a5cd3a1f21822b4b53daa7fd895883f8a5",
+    "ownerRoot": "references/Hexalith.EventStore",
+    "representation": "Current reviewed source; repository-relative paths. Original qualification-1 source is preserved separately.",
+    "patchSha256": "81100b6c572c1cc726d7df943efeb3561ef21cfdc5c8648bf3ed7f0fbc5be8f9",
+    "files": {
+      "src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs": "b0657f77036c6852d105ab978642a9777d5042e9e6d18abada0b54fd26d6b1af",
+      "src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs": "7db36b5d0578b2d63dc5533e0c3d659c2940682c0df5113f4f8518db083425c2",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs": "ddbedfd408ab642f5db94f0377423644a15818c8b8fed0bcfe0c2f2c16ffc3a7",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs": "8a447eab88c8e47f281a5a12fd38fd06b4badfa2415614e1a46e9a095d984790",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs": "760814d44c156235a216c7785524d076a7ed5ee44204eaea3d0bd082335c1e15",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs": "aa5064a3e858890b8ff8fd9be57061bfc7755e2eeab959e0aa7379928a076eaf",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs": "90b228487a8b7323ccd0ee475c9ef72fdcea9a5f86066416dc83d879492f5cd7",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs": "02ee45d2bac979ec02a3c7f9bb79b4b5620baa5ff89101ba5aa9caefc325eab6",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs": "2c947db30f21d647a64baa65298d01c5ca6cd203e502b4f2a9a2abb47ad3db90",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs": "dd0cb6ec30f46ac0d7ee0b2193d6680ff26a277ea111cc6c59fdc227674365c9",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs": "6880b4a3d3cabf36cd07f0678fa80b93bc65fae25ebcb5286a8e5afaa17525b8",
+      "tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs": "cb02a4ba40fb1f41c6a935473fbf12a80b529c5b4f4b7e0619673ea23eb7338f",
+      "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs": "16ac474c16e3423af41a8c8812e1fcd7f0a249617bb4f0e22733732e4b83663a"
+    },
+    "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+  },
+  "Tenants": {
+    "head": "8e20524574901d71ad5f4876804c64c3c6c87b88",
+    "ownerRoot": "references/Hexalith.Tenants",
+    "representation": "Current reviewed source; repository-relative paths. Original qualification-1 source is preserved separately.",
+    "patchSha256": "cd68a8bc302e066efa8862eaa6e11e7ace0d52ad610eb8f78d24a0b8edb939b8",
+    "files": {
+      "src/Hexalith.Tenants/Authorization/TenantOwnerSourceReadDevelopmentEnrollment.cs": "884ae5523339bb9422d9cd1c589cd776813426a5ddd3c9d1db341f9459a744cf",
+      "src/Hexalith.Tenants/Hexalith.Tenants.csproj": "88deae1482b4c7c8c384481f718bdcdb44e888d9dec26a0478f5b54d53a3588f",
+      "src/Hexalith.Tenants/Program.cs": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+      "tests/Hexalith.Tenants.Server.Tests/Authorization/OwnerSourceTargetHttpHandler.cs": "5b441896402798301868fc02d88e1874082557ba0eb7dd635d31affbd1a7a034",
+      "tests/Hexalith.Tenants.Server.Tests/Authorization/TenantOwnerSourceRuntimeTests.cs": "6c8a317fa4307f90e9b190b0c5a0067a701377f0a9d9bfc3a6dbe5266ead9883",
+      "tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj": "0dd120265d84d634569ca4db0d37b2b19c73522568f36cf0425e2fe6fbb0d45e"
+    },
+    "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+  "commands": {
+    "launcher": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_supported_project_reads_launcher.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "launcher.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "sdk": {
+      "command": [
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Client.Tests.dll",
+        "-class",
+        "*EventStoreGatewayWorkloadClientTests",
+        "-class",
+        "*EventStoreGatewayClientStreamTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/parent-final/sdk.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "sdk.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+      "totals": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "sdk.xml",
+      "xmlSha256": "9a556aecd9bbc9f8aaa3a6b352c57b448637bf57490c5308040fe1fc00db93f9"
+    },
+    "helper": {
+      "command": [
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+        "-class",
+        "*OwnerSourceReadTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/parent-final/helper.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "helper.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+      "totals": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "helper.xml",
+      "xmlSha256": "ccc2fb391ddf3707808743fac9e1cbe63034a8ba7e3ce086468e505ae5881210"
+    },
+    "tenants-selected-build": {
+      "command": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "tenants-selected-build.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "tenants-selected": {
+      "command": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+        "-class",
+        "*TenantOwnerSourceRuntimeTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/parent-final/tenants-selected.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "tenants-selected.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+      "totals": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "tenants-selected.xml",
+      "xmlSha256": "873647d92f5ce5ec3eeacb3532bbda58575360dd12dd8a8b2e2f5c156b45c5f4"
+    },
+    "integration-build": {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "integration-build.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "integration": {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class-",
+        "*SupportedProjectReadDistributedTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/parent-final/integration.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "integration.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+      "totals": {
+        "total": 212,
+        "passed": 212,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "integration.xml",
+      "xmlSha256": "44aba51e6ee8e8d4b6e4a9f87b3b9587e064a04266c058b6f23bb7c23b256891"
+    },
+    "server-build": {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "server-build.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "server": {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class-",
+        "*SupportedProjectAuthorityHttpTests",
+        "-method-",
+        "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-method-",
+        "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/parent-final/server.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "server.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+      "totals": {
+        "total": 1331,
+        "passed": 1331,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "server.xml",
+      "xmlSha256": "4c58c24836ce21e036b57f8fdbb6f8458fd1b246045a4b84f707383992cea18e"
+    },
+    "diff-check-Projects": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "diff-check-Projects.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "diff-check-EventStore": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "diff-check-EventStore.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    },
+    "diff-check-Tenants": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "environment": "environment.json",
+      "output": "diff-check-Tenants.txt",
+      "sourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc"
+    }
+  }
+}

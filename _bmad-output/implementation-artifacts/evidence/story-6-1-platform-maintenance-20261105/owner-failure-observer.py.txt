@@ -1,0 +1,27 @@
+from pathlib import Path
+import hashlib,json,os,re,runpy,subprocess,time
+root=Path('/home/administrator/projects/hexalith/projects');packet=root/'_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105';lane=packet/'qualification-2/duplicate'
+launcher=runpy.run_path(str(root/'tools/qualification/run_supported_project_reads.py'))
+fixed=set()
+for p in (root/'references/Hexalith.Folders/src').rglob('*.cs'):
+ fixed.update(re.findall(r'throw new InvalidOperationException\("([^"\n]+)"',p.read_text()))
+observations=[];owned=None;deadline=time.monotonic()+850
+while time.monotonic()<deadline:
+ if (lane/'run.json').exists(): break
+ try:
+  sessions=launcher['exact_apphost_sessions']()
+  for session in sessions:
+   pid=session['appHostPid'];values=dict(x.split(b'=',1) for x in Path('/proc',str(pid),'environ').read_bytes().split(b'\0') if b'=' in x)
+   if values.get(b'SUPPORTED_PROJECT_READ_EVIDENCE') != str(lane).encode(): continue
+   candidate=launcher['session_identity'](session,Path(values[b'Projects__SupportedReads__ConfigurationFile'].decode()),values[b'NAMESPACE'].decode())
+   if candidate and launcher['owns_current_apphost'](candidate): owned=candidate
+  if owned and launcher['owns_current_apphost'](owned):
+   command=['aspire','logs','folders','--apphost',str(launcher['APPHOST']),'--format','Json','--tail','1000','--include-hidden','--non-interactive']
+   result=subprocess.run(command,cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=15,text=True)
+   same=launcher['owns_current_apphost'](owned)
+   if result.returncode==0 and same and 'InvalidOperationException' in result.stdout:
+    value={'command':command,'ownershipVerifiedBeforeAndAfter':True,'session':{k:v for k,v in owned.items() if not k.startswith('_')},'rawSha256':hashlib.sha256(result.stdout.encode()).hexdigest(),'rawRetained':False,'fixedSourceMessages':sorted(x for x in fixed if x in result.stdout),'exceptionTypes':sorted(set(re.findall(r'(?:[A-Za-z_][A-Za-z0-9_]*\.)*[A-Za-z_][A-Za-z0-9_]*Exception',result.stdout))),'stackMethods':sorted(set(re.findall(r'at ((?:Hexalith|Microsoft)\.[A-Za-z0-9_.+`]+)\(',result.stdout)))}
+    (packet/'owner-failure-diagnostic.json').write_text(json.dumps(value,indent=2)+'\n');print(json.dumps(value,indent=2));break
+ except (OSError,ValueError,RuntimeError,subprocess.TimeoutExpired): pass
+ time.sleep(3)
+else: raise SystemExit('Observation expired')

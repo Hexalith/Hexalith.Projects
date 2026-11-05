@@ -1,0 +1,37 @@
+{
+  "sourceManifestSha256": "1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60",
+  "sourceInputs": 17078,
+  "sourceUnchangedSinceQualificationStart": true,
+  "bootstrap": {
+    "hostedReceiptVerified": true,
+    "receiptPhase": "accepted",
+    "observedHttpStatus": 202,
+    "uncertainDeliveryRecovered": false,
+    "actualCommandStatus": "Completed",
+    "statusReadHttpStatus": 200,
+    "commandBindingVerified": true,
+    "correlationBindingVerified": true,
+    "persistedGlobalAdministratorSetVerified": true,
+    "targetActorVerified": true
+  },
+  "native": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "remainingBlocker": {
+    "stage": "bootstrap legacy delivery checkpoint reconciliation before any Project seed/read",
+    "httpStatus": 403,
+    "method": "POST",
+    "route": "api/v1/admin/projections/system/global-administrators/delivery-reconciliation/global-administrators/global-administrators",
+    "admission": "AdminTenantAuthorizationFilter requires a canonical public Tenant and matching grants; system is reserved.",
+    "secondaryBoundary": "AdminProjectionRebuildController.CreateScope also rejects reserved public Tenant identity.",
+    "scopeExpansionNotApplied": true,
+    "laterGroupsStarted": false,
+    "fullLiveRegressionsRun": false
+  },
+  "packageMode": "Previously recorded NU1109 conflict remains separate; no pins changed and no package-mode rerun is claimed."
+}

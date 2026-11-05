@@ -1,0 +1,164 @@
+{
+  "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22",
+  "unchanged": true,
+  "results": [
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--verbosity",
+        "minimal",
+        "--disable-build-servers",
+        "-m:1"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 2.169499239003926,
+      "output": "sdk-build.txt",
+      "outputSha256": "fbb98cbac27e1a040926d6738b78c9d42722ef75d561fd4bee0d5e985d3ec991",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/parent-review/final-checks/sdk-full.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 222.01449103900086,
+      "output": "sdk-full.txt",
+      "outputSha256": "7d14a2dd01a6317c70dd3438238f67519bc719a3453789fc0263ea4e841bdb49",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22",
+      "totals": {
+        "total": 1382,
+        "passed": 1381,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 1,
+        "not-run": 0
+      },
+      "xml": "sdk-full.xml",
+      "xmlSha256": "55624a61f95adfbca15f0bd044e2e1878c18c4e26cd6abf32446422f89006dd1"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Testing.Tests/Hexalith.EventStore.Testing.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--verbosity",
+        "minimal",
+        "--disable-build-servers",
+        "-m:1"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 2.1196978480002144,
+      "output": "helper-build.txt",
+      "outputSha256": "f8ae90a0003e0cd0eb2911028598d175efd71cefa6011ef4e6c7e0e9d101763d",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Testing.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Testing.Tests.OwnerSourceReadTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/parent-review/final-checks/helper-full.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 1.5682677250006236,
+      "output": "helper-full.txt",
+      "outputSha256": "c7307f41ba6db639c305b4bf82636e74ed7eb8716b7ba209096c6c7f57cf6bf4",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22",
+      "totals": {
+        "total": 34,
+        "passed": 34,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "helper-full.xml",
+      "xmlSha256": "272cc5b05cf07f74d5bcb06601dbca971d648acfce3dfebbedff846870d81a5f"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--verbosity",
+        "minimal",
+        "--disable-build-servers",
+        "-m:1"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 37.414615759997105,
+      "output": "folders-build.txt",
+      "outputSha256": "d45a44aba55cbfe085f5d0ae8d07e0a2a4f2b0facf551e9abc7b29a5140ab005",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/parent-review/final-checks/folders-default-full.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 289.8956141460003,
+      "output": "folders-default-full.txt",
+      "outputSha256": "14a14962051835bb80606a6b01386221c365b50e273efafca38f9b6d9b82ce21",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22",
+      "totals": {
+        "total": 1424,
+        "passed": 1424,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "xml": "folders-default-full.xml",
+      "xmlSha256": "2561878664fda9af1e6add14f8b6d4f946789ec068085018038de3fc96c880c6"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_supported_project_reads_launcher.py",
+        "-v"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": "environment.json",
+      "exitCode": 0,
+      "seconds": 3.7241072979959426,
+      "output": "launcher-controls.txt",
+      "outputSha256": "8962c48f8bf3c7f0a9f6c63bcf3b89626ad334ff37ed90d468e8aeeaa7b3af88",
+      "sourceManifestSha256": "fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22"
+    }
+  ],
+  "result": "passed"
+}

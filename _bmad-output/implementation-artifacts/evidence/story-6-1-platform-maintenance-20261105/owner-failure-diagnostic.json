@@ -1,0 +1,36 @@
+{
+  "command": [
+    "aspire",
+    "logs",
+    "folders",
+    "--apphost",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+    "--format",
+    "Json",
+    "--tail",
+    "1000",
+    "--include-hidden",
+    "--non-interactive"
+  ],
+  "ownershipVerifiedBeforeAndAfter": true,
+  "session": {
+    "configurationSha256": "b94fa8c2ce5260feb798a9459922ebc291ed131f96b3d4ffccf57a248ff064da",
+    "configurationPathSha256": "1ca7df5152366270693386484c32ba5dd2ce606aa452c1426d4d3cbc987e5d7e",
+    "appHostPid": 1052294,
+    "appHostStartTicks": "3111905",
+    "cliPid": 1035046,
+    "cliStartTicks": "3102705"
+  },
+  "rawSha256": "91d0e5abf6c67e21e1196bd9d33bbc73a9a59907c3d726fceefcec203bad260b",
+  "rawRetained": false,
+  "fixedSourceMessages": [
+    "A validated public human credential is required for gateway submission."
+  ],
+  "exceptionTypes": [
+    "System.InvalidOperationException"
+  ],
+  "stackMethods": [
+    "Hexalith.Folders.Server.Authentication.FoldersGatewayHumanBearerHandler.SendAsync",
+    "Microsoft.Extensions.ServiceDiscovery.Http.ResolvingHttpDelegatingHandler.SendAsync"
+  ]
+}

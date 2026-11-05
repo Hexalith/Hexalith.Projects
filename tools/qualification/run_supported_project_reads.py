@@ -555,6 +555,15 @@ def sanitized_environment(source) -> dict[str, str]:
     return {key: value for key, value in source.items() if not key.casefold().replace(":", "__").startswith(prefixes)}
 
 
+def prepare_owner_source_read_directory(private: Path) -> Path:
+    """Create fresh exact private IPC custody, separately from gateway callbacks."""
+    private_identity(private, directory=True)
+    directory = private / "owner-source-reads"
+    directory.mkdir(mode=0o700)
+    private_identity(directory, directory=True, private_parent=private)
+    return directory
+
+
 def source_manifest() -> dict[str, str]:
     """Bind tracked and untracked build inputs, including dirty source dependencies, without copying payloads."""
     manifest = {}
@@ -1633,7 +1642,7 @@ COMPILATION_PROJECTS = (
     "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
     "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
 )
-COMPILATION_PROPERTIES = ("Configuration", "Optimize", "DefineConstants", "DebugType", "UseHexalithProjectReferences", "UseNuGetDeps", "EnablePrivateCatalogInvocationProof")
+COMPILATION_PROPERTIES = ("Configuration", "Optimize", "DefineConstants", "DebugType", "UseHexalithProjectReferences", "UseNuGetDeps", "EnablePrivateCatalogInvocationProof", "EnablePrivateOwnerSourceReadProof")
 RUNTIME_PROJECTS = dict(zip(("eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers"), (
     "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
     "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
@@ -1656,6 +1665,7 @@ def require_compilation_profile(profile: dict) -> None:
                 or any(not isinstance(value, str) for value in values.values())
                 or values["Optimize"].lower() != "false" or values["UseHexalithProjectReferences"].lower() != "true"
                 or values["UseNuGetDeps"].lower() != "false" or values["EnablePrivateCatalogInvocationProof"].lower() != "true"
+                or values["EnablePrivateOwnerSourceReadProof"].lower() != "true"
                 or "DEBUG" not in values["DefineConstants"].split(";")):
             raise RuntimeError("A scenario is outside the actual ordinary Debug/source proof mode.")
 
@@ -2323,6 +2333,7 @@ def main() -> int:
                 "HexalithCommonsRoot": str(ROOT / "references/Hexalith.Commons"),
                 "HexalithFoldersRoot": str(ROOT / "references/Hexalith.Folders")})
     env["EnablePrivateCatalogInvocationProof"] = "true"
+    env["EnablePrivateOwnerSourceReadProof"] = "true"
     env["UseHexalithProjectReferences"] = "true"
     env["UseNuGetDeps"] = "false"
     for module in ("EventStore", "Tenants", "Folders", "Commons", "Conversations", "Memories", "FrontComposer", "Parties", "McpCli"):
@@ -2452,6 +2463,7 @@ def main() -> int:
         # Initial sidecar syntax only: canonical Platform composition allocates and replaces these.
         dependencies.update({"PlacementHostAddress": f"127.0.0.1:{free_port()}", "SchedulerHostAddress": f"127.0.0.1:{free_port()}"})
         (private / "catalog-invocations").mkdir(mode=0o700)
+        owner_source_directory = prepare_owner_source_read_directory(private)
         fixture = {"IsolationId": isolation, "UserIssuer": user_issuer, "UserKeyPath": str(private / "user.pem"),
                    "CertificatePath": str(private / "certificate.pfx"), "CertificatePassword": password,
                    "TrustBundle": str(private / "certificate.pem"), "EventStoreSecret": secrets.token_hex(32),
@@ -2459,6 +2471,7 @@ def main() -> int:
                    "TenantsSecret": secrets.token_hex(32), "FoldersSecret": secrets.token_hex(32), "BootstrapPassword": bootstrap_password,
                    "CatalogDigestKey": base64.b64encode(secrets.token_bytes(32)).decode(),
                    "InvocationDirectory": str(private / "catalog-invocations"),
+                   "OwnerSourceReadDirectory": str(owner_source_directory),
                    "ReceiptKey": base64.b64encode(secrets.token_bytes(32)).decode(),
                    "OwnerPrivateKey": base64.b64encode((private / "owner.der").read_bytes()).decode(),
                    "OwnerPublicKey": base64.b64encode((private / "owner-public.der").read_bytes()).decode(),

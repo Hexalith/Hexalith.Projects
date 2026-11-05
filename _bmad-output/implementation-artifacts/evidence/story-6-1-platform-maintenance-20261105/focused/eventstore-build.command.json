@@ -1,0 +1,17 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+  "exitCode": 1,
+  "environment": "environment.json",
+  "seconds": 17.342726230621338,
+  "output": "eventstore-build.txt",
+  "sourceBinding": "Pre-correction failed attempt; retained separately, not accepted current-source evidence."
+}

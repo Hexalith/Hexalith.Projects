@@ -1,0 +1,47 @@
+{
+  "sourceUnchanged": true,
+  "sourceManifestSha256": "1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60",
+  "sourceInputs": 17078,
+  "diffChecks": {
+    "Projects": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    "EventStore": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    "Tenants": {
+      "command": [
+        "git",
+        "-C",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  },
+  "localSourceMappingRemoved": true,
+  "exactAppHostSessionsAbsent": true,
+  "localResults": "focused/results.json",
+  "nativeResult": "qualification-1/duplicate/run.json",
+  "nativeAccepted": false,
+  "bootstrapSourceProofPassed": true,
+  "storyStatus": "in-progress"
+}

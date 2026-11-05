@@ -1,0 +1,65 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Folders.Server.Tests
+  Discovered:  Hexalith.Folders.Server.Tests
+  Starting:    Hexalith.Folders.Server.Tests
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost/private-path-sentinel - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /{**path}'
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]
+      Setting HTTP status code 204.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /{**path}'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost/private-path-sentinel - 204 - - 37.7117ms
+    Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(concurrent: False) [FAIL]
+      Shouldly.ShouldAssertException : count.GetInt64()
+          should be
+      0L
+          but was
+      1L
+      Stack Trace:
+        tests/Hexalith.Folders.Server.Tests/Task36LifecycleDiagnosticObserverTests.cs(70,0): at Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(Boolean concurrent)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Folders.Server.Tests/Task36LifecycleDiagnosticObserverTests.cs(81,0): at Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(Boolean concurrent)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://localhost/private-path-sentinel - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /{**path}'
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]
+      Setting HTTP status code 204.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /{**path}'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://localhost/private-path-sentinel - 204 - - 2.2145ms
+    Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(concurrent: True) [FAIL]
+      Shouldly.ShouldAssertException : count.GetInt64()
+          should be
+      0L
+          but was
+      1L
+      Stack Trace:
+        tests/Hexalith.Folders.Server.Tests/Task36LifecycleDiagnosticObserverTests.cs(70,0): at Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(Boolean concurrent)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Folders.Server.Tests/Task36LifecycleDiagnosticObserverTests.cs(81,0): at Hexalith.Folders.Server.Tests.Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices(Boolean concurrent)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+  Finished:    Hexalith.Folders.Server.Tests (ID = '16abc039b394db8d32eff3b4c1fce9834a496a09a8a4325bf32c69a94c334284')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Folders.Server.Tests  Total: 2, Errors: 0, Failed: 2, Skipped: 0, Not Run: 0, Time: 0.306s
+
+shutdown rows with nonzero in-flight: [{'processId': 1445911, 'phase': 'application_stopping', 'utc': '2026-11-05T15:41:47.365623+00:00', 'inFlightRequests': 1}, {'processId': 1445911, 'phase': 'host_stop', 'utc': '2026-11-05T15:41:47.3663152+00:00', 'inFlightRequests': 1}]

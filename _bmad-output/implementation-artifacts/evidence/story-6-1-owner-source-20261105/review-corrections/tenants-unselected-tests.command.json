@@ -1,0 +1,42 @@
+{
+  "command": [
+    "dotnet",
+    "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll",
+    "-class",
+    "*TenantOwnerSourceRuntimeTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/review-corrections/tenants-unselected.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "UseHexalithProjectReferences": "true",
+    "UseNuGetDeps": "false",
+    "EnablePrivateCatalogInvocationProof": "true",
+    "EnablePrivateOwnerSourceReadProof": "false",
+    "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+    "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+    "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+    "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+    "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+    "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-review/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "57f96052c9aec562f65bae8135f4f0e84977acaea95c519cdf91d920c7c99f4a",
+    "Configuration": "Debug"
+  },
+  "environmentReceipt": "unselected-environment.json",
+  "environmentCompleteness": "all explicitly configured build properties retained",
+  "exitCode": 0,
+  "output": "tenants-unselected-tests.txt"
+}

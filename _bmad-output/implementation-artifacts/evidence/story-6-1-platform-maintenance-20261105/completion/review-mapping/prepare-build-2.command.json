@@ -1,0 +1,43 @@
+{
+  "command": [
+    "dotnet",
+    "run",
+    "--no-build",
+    "--project",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+    "--",
+    "prepare-build",
+    "--manifest",
+    "module/hexalith.module-manifest.v2.json",
+    "--mode",
+    "source",
+    "--workspace",
+    "/tmp/story61-platform-maintenance-review-20261105/mapping",
+    "--output",
+    "json"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "UseHexalithProjectReferences": "true",
+    "UseNuGetDeps": "false",
+    "EnablePrivateCatalogInvocationProof": "true",
+    "EnablePrivateOwnerSourceReadProof": "true",
+    "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+    "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+    "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+    "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+    "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+    "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+    "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src"
+  },
+  "exitCode": 0,
+  "seconds": 2.292914390563965,
+  "output": "prepare-build-2.txt"
+}

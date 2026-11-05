@@ -103,6 +103,10 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
             receivers, statePath, options, isolation);
         builder.AddEventStoreDevelopmentSqliteStartupOrdering(tenants, gateway, projects, projectsWorkers, folders, foldersWorkers);
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadReceiptPath", Path.Combine(catalog.Directory, "tenants.bootstrap.json"));
+        _ = tenants.WithEnvironment("EventStore__Testing__OwnerSourceRead__Enabled", "true")
+            .WithEnvironment("EventStore__Testing__OwnerSourceRead__Directory", builder.Configuration["Projects:SupportedReads:OwnerSourceReadDirectory"]!)
+            .WithEnvironment("EventStore__Testing__OwnerSourceRead__Mode", "administrator-bootstrap")
+            .WithEnvironment("EventStore__Testing__OwnerSourceRead__GatewayAppId", gateway.Resource.Name);
         WriteReceipt(privateDirectory, "catalog-plane.json", new
         {
             isolationId = isolation, directory = catalog.Directory, rootDigest = catalog.RootDigest,

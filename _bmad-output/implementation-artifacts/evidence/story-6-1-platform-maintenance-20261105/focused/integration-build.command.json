@@ -1,0 +1,17 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "exitCode": 0,
+  "environment": "environment.json",
+  "seconds": 86.58186507225037,
+  "output": "integration-build.txt"
+}

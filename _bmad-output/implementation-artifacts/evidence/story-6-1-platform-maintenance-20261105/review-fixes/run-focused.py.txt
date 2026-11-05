@@ -1,0 +1,29 @@
+from pathlib import Path
+import hashlib
+import json
+import os
+import runpy
+import subprocess
+import sys
+import time
+
+root = Path('/home/administrator/projects/hexalith/projects')
+packet = root / '_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105'
+evidence = packet / 'review-fixes'
+environment = json.loads((packet / 'completion/review-mapping/environment.json').read_text())
+name = sys.argv[1]
+command = json.loads(sys.argv[2])
+started = time.time()
+manifest = runpy.run_path(str(root / 'tools/qualification/run_supported_project_reads.py'))['source_manifest']()
+source_digest = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest()
+with (evidence / (name + '.txt')).open('wb') as output:
+    result = subprocess.run(command, cwd=root / 'references/Hexalith.EventStore', env=os.environ | environment,
+                            stdout=output, stderr=subprocess.STDOUT)
+receipt = dict(command=command, cwd=str(root / 'references/Hexalith.EventStore'),
+               environment='../completion/review-mapping/environment.json', exitCode=result.returncode,
+               seconds=time.time() - started, output=name + '.txt',
+               sourceManifestSha256=source_digest)
+(evidence / (name + '.command.json')).write_text(json.dumps(receipt, indent=2) + '\n')
+print((evidence / (name + '.txt')).read_text()[-4500:])
+print('exitCode', result.returncode)
+sys.exit(result.returncode)

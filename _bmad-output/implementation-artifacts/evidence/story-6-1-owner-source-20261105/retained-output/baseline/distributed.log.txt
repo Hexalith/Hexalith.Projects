@@ -1,0 +1,18 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync [FAIL]
+      System.NotSupportedException : Owner capability required: the EventStore bound-workload SDK does not support platform:global-administrators source reads.
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(1425,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.AwaitHostedBootstrapAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(141,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.SeedAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs(22,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.DuplicateDeliveryUsesActualPersistedOwnersAsync()
+        --- End of stack trace from previous location ---
+      Output:
+        supported-read-scenario-v2|duplicate|404B9A99F5BDEA22E70B51476221099652AEE106E5331ED9C51266DBD7124973|950ec92c6b6b1bd1429400ec291d4c20bffb869b8d7095698fabd37f2db7e9f6
+  Finished:    Hexalith.Projects.Integration.Tests (ID = '7d08804aef3400c280a907a2963fca6c344cedbb88db325887a732af78139655')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.274s

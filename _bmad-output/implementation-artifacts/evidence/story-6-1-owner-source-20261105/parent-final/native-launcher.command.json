@@ -1,0 +1,22 @@
+{
+  "command": [
+    "python3",
+    "tools/qualification/run_supported_project_reads.py",
+    "--regressions",
+    "--timeout",
+    "900",
+    "--evidence",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/qualification-2"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "output": "native-launcher.txt",
+  "expectedSourceManifestSha256": "970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc",
+  "startedAtUnix": 1793888394.395995,
+  "exitCode": 1,
+  "finishedAtUnix": 1793888716.1437104
+}

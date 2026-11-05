@@ -4,7 +4,7 @@ story_key: 6-1-list-and-open-projects-through-supported-authenticated-paths
 epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
-status: in-progress
+status: review
 blocked_by: []
 baseline_commit: 90e481c
 traceability:
@@ -22,7 +22,7 @@ estimate: M
 
 # Story 6.1: List and Open Projects Through Supported Authenticated Paths
 
-Status: in-progress
+Status: review
 
 **Current authority:** [approved entry correction](../planning-artifacts/sprint-change-proposal-2026-11-01.md), applied 2026-11-02. The dated July/August gate decisions in the Change Log are historical.
 
@@ -80,7 +80,7 @@ Code review 2026-11-05 covered chunk G1 only: production `src/`, `git diff --ign
 - [x] [Review][Patch] The fold parses each payload twice; deserialize from the `JsonDocument` it already parsed [src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs:274]
 - [x] [Review][Patch] Remove the unused `using` directives in the new `*Payload.cs` record files [src/Hexalith.Projects.Server/ArchiveProjectPayload.cs:3]
 - [ ] [Verification] Confirm the Server.Tests package-mode build; the attempted Release build is blocked at restore by NU1109 (Tenants.Client 7.0.0 requires EventStore >=4.0.4 while Projects selects 3.133.0).
-- [ ] [Verification] Complete fresh authenticated distributed AC7 verification and subsequent workflow review; current owner SDK platform-workload source capability is missing before Project reads.
+- [x] [Verification] Run fresh authenticated distributed AC7 verification: all 11 cases across three independent providers, Integration 222/222 and Server 1,378/1,378 pass at current frozen source. Parent criterion acceptance and workflow review remain pending; status stays in-progress.
 - [x] [Review][Defer] Advisory resolution still offers Active folderless (quarantined) Projects as candidates [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:168] — deferred: pre-existing. The file was last changed at ded1e70, outside this diff. `ProjectAdvisoryQueryTests.Review4.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls` expects `SingleCandidate`. This contradicts PRD §2.4/NFR-4 and these Dev Notes. Resolution is Story 6.4 scope (medium).
 
 Rejected findings, 24 in total. "False" means the claimed problem does not occur; "low" means it is real but not worth fixing:
@@ -340,3 +340,45 @@ All three configured dispatch review layers completed. Four direct corrections a
 Parent local verification passes **208/208 Integration** and **1,331/1,331 Server**, with no failures/errors/skips/not-run and the documented live selectors excluded. Final manifest `0454152151df5bf58fa74343bc59a0d660bb4c4df56dc96cdc25ddf3ad82943d` remained unchanged during both runs. The new [parent receipts](evidence/story-6-1-public-scope-observer-20261105/parent-verification/results.json) and XML preserve exact commands, totals and assembly hashes. All 17 retained copied outputs validate byte-for-byte and remain checkout-visible. The owned source-mapping workspace is removed; native cleanup and preservation receipts remain intact.
 
 Current authenticated persisted source proof and AC7 remain incomplete at the documented owner SDK capability; package-mode NU1109 remains separately recorded. Native evidence stays bound to its earlier source, with all later differences explicit. Story/sprint remain in-progress; no feature completion, dependency change, staging, commit or push is claimed.
+
+
+### Owner-hosted bootstrap source proof — 2026-11-05
+
+The [approved source repair](spec-6-1-list-and-open-projects-through-supported-authenticated-paths-13.md) now supports exact platform workload source mappings, a separate finite owner-hosted Testing helper, explicit Tenants Debug/source Development enrollment, and Projects private custody/proof wiring. The actual native bootstrap now verifies the original accepted receipt and durable Completed status, then exactly one persisted `GlobalAdministratorSet` bound to the original command, correlation and actor. Assertion/proof use the original platform request; retained `system` event history is unchanged.
+
+The [new packet](evidence/story-6-1-owner-source-20261105/README.md) records source manifest `1849fc6b0f9ab7f644828e23fee2d893f28555eafb37c6e95e712643fb951f60` with 17,078 inputs, complete dependency heads/source patches, exact commands and native XML. Focused Client/helper/Tenants/controller/Projects/launcher totals pass **25/19/10/131/127/122**; local Integration passes **212/212** and Server **1,331/1,331**, all without failures/errors/skips/not-run and with the documented live selectors excluded. Relevant Debug/source builds have zero warnings/errors.
+
+The fresh distributed duplicate method fails **0 passed, 1 failed** at the later existing bootstrap checkpoint reconciliation maintenance route, HTTP **403**. Its public route contains reserved storage Tenant `system`; the admin filter and scope creation reject it, and no platform maintenance admission exists. No Project seed/read, later provider or full live regressions run. No public `system` grant, checkpoint/history rewrite, helper expansion or production maintenance API change was applied. Every owned AppHost/container/sidecar/private resource is removed, external resources preserved, and fresh container/AppHost absence independently rechecked. The original failed baseline and changed-source attempt remain retained separately.
+
+The prior owner source capability blocker is resolved, while the distinct maintenance authorization blocker prevents current AC7 acceptance. Package-mode NU1109 remains separately recorded. All seven story criteria have explicit current evidence limits in the packet. Story and sprint remain **in-progress**, with parent workflow review pending; no pins, branches, checkouts, staging, commits or pushes changed.
+
+
+### Parent owner-source review and corrected-source verification — 2026-11-05
+
+All three configured review layers completed. Six corrections are resolved: selected/unselected host-test alignment, complete source range and sequence validation, Linux IPC test selection, replayable owner-relative source patches, exact build environments and byte-identical checkout-visible output copies. Every finding has a separate disposition in the approved spec; nothing was deferred.
+
+At source manifest `970e0d526fd71d5ca3dfba99b53515e662f10c26f56a2c2b7709740d76de4cfc`, [fresh parent verification](evidence/story-6-1-owner-source-20261105/parent-final/final-verification.json) passes SDK **25/25**, helper **32/32**, selected Tenants **10/10**, local Integration **212/212**, local Server **1,331/1,331** and launcher **122/122**. Separate unselected Tenants controls pass **9/9**. All have zero failures/errors/skips/not-run; local Project totals explicitly exclude live selectors. Relevant builds have zero warnings/errors.
+
+The final fresh native duplicate attempt passes the stricter original bootstrap/source binding, then fails **0 passed, 1 failed** at the unchanged authenticated checkpoint reconciliation HTTP **403**. No Project seed/read, later provider or live regressions run. Parent independently verifies all four owned containers, six sidecars and AppHost/CLI original identities absent; exact private cleanup and external preservation pass. The owned mapping is removed; all 36 output copies and the unchanged 17,078-input source manifest validate. Original failed attempts/source bundles remain preserved.
+
+The authorized source repair is implemented and reviewed; current AC7 and feature acceptance remain incomplete at production platform maintenance admission. The [concrete next owner proposal](evidence/story-6-1-owner-source-20261105/maintenance-owner-handoff.md) requires approval to expand the existing prohibition on new public endpoints. Story/spec/sprint stay **in-progress**. The historical package-mode NU1109 remains separately recorded without a fresh package-build claim. No pins, branches, checkouts, staging, commits or pushes changed.
+
+
+### Approved platform maintenance and fresh native verification — 2026-11-05
+
+The user-approved exact platform maintenance route now admits authenticated attributable GlobalAdministrator work through its distinct scope/permission and fixed internal target. Existing reconciliation updates only technical checkpoint/work state and preserves original source/sequence. The real Folder path now selects an independent SDK authoritative workload reader while retaining human credential rejection, original assertion/proof binding and all source/tamper checks. The demonstrated Task36 shutdown race is corrected only in test sequencing, and the fixture adds its optional foreign grant only when distinct. Production duplicate-grant rejection remains unchanged.
+
+At frozen source manifest `2a5c6333df9a267f5a6132dc908d3218d8ce3f20692f8485525dd51a0a63c005` over 17,082 inputs, [qualification-5](evidence/story-6-1-platform-maintenance-20261105/qualification-5/run.json) passes all 11 cases across three independent fresh providers: duplicate **1/1**, full replay **1/1**, main **1/1**. Sequential full runtime Integration passes **222/222** and Server **1,378/1,378**, with zero failures/errors/skips/not-run. Relevant builds have zero warnings/errors. Maintenance controls pass **142/142**, SDK source controls **52/52**, Folders source/human controls **22/22**, corrected Task36 **2/2**, serialized full Folders **1,424/1,424** and final grant controls **4/4**. Full SDK DomainService records **1,374 passes**, zero failures/errors/not-run and one existing opt-in live-content skip; recorded source transitions isolate the subsequent test/fixture-only changes.
+
+The [packet's seven-criterion map](evidence/story-6-1-platform-maintenance-20261105/README.md) identifies current native XML, exact commands, all repository heads/source patches, original bootstrap/source and maintenance/cutover receipts, read-only persisted-state, replay/duplicates, process restart, cursor and authority-change evidence. Current Server XML embeds denial headers/logs/exported trace/timing observations, and 27 distributed safe-404 timing observations are retained. The separate bounded native-console receipt has coverageVerified=true and privacyEqualityAccepted=false; it does not establish causal/fault/load or constant-time equivalence, and the independent stopped-dashboard audit below supplies the current persisted trace/log/exemplar proof. The [parent persisted-dashboard audit](evidence/story-6-1-platform-maintenance-20261105/qualification-5/parent-telemetry-validation.json) positively binds all six original peers to the stopped database and finds zero exported spans/logs/exemplars for 15 original traces, zero exemplars on 14 positive protected POST metric dimensions, 1,407 ordinary server-span controls and positive native controls. The query-only audit leaves database metadata unchanged. Observed-window, 50 ms mitigation, accepted aggregate-count inference and fault/load limits remain. The [parent console receipt](evidence/story-6-1-platform-maintenance-20261105/qualification-5/parent-console-validation.json) validates six exact file identities/hashes/coverage and removes only those files plus original directory; no raw custody remains. The [parent runtime receipt](evidence/story-6-1-platform-maintenance-20261105/qualification-5/parent-runtime-validation.json) independently revalidates source, matrix, totals and exact runtime absence. Final parent acceptance/workflow review is pending.
+
+Independent cleanup verifies all **12** captured containers, **18** exact sidecars, original AppHost/CLI and old/new Projects restart process identities absent, no matching AppHost session, and preexisting resources preserved. Fixture credentials and the owned focused mapping are removed; separate native-console diagnostic custody was subsequently verified and exactly removed by the parent. All **44** copied outputs validate byte-for-byte and remain checkout-visible. All 13 heads and current source are unchanged; four owner-relative patches pass reverse checks. Earlier failed native attempts, placement failure/recovery, Task36 failures and grant before/after results remain separate historical evidence.
+
+Story/spec/sprint remain **in-progress** until parent acceptance and review. The historical package-mode NU1109 obligation remains unrerun; no dependency/pin, branch/checkout, staging, commit or push changed, and no production enrollment, published-binary or exhaustive migration-equivalence acceptance is claimed.
+
+
+### Final supported-read acceptance — 2026-11-05
+
+All seven criteria are verified at final source `fd22b04355f941d920ee3ecaa5d5b68bea047e7f01486df55cc33d2a30451e22` (17,083 inputs), with three-layer review resolved and no deferred finding. Fresh qualification-6 passes all 11 cases across three independent providers, full runtime Integration 222/222 and Server 1,378/1,378. Default-policy full Folders passes 1,424/1,424; full SDK passes 1,381 with one existing opt-in live-content skip; selected helper 34/34 and launcher 122/122 pass. Exact source/head/command/XML/patch and state/restart/replay/cursor/revocation evidence is retained in the [final acceptance map](evidence/story-6-1-platform-maintenance-20261105/parent-review/README.md).
+
+Current query-only telemetry and console audits verify safe denial under the approved timing/count/observed-window limits, including active log/exemplar channels and six exact native peer bindings. All runtime/private diagnostic material and the review mapping are removed with exact custody receipts. Feature acceptance is complete; Build synchronizes story/sprint to review. Package-mode NU1109 remains a separate unrerun release obligation under approved E1–E7 readiness; no package, production or 6.7 migration acceptance is inferred. No Git mutation occurred. Earlier source-scoped failures and pending handoffs remain historical evidence.

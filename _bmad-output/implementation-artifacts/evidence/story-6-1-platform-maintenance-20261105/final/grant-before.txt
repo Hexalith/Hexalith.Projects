@@ -1,0 +1,18 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadEvidenceTests.PublicFixtureGrantAugmentationPreservesDistinctScopesAndOriginalActor(tenant: "foreign", augmented: True, expected: "foreign") [FAIL]
+      Assert.Equal() Failure: Collections differ
+      Expected: ["foreign"]
+      Actual:   ["foreign", "foreign"]
+                            ↑ (pos 1)
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs(50,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadEvidenceTests.PublicFixtureGrantAugmentationPreservesDistinctScopesAndOriginalActor(String tenant, Boolean augmented, String expected)
+           at InvokeStub_SupportedProjectReadEvidenceTests.PublicFixtureGrantAugmentationPreservesDistinctScopesAndOriginalActor(Object, Span`1)
+           at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Finished:    Hexalith.Projects.Integration.Tests (ID = 'b866160c8dc437633885722bbe7cf6d250c361b59a8d5bc14e33ef6b5f03251e')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 4, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.113s

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:SupportedProjectReadDistributed=true"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "exitCode": 1,
+  "environment": "environment.json",
+  "seconds": 74.79258131980896,
+  "output": "grant-red-build.txt",
+  "sourceManifestSha256": "0d3f167de642cb9bfe7d98aafd3676ea8f2d2315592601fab7544b9004fe7026"
+}

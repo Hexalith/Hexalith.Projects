@@ -1,0 +1,8 @@
+from pathlib import Path
+import datetime,hashlib,importlib.util,json,os,subprocess,sys,time
+root=Path('/home/administrator/projects/hexalith/projects');packet=root/'_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105';env=os.environ|{'MSBUILDDISABLENODEREUSE':'1','DOTNET_CLI_USE_MSBUILD_SERVER':'0','DOTNET_PROCESSOR_COUNT':'2'}
+spec=importlib.util.spec_from_file_location('story61_parent_native_launcher',root/'tools/qualification/run_supported_project_reads.py');m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m);before=m.source_manifest();source=hashlib.sha256(json.dumps(before,sort_keys=True).encode()).hexdigest();dest=packet/'qualification-6';assert not dest.exists()
+cmd=['python3','tools/qualification/run_supported_project_reads.py','--regressions','--timeout','900','--evidence',str(dest)];log=packet/'parent-review/native-6.txt';started=datetime.datetime.now(datetime.timezone.utc).isoformat();t=time.monotonic()
+print(json.dumps({'sourceManifestSha256':source,'command':cmd,'startedUtc':started}),flush=True)
+with log.open('wb') as stream:r=subprocess.run(cmd,cwd=root,env=env,stdout=stream,stderr=subprocess.STDOUT)
+receipt={'command':cmd,'cwd':str(root),'environment':{k:env[k] for k in ('MSBUILDDISABLENODEREUSE','DOTNET_CLI_USE_MSBUILD_SERVER','DOTNET_PROCESSOR_COUNT')},'startedUtc':started,'seconds':time.monotonic()-t,'exitCode':r.returncode,'sourceManifestSha256':source,'sourceUnchanged':m.source_manifest()==before,'output':str(log.relative_to(packet)),'outputSha256':hashlib.sha256(log.read_bytes()).hexdigest()};(packet/'parent-review/native-6.command.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt),flush=True);sys.exit(r.returncode)

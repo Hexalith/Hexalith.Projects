@@ -1,0 +1,12 @@
+from pathlib import Path
+import hashlib,importlib.util,json,os,runpy,subprocess,sys,time
+root=Path('/home/administrator/projects/hexalith/projects'); evidence=root/'_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/final'
+env=json.loads((evidence.parent/'focused/environment.json').read_text()); (evidence/'environment.json').write_text(json.dumps(env,indent=2)+'\n'); owner=root/'references/Hexalith.EventStore'
+name=sys.argv[1]; cmd=json.loads(sys.argv[2]); cwd=owner if name.startswith('eventstore') else root/'references/Hexalith.Folders' if name.startswith('folders') else root
+manifest=runpy.run_path(str(root/'tools/qualification/run_supported_project_reads.py'))['source_manifest']()
+digest=hashlib.sha256(json.dumps(manifest,sort_keys=True).encode()).hexdigest()
+started=time.time(); result=subprocess.run(cmd,cwd=cwd,env=os.environ|env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+(evidence/(name+'.txt')).write_text(result.stdout)
+(evidence/(name+'.command.json')).write_text(json.dumps({'command':cmd,'cwd':str(cwd),'exitCode':result.returncode,'environment':'environment.json','seconds':time.time()-started,'output':name+'.txt','sourceManifestSha256':digest},indent=2)+'\n')
+print(result.stdout[-5000:]);print('exitCode',result.returncode)
+sys.exit(result.returncode)

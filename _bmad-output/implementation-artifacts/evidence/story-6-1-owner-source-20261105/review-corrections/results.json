@@ -1,0 +1,72 @@
+{
+  "owner-source": {
+    "xml": "owner-source.xml",
+    "xmlSha256": "a1b4bdf21bdd1584855989897e4c1eb81613dff0318652d00145efcf39af754f",
+    "totals": {
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "methods": [
+      "ActualSdkMethodReceivesExactScopeAndCancellation",
+      "CancellationPreventsLateSuccess",
+      "CompleteHistoryRejectsBoundedMissingOrInconsistentPositions",
+      "DefaultIsInertAndWrongHostSelectionRefuses",
+      "FiniteSelectionRefusesBeforeSdkDispatch",
+      "PrivateRoundTripNeverSynthesizesSuccessfulProof",
+      "ResultIdentityAndBoundsRefuse"
+    ]
+  },
+  "tenants-selected": {
+    "xml": "tenants-selected.xml",
+    "xmlSha256": "787c45f6be8e099d46c91e3268f8bd4adca7d7cc19eeeb846929c4bdc1672cbf",
+    "totals": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "methods": [
+      "ActualSourceReaderPreservesRuntimeAddressAndRefusesDifferentCatalogCoordinates",
+      "PrivateSourceEnrollmentIsInertByDefaultAndProductionRefuses",
+      "PrivateSourceHelperUsesActualOwnerIssuerKeyAndCatalogTransport"
+    ]
+  },
+  "tenants-unselected": {
+    "xml": "tenants-unselected.xml",
+    "xmlSha256": "cbfabddb61e7c43c20b337b739e1bb95f3c490879a027d08017db16fc46057ce",
+    "totals": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "methods": [
+      "ActualSourceReaderPreservesRuntimeAddressAndRefusesDifferentCatalogCoordinates",
+      "PrivateSourceEnrollmentIsInertByDefaultAndProductionRefuses",
+      "UnselectedBuildRefusesPrivateSourceSelectionInDevelopment"
+    ]
+  },
+  "projects-bootstrap-binding": {
+    "xml": "projects-bootstrap-binding.xml",
+    "xmlSha256": "f762375050e99c7dd3f129a9c2d8976d6a415f6875c7f577cf7c87b756640733",
+    "totals": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "methods": [
+      "HostedBootstrapEventRequiresExactCommandAndActorBindings"
+    ]
+  }
+}

@@ -96,6 +96,12 @@ public static class SupportedProjectReadFixtureProfile
             || (!OperatingSystem.IsWindows() && (File.GetUnixFileMode(invocations)
                 & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0))
             throw new InvalidOperationException("Fixture invocations require the exact owner-private IPC directory.");
+        string ownerSource = Required(configuration, Prefix + "OwnerSourceReadDirectory");
+        if (!Path.IsPathFullyQualified(ownerSource) || ownerSource != Path.Combine(privateDirectory, "owner-source-reads")
+            || !Directory.Exists(ownerSource) || new DirectoryInfo(ownerSource).LinkTarget is not null
+            || (!OperatingSystem.IsWindows() && (File.GetUnixFileMode(ownerSource)
+                & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0))
+            throw new InvalidOperationException("Owner source proof requires the exact owner-private IPC directory.");
         if (!File.Exists(discoveryPath) || privateDirectory != Path.GetDirectoryName(Path.GetFullPath(Required(configuration, Prefix + "CertificatePath"))))
             throw new InvalidOperationException("Discovery configuration must belong to the private fixture directory.");
         using JsonDocument discovery = JsonDocument.Parse(File.ReadAllBytes(discoveryPath));
@@ -241,6 +247,12 @@ public static class SupportedProjectReadFixtureProfile
         ConfigureClient(tenants, "tenants", tenantsSecret);
         AddGrant("tenants-bootstrap", "tenants", "TenantsSecret", "eventstore",
             ["eventstore:command-submit", "eventstore:stream-read"], false);
+        int bootstrapSourceGrant = ordinal;
+        AddGrant("tenants-bootstrap-source", "tenants", "TenantsSecret", "eventstore", ["eventstore:stream-read"], false);
+        string sourceGrant = "Authentication__WorkloadAuthority__Grants__" + bootstrapSourceGrant + "__";
+        _ = authority.WithEnvironment(sourceGrant + "AllowUnbound", "false")
+            .WithEnvironment(sourceGrant + "Bindings__eventstore:bound-tenant__0", "platform:global-administrators")
+            .WithEnvironment(sourceGrant + "Bindings__eventstore:bound-domain__0", "global-administrators");
         _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__1", "tenants")
             .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__tenants", Required(configuration, Prefix + "TenantOwnerPublicKey"))
             .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__tenants", "tenants,global-administrators")

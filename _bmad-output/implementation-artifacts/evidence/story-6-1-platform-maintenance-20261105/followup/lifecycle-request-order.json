@@ -1,0 +1,113 @@
+{
+  "command": [
+    "dotnet",
+    "tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+    "-method",
+    "*Task36LifecycleDiagnosticObserverTests.RealFrameworkLifecycleShouldRetainOnlyClosedMetadataWithoutResolvingTransientServices",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/followup/folders-lifecycle-diagnostic.xml"
+  ],
+  "pid": 1445911,
+  "exitCode": 1,
+  "capturedOnlyExactChildMetadata": true,
+  "rows": [
+    {
+      "processId": 1445911,
+      "phase": "host_configuration",
+      "utc": "2026-11-05T15:41:47.2782497+00:00"
+    },
+    {
+      "processId": 1445911,
+      "phase": "observer_registered",
+      "utc": "2026-11-05T15:41:47.2989401+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "host_start",
+      "utc": "2026-11-05T15:41:47.3069237+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "existing_hosted_services",
+      "utc": "2026-11-05T15:41:47.312533+00:00"
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_start",
+      "utc": "2026-11-05T15:41:47.3269352+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_activity_start",
+      "utc": "2026-11-05T15:41:47.3332639+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "application_stopping",
+      "utc": "2026-11-05T15:41:47.365623+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "host_stop",
+      "utc": "2026-11-05T15:41:47.3663152+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_activity_end",
+      "utc": "2026-11-05T15:41:47.3663103+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_end",
+      "utc": "2026-11-05T15:41:47.366452+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "application_stopped",
+      "utc": "2026-11-05T15:41:47.3669852+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "host_configuration",
+      "utc": "2026-11-05T15:41:47.418039+00:00"
+    },
+    {
+      "processId": 1445911,
+      "phase": "observer_registered",
+      "utc": "2026-11-05T15:41:47.4181407+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "host_start",
+      "utc": "2026-11-05T15:41:47.4182093+00:00",
+      "inFlightRequests": 0
+    },
+    {
+      "processId": 1445911,
+      "phase": "existing_hosted_services",
+      "utc": "2026-11-05T15:41:47.4206213+00:00"
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_start",
+      "utc": "2026-11-05T15:41:47.4210802+00:00",
+      "inFlightRequests": 1
+    },
+    {
+      "processId": 1445911,
+      "phase": "request_activity_start",
+      "utc": "2026-11-05T15:41:47.4211698+00:00",
+      "inFlightRequests": 1
+    }
+  ]
+}

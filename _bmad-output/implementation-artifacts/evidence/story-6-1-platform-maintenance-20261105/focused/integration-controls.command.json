@@ -1,0 +1,28 @@
+{
+  "command": [
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectReadEvidenceTests",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectReadTopologyTests",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105/focused/integration-controls.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "exitCode": 0,
+  "environment": "environment.json",
+  "seconds": 1.908005714416504,
+  "output": "integration-controls.txt",
+  "sourceManifestSha256": "5e29dacadd3659b0f830432815a0ddbc610a4c3eb3329e1bdfd3b22fcc431bc5",
+  "totals": {
+    "total": 133,
+    "passed": 133,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "not-run": 0
+  },
+  "xml": "integration-controls.xml",
+  "xmlSha256": "2596029b8e704461ea4920e6ca933cb6bb07c8a82b390a26691d3c8d703d42d3"
+}

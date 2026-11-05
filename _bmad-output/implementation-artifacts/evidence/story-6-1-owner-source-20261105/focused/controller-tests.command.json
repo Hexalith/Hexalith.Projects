@@ -1,0 +1,22 @@
+{
+  "command": [
+    "dotnet",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "-class",
+    "*StreamsControllerTests",
+    "-class",
+    "*StreamsControllerProtectedDataLeakRegressionTests",
+    "-xml",
+    "_bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/focused/streams-controller.xml"
+  ],
+  "exitCode": 0,
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story61-owner-build/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "0edf846fd4a50420065b9840951a8fdf4f065d2b8e2f12e4940a52058aae144d",
+    "Configuration": "Debug"
+  }
+}

@@ -1,0 +1,155 @@
+"""Read-only post-run verification; run from the Projects root."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import runpy
+import stat
+import subprocess
+import xml.etree.ElementTree as ET
+
+ROOT = Path.cwd()
+PACKET = ROOT / "_bmad-output/implementation-artifacts/evidence/story-6-1-platform-maintenance-20261105"
+OUT = PACKET / "completion"
+LAUNCHER = runpy.run_path(str(ROOT / "tools/qualification/run_supported_project_reads.py"))
+
+
+def load(path):
+    return json.loads(path.read_text())
+
+
+def totals(path):
+    assemblies = list(ET.parse(path).getroot().iter("assembly"))
+    assert assemblies
+    return {key: sum(int(row.get(key, 0)) for row in assemblies)
+            for key in ("total", "passed", "failed", "errors", "skipped", "not-run")}
+
+
+def process(role, pid, started):
+    current = LAUNCHER["process_start"](pid)
+    result = {"role": role, "pid": pid, "originalStartTicks": started,
+              "currentStartTicks": current, "originalIdentityAbsent": current != started}
+    assert result["originalIdentityAbsent"]
+    return result
+
+
+expected = load(OUT / "source-manifest.json")
+current = LAUNCHER["source_manifest"]()
+assert current == expected
+digest = hashlib.sha256(json.dumps(current, sort_keys=True).encode()).hexdigest()
+assert digest == load(OUT / "source-binding.json")["sourceManifestSha256"]
+result = {"sourceMatchesFrozenCompletion": True, "sourceManifestSha256": digest,
+          "inputs": len(current), "groups": {}, "heads": {}, "patches": []}
+heads = load(OUT / "source-heads.json")
+for name, item in heads.items():
+    repo = ROOT if name == "Projects" else ROOT / "references" / ("Hexalith." + name)
+    command = ["git", "rev-parse", "HEAD"]
+    checked = subprocess.run(command, cwd=repo, capture_output=True, text=True, check=True)
+    assert checked.stdout.strip() == item["head"]
+    result["heads"][name] = {"head": checked.stdout.strip(), "unchanged": True}
+
+aggregate = load(PACKET / "qualification-5/run.json")
+matrix = load(PACKET / "qualification-5/matrix.json")
+assert aggregate["result"] == "passed" and aggregate["matrixCompleted"] is True
+assert matrix["allCasesExecuted"] is True and len(matrix["cases"]) == 11
+assert len({row["providerId"] for row in aggregate["groups"]}) == 3
+external = LAUNCHER["preexisting_resources"]()
+for group in ("duplicate", "full-replay", "main"):
+    lane = PACKET / "qualification-5" / group
+    report = load(lane / "run.json")
+    group_matrix = load(lane / "matrix.json")
+    native = totals(lane / "distributed.xml")
+    assert native == dict(total=1, passed=1, failed=0, errors=0, skipped=0, **{"not-run": 0})
+    assert report["result"] == "passed" and report["matrixCompleted"] is True
+    assert group_matrix["allGroupCasesExecuted"] is True
+    assert report["sourceManifestSha256"] == digest
+    assert load(lane / "source-manifest.json") == current
+    cutover = load(lane / "writer-protocol-cutover.json")
+    assert cutover["sourceManifestSha256"] == hashlib.sha256((lane / "source-manifest.json").read_bytes()).hexdigest()
+    assert cutover["authenticatedHttpStatus"] == 200 and cutover["actualSdkReadinessHttpStatus"] == 200
+    for key in ("actualPersistedMarkerVerified", "providerNativeBackupValidated", "copiedNativeBackupHashVerified",
+                "markerInitiallyObservedAbsent", "completeProviderDeliveryInventoryVerified",
+                "unchangedQuiescentInventoryAcrossBackup", "bootstrapSourceCompletionVerified",
+                "bootstrapLegacyCheckpointReconciled", "oldWritersAbsentFromFreshOwnedV2Fleet",
+                "downgradeProhibitedAcknowledged"):
+        assert cutover[key] is True
+    assert cutover["seedCommandsSubmittedBeforeActivation"] is False and cutover["directMarkerWrite"] is False
+    bootstrap = load(lane / "bootstrap-delivery.json")
+    for key in ("hostedReceiptVerified", "commandBindingVerified", "correlationBindingVerified",
+                "persistedGlobalAdministratorSetVerified", "targetActorVerified"):
+        assert bootstrap[key] is True
+    assert bootstrap["observedHttpStatus"] == 202 and bootstrap["statusReadHttpStatus"] == 200
+    baseline = report["preexistingResources"]
+    preserved = (set(baseline["containers"]).issubset(external["containers"])
+                 and all(external["apphosts"].get(pid) == value for pid, value in baseline["apphosts"].items())
+                 and all(external["sidecars"].get(pid) == value for pid, value in baseline["sidecars"].items()))
+    assert preserved
+    facts = {"native": native, "sourceMatches": True, "writerRawSourceBindingMatches": True,
+             "bootstrapOriginalSourceAndCutoverChecks": True,
+             "cases": group_matrix["cases"], "containers": [], "processes": [], "sidecars": [],
+             "fixturePrivateMaterialRemoved": report["privateMaterialRemoved"],
+             "originalExternalPreservation": report["preexistingResourcesPreserved"],
+             "independentExternalPreservation": preserved}
+    for row in report["cleanup"]:
+        assert row.get("removed") is True and row.get("absenceVerified") is True
+        if "containerId" not in row:
+            continue
+        command = ["docker", "inspect", "--type", "container", row["containerId"]]
+        checked = subprocess.run(command, capture_output=True, text=True)
+        absent = checked.returncode == 1 and "No such container" in checked.stderr
+        assert absent
+        facts["containers"].append({"command": command, "exitCode": checked.returncode,
+                                    "absent": absent, "output": checked.stdout + checked.stderr})
+    owned = report["ownedAppHostSession"]
+    for role in ("appHost", "cli"):
+        facts["processes"].append(process(role, owned[role + "Pid"], owned[role + "StartTicks"]))
+    observed = {}
+    for key in ("discovery", "discoveryAfterReads"):
+        for row in report[key]["ownedSidecars"]:
+            observed[(row["pid"], row["startTicks"])] = row
+    for row in observed.values():
+        facts["sidecars"].append(process(row["appId"], row["pid"], row["startTicks"]))
+    assert len(facts["containers"]) == 4 and len(facts["sidecars"]) == 6
+    assert report["ownedSidecarsAbsent"] and facts["fixturePrivateMaterialRemoved"]
+    if group == "main":
+        facts["regressions"] = {name: totals(lane / filename) for name, filename in
+                                (("Integration", "integration.xml"), ("Server", "server.xml"))}
+        assert facts["regressions"]["Integration"]["passed"] == 222
+        assert facts["regressions"]["Server"]["passed"] == 1378
+        for row in facts["regressions"].values():
+            assert all(row[key] == 0 for key in ("failed", "errors", "skipped", "not-run"))
+        restart = report["projectsRestart"]
+        assert restart["completed"] and restart["oldProcessExited"]
+        for stage in ("before", "after"):
+            for role, field, start in (("projects", "pid", "startTicks"), ("projects-wrapper", "launcherPid", "launcherStartTicks")):
+                facts["processes"].append(process(stage + "-" + role, restart[stage][field], restart[stage][start]))
+        console = report["nativeConsoleEvidence"]
+        directory = Path(console["directory"])
+        identity = LAUNCHER["private_identity"](directory, directory=True)
+        assert identity == console["directoryIdentity"]
+        assert directory.stat().st_uid == os.getuid() and stat.S_IMODE(directory.stat().st_mode) == 0o700
+        for app, capture in console["captures"].items():
+            assert LAUNCHER["private_identity"](directory / (app + ".json")) == capture["identity"]
+        facts["nativeConsoleCustody"] = {"directory": str(directory), "identity": identity,
+            "privateIdentitiesUnchanged": True, "coverageVerified": console["coverageVerified"],
+            "privacyEqualityAccepted": console["privacyEqualityAccepted"],
+            "disposition": "Existing launcher retains bounded owner-private raw snapshots for parent review; no raw content copied into this packet."}
+    result["groups"][group] = facts
+
+result["exactAppHostSessionsAbsent"] = LAUNCHER["exact_apphost_sessions"]() == []
+assert result["exactAppHostSessionsAbsent"]
+for row in load(OUT / "source-changes/patch-checks.json"):
+    path = PACKET / row["path"]
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == row["sha256"]
+    repo = ROOT if row["repository"] == "Projects" else ROOT / "references" / ("Hexalith." + row["repository"])
+    command = ["git", "apply", "--reverse", "--check", str(path)]
+    checked = subprocess.run(command, cwd=repo, capture_output=True, text=True)
+    assert checked.returncode == 0
+    result["patches"].append({"repository": row["repository"], "command": command,
+                              "exitCode": checked.returncode, "sha256": row["sha256"]})
+result["result"] = "passed"
+(OUT / "final-verification.json").write_text(json.dumps(result, indent=2) + "\n")
+print(json.dumps({"result": result["result"], "sourceManifestSha256": digest,
+                  "independentlyAbsentContainers": sum(len(v["containers"]) for v in result["groups"].values()),
+                  "independentlyAbsentSidecars": sum(len(v["sidecars"]) for v in result["groups"].values()),
+                  "allHeadsUnchanged": len(result["heads"]), "patchReverseChecks": len(result["patches"])}))

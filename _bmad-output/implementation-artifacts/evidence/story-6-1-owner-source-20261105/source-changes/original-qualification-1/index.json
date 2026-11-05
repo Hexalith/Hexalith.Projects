@@ -1,0 +1,44 @@
+{
+  "Projects": {
+    "head": "fb6e1dfbe55fcade245da251bc5ff0d645a3456d",
+    "patchSha256": "56fc6f90a56c4312d46c700520b40038bdd64d32a87153cfa3258283d588fd49",
+    "files": {
+      "src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs": "4a6961fcfda7f54cf2c1f2d855c0078782c9fa0bba5951170fbf4d5d956d41dd",
+      "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "160ed41f2b4fe6b024d8e729329d6db32513e769e554b9eec1312fc2a2fdb5ab",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "b4ccd4ef4a4effbacef80feb7bd4e0ed8530aa840a94e6b69cb4572d841fe638",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadEvidenceTests.cs": "1041aac3addd97c03a3f06db1a65d60943d0b8b121c6c79bba1c52468a1e097e",
+      "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs": "91f69c7a60c42ab386dbecbeb226898d01ec6c7fca0b0527cc1ce2a4a6c66cde",
+      "tests/tools/test_supported_project_reads_launcher.py": "430c7773c9fd54eec7db58b5f41ab9c1fc3207d8569241adc681693f211a5781",
+      "tools/qualification/run_supported_project_reads.py": "9df04175498a36bc0dc1610289762bfa75d10f0bdc1f4e46475b1204cc09cd9a"
+    }
+  },
+  "EventStore": {
+    "head": "bbc165a5cd3a1f21822b4b53daa7fd895883f8a5",
+    "patchSha256": "5451b90adcc0e369e073275208e0ef0e429e9dd96fcf8a92065013177d387fdf",
+    "files": {
+      "src/Hexalith.EventStore.Client/Gateway/EventStoreGatewayClient.cs": "b0657f77036c6852d105ab978642a9777d5042e9e6d18abada0b54fd26d6b1af",
+      "src/Hexalith.EventStore.Client/Gateway/IEventStoreGatewayClient.cs": "7db36b5d0578b2d63dc5533e0c3d659c2940682c0df5113f4f8518db083425c2",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadClient.cs": "ddbedfd408ab642f5db94f0377423644a15818c8b8fed0bcfe0c2f2c16ffc3a7",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadCredentials.cs": "8a447eab88c8e47f281a5a12fd38fd06b4badfa2415614e1a46e9a095d984790",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadGateway.cs": "760814d44c156235a216c7785524d076a7ed5ee44204eaea3d0bd082335c1e15",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadOptions.cs": "aa5064a3e858890b8ff8fd9be57061bfc7755e2eeab959e0aa7379928a076eaf",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadRequest.cs": "90b228487a8b7323ccd0ee475c9ef72fdcea9a5f86066416dc83d879492f5cd7",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadResult.cs": "02ee45d2bac979ec02a3c7f9bb79b4b5620baa5ff89101ba5aa9caefc325eab6",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadSelection.cs": "4051128f10cb27c0c868fd9d17686b931e5a685fee456dd0eea3c85c04b6aa04",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadServiceCollectionExtensions.cs": "dd0cb6ec30f46ac0d7ee0b2193d6680ff26a277ea111cc6c59fdc227674365c9",
+      "src/Hexalith.EventStore.Testing/OwnerSourceRead/OwnerSourceReadWorker.cs": "6880b4a3d3cabf36cd07f0678fa80b93bc65fae25ebcb5286a8e5afaa17525b8",
+      "tests/Hexalith.EventStore.Client.Tests/Gateway/EventStoreGatewayWorkloadClientTests.cs": "cb02a4ba40fb1f41c6a935473fbf12a80b529c5b4f4b7e0619673ea23eb7338f",
+      "tests/Hexalith.EventStore.Testing.Tests/OwnerSourceReadTests.cs": "26e85b765a8c0750ccd6d5bff17b68e2b3702f2e836167c7760f5b647caab3f1"
+    }
+  },
+  "Tenants": {
+    "head": "8e20524574901d71ad5f4876804c64c3c6c87b88",
+    "patchSha256": "b088b330ba4e232efee2147bb8a8925c563d92623a9e2abf6070fd2a3b4712b8",
+    "files": {
+      "src/Hexalith.Tenants/Authorization/TenantOwnerSourceReadDevelopmentEnrollment.cs": "884ae5523339bb9422d9cd1c589cd776813426a5ddd3c9d1db341f9459a744cf",
+      "src/Hexalith.Tenants/Hexalith.Tenants.csproj": "88deae1482b4c7c8c384481f718bdcdb44e888d9dec26a0478f5b54d53a3588f",
+      "src/Hexalith.Tenants/Program.cs": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+      "tests/Hexalith.Tenants.Server.Tests/Authorization/TenantOwnerSourceRuntimeTests.cs": "404baa1c6aa6437ad8f96c0b03454adb33de2bf660f48623409cfbdebef6ec9e"
+    }
+  }
+}

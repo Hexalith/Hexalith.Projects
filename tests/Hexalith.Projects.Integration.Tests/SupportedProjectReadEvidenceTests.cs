@@ -8,6 +8,7 @@ using Dapr.Client;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Streams;
 using Hexalith.EventStore.Contracts.Streams;
+using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
@@ -28,10 +29,59 @@ public sealed class SupportedProjectReadEvidenceTests
         Assert.Equal(["primary"], claims.Where(claim => claim.Type == "eventstore:tenant").Select(claim => claim.Value));
         Assert.DoesNotContain(claims, claim => claim.Value == "system");
         Assert.Equal(new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
-            "create_folder", "manage_folder_access", "manage_organization_acl", "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read" },
+            "create_folder", "manage_folder_access", "manage_organization_acl", "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read", ProjectionDeliveryMaintenanceScopeCatalog.Permission },
             claims.Where(claim => claim.Type == "eventstore:permission").Select(claim => claim.Value));
         Assert.DoesNotContain(SupportedProjectReadDistributedFixture.HumanClaims("primary", "foreign"),
-            claim => claim.Type == "eventstore:permission" && claim.Value.StartsWith("tenants:", StringComparison.Ordinal));
+            claim => claim.Type == "eventstore:permission" && (claim.Value.StartsWith("tenants:", StringComparison.Ordinal)
+                || claim.Value == ProjectionDeliveryMaintenanceScopeCatalog.Permission));
+    }
+
+    /// <summary>Positive foreign actors keep one grant, while the deliberate coarse negative control keeps both distinct grants.</summary>
+    [Theory]
+    [InlineData("primary", false, "primary")]
+    [InlineData("primary", true, "primary,foreign")]
+    [InlineData("foreign", false, "foreign")]
+    [InlineData("foreign", true, "foreign")]
+    public void PublicFixtureGrantAugmentationPreservesDistinctScopesAndOriginalActor(string tenant, bool augmented, string expected)
+    {
+        ArgumentNullException.ThrowIfNull(expected);
+        List<Claim> claims = SupportedProjectReadDistributedFixture.HumanClaims(tenant, "foreign", foreignTransportGrant: augmented);
+        string[] grants = claims.Where(claim => claim.Type == "eventstore:tenant").Select(claim => claim.Value).ToArray();
+        Assert.Equal(expected.Split(','), grants);
+        Assert.True(Hexalith.EventStore.Contracts.Identity.TenantCanonicalizer.TryCanonicalizeGrants(grants, out _));
+        Assert.Equal(tenant, claims.Single(claim => claim.Type == "tenant_id").Value);
+        Assert.Equal(tenant == "foreign" ? "foreign-actor" : "actor-1", claims.Single(claim => claim.Type == "sub").Value);
+    }
+
+    /// <summary>Maintenance sends the approved exact URL and one explicit disjoint scope.</summary>
+    [Fact]
+    public void PublicFixtureMaintenanceUsesExactRouteAndScope()
+    {
+        const string route = "api/v1/admin/projections/platform/global-administrators/delivery-reconciliation";
+        Assert.Equal(route, "api/v1/admin/projections/" + ProjectionDeliveryMaintenanceScopeCatalog.Route);
+        using HttpRequestMessage request = new(HttpMethod.Post, "https://fixture/" + route);
+        SupportedProjectReadDistributedFixture.BindDeliveryMaintenanceScope(request, route);
+        Assert.Equal(["platform:global-administrators-delivery-reconciliation"], request.Headers.GetValues("X-Hexalith-Scope"));
+        Assert.Single(request.Headers);
+        Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.BindDeliveryMaintenanceScope(request, route));
+    }
+
+    /// <summary>Foreign routes, verbs and mixed selectors cannot borrow maintenance scope.</summary>
+    [Theory]
+    [InlineData("legacy")]
+    [InlineData("read")]
+    [InlineData("tenant")]
+    [InlineData("scope")]
+    [InlineData("verb")]
+    public void PublicFixtureMaintenanceRejectsOtherRoutesAndMixedScopes(string kind)
+    {
+        string route = "api/v1/admin/projections/" + ProjectionDeliveryMaintenanceScopeCatalog.Route;
+        using HttpRequestMessage request = new(kind == "verb" ? HttpMethod.Get : HttpMethod.Post, "https://fixture/");
+        if (kind == "legacy") route = "api/v1/admin/projections/system/global-administrators/delivery-reconciliation/global-administrators/global-administrators";
+        if (kind == "read") route = "api/v1/streams/read";
+        if (kind == "tenant") request.Headers.Add("X-Hexalith-Tenant", "primary");
+        if (kind == "scope") request.Headers.Add("X-Hexalith-Scope", "platform:eventstore-admin");
+        Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.BindDeliveryMaintenanceScope(request, route));
     }
 
     /// <summary>Reserved, malformed and platform scopes never become public Tenant grants.</summary>
@@ -685,6 +735,30 @@ public sealed class SupportedProjectReadEvidenceTests
             "01ARZ3NDEKTSV4RRFFQ69G5FAX", "correlation", "command", DateTimeOffset.UtcNow, "actor-1");
         bool Matches(StreamReadEvent item) => SupportedProjectReadDistributedFixture.HostedBootstrapEventMatches(item, "command", "correlation", "actor-1");
         Assert.True(Matches(value));
+        var source = new StreamReadPage("system", "global-administrators", "global-administrators", [value], new(0, null, 1, 1, 1, false, null));
+        bool SourceMatches(StreamReadPage page) => SupportedProjectReadDistributedFixture.HostedBootstrapSourceMatches(page, "command", "correlation", "actor-1");
+        Assert.True(SourceMatches(source));
+        var following = value with { SequenceNumber = 2, CausationId = "another-command" };
+        var complete = source with { Events = [value, following], Metadata = new(0, null, 2, 2, 2, false, null) };
+        Assert.True(SourceMatches(complete));
+        foreach (var invalid in new[]
+        {
+            source with { Tenant = "platform:global-administrators" }, source with { Domain = "tenants" }, source with { AggregateId = "other" },
+            source with { Events = [] }, source with { Events = [value, value], Metadata = source.Metadata with { EventCount = 2 } },
+            source with { Metadata = source.Metadata with { IsTruncated = true } },
+            source with { Metadata = source.Metadata with { NextContinuationToken = new("cursor") } },
+            source with { Metadata = source.Metadata with { FromSequence = 1 } },
+            source with { Metadata = source.Metadata with { ToSequence = 1 } },
+            source with { Metadata = source.Metadata with { LatestSequence = 2 } },
+            source with { Metadata = source.Metadata with { LastSequenceReturned = null } },
+            source with { Metadata = source.Metadata with { LastSequenceReturned = 2 } },
+            source with { Events = [value with { SequenceNumber = 0 }] },
+            source with { Events = [value with { SequenceNumber = -1 }] },
+            source with { Events = [value with { SequenceNumber = 2 }] },
+            complete with { Events = [value, following with { SequenceNumber = 3 }] },
+            complete with { Events = [value, following with { SequenceNumber = 1 }] },
+            complete with { Events = [following, value] },
+        }) Assert.False(SourceMatches(invalid));
         foreach (var invalid in new[]
         {
             value with { CausationId = "other" }, value with { CorrelationId = "other" }, value with { UserId = "other" },
