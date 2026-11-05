@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--no-restore",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    "sourceMappingHash": "4ed61d1e8bdca42ed9ec1c6931c6b0f612fa742695254d05d41b3f08eeabd02f",
+    "exitCode": 0
+  },
+  {
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-method",
+      "*ConfirmedFolderReplacementKeepsEnumerationCompleteAndReadsPartial",
+      "-method",
+      "*AdministratorQuarantineOpenOfBoundProjectFailsSafely",
+      "-method",
+      "*ArchivedFolderlessProjectRemainsOrdinaryAndOutsideQuarantineInventory",
+      "-method",
+      "*OrdinaryTenantReadsExcludeQuarantinedActiveProjects",
+      "-method",
+      "*AdministratorInventoryAuditsEveryReturnedProjectAndBindsCursorToInventory",
+      "-method",
+      "*PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads",
+      "-method",
+      "*QuarantineDisclosureRequiresAdministratorPermissionAndDurableAudit",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-review-patches-20261105/reads-corrected.xml"
+    ],
+    "exitCode": 0
+  }
+]

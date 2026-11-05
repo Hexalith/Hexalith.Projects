@@ -1,0 +1,45 @@
+{
+  "originalReportSha256": "cc997dc946ba1f5d9203df4c98fdea15104104439b6c1f4763c478ba02a7db30",
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "4ad54e786e2ec00a5e6eae8631a5aaae8a1236d9493e27d4d6fc3e34c533df53",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "4ea28dea4a10b3dff5f66a69f7cb783ce7e9f985aadabc23a8a0df7c642a39cb",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-fc2ba039b274da164b578e0c-redishost",
+      "containerId": "b2364f3caeac11df4265c803e4fcb49ccd19d4078017016a74eb67cf334a6543",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "30aae9004d2765204c6606f4e401d98172140237918be7bc6b969a9abc51c7bb",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    }
+  ],
+  "recoveredOriginalFailure": {
+    "resource": "dapr-placement-mtls",
+    "removed": false
+  },
+  "ownedSidecarsAbsent": true,
+  "appHostPidIdentityAbsent": true,
+  "cliPidIdentityAbsent": true,
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": true,
+  "originalReportUnchanged": true
+}

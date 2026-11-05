@@ -1,0 +1,15 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "--no-restore",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false"
+  ],
+  "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+  "exitCode": 0
+}

@@ -3,8 +3,10 @@ namespace Hexalith.Projects.Integration.Tests;
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Security.Claims;
 using Dapr.Client;
 using Hexalith.EventStore.Client.Projections;
+using Hexalith.EventStore.Client.Streams;
 using Hexalith.EventStore.Contracts.Streams;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
@@ -12,11 +14,64 @@ using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 
 /// <summary>Focused controls for the distributed fixture's independent evidence checks.</summary>
 public sealed class SupportedProjectReadEvidenceTests
 {
+    /// <summary>Administrator credentials retain only canonical public grants and finite provisioning permissions.</summary>
+    [Fact]
+    public void PublicFixtureAdministratorGrantsExcludeHistoricalStorage()
+    {
+        List<Claim> claims = SupportedProjectReadDistributedFixture.HumanClaims("primary", "foreign", chatbot: false, administrator: true);
+        Assert.Equal(["primary"], claims.Where(claim => claim.Type == "eventstore:tenant").Select(claim => claim.Value));
+        Assert.DoesNotContain(claims, claim => claim.Value == "system");
+        Assert.Equal(new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
+            "create_folder", "manage_folder_access", "manage_organization_acl", "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read" },
+            claims.Where(claim => claim.Type == "eventstore:permission").Select(claim => claim.Value));
+        Assert.DoesNotContain(SupportedProjectReadDistributedFixture.HumanClaims("primary", "foreign"),
+            claim => claim.Type == "eventstore:permission" && claim.Value.StartsWith("tenants:", StringComparison.Ordinal));
+    }
+
+    /// <summary>Reserved, malformed and platform scopes never become public Tenant grants.</summary>
+    [Theory]
+    [InlineData("system")]
+    [InlineData("platform:tenants")]
+    [InlineData(" tenant ")]
+    [InlineData("")]
+    public void PublicFixtureCredentialsRejectInvalidTenantScopes(string tenant)
+        => Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.HumanClaims(tenant, "foreign"));
+
+    /// <summary>Status requests carry exactly the explicit scope required by the owner contract.</summary>
+    [Theory]
+    [InlineData("primary", "X-Hexalith-Tenant")]
+    [InlineData("platform:tenants", "X-Hexalith-Scope")]
+    [InlineData("platform:global-administrators", "X-Hexalith-Scope")]
+    public void PublicFixtureStatusBindsOneExplicitScope(string scope, string header)
+    {
+        using HttpRequestMessage request = new();
+        SupportedProjectReadDistributedFixture.BindStatusScope(request, scope);
+        Assert.Equal([scope], request.Headers.GetValues(header));
+        Assert.Single(request.Headers);
+        Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.BindStatusScope(request, scope));
+    }
+
+    /// <summary>Invalid, reserved and mixed status scopes fail before transport.</summary>
+    [Theory]
+    [InlineData("system")]
+    [InlineData("platform:other")]
+    [InlineData(" tenant ")]
+    [InlineData("")]
+    public void PublicFixtureStatusRejectsInvalidAndMixedScopes(string scope)
+    {
+        using HttpRequestMessage request = new();
+        Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.BindStatusScope(request, scope));
+        Assert.Empty(request.Headers);
+        request.Headers.Add("X-Hexalith-Tenant", "primary");
+        Assert.Throws<ArgumentException>(() => SupportedProjectReadDistributedFixture.BindStatusScope(request, "platform:tenants"));
+    }
+
     /// <summary>The complete provider control must finish before the actual matrix file can exist.</summary>
     [Fact]
     public async Task ScenarioReceiptWaitsForDeferredProviderVerification()
@@ -343,7 +398,8 @@ public sealed class SupportedProjectReadEvidenceTests
         using HttpClient unusedTransport = new();
         var model = new Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel(state,
             new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(now),
-            new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(unusedTransport));
+            new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(
+                new DaprNativeSourceMetadataReader(unusedTransport, new ConfigurationBuilder().Build(), TimeProvider.System)));
         foreach ((StreamReadEvent item, int index) in events.Select((item, index) => (item, index)))
         {
             string digest = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
@@ -410,7 +466,8 @@ public sealed class SupportedProjectReadEvidenceTests
         var state = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
         var clock = new Hexalith.Folders.Projections.TenantAccess.FixedUtcClock(now);
         using HttpClient unusedTransport = new();
-        var sequence = new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(unusedTransport);
+        var sequence = new Hexalith.Folders.Authorization.DaprOrganizationStreamSequenceReader(
+            new DaprNativeSourceMetadataReader(unusedTransport, new ConfigurationBuilder().Build(), TimeProvider.System));
         var organization = new Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel(state, clock, sequence);
         var model = new Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel(state, clock, sequence, organization);
         await model.ApplyAsync("tenant", "folder", item.MessageId, 1, Digest(item), created, TestContext.Current.CancellationToken);

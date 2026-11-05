@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
 
 /// <summary>Captures every emitted provider record and exported span during each actual gateway observation.</summary>
 internal sealed class ProjectReadDenialObserver : IDisposable
@@ -21,6 +22,7 @@ internal sealed class ProjectReadDenialObserver : IDisposable
     private readonly ConcurrentDictionary<ActivityTraceId, TaskCompletionSource> _activities = new();
     private readonly ConcurrentDictionary<ActivityTraceId, ActivitySpanId> _gatewaySpans = new();
     private readonly ActivityListener _activityListener;
+    private ActivityListener? _completionListener;
     private readonly MeterListener _meterListener;
     private const string GatewayRequestMarker = "story61.actual-gateway-request";
 
@@ -38,11 +40,6 @@ internal sealed class ProjectReadDenialObserver : IDisposable
         {
             ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = activity =>
-            {
-                if (activity.OperationName == "Microsoft.AspNetCore.Hosting.HttpRequestIn" && IsBoundGatewaySpan(activity)
-                    && _activities.TryGetValue(activity.TraceId, out TaskCompletionSource? completion)) completion.TrySetResult();
-            },
         };
         ActivitySource.AddActivityListener(_activityListener);
         _meterListener = new MeterListener
@@ -63,6 +60,25 @@ internal sealed class ProjectReadDenialObserver : IDisposable
             completion.TrySetResult((duration, JsonSerializer.Serialize(category.OrderBy(tag => tag.Key, StringComparer.Ordinal))));
         });
         _meterListener.Start();
+    }
+
+    /// <summary>Registers root completion after the actual provider's synchronous export callback.</summary>
+    /// <param name="provider">The initialized gateway provider whose callback must finish first.</param>
+    internal void InstallCompletionGate(TracerProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+        if (_completionListener is not null) throw new InvalidOperationException("The gateway completion gate is already installed.");
+        _completionListener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.PropagationData,
+            ActivityStopped = activity =>
+            {
+                if (activity.OperationName == "Microsoft.AspNetCore.Hosting.HttpRequestIn" && IsBoundGatewaySpan(activity)
+                    && _activities.TryGetValue(activity.TraceId, out TaskCompletionSource? completion)) completion.TrySetResult();
+            },
+        };
+        ActivitySource.AddActivityListener(_completionListener);
     }
 
     /// <summary>Begins an independent trace and a complete provider/exporter observation window.</summary>
@@ -196,6 +212,7 @@ internal sealed class ProjectReadDenialObserver : IDisposable
     public void Dispose()
     {
         _meterListener.Dispose();
+        _completionListener?.Dispose();
         _activityListener.Dispose();
         TraceExporter.Dispose();
     }

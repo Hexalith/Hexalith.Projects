@@ -1,0 +1,242 @@
+{
+  "result": "owner-sdk-capability-blocked",
+  "storyStatus": "in-progress",
+  "specStatus": "in-progress",
+  "projectsCommit": "a6c415f38053cbdb257b12d196be0bfa70aadc2d",
+  "revisions": {
+    ".": "a6c415f38053cbdb257b12d196be0bfa70aadc2d",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Memories": "4dac7decfdd33b3d048de3c77e9cb1562bb95c6f",
+    "references/Hexalith.Platform": "aaa30aff1038688a921494a78c9fc53fc5eb8836",
+    "references/Hexalith.Folders": "9198d9213f6ea54c629148322f05e7ded994822d",
+    "references/Hexalith.EventStore": "2dca77cc2f22a9b85e4fcc3f8e18cbcaa532b135",
+    "references/Hexalith.Tenants": "143cec60a3f5bb1831fa57f35c510880ceb788d8",
+    "references/Hexalith.Parties": "570ff5935ac79331db4a10f74cfaa774c56239eb",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Conversations": "c02e6092905b17e0c675c24e27082a7bcb27b06a",
+    "references/Hexalith.Builds": "06a51f55bfe2e03a06e1121d94a41e98f1e3e251",
+    "references/Hexalith.McpCli": "add6e2079a2446fc764f95b4add87d49cda430a8",
+    "references/Hexalith.FrontComposer": "b70627f649826b1a2338ccc13295ba02b71f7424"
+  },
+  "sourceComparison": {
+    "nativeManifestSha256": "41df764d7b1a222455c81f74258f5b819021a87604fd0fdb5928f8aa30c723e0",
+    "finalLocalManifestSha256": "a56fe2d12ab5c1077217ebb02e1f67a9c879e3e73fce6e06098dd622b609099b",
+    "sourceInputs": 17029,
+    "frozenSourceMatchesAtNativeCleanup": true,
+    "finalSourceEqualsNativeManifest": false,
+    "laterChanges": [
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.DenialObservability.cs",
+        "nativeSha256": "92c6af3d0600ba95ffede092642816f8f26aa76a610f5249882d36948f4e989e",
+        "finalSha256": "16db7fc79e24b479161b14084790b09e49a565d3ab704da9170e51a3847a42c8"
+      }
+    ],
+    "integrationRuntimeSourceUnchanged": true,
+    "nativeScenarioWasNotRerunAfterServerOnlyChange": true,
+    "finalServerAssemblySha256": "42a0123084b60fb8cbb9602ec5c02c2483f2ead2abdbf25a14217131ee97fff9"
+  },
+  "verification": {
+    "signedIssuer": {
+      "total": 1,
+      "passed": 1
+    },
+    "launcherControls": {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_supported_project_reads_launcher.py",
+        "-v"
+      ],
+      "total": 119,
+      "passed": 119,
+      "failed": 0,
+      "skipped": 0
+    },
+    "localIntegration": {
+      "total": 208,
+      "passed": 208,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "finalLocalServer": {
+      "total": 1330,
+      "passed": 1330,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "finalObserverControls": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0
+    },
+    "evidenceControls": 95,
+    "newPublicScopeControls": 12,
+    "mappedDebugBuilds": {
+      "warnings": 0,
+      "errors": 0
+    },
+    "distributed": {
+      "totals": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "bootstrapProgress": {
+        "hostedReceiptVerified": true,
+        "actualCommandStatus": "Completed",
+        "statusReadHttpStatus": 200,
+        "explicitScope": "platform:global-administrators",
+        "persistedGlobalAdministratorSetVerified": false,
+        "sourceProofBlockedByOwnerSdk": true
+      },
+      "nativeFailure": "Owner capability required: the EventStore bound-workload SDK does not support platform:global-administrators source reads.",
+      "matrixCompleted": false,
+      "laterProvidersExecuted": false,
+      "fullRuntimeRegressionsExecuted": false,
+      "testAssemblySha256": "7eb121c25135414d7bc80f16d49794d59893b0bde1088276b7ae84a4662e7668"
+    },
+    "packageRelease": {
+      "rerunInThisContinuation": false,
+      "existingBlocker": "NU1109: Tenants.Client 7.0.0 requires EventStore Client/Contracts >=4.0.4; Projects selects 3.133.0.",
+      "exactCommandAndOutput": "README.md and retained-output/prior-package-restore-nu1109.txt"
+    }
+  },
+  "cleanup": {
+    "sourceManifestSha256": "41df764d7b1a222455c81f74258f5b819021a87604fd0fdb5928f8aa30c723e0",
+    "frozenSourceMatchesAtNativeCleanup": true,
+    "sourceDriftAtNativeCleanup": [],
+    "freshOwnedContainerAbsence": [
+      {
+        "resource": "dapr-scheduler-mtls",
+        "containerId": "0446154ebcf444bf84dc62c93bb40f85e5286b1c0a8e24226e9f19b84996021c",
+        "absent": true
+      },
+      {
+        "resource": "dapr-placement-mtls",
+        "containerId": "88613572a28f515c108d9382e55853640a60acc994381539df2ea37d38900562",
+        "absent": true
+      },
+      {
+        "resource": "dapr-sentry",
+        "containerId": "4dd16bc0831213e33ea727e1dd07cae37c2264cc6e4044941e2f529d70c5df56",
+        "absent": true
+      },
+      {
+        "resource": "reads-cdc8c48a3f886081311bf669-redishost",
+        "containerId": "2bc4c5c497cecd9643462d415b9f92d396817b9cdbb75e84161b217388ed098c",
+        "absent": true
+      }
+    ],
+    "appHostSessionsAfterRun": [],
+    "preexistingContainersPreserved": true,
+    "privateMaterialAbsent": true,
+    "ownedSidecarsAbsent": true,
+    "originalExactCleanup": [
+      {
+        "resource": "exact-apphost",
+        "removed": true,
+        "absenceVerified": true
+      },
+      {
+        "resource": "dapr-scheduler-mtls",
+        "containerId": "0446154ebcf444bf84dc62c93bb40f85e5286b1c0a8e24226e9f19b84996021c",
+        "removed": true,
+        "alreadyAbsent": true,
+        "absenceVerified": true
+      },
+      {
+        "resource": "dapr-placement-mtls",
+        "containerId": "88613572a28f515c108d9382e55853640a60acc994381539df2ea37d38900562",
+        "removed": true,
+        "alreadyAbsent": true,
+        "absenceVerified": true
+      },
+      {
+        "resource": "dapr-sentry",
+        "containerId": "4dd16bc0831213e33ea727e1dd07cae37c2264cc6e4044941e2f529d70c5df56",
+        "removed": true,
+        "alreadyAbsent": true,
+        "absenceVerified": true
+      },
+      {
+        "resource": "reads-cdc8c48a3f886081311bf669-redishost",
+        "containerId": "2bc4c5c497cecd9643462d415b9f92d396817b9cdbb75e84161b217388ed098c",
+        "removed": true,
+        "absenceVerified": true
+      }
+    ],
+    "originalExternalPreservation": true,
+    "originalPrivateRemoval": true,
+    "localSourceMappingWorkspaceRemoved": true
+  },
+  "preservedInitialFailure": {
+    "file": "retained-output/build-server.txt",
+    "error": "xUnit1051: Task.Run required TestContext.Current.CancellationToken; repaired and subsequent builds pass."
+  },
+  "staged": false,
+  "committed": false,
+  "pushed": false,
+  "dependenciesChanged": false,
+  "ownerSourcesChanged": false,
+  "laterReviewCorrections": "review-corrections/README.md",
+  "parentReview": {
+    "layers": {
+      "blind-hunter": "10 findings triaged",
+      "edge-case-hunter": "no findings",
+      "verification-gap": "no gaps"
+    },
+    "patchesResolved": 4,
+    "rejectedLow": 5,
+    "rejectedFalse": 1,
+    "deferred": 0,
+    "acceptanceWaived": false
+  },
+  "parentVerification": {
+    "sourceManifestSha256": "0454152151df5bf58fa74343bc59a0d660bb4c4df56dc96cdc25ddf3ad82943d",
+    "sourceUnchanged": true,
+    "lanes": [
+      {
+        "lane": "integration",
+        "totals": {
+          "total": 208,
+          "passed": 208,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "not-run": 0
+        },
+        "assemblySha256": "cfaf003c16bd8c9355c0193f14bca1fd26df0ebbbf7af9166252a84579ccd6a0"
+      },
+      {
+        "lane": "server",
+        "totals": {
+          "total": 1331,
+          "passed": 1331,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "not-run": 0
+        },
+        "assemblySha256": "b31af8162597f4220c9cf0d030bc833324f16331f878d9e63a6e0684e57793c0"
+      }
+    ],
+    "details": "parent-verification/results.json",
+    "mappingWorkspaceRemoved": true,
+    "retainedOutputsVerified": 17
+  }
+}

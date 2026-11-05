@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Commands;
@@ -11,12 +10,6 @@ namespace Hexalith.Projects.Server;
 /// <summary>Binds the actual processor payloads through the standard SDK intent adapter.</summary>
 public static class ProjectsIntentAdapters
 {
-    private static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web)
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
-    };
-
     /// <summary>Gets all owner adapters without enabling admission or replacing the processor.</summary>
     public static IReadOnlyList<IDeclaredIdempotencyIntentAdapter> Create() =>
     [
@@ -29,13 +22,13 @@ public static class ProjectsIntentAdapters
     private static DeclaredIdempotencyIntentAdapter<T> Adapter<T>() => new(
         ProjectsRuntimeCatalogDeclarations.Commands.Single(command => command.Route.Execution!.HandlerType == typeof(T).FullName),
         Fields,
-        bytes => Fields(JsonSerializer.Deserialize<T>(bytes.Span, PayloadOptions)
+        bytes => Fields(JsonSerializer.Deserialize<T>(bytes.Span, ProjectCommandPayloadJson.Options)
             ?? throw new InvalidOperationException("The command payload is missing.")));
 
-    // Include every bound field, preserving null, list ordering, typed nested metadata and actor attribution.
+    // Include bound fields with the processor's null omission, list ordering, typed metadata and actor attribution.
     // The descriptor stays inside platform idempotency admission and never becomes response or audit payload.
     private static IReadOnlyDictionary<string, object?> Fields<T>(T payload) => new Dictionary<string, object?>
     {
-        ["semantic-payload"] = JsonSerializer.Serialize(payload, PayloadOptions),
+        ["semantic-payload"] = JsonSerializer.Serialize(payload, ProjectCommandPayloadJson.Options),
     };
 }

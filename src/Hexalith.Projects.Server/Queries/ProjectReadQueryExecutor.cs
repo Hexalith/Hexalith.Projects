@@ -317,7 +317,8 @@ public sealed class ProjectReadQueryExecutor(
             Component("Authorization", true, EvidenceFreshnessState.Current, "Current", observedAt),
             Component("References", references, references ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
                 references ? "Current" : "OptionalReferencesOmitted", references ? verifiedAt : null),
-        ], state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
+        ], IsQuarantined(detail) ? [AdmissionRecoveryAction.ResolveNeedsAttention]
+            : state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
     }
 
     private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState)

@@ -1,0 +1,103 @@
+{
+  "rootHead": "a6c415f38053cbdb257b12d196be0bfa70aadc2d",
+  "revisionsFile": "revisions.json",
+  "sourceManifestSha256": "2e4b2076406fe46f47b27cea844d71353e62a6eccadd81c01171267145a6e5d7",
+  "sourceInputCount": 17028,
+  "distributedSourceManifestSha256": "32ac7ec2d471f0c68a0d871aa42541c35ae3e1121917b235e75d064d9592796e",
+  "changesSinceDistributedAttempt": [
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTopologyTests.cs"
+  ],
+  "nativeResults": {
+    "localIntegration": {
+      "xml": "local-integration.xml",
+      "total": 196,
+      "passed": 196,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 196
+    },
+    "localServer": {
+      "xml": "local-server.xml",
+      "total": 1328,
+      "passed": 1328,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 1328
+    },
+    "projection": {
+      "xml": "projection.xml",
+      "total": 51,
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 51
+    },
+    "reads": {
+      "xml": "reads-corrected.xml",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 7
+    },
+    "catalog": {
+      "xml": "catalog.xml",
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 12
+    },
+    "evidenceControls": {
+      "xml": "integration-evidence-controls.xml",
+      "total": 83,
+      "passed": 83,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 83
+    },
+    "distributed": {
+      "xml": "distributed-current/duplicate/distributed.xml",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0,
+      "notRun": 0,
+      "nativeNodes": 1
+    }
+  },
+  "bootstrapEnvironmentEquivalence": {
+    "DuplicateBootstrapAssignmentsEquivalent": true,
+    "TenantEnvironmentEntries": 47,
+    "GatewayEnvironmentEntries": 58
+  },
+  "currentOwnedAppHostAbsent": true,
+  "currentCapturedContainersAbsent": true,
+  "externalResourcesStillPreserved": true,
+  "originalRecovery": "distributed-recovery.json",
+  "currentCleanup": {
+    "ownedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "preexistingResourcesPreserved": true
+  },
+  "ac7Accepted": false,
+  "overallStoryStatus": "in-progress",
+  "blockers": [
+    "Distributed Tenants bootstrap produced no original submission receipt; EventStore logged RouteCatalogUnavailableException before Project reads.",
+    "Package-mode restore NU1109: Tenants.Client 7.0.0 requires EventStore.Client/Contracts >=4.0.4; Projects centrally selects 3.133.0."
+  ],
+  "manualSourceMappingRemoved": true
+}

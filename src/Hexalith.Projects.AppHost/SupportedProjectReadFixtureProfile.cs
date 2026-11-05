@@ -235,49 +235,41 @@ public static class SupportedProjectReadFixtureProfile
                     "domain-service:project", "domain-service:metadata",
                     "domain-service:replay-state"], domain != "tenants");
         AddGrant("owner-gateway", "projects", "ProjectsSecret", "eventstore", ["eventstore:owner-authority-query"], false);
-        // These additional inputs belong to the explicitly selected current catalog lane. Keep
-        // the established four grants stable for structural/compatibility consumers.
-        if (!string.IsNullOrWhiteSpace(configuration[Prefix + "TenantsSecret"]))
-        {
-            IResourceBuilder<ParameterResource> tenantsSecret = Secret("tenants-secret", "TenantsSecret");
-            IResourceBuilder<ParameterResource> tenantsOwnerKey = Secret("tenants-owner-key", "TenantOwnerPrivateKey");
-            IResourceBuilder<ParameterResource> bootstrapPassword = Secret("bootstrap-password", "BootstrapPassword");
-            ConfigureClient(tenants, "tenants", tenantsSecret);
-            AddGrant("tenants-bootstrap", "tenants", "TenantsSecret", "eventstore",
-                ["eventstore:command-submit", "eventstore:stream-read"], false);
-            _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__1", "tenants")
-                .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__tenants", Required(configuration, Prefix + "TenantOwnerPublicKey"))
-                .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__tenants", "tenants,global-administrators")
-                .WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators");
-            _ = tenants.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", tenantsOwnerKey)
-                .WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
-                .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", "actor-1")
-                .WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
-                .WithEnvironment("EventStore__Authentication__Authority", Required(configuration, Prefix + "UserIssuer"))
-                .WithEnvironment("EventStore__Authentication__TokenEndpoint", Required(configuration, Prefix + "UserIssuer").TrimEnd('/') + "/token")
-                .WithEnvironment("EventStore__Authentication__ClientId", "supported-read-bootstrap")
-                .WithEnvironment("EventStore__Authentication__Username", "actor-1")
-                .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);
-        }
-        if (!string.IsNullOrWhiteSpace(configuration[Prefix + "FoldersSecret"]))
-        {
-            IResourceBuilder<ParameterResource> foldersSecret = Secret("folders-secret", "FoldersSecret");
-            IResourceBuilder<ParameterResource> folderOwnerKey = Secret("folders-owner-key", "FolderOwnerPrivateKey");
-            ConfigureClient(folders, "folders", foldersSecret);
-            int folderGrant = ordinal;
-            AddGrant("folders-owner-head", "folders", "FoldersSecret", "eventstore", ["eventstore:stream-read"], false);
-            string grant = "Authentication__WorkloadAuthority__Grants__" + folderGrant + "__";
-            _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
-                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
-                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
-                .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
-            _ = folders.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", folderOwnerKey)
-                .WithEnvironment("Folders__EventStore__OwnerMetadataReads__Enabled", "true")
-                .WithEnvironment("Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled", "true");
-            _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__2", "folders")
-                .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__folders", Required(configuration, Prefix + "FolderOwnerPublicKey"))
-                .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__folders", "folders");
-        }
+        IResourceBuilder<ParameterResource> tenantsSecret = Secret("tenants-secret", "TenantsSecret");
+        IResourceBuilder<ParameterResource> tenantsOwnerKey = Secret("tenants-owner-key", "TenantOwnerPrivateKey");
+        IResourceBuilder<ParameterResource> bootstrapPassword = Secret("bootstrap-password", "BootstrapPassword");
+        ConfigureClient(tenants, "tenants", tenantsSecret);
+        AddGrant("tenants-bootstrap", "tenants", "TenantsSecret", "eventstore",
+            ["eventstore:command-submit", "eventstore:stream-read"], false);
+        _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__1", "tenants")
+            .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__tenants", Required(configuration, Prefix + "TenantOwnerPublicKey"))
+            .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__tenants", "tenants,global-administrators")
+            .WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators");
+        _ = tenants.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", tenantsOwnerKey)
+            .WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
+            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", "actor-1")
+            .WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
+            .WithEnvironment("EventStore__Authentication__Authority", Required(configuration, Prefix + "UserIssuer"))
+            .WithEnvironment("EventStore__Authentication__TokenEndpoint", Required(configuration, Prefix + "UserIssuer").TrimEnd('/') + "/token")
+            .WithEnvironment("EventStore__Authentication__ClientId", "supported-read-bootstrap")
+            .WithEnvironment("EventStore__Authentication__Username", "actor-1")
+            .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);
+        IResourceBuilder<ParameterResource> foldersSecret = Secret("folders-secret", "FoldersSecret");
+        IResourceBuilder<ParameterResource> folderOwnerKey = Secret("folders-owner-key", "FolderOwnerPrivateKey");
+        ConfigureClient(folders, "folders", foldersSecret);
+        int folderGrant = ordinal;
+        AddGrant("folders-owner-head", "folders", "FoldersSecret", "eventstore", ["eventstore:stream-read"], false);
+        string grant = "Authentication__WorkloadAuthority__Grants__" + folderGrant + "__";
+        _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
+            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
+            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
+            .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
+        _ = folders.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", folderOwnerKey)
+            .WithEnvironment("Folders__EventStore__OwnerMetadataReads__Enabled", "true")
+            .WithEnvironment("Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled", "true");
+        _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__2", "folders")
+            .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__folders", Required(configuration, Prefix + "FolderOwnerPublicKey"))
+            .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__folders", "folders");
         _ = eventStore.WaitFor(authority);
         _ = tenants.WaitFor(authority);
         _ = projects.WithReference(eventStore).WithReference(tenants).WithReference(folders).WaitFor(eventStore).WaitFor(tenants).WaitFor(authority);

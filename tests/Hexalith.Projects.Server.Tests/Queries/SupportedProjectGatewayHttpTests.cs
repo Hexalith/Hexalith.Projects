@@ -441,7 +441,8 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(now.AddSeconds(1)));
         builder.Services.AddSingleton<TimeProvider>(new ProjectReadTestClock(now.AddSeconds(1)));
         WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapProjectsServerEndpoints();
-        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        return app;
     }
 
     private static async Task<WebApplication> StartFoldersAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, DateTimeOffset now, string tenant,
@@ -544,7 +545,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
             app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
         }
         app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
-        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        denialObserver?.InstallCompletionGate(app.Services.GetRequiredService<TracerProvider>());
+        return app;
     }
 
     private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true)

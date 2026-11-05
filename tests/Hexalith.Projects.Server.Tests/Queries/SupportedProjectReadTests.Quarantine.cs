@@ -47,7 +47,7 @@ public sealed partial class SupportedProjectReadTests
         first.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         first.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
         first.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
-        first.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        first.Items.Single().Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ResolveNeedsAttention]);
         first.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
         fixture.AuditStore.Keys.Count.ShouldBe(1);
 
@@ -61,7 +61,7 @@ public sealed partial class SupportedProjectReadTests
         second.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         second.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
         second.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
-        second.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        second.Items.Single().Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ResolveNeedsAttention]);
         fixture.AuditStore.Keys.Count.ShouldBe(2);
         fixture.Store.Count.ShouldBe(before + 2);
         fixture.AuditStore.Keys.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)
@@ -108,6 +108,7 @@ public sealed partial class SupportedProjectReadTests
         GetProjectResponse inspected = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
             fixture.Query(new GetProjectQuery(InspectQuarantined: true), "legacy-pending", "pending-inspect"), TestContext.Current.CancellationToken));
         inspected.Name.ShouldBe("Project legacy-pending");
+        inspected.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ResolveNeedsAttention]);
         inspected.Description.ShouldBeNull(); inspected.Setup.ShouldBeNull(); inspected.SetupMetadata.ShouldBeNull();
         inspected.References.Single().FolderId.ShouldBe("historical-folder");
         inspected.References.Single().ReferenceState.ShouldBe(ReferenceState.Pending);

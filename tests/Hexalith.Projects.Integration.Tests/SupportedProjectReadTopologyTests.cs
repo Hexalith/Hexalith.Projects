@@ -148,6 +148,29 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         tenantEnvironment["EventStore__Authentication__Password"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
         tenantEnvironment["Authentication__WorkloadIssuer__ClientSecret"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
         tenantEnvironment["Authentication__BoundStreamRead__PrivateKey"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
+        tenantEnvironment["Tenants__BootstrapBoundWorkloadEnabled"].ShouldBe("true");
+        tenantEnvironment["Tenants__BootstrapGlobalAdminEnabled"].ShouldBe("true");
+        tenantEnvironment["Tenants__BootstrapGlobalAdminUserId"].ShouldBe("actor-1");
+        IReadOnlyDictionary<string, object> gatewayEnvironment = await EnvironmentAsync(gateway.Resource, builder.ExecutionContext);
+        gatewayEnvironment["Authentication__BoundCommand__AllowedDomains__tenants"].ShouldBe("global-administrators");
+        // Replay the removed, later Infrastructure assignments through Aspire's actual callbacks.
+        // Equal final dictionaries prove that they rewrote only identical existing values.
+        _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
+            .WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
+            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", "actor-1");
+        _ = gateway.WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators");
+        IReadOnlyDictionary<string, object> previousTenantEnvironment = await EnvironmentAsync(tenants.Resource, builder.ExecutionContext);
+        IReadOnlyDictionary<string, object> previousGatewayEnvironment = await EnvironmentAsync(gateway.Resource, builder.ExecutionContext);
+        previousTenantEnvironment.Count.ShouldBe(tenantEnvironment.Count);
+        previousGatewayEnvironment.Count.ShouldBe(gatewayEnvironment.Count);
+        foreach ((string key, object value) in tenantEnvironment) { previousTenantEnvironment[key].ShouldBe(value); }
+        foreach ((string key, object value) in gatewayEnvironment) { previousGatewayEnvironment[key].ShouldBe(value); }
+        TestContext.Current.TestOutputHelper!.WriteLine(System.Text.Json.JsonSerializer.Serialize(new
+        {
+            DuplicateBootstrapAssignmentsEquivalent = true,
+            TenantEnvironmentEntries = tenantEnvironment.Count,
+            GatewayEnvironmentEntries = gatewayEnvironment.Count,
+        }));
         foreach (ProjectResource resource in builder.Resources.OfType<ProjectResource>().Where(resource => resource.Name != "supported-read-authority"))
         {
             (await EnvironmentAsync(resource, builder.ExecutionContext))["EventStore__RouteCatalog__ScopedDecodeReuse"].ShouldBe("true");

@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 /// <param name="Cursor">The opaque continuation issued for this exact authorized view.</param>
 /// <param name="PageSize">The requested number of rows, from one through 200.</param>
 /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
-/// <param name="IncludeQuarantined">Selects the separately audited Administrator inventory of unbound Active Projects.</param>
+/// <param name="IncludeQuarantined">When true, returns only the separately audited Administrator quarantine inventory of unbound Active Projects; ordinary Projects are excluded.</param>
 [method: JsonConstructor]
 public sealed record ListProjectsQuery(
     string? LifecycleState = null,

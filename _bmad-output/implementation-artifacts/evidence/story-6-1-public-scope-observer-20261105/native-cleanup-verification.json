@@ -1,0 +1,67 @@
+{
+  "sourceManifestSha256": "41df764d7b1a222455c81f74258f5b819021a87604fd0fdb5928f8aa30c723e0",
+  "frozenSourceMatchesAtNativeCleanup": true,
+  "sourceDriftAtNativeCleanup": [],
+  "freshOwnedContainerAbsence": [
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "0446154ebcf444bf84dc62c93bb40f85e5286b1c0a8e24226e9f19b84996021c",
+      "absent": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "88613572a28f515c108d9382e55853640a60acc994381539df2ea37d38900562",
+      "absent": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "4dd16bc0831213e33ea727e1dd07cae37c2264cc6e4044941e2f529d70c5df56",
+      "absent": true
+    },
+    {
+      "resource": "reads-cdc8c48a3f886081311bf669-redishost",
+      "containerId": "2bc4c5c497cecd9643462d415b9f92d396817b9cdbb75e84161b217388ed098c",
+      "absent": true
+    }
+  ],
+  "appHostSessionsAfterRun": [],
+  "preexistingContainersPreserved": true,
+  "privateMaterialAbsent": true,
+  "ownedSidecarsAbsent": true,
+  "originalExactCleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "0446154ebcf444bf84dc62c93bb40f85e5286b1c0a8e24226e9f19b84996021c",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "88613572a28f515c108d9382e55853640a60acc994381539df2ea37d38900562",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "4dd16bc0831213e33ea727e1dd07cae37c2264cc6e4044941e2f529d70c5df56",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-cdc8c48a3f886081311bf669-redishost",
+      "containerId": "2bc4c5c497cecd9643462d415b9f92d396817b9cdbb75e84161b217388ed098c",
+      "removed": true,
+      "absenceVerified": true
+    }
+  ],
+  "originalExternalPreservation": true,
+  "originalPrivateRemoval": true
+}

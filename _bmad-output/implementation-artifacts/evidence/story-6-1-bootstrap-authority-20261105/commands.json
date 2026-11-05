@@ -1,0 +1,34 @@
+[
+  {
+    "command": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --scenario duplicate --timeout 900 --evidence _bmad-output/implementation-artifacts/evidence/story-6-1-bootstrap-authority-20261105/baseline",
+    "exitCode": 1,
+    "note": "Intentionally interrupted after startup inspection; cleanup passed."
+  },
+  {
+    "command": "PYTHONPATH=tests/tools python3 -m unittest test_supported_project_reads_launcher.SupportedReadDelegatedIssuerTests -v",
+    "phase": "red",
+    "exitCode": 1,
+    "output": "bootstrap-permission-red.log"
+  },
+  {
+    "command": "PYTHONPATH=tests/tools python3 -m unittest test_supported_project_reads_launcher.SupportedReadDelegatedIssuerTests -v",
+    "phase": "green",
+    "exitCode": 0,
+    "output": "bootstrap-permission-green.log"
+  },
+  {
+    "command": "python3 -m unittest discover -s tests/tools -p test_supported_project_reads_launcher.py -v",
+    "exitCode": 0,
+    "output": "launcher-controls.log"
+  },
+  {
+    "command": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900 --evidence _bmad-output/implementation-artifacts/evidence/story-6-1-bootstrap-authority-20261105/acceptance",
+    "exitCode": 1,
+    "output": "acceptance/run.json"
+  },
+  {
+    "command": "CI=true MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Release -m:1 -p:NuGetAudit=false",
+    "exitCode": 1,
+    "output": "build-package.log"
+  }
+]

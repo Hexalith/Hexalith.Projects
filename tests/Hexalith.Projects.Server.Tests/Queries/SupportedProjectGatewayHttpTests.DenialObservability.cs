@@ -16,6 +16,7 @@ using Hexalith.EventStore.Server.Queries;
 using Hexalith.EventStore.ServiceDefaults;
 using Hexalith.Projects.Contracts.Queries;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shouldly;
@@ -25,6 +26,103 @@ using Xunit;
 
 public sealed partial class SupportedProjectGatewayHttpTests
 {
+    /// <summary>The actual HTTP gateway provider exports an ordinary server request before its raw stop signal.</summary>
+    [Fact]
+    public async Task DenialObserverExportsActualGatewayHttpServerSpan()
+    {
+        using ProjectReadDenialObserver observer = new();
+        var routes = new GatewayFixtureLocalRoutes();
+        using RSA ownerKey = RSA.Create(2048);
+        WebApplication gateway = await StartGatewayAsync("http://127.0.0.1:1", "http://127.0.0.1:1", routes,
+            ownerKey, "ordinary-export-control", observer);
+        await using var gatewayLifetime = gateway.ConfigureAwait(true);
+        using Activity trace = observer.BeginRequest();
+        TaskCompletionSource<ActivitySpanId> stopped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        // Register after StartGatewayAsync initializes the actual provider and observer exporter.
+        using ActivityListener completion = new()
+        {
+            ShouldListenTo = source => source.Name == "Microsoft.AspNetCore",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.PropagationData,
+            ActivityStopped = activity =>
+            {
+                if (activity.TraceId == trace.TraceId && activity.Kind == ActivityKind.Server
+                    && activity.OperationName == "Microsoft.AspNetCore.Hosting.HttpRequestIn")
+                    stopped.TrySetResult(activity.SpanId);
+            },
+        };
+        ActivitySource.AddActivityListener(completion);
+        using HttpClient client = new() { BaseAddress = new(gateway.Urls.Single()) };
+        using HttpRequestMessage request = new(HttpMethod.Get, "/story61-ordinary-export-control");
+        request.Headers.Add("traceparent", trace.Id);
+        using (SuppressInstrumentationScope.Begin())
+        using (HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken))
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        ActivitySpanId serverSpan = await stopped.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        using JsonDocument exported = JsonDocument.Parse(observer.ExportedActivities(trace.TraceId));
+        exported.RootElement.EnumerateArray().Select(item => JsonSerializer.Deserialize<JsonElement>(item.GetString()!))
+            .ShouldContain(activity => activity.GetProperty("Source").GetString() == "Microsoft.AspNetCore"
+                && activity.GetProperty("OperationName").GetString() == "Microsoft.AspNetCore.Hosting.HttpRequestIn"
+                && activity.GetProperty("Kind").GetInt32() == (int)ActivityKind.Server
+                && activity.GetProperty("Trace").GetString() == trace.TraceId.ToString()
+                && activity.GetProperty("Span").GetString() == serverSpan.ToString());
+    }
+
+    /// <summary>Cannot snapshot an empty queue while the actual root export is blocked.</summary>
+    [Fact]
+    public async Task DenialObserverWaitsForBlockedProviderExportBeforeSnapshot()
+    {
+        using ProjectReadDenialObserver observer = new();
+        using Activity request = observer.BeginRequest();
+        using ActivitySource source = new("Microsoft.AspNetCore");
+        using ProjectReadBlockingTraceExporter exporter = new(observer);
+        using TracerProvider provider = Sdk.CreateTracerProviderBuilder().AddSource(source.Name)
+            .AddProcessor(new SimpleActivityExportProcessor(exporter)).Build();
+        observer.InstallCompletionGate(provider);
+        Task stopped = Task.Run(() =>
+        {
+            using Activity root = source.StartActivity("Microsoft.AspNetCore.Hosting.HttpRequestIn", ActivityKind.Server)!;
+            DefaultHttpContext context = new();
+            context.Request.Path = "/api/v1/queries";
+            context.Request.Headers["traceparent"] = root.Id;
+            observer.BindGatewayRequest(context);
+        }, TestContext.Current.CancellationToken);
+        Task<string> snapshot;
+        try
+        {
+            await exporter.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+            snapshot = observer.ActivityAsync(request.TraceId, TestContext.Current.CancellationToken);
+            snapshot.IsCompleted.ShouldBeFalse("Root completion must follow the provider's blocked export callback.");
+            observer.ExportedActivities(request.TraceId).ShouldBe("[]");
+        }
+        finally { exporter.Release(); await stopped.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken); }
+        using JsonDocument exported = JsonDocument.Parse(await snapshot.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+        exported.RootElement.GetArrayLength().ShouldBe(1);
+        exported.RootElement[0].GetString()!.ShouldContain("Microsoft.AspNetCore.Hosting.HttpRequestIn");
+    }
+
+    /// <summary>A privacy-suppressed root completes without requiring a nonexistent exporter record.</summary>
+    [Fact]
+    public async Task DenialObserverCompletesSuppressedRootWithEmptyExportSet()
+    {
+        using ProjectReadDenialObserver observer = new();
+        using Activity request = observer.BeginRequest();
+        using ActivitySource source = new("Microsoft.AspNetCore");
+        using TracerProvider provider = Sdk.CreateTracerProviderBuilder().AddSource(source.Name)
+            .AddProcessor(new SimpleActivityExportProcessor(observer.TraceExporter)).Build();
+        observer.InstallCompletionGate(provider);
+        using (Activity root = source.StartActivity("Microsoft.AspNetCore.Hosting.HttpRequestIn", ActivityKind.Server)!)
+        {
+            DefaultHttpContext context = new();
+            context.Request.Path = "/api/v1/queries";
+            context.Request.Headers["traceparent"] = root.Id;
+            observer.BindGatewayRequest(context);
+            root.IsAllDataRequested = false;
+            root.ActivityTraceFlags &= ~ActivityTraceFlags.Recorded;
+        }
+        (await observer.ActivityAsync(request.TraceId, TestContext.Current.CancellationToken)
+            .WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken)).ShouldBe("[]");
+    }
+
     /// <summary>Prevents an ambient test trace from joining independent request observations.</summary>
     [Fact]
     public void DenialObserverCreatesIndependentTracesUnderAnAmbientActivity()
@@ -119,6 +217,9 @@ public sealed partial class SupportedProjectGatewayHttpTests
         using ProjectReadDenialObserver observer = new();
         using Activity request = observer.BeginRequest();
         using ActivitySource source = new("Microsoft.AspNetCore");
+        using TracerProvider provider = Sdk.CreateTracerProviderBuilder().AddSource(source.Name)
+            .AddProcessor(new SimpleActivityExportProcessor(observer.TraceExporter)).Build();
+        observer.InstallCompletionGate(provider);
         using Meter meter = new("Microsoft.AspNetCore.Hosting");
         Histogram<double> duration = meter.CreateHistogram<double>("http.server.request.duration");
         using (Activity nested = source.StartActivity("Microsoft.AspNetCore.Hosting.HttpRequestIn", ActivityKind.Server)!)
@@ -134,6 +235,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
         await cancellation.CancelAsync();
         await Should.ThrowAsync<OperationCanceledException>(() => observer.MetricAsync(request.TraceId, cancellation.Token));
         await Should.ThrowAsync<OperationCanceledException>(() => observer.ActivityAsync(request.TraceId, cancellation.Token));
+        observer.ExportedActivities(request.TraceId).ShouldContain("Microsoft.AspNetCore.Hosting.HttpRequestIn");
         observer.Logs(request.TraceId).Length.ShouldBe(1, "Unbound nested log evidence must remain observable even though it cannot complete the root request.");
     }
 

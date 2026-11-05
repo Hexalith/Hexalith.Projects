@@ -1,0 +1,66 @@
+{
+  "sourceManifestSha256": "0454152151df5bf58fa74343bc59a0d660bb4c4df56dc96cdc25ddf3ad82943d",
+  "sourceInputs": 17029,
+  "environment": {
+    "mapping": "../review-corrections/prepare-source.json#/buildPreparation/environment",
+    "common": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2"
+    }
+  },
+  "commands": [
+    {
+      "lane": "integration",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class-",
+        "*SupportedProjectReadDistributedTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/parent-verification/integration.xml"
+      ],
+      "assemblySha256": "cfaf003c16bd8c9355c0193f14bca1fd26df0ebbbf7af9166252a84579ccd6a0",
+      "exitCode": 0,
+      "output": "retained-output/parent/integration.txt",
+      "totals": {
+        "total": 208,
+        "passed": 208,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "lane": "server",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class-",
+        "*SupportedProjectAuthorityHttpTests",
+        "-method-",
+        "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-method-",
+        "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/parent-verification/server.xml"
+      ],
+      "assemblySha256": "b31af8162597f4220c9cf0d030bc833324f16331f878d9e63a6e0684e57793c0",
+      "exitCode": 0,
+      "output": "retained-output/parent/server.txt",
+      "totals": {
+        "total": 1331,
+        "passed": 1331,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      }
+    }
+  ],
+  "sourceUnchanged": true,
+  "finalSourceManifestSha256": "0454152151df5bf58fa74343bc59a0d660bb4c4df56dc96cdc25ddf3ad82943d"
+}

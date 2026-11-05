@@ -98,10 +98,6 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
         }
         _ = projects.WithEnvironment("Projects__SupportedReads__Enabled", "true");
         _ = projectsWorkers.WithEnvironment("Projects__SupportedReads__Enabled", "true");
-        _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
-            .WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
-            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", "actor-1");
-        _ = gateway.WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators");
         DevelopmentRouteCatalogComposition catalog = builder.AddEventStoreDevelopmentRouteCatalog(gateway,
             [new(projects, projectOwner, projectOwner), new(tenants, tenantOwner, tenantAdapters), new(folders, folderOwner, folderAdapters)],
             receivers, statePath, options, isolation);

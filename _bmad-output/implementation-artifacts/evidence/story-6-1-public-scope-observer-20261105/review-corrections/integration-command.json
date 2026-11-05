@@ -1,0 +1,14 @@
+{
+  "command": [
+    "dotnet",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-method",
+    "*HostedBootstrapReceiptRetainsUnknownAcknowledgementAndRejectsConflicts",
+    "-method",
+    "*HostedBootstrapEventRequiresExactCommandAndActorBindings",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/review-corrections/integration-controls.xml"
+  ],
+  "exitCode": 0,
+  "output": "retained-output/review-corrections/integration-controls.txt"
+}

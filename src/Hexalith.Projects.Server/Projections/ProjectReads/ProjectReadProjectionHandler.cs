@@ -202,8 +202,11 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
             nameof(ProjectChatBotAuthorityRejected) => ["reasonCode"],
             nameof(ProjectReferenceLinkRejected) or nameof(ProjectReferenceUnlinkRejected) => ["tenantId", "projectId", "referenceKind", "referenceId", "reason"],
             nameof(ProjectCreationRejected) => ["tenantId", "reason"],
-            _ => ["tenantId", "projectId", "reason"],
+            nameof(ProjectArchiveRejected) or nameof(ProjectRestoreRejected) or nameof(ProjectSetupUpdateRejected)
+                or nameof(ProjectResolutionConfirmationRejected) => ["tenantId", "projectId", "reason"],
+            _ => [],
         };
+        if (required.Length == 0) { return false; }
         if (typeof(IProjectEvent).IsAssignableFrom(type)) required = [.. required, "tenantId", "projectId", "occurredAt"];
         return required.All(name => fields.TryGetValue(name, out JsonElement field)
             && field.ValueKind is not (JsonValueKind.Null or JsonValueKind.Undefined)
@@ -273,7 +276,7 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
             {
                 using JsonDocument content = JsonDocument.Parse(item.Payload);
                 if (!HasRequiredContent(content.RootElement, type)) { return failed; }
-                value = JsonSerializer.Deserialize(item.Payload, type, JsonOptions);
+                value = content.RootElement.Deserialize(type, JsonOptions);
             }
             catch (JsonException)
             {
@@ -317,7 +320,7 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
                 {
                     return failed;
                 }
-                if (detail is null || !ProjectPersistedDetailValidator.IsValid(detail))
+                if (detail is null)
                 {
                     return failed;
                 }

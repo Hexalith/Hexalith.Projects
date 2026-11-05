@@ -8,7 +8,6 @@ namespace Hexalith.Projects.Server;
 using System;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,11 +39,7 @@ public sealed class ProjectsDomainProcessor(
     IProjectEventStoreAuthorizationValidator authorizationValidator,
     ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor, Hexalith.EventStore.DomainService.IDomainCommandPayloadInventory
 {
-    private static readonly JsonSerializerOptions PayloadJsonOptions = new(JsonSerializerDefaults.Web)
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
-    };
+    private static readonly JsonSerializerOptions PayloadJsonOptions = ProjectCommandPayloadJson.Options;
 
     private static readonly JsonSerializerOptions StateJsonOptions = new(JsonSerializerDefaults.Web);
 

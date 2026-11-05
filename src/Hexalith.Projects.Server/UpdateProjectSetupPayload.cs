@@ -1,7 +1,5 @@
 namespace Hexalith.Projects.Server;
 
-using System.Text.Json.Serialization;
-
 using Hexalith.Projects.Contracts.Models;
 
 /// <summary>The exact payload bound by the existing UpdateProjectSetup processor branch.</summary>

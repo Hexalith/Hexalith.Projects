@@ -23,6 +23,8 @@ using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.Contracts.Streams;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Tenants.Contracts.Identity;
+using Hexalith.EventStore.Contracts.Identity;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;
@@ -81,20 +83,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Signs a synthetic public credential using trust distinct from workload trust.</summary>
     internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false, bool projectAdministrator = false)
     {
-        List<Claim> claims = [new("sub", tenant == ForeignTenant ? "foreign-actor" : "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant),
-            new("azp", chatbot ? "chatbot" : "operator-web"), new("eventstore:surface", chatbot ? "agent" : "ui"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
-            new("scope", "projects.read projects.list"), new("projects:role", projectAdministrator ? "TenantProjectAdministrator" : chatbot ? "ProjectUser" : "TenantOperator")];
-        foreach (string permission in new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
-            "create_folder", "manage_folder_access", "manage_organization_acl" }) claims.Add(new("eventstore:permission", permission));
-        if (inspection) claims.Add(new("eventstore:permission", "projects:inspect_descriptive_metadata"));
-        // Admit the negative control through the gateway's coarse tenant check. The current
-        // Project/Folder membership remains absent and must produce the same safe refusal.
-        if (foreignTransportGrant) claims.Add(new("eventstore:tenant", ForeignTenant));
-        if (administrator)
-        {
-            claims.Add(new("global_admin", "true"));
-            claims.Add(new("eventstore:tenant", "system"));
-        }
+        List<Claim> claims = HumanClaims(tenant, ForeignTenant, chatbot, inspection, administrator, foreignTransportGrant, projectAdministrator);
         lock (_userSigning)
         {
             return new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
@@ -104,6 +93,44 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 SigningCredentials = new(new RsaSecurityKey(_userKey) { KeyId = "synthetic-user" }, SecurityAlgorithms.RsaSha256),
             });
         }
+    }
+
+    /// <summary>Builds finite public grants without granting the reserved historical storage partition.</summary>
+    internal static List<Claim> HumanClaims(string tenant, string foreignTenant, bool chatbot = true, bool inspection = false,
+        bool administrator = false, bool foreignTransportGrant = false, bool projectAdministrator = false)
+    {
+        if (!TenantCanonicalizer.TryCanonicalize(tenant, out string canonical) || canonical != tenant
+            || !TenantCanonicalizer.TryCanonicalize(foreignTenant, out string canonicalForeign) || canonicalForeign != foreignTenant)
+            throw new ArgumentException("Synthetic credentials require canonical public Tenant identities.");
+        List<Claim> claims = [new("sub", tenant == foreignTenant ? "foreign-actor" : "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant),
+            new("azp", chatbot ? "chatbot" : "operator-web"), new("eventstore:surface", chatbot ? "agent" : "ui"), new("client_id", "synthetic-client"), new("act", "{\"sub\":\"delegation-1\"}"),
+            new("scope", "projects.read projects.list"), new("projects:role", projectAdministrator ? "TenantProjectAdministrator" : chatbot ? "ProjectUser" : "TenantOperator")];
+        foreach (string permission in new[] { "command:submit", "query:read", "replay:read", "read_metadata", "projects:read", "projects:list",
+            "create_folder", "manage_folder_access", "manage_organization_acl" }) claims.Add(new("eventstore:permission", permission));
+        if (inspection) claims.Add(new("eventstore:permission", "projects:inspect_descriptive_metadata"));
+        // Admit the negative control through the gateway's coarse tenant check. The current
+        // Project/Folder membership remains absent and must produce the same safe refusal.
+        if (foreignTransportGrant) claims.Add(new("eventstore:tenant", foreignTenant));
+        if (administrator)
+        {
+            claims.Add(new("global_admin", "true"));
+            foreach (string permission in new[] { "tenants:create", "tenants:add-user", "tenants:read", "global-administrators:read" })
+                claims.Add(new("eventstore:permission", permission));
+        }
+        return claims;
+    }
+
+    /// <summary>Binds a status read to exactly one explicit public Tenant or owner-declared platform scope.</summary>
+    internal static void BindStatusScope(HttpRequestMessage request, string scope)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.Headers.Contains("X-Hexalith-Scope") || request.Headers.Contains("X-Hexalith-Tenant"))
+            throw new ArgumentException("A status read must have exactly one scope.", nameof(request));
+        if (scope is TenantPlatformScopes.Tenants or TenantPlatformScopes.GlobalAdministrators)
+            request.Headers.Add("X-Hexalith-Scope", scope);
+        else if (TenantCanonicalizer.TryCanonicalize(scope, out string canonical) && canonical == scope)
+            request.Headers.Add("X-Hexalith-Tenant", scope);
+        else throw new ArgumentException("Status scope is invalid or reserved.", nameof(scope));
     }
 
     /// <summary>Seeds both tenants through real authenticated commands and projection callbacks.</summary>
@@ -117,12 +144,12 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         {
             string actor = tenant == Tenant ? "actor-1" : "foreign-actor";
             Stopwatch projectReadiness = new(), folderReadiness = new();
-            await CommandAsync("system", "tenants", tenant, "CreateTenant", new { TenantId = tenant, Name = "Synthetic tenant", Description = "Isolated read proof" }, Tenant).ConfigureAwait(false);
-            StreamReadPage created = await StreamAsync("system", "tenants", tenant, tenant).ConfigureAwait(false);
+            await CommandAsync(TenantPlatformScopes.Tenants, "tenants", tenant, "CreateTenant", new { TenantId = tenant, Name = "Synthetic tenant", Description = "Isolated read proof" }, Tenant).ConfigureAwait(false);
+            StreamReadPage created = await StreamAsync(TenantPlatformScopes.Tenants, "tenants", tenant, tenant).ConfigureAwait(false);
             await WaitForTenantAuthorityAsync("projects:tenant-access:" + tenant, tenant, actor, created,
                 projectReadiness, requireOwner: false).ConfigureAwait(false);
-            await CommandAsync("system", "tenants", tenant, "AddUserToTenant", new { TenantId = tenant, UserId = actor, Role = "TenantOwner" }, Tenant).ConfigureAwait(false);
-            StreamReadPage tenantEvents = await StreamAsync("system", "tenants", tenant, tenant).ConfigureAwait(false);
+            await CommandAsync(TenantPlatformScopes.Tenants, "tenants", tenant, "AddUserToTenant", new { TenantId = tenant, UserId = actor, Role = "TenantOwner" }, Tenant).ConfigureAwait(false);
+            StreamReadPage tenantEvents = await StreamAsync(TenantPlatformScopes.Tenants, "tenants", tenant, tenant).ConfigureAwait(false);
             await WaitForTenantAuthorityAsync("projects:tenant-access:" + tenant, tenant, actor, tenantEvents,
                 projectReadiness).ConfigureAwait(false);
             // The owners intentionally subscribe to different existing tenant topics. Replay the exact
@@ -790,6 +817,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         {
             using HttpRequestMessage request = new(HttpMethod.Get, _endpoints["eventstore"] + "/api/v1/commands/status/" + messageId);
             request.Headers.Authorization = new("Bearer", token);
+            BindStatusScope(request, tenant);
             using HttpResponseMessage status = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
             if (status.StatusCode == HttpStatusCode.OK)
             {
@@ -1377,6 +1405,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         {
             using HttpRequestMessage request = new(HttpMethod.Get, _endpoints["eventstore"] + "/api/v1/commands/status/" + message);
             request.Headers.Authorization = new("Bearer", HumanToken(Tenant, chatbot: false, administrator: true));
+            BindStatusScope(request, TenantPlatformScopes.GlobalAdministrators);
             using HttpResponseMessage status = await _http.SendAsync(request, Cancellation).ConfigureAwait(false);
             Require(status.StatusCode is HttpStatusCode.OK or HttpStatusCode.NotFound, "Hosted bootstrap durable status read refused.");
             if (status.StatusCode == HttpStatusCode.OK)
@@ -1386,8 +1415,14 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 Require(outcome is not ("Rejected" or "TimedOut" or "PublishFailed"), "Hosted bootstrap did not persist successfully.");
                 if (outcome == "Completed")
                 {
+                    await File.WriteAllTextAsync(Path.Combine(Evidence, "bootstrap-command-status.json"), JsonSerializer.Serialize(new
+                    {
+                        hostedReceiptVerified = true, actualCommandStatus = outcome,
+                        statusReadHttpStatus = (int)status.StatusCode, explicitScope = TenantPlatformScopes.GlobalAdministrators,
+                        persistedGlobalAdministratorSetVerified = false,
+                    }, new JsonSerializerOptions { WriteIndented = true }), Cancellation).ConfigureAwait(false);
                     await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
-                    StreamReadPage stream = await StreamAsync("system", "global-administrators", "global-administrators", Tenant).ConfigureAwait(false);
+                    StreamReadPage stream = await ReadHostedBootstrapSourceAsync().ConfigureAwait(false);
                     Require(stream.Events.Count(item => HostedBootstrapEventMatches(item, message,
                         value.GetProperty("CorrelationId").GetString()!, "actor-1")) == 1,
                         "Hosted bootstrap has no exactly bound persisted administrator event.");
@@ -1415,6 +1450,14 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         }
         throw new InvalidOperationException("Hosted bootstrap did not reach actual durable completion.");
     }
+
+    /// <summary>Stops at the missing owner SDK capability without issuing a reserved public read or bypassing owner authorization.</summary>
+    private static Task<StreamReadPage> ReadHostedBootstrapSourceAsync()
+        // EventStoreGatewayClient's workload transport omits the required X-Hexalith-Scope
+        // and rejects the retained system identity returned for a platform-scope request.
+        // The human stream route supports only platform:tenants. An owner SDK repair is required.
+        => Task.FromException<StreamReadPage>(new NotSupportedException(
+            "Owner capability required: the EventStore bound-workload SDK does not support platform:global-administrators source reads."));
 
     /// <summary>Accepts only the original exact private submission receipt, preserving a genuinely unknown acknowledgement.</summary>
     /// <param name="receipt">The actual hosted submission receipt.</param>
@@ -1464,6 +1507,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     {
         using HttpRequestMessage request = new(HttpMethod.Post, _endpoints["eventstore"] + "/" + route) { Content = JsonContent.Create(body, options: Json) };
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        if (body is SubmitCommandRequest command && TenantCanonicalizer.IsPlatformScope(command.Tenant))
+            request.Headers.Add("X-Hexalith-Scope", command.Tenant);
+        if (body is StreamReadRequest stream && TenantCanonicalizer.IsPlatformScope(stream.Tenant))
+            request.Headers.Add("X-Hexalith-Scope", stream.Tenant);
         request.Headers.Add("X-Correlation-Id", Unique());
         return await _http.SendAsync(request, cancellationToken ?? Cancellation).ConfigureAwait(false);
     }

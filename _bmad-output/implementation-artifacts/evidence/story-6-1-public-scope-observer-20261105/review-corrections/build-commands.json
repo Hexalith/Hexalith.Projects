@@ -1,0 +1,37 @@
+[
+  {
+    "name": "build-server",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--no-restore",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    "sourceMappingHash": "b6c2dea464a26a856079a4d7cd45073d7b4f550bc07d64d771ee1e48b4c05250",
+    "exitCode": 0,
+    "output": "retained-output/review-corrections/build-server.txt"
+  },
+  {
+    "name": "build-integration",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--no-restore",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false",
+      "-p:SupportedProjectReadDistributed=true"
+    ],
+    "sourceMappingHash": "b6c2dea464a26a856079a4d7cd45073d7b4f550bc07d64d771ee1e48b4c05250",
+    "exitCode": 0,
+    "output": "retained-output/review-corrections/build-integration.txt"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:NuGetAudit=false"
+    ],
+    "exitCode": 0,
+    "sourceMappingHash": "4ed61d1e8bdca42ed9ec1c6931c6b0f612fa742695254d05d41b3f08eeabd02f"
+  },
+  {
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadEvidenceTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-review-patches-20261105/integration-evidence-controls.xml"
+    ],
+    "exitCode": 0
+  }
+]

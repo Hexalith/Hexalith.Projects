@@ -2224,9 +2224,9 @@ def issuer_server(directory: Path, issuer: str, bootstrap_password: str) -> tupl
             header = b64url(json.dumps({"alg": "RS256", "typ": "JWT", "kid": "synthetic-user"}).encode())
             payload = b64url(json.dumps({"iss": issuer, "aud": "supported-read-users", "sub": "actor-1",
                 "iat": now, "nbf": now - 5, "exp": now + 120, "jti": secrets.token_hex(16),
-                "tenant_id": "system", "eventstore:tenant": "system", "global_admin": "true", "azp": "supported-read-bootstrap",
+                "global_admin": "true", "azp": "supported-read-bootstrap",
                 "eventstore:surface": "ui",
-                "client_id": "supported-read-bootstrap", "eventstore:permission": ["command:submit", "replay:read"]}).encode())
+                "client_id": "supported-read-bootstrap", "eventstore:permission": ["global-administrators:bootstrap"]}).encode())
             unsigned = (header + "." + payload).encode()
             try:
                 signed = subprocess.run(["openssl", "dgst", "-sha256", "-sign", str(directory / "user.pem")],

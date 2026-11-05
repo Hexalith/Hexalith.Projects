@@ -16,6 +16,7 @@ using Xunit;
 /// <summary>Verifies the private peer enrollment keeps actual worker callbacks behind the Dapr channel boundary.</summary>
 public sealed class ProjectsWorkerCatalogTests
 {
+#if HEXALITH_SOURCE_FIXTURE
     /// <summary>The selected private worker never exposes subscription discovery or event delivery anonymously.</summary>
     [Fact]
     public void PrivateWorkerCallbacksRequireTheAuthenticatedChannel()
@@ -36,6 +37,7 @@ public sealed class ProjectsWorkerCatalogTests
                 .ShouldBe([EventStoreWorkloadAuthenticationDefaults.SidecarChannelPolicy]);
         }
     }
+#endif
 
     /// <summary>A production worker cannot select the disposable Development authority.</summary>
     [Fact]

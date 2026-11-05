@@ -1,0 +1,36 @@
+[
+  {
+    "layout": "sibling",
+    "command": [
+      "dotnet",
+      "msbuild",
+      "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-nologo",
+      "-p:Configuration=Debug",
+      "-getProperty:HexalithPlatformRoot,HexalithBuildsRoot"
+    ],
+    "exitCode": 0,
+    "properties": {
+      "HexalithPlatformRoot": "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/../../../Hexalith.Platform",
+      "HexalithBuildsRoot": "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/../../../Hexalith.Builds"
+    },
+    "passed": true
+  },
+  {
+    "layout": "umbrella",
+    "command": [
+      "dotnet",
+      "msbuild",
+      "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-nologo",
+      "-p:Configuration=Debug",
+      "-getProperty:HexalithPlatformRoot,HexalithBuildsRoot"
+    ],
+    "exitCode": 0,
+    "properties": {
+      "HexalithPlatformRoot": "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/../../references/Hexalith.Platform",
+      "HexalithBuildsRoot": "/tmp/story61-apphost-layout-bahvy5ot/Projects/src/Hexalith.Projects.AppHost/../../references/Hexalith.Builds"
+    },
+    "passed": true
+  }
+]

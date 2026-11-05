@@ -1,0 +1,52 @@
+[
+  {
+    "name": "projection",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*SupportedProjectProjectionTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-review-patches-20261105/projection.xml"
+    ],
+    "exitCode": 0
+  },
+  {
+    "name": "reads",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-method",
+      "*ConfirmedFolderReplacementKeepsEnumerationCompleteAndReadsPartial",
+      "-method",
+      "*AdministratorQuarantineOpenOfBoundProjectFailsSafely",
+      "-method",
+      "*ArchivedFolderlessProjectRemainsOrdinaryAndOutsideQuarantineInventory",
+      "-method",
+      "*OrdinaryTenantReadsExcludeQuarantinedActiveProjects",
+      "-method",
+      "*AdministratorInventoryAuditsEveryReturnedProjectAndBindsCursorToInventory",
+      "-method",
+      "*PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads",
+      "-method",
+      "*QuarantineDisclosureRequiresAdministratorPermissionAndDurableAudit",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-review-patches-20261105/reads.xml"
+    ],
+    "exitCode": 1
+  },
+  {
+    "name": "catalog",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*ProjectsRuntimeCatalogTests",
+      "-class",
+      "*ProjectsWorkerCatalogTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-review-patches-20261105/catalog.xml"
+    ],
+    "exitCode": 0
+  }
+]

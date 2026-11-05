@@ -1,0 +1,217 @@
+{
+  "commonBuildEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "sourceMappingEnvironment": "prepare-source.json#/buildPreparation/environment",
+  "commands": [
+    {
+      "name": "source-preparation",
+      "command": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 dotnet run --project references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace /tmp/story61-public-scope-observer-map-20261105 --output json",
+      "exitCode": 0,
+      "output": "prepare-source.json"
+    },
+    {
+      "name": "focused-signed-issuer",
+      "command": "PYTHONPATH=tests/tools python3 -m unittest test_supported_project_reads_launcher.SupportedReadDelegatedIssuerTests -v",
+      "exitCode": 0,
+      "output": "retained-output/issuer.txt",
+      "originalOutput": "issuer.log"
+    },
+    {
+      "name": "launcher-controls",
+      "command": "python3 -m unittest discover -s tests/tools -p test_supported_project_reads_launcher.py -v",
+      "exitCode": 0,
+      "output": "retained-output/launcher-controls.txt",
+      "originalOutput": "launcher-controls.log"
+    },
+    {
+      "name": "native-duplicate",
+      "command": "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --scenario duplicate --timeout 900 --evidence _bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/duplicate",
+      "exitCode": 1,
+      "output": "duplicate/run.json"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false"
+      ],
+      "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+      "exitCode": 1,
+      "name": "build-server",
+      "output": "retained-output/build-server.txt",
+      "originalOutput": "build-server.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--no-restore",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+      "exitCode": 0,
+      "name": "build-server-corrected",
+      "output": "retained-output/build-server-corrected.txt",
+      "originalOutput": "build-server-corrected.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/observer.xml"
+      ],
+      "exitCode": 0,
+      "name": "observer",
+      "output": "retained-output/observer.txt",
+      "originalOutput": "observer.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true",
+        "-p:NuGetAudit=false"
+      ],
+      "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+      "exitCode": 0,
+      "name": "build-integration",
+      "output": "retained-output/build-integration.txt",
+      "originalOutput": "build-integration.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--no-restore",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+      "exitCode": 0,
+      "name": "build-server-reviewed",
+      "output": "retained-output/build-server-reviewed.txt",
+      "originalOutput": "build-server-reviewed.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+        "-class-",
+        "*SupportedProjectReadDistributedTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/local-integration.xml"
+      ],
+      "exitCode": 0,
+      "name": "local-integration",
+      "output": "retained-output/local-integration.txt",
+      "originalOutput": "local-integration.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class-",
+        "*SupportedProjectAuthorityHttpTests",
+        "-method-",
+        "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-method-",
+        "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/local-server.xml"
+      ],
+      "exitCode": 0,
+      "name": "local-server",
+      "output": "retained-output/local-server.txt",
+      "originalOutput": "local-server.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "--no-restore",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "sourceMappingHash": "5c58db5822d369144719042d148186e32253aaf1862bbf9f5ab14065930f0c6d",
+      "exitCode": 0,
+      "name": "build-server-final",
+      "output": "retained-output/build-server-final.txt",
+      "originalOutput": "build-server-final.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*SupportedProjectGatewayHttpTests",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/observer-final.xml"
+      ],
+      "exitCode": 0,
+      "name": "observer-final",
+      "output": "retained-output/observer-final.txt",
+      "originalOutput": "observer-final.log"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class-",
+        "*SupportedProjectAuthorityHttpTests",
+        "-method-",
+        "*GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-method-",
+        "*ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+        "-method-",
+        "*GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-1-public-scope-observer-20261105/local-server-final.xml"
+      ],
+      "exitCode": 0,
+      "name": "local-server-final",
+      "output": "retained-output/local-server-final.txt",
+      "originalOutput": "local-server-final.log"
+    }
+  ],
+  "retainedOutputMap": "retained-output-map.json",
+  "retainedNativeOutputs": [
+    "retained-output/duplicate/build-35.txt",
+    "retained-output/duplicate/distributed.txt",
+    "retained-output/duplicate/launcher-controls.txt"
+  ],
+  "retainedPriorPackageOutput": "retained-output/prior-package-restore-nu1109.txt",
+  "laterReviewCorrections": "review-corrections/commands.json"
+}
