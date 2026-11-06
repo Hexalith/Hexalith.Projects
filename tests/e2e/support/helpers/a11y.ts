@@ -24,6 +24,8 @@ export interface A11yScanOptions {
   disableRules?: string[];
   /** Text that must never appear in the retained receipt (protected fixture values). */
   forbiddenText?: string[];
+  /** Record violations as soft failures, so later surfaces are still scanned; the test still fails. */
+  soft?: boolean;
 }
 
 // Only numeric/closed-vocabulary check data is retained; axe messages and HTML snippets can carry page text.
@@ -85,8 +87,10 @@ export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, opt
     });
   }
 
-  expect(
-    results.violations,
+  // The assertion output reaches retained logs, so it names rules and selectors only, never HTML.
+  const assertion = options.soft ? expect.soft : expect;
+  assertion(
+    results.violations.map((violation) => ({ id: violation.id, impact: violation.impact, targets: violation.nodes.map((node) => node.target) })),
     `Expected no WCAG 2.2 AA violations, found ${results.violations.length}: ${results.violations.map((v) => v.id).join(', ')}`,
   ).toEqual([]);
 }

@@ -10,12 +10,17 @@
     <h1 id="project-inventory-heading">Projects</h1>
     <FluentText data-testid="project-inventory-tenant-scope">@(_result?.TenantScope ?? "server-derived tenant")</FluentText>
     <FluentText>Safe Metadata is the default. Descriptive and quarantine inspection require separate authorization and are audited.</FluentText>
-    <FluentStack Wrap="true" aria-label="Project inventory filters">
-        <FluentButton role="button" OnClick="@(() => SetLifecycleAsync(null))" data-testid="project-inventory-filter-all">All lifecycle states</FluentButton>
-        <FluentButton role="button" OnClick="@(() => SetLifecycleAsync("Active"))" data-testid="project-inventory-filter-active">Active</FluentButton>
-        <FluentButton role="button" OnClick="@(() => SetLifecycleAsync("Archived"))" data-testid="project-inventory-filter-archived">Archived</FluentButton>
-        <FluentCheckbox role="checkbox" aria-checked="@((_descriptive || _quarantined).ToString().ToLowerInvariant())" aria-disabled="@_quarantined.ToString().ToLowerInvariant()" Label="Descriptive inspection (audited; required in quarantine)" Value="@(_descriptive || _quarantined)" Disabled="@_quarantined" ValueChanged="SetDescriptiveAsync" data-testid="project-inventory-inspection" />
-        <FluentCheckbox role="checkbox" aria-checked="@_quarantined.ToString().ToLowerInvariant()" Label="Quarantine inventory (Administrator inspection, audited names)" Value="@_quarantined" ValueChanged="SetQuarantineAsync" data-testid="project-inventory-quarantine" />
+    @* Separate groups keep each 16px checkbox clear of the filter buttons (WCAG 2.2 target size). *@
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="var(--spacingVerticalL)">
+        <FluentStack Wrap="true" role="group" aria-label="Lifecycle filter">
+            <FluentButton role="button" OnClick="@(() => SetLifecycleAsync(null))" data-testid="project-inventory-filter-all">All lifecycle states</FluentButton>
+            <FluentButton role="button" OnClick="@(() => SetLifecycleAsync("Active"))" data-testid="project-inventory-filter-active">Active</FluentButton>
+            <FluentButton role="button" OnClick="@(() => SetLifecycleAsync("Archived"))" data-testid="project-inventory-filter-archived">Archived</FluentButton>
+        </FluentStack>
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="var(--spacingVerticalS)" role="group" aria-label="Inspection mode">
+            <FluentCheckbox role="checkbox" aria-checked="@((_descriptive || _quarantined).ToString().ToLowerInvariant())" aria-disabled="@_quarantined.ToString().ToLowerInvariant()" Label="Descriptive inspection (audited; required in quarantine)" Value="@(_descriptive || _quarantined)" Disabled="@_quarantined" ValueChanged="SetDescriptiveAsync" data-testid="project-inventory-inspection" />
+            <FluentCheckbox role="checkbox" aria-checked="@_quarantined.ToString().ToLowerInvariant()" Label="Quarantine inventory (Administrator inspection, audited names)" Value="@_quarantined" ValueChanged="SetQuarantineAsync" data-testid="project-inventory-quarantine" />
+        </FluentStack>
     </FluentStack>
     @if (_quarantined) { <FluentText role="status">Administrator quarantine inspection may disclose names and excludes ordinary Projects. It grants no context or Conversation-start authority.</FluentText> }
     @if (_loading) { <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("project_inventory_loading")" /> }

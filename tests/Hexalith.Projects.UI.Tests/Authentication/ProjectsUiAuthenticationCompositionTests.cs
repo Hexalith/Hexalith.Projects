@@ -222,7 +222,7 @@ public sealed class ProjectsUiAuthenticationCompositionTests
                 ("circuit-d", "tenant-b", "synthetic-credential-d"),
             ];
             foreach (var session in sessions)
-                store.Set(new(session.Session, "same-subject", session.Tenant), session.Credential, DateTimeOffset.UtcNow.AddMinutes(5));
+                store.Set(new FrontComposerTokenSession(session.Session, "same-subject", session.Tenant), session.Credential, DateTimeOffset.UtcNow.AddMinutes(5));
             await Task.WhenAll(sessions.Select(session => Task.Run(async () =>
             {
                 using IServiceScope scope = provider.CreateScope();

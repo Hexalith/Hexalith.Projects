@@ -294,11 +294,11 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       for (const [surface, open] of surfaces) {
         await page.setViewportSize({ width: 1280, height: 900 });
         await open(page);
-        await expectNoA11yViolations(page, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-1280.json`, forbiddenText: protectedText });
+        await expectNoA11yViolations(page, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-1280.json`, forbiddenText: protectedText, soft: true });
         await retainSafeReceipt(`supported-read-reading-order-${surface}-1280.json`, await readingOrder(pageAccessibility));
         await retainSafeReceipt(`supported-read-keyboard-${surface}-1280.json`, await keyboardOrder(page, pageAccessibility, `${surface} 1280`));
         await page.setViewportSize({ width: 320, height: 900 });
-        await expectNoA11yViolations(page, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-320px.json`, forbiddenText: protectedText });
+        await expectNoA11yViolations(page, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-320px.json`, forbiddenText: protectedText, soft: true });
         expect.soft(await noHorizontalScroll(page), `${surface}: 320px reflow scrolls horizontally`).toBe(true);
       }
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -314,7 +314,7 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
         for (const [surface, open] of surfaces) {
           await open(zoomPage);
           expect(await zoomPage.evaluate(() => ({ width: window.innerWidth, ratio: window.devicePixelRatio }))).toEqual({ width: 640, ratio: 2 });
-          await expectNoA11yViolations(zoomPage, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-zoom-200.json`, forbiddenText: protectedText });
+          await expectNoA11yViolations(zoomPage, testInfo, { include: '[role="main"]', receiptName: `supported-read-a11y-${surface}-zoom-200.json`, forbiddenText: protectedText, soft: true });
           expect.soft(await noHorizontalScroll(zoomPage), `${surface}: 200% zoom scrolls horizontally`).toBe(true);
           await retainSafeReceipt(`supported-read-reading-order-${surface}-zoom-200.json`, await readingOrder(zoomAccessibility));
           await retainSafeReceipt(`supported-read-keyboard-${surface}-zoom-200.json`, await keyboardOrder(zoomPage, zoomAccessibility, `${surface} 200% zoom`));
