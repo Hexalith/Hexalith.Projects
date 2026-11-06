@@ -41,6 +41,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private bool _duplicateVerified;
     private bool _replayVerified;
     private bool _seedAttempted;
+    private string? _browserReadToken;
     private readonly HashSet<(string Tenant, string Project)> _recordedReplaySources = [];
     private readonly JsonElement _configuration;
     private readonly Dictionary<string, string> _endpoints;
@@ -245,6 +246,102 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             Require(queries.Contains(domain == "projects" ? ListProjectsQuery.QueryType : "Hexalith.Folders.Queries.AuthorizeFolderRead.v1"), "Real owner/query catalog missing.");
             // Wait for the platform's metadata publisher, never substitute the gateway registry.
             await WaitForStateAsync("admin:query-types:" + domain).ConfigureAwait(false);
+        }
+        if (_configuration.TryGetProperty("Browser", out JsonElement browser))
+        {
+            _browserReadToken = await FreshBrowserReadCredentialAsync(browser).ConfigureAwait(false);
+            await WaitForBrowserAdvisoryReadinessAsync(_browserReadToken).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<string> FreshBrowserReadCredentialAsync(JsonElement browser)
+    {
+        using FormUrlEncodedContent body = new(new Dictionary<string, string>
+        {
+            ["grant_type"] = "password", ["client_id"] = "supported-read-reader", ["username"] = "actor-1",
+            ["password"] = browser.GetProperty("Password").GetString()!, ["scope"] = "openid",
+        });
+        using HttpResponseMessage response = await _http.PostAsync(browser.GetProperty("TokenEndpoint").GetString(), body, Cancellation).ConfigureAwait(false);
+        Require(response.StatusCode == HttpStatusCode.OK, "Fresh OIDC advisory readiness credential was refused.");
+        using JsonDocument result = JsonDocument.Parse(await response.Content.ReadAsByteArrayAsync(Cancellation).ConfigureAwait(false));
+        string token = result.RootElement.GetProperty("access_token").GetString()!;
+        JwtSecurityToken claims = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        Require(SupportedProjectAdvisoryReadiness.HasFreshAuthority(claims, PrimaryActor, Tenant,
+            browser.GetProperty("Authority").GetString()!, DateTime.UtcNow),
+            "Fresh advisory readiness authority differs from the seeded actor/read scope or lacks its bounded lifetime.");
+        string path = Path.Combine(Path.GetDirectoryName(Setting("InvocationDirectory"))!, "browser-readiness-credential.json");
+        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new { accessToken = token, expiresAt = claims.ValidTo,
+            acquiredAfterSeeding = true, bootstrapAuthority = false }, Json), Cancellation).ConfigureAwait(false);
+        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        return token;
+    }
+
+    private async Task WaitForBrowserAdvisoryReadinessAsync(string credential)
+    {
+        using var sidecar = new Dapr.Client.DaprClientBuilder()
+            .UseHttpEndpoint(_endpoints["eventstore-dapr-cli"]).UseGrpcEndpoint(_endpoints["state-grpc"]).Build();
+        var models = new Hexalith.EventStore.Client.Projections.DaprReadModelStore(sidecar);
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
+        budget.CancelAfter(TimeSpan.FromSeconds(90));
+        foreach (bool multiple in new[] { false, true })
+        {
+            await SupportedProjectAdvisoryReadiness.WaitAsync(async (attempt, token) =>
+            {
+                string[] folders = multiple ? ["folder-project-a", "folder-project-b"] : ["folder-project-a"];
+                var payload = new ResolveProjectFromAttachmentsQuery(folders.Select(id => new ProjectAdvisoryAttachment("folder", id)).ToArray());
+                var query = new SubmitQueryRequest(Tenant, "projects", "projects", ResolveProjectFromAttachmentsQuery.QueryType,
+                    Payload: JsonSerializer.SerializeToElement(payload, Json));
+                Stopwatch elapsed = Stopwatch.StartNew();
+                using HttpResponseMessage response = await SendHumanAsync("api/v1/queries", query, credential, token).ConfigureAwait(false);
+                ProjectAdvisoryResolutionResponse? result = null;
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    SubmitQueryResponse? delivered = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, token).ConfigureAwait(false);
+                    if (delivered?.Success == true) result = delivered.Payload.Deserialize<ProjectAdvisoryResolutionResponse>(Json);
+                }
+                var index = await models.GetAsync<ProjectReadIndex>("statestore", ProjectReadModelKeys.Index(Tenant), token).ConfigureAwait(false);
+                List<object> details = [];
+                foreach (string project in new[] { "project-a", "project-b" })
+                {
+                    var entry = await models.GetAsync<ProjectReadModel>("statestore", ProjectReadModelKeys.Detail(Tenant, project), token).ConfigureAwait(false);
+                    ProjectReadModel? model = entry.Value;
+                    details.Add(new { projectSha256 = Digest(project), present = model is not null, hasETag = !string.IsNullOrEmpty(entry.ETag),
+                        identityMatches = model?.TenantId == Tenant && model.ProjectId == project,
+                        sequence = model?.Sequence, globalPosition = model?.GlobalPosition, freshness = model?.Freshness.ToString(),
+                        advisoryHeaderValid = model?.Detail is { } detail && Hexalith.Projects.Aggregates.Project.ProjectPersistedDetailValidator.IsAdvisoryHeaderValid(detail),
+                        folderBindingMatches = model?.Detail?.ProjectFolder?.FolderId == "folder-" + project,
+                        folderState = model?.Detail?.ProjectFolder?.ReferenceState.ToString() });
+                }
+                List<object> ownerStates = [];
+                foreach (string key in new[] { "projection:folders:tenant-access:" + Tenant, "projection:folders:organization-permissions:" + Tenant,
+                    "projection:folders:folder-permissions:" + Tenant + ":folder-project-a", "projection:folders:folder-permissions:" + Tenant + ":folder-project-b" })
+                {
+                    var entry = await models.GetAsync<System.Text.Json.Nodes.JsonObject>("statestore", key, token).ConfigureAwait(false);
+                    ownerStates.Add(new { keySha256 = Digest(key), present = entry.Value is not null, hasETag = !string.IsNullOrEmpty(entry.ETag),
+                        lastSequence = entry.Value?["lastSequence"]?.GetValue<long>(), watermark = entry.Value?["watermark"]?.GetValue<long>(),
+                        bytesSha256 = entry.Value is null ? null : Digest(entry.Value) });
+                }
+                string[] generationKeys = System.Text.Encoding.UTF8.GetString(await RedisBytesAsync(token, "--scan").ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Where(key => key.StartsWith("shared-generation:", StringComparison.Ordinal)
+                        || key.StartsWith("shared-cow-pointer:", StringComparison.Ordinal)).Order(StringComparer.Ordinal).ToArray();
+                Require(generationKeys.Length <= 128, "Owned setup generation census exceeded its finite bound.");
+                SupportedProjectReadStateSnapshot[] generations = await RawStatesAsync(generationKeys, token).ConfigureAwait(false);
+                var generationFacts = generations.Select(entry => new { keySha256 = Digest(entry.Key),
+                    bytesSha256 = Convert.ToHexString(SHA256.HashData(entry.Bytes)), etagSha256 = Digest(entry.ETag) }).ToArray();
+                await AppendReadEvidenceAsync(_readEvidence, Path.Combine(Evidence, "browser-advisory-seed-readiness.jsonl"), JsonSerializer.Serialize(new
+                {
+                    multiple, attempt, elapsedMilliseconds = elapsed.Elapsed.TotalMilliseconds, httpStatus = (int)response.StatusCode,
+                    result = result?.Result?.ToString(), result?.Incomplete, candidateCount = result?.Candidates.Count,
+                    positiveCandidatesVerified = SupportedProjectAdvisoryReadiness.Matches(result, multiple),
+                    index = new { present = index.Value is not null, hasETag = !string.IsNullOrEmpty(index.ETag),
+                        identityMatches = index.Value?.TenantId == Tenant, index.Value?.GlobalPosition, index.Value?.LastVerifiedAt,
+                        unavailableCount = index.Value?.UnavailableProjectIds.Count,
+                        primaryIdsPresent = index.Value?.ProjectIds.Contains("project-a") == true && index.Value.ProjectIds.Contains("project-b") },
+                    details, ownerStates, generationFacts, actualPublicGateway = true, nonBootstrapCredential = true,
+                    fabricatedProjectionWrite = false, runtimeAuthoritySupplied = false,
+                }, Json) + Environment.NewLine, CancellationToken.None).ConfigureAwait(false);
+                return result;
+            }, multiple, budget.Token).ConfigureAwait(false);
         }
     }
 
@@ -581,7 +678,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private IEnumerable<string> ProtectedValues() => new[] { Tenant, ForeignTenant, PrimaryActor, ForeignActor, "project-a", "project-b", "folder-project",
         "legacy-a", "legacy-b", "Legacy project", "Restricted legacy description", "Restricted legacy setup reference", "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
         Setting("UserIssuer"), Setting("UserKeyPath"), Setting("CertificatePassword"), Setting("EventStoreSecret"), Setting("ProjectsSecret"),
-        Setting("ChannelToken"), Setting("ReceiptKey"), Setting("OwnerPrivateKey"), Setting("OwnerPublicKey"), HumanToken(Tenant) };
+        Setting("ChannelToken"), Setting("ReceiptKey"), Setting("OwnerPrivateKey"), Setting("OwnerPublicKey"), HumanToken(Tenant) }
+        .Concat(_browserReadToken is { } readToken ? new[] { readToken } : []);
 
     /// <summary>Proves a fresh metadata-only audit write is denied while ordinary reads remain healthy.</summary>
     internal async Task VerifyAuditWriteFaultAsync()
@@ -2136,10 +2234,10 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         return cjson.encode(rows)
         """;
 
-    private async Task<SupportedProjectReadStateSnapshot[]> RawStatesAsync(string[] keys)
+    private async Task<SupportedProjectReadStateSnapshot[]> RawStatesAsync(string[] keys, CancellationToken? cancellationToken = null)
     {
         if (keys.Length == 0) return [];
-        byte[] response = await RedisBytesAsync(["EVAL", RawStateBatchScript, keys.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), .. keys]).ConfigureAwait(false);
+        byte[] response = await RedisBytesAsync(cancellationToken ?? Cancellation, ["EVAL", RawStateBatchScript, keys.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), .. keys]).ConfigureAwait(false);
         return ParseRawStateBatch(response, keys);
     }
 

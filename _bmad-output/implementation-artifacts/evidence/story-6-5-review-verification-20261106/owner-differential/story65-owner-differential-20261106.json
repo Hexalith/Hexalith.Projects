@@ -1,0 +1,128 @@
+{
+  "kind": "Actual public authenticated differential; no privacy suppression disabled",
+  "cases": [
+    {
+      "case": "empty-scope-1",
+      "atUtc": "2026-11-06T14:57:50.596002+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 306.147212999349,
+      "success": true,
+      "result": "NoMatch",
+      "incomplete": false,
+      "candidateCount": 0
+    },
+    {
+      "case": "open-1",
+      "atUtc": "2026-11-06T14:57:50.902256+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 796.1907210010395,
+      "success": true,
+      "responseState": "Unavailable",
+      "components": [
+        {
+          "name": "Project",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "Folder",
+          "included": false,
+          "freshness": "Stale",
+          "reason": "FolderUnavailable"
+        },
+        {
+          "name": "Setup",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "Authorization",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "References",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        }
+      ]
+    },
+    {
+      "case": "single-folder",
+      "atUtc": "2026-11-06T14:57:51.698533+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 727.0578080006089,
+      "success": true,
+      "result": null,
+      "incomplete": true,
+      "candidateCount": 0
+    },
+    {
+      "case": "empty-scope-2",
+      "atUtc": "2026-11-06T14:57:52.425694+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 285.9498940015328,
+      "success": true,
+      "result": "NoMatch",
+      "incomplete": false,
+      "candidateCount": 0
+    },
+    {
+      "case": "open-2",
+      "atUtc": "2026-11-06T14:57:52.711736+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 758.1428379999124,
+      "success": true,
+      "responseState": "Unavailable",
+      "components": [
+        {
+          "name": "Project",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "Folder",
+          "included": false,
+          "freshness": "Stale",
+          "reason": "FolderUnavailable"
+        },
+        {
+          "name": "Setup",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "Authorization",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        },
+        {
+          "name": "References",
+          "included": true,
+          "freshness": "Current",
+          "reason": "Current"
+        }
+      ]
+    },
+    {
+      "case": "multiple-folder",
+      "atUtc": "2026-11-06T14:57:53.469996+00:00",
+      "httpStatus": 200,
+      "wireElapsedMilliseconds": 1050.8788360002654,
+      "success": true,
+      "result": null,
+      "incomplete": true,
+      "candidateCount": 0
+    }
+  ],
+  "domainUnchanged": true,
+  "auditUnchanged": true,
+  "productionReadiness": false
+}

@@ -1,0 +1,62 @@
+{
+  "integrationCommand": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.AspireTopologyTests",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.PersistedReadObserverBindingTests",
+    "-class",
+    "Hexalith.Projects.Integration.Tests.SupportedProjectAdvisoryReadinessTests",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-review-verification-20261106/integration-readiness-tests.xml"
+  ],
+  "integrationExitCode": 0,
+  "totals": [
+    {
+      "total": "45",
+      "passed": "45",
+      "failed": "0",
+      "skipped": "0",
+      "errors": "0"
+    }
+  ],
+  "xmlSha256": "6f46ebc322c6fea2ab461840ed1ef36e91a605f63db03ed111e25b3461a940f1",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_supported_project_reads_launcher.py"
+      ],
+      "exitCode": 0,
+      "log": "readiness-launcher.log.txt"
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "tests/e2e",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": "readiness-typecheck.log.txt"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "readiness-diff.log.txt"
+    }
+  ],
+  "reason": "Refresh only Integration/test-harness changes after bounded advisory setup was added; UI/Server/Contracts sources and their previous full passes remain unchanged."
+}

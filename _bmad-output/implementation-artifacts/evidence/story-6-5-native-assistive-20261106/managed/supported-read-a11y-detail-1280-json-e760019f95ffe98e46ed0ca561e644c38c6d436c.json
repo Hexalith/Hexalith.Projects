@@ -1,0 +1,202 @@
+{
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "timestamp": "2026-11-06T13:04:14.692Z",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "passedRuleCount": 17,
+  "incompleteRuleIds": [
+    "color-contrast"
+  ],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            "#project-detail-heading"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "3:1",
+                "fontSize": "30.0pt (40px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            ".project-detail-inspector > fluent-text"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "#f7dd9fc9-label"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            [
+              "fluent-button[data-testid=\"project-detail-reread\"]",
+              ".content[part=\"content\"]"
+            ]
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "colorContrastPassTargets": [
+    [
+      "#f71793fe > span[slot=\"heading\"]"
+    ],
+    [
+      "#f71793fe > fluent-text:nth-child(2)"
+    ],
+    [
+      "#f71793fe > fluent-text:nth-child(3)"
+    ],
+    [
+      "#f71793fe > fluent-text:nth-child(4)"
+    ],
+    [
+      "#f71793fe > fluent-text:nth-child(5)"
+    ],
+    [
+      "#f71793fe > fluent-text:nth-child(6)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text:nth-child(1)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text:nth-child(2)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text:nth-child(3)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(4)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(5)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(6)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(7)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(8)"
+    ],
+    [
+      "div[data-testid=\"project-open-snapshot\"] > fluent-text:nth-child(9)"
+    ],
+    [
+      "fluent-text[data-testid=\"project-open-reference\"]"
+    ],
+    [
+      "#f44c6cdc > span[slot=\"heading\"]"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text:nth-child(1)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text:nth-child(2)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text:nth-child(3)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(4)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(5)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(6)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(7)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(8)"
+    ],
+    [
+      "div[data-testid=\"project-context-snapshot\"] > fluent-text:nth-child(9)"
+    ],
+    [
+      "#f44c6cdc > fluent-text:nth-child(3)"
+    ],
+    [
+      "fluent-text[data-testid=\"project-context-reference\"]"
+    ],
+    [
+      "#f18612e5 > span[slot=\"heading\"]"
+    ],
+    [
+      "div[data-testid=\"project-start-snapshot\"] > fluent-text:nth-child(1)"
+    ],
+    [
+      "div[data-testid=\"project-start-snapshot\"] > fluent-text:nth-child(2)"
+    ],
+    [
+      "div[data-testid=\"project-start-snapshot\"] > fluent-text:nth-child(3)"
+    ],
+    [
+      [
+        "#f2a7dad2",
+        "#control"
+      ]
+    ]
+  ],
+  "violations": []
+}

@@ -1,0 +1,65 @@
+{
+  "surface": "suggestions-native-100",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "timestamp": "2026-11-06T13:12:59.035Z",
+  "passes": 19,
+  "colorContrastPassed": true,
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            "#f6fd2840 > span[slot=\"heading\"]"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "violations": [],
+  "geometry": {
+    "width": 1279,
+    "height": 856,
+    "devicePixelRatio": 1,
+    "cssZoom": "1",
+    "horizontalOverflow": false
+  },
+  "contrastDeterminations": [
+    {
+      "target": [
+        "#f6fd2840 > span[slot=\"heading\"]"
+      ],
+      "foreground": "rgb(36, 36, 36)",
+      "effectiveBackgroundRgb": [
+        255,
+        255,
+        255
+      ],
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "solidOpaqueColorPath": true,
+      "contrastRatio": 15.522910417680388,
+      "minimumRequired": 4.5,
+      "passes": true,
+      "method": "W3C WCAG 2.2 G18 relative luminance and computed solid rendered colors",
+      "source": "https://www.w3.org/WAI/WCAG22/Techniques/general/G18"
+    }
+  ],
+  "unresolvedIncompleteRuleCount": 0
+}

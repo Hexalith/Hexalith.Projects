@@ -10,11 +10,16 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
     test.setTimeout(300_000);
     const retainJsonReceipt = async (name: string, value: unknown): Promise<void> => {
       const path = testInfo.outputPath(name);
-      await writeFile(path, JSON.stringify(value, null, 2), { mode: 0o600 });
+      const body = JSON.stringify(value, null, 2);
+      for (const text of protectedText) expect(body.includes(text), name + ' retained protected text').toBe(false);
+      expect(/eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/.test(body), name + ' retained a credential').toBe(false);
+      await writeFile(path, body, { mode: 0o600 });
       await testInfo.attach(name, { path, contentType: 'application/json' });
     };
     // Accessibility receipts read rendered text, so each is refused if any protected fixture value appears.
-    const protectedText = ['Synthetic project project-a', 'Synthetic descriptive metadata', 'Restricted legacy description'];
+    const protectedText = [...JSON.parse(process.env.E2E_PROTECTED_FIXTURE_MARKERS ?? '[]') as string[], process.env.TEST_USER_PASSWORD, process.env.E2E_FOREIGN_PASSWORD].filter((value): value is string => !!value);
+    expect(process.env.E2E_PROTECTED_FIXTURE_MARKERS).toBeTruthy();
+    expect(protectedText.length).toBeGreaterThan(0);
     const retainSafeReceipt = async (name: string, value: unknown): Promise<void> => {
       const body = JSON.stringify(value);
       for (const text of protectedText) expect(body.includes(text), `${name} retained protected text`).toBe(false);
@@ -156,6 +161,7 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       await page.goto('/inspect/projects');
       const row = page.getByTestId('project-inventory-row').filter({ hasText: 'project-a' });
       await expect(row).toBeVisible();
+      await expect(page.locator('#fc-account-avatar')).toHaveAccessibleName(/Fixture Reader/);
       await expect(row).not.toContainText('Synthetic project project-a');
       await expect(row.getByTestId('project-inventory-row-snapshot')).toContainText('Project version:');
       await expect(page.getByTestId('project-inventory-page-snapshot')).toContainText('State: Complete');
@@ -206,6 +212,31 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       await page.getByRole('button', { name: 'Conversation-start observation', exact: true }).click();
       await expect(page.getByTestId('project-start-snapshot')).toContainText('State:');
       await expect(page.getByTestId('project-detail-inspector')).not.toContainText('Synthetic project project-a');
+      // Real supported Folder suggestions use the already command-seeded owner/index data.
+      await page.getByRole('button', { name: 'Project suggestions', exact: true }).click();
+      await page.getByRole('checkbox', { name: 'Use attachment inputs' }).click();
+      const folderInputs = page.getByRole('textbox', { name: /Folder IDs/ });
+      await folderInputs.fill('folder-project-a');
+      await page.getByTestId('project-resolution-trace-run').click();
+      await expect(page.getByTestId('project-resolution-trace-outcome')).toContainText('One unselected suggestion');
+      const candidates = page.getByTestId('project-resolution-trace-candidate');
+      await expect(candidates).toHaveCount(1);
+      await expect(candidates.nth(0)).toContainText('Project ID: project-a; Rank: 1; Score: 45; Safe reasons: ProjectFolderMatched');
+      await folderInputs.fill('folder-project-a, folder-project-b');
+      await expect(candidates).toHaveCount(0);
+      await page.getByTestId('project-resolution-trace-run').click();
+      await expect(page.getByTestId('project-resolution-trace-outcome')).toContainText('Multiple unselected suggestions');
+      await expect(candidates).toHaveCount(2);
+      await expect(candidates.nth(0)).toContainText('Project ID: project-a; Rank: 1; Score: 45; Safe reasons: ProjectFolderMatched');
+      await expect(candidates.nth(1)).toContainText('Project ID: project-b; Rank: 2; Score: 45; Safe reasons: ProjectFolderMatched');
+      await expect(page.getByTestId('project-resolution-trace-workbench')).toContainText('grant no association, context or Conversation-start authority');
+      await expect(page.getByTestId('project-resolution-trace-workbench').getByRole('button', { name: /select|associate/i })).toHaveCount(0);
+      await retainSafeReceipt('supported-read-folder-suggestions.json', {
+        single: [{ projectId: 'project-a', rank: 1, score: 45, reasons: ['ProjectFolderMatched'] }],
+        multiple: [{ projectId: 'project-a', rank: 1, score: 45, reasons: ['ProjectFolderMatched'] },
+          { projectId: 'project-b', rank: 2, score: 45, reasons: ['ProjectFolderMatched'] }], unselected: true,
+      });
+      await page.getByRole('button', { name: 'Project suggestions', exact: true }).click();
       const beforeKeyboardRead = /As of:\s*([0-9TZ:+.\-]+)/.exec(await page.getByTestId('project-open-snapshot').innerText())![1];
       await page.getByTestId('project-detail-reread').focus();
       await page.getByTestId('project-detail-reread').press('Enter');
@@ -327,7 +358,7 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       expect(browserTraffic.authorizationHeaders).toBe(0);
       expect(browserTraffic.tokenBearingUrls).toBe(0);
       assertServerOnlySession(await inspectBrowserSession(page, context, process.env.BASE_URL!), 'supported-sdk-browser');
-      expect(telemetry.join('\n')).not.toContain('Synthetic project project-a');
+      for (const marker of protectedText) expect(telemetry.join('\n')).not.toContain(marker);
       await retainJsonReceipt('supported-read-persisted-boundary.json', { before, after, quarantined, inspected, foreignBefore, foreignAfter: await observe('-foreign') });
     } finally { await fixture.dispose(); }
   });

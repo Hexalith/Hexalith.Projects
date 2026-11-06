@@ -27,7 +27,7 @@ builder.Services.AddScoped<ILegacyProjectWarningsDashboardSource, LegacyProjectW
 builder.Services.AddScoped<ILegacyProjectDetailSource, LegacyProjectDetailSource>();
 builder.Services.AddScoped<ILegacyProjectResolutionTraceSource, LegacyProjectResolutionTraceSource>();
 IHttpClientBuilder projectsClient = builder.Services.AddProjectsClient();
-builder.Services.AddScoped<IProjectInventorySource, ProjectInventorySource>();
+builder.Services.AddTransient<IProjectInventorySource, ProjectInventorySource>();
 builder.Services.AddScoped<IProjectWarningsDashboardSource, ProjectWarningsDashboardSource>();
 builder.Services.AddScoped<IProjectOperatorDiagnosticSource, ProjectOperatorDiagnosticSource>();
 builder.Services.AddScoped<IProjectDetailSource, ProjectDetailSource>();

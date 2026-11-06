@@ -1,0 +1,258 @@
+{
+  "story": "6.5",
+  "rootCanonicalRevision": "b79d46e1930d60cd5dcf999c19b9202a563f1f2f",
+  "result": "passed",
+  "humanTestPerformed": false,
+  "humanAudibleEvaluation": false,
+  "productionReadiness": false,
+  "commands": {
+    "managed": "E2E_SUPPORTED_READS_ONLY=1 E2E_SUPPORTED_EVIDENCE=/tmp/story65-supported-browser-native-a11y-20261106-r1 SUPPORTED_READ_MANUAL_HOLD=/tmp/story65-a11y-live-hold SUPPORTED_READ_MANUAL_HOLD_SECONDS=5400 npm --prefix tests/e2e run test:live:managed",
+    "assistive": "STORY65_LIVE_OUTPUT=/tmp/story65-supported-a11y-native-observer-20261106-r3 dbus-run-session -- /usr/bin/python3 /tmp/story65-a11y-tool-probe/live.py",
+    "release": "Create /tmp/story65-a11y-live-hold/release with owner-only permissions; managed launcher removes it and access.json before exact owned cleanup."
+  },
+  "managedResult": "passed",
+  "managedCleanup": {
+    "preexistingResourcesPreserved": true,
+    "ownedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "manualHold": {
+      "released": true,
+      "heldSeconds": 780.0,
+      "limitSeconds": 5400,
+      "accessRemoved": true,
+      "countedAsAutomatedProof": false
+    },
+    "testAssemblyUnchanged": true
+  },
+  "managedBrowserSeed": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "xmlSha256": "137d9ff80133e51dafc4fb007ae19959d77e235d1eda1667e2e2c074f7f36827"
+  },
+  "managedBrowserProof": {
+    "realmSha256": "2192318de556b6e0f36ad53b355236a54ade72b288a44581618fc25ba97c3e8e",
+    "keycloakImageId": "sha256:0aae0de7fca85525f727d3354df17896092de8bb26ae4c12d89c77e5df8cbce4",
+    "realOidc": true,
+    "realOwners": true,
+    "persistedObservation": true,
+    "workers": 1,
+    "manualScreenReader": "pending"
+  },
+  "routeZoomChecks": 6,
+  "assertions": 41,
+  "failedAssertions": [],
+  "announcementSteps": 77,
+  "keyboardFocusStops": 74,
+  "focusOutsideViewport": 0,
+  "focusWithoutVisibleState": 0,
+  "nativeZoomMetrics": [
+    {
+      "step": "native browser zoom 100",
+      "metrics": {
+        "width": 1279,
+        "height": 856,
+        "devicePixelRatio": 1,
+        "cssZoom": "1"
+      }
+    },
+    {
+      "step": "native browser zoom 200",
+      "metrics": {
+        "width": 639,
+        "height": 428,
+        "devicePixelRatio": 2,
+        "cssZoom": "1"
+      }
+    }
+  ],
+  "orcaAnnounced200Percent": true,
+  "freshTimestampProofs": [
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:15:22.6555290+00:00",
+      "afterAsOf": "2026-11-06T13:15:24.5781341+00:00"
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:15:41.4264302+00:00",
+      "afterAsOf": "2026-11-06T13:15:43.7489983+00:00"
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:15:50.2055026+00:00",
+      "afterAsOf": "2026-11-06T13:15:52.5787484+00:00"
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:16:09.4910568+00:00",
+      "afterAsOf": "2026-11-06T13:16:13.7879504+00:00"
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:16:41.8689164+00:00",
+      "afterAsOf": "2026-11-06T13:16:44.6228557+00:00"
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:16:58.5102600+00:00",
+      "afterAsOf": "2026-11-06T13:16:59.8501212+00:00"
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:17:03.4808909+00:00",
+      "afterAsOf": "2026-11-06T13:17:05.1565709+00:00"
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T13:17:21.9244340+00:00",
+      "afterAsOf": "2026-11-06T13:17:23.7651899+00:00"
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "detail-native-100.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/detail-native-100.png",
+      "sha256": "663ea1ab892eabccbf83c36becf7ce0854726316c97fa816b96a48a854d88f53",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    },
+    {
+      "name": "detail-native-200.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/detail-native-200.png",
+      "sha256": "6347fa160b1e31c284d015deb8fdfb6079c2c806d92e195e6fa88b8ef6b74af9",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    },
+    {
+      "name": "inventory-native-100.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/inventory-native-100.png",
+      "sha256": "d097b1c064742614c8ed66aac423832dfc13d5f82adefe340339483e7f9f4ac9",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    },
+    {
+      "name": "inventory-native-200.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/inventory-native-200.png",
+      "sha256": "98adc1df42474bfc68b2fc546d803d2f438aed6a138dfa9aa8a1f4342d439154",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    },
+    {
+      "name": "suggestions-native-100.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/suggestions-native-100.png",
+      "sha256": "efeab56f651df41ced87df81d99a39b8e999409aad036390d2cbdbfe5fc27e5f",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    },
+    {
+      "name": "suggestions-native-200.png",
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r3/suggestions-native-200.png",
+      "sha256": "01e28be931f7b0ff3aa278d5ad5c8f082198cf4e52133fed46936517208f95f3",
+      "physicalPixels": [
+        1280,
+        1000
+      ],
+      "reviewedBy": "Codex visual inspection",
+      "humanReview": false,
+      "finding": "Text and controls remain legible and reflow at the captured native zoom. Screens show scroll positions used during keyboard/contrast checks; content outside the current vertical viewport remains scrollable. No unresolved critical or serious visual finding."
+    }
+  ],
+  "limitations": [
+    "These are actual assistive runtime checks driven and visually inspected by Codex, not a human listening session or exhaustive WCAG certification.",
+    "Speech synthesis used the actual espeak-ng engine with ALSA null output; emitted utterances and synthesis counts are retained, raw speech/debug/browser-session capture was removed.",
+    "Only the recorded Chrome/Orca/OS and Safe Metadata journeys were checked. Existing audit/browser and tenant-isolation proof remains in the managed receipts.",
+    "Folder availability degraded during some reads; delivered unavailable/Retry evidence was preserved and was not converted into Complete.",
+    "Adjacent Orca utterances can lag a keyboard event; emitted order is retained and input effects/focus are also checked independently."
+  ],
+  "sprintStatusChanged": false,
+  "sourceChanges": false,
+  "recordedAtUtc": "2026-11-06T13:19:47.764149+00:00",
+  "axe": [
+    {
+      "file": "detail-native-100-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [
+        "color-contrast"
+      ],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 10
+    },
+    {
+      "file": "detail-native-200-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 0
+    },
+    {
+      "file": "inventory-native-100-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [
+        "color-contrast"
+      ],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 2
+    },
+    {
+      "file": "inventory-native-200-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [
+        "color-contrast"
+      ],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 3
+    },
+    {
+      "file": "suggestions-native-100-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [
+        "color-contrast"
+      ],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 1
+    },
+    {
+      "file": "suggestions-native-200-axe.json",
+      "violations": 0,
+      "originalIncompleteRules": [],
+      "unresolvedIncompleteRuleCount": 0,
+      "contrastDeterminationCount": 0
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectBrowserSeedTests.SeedRealOidcBrowserFixture [FAIL]
+      System.InvalidOperationException : Real supported Folder advisory readiness was not established; inspect its closed setup observations.
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectAdvisoryReadiness.cs(23,0): at Hexalith.Projects.Integration.Tests.SupportedProjectAdvisoryReadiness.WaitAsync(Func`3 read, Boolean multiple, CancellationToken cancellationToken, Func`3 wait)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(288,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.WaitForBrowserAdvisoryReadinessAsync(String credential)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(253,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.SeedAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectBrowserSeedTests.cs(15,0): at Hexalith.Projects.Integration.Tests.SupportedProjectBrowserSeedTests.SeedRealOidcBrowserFixture()
+        --- End of stack trace from previous location ---
+  Finished:    Hexalith.Projects.Integration.Tests (ID = '116aa5d77161c1d8b1b7a0a9d7e5e8f4b3a01f8c88bcc7f66a2c457a941f0c1b')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 204.695s

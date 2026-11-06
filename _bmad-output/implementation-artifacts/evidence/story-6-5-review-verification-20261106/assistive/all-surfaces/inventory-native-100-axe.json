@@ -1,0 +1,363 @@
+{
+  "surface": "inventory-native-100",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "timestamp": "2026-11-06T15:00:16.759Z",
+  "passes": 18,
+  "colorContrastPassed": true,
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            "fluent-link[data-testid=\"project-inventory-row-link\"][aria-label=\"Open project project-a\"]"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "fluent-link[data-testid=\"project-inventory-row-link\"][aria-label=\"Open project project-b\"]"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "violations": [],
+  "geometry": {
+    "width": 1279,
+    "height": 856,
+    "devicePixelRatio": 1,
+    "cssZoom": "1",
+    "horizontalOverflow": false
+  },
+  "contrastDeterminations": [
+    {
+      "target": [
+        "fluent-link[data-testid=\"project-inventory-row-link\"][aria-label=\"Open project project-a\"]"
+      ],
+      "nodeText": "project-a",
+      "resolvedTag": "fluent-link",
+      "resolvedPart": null,
+      "foreground": "rgb(24, 100, 110)",
+      "effectiveBackgroundRgb": [
+        255,
+        255,
+        255
+      ],
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "ancestorBackgroundWalk": [
+        {
+          "tag": "fluent-link",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "fluent-accordion-item",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "fluent-accordion",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "section",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "body",
+          "part": null,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "html",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        }
+      ],
+      "solidOpaqueColorPath": true,
+      "contrastRatio": 6.803019892082296,
+      "minimumRequired": 4.5,
+      "passes": true,
+      "method": "W3C WCAG 2.2 G18 relative luminance and computed solid rendered colors",
+      "source": "https://www.w3.org/WAI/WCAG22/Techniques/general/G18"
+    },
+    {
+      "target": [
+        "fluent-link[data-testid=\"project-inventory-row-link\"][aria-label=\"Open project project-b\"]"
+      ],
+      "nodeText": "project-b",
+      "resolvedTag": "fluent-link",
+      "resolvedPart": null,
+      "foreground": "rgb(24, 100, 110)",
+      "effectiveBackgroundRgb": [
+        255,
+        255,
+        255
+      ],
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "ancestorBackgroundWalk": [
+        {
+          "tag": "fluent-link",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "fluent-accordion-item",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "fluent-accordion",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "section",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "div",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "body",
+          "part": null,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        },
+        {
+          "tag": "html",
+          "part": null,
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "backgroundImage": "none",
+          "opacity": "1",
+          "filter": "none",
+          "mixBlendMode": "normal"
+        }
+      ],
+      "solidOpaqueColorPath": true,
+      "contrastRatio": 6.803019892082296,
+      "minimumRequired": 4.5,
+      "passes": true,
+      "method": "W3C WCAG 2.2 G18 relative luminance and computed solid rendered colors",
+      "source": "https://www.w3.org/WAI/WCAG22/Techniques/general/G18"
+    }
+  ],
+  "unresolvedIncompleteRuleCount": 0
+}

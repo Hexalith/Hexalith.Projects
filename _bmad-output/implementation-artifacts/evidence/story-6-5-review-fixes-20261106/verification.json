@@ -1,0 +1,51 @@
+{
+  "canonicalRootRevision": "b79d46e1930d60cd5dcf999c19b9202a563f1f2f",
+  "recordedAtUtc": "2026-11-06T13:57:02.996271+00:00",
+  "checks": {
+    "uiBuild": {
+      "warnings": 0,
+      "errors": 0,
+      "command": "source /tmp/story65-env.sh; dotnet build tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --configuration Debug -m:1 -p:NuGetAudit=false --disable-build-servers"
+    },
+    "uiTests": {
+      "total": "39",
+      "passed": "39",
+      "failed": "0",
+      "skipped": "0",
+      "errors": "0"
+    },
+    "uiCommand": "dotnet tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll -class Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests -class Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests -class Hexalith.Projects.UI.Tests.Components.ProjectNavigationTests -xml /tmp/story65-reviewfix-ui-tests-final.xml",
+    "python": {
+      "passed": 19,
+      "command": "python3 -m unittest tests.tools.test_supported_project_reads_launcher.BrowserReviewCorrectionsTests tests.tools.test_supported_project_reads_launcher.BrowserReceiptControls tests.tools.test_supported_project_reads_launcher.BrowserTelemetryCoverageTests"
+    },
+    "axe": {
+      "passed": 2,
+      "command": "./node_modules/.bin/playwright test specs/a11y-sanitization.spec.ts --project chromium --workers 1 --retries 0 --output /tmp/story65-reviewfix-playwright-2",
+      "workingDirectory": "tests/e2e"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "command": "npm --prefix tests/e2e run typecheck"
+    }
+  },
+  "sourceManifest": {
+    "src/Hexalith.Projects.UI/Program.cs": "5afc74ee283f21d43c43ad2cbad27bc586d635bc3fa6de305b4b2a763224b31c",
+    "src/Hexalith.Projects.UI/Components/Pages/ProjectDiagnostics.razor": "4efacf9740401e80954ad69724d999128da20665c4b3b9ffb396b45b07622b47",
+    "src/Hexalith.Projects.UI/Components/Shared/ProjectResolutionTraceWorkbench.razor": "0b1b63f0fc5360f1ea1b2baf8bbdea744784f6dc614fe033f9a184873ae4bb0b",
+    "src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json": "9fec01cebb658607e7699e69dd553da23a7866e78d5c627402ed677299aa1543",
+    "tests/Hexalith.Projects.UI.Tests/Components/ProjectNavigationTests.cs": "8d214b8ef4ff47fc7cc0197d4b7056a81c16666b6fc6b75926793037e5b8102f",
+    "tests/Hexalith.Projects.UI.Tests/Components/SupportedProjectReadPageTests.cs": "a7516bddee97162cfe2746c0ddf104b46f64b44a6ec62d0452010346f2477c4e",
+    "tests/Hexalith.Projects.UI.Tests/Diagnostics/SupportedProjectReadSourceTests.cs": "34e4c2f739fb83c2f5085fba9d7da362a75f1717d09b35fc8a5dfa8ff76573df",
+    "tests/e2e/run-live-apphost.sh": "11b3035d3178b1b6f705f5a63a838e1b00c5048c092df0b495fc697c0788ae42",
+    "tests/e2e/specs/projects-supported-read-browser.spec.ts": "8381e35d2eaffe4ffd8e2603184e9d640f4f7db861761fecd528d9774c5890a4",
+    "tests/e2e/specs/a11y-sanitization.spec.ts": "7d52be13468025227354228a4a8b1c75cd21289047ea1525e814222a13b65ec0",
+    "tests/e2e/support/helpers/a11y.ts": "05dc3b6d2cf172c845b41f2e60cfc2d9b39cf172d9e28761fad565184cebc970",
+    "tests/tools/test_supported_project_reads_launcher.py": "ba761766b6643804c2dc59ca2cbda3794f7d8ad60b342cc477980fe156b9105e",
+    "tools/qualification/supported_browser_reads.py": "db3bc71a795c843e1f22069bdd5032dadaa50bcc3806fff03a894e9a6038eac2"
+  },
+  "broaderVerification": "Not run; primary agent owns fresh full native/managed/actual-assistive verification. New friendly-account and real single/multiple Folder suggestions browser cases are typechecked here, not counted as executed live proof.",
+  "navigationProductionChange": false,
+  "protectedFixtureHelper": "tools/qualification/supported_browser_reads.py::PROTECTED_FIXTURE_MARKERS",
+  "preexistingSpecAndEvidencePreserved": true
+}

@@ -30,7 +30,7 @@
                 <ProjectReadSnapshot Snapshot="opened.Snapshot" TestId="project-open-snapshot" />
                 @foreach (ProjectReadReference reference in opened.References)
                 {
-                    <FluentText data-testid="project-open-reference">@reference.ReferenceKind: @reference.FolderId @reference.FileReferenceId @reference.MemoryReferenceId; @reference.ReferenceState; @reference.ReasonCode; Observed: @reference.ObservedAt.ToString("O")</FluentText>
+                    <FluentText data-testid="project-open-reference">@reference.ReferenceKind: @reference.FolderId @reference.FileReferenceId @reference.MemoryReferenceId@if (reference.DisplayName is { Length: > 0 } label) { <FluentText data-testid="project-open-reference-label"> — @label</FluentText> }; @reference.ReferenceState; @reference.ReasonCode; Observed: @reference.ObservedAt.ToString("O")</FluentText>
                 }
             </FluentAccordionItem>
             <FluentAccordionItem Header="Context observation">

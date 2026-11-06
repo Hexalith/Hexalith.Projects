@@ -1,0 +1,126 @@
+{
+  "scope": "Current-source frozen-matrix native verification; overall live feature acceptance remains pending.",
+  "xml": "ui-tests.xml",
+  "xmlSha256": "5670aa7682b972f7c09620452d3acf8e283cbe61a56de6194d9bad40800c846a",
+  "executedTests": 211,
+  "passed": 211,
+  "failed": 0,
+  "skipped": 0,
+  "errors": 0,
+  "allMatrixRowsCoveredAndPassed": true,
+  "rows": [
+    {
+      "row": 1,
+      "given": "Anonymous/missing authority",
+      "when": "Supported route loads",
+      "then": "Challenge or fail closed before protected queries",
+      "coveringTests": [
+        {
+          "type": "Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests",
+          "method": "RoutesShouldProtectInteractiveRenderingAndChallengeAnonymousUsers",
+          "name": "Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.RoutesShouldProtectInteractiveRenderingAndChallengeAnonymousUsers",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "MissingServerAuthenticationFailsBeforeGatewayIncludingAuthDisabledStartup",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.MissingServerAuthenticationFailsBeforeGatewayIncludingAuthDisabledStartup",
+          "result": "Pass"
+        }
+      ]
+    },
+    {
+      "row": 2,
+      "given": "Authorized page and degraded row",
+      "when": "Inventory renders",
+      "then": "Preserve page enumeration and each row snapshot independently",
+      "coveringTests": [
+        {
+          "type": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests",
+          "method": "InventoryRendersIndependentEnumerationAndRowEvidenceWithoutInventedDatesOrWarnings",
+          "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.InventoryRendersIndependentEnumerationAndRowEvidenceWithoutInventedDatesOrWarnings",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "InventoryPreservesIndependentPageAndDegradedRowEvidenceWithoutDiagnosticFanout",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.InventoryPreservesIndependentPageAndDegradedRowEvidenceWithoutDiagnosticFanout",
+          "result": "Pass"
+        }
+      ]
+    },
+    {
+      "row": 3,
+      "given": "Open/context/start observations differ",
+      "when": "Detail renders",
+      "then": "Separate states, times, versions, omissions and recovery; no combined admission",
+      "coveringTests": [
+        {
+          "type": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests",
+          "method": "DetailLabelsThreeIndependentStatesAndVersionsAndOffersNoUnsupportedControls",
+          "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.DetailLabelsThreeIndependentStatesAndVersionsAndOffersNoUnsupportedControls",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "DetailPreservesThreeStatesVersionsAndConversationStartComponentType",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DetailPreservesThreeStatesVersionsAndConversationStartComponentType",
+          "result": "Pass"
+        }
+      ]
+    },
+    {
+      "row": 4,
+      "given": "Absent/denied/foreign/unverifiable target",
+      "when": "Open requested",
+      "then": "Identical generic safe absence without protected metadata",
+      "coveringTests": [
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 401)",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 403)",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 404)",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 503)",
+          "result": "Pass"
+        }
+      ]
+    },
+    {
+      "row": 5,
+      "given": "Incomplete advisory or unsupported File",
+      "when": "Suggestions render",
+      "then": "Explicit coverage limits; no exhaustive NoMatch, selection or admission claim",
+      "coveringTests": [
+        {
+          "type": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests",
+          "method": "EmptyIncompleteAdvisoryHasNoExhaustiveMatchOrSelectionClaim",
+          "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.EmptyIncompleteAdvisoryHasNoExhaustiveMatchOrSelectionClaim",
+          "result": "Pass"
+        },
+        {
+          "type": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests",
+          "method": "AdvisoryPreservesNullIncompleteFileCoverageAndComputationTime",
+          "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.AdvisoryPreservesNullIncompleteFileCoverageAndComputationTime",
+          "result": "Pass"
+        }
+      ]
+    }
+  ],
+  "canonicalRevision": "b79d46e1930d60cd5dcf999c19b9202a563f1f2f"
+}

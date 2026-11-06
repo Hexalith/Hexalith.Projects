@@ -2280,6 +2280,103 @@ class BrowserReceiptControls(unittest.TestCase):
             self.assertFalse(evidence.exists())
 
 
+class BrowserReviewCorrectionsTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("supported_browser_reads", ROOT / "tools/qualification/supported_browser_reads.py")
+        self.browser = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.browser)
+
+    def test_post_seed_readiness_token_is_private_and_in_every_output_protection_collection(self):
+        fixture = {"Browser": {key: key + "-credential" for key in ("Password", "ClientSecret", "TenantToken", "ForeignToken")}}
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            fresh = "eyJabcdefgh.freshreadtoken.abcdefgh"
+            path = private / "browser-readiness-credential.json"
+            path.write_text(json.dumps({"accessToken": fresh, "acquiredAfterSeeding": True}))
+            path.chmod(0o600)
+            values = self.browser.protected_browser_values(fixture, private)
+            self.assertIn(fresh, values)
+            self.assertTrue(set(self.browser.PROTECTED_FIXTURE_MARKERS).issubset(values))
+            self.assertNotIn(fresh, self.browser.sanitize_output("seed failure " + fresh, values))
+            observation = self.browser._LogObservation(values)
+            observation.accept(fresh.encode())
+            self.assertFalse(observation.receipt()["protectedMarkerAbsent"])
+            path.chmod(0o644)
+            with self.assertRaises(RuntimeError):
+                self.browser.protected_browser_values(fixture, private)
+
+    def test_wrong_issuer_discovery_uses_delay_and_existing_deadline(self):
+        now = [0.0]
+        calls, sleeps = [], []
+        def open_url(*args, **kwargs):
+            calls.append(args[0])
+            return io.StringIO(json.dumps({"issuer": "https://another-issuer.invalid"}))
+        def sleep(seconds):
+            sleeps.append(seconds)
+            now[0] += seconds
+        with self.assertRaisesRegex(RuntimeError, "OIDC readiness"):
+            self.browser.wait_for_oidc("https://expected.invalid", None, seconds=.5,
+                clock=lambda: now[0], sleep=sleep, opener=open_url)
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(sleeps, [.25, .25])
+
+    def test_correct_discovery_finishes_without_polling_delay(self):
+        self.browser.wait_for_oidc("https://expected.invalid", None,
+            opener=lambda *args, **kwargs: io.StringIO('{"issuer":"https://expected.invalid"}'),
+            sleep=lambda _: self.fail("A matching issuer must finish"))
+
+    def test_retained_assertion_output_redacts_every_fixture_marker_and_arbitrary_jwt(self):
+        markers = self.browser.PROTECTED_FIXTURE_MARKERS
+        expected = {"Synthetic project project-a", "Synthetic project project-b", "Foreign synthetic name",
+                    "Owned folder label", "Legacy project legacy-a", "Legacy project legacy-b",
+                    "Synthetic descriptive metadata", "Restricted legacy description", "Restricted legacy setup reference"}
+        self.assertEqual(set(markers), expected)
+        token = "eyJabcdefgh." + "A" * 100000 + ".abcdefgh"
+        raw = "<failure>" + "\n".join(markers) + " private-password " + token + "</failure>"
+        sanitized = self.browser.sanitize_output(raw, [*markers, "private-password"])
+        for marker in [*markers, "private-password", token]:
+            self.assertNotIn(marker, sanitized)
+        self.assertIn("[redacted-jwt]", sanitized)
+        ET.fromstring(sanitized)
+        with tempfile.TemporaryDirectory() as temporary:
+            for name in ("browser.log", "browser.xml", "browser-seed.log", "browser-seed.xml"):
+                path = Path(temporary) / name
+                self.browser.write_sanitized_output(path, raw, [*markers, "private-password"])
+                self.assertEqual(path.read_text(), sanitized)
+
+    def test_standard_keycloak_scopes_keep_real_identity_and_role_mappers(self):
+        realm = json.loads((ROOT / "src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json").read_text())
+        scopes = {scope["name"]: scope for scope in realm["clientScopes"]}
+        profile = {mapper["name"]: mapper for mapper in scopes["profile"]["protocolMappers"]}
+        self.assertEqual(profile["username"]["config"]["claim.name"], "preferred_username")
+        self.assertEqual(profile["given name"]["config"]["claim.name"], "given_name")
+        self.assertEqual(profile["family name"]["config"]["claim.name"], "family_name")
+        self.assertEqual(profile["full name"]["protocolMapper"], "oidc-full-name-mapper")
+        self.assertEqual(profile["full name"]["config"]["id.token.claim"], "true")
+        self.assertEqual(len(scopes["email"]["protocolMappers"]), 2)
+        self.assertEqual({m["protocolMapper"] for m in scopes["roles"]["protocolMappers"]},
+            {"oidc-usermodel-realm-role-mapper", "oidc-usermodel-client-role-mapper", "oidc-audience-resolve-mapper"})
+        for name in ("basic", "web-origins", "acr"):
+            self.assertTrue(scopes[name]["protocolMappers"])
+
+    def test_supported_only_exec_removes_only_its_two_owned_temporary_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            binaries, allocations = root / "bin", root / "allocations"
+            binaries.mkdir(); allocations.mkdir()
+            for name in ("aspire", "jq", "npm", "npx", "python3"):
+                path = binaries / name
+                path.write_text("#!/bin/sh\nexit 0\n"); path.chmod(0o700)
+            unrelated = allocations / "pre-existing"; unrelated.write_text("preserve")
+            env = dict(os.environ, PATH=str(binaries) + ":" + os.environ["PATH"],
+                TMPDIR=str(allocations), E2E_SUPPORTED_READS_ONLY="1")
+            result = subprocess.run(["bash", str(ROOT / "tests/e2e/run-live-apphost.sh")],
+                env=env, capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(list(allocations.iterdir()), [unrelated])
+            self.assertEqual(unrelated.read_text(), "preserve")
+
+
 class BrowserTelemetryCoverageTests(unittest.TestCase):
     def setUp(self):
         spec = importlib.util.spec_from_file_location('supported_browser_reads', ROOT / 'tools/qualification/supported_browser_reads.py')

@@ -1,0 +1,57 @@
+{
+  "recordedAtUtc": "2026-11-06T14:27:27.471912+00:00",
+  "originalFailure": {
+    "nativeSeedPassed": 1,
+    "browserFailed": 1,
+    "browserFailingLine": 221,
+    "observed": "No suggestion observed; coverage incomplete",
+    "exactNormalReturnBranch": "not established by retained metadata; original private runtime was cleaned",
+    "verifiedFixtureGap": "SeedAsync checked accepted commands/named projection completion/catalog presence but did not execute the positive advisory generation/index/Folder-authority path before browser handoff."
+  },
+  "change": {
+    "where": "fixture setup only",
+    "realPublicAdvisoryQueries": true,
+    "expectedSingleAndMultipleCandidatesRequired": true,
+    "maxAttemptsPerShape": 30,
+    "pollMilliseconds": 250,
+    "sharedSetupBudgetSeconds": 90,
+    "ownerBudgetsChanged": false,
+    "browserPositiveAssertionsChanged": false,
+    "fabricatedProjectionWrites": false,
+    "siblingSourcesChanged": false
+  },
+  "credential": {
+    "privateClient": "supported-read-reader",
+    "newClientSecret": false,
+    "minted": "after command/projection/catalog seeding completes, directly from the real OIDC token endpoint",
+    "lifetime": "requires actual remaining lifetime >90 seconds; no token lifetime setting changed",
+    "privateFile": "<owned-private-directory>/browser-readiness-credential.json",
+    "tokenField": "accessToken",
+    "protectionHelper": "tools/qualification/supported_browser_reads.py::protected_browser_values(fixture, private)",
+    "nativeProtection": "_browserReadToken is appended to ProtectedValues()",
+    "publishedCredential": false
+  },
+  "focusedTests": {
+    "total": "17",
+    "passed": "17",
+    "failed": "0",
+    "skipped": "0",
+    "errors": "0"
+  },
+  "pythonControls": {
+    "passed": 20
+  },
+  "commands": [
+    "source /tmp/story65-env.sh; dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --configuration Debug -m:1 -p:SupportedProjectReadDistributed=true -p:NuGetAudit=false --disable-build-servers",
+    "dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll -class Hexalith.Projects.Integration.Tests.SupportedProjectAdvisoryReadinessTests -xml /tmp/story65-advisory-readiness-tests.xml",
+    "python3 -m unittest tests.tools.test_supported_project_reads_launcher.BrowserReviewCorrectionsTests tests.tools.test_supported_project_reads_launcher.BrowserReceiptControls tests.tools.test_supported_project_reads_launcher.BrowserTelemetryCoverageTests"
+  ],
+  "currentSourceSha256": {
+    "tools/qualification/supported_browser_reads.py": "36db40b792d0e7cf97a80f80ed5ef7c509722c6812d4a664ec2aee50a9398d70",
+    "tests/tools/test_supported_project_reads_launcher.py": "93a0f618c5eb71fe694d5800dbb35531e5a6a522c700a2ba7c2f26e1a4f21bdd",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs": "cf5cc123abe51365cf4af1b8312b28f1e29d1d25bcafdc3a9905dea8099a16f9",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectAdvisoryReadiness.cs": "4beccc0510018f2ee6598123d90a1837281594b162c112348df44e9e23b55c69",
+    "tests/Hexalith.Projects.Integration.Tests/SupportedProjectAdvisoryReadinessTests.cs": "8897bb31588b76876fb6269caac9090f09f72444f08acb975e9219444e96a5b4"
+  },
+  "liveVerification": "Not run here, as requested. The primary agent will execute fresh native/managed/assistive verification and inspect browser-advisory-seed-readiness.jsonl."
+}

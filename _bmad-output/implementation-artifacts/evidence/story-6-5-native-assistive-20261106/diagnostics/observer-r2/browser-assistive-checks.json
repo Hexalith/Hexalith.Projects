@@ -1,0 +1,2415 @@
+{
+  "qualification": "actual-assistive-technology-and-native-browser-zoom",
+  "humanTestPerformed": false,
+  "realOidc": true,
+  "routes": [
+    {
+      "surface": "inventory",
+      "path": "/inspect/projects",
+      "nativeZoom": 100,
+      "axeReceipt": "inventory-native-100-axe.json",
+      "incompleteRules": [
+        "color-contrast"
+      ]
+    },
+    {
+      "surface": "detail",
+      "path": "/inspect/projects/project-a",
+      "nativeZoom": 100,
+      "axeReceipt": "detail-native-100-axe.json",
+      "incompleteRules": [
+        "color-contrast"
+      ]
+    },
+    {
+      "surface": "suggestions",
+      "path": "/inspect/projects/project-a",
+      "nativeZoom": 100,
+      "axeReceipt": "suggestions-native-100-axe.json",
+      "incompleteRules": [
+        "color-contrast"
+      ]
+    },
+    {
+      "surface": "inventory",
+      "path": "/inspect/projects",
+      "nativeZoom": 200,
+      "axeReceipt": "inventory-native-200-axe.json",
+      "incompleteRules": [
+        "color-contrast"
+      ]
+    },
+    {
+      "surface": "detail",
+      "path": "/inspect/projects/project-a",
+      "nativeZoom": 200,
+      "axeReceipt": "detail-native-200-axe.json",
+      "incompleteRules": []
+    },
+    {
+      "surface": "suggestions",
+      "path": "/inspect/projects/project-a",
+      "nativeZoom": 200,
+      "axeReceipt": "suggestions-native-200-axe.json",
+      "incompleteRules": []
+    }
+  ],
+  "checks": [
+    {
+      "step": "native zoom reset",
+      "announcements": []
+    },
+    {
+      "step": "native browser zoom 100",
+      "metrics": {
+        "width": 1279,
+        "height": 856,
+        "devicePixelRatio": 1,
+        "cssZoom": "1"
+      }
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "inventory 100: route announcement",
+      "announcements": [
+        "'Browse mode'",
+        "'left control'",
+        "'escape'",
+        "'leaving main content.'",
+        "'localhost:33895/inspect/projects - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Projects'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 4 landmarks, 1 heading, 3 unvisited links.'",
+        "'Loading.project_inventory_loading'",
+        "'Finished loading.'",
+        "'Page has 4 landmarks, 1 heading, 3 unvisited links.'"
+      ]
+    },
+    {
+      "step": "inventory 100: heading navigation",
+      "announcements": [
+        "'Loading.project_inventory_loading'",
+        "'left control'",
+        "'Skip to content'",
+        "'link.'",
+        "'S'",
+        "'h'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 2",
+      "announcements": [
+        "'main content'",
+        "'Projects'",
+        "'heading 1 clickable.'",
+        "'tab'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 2",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to navigation"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 3",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 3",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 4",
+      "announcements": [
+        "'Skip to navigation'",
+        "'link.'",
+        "'tab'",
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 4",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 5",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 5",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 6",
+      "announcements": [
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'",
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 6",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 7",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 7",
+      "focus": {
+        "testId": "project-navigation-home",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Projects"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 8",
+      "announcements": [
+        "'Open settings'",
+        "'button.'",
+        "'tab'",
+        "'leaving banner.'",
+        "'navigation'",
+        "'Projects'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 8",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-a"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 9",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 9",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-b"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 10",
+      "announcements": [
+        "'List with 2 items'",
+        "'Open project project-a'",
+        "'link.'",
+        "'tab'",
+        "'Open project project-b'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 10",
+      "focus": {
+        "testId": "project-inventory-filter-all",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "All lifecycle states"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 11",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: archived filter: focus 11",
+      "focus": {
+        "testId": "project-inventory-filter-active",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Active"
+      }
+    },
+    {
+      "step": "inventory 100: archived filter: Tab 12",
+      "announcements": [
+        "'leaving list.'",
+        "'leaving navigation.'",
+        "'main content'",
+        "'Lifecycle filter'",
+        "'panel'",
+        "'All lifecycle states'",
+        "'button.'",
+        "'tab'",
+        "'Active'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: archived filter: focus 12",
+      "focus": {
+        "testId": "project-inventory-filter-archived",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Archived"
+      }
+    },
+    {
+      "step": "inventory 100: activate archived filter",
+      "announcements": []
+    },
+    {
+      "assertion": "inventory 100: empty inventory reachable by keyboard",
+      "passed": true
+    },
+    {
+      "step": "inventory 100: restart: Tab 1",
+      "announcements": [
+        "'Archived'",
+        "'button.'",
+        "'space'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: restart: focus 1",
+      "focus": {
+        "testId": "project-inventory-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "inventory 100: restart: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: restart: focus 2",
+      "focus": {
+        "testId": "project-inventory-quarantine",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Quarantine inventory (Administrator inspection, audited names)"
+      }
+    },
+    {
+      "step": "inventory 100: restart: Tab 3",
+      "announcements": [
+        "'leaving panel.'",
+        "'Inspection mode'",
+        "'panel'",
+        "'Descriptive inspection (audited; required in quarantine)'",
+        "'check box not checked.'",
+        "'tab'",
+        "'Quarantine inventory (Administrator inspection, audited names)'",
+        "'check box not checked.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 100: restart: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "button",
+        "hostTag": "fluent-accordion-item",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Inventory"
+      }
+    },
+    {
+      "step": "inventory 100: restart: Tab 4",
+      "announcements": []
+    },
+    {
+      "step": "inventory 100: restart: focus 4",
+      "focus": {
+        "testId": "project-inventory-restart",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Start over"
+      }
+    },
+    {
+      "step": "inventory 100: activate restart",
+      "announcements": [
+        "'leaving panel.'",
+        "'Inventory'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'",
+        "'Start over'",
+        "'button.'",
+        "'Browse mode'",
+        "'return'"
+      ]
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "assertion": "inventory 100: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-100: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-100: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-100: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "inventory 100: read from beginning",
+      "announcements": [
+        "'Hexalith FrontComposer © 2026.'",
+        "'Browse mode'",
+        "'localhost:33895/inspect/projects - Memory usage - 79.3 MB'",
+        "'page tab.'",
+        "'left control'",
+        "'localhost:33895/inspect/projects - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'",
+        "'Skip to content'",
+        "'link.'"
+      ]
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "detail 100: route announcement",
+      "announcements": [
+        "'S'",
+        "'left alt'",
+        "'localhost:33895/inspect/projects - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 4 landmarks, 1 heading, 3 unvisited links.'",
+        "'Loading.project_detail_loading'",
+        "'main content'",
+        "'Re-read supported observations'",
+        "'button.'"
+      ]
+    },
+    {
+      "step": "detail 100: heading navigation",
+      "announcements": [
+        "'Loading.project_detail_loading'",
+        "'left control'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: Tab 1",
+      "announcements": [
+        "'S'",
+        "'h'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: reread: focus 2",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to navigation"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 3",
+      "announcements": [
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'",
+        "'Skip to navigation'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 3",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 4",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: reread: focus 4",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 5",
+      "announcements": [
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'",
+        "'tab'",
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 5",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 6",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: reread: focus 6",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 7",
+      "announcements": [
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'",
+        "'Open settings'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 7",
+      "focus": {
+        "testId": "project-navigation-home",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Projects"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 8",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: reread: focus 8",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-a"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 9",
+      "announcements": [
+        "'leaving banner.'",
+        "'navigation'",
+        "'Projects'",
+        "'link.'",
+        "'tab'",
+        "'List with 2 items'",
+        "'Open project project-a'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 9",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-b"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 10",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: reread: focus 10",
+      "focus": {
+        "testId": "project-detail-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (separately authorized and audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "detail 100: reread: Tab 11",
+      "announcements": [
+        "'Open project project-b'",
+        "'link.'",
+        "'tab'",
+        "'leaving list.'",
+        "'leaving navigation.'",
+        "'main content'",
+        "'Descriptive inspection (separately authorized and audited; required in quarantine)'",
+        "'check box not checked.'"
+      ]
+    },
+    {
+      "step": "detail 100: reread: focus 11",
+      "focus": {
+        "testId": "project-detail-reread",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Re-read supported observations"
+      }
+    },
+    {
+      "step": "detail 100: activate reread",
+      "announcements": []
+    },
+    {
+      "assertion": "detail 100: reread control remains focused",
+      "passed": true
+    },
+    {
+      "step": "detail 100: next observation control",
+      "announcements": [
+        "'tab'",
+        "'Re-read supported observations'",
+        "'button.'",
+        "'return'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 100: next observation control",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: expand Context observation",
+      "announcements": [
+        "'Open observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'",
+        "'Context observation'",
+        "'collapsed button heading 2.'",
+        "'space'"
+      ]
+    },
+    {
+      "step": "detail 100: next observation control",
+      "announcements": []
+    },
+    {
+      "step": "detail 100: expand Conversation-start observation",
+      "announcements": [
+        "'expanded'",
+        "'tab'",
+        "'Conversation-start observation'",
+        "'collapsed button heading 2.'",
+        "'space'"
+      ]
+    },
+    {
+      "assertion": "detail 100: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-100: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-100: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-100: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "detail 100: read from beginning",
+      "announcements": [
+        "'Conversation-start observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'about:blank'",
+        "'page tab.'",
+        "'localhost:33895/inspect/projects/project-a - Memory usage - 111 MB'",
+        "'page tab.'"
+      ]
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "suggestions 100: route announcement",
+      "announcements": [
+        "'left control'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'",
+        "'left alt'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 4 landmarks, 1 heading, 3 unvisited links.'",
+        "'Loading.project_detail_loading'"
+      ]
+    },
+    {
+      "step": "suggestions 100: heading navigation",
+      "announcements": [
+        "'main content'",
+        "'Re-read supported observations'",
+        "'button.'",
+        "'Loading.project_detail_loading'",
+        "'left control'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'S'",
+        "'h'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 2",
+      "announcements": [
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'tab'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: focus 2",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to navigation"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 3",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 3",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 4",
+      "announcements": [
+        "'Skip to navigation'",
+        "'link.'",
+        "'tab'",
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: focus 4",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 5",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 5",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 6",
+      "announcements": [
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'",
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: focus 6",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 7",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 7",
+      "focus": {
+        "testId": "project-navigation-home",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Projects"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 8",
+      "announcements": [
+        "'Open settings'",
+        "'button.'",
+        "'tab'",
+        "'leaving banner.'",
+        "'navigation'",
+        "'Projects'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: focus 8",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-a"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 9",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 9",
+      "focus": {
+        "testId": "project-navigation-project",
+        "tag": "fluent-link",
+        "hostTag": "fluent-link",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Open project project-b"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 10",
+      "announcements": [
+        "'List with 2 items'",
+        "'Open project project-a'",
+        "'link.'",
+        "'tab'",
+        "'Open project project-b'",
+        "'link.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: reread: focus 10",
+      "focus": {
+        "testId": "project-detail-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (separately authorized and audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "suggestions 100: reread: Tab 11",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: reread: focus 11",
+      "focus": {
+        "testId": "project-detail-reread",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Re-read supported observations"
+      }
+    },
+    {
+      "step": "suggestions 100: activate reread",
+      "announcements": []
+    },
+    {
+      "assertion": "suggestions 100: reread control remains focused",
+      "passed": true
+    },
+    {
+      "step": "suggestions 100: next section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: next section",
+      "announcements": [
+        "'Loading.project_detail_loading'",
+        "'tab'",
+        "'Open observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: next section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: next section",
+      "announcements": [
+        "'Context observation'",
+        "'collapsed button heading 2.'",
+        "'tab'",
+        "'Conversation-start observation'",
+        "'collapsed button heading 2.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: expand Project suggestions",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: attachments mode: Tab 1",
+      "announcements": [
+        "'Project suggestions'",
+        "'collapsed button heading 2.'",
+        "'space'",
+        "'expanded'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: attachments mode: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-mode",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Use attachment inputs"
+      }
+    },
+    {
+      "step": "suggestions 100: toggle attachments",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: file input: Tab 1",
+      "announcements": [
+        "'Use attachment inputs'",
+        "'check box not checked.'",
+        "'Browse mode'",
+        "'space'",
+        "'checked'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: file input: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-folder-id",
+        "tag": "textarea",
+        "hostTag": "fluent-textarea",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "textbox",
+        "name": "Folder IDs (maximum 32 raw attachments in total)"
+      }
+    },
+    {
+      "step": "suggestions 100: file input: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: file input: focus 2",
+      "focus": {
+        "testId": "project-resolution-trace-file-id",
+        "tag": "textarea",
+        "hostTag": "fluent-textarea",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "textbox",
+        "name": "File IDs (unsupported coverage)"
+      }
+    },
+    {
+      "step": "suggestions 100: enter unsupported file ID",
+      "announcements": [
+        "'Folder IDs (maximum 32 raw attachments in total)'",
+        "'entry.'",
+        "'Focus mode'",
+        "'tab'",
+        "'File IDs (unsupported coverage)'",
+        "'entry.'",
+        "'u'",
+        "'n'",
+        "'s'",
+        "'u'",
+        "'p'",
+        "'p'",
+        "'o'",
+        "'r'",
+        "'t'",
+        "'e'",
+        "'d'",
+        "'minus'",
+        "'f'",
+        "'i'"
+      ]
+    },
+    {
+      "step": "suggestions 100: evaluate: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: evaluate: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-workbench",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Include archived suggestions"
+      }
+    },
+    {
+      "step": "suggestions 100: evaluate: Tab 2",
+      "announcements": [
+        "'l'",
+        "'e'",
+        "'tab'",
+        "'Include archived suggestions'",
+        "'check box not checked.'",
+        "'Browse mode'"
+      ]
+    },
+    {
+      "step": "suggestions 100: evaluate: focus 2",
+      "focus": {
+        "testId": "project-resolution-trace-run",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Evaluate suggestions"
+      }
+    },
+    {
+      "step": "suggestions 100: evaluate by keyboard",
+      "announcements": []
+    },
+    {
+      "assertion": "suggestions 100: incomplete coverage displayed",
+      "passed": true
+    },
+    {
+      "step": "suggestions 100: next result section",
+      "announcements": [
+        "'tab'",
+        "'Evaluate suggestions'",
+        "'button.'",
+        "'return'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 100: next result section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 100: expand coverage",
+      "announcements": [
+        "'Unselected candidates'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'",
+        "'Evaluation and coverage'",
+        "'collapsed button heading 2.'",
+        "'space'"
+      ]
+    },
+    {
+      "assertion": "suggestions 100: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-100: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-100: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-100: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "suggestions 100: read from beginning",
+      "announcements": [
+        "'main content'",
+        "'Evaluation and coverage'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'left control'"
+      ]
+    },
+    {
+      "step": "native zoom reset",
+      "announcements": [
+        "'localhost:33895/inspect/projects/project-a - Memory usage - 81.9 MB'",
+        "'page tab.'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'",
+        "'left alt'"
+      ]
+    },
+    {
+      "step": "native zoom increment 1",
+      "announcements": []
+    },
+    {
+      "step": "native zoom increment 2",
+      "announcements": [
+        "'left control'",
+        "'left control'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'alert.'",
+        "' 110%Make Text SmallerMake Text LargerReset'",
+        "'notification'",
+        "'110%'",
+        "'left control'"
+      ]
+    },
+    {
+      "step": "native zoom increment 3",
+      "announcements": []
+    },
+    {
+      "step": "native zoom increment 4",
+      "announcements": [
+        "'notification'",
+        "'Zoom: 125% 110%'",
+        "'left control'",
+        "'notification'",
+        "'Zoom: 150% 110%'",
+        "'left control'",
+        "'notification'"
+      ]
+    },
+    {
+      "step": "native zoom increment 5",
+      "announcements": []
+    },
+    {
+      "step": "native browser zoom 200",
+      "metrics": {
+        "width": 639,
+        "height": 428,
+        "devicePixelRatio": 2,
+        "cssZoom": "1"
+      }
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "inventory 200: route announcement",
+      "announcements": [
+        "'Zoom: 175% 110%'",
+        "'left control'",
+        "'notification'",
+        "'Zoom: 200% 110%'",
+        "'escape'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Projects'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 3 landmarks, 1 heading, 1 unvisited link.'",
+        "'Loading.project_inventory_loading'"
+      ]
+    },
+    {
+      "step": "inventory 200: heading navigation",
+      "announcements": [
+        "'left control'",
+        "'Skip to content'",
+        "'link.'",
+        "'S'",
+        "'h'",
+        "'main content'",
+        "'Projects'",
+        "'heading 1 clickable.'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 2",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 3",
+      "announcements": [
+        "'tab'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'",
+        "'banner'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 4",
+      "announcements": [
+        "'Toggle navigation'",
+        "'button.'",
+        "'tab'",
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 4",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 5",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 5",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 6",
+      "announcements": [
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'",
+        "'Open settings'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 6",
+      "focus": {
+        "testId": "project-inventory-filter-all",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "All lifecycle states"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 7",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 7",
+      "focus": {
+        "testId": "project-inventory-filter-active",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Active"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 8",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 8",
+      "focus": {
+        "testId": "project-inventory-filter-archived",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Archived"
+      }
+    },
+    {
+      "step": "inventory 200: activate archived filter",
+      "announcements": [
+        "'leaving banner.'",
+        "'main content'",
+        "'Lifecycle filter'",
+        "'panel'",
+        "'All lifecycle states'",
+        "'button.'",
+        "'tab'",
+        "'Active'",
+        "'button.'",
+        "'tab'",
+        "'Archived'",
+        "'button.'"
+      ]
+    },
+    {
+      "assertion": "inventory 200: empty inventory reachable by keyboard",
+      "passed": true
+    },
+    {
+      "step": "inventory 200: restart: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: restart: focus 1",
+      "focus": {
+        "testId": "project-inventory-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 2",
+      "announcements": [
+        "'space'",
+        "'Loading.project_inventory_loading'",
+        "'tab'",
+        "'leaving panel.'",
+        "'Inspection mode'",
+        "'panel'",
+        "'Descriptive inspection (audited; required in quarantine)'",
+        "'check box not checked.'"
+      ]
+    },
+    {
+      "step": "inventory 200: restart: focus 2",
+      "focus": {
+        "testId": "project-inventory-quarantine",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Quarantine inventory (Administrator inspection, audited names)"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 3",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: restart: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "button",
+        "hostTag": "fluent-accordion-item",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Inventory"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 4",
+      "announcements": [
+        "'tab'",
+        "'Quarantine inventory (Administrator inspection, audited names)'",
+        "'check box not checked.'",
+        "'tab'",
+        "'leaving panel.'",
+        "'Inventory'",
+        "'expanded button heading 2.'"
+      ]
+    },
+    {
+      "step": "inventory 200: restart: focus 4",
+      "focus": {
+        "testId": "project-inventory-restart",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Start over"
+      }
+    },
+    {
+      "step": "inventory 200: activate restart",
+      "announcements": []
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "assertion": "inventory 200: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-200: no unresolved incomplete rules",
+      "passed": false
+    },
+    {
+      "assertion": "inventory-native-200: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-200: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "inventory 200: read from beginning",
+      "announcements": [
+        "'left control'",
+        "'leaving panel.'",
+        "'leaving main content.'",
+        "'invalid grayed.'",
+        "'localhost:33895/inspect/projects - Memory usage - 74.7 MB'",
+        "'page tab.'",
+        "'left alt'",
+        "'localhost:33895/inspect/projects - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'"
+      ]
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "detail 200: route announcement",
+      "announcements": [
+        "'localhost:33895/inspect/projects - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 3 landmarks, 1 heading, 1 unvisited link.'",
+        "'Loading.project_detail_loading'"
+      ]
+    },
+    {
+      "step": "detail 200: heading navigation",
+      "announcements": [
+        "'Loading.project_detail_loading'",
+        "'left control'",
+        "'Skip to content'",
+        "'link.'",
+        "'S'"
+      ]
+    },
+    {
+      "step": "detail 200: reread: Tab 1",
+      "announcements": [
+        "'h'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 200: reread: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "detail 200: reread: focus 2",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 3",
+      "announcements": [
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'",
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 200: reread: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 4",
+      "announcements": []
+    },
+    {
+      "step": "detail 200: reread: focus 4",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 5",
+      "announcements": [
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'",
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 200: reread: focus 5",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 6",
+      "announcements": []
+    },
+    {
+      "step": "detail 200: reread: focus 6",
+      "focus": {
+        "testId": "project-detail-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (separately authorized and audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "detail 200: reread: Tab 7",
+      "announcements": [
+        "'Open settings'",
+        "'button.'",
+        "'tab'",
+        "'leaving banner.'",
+        "'main content'",
+        "'Descriptive inspection (separately authorized and audited; required in quarantine)'",
+        "'check box not checked.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 200: reread: focus 7",
+      "focus": {
+        "testId": "project-detail-reread",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Re-read supported observations"
+      }
+    },
+    {
+      "step": "detail 200: activate reread",
+      "announcements": []
+    },
+    {
+      "assertion": "detail 200: reread control remains focused",
+      "passed": true
+    },
+    {
+      "step": "detail 200: next observation control",
+      "announcements": [
+        "'Re-read supported observations'",
+        "'button.'",
+        "'return'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "detail 200: next observation control",
+      "announcements": []
+    },
+    {
+      "step": "detail 200: expand Context observation",
+      "announcements": []
+    },
+    {
+      "step": "detail 200: next observation control",
+      "announcements": [
+        "'Open observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'",
+        "'Context observation'",
+        "'collapsed button heading 2.'",
+        "'space'"
+      ]
+    },
+    {
+      "step": "detail 200: expand Conversation-start observation",
+      "announcements": []
+    },
+    {
+      "assertion": "detail 200: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-200: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-200: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "detail-native-200: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "detail 200: read from beginning",
+      "announcements": [
+        "'main content'",
+        "'Conversation-start observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'left control'",
+        "'localhost:33895/inspect/projects/project-a - Memory usage - 93.5 MB'",
+        "'page tab.'"
+      ]
+    },
+    {
+      "step": "detail: post-hydration readiness",
+      "webSocketObserved": true,
+      "freshSupportedReadObserved": true
+    },
+    {
+      "step": "suggestions 200: route announcement",
+      "announcements": [
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'",
+        "'left alt'",
+        "'localhost:33895/inspect/projects/project-a - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Re-read supported observations'",
+        "'button.'",
+        "'Finished loading.'",
+        "'Page has 3 landmarks, 1 heading, 1 unvisited link.'"
+      ]
+    },
+    {
+      "step": "suggestions 200: heading navigation",
+      "announcements": [
+        "'left control'"
+      ]
+    },
+    {
+      "step": "suggestions 200: reread: Tab 1",
+      "announcements": [
+        "'Skip to content'",
+        "'link.'",
+        "'S'",
+        "'h'",
+        "'main content'",
+        "'Project project-a'",
+        "'heading 1 clickable.'"
+      ]
+    },
+    {
+      "step": "suggestions 200: reread: focus 1",
+      "focus": {
+        "testId": null,
+        "tag": "a",
+        "hostTag": "a",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "link",
+        "name": "Skip to content"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 2",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: reread: focus 2",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 3",
+      "announcements": [
+        "'tab'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'tab'",
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'"
+      ]
+    },
+    {
+      "step": "suggestions 200: reread: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 4",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: reread: focus 4",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 5",
+      "announcements": [
+        "'tab'",
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'",
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'"
+      ]
+    },
+    {
+      "step": "suggestions 200: reread: focus 5",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 6",
+      "announcements": [
+        "'tab'",
+        "'Open settings'",
+        "'button.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 200: reread: focus 6",
+      "focus": {
+        "testId": "project-detail-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (separately authorized and audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "suggestions 200: reread: Tab 7",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: reread: focus 7",
+      "focus": {
+        "testId": "project-detail-reread",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Re-read supported observations"
+      }
+    },
+    {
+      "step": "suggestions 200: activate reread",
+      "announcements": []
+    },
+    {
+      "assertion": "suggestions 200: reread control remains focused",
+      "passed": true
+    },
+    {
+      "step": "suggestions 200: next section",
+      "announcements": [
+        "'leaving banner.'",
+        "'main content'",
+        "'Descriptive inspection (separately authorized and audited; required in quarantine)'",
+        "'check box not checked.'",
+        "'tab'",
+        "'Re-read supported observations'",
+        "'button.'",
+        "'return'",
+        "'Loading.project_detail_loading'"
+      ]
+    },
+    {
+      "step": "suggestions 200: next section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: next section",
+      "announcements": [
+        "'tab'",
+        "'Open observation'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 200: next section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: expand Project suggestions",
+      "announcements": [
+        "'Context observation'",
+        "'collapsed button heading 2.'",
+        "'tab'",
+        "'Conversation-start observation'",
+        "'collapsed button heading 2.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 200: attachments mode: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: attachments mode: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-mode",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Use attachment inputs"
+      }
+    },
+    {
+      "step": "suggestions 200: toggle attachments",
+      "announcements": [
+        "'Project suggestions'",
+        "'collapsed button heading 2.'",
+        "'space'",
+        "'expanded'",
+        "'tab'",
+        "'Use attachment inputs'",
+        "'check box not checked.'",
+        "'Browse mode'"
+      ]
+    },
+    {
+      "step": "suggestions 200: file input: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: file input: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-folder-id",
+        "tag": "textarea",
+        "hostTag": "fluent-textarea",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "textbox",
+        "name": "Folder IDs (maximum 32 raw attachments in total)"
+      }
+    },
+    {
+      "step": "suggestions 200: file input: Tab 2",
+      "announcements": [
+        "'space'",
+        "'checked'",
+        "'tab'",
+        "'Folder IDs (maximum 32 raw attachments in total)'",
+        "'entry.'",
+        "'Focus mode'"
+      ]
+    },
+    {
+      "step": "suggestions 200: file input: focus 2",
+      "focus": {
+        "testId": "project-resolution-trace-file-id",
+        "tag": "textarea",
+        "hostTag": "fluent-textarea",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "textbox",
+        "name": "File IDs (unsupported coverage)"
+      }
+    },
+    {
+      "step": "suggestions 200: enter unsupported file ID",
+      "announcements": [
+        "'tab'",
+        "'File IDs (unsupported coverage)'",
+        "'entry.'",
+        "'u'",
+        "'n'",
+        "'s'",
+        "'u'",
+        "'p'",
+        "'p'",
+        "'o'",
+        "'r'",
+        "'t'",
+        "'e'",
+        "'d'",
+        "'minus'",
+        "'f'",
+        "'i'",
+        "'l'",
+        "'e'"
+      ]
+    },
+    {
+      "step": "suggestions 200: evaluate: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: evaluate: focus 1",
+      "focus": {
+        "testId": "project-resolution-trace-workbench",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Include archived suggestions"
+      }
+    },
+    {
+      "step": "suggestions 200: evaluate: Tab 2",
+      "announcements": [
+        "'tab'",
+        "'Include archived suggestions'",
+        "'check box not checked.'",
+        "'Browse mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 200: evaluate: focus 2",
+      "focus": {
+        "testId": "project-resolution-trace-run",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Evaluate suggestions"
+      }
+    },
+    {
+      "step": "suggestions 200: evaluate by keyboard",
+      "announcements": []
+    },
+    {
+      "assertion": "suggestions 200: incomplete coverage displayed",
+      "passed": true
+    },
+    {
+      "step": "suggestions 200: next result section",
+      "announcements": [
+        "'Evaluate suggestions'",
+        "'button.'",
+        "'return'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "suggestions 200: next result section",
+      "announcements": []
+    },
+    {
+      "step": "suggestions 200: expand coverage",
+      "announcements": [
+        "'Unselected candidates'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'tab'",
+        "'Evaluation and coverage'",
+        "'collapsed button heading 2.'",
+        "'space'"
+      ]
+    },
+    {
+      "assertion": "suggestions 200: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-200: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-200: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "suggestions-native-200: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "suggestions 200: read from beginning",
+      "announcements": [
+        "'main content'",
+        "'Evaluation and coverage'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'left control'"
+      ]
+    },
+    {
+      "assertion": "Orca produced actual speech output",
+      "passed": true
+    }
+  ],
+  "failures": [
+    "inventory-native-200: no unresolved incomplete rules"
+  ],
+  "screenshots": [
+    {
+      "surface": "inventory",
+      "zoom": 100,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/inventory-native-100.png"
+    },
+    {
+      "surface": "detail",
+      "zoom": 100,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/detail-native-100.png"
+    },
+    {
+      "surface": "suggestions",
+      "zoom": 100,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/suggestions-native-100.png"
+    },
+    {
+      "surface": "inventory",
+      "zoom": 200,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/inventory-native-200.png"
+    },
+    {
+      "surface": "detail",
+      "zoom": 200,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/detail-native-200.png"
+    },
+    {
+      "surface": "suggestions",
+      "zoom": 200,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r2/suggestions-native-200.png"
+    }
+  ],
+  "result": "failed"
+}

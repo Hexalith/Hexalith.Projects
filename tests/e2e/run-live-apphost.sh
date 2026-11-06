@@ -40,6 +40,7 @@ done
 
 if test "${E2E_SUPPORTED_READS_ONLY:-0}" = 1; then
     cd "$repository_root"
+    rm -f "$describe_file" "$start_file"
     exec python3 tools/qualification/run_supported_project_reads.py --browser --timeout "$resource_timeout_seconds" \
         --evidence "${E2E_SUPPORTED_EVIDENCE:-/tmp/projects-supported-browser-$(date -u +%Y%m%d%H%M%S)-$$}"
 fi

@@ -17,23 +17,82 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 
+# Every descriptive value seeded by SupportedProjectReadDistributedFixture, including both Tenants.
+PROTECTED_FIXTURE_MARKERS = (
+    'Synthetic project project-a', 'Synthetic project project-b', 'Foreign synthetic name',
+    'Synthetic descriptive metadata', 'Owned folder label', 'Legacy project legacy-a',
+    'Legacy project legacy-b', 'Restricted legacy description', 'Restricted legacy setup reference',
+)
+JWT_PATTERN = re.compile(r'eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}')
+
+
+def sanitize_output(value, protected):
+    """Redact known protected values and arbitrary JWT-shaped credentials before artifact writes."""
+    import html
+    for marker in sorted(set(protected), key=len, reverse=True):
+        if marker:
+            for encoded in (marker, html.escape(marker), json.dumps(marker)[1:-1]):
+                value = value.replace(encoded, '[redacted]')
+    return JWT_PATTERN.sub('[redacted-jwt]', value)
+
+
+def write_sanitized_output(path, value, protected):
+    """Keep raw assertion/log output inside the private run and publish only redacted artifacts."""
+    Path(path).write_text(sanitize_output(value, protected))
+
+
+
+def protected_browser_values(fixture, private):
+    """Includes the fresh post-seed readiness credential without publishing it outside private custody."""
+    values = [fixture['Browser'][key] for key in ('Password', 'ClientSecret', 'TenantToken', 'ForeignToken')]
+    path = Path(private) / 'browser-readiness-credential.json'
+    if path.exists():
+        if path.is_symlink() or path.stat().st_uid != os.getuid() or path.stat().st_mode & 0o077:
+            raise RuntimeError('The private readiness credential has invalid custody.')
+        credential = json.loads(path.read_text()).get('accessToken')
+        if not isinstance(credential, str) or not credential:
+            raise RuntimeError('The private readiness credential is missing.')
+        values.append(credential)
+    return [*values, *PROTECTED_FIXTURE_MARKERS]
+
+
+def wait_for_oidc(authority, context, *, seconds=120, clock=time.monotonic, sleep=time.sleep, opener=None):
+    """Bound every unsuccessful discovery response, including a valid document with another issuer."""
+    opener = opener or urllib.request.urlopen
+    deadline = clock() + seconds
+    while True:
+        try:
+            with opener(authority + '/.well-known/openid-configuration', context=context, timeout=3) as response:
+                if json.load(response)['issuer'] == authority:
+                    return
+        except (OSError, ValueError, KeyError):
+            pass
+        if clock() >= deadline:
+            raise RuntimeError('Owned HTTPS OIDC readiness failed.') from None
+        sleep(0.25)
+
+
 def prepare_oidc(root, private, isolation, owned, run, free_port, password):
     """Own an HTTPS Keycloak before AppHost startup; leave all existing private guards intact."""
     realm = json.loads((root / 'src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json').read_text())
     clients = {client['clientId']: client for client in realm['clients']}
     api = copy.deepcopy(clients['hexalith-eventstore'])
     api['clientId'] = 'supported-read-bootstrap'
+    reader = copy.deepcopy(api)
+    reader['clientId'] = 'supported-read-reader'
+    reader['protocolMappers'] = [mapper for mapper in reader['protocolMappers']
+        if mapper.get('config', {}).get('claim.name') not in ('global_admin', 'is_global_admin')]
     ui = copy.deepcopy(clients['hexalith-projects-ui'])
     client_secret = secrets.token_hex(32)
     ui['secret'] = client_secret
     # Tenant UI queries do not carry the setup client's global bootstrap marker.
     ui['protocolMappers'] = [mapper for mapper in ui['protocolMappers']
                              if mapper.get('config', {}).get('claim.name') not in ('global_admin', 'is_global_admin')]
-    for client in (api, ui):
+    for client in (api, ui, reader):
         client['protocolMappers'].append({'name': 'supported-read-users-audience', 'protocol': 'openid-connect',
             'protocolMapper': 'oidc-audience-mapper', 'consentRequired': False,
             'config': {'included.client.audience': 'supported-read-users', 'access.token.claim': 'true', 'id.token.claim': 'false'}})
-    realm['clients'] = [api, ui]
+    realm['clients'] = [api, ui, reader]
     template = next(user for user in realm['users'] if user['username'] == 'admin-user')
     permissions = ['command:submit', 'query:read', 'replay:read', 'read_metadata', 'projects:read', 'projects:list',
                    'projects:inspect_descriptive_metadata', 'create_folder', 'manage_folder_access', 'manage_organization_acl',
@@ -76,14 +135,7 @@ def prepare_oidc(root, private, isolation, owned, run, free_port, password):
         raise RuntimeError('OIDC container ownership is unproven.')
     run(['docker', 'start', created])
     context = ssl.create_default_context(cafile=str(private / 'certificate.pem'))
-    deadline = time.monotonic() + 120
-    while True:
-        try:
-            with urllib.request.urlopen(authority + '/.well-known/openid-configuration', context=context, timeout=3) as response:
-                if json.load(response)['issuer'] == authority: break
-        except (OSError, ValueError, KeyError):
-            if time.monotonic() >= deadline: raise RuntimeError('Owned HTTPS OIDC readiness failed.') from None
-            time.sleep(0.25)
+    wait_for_oidc(authority, context)
     tokens = {}
     subjects = {}
     for name in ('actor-1', 'foreign-actor'):
@@ -334,12 +386,15 @@ def manual_hold(directory, access, *, seconds=MANUAL_HOLD_DEFAULT_SECONDS, poll=
 
 def run_browser(root, private, evidence, graph, endpoint, fixture, env, run, assembly, report, run_test_process, group_members):
     """Seed actual persisted owner state through real credentials, then inspect it through OIDC and SDK."""
+    protected = protected_browser_values(fixture, private)
     command = ['dotnet', str(assembly), '-method',
                'Hexalith.Projects.Integration.Tests.SupportedProjectBrowserSeedTests.SeedRealOidcBrowserFixture',
-               '-xml', str(evidence / 'browser-seed.xml')]
+               '-xml', str(private / 'browser-seed.xml')]
     report['commands'].append(command)
     result = run_test_process(command, env=env, timeout=600, cleanup=report.setdefault('testProcessCleanup', []))
-    (evidence / 'browser-seed.log').write_text(result.stdout)
+    protected = protected_browser_values(fixture, private)
+    write_sanitized_output(evidence / 'browser-seed.log', result.stdout, protected)
+    write_sanitized_output(evidence / 'browser-seed.xml', (private / 'browser-seed.xml').read_text(), protected)
     diagnostic = private / 'command-diagnostic.json'
     if diagnostic.exists():
         report['seedCommandRefusal'] = safe_command_refusal(diagnostic)
@@ -371,10 +426,10 @@ def run_browser(root, private, evidence, graph, endpoint, fixture, env, run, ass
                        E2E_FOREIGN_USERNAME='foreign-actor', E2E_FOREIGN_PASSWORD=fixture['Browser']['Password'],
                        KEYCLOAK_REALM='hexalith', TEST_USER_USERNAME='actor-1', TEST_USER_PASSWORD=fixture['Browser']['Password'],
                        E2E_BROWSER_SESSION_FILE=str(private / 'browser-session.json'), TEST_TENANT_ID=fixture['Tenant'], TEST_PRINCIPAL_ID=fixture['Browser']['PrimaryActor'], NODE_EXTRA_CA_CERTS=str(private / 'certificate.pem'))
-    command = ['npx', 'playwright', 'test', 'specs/projects-supported-read-browser.spec.ts', '--project', 'chromium', '--workers', '1', '--retries', '0']
+    browser_env['E2E_PROTECTED_FIXTURE_MARKERS'] = json.dumps(PROTECTED_FIXTURE_MARKERS)
+    browser_env['PLAYWRIGHT_JUNIT_OUTPUT_FILE'] = str(private / 'browser.xml')
+    command = ['npx', 'playwright', 'test', 'specs/projects-supported-read-browser.spec.ts', '--project', 'chromium', '--workers', '1', '--retries', '0', '--reporter=line,junit', '--output', str(private / 'browser-results')]
     report['commands'].append(command)
-    protected = [fixture['Browser']['Password'], fixture['Browser']['ClientSecret'], fixture['Browser']['TenantToken'], fixture['Browser']['ForeignToken'],
-                 'Synthetic project project-a', 'Synthetic descriptive metadata', 'Restricted legacy description']
     monitor = _BrowserTelemetry(root, protected, group_members)
     interval = {}
     try:
@@ -387,13 +442,12 @@ def run_browser(root, private, evidence, graph, endpoint, fixture, env, run, ass
         report['browserTelemetryReaderCleanup'] = [value['cleanup'] for value in telemetry['resources'].values()]
         (evidence / 'browser-telemetry.json').write_text(json.dumps(telemetry, indent=2) + '\n')
         (private / 'browser-session.json').unlink(missing_ok=True)
-    (evidence / 'browser.log').write_text(result.stdout)
-    import shutil
-    junit = root / 'tests/e2e/test-results/junit.xml'
-    if junit.exists(): shutil.copyfile(junit, evidence / 'browser.xml')
-    results = root / 'tests/e2e/test-results'
+    write_sanitized_output(evidence / 'browser.log', result.stdout, protected)
+    junit = private / 'browser.xml'
+    if junit.exists(): write_sanitized_output(evidence / 'browser.xml', junit.read_text(), protected)
+    results = private / 'browser-results'
     for receipt in [*results.glob('*/supported-read-*.json'), *results.glob('*/attachments/supported-read-*.json')]:
-        shutil.copyfile(receipt, evidence / receipt.name)
+        write_sanitized_output(evidence / receipt.name, receipt.read_text(), protected)
     if result.returncode:
         raise RuntimeError('Real authenticated supported browser assertions failed; inspect browser.log.')
     if not telemetry['completeIntervalObserved'] or not telemetry['protectedMarkerAbsent']:

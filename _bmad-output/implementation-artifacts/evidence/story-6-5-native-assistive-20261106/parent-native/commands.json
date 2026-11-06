@@ -1,0 +1,203 @@
+{
+  "canonicalRevision": "b79d46e1930d60cd5dcf999c19b9202a563f1f2f",
+  "reason": "Refresh native evidence after source/dependency drift since historical native17 receipts",
+  "environment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-parent-ui-source-mapping-20261106/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-parent-ui-source-mapping-20261106/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-parent-ui-source-mapping-20261106/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-parent-ui-source-mapping-20261106/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-parent-ui-source-mapping-20261106/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "f2035fb73fbff1a5c1d48747c8ca377bc0a1e3ffb8fa89684a8f7c0b95d6162b",
+    "Configuration": "Debug",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "commands": [
+    {
+      "module": "UI",
+      "build": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests",
+        "command": [
+          "dotnet",
+          "build",
+          "--configuration",
+          "Debug",
+          "-m:1",
+          "-p:NuGetAudit=false",
+          "--disable-build-servers"
+        ],
+        "startedAtUtc": "2026-11-06T13:24:26.358678+00:00",
+        "exitCode": 0,
+        "log": "ui-build.log.txt",
+        "logSha256": "6d9906c65af0ff986d5e60e3c05e048ba0576765c44af05fad79c9d2c1dd761f"
+      },
+      "test": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests",
+        "command": [
+          "dotnet",
+          "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll",
+          "-class",
+          "Hexalith.Projects.UI.Tests.*",
+          "-xml",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-native-assistive-20261106/parent-native/ui-tests.xml"
+        ],
+        "exitCode": 0,
+        "totals": [
+          {
+            "total": "197",
+            "passed": "197",
+            "failed": "0",
+            "skipped": "0",
+            "errors": "0"
+          }
+        ],
+        "log": "ui-tests.log.txt",
+        "xml": "ui-tests.xml",
+        "xmlSha256": "0295f6155694e6b8fcdc2559ab0112c1773c5df3f0618918b7893439415274dc",
+        "assemblySha256": "3cf45bcb7384a138470b118375ff47ebba9a233f0e73d849b55d76d30a4efd93"
+      }
+    },
+    {
+      "module": "Server",
+      "build": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+        "command": [
+          "dotnet",
+          "build",
+          "--configuration",
+          "Debug",
+          "-m:1",
+          "-p:NuGetAudit=false",
+          "--disable-build-servers"
+        ],
+        "startedAtUtc": "2026-11-06T13:25:09.603640+00:00",
+        "exitCode": 0,
+        "log": "server-build.log.txt",
+        "logSha256": "c4c611e0ff57a7312165a7e2369654ca713c57a6ea4ac670190c1f871e86a66b"
+      },
+      "test": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+        "command": [
+          "dotnet",
+          "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+          "-class",
+          "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests",
+          "-class",
+          "Hexalith.Projects.Server.Tests.Queries.GetConversationStartSetupQueryHandlerTests",
+          "-class",
+          "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests",
+          "-method-",
+          "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+          "-xml",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-native-assistive-20261106/parent-native/server-tests.xml"
+        ],
+        "exitCode": 0,
+        "totals": [
+          {
+            "total": "185",
+            "passed": "185",
+            "failed": "0",
+            "skipped": "0",
+            "errors": "0"
+          }
+        ],
+        "log": "server-tests.log.txt",
+        "xml": "server-tests.xml",
+        "xmlSha256": "b7702a4b25cbd0370400e62fa265b4960f47c2fd2f9ac6ce740ede89594255be",
+        "assemblySha256": "34ea64b09830cefd990ebbb675c55de6be9e9baa26fdb001346b02e222f2bc76"
+      }
+    },
+    {
+      "module": "Contracts",
+      "build": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests",
+        "command": [
+          "dotnet",
+          "build",
+          "--configuration",
+          "Debug",
+          "-m:1",
+          "-p:NuGetAudit=false",
+          "--disable-build-servers"
+        ],
+        "startedAtUtc": "2026-11-06T13:26:12.467023+00:00",
+        "exitCode": 0,
+        "log": "contracts-build.log.txt",
+        "logSha256": "0d3cae4abad19b15048dd4122c46aacd6485d6a8c0d66cd68d98354d145b15e9"
+      },
+      "test": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests",
+        "command": [
+          "dotnet",
+          "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll",
+          "-class",
+          "Hexalith.Projects.Contracts.Tests.Ui.ProjectResolutionTraceProjectionTests",
+          "-class",
+          "Hexalith.Projects.Contracts.Tests.Ui.ProjectVocabularyTests",
+          "-xml",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-native-assistive-20261106/parent-native/contracts-tests.xml"
+        ],
+        "exitCode": 0,
+        "totals": [
+          {
+            "total": "46",
+            "passed": "46",
+            "failed": "0",
+            "skipped": "0",
+            "errors": "0"
+          }
+        ],
+        "log": "contracts-tests.log.txt",
+        "xml": "contracts-tests.xml",
+        "xmlSha256": "1114fea612b734052ed32cf91128babdf8fafadf92506959c0a1692a70485a8a",
+        "assemblySha256": "057e47876d9aa56f12f145ebc397be0f4d27b220fa2f242e50b1766cd37a5c5d"
+      }
+    },
+    {
+      "module": "Integration",
+      "build": {
+        "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests",
+        "command": [
+          "dotnet",
+          "build",
+          "--configuration",
+          "Debug",
+          "-m:1",
+          "-p:NuGetAudit=false",
+          "--disable-build-servers"
+        ],
+        "startedAtUtc": "2026-11-06T13:26:17.055843+00:00",
+        "exitCode": 0,
+        "log": "integration-build.log.txt",
+        "logSha256": "9b7315f4fe3011689c47c5ef1ff29ac4bcb4f3991893652ea3d4454bafded105"
+      },
+      "test": {
+        "cwd": "/home/administrator/projects/hexalith/projects",
+        "command": [
+          "dotnet",
+          "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+          "-class",
+          "Hexalith.Projects.Integration.Tests.AspireTopologyTests",
+          "-class",
+          "Hexalith.Projects.Integration.Tests.PersistedReadObserverBindingTests",
+          "-xml",
+          "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-native-assistive-20261106/parent-native/integration-tests.xml"
+        ],
+        "exitCode": 0,
+        "totals": [
+          {
+            "total": "28",
+            "passed": "28",
+            "failed": "0",
+            "skipped": "0",
+            "errors": "0"
+          }
+        ],
+        "log": "integration-tests.log.txt",
+        "xml": "integration-tests.xml",
+        "xmlSha256": "a13b94ae76805151807657082323083ee3adfa1e2f9b974530c287bbce45f73b",
+        "assemblySha256": "d296e593d457932c998ea2369742209cae35ffd5aa6f12ac9264a38ca76a3efd"
+      }
+    }
+  ]
+}

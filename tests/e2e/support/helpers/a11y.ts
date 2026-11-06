@@ -47,9 +47,21 @@ function retainedNode(node: AxeNode): { target: unknown; checks: Array<{ id: str
   return { target: node.target, checks };
 }
 
+/** Removes protected values even when axe uses them inside a CSS selector. */
+export function sanitizeA11yMetadata(value: unknown, forbidden: readonly string[]): unknown {
+  if (typeof value === 'string') {
+    for (const marker of forbidden) if (marker) value = (value as string).replaceAll(marker, '[redacted]');
+    return (value as string).replace(/eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g, '[redacted-jwt]');
+  }
+  if (Array.isArray(value)) return value.map(item => sanitizeA11yMetadata(item, forbidden));
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, sanitizeA11yMetadata(item, forbidden)]));
+  }
+  return value;
+}
+
 /**
- * Run an axe WCAG 2.2 AA scan and assert zero violations. On failure, the full
- * violations report is attached to the test for debugging.
+ * Run an axe WCAG 2.2 AA scan and assert zero violations. On failure, only sanitized rule, selector and numeric check metadata is attached.
  */
 export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, options: A11yScanOptions = {}): Promise<void> {
   let builder = new AxeBuilder({ page }).withTags([...WCAG_AA_TAGS]);
@@ -59,9 +71,11 @@ export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, opt
   if (options.disableRules?.length) builder = builder.disableRules(options.disableRules);
 
   const results = await builder.analyze();
+  const forbidden = options.forbiddenText ?? JSON.parse(process.env.E2E_PROTECTED_FIXTURE_MARKERS ?? '[]') as string[];
+  const safe = (value: unknown) => sanitizeA11yMetadata(value, forbidden);
   if (options.receiptName) {
     const receipt = testInfo.outputPath(options.receiptName);
-    const body = JSON.stringify({
+    const body = JSON.stringify(safe({
         testEngine: results.testEngine,
         timestamp: results.timestamp,
         tags: WCAG_AA_TAGS,
@@ -72,7 +86,7 @@ export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, opt
         // Decided contrast targets let an undetermined node be matched to a definite verdict elsewhere.
         colorContrastPassTargets: results.passes.filter(result => result.id === 'color-contrast').flatMap(result => result.nodes.map(node => node.target)),
         violations: results.violations.map(result => ({ id: result.id, impact: result.impact })),
-      }, null, 2);
+      }), null, 2);
     for (const text of options.forbiddenText ?? []) {
       expect(body.includes(text), `Accessibility receipt ${options.receiptName} retained protected text`).toBe(false);
     }
@@ -82,7 +96,7 @@ export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, opt
 
   if (results.violations.length > 0) {
     await testInfo.attach('axe-violations.json', {
-      body: JSON.stringify(results.violations, null, 2),
+      body: JSON.stringify(safe(results.violations.map(result => ({ id: result.id, impact: result.impact, nodes: result.nodes.map(retainedNode) }))), null, 2),
       contentType: 'application/json',
     });
   }
@@ -90,7 +104,7 @@ export async function expectNoA11yViolations(page: Page, testInfo: TestInfo, opt
   // The assertion output reaches retained logs, so it names rules and selectors only, never HTML.
   const assertion = options.soft ? expect.soft : expect;
   assertion(
-    results.violations.map((violation) => ({ id: violation.id, impact: violation.impact, targets: violation.nodes.map((node) => node.target) })),
+    safe(results.violations.map((violation) => ({ id: violation.id, impact: violation.impact, targets: violation.nodes.map((node) => node.target) }))),
     `Expected no WCAG 2.2 AA violations, found ${results.violations.length}: ${results.violations.map((v) => v.id).join(', ')}`,
   ).toEqual([]);
 }

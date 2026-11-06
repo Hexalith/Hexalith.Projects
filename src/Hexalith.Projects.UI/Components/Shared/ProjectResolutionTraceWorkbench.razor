@@ -5,14 +5,14 @@
 <section class="project-resolution-trace" data-testid="project-resolution-trace-workbench" aria-label="Project suggestions">
     <FluentText>Suggestions are unselected observations. They grant no association, context or Conversation-start authority.</FluentText>
     <FluentText>File identity mapping is unsupported. Evaluation time is computation time; source freshness is not supplied. Lag alone does not imply incomplete coverage.</FluentText>
-    <FluentCheckbox role="checkbox" aria-checked="@_attachments.ToString().ToLowerInvariant()" Label="Use attachment inputs" @bind-Value="_attachments" data-testid="project-resolution-trace-mode" />
-    @if (!_attachments) { <FluentTextInput Width="100%" Label="Conversation ID" @bind-Value="_conversationId" data-testid="project-resolution-trace-conversation-id" /> }
+    <FluentCheckbox role="checkbox" aria-checked="@_attachments.ToString().ToLowerInvariant()" Label="Use attachment inputs" @bind-Value="_attachments" @bind-Value:after="InputsChanged" data-testid="project-resolution-trace-mode" />
+    @if (!_attachments) { <FluentTextInput Immediate="true" ImmediateDelay="0" Width="100%" Label="Conversation ID" @bind-Value="_conversationId" @bind-Value:after="InputsChanged" data-testid="project-resolution-trace-conversation-id" /> }
     else
     {
-        <FluentTextArea Width="100%" Label="Folder IDs (maximum 32 raw attachments in total)" @bind-Value="_folderIds" data-testid="project-resolution-trace-folder-id" />
-        <FluentTextArea Width="100%" Label="File IDs (unsupported coverage)" @bind-Value="_fileIds" data-testid="project-resolution-trace-file-id" />
+        <FluentTextArea Immediate="true" ImmediateDelay="0" Width="100%" Label="Folder IDs (maximum 32 raw attachments in total)" @bind-Value="_folderIds" @bind-Value:after="InputsChanged" data-testid="project-resolution-trace-folder-id" />
+        <FluentTextArea Immediate="true" ImmediateDelay="0" Width="100%" Label="File IDs (unsupported coverage)" @bind-Value="_fileIds" @bind-Value:after="InputsChanged" data-testid="project-resolution-trace-file-id" />
     }
-    <FluentCheckbox role="checkbox" aria-checked="@_includeArchived.ToString().ToLowerInvariant()" Label="Include archived suggestions" @bind-Value="_includeArchived" />
+    <FluentCheckbox role="checkbox" aria-checked="@_includeArchived.ToString().ToLowerInvariant()" Label="Include archived suggestions" @bind-Value="_includeArchived" @bind-Value:after="InputsChanged" />
     <FluentButton role="button" OnClick="RunAsync" Disabled="_loading" data-testid="project-resolution-trace-run">Evaluate suggestions</FluentButton>
     @if (_loading) { <FluentText role="status">Evaluating suggestions</FluentText> }
     else if (_result?.Feedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
@@ -42,14 +42,36 @@
     private bool _attachments, _includeArchived, _loading;
     private string? _conversationId, _folderIds, _fileIds;
     private ProjectResolutionTraceLoadResult? _result;
+    private int _inputGeneration;
+    private CancellationTokenSource? _evaluationCancellation;
+    private void InputsChanged()
+    {
+        ++_inputGeneration;
+        _evaluationCancellation?.Cancel();
+        _result = null;
+        _loading = false;
+    }
     private async Task RunAsync()
     {
+        _evaluationCancellation?.Cancel();
+        _evaluationCancellation?.Dispose();
+        CancellationTokenSource request = _evaluationCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        int generation = ++_inputGeneration;
         _loading = true; _result = null;
-        try { _result = await TraceSource.LoadTraceAsync(_attachments
-            ? ProjectResolutionTraceRequest.ForAttachments([_folderIds ?? ""], [_fileIds ?? ""], _includeArchived)
-            : ProjectResolutionTraceRequest.ForConversation(_conversationId, _includeArchived), _lifetime.Token); }
-        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
-        finally { _loading = false; }
+        try
+        {
+            ProjectResolutionTraceLoadResult result = await TraceSource.LoadTraceAsync(_attachments
+                ? ProjectResolutionTraceRequest.ForAttachments([_folderIds ?? ""], [_fileIds ?? ""], _includeArchived)
+                : ProjectResolutionTraceRequest.ForConversation(_conversationId, _includeArchived), request.Token);
+            if (generation == _inputGeneration && !request.IsCancellationRequested) _result = result;
+        }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
+        finally { if (generation == _inputGeneration) _loading = false; }
     }
-    public void Dispose() { _lifetime.Cancel(); _lifetime.Dispose(); }
+    public void Dispose()
+    {
+        ++_inputGeneration;
+        _evaluationCancellation?.Cancel(); _evaluationCancellation?.Dispose();
+        _lifetime.Cancel(); _lifetime.Dispose();
+    }
 }

@@ -1,0 +1,43 @@
+{
+  "surface": "suggestions-native-100",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "timestamp": "2026-11-06T13:06:52.868Z",
+  "passes": 19,
+  "colorContrastPassed": true,
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            "#f15dd8c9 > span[slot=\"heading\"]"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "violations": [],
+  "geometry": {
+    "width": 1279,
+    "height": 856,
+    "devicePixelRatio": 1,
+    "cssZoom": "1",
+    "horizontalOverflow": false
+  }
+}

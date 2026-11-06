@@ -1,0 +1,60 @@
+{
+  "image": "quay.io/keycloak/keycloak:26.6",
+  "imageId": "sha256:0aae0de7fca85525f727d3354df17896092de8bb26ae4c12d89c77e5df8cbce4",
+  "repoDigests": [
+    "quay.io/keycloak/keycloak@sha256:0aae0de7fca85525f727d3354df17896092de8bb26ae4c12d89c77e5df8cbce4"
+  ],
+  "version": "Keycloak 26.6.4\nJVM: 21.0.11 (Red Hat, Inc. OpenJDK 64-Bit Server VM 21.0.11+10-LTS)\nOS: Linux 6.6.87.2-microsoft-standard-WSL2 amd64",
+  "source": "https://github.com/keycloak/keycloak/blob/26.6.0/services/src/main/java/org/keycloak/protocol/oidc/OIDCLoginProtocolFactory.java",
+  "method": "Offline import of a minimal owned realm, followed by export, with the same cached image, no network and no published ports; extracted only six standard scopes; removed generated scope/mapper IDs.",
+  "realmInput": {
+    "realm": "standard-scope-reference",
+    "enabled": true
+  },
+  "commands": [
+    [
+      "docker",
+      "run",
+      "--rm",
+      "--network",
+      "none",
+      "--user",
+      "1000",
+      "-v",
+      "<owned-private-directory>:/work",
+      "-v",
+      "<owned-private-directory>:/opt/keycloak/data",
+      "quay.io/keycloak/keycloak:26.6",
+      "import",
+      "--file",
+      "/work/realm.json"
+    ],
+    [
+      "docker",
+      "run",
+      "--rm",
+      "--network",
+      "none",
+      "--user",
+      "1000",
+      "-v",
+      "<same-owned-private-directory>:/work",
+      "-v",
+      "<same-owned-private-directory>:/opt/keycloak/data",
+      "quay.io/keycloak/keycloak:26.6",
+      "export",
+      "--realm",
+      "standard-scope-reference",
+      "--file",
+      "/work/export.json"
+    ]
+  ],
+  "mapperCounts": {
+    "acr": 1,
+    "roles": 3,
+    "web-origins": 1,
+    "basic": 2,
+    "profile": 14,
+    "email": 2
+  }
+}

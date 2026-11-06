@@ -197,6 +197,97 @@ public sealed class SupportedProjectReadPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-detail-inspection']").GetAttribute("aria-disabled").ShouldBe("false");
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void AdvisoryRendersNonemptyCandidatesWithoutSelection(bool multiple)
+    {
+        IProjectResolutionTraceSource source = Substitute.For<IProjectResolutionTraceSource>();
+        source.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(Advisory(multiple)));
+        Services.AddSingleton(source);
+        IRenderedComponent<ProjectResolutionTraceWorkbench> cut = Render<ProjectResolutionTraceWorkbench>();
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-resolution-trace-candidate']").Count.ShouldBe(multiple ? 2 : 1));
+        cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("unselected");
+        cut.Markup.ShouldContain("Project ID: p1; Rank: 1; Score: 100; Safe reasons: ProjectFolderMatched");
+        if (multiple) cut.Markup.ShouldContain("Project ID: p2; Rank: 2; Score: 90; Safe reasons: ConversationLinked");
+        cut.Markup.ShouldNotContain("Resolved");
+        cut.FindAll("[data-testid*='select-candidate']").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("conversation")]
+    [InlineData("folders")]
+    [InlineData("files")]
+    [InlineData("mode")]
+    [InlineData("archived")]
+    public async Task EditingAdvisoryInputsClearsCompletedAndLateResults(string input)
+    {
+        IProjectResolutionTraceSource source = Substitute.For<IProjectResolutionTraceSource>();
+        TaskCompletionSource<ProjectResolutionTraceLoadResult> late = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        CancellationToken cancelled = default;
+        source.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Do<CancellationToken>(token => cancelled = token))
+            .Returns(Task.FromResult(Advisory(false)), late.Task);
+        Services.AddSingleton(source);
+        IRenderedComponent<ProjectResolutionTraceWorkbench> cut = Render<ProjectResolutionTraceWorkbench>();
+        if (input is "folders" or "files")
+            await cut.InvokeAsync(() => cut.FindComponents<FluentCheckbox>()[0].Instance.ValueChanged.InvokeAsync(true));
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Project ID: p1"));
+        await EditAdvisoryAsync(cut, input, "first-edit");
+        cut.FindAll("[data-testid='project-resolution-trace-candidate']").ShouldBeEmpty();
+        cut.FindAll("[data-testid='project-resolution-trace-coverage']").ShouldBeEmpty();
+        Task pending = cut.InvokeAsync(() => cut.Find("[data-testid='project-resolution-trace-run']").Click());
+        await EditAdvisoryAsync(cut, input, "second-edit");
+        cancelled.IsCancellationRequested.ShouldBeTrue();
+        late.SetResult(Advisory(true));
+        await pending.ConfigureAwait(true);
+        cut.FindAll("[data-testid='project-resolution-trace-candidate']").ShouldBeEmpty();
+        cut.FindAll("[data-testid='project-resolution-trace-coverage']").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("Authorized reference label")]
+    public void OpenReferenceRendersOnlyTheDeliveredOptionalLabel(string? label)
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ProjectDetailLoadResult result = Detail("p1", null) with
+        {
+            Open = Detail("p1", null).Open! with
+            {
+                References = [new("ProjectFolder", "folder-p1", null, null, label, ReferenceState.Included, "ProjectFolderMatched", DateTimeOffset.UnixEpoch)]
+            }
+        };
+        source.InspectAsync("p1", false, false, Arg.Any<CancellationToken>()).Returns(Task.FromResult(result));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters.Add(p => p.ProjectId, "p1"));
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-open-reference']").TextContent.ShouldContain("folder-p1"));
+        if (label is null) cut.FindAll("[data-testid='project-open-reference-label']").ShouldBeEmpty();
+        else cut.Find("[data-testid='project-open-reference-label']").TextContent.ShouldContain(label);
+    }
+
+    private static Task EditAdvisoryAsync(IRenderedComponent<ProjectResolutionTraceWorkbench> cut, string input, string value)
+        => cut.InvokeAsync(() => input switch
+        {
+            "conversation" => cut.FindComponent<FluentTextInput>().Instance.ValueChanged.InvokeAsync(value),
+            "folders" => cut.FindComponents<FluentTextArea>()[0].Instance.ValueChanged.InvokeAsync(value),
+            "files" => cut.FindComponents<FluentTextArea>()[1].Instance.ValueChanged.InvokeAsync(value),
+            "mode" => cut.FindComponents<FluentCheckbox>()[0].Instance.ValueChanged.InvokeAsync(value == "first-edit"),
+            _ => cut.FindComponents<FluentCheckbox>()[1].Instance.ValueChanged.InvokeAsync(value == "first-edit"),
+        });
+
+    private static ProjectResolutionTraceLoadResult Advisory(bool multiple)
+        => ProjectResolutionTraceLoadResult.FromTrace(new()
+        {
+            Result = multiple ? ResolutionResult.MultipleCandidates : ResolutionResult.SingleCandidate,
+            EvaluatedAt = DateTimeOffset.UnixEpoch,
+        }, multiple
+            ? [new() { ProjectId = "p1", Rank = 1, Score = 100, ReasonCodes = "ProjectFolderMatched" }, new() { ProjectId = "p2", Rank = 2, Score = 90, ReasonCodes = "ConversationLinked" }]
+            : [new() { ProjectId = "p1", Rank = 1, Score = 100, ReasonCodes = "ProjectFolderMatched" }], []);
+
     private static ProjectWarningsDashboardLoadResult Inventory(string projectId, string? name)
     {
         ProjectInventoryLoadResult page = ProjectInventoryLoadResult.FromRows([new() { ProjectId = projectId, Name = name ?? string.Empty }]);

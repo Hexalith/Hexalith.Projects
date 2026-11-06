@@ -1,0 +1,188 @@
+{
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "timestamp": "2026-11-06T13:03:55.651Z",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "passedRuleCount": 19,
+  "incompleteRuleIds": [
+    "color-contrast"
+  ],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": [
+        {
+          "target": [
+            "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(7)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "div[data-testid=\"project-open-snapshot\"] > fluent-text[data-testid=\"project-read-component\"]:nth-child(8)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "div[data-testid=\"project-open-snapshot\"] > fluent-text:nth-child(9)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "#f1e6c54c > fluent-text:nth-child(2)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "#f1e6c54c > fluent-text:nth-child(3)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        },
+        {
+          "target": [
+            "#f1e6c54c > fluent-text:nth-child(4)"
+          ],
+          "checks": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "contrastRatio": 0,
+                "expectedContrastRatio": "4.5:1",
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "bgOverlap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "colorContrastPassTargets": [
+    [
+      "fluent-text[data-testid=\"project-open-reference\"]"
+    ],
+    [
+      "#f78acf46 > span[slot=\"heading\"]"
+    ],
+    [
+      "#f75d7b23 > span[slot=\"heading\"]"
+    ],
+    [
+      "#f5626311 > span[slot=\"heading\"]"
+    ],
+    [
+      ".project-resolution-trace > fluent-text:nth-child(1)"
+    ],
+    [
+      ".project-resolution-trace > fluent-text:nth-child(2)"
+    ],
+    [
+      "#f40064a9-label"
+    ],
+    [
+      "#f544eec5-label"
+    ],
+    [
+      [
+        "#f544eec5",
+        "#control"
+      ]
+    ],
+    [
+      "#f260d6c2-label"
+    ],
+    [
+      [
+        "#f260d6c2",
+        "#control"
+      ]
+    ],
+    [
+      "#f5a628fb-label"
+    ],
+    [
+      [
+        "fluent-button[data-testid=\"project-resolution-trace-run\"]",
+        ".content[part=\"content\"]"
+      ]
+    ],
+    [
+      "#f611032d > span[slot=\"heading\"]"
+    ],
+    [
+      "#f611032d > fluent-text"
+    ],
+    [
+      "#f1e6c54c > span[slot=\"heading\"]"
+    ]
+  ],
+  "violations": []
+}

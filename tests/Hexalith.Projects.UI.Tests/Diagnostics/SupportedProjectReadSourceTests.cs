@@ -1,6 +1,7 @@
 namespace Hexalith.Projects.UI.Tests.Diagnostics;
 
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.Projects.Contracts.Queries;
@@ -161,6 +162,55 @@ public sealed class SupportedProjectReadSourceTests
         sent.Payload!.Value.GetProperty("attachments").GetArrayLength().ShouldBe(32);
         sent.Paging.ShouldBeNull();
         sent.AggregateId.ShouldBe("projects");
+    }
+
+    [Fact]
+    public async Task NavigationRemountCannotOverwriteAnotherConsumersContinuation()
+    {
+        string program = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "Hexalith.Projects.UI", "Program.cs"));
+        program.ShouldContain("AddTransient<IProjectInventorySource, ProjectInventorySource>()");
+        SupportedReadTestContext context = new();
+        List<SubmitQueryRequest> requests = [];
+        int page = 0;
+        context.Client.SubmitQueryAsync<ProjectListPage>(Arg.Do<SubmitQueryRequest>(requests.Add), null, Arg.Any<CancellationToken>())
+            .Returns(_ => new EventStoreQueryResult<ProjectListPage>(null,
+                new([], "opaque-" + ++page, true, Snapshot(AdmissionResponseState.Complete, 0)), false, null));
+        ServiceCollection services = new();
+        services.AddSingleton(context.Queries);
+        services.AddTransient<IProjectInventorySource, ProjectInventorySource>();
+        using ServiceProvider provider = services.BuildServiceProvider();
+        IProjectInventorySource home = provider.GetRequiredService<IProjectInventorySource>();
+        ProjectInventoryLoadResult first = await home.LoadPageAsync(new(), TestContext.Current.CancellationToken);
+        await provider.GetRequiredService<IProjectInventorySource>().ListProjectsAsync(null, TestContext.Current.CancellationToken);
+        await provider.GetRequiredService<IProjectInventorySource>().ListProjectsAsync(null, TestContext.Current.CancellationToken);
+        await home.LoadPageAsync(new(Cursor: first.Cursor), TestContext.Current.CancellationToken);
+        requests[3].Payload!.Value.GetProperty("cursor").GetString().ShouldBe(first.Cursor);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AdvisoryPreservesNonemptyUnselectedCandidates(bool multiple)
+    {
+        SupportedReadTestContext scope = new();
+        ProjectAdvisoryCandidate[] candidates = multiple
+            ? [new("p1", [ProjectReasonCode.ProjectFolderMatched], 1, 100), new("p2", [ProjectReasonCode.ConversationLinked], 2, 90)]
+            : [new("p1", [ProjectReasonCode.ProjectFolderMatched], 1, 100)];
+        scope.Client.SubmitQueryAsync<ProjectAdvisoryResolutionResponse>(Arg.Any<SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(new EventStoreQueryResult<ProjectAdvisoryResolutionResponse>(null,
+                new(multiple ? ResolutionResult.MultipleCandidates : ResolutionResult.SingleCandidate, candidates, DateTimeOffset.UnixEpoch, false, []), false, null));
+        ProjectResolutionTraceLoadResult result = await new ProjectResolutionTraceSource(scope.Queries)
+            .LoadTraceAsync(ProjectResolutionTraceRequest.ForAttachments(["folder-p1"], [], false), TestContext.Current.CancellationToken);
+        result.Candidates.Count.ShouldBe(candidates.Length);
+        for (int index = 0; index < candidates.Length; index++)
+        {
+            result.Candidates[index].ProjectId.ShouldBe(candidates[index].ProjectId);
+            result.Candidates[index].Rank.ShouldBe(candidates[index].Rank);
+            result.Candidates[index].Score.ShouldBe(candidates[index].Score);
+            result.Candidates[index].ReasonCodes.ShouldBe(string.Join(", ", candidates[index].ReasonCodes));
+        }
+        ProjectResolutionTraceMapper.DeriveOutcomeLabel(result.Trace!, []).ShouldContain("unselected");
+        result.Exclusions.ShouldBeEmpty();
     }
 
     private static AdmissionSnapshot Snapshot(AdmissionResponseState state, long version)

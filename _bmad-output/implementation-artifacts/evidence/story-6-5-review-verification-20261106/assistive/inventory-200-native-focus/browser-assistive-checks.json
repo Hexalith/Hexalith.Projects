@@ -1,0 +1,470 @@
+{
+  "qualification": "actual-assistive-technology-and-native-browser-zoom",
+  "humanTestPerformed": false,
+  "realOidc": true,
+  "routes": [
+    {
+      "surface": "inventory",
+      "path": "/inspect/projects",
+      "nativeZoom": 200,
+      "axeReceipt": "inventory-native-200-axe.json",
+      "incompleteRules": [
+        "color-contrast"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "step": "native zoom reset",
+      "announcements": []
+    },
+    {
+      "step": "native zoom increment 1",
+      "announcements": []
+    },
+    {
+      "step": "native zoom increment 2",
+      "announcements": [
+        "'Browse mode'",
+        "'left control'",
+        "'left control'",
+        "'localhost:43375/inspect/projects - Google Chrome'",
+        "'alert.'",
+        "' 110%Make Text SmallerMake Text LargerReset'",
+        "'notification'",
+        "'110%'"
+      ]
+    },
+    {
+      "step": "native zoom increment 3",
+      "announcements": []
+    },
+    {
+      "step": "native zoom increment 4",
+      "announcements": [
+        "'left control'",
+        "'notification'",
+        "'Zoom: 125% 110%'",
+        "'left control'",
+        "'notification'",
+        "'Zoom: 150% 110%'",
+        "'left control'"
+      ]
+    },
+    {
+      "step": "native zoom increment 5",
+      "announcements": []
+    },
+    {
+      "step": "native browser zoom 200",
+      "metrics": {
+        "width": 639,
+        "height": 428,
+        "devicePixelRatio": 2,
+        "cssZoom": "1"
+      }
+    },
+    {
+      "assertion": "inventory: observed response timestamp changed",
+      "passed": true
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T15:07:24.6564026+00:00",
+      "afterAsOf": "2026-11-06T15:07:25.9598975+00:00"
+    },
+    {
+      "step": "inventory 200: route announcement",
+      "announcements": [
+        "'notification'",
+        "'Zoom: 175% 110%'",
+        "'left control'",
+        "'notification'",
+        "'Zoom: 200% 110%'",
+        "'escape'",
+        "'leaving main content.'",
+        "'localhost:43375/inspect/projects - Google Chrome'",
+        "'document web'",
+        "'Browse mode'",
+        "'main content'",
+        "'Projects'",
+        "'heading 1 clickable.'",
+        "'Finished loading.'",
+        "'Page has 3 landmarks, 1 heading, 1 unvisited link.'",
+        "'Finished loading.'",
+        "'Page has 3 landmarks, 1 heading, 1 unvisited link.'"
+      ]
+    },
+    {
+      "step": "inventory 200: heading navigation",
+      "announcements": [
+        "'left control'",
+        "'leaving panel.'",
+        "'leaving main content.'",
+        "'Skip to content'",
+        "'link.'",
+        "'h'",
+        "'No more headings.'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 1",
+      "focus": {
+        "testId": "fc-hamburger-toggle",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Toggle navigation"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 2",
+      "announcements": [
+        "'tab'",
+        "'banner'",
+        "'Toggle navigation'",
+        "'button.'",
+        "'Browse mode'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 2",
+      "focus": {
+        "testId": null,
+        "tag": "fluent-menu-button",
+        "hostTag": "fluent-menu-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Change theme: Light"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 3",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 3",
+      "focus": {
+        "testId": "fc-palette-trigger",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open command palette"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 4",
+      "announcements": [
+        "'Change theme: Light'",
+        "'collapsed button.'",
+        "'opens menu'",
+        "'Focus mode'",
+        "'tab'",
+        "'Open command palette'",
+        "'button.'",
+        "'Browse mode'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 4",
+      "focus": {
+        "testId": "fc-settings-button",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Open settings"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 5",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 5",
+      "focus": {
+        "testId": "project-inventory-filter-all",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "All lifecycle states"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 6",
+      "announcements": [
+        "'tab'",
+        "'Open settings'",
+        "'button.'",
+        "'tab'",
+        "'leaving banner.'",
+        "'main content'",
+        "'Lifecycle filter'",
+        "'panel'",
+        "'All lifecycle states'",
+        "'button.'"
+      ]
+    },
+    {
+      "step": "inventory 200: archived filter: focus 6",
+      "focus": {
+        "testId": "project-inventory-filter-active",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Active"
+      }
+    },
+    {
+      "step": "inventory 200: archived filter: Tab 7",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: archived filter: focus 7",
+      "focus": {
+        "testId": "project-inventory-filter-archived",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Archived"
+      }
+    },
+    {
+      "step": "inventory 200: activate archived filter",
+      "announcements": [
+        "'tab'",
+        "'Active'",
+        "'button.'",
+        "'tab'",
+        "'Archived'",
+        "'button.'",
+        "'space'"
+      ]
+    },
+    {
+      "assertion": "inventory 200: empty inventory reachable by keyboard",
+      "passed": true
+    },
+    {
+      "step": "inventory 200: restart: Tab 1",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: restart: focus 1",
+      "focus": {
+        "testId": "project-inventory-inspection",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Descriptive inspection (audited; required in quarantine)"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 2",
+      "announcements": [
+        "'Loading.project_inventory_loading'",
+        "'tab'",
+        "'leaving panel.'",
+        "'Inspection mode'",
+        "'panel'",
+        "'Descriptive inspection (audited; required in quarantine)'",
+        "'check box not checked.'",
+        "'tab'"
+      ]
+    },
+    {
+      "step": "inventory 200: restart: focus 2",
+      "focus": {
+        "testId": "project-inventory-quarantine",
+        "tag": "fluent-checkbox",
+        "hostTag": "fluent-checkbox",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "checkbox",
+        "name": "Quarantine inventory (Administrator inspection, audited names)"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 3",
+      "announcements": []
+    },
+    {
+      "step": "inventory 200: restart: focus 3",
+      "focus": {
+        "testId": null,
+        "tag": "button",
+        "hostTag": "fluent-accordion-item",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Inventory"
+      }
+    },
+    {
+      "step": "inventory 200: restart: Tab 4",
+      "announcements": [
+        "'Quarantine inventory (Administrator inspection, audited names)'",
+        "'check box not checked.'",
+        "'tab'",
+        "'leaving panel.'",
+        "'Inventory'",
+        "'expanded button heading 2.'",
+        "'Focus mode'"
+      ]
+    },
+    {
+      "step": "inventory 200: restart: focus 4",
+      "focus": {
+        "testId": "project-inventory-restart",
+        "tag": "fluent-button",
+        "hostTag": "fluent-button",
+        "visibleFocus": true,
+        "withinViewport": true,
+        "role": "button",
+        "name": "Start over"
+      }
+    },
+    {
+      "step": "inventory 200: activate restart",
+      "announcements": []
+    },
+    {
+      "assertion": "inventory: observed response timestamp changed",
+      "passed": true
+    },
+    {
+      "step": "inventory: post-hydration readiness",
+      "webSocketObserved": true,
+      "beforeAsOf": "2026-11-06T15:07:37.1087038+00:00",
+      "afterAsOf": "2026-11-06T15:07:40.1554919+00:00"
+    },
+    {
+      "assertion": "inventory 200: Safe Metadata retained",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-200: no unresolved incomplete rules",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-200: axe no critical/serious violations",
+      "passed": true
+    },
+    {
+      "assertion": "inventory-native-200: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "step": "inventory 200: native row anchor",
+      "announcements": [
+        "'Address and search bar'",
+        "'autocomplete'",
+        "'localhost:43375/inspect/projects.'",
+        "'Hexalith FrontComposer © 2026.'",
+        "'Browse mode'",
+        "'tab'",
+        "'main content'",
+        "'Inventory'",
+        "'expanded button heading 2.'",
+        "'Focus mode'",
+        "'Open project project-a'",
+        "'link.'",
+        "'Browse mode'"
+      ]
+    },
+    {
+      "assertion": "inventory 200: row anchor has native keyboard focus",
+      "passed": true
+    },
+    {
+      "step": "inventory 200: spoken row observation",
+      "method": "Actual Orca sticky browse mode and native Down navigation from the focused content anchor",
+      "announcements": [
+        "'leaving main content.'",
+        "'invalid grayed.'",
+        "'localhost:43375/inspect/projects - Memory usage - 94.3 MB'",
+        "'page tab.'",
+        "'localhost:43375/inspect/projects - Google Chrome'",
+        "'Infobar Container You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.'",
+        "'alert'",
+        "'Infobar.'",
+        "'You are using an unsupported command-line flag: --no-sandbox. Stability and security will suffer.Close'",
+        "'insert'",
+        "'Focus mode'",
+        "'insert'",
+        "'Focus mode is sticky.'",
+        "'insert'",
+        "'Browse mode is sticky.'",
+        "'Project ID: project-a.'",
+        "'Lifecycle: Active; Project Folder: Stale.'",
+        "'State: Unavailable.'",
+        "'As of: 2026-11-06T15:07:40.1554919+00:00.'",
+        "'As of: 2026-11-06T15:07:40.1554919+00:00.'",
+        "'Project version: 3.'",
+        "'Project — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-'",
+        "'11-06T14:50:57.6059584+00:00.'",
+        "'Folder — Included: False; Freshness: Stale; Reason: FolderUnavailable; Last '",
+        "'verified: Not supplied.'",
+        "'Setup — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-'",
+        "'11-06T14:50:57.6059584+00:00.'",
+        "'Authorization — Included: True; Freshness: Current; Reason: Current; Last verified: '",
+        "'2026-11-06T15:07:40.1554919+00:00.'",
+        "'References — Included: True; Freshness: Current; Reason: Current; Last verified: '",
+        "'2026-11-06T14:50:57.6059584+00:00.'",
+        "'Recovery guidance: Retry.'",
+        "'project-b'",
+        "'link.'",
+        "'Project ID: project-b.'",
+        "'Lifecycle: Active; Project Folder: Stale.'",
+        "'Lifecycle: Active; Project Folder: Stale.'",
+        "'State: Unavailable.'",
+        "'As of: 2026-11-06T15:07:40.6036064+00:00.'",
+        "'Project version: 3.'",
+        "'Project — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-'",
+        "'11-06T14:51:16.4078113+00:00.'",
+        "'Folder — Included: False; Freshness: Stale; Reason: FolderUnavailable; Last '",
+        "'verified: Not supplied.'",
+        "'Setup — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-'",
+        "'11-06T14:51:16.4078113+00:00.'",
+        "'Authorization — Included: True; Freshness: Current; Reason: Current; Last verified: '"
+      ]
+    },
+    {
+      "assertion": "inventory 200: spoken row observation: actual spoken content",
+      "passed": true
+    },
+    {
+      "assertion": "Orca produced actual speech output",
+      "passed": true
+    }
+  ],
+  "failures": [],
+  "screenshots": [
+    {
+      "surface": "inventory",
+      "zoom": 200,
+      "privatePath": "/tmp/story65-supported-a11y-native-observer-20261106-r5-inventory200/inventory-native-200.png"
+    }
+  ],
+  "result": "passed"
+}

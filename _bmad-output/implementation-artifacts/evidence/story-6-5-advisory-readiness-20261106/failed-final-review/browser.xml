@@ -1,0 +1,40 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="29.078131999999997">
+<testsuite name="projects-supported-read-browser.spec.ts" timestamp="2026-11-06T14:05:31.489Z" hostname="chromium" tests="1" failures="1" skipped="0" time="26.323" errors="0">
+<testcase name="supported OIDC SDK journeys preserve persisted domain state and separate inspection audits" classname="projects-supported-read-browser.spec.ts" time="26.323">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|browser-results/projects-supported-read-br-aa548--separate-inspection-audits-chromium/error-context.md]]
+]]>
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  [chromium] › projects-supported-read-browser.spec.ts:9:3 › supported OIDC SDK journeys preserve persisted domain state and separate inspection audits 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('project-resolution-trace-outcome')
+    Expected substring: "One unselected suggestion"
+    Received string:    "No suggestion observed; coverage incomplete"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toContainText" getByTestId('project-resolution-trace-outcome') with timeout 10000ms
+      - waiting for getByTestId('project-resolution-trace-outcome')
+        15 × locator resolved to <fluent-text data-testid="project-resolution-trace-outcome">No suggestion observed; coverage incomplete</fluent-text>
+           - unexpected value "No suggestion observed; coverage incomplete"
+
+
+      219 |       await folderInputs.fill('folder-project-a');
+      220 |       await page.getByTestId('project-resolution-trace-run').click();
+    > 221 |       await expect(page.getByTestId('project-resolution-trace-outcome')).toContainText('One unselected suggestion');
+          |                                                                          ^
+      222 |       const candidates = page.getByTestId('project-resolution-trace-candidate');
+      223 |       await expect(candidates).toHaveCount(1);
+      224 |       await expect(candidates.nth(0)).toContainText('Project ID: project-a; Rank: 1; Score: 45; Safe reasons: ProjectFolderMatched');
+        at /home/administrator/projects/hexalith/projects/tests/e2e/specs/projects-supported-read-browser.spec.ts:221:74
+
+    Error Context: ../../../../../../../../tmp/supported-project-reads-private-kk02kozk/browser-results/projects-supported-read-br-aa548--separate-inspection-audits-chromium/error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

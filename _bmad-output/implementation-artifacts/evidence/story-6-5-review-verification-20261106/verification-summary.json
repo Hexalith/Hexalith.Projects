@@ -1,0 +1,193 @@
+{
+  "story": "6.5",
+  "result": "in-progress-live-acceptance-blocked",
+  "rootCanonicalRevision": "b79d46e1930d60cd5dcf999c19b9202a563f1f2f",
+  "baselineCommit": "2e2b6cff6c59775ce06d5e26b5c5913ac54c8edd",
+  "native": {
+    "UI": 211,
+    "Server": 185,
+    "Contracts": 46,
+    "IntegrationIncludingReadiness": 45,
+    "totalPassed": 487,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "selectedScope": true
+  },
+  "launcherControlsPassed": 142,
+  "axeSafetyCasesPassed": 2,
+  "typeScriptPassed": true,
+  "matrix": {
+    "rows": 5,
+    "executedPassingCases": 12,
+    "missing": []
+  },
+  "actualAssistive": {
+    "agentDriven": true,
+    "humanAudioEvaluation": false,
+    "allSurfaces": {
+      "assertions": 51,
+      "passed": 50,
+      "failed": 1,
+      "unmet": "inventory200 spoken-state capture was inconclusive"
+    },
+    "targetedInventory200": {
+      "assertions": 10,
+      "passed": 10,
+      "failed": 0,
+      "nativeKeyboardAnchorVerified": true
+    },
+    "spokenContentChecks": [
+      {
+        "run": "all-surfaces",
+        "assertion": "inventory 100: spoken row observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 100: spoken Open observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 100: spoken Context observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 100: spoken Conversation-start observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "suggestions 100: spoken coverage limits: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "inventory 200: spoken row observation: actual spoken content",
+        "passed": false
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 200: spoken Open observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 200: spoken Context observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "detail 200: spoken Conversation-start observation: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "all-surfaces",
+        "assertion": "suggestions 200: spoken coverage limits: actual spoken content",
+        "passed": true
+      },
+      {
+        "run": "inventory-200-native-focus",
+        "assertion": "inventory 200: spoken row observation: actual spoken content",
+        "passed": true
+      }
+    ],
+    "axe": [
+      {
+        "run": "all-surfaces",
+        "file": "suggestions-native-100-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 1
+      },
+      {
+        "run": "all-surfaces",
+        "file": "detail-native-100-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 10
+      },
+      {
+        "run": "all-surfaces",
+        "file": "suggestions-native-200-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 0
+      },
+      {
+        "run": "all-surfaces",
+        "file": "inventory-native-200-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 3
+      },
+      {
+        "run": "all-surfaces",
+        "file": "detail-native-200-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 0
+      },
+      {
+        "run": "all-surfaces",
+        "file": "inventory-native-100-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 2
+      },
+      {
+        "run": "inventory-200-native-focus",
+        "file": "inventory-native-200-axe.json",
+        "violations": 0,
+        "unresolvedIncompleteRules": 0,
+        "contrastDeterminations": 2
+      }
+    ],
+    "allTenSpokenContentCasesHavePassingEvidence": true,
+    "domainAuditFingerprintsUnchanged": true,
+    "continuousTelemetryCompleteAndProtectedAbsent": true,
+    "exactAssistiveCleanupPassed": true
+  },
+  "managedAcceptance": {
+    "firstPositiveBrowser": "failed at One unselected suggestion; actual empty incomplete result",
+    "boundedReadinessRun": "failed 30 real single-Folder queries; browser not collected",
+    "diagnosticHoldRun": "failed again; explicitly diagnostic-only, never accepted automated proof",
+    "positiveLiveFolderCandidatesProved": false
+  },
+  "causalLimits": {
+    "currentHeldFolderStalenessEstablished": true,
+    "originalReadinessBeforeStrictAgeThreshold": true,
+    "originalEmptyIncompleteCauseEstablished": false,
+    "sourceSpansSuppressedByDesign": true,
+    "noBudgetOrPrivacyRelaxation": true,
+    "noSiblingSourceChange": true
+  },
+  "cleanup": {
+    "preexistingResourcesPreserved": true,
+    "ownedSidecarsAbsent": true,
+    "privateMaterialRemoved": true,
+    "diagnosticHold": {
+      "released": true,
+      "heldSeconds": 1075.0,
+      "limitSeconds": 3600,
+      "accessRemoved": true,
+      "countedAsAutomatedProof": false
+    }
+  },
+  "sourceStability": {
+    "unchanged": true,
+    "inputs": 17154,
+    "changedPaths": []
+  },
+  "sprintStatusChanged": false,
+  "stagedCommittedPushed": false,
+  "recordedAtUtc": "2026-11-06T15:22:18.229734+00:00",
+  "uncommittedConsumerChanges": true,
+  "sourceManifest": {
+    "path": "managed/diagnostic-hold/source-manifest.json",
+    "sha256": "dbcbc3b7cbd687fae65f59c43e9bf9f9d717748ba6ef27176c218bfbc1d869f2"
+  },
+  "workflowStatus": "in-progress; step04 halted on failed live verification; step05 not executed"
+}
