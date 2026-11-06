@@ -1,0 +1,87 @@
+{
+  "originalRunSha256": "fa64734cc20b51889a0eb456702efd3e979f3c2dbdf5891f46d597ff6bdaab79",
+  "commands": [
+    [
+      "docker",
+      "ps",
+      "--all",
+      "--no-trunc",
+      "--format",
+      "{{json .}}"
+    ],
+    [
+      "docker",
+      "ps",
+      "--all",
+      "--no-trunc",
+      "--filter",
+      "label=hexalith.supported-reads=reads-382305aeb0dd11e946241bbf",
+      "--format",
+      "{{.ID}}"
+    ],
+    [
+      "aspire",
+      "ps",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ]
+  ],
+  "recordedContainers": [
+    {
+      "containerId": "5875cfa8cee18621bc532fbac87d10a2f4e14f6c864c222a93911c475fbf81da",
+      "recordedName": "dapr-sentry",
+      "absenceVerified": true
+    },
+    {
+      "containerId": "f5396f4f84b459f3eca1a280a9761cc04b585230522c2a9e3c8afee59a04c852",
+      "recordedName": "dapr-placement-mtls",
+      "absenceVerified": true
+    },
+    {
+      "containerId": "19ffa92d7b00aa35f456032594b2b3235273a63462861d4f86f772d99a978896",
+      "recordedName": "dapr-scheduler-mtls",
+      "absenceVerified": true
+    },
+    {
+      "containerId": "bdc1a14448633b41aee5662dc0b0ceee869c7c59e6da476d1204ce26589d4826",
+      "recordedName": "reads-382305aeb0dd11e946241bbf-redishost",
+      "absenceVerified": true
+    },
+    {
+      "containerId": "e387f57eef166eefd8e52ad9f8c96c11ae2836cdb71358ff63bbb1f70755b719",
+      "recordedName": "reads-382305aeb0dd11e946241bbf-oidc",
+      "absenceVerified": true
+    }
+  ],
+  "recordedAppHostAndCliAbsent": true,
+  "ownedSidecarsAbsent": true,
+  "originalInfrastructureIdentitiesValidated": true,
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-382305aeb0dd11e946241bbf-redishost",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-382305aeb0dd11e946241bbf-oidc",
+      "absenceVerified": true
+    }
+  ],
+  "privateMaterialRemoved": true
+}

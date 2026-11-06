@@ -8,7 +8,7 @@ import type { BrowserContext, Page } from '@playwright/test';
  * preferences. It never holds an access, refresh, or identity token, and the managed runner deletes it
  * after each run.
  */
-export const browserSessionStoragePath = resolve('.auth', 'projects-ui-browser-session.json');
+export const browserSessionStoragePath = resolve(process.env.E2E_BROWSER_SESSION_FILE ?? '.auth/projects-ui-browser-session.json');
 
 const TOKEN_LIKE_VALUE = /access_token|refresh_token|id_token|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/i;
 const SESSION_LIKE_COOKIE = /cookie|session|auth|token|oidc|nonce|correlation/i;
@@ -70,4 +70,16 @@ export function assertServerOnlySession(exposure: BrowserSessionExposure, source
   if (leaks.length > 0) {
     throw new Error(`[${source}] browser-readable session material detected: ${leaks.join(', ')}.`);
   }
+}
+
+/** Observes only traffic counts; never records bearer values, request bodies or credential URLs. */
+export function observeBrowserTraffic(page: Page): { settle: () => Promise<{ authorizationHeaders: number; tokenBearingUrls: number }> } {
+  const counts = { authorizationHeaders: 0, tokenBearingUrls: 0 };
+  const pending: Promise<void>[] = [];
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (/(?:^|[?#&])(?:access_token|id_token|refresh_token)=/.test(`${url.search}${url.hash}`)) counts.tokenBearingUrls++;
+    pending.push(request.allHeaders().then(headers => { if (headers.authorization) counts.authorizationHeaders++; }, () => undefined));
+  });
+  return { settle: async () => { await Promise.all(pending); return counts; } };
 }

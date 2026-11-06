@@ -1,0 +1,31 @@
+{
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "tools/qualification/supported_browser_reads.py",
+        "tools/qualification/run_supported_project_reads.py"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "tests/e2e/run-live-apphost.sh"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ]
+}

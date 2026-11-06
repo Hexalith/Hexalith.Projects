@@ -12,6 +12,9 @@ using Hexalith.Projects.Contracts.Ui;
 /// </summary>
 public interface IProjectInventorySource
 {
+    /// <summary>Loads one supported bounded page.</summary>
+    Task<ProjectInventoryLoadResult> LoadPageAsync(Hexalith.Projects.Contracts.Queries.ListProjectsQuery query, CancellationToken cancellationToken);
+
     /// <summary>Loads metadata-only inventory rows.</summary>
     /// <param name="lifecycle">The optional lifecycle filter backed by the list query.</param>
     /// <param name="cancellationToken">The cancellation token.</param>

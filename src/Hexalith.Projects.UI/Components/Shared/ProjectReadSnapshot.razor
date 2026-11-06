@@ -1,0 +1,15 @@
+@using Hexalith.Projects.Contracts.Queries
+<FluentStack Orientation="Orientation.Vertical" data-testid="@TestId">
+    <FluentText>State: @Snapshot.ResponseState</FluentText>
+    <FluentText>As of: @Snapshot.AsOf.ToString("O")</FluentText>
+    <FluentText>Project version: @Snapshot.ProjectVersion</FluentText>
+    @foreach (AdmissionComponent component in Snapshot.Components)
+    {
+        <FluentText data-testid="project-read-component">@component.Name — Included: @component.Included; Freshness: @component.Freshness; Reason: @component.Reason; Last verified: @(component.LastVerifiedAt?.ToString("O") ?? "Not supplied")</FluentText>
+    }
+    <FluentText>Recovery guidance: @(Snapshot.RecoveryActions.Count == 0 ? "None supplied" : string.Join(", ", Snapshot.RecoveryActions))</FluentText>
+</FluentStack>
+@code {
+    [Parameter, EditorRequired] public AdmissionSnapshot Snapshot { get; set; } = default!;
+    [Parameter] public string TestId { get; set; } = "project-read-snapshot";
+}

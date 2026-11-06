@@ -78,6 +78,15 @@ public static class SupportedProjectReadFixtureProfile
         if (!Uri.TryCreate(Required(configuration, Prefix + "UserIssuer"), UriKind.Absolute, out Uri? user)
             || user.Scheme != "https" || !user.IsLoopback)
             throw new InvalidOperationException("The synthetic public issuer must use trusted loopback HTTPS.");
+        if (SupportedProjectBrowserFixtureProfile.IsEnabled(configuration))
+        {
+            if (Required(configuration, Prefix + "Browser:Authority") != user.AbsoluteUri.TrimEnd('/')
+                || Required(configuration, Prefix + "Browser:TokenEndpoint") != user.AbsoluteUri.TrimEnd('/') + "/protocol/openid-connect/token")
+                throw new InvalidOperationException("Browser credentials require the same trusted isolated issuer as the native owner calls.");
+            _ = Required(configuration, Prefix + "Browser:ClientSecret");
+        }
+        else if (configuration[Prefix + "Browser:TokenEndpoint"] is not null)
+            throw new InvalidOperationException("A browser token endpoint requires the explicit browser fixture.");
         foreach (string key in new[] { "CertificatePath", "CertificatePassword", "TrustBundle", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "Tenant", "ForeignTenant", "DiscoveryConfiguration", "CatalogDigestKey", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey", "InvocationDirectory" })
             _ = Required(configuration, Prefix + key);
         foreach (string key in new[] { "CertificatePath", "TrustBundle" })
@@ -219,6 +228,10 @@ public static class SupportedProjectReadFixtureProfile
             .WithEnvironment("Authentication__BoundOwnerQuery__AllowedQueries__projects", "Hexalith.Folders.Queries.AuthorizeFolderRead.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__0", "Hexalith.Projects.Queries.ListProjects.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__1", "Hexalith.Projects.Queries.GetProject.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__2", "Hexalith.Projects.Queries.GetProjectContext.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__3", "Hexalith.Projects.Queries.GetConversationStartSetup.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__4", "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__5", "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1")
             .WithEnvironment("Authentication__DaprInternal__AllowedCallers__0", "projects")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__AppId", "tenants")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__Domain", "global-administrators")
@@ -259,10 +272,10 @@ public static class SupportedProjectReadFixtureProfile
             .WithEnvironment("Authentication__BoundCommand__AllowedDomains__tenants", "global-administrators");
         _ = tenants.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", tenantsOwnerKey)
             .WithEnvironment("Tenants__BootstrapGlobalAdminEnabled", "true")
-            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", "actor-1")
+            .WithEnvironment("Tenants__BootstrapGlobalAdminUserId", SupportedProjectBrowserFixtureProfile.IsEnabled(configuration) ? Required(configuration, Prefix + "Browser:PrimaryActor") : "actor-1")
             .WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
             .WithEnvironment("EventStore__Authentication__Authority", Required(configuration, Prefix + "UserIssuer"))
-            .WithEnvironment("EventStore__Authentication__TokenEndpoint", Required(configuration, Prefix + "UserIssuer").TrimEnd('/') + "/token")
+            .WithEnvironment("EventStore__Authentication__TokenEndpoint", configuration[Prefix + "Browser:TokenEndpoint"] ?? Required(configuration, Prefix + "UserIssuer").TrimEnd('/') + "/token")
             .WithEnvironment("EventStore__Authentication__ClientId", "supported-read-bootstrap")
             .WithEnvironment("EventStore__Authentication__Username", "actor-1")
             .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);

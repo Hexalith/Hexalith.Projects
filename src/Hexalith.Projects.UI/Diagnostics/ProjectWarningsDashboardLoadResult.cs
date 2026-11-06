@@ -23,6 +23,12 @@ public sealed record ProjectWarningsDashboardLoadResult(
     ProjectConsoleFeedback? Feedback,
     string TenantScope)
 {
+    /// <summary>Gets the supported inventory page, including enumeration and row evidence.</summary>
+    public ProjectInventoryLoadResult? Inventory
+    {
+        get; init;
+    }
+
     /// <summary>Creates a successful warnings/dashboard result.</summary>
     public static ProjectWarningsDashboardLoadResult FromRows(
         IReadOnlyList<ProjectInventoryRowProjection> inventoryRows,

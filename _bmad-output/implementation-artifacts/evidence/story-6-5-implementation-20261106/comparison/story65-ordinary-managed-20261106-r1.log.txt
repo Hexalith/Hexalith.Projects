@@ -1,0 +1,67 @@
+
+> hexalith-projects-e2e@0.0.0 test:live:managed
+> ./run-live-apphost.sh
+
+Starting Aspire AppHost in the background...
+Waiting for resource 'security' to be healthy...
+
+✅ Resource 'security' is healthy. (19.9s)
+Waiting for resource 'eventstore' to be healthy...
+
+✅ Resource 'eventstore' is healthy. (0.0s)
+Waiting for resource 'tenants' to be healthy...
+
+✅ Resource 'tenants' is healthy. (0.0s)
+Waiting for resource 'projects' to be healthy...
+
+✅ Resource 'projects' is healthy. (0.0s)
+Waiting for resource 'projects-workers' to be healthy...
+
+✅ Resource 'projects-workers' is healthy. (0.0s)
+Waiting for resource 'projects-ui' to be healthy...
+
+✅ Resource 'projects-ui' is healthy. (0.0s)
+Waiting for resource 'conversations' to be healthy...
+
+✅ Resource 'conversations' is healthy. (0.0s)
+Waiting for resource 'folders' to be healthy...
+
+✅ Resource 'folders' is healthy. (0.0s)
+Waiting for resource 'memories' to be healthy...
+
+✅ Resource 'memories' is healthy. (0.0s)
+Waiting for resource 'live-fixtures' to be healthy...
+
+✅ Resource 'live-fixtures' is healthy. (0.0s)
+Waiting for resource 'eventstore-dapr-cli' to be healthy...
+
+✅ Resource 'eventstore-dapr-cli' is healthy. (0.0s)
+Waiting for resource 'tenants-dapr-cli' to be healthy...
+
+✅ Resource 'tenants-dapr-cli' is healthy. (0.0s)
+Waiting for resource 'projects-dapr-cli' to be healthy...
+
+✅ Resource 'projects-dapr-cli' is healthy. (0.0s)
+Waiting for resource 'projects-workers-dapr-cli' to be healthy...
+
+✅ Resource 'projects-workers-dapr-cli' is healthy. (0.0s)
+
+> hexalith-projects-e2e@0.0.0 typecheck
+> tsc --noEmit
+
+Error: [tenant-readiness] CreateTenant submission failed (403). initialProjects={"listStatus":404,"listCategory":null,"createStatus":404}; completed=[]
+
+   at ../support/helpers/tenant-access-readiness.ts:86
+
+  84 |     } catch (error) {
+  85 |       // Keep the diagnostic metadata-only: the command error already carries statuses only.
+> 86 |       throw new Error(
+     |             ^
+  87 |         `${error instanceof Error ? error.message : '[tenant-readiness] tenant command failed.'} ` +
+  88 |           `initialProjects=${JSON.stringify(initial)}; ` +
+  89 |           `completed=${JSON.stringify(results.map((item) => ({ status: item.status.status, statusCode: item.status.statusCode })))}`,
+    at ensureProjectsTenantAccess (/home/administrator/projects/hexalith/projects/tests/e2e/support/helpers/tenant-access-readiness.ts:86:13)
+    at globalSetup (/home/administrator/projects/hexalith/projects/tests/e2e/global-setup.ts:44:7)
+
+[zero-live-skip] collected=0 skipped=0 status=failed
+[zero-live-skip] the live lane must collect cases and must not skip any of them.

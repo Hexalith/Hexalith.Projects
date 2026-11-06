@@ -66,6 +66,6 @@ public sealed class GetConversationStartSetupQueryHandler(ProjectContextQueryExe
             setup,
             ConversationStartAdmissionSnapshot.FromShared(admission.Snapshot));
 
-        return QueryResult.FromPayload(JsonSerializer.SerializeToElement(response, JsonOptions), QueryType);
+        return QueryResult.FromPayload(JsonSerializer.SerializeToElement(response, JsonOptions));
     }
 }

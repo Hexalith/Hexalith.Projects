@@ -1,0 +1,85 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "explicitEnvironment": {
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-supported-browser-20261106-18-fresh"
+  },
+  "sourceMappingEnvironmentReceipt": "native-commands.json#environmentForEveryNativeCommand",
+  "exitCode": 0,
+  "sourceManifestFileSha256": "d58ea828a362c6392beb9899231afb9730213a43cba2b7c74cb31fbaec41f192",
+  "nativeCounts": {
+    "UI": 197,
+    "Server": 185,
+    "Contracts": 46,
+    "TopologyObserver": 28
+  },
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 133,
+    "passed": 133,
+    "failed": 0,
+    "skipped": 0
+  },
+  "seed": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "xmlSha256": "ee7a468789236ef77cc75f4abc8de0108d6fe371b7ddfd7f53e001450b738a81"
+  },
+  "browser": {
+    "tests": 1,
+    "failures": 0,
+    "skipped": 0,
+    "errors": 0
+  },
+  "browserInterval": {
+    "startedAtUtc": "2026-11-06T04:46:15.342321+00:00",
+    "endedAtUtc": "2026-11-06T04:47:40.659624+00:00"
+  },
+  "streamEntries": {
+    "eventstore": 29775,
+    "projects": 1913,
+    "projects-ui": 3831
+  },
+  "completeIntervalObserved": true,
+  "protectedAndJwtMarkersAbsent": true,
+  "readerGroupsAbsent": true,
+  "ownedCleanupVerified": true,
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": true,
+  "manualScreenReader": "pending-unperformed",
+  "manualNativeZoom200": "pending-unperformed",
+  "cssZoom200IncompleteRuleIds": [
+    "color-contrast"
+  ],
+  "persistedObservation": {
+    "domainUnchangedAtRetainedPrimarySnapshots": true,
+    "foreignDomainUnchanged": true,
+    "primaryDomainKeyCount": 136,
+    "auditKeyCounts": {
+      "before": 0,
+      "after": 2,
+      "quarantined": 2,
+      "inspected": 3
+    }
+  }
+}

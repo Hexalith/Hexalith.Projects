@@ -368,6 +368,21 @@ public sealed class AspireTopologyTests
         }
     }
 
+    /// <summary>Verifies supported UI SDK queries reach the EventStore gateway through an explicit topology dependency.</summary>
+    [Fact]
+    public void ProjectsUiShouldReferenceGatewayAndRetainProjectsComparisonDependency()
+    {
+        string program = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.AppHost", "Program.cs"));
+        program.ShouldContain(".WithReference(eventStore)");
+        program.ShouldContain(".WaitFor(eventStore)");
+        program.ShouldContain("EventStore__GatewayAddress");
+        program.ShouldContain(".WithReference(projects)");
+        string ui = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.UI", "Program.cs"));
+        ui.ShouldContain("AddEventStoreGatewayClient(");
+        ui.IndexOf("gatewayClient.AddFrontComposerGatewayAuthorization()", StringComparison.Ordinal)
+            .ShouldBeGreaterThan(ui.IndexOf("AddProjectsUiSecurity(", StringComparison.Ordinal));
+    }
+
     private static string ProjectRoot()
         => TestRepositoryRoot.Find();
 

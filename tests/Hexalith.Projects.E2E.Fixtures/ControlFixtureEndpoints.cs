@@ -44,6 +44,17 @@ internal static class ControlFixtureEndpoints
             LiveFixtureGraph? graph = state.Find(item => string.Equals(item.GraphId, graphId, StringComparison.Ordinal));
             return graph is null ? Results.NotFound() : Results.Ok(graph);
         });
+        if (app.ServiceProvider.GetRequiredService<IConfiguration>().GetValue<bool>("FixtureStateStore:Enabled"))
+        {
+            _ = app.MapGet("/api/v1/live-fixtures/graphs/{graphId}/persisted-observation", async (
+                string graphId, PersistedReadObserver observer, CancellationToken cancellationToken) =>
+            {
+                LiveFixtureGraph? graph = state.Find(item => string.Equals(item.GraphId, graphId, StringComparison.Ordinal));
+                if (graph is null || !observer.CanObserve(graph))
+                    return Results.NotFound();
+                return Results.Ok(await observer.ObserveAsync(graph, cancellationToken).ConfigureAwait(false));
+            });
+        }
         _ = app.MapDelete("/api/v1/live-fixtures/graphs/{graphId}", async (
             string graphId,
             FixtureProxy proxy,

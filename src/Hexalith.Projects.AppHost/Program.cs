@@ -64,7 +64,8 @@ _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
 DevelopmentRouteCatalogComposition? supportedReadCatalog = null;
 if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
 {
-    _ = projectsUi.WithExplicitStart();
+    if (!SupportedProjectBrowserFixtureProfile.IsEnabled(builder.Configuration))
+        _ = projectsUi.WithExplicitStart();
     SupportedProjectReadFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, daprComponentsPath);
     supportedReadCatalog = SupportedProjectReadDevelopmentInfrastructure.Add(builder, eventStore, tenants, projects);
 }
@@ -81,6 +82,8 @@ else
         daprPlacementHostAddress,
         daprSchedulerHostAddress);
 }
+
+SupportedProjectBrowserFixtureProfile.Add(builder, projectsUi);
 
 if (security is not null)
 {
@@ -120,6 +123,9 @@ if (security is not null)
 }
 
 _ = projectsUi
+    .WithReference(eventStore)
+    .WaitFor(eventStore)
+    .WithEnvironment("EventStore__GatewayAddress", ReferenceExpression.Create($"{eventStore.GetEndpoint("http")}"))
     .WithReference(projects)
     .WaitFor(projects)
     .WithEnvironment("Projects__BaseAddress", ReferenceExpression.Create($"{projects.GetEndpoint("http")}"));

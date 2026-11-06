@@ -10,6 +10,9 @@ namespace Hexalith.Projects.UI.Diagnostics;
 /// </summary>
 public interface IProjectDetailSource
 {
+    /// <summary>Requests explicit separately authorized descriptive or quarantine inspection.</summary>
+    Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken);
+
     /// <summary>Loads Project detail using canonical generated query clients.</summary>
     /// <param name="projectId">The Project identifier.</param>
     /// <param name="cancellationToken">The cancellation token.</param>

@@ -23,6 +23,12 @@ public partial class ProjectInventoryRowProjection
     /// </summary>
     public const string WarningSummaryUnavailable = "Not available on list row";
 
+    /// <summary>Gets or sets the delivered Folder availability.</summary>
+    public ReferenceState ProjectFolderAvailability
+    {
+        get; set;
+    }
+
     /// <summary>Gets or sets the stable FrontComposer row identity.</summary>
     [ColumnPriority(0)]
     [Display(Name = "ID")]

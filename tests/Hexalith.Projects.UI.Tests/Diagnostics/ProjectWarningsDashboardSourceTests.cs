@@ -1,4 +1,4 @@
-// <copyright file="ProjectWarningsDashboardSourceTests.cs" company="Hexalith">
+// <copyright file="LegacyProjectWarningsDashboardSourceTests.cs" company="Hexalith">
 // Copyright (c) Hexalith. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -26,7 +26,7 @@ using GeneratedDiagnostic = Hexalith.Projects.Client.Generated.ProjectOperatorDi
 /// <summary>
 /// Tests for the bounded generated-client warnings dashboard source.
 /// </summary>
-public sealed class ProjectWarningsDashboardSourceTests
+public sealed class LegacyProjectWarningsDashboardSourceTests
 {
     [Fact]
     public async Task SourceUsesVisibleProjectListAndBoundedOperatorDiagnostics()
@@ -61,7 +61,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                 ProjectLifecycleState.Archived,
                 Reference(ProjectReferenceSummaryReferenceKind.File, ProjectReferenceSummaryReferenceState.Included, "file-001", "FileReferenceMatched"))));
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(ProjectLifecycle.Active, CancellationToken.None)
             .ConfigureAwait(true);
@@ -119,7 +119,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<GeneratedDiagnostic>>(_ => throw ApiException(503));
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(null, CancellationToken.None)
             .ConfigureAwait(true);
@@ -200,7 +200,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                         "MemoryMatched"));
             });
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(null, TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
@@ -235,7 +235,7 @@ public sealed class ProjectWarningsDashboardSourceTests
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
 
         await Should.ThrowAsync<OperationCanceledException>(() => source.LoadAsync(null, cts.Token));
         await client.DidNotReceiveWithAnyArgs().GetProjectOperatorDiagnosticsAsync(
@@ -272,7 +272,7 @@ public sealed class ProjectWarningsDashboardSourceTests
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
 
         await Should.ThrowAsync<OperationCanceledException>(() => source.LoadAsync(null, cts.Token));
         await client.DidNotReceive().GetProjectOperatorDiagnosticsAsync(
@@ -294,7 +294,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw new TaskCanceledException("transport timeout"));
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(null, CancellationToken.None)
             .ConfigureAwait(true);
@@ -342,7 +342,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                     "memory-002",
                     "MemoryMatched"))));
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(null, CancellationToken.None)
             .ConfigureAwait(true);
@@ -374,7 +374,7 @@ public sealed class ProjectWarningsDashboardSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw ApiException(statusCode));
 
-        var source = new ProjectWarningsDashboardSource(client);
+        var source = new LegacyProjectWarningsDashboardSource(client);
         ProjectWarningsDashboardLoadResult result = await source
             .LoadAsync(null, CancellationToken.None)
             .ConfigureAwait(true);

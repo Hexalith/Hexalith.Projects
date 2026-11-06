@@ -9,6 +9,11 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 
 using Hexalith.FrontComposer.Shell.Services.Auth;
+using Hexalith.EventStore.Client.Registration;
+using Hexalith.FrontComposer.Shell.Extensions;
+using Hexalith.FrontComposer.Shell.Infrastructure.Tenancy;
+using Hexalith.Projects.Contracts.Queries;
+using Hexalith.Projects.UI.Diagnostics;
 using Hexalith.Projects.Client;
 using Hexalith.Projects.UI;
 
@@ -200,6 +205,50 @@ public sealed class ProjectsUiAuthenticationCompositionTests
         exception.Message.ShouldNotContain(ClientSecret);
     }
 
+    /// <summary>Exercises the real SDK and owner relay under interleaved same-subject circuit sessions.</summary>
+    [Fact]
+    public async Task SupportedQueriesUseOnlyTheirExactCircuitCredentialAndCurrentTenant()
+    {
+        QueryRecordingHttpMessageHandler recorder = new();
+        (ServiceProvider provider, _, _, _, _) = Compose(CompleteSettings(), recorder);
+        await using (provider.ConfigureAwait(true))
+        {
+            FrontComposerUserTokenStore store = provider.GetRequiredService<FrontComposerUserTokenStore>();
+            (string Session, string Tenant, string Credential)[] sessions =
+            [
+                ("circuit-a", "tenant-a", "synthetic-credential-a"),
+                ("circuit-b", "tenant-a", "synthetic-credential-b"),
+                ("circuit-c", "tenant-b", "synthetic-credential-c"),
+                ("circuit-d", "tenant-b", "synthetic-credential-d"),
+            ];
+            foreach (var session in sessions)
+                store.Set(new(session.Session, "same-subject", session.Tenant), session.Credential, DateTimeOffset.UtcNow.AddMinutes(5));
+            await Task.WhenAll(sessions.Select(session => Task.Run(async () =>
+            {
+                using IServiceScope scope = provider.CreateScope();
+                ClaimsPrincipal principal = new(new ClaimsIdentity([
+                    new Claim("sub", "same-subject"), new Claim("eventstore:current-tenant", session.Tenant),
+                    new Claim(FrontComposerTokenSession.ClaimType, session.Session)], "test"));
+                ((ServerAuthenticationStateProvider)scope.ServiceProvider.GetRequiredService<AuthenticationStateProvider>())
+                    .SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+                provider.GetRequiredService<CircuitServicesAccessor>().Services = scope.ServiceProvider;
+                // Interactive circuit authority must work after the HTTP request has ended.
+                provider.GetRequiredService<IHttpContextAccessor>().HttpContext = null;
+                ProjectReadQueryClient queries = scope.ServiceProvider.GetRequiredService<ProjectReadQueryClient>();
+                for (int i = 0; i < 3; i++)
+                {
+                    ProjectReadResult<ProjectListPage> result = await queries.QueryAsync<ProjectListPage>("projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+                    result.Feedback.ShouldBeNull();
+                    result.TenantScope.ShouldBe(session.Tenant);
+                }
+                provider.GetRequiredService<CircuitServicesAccessor>().Services = null;
+            }))).ConfigureAwait(true);
+            recorder.Sends.Count.ShouldBe(12);
+            foreach (var session in sessions)
+                recorder.Sends.Count(send => send.Tenant == session.Tenant && send.Credential == session.Credential).ShouldBe(3);
+        }
+    }
+
     private static Dictionary<string, string?> CompleteSettings()
         => new(StringComparer.Ordinal)
         {
@@ -209,7 +258,7 @@ public sealed class ProjectsUiAuthenticationCompositionTests
         };
 
     private static (ServiceProvider Provider, ServiceCollection Services, bool Enabled, RecordingHttpMessageHandler Recorder, string ClientName) Compose(
-        IReadOnlyDictionary<string, string?> settings)
+        IReadOnlyDictionary<string, string?> settings, QueryRecordingHttpMessageHandler? queryRecorder = null)
     {
         IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection(settings).Build();
         ServiceCollection services = new();
@@ -226,6 +275,13 @@ public sealed class ProjectsUiAuthenticationCompositionTests
         _ = projectsClient.ConfigurePrimaryHttpMessageHandler(() => recorder);
 
         bool enabled = services.AddProjectsUiSecurity(configuration, projectsClient);
+        if (queryRecorder is not null)
+        {
+            services.AddScoped<IFrontComposerTenantContextAccessor, FrontComposerTenantContextAccessor>();
+            services.AddScoped<ProjectReadQueryClient>();
+            services.AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("https://gateway.test/"))
+                .AddFrontComposerGatewayAuthorization().ConfigurePrimaryHttpMessageHandler(() => queryRecorder);
+        }
         return (services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true }), services, enabled, recorder, projectsClient.Name);
     }
 

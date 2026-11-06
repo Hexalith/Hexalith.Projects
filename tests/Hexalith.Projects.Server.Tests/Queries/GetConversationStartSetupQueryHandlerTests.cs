@@ -51,6 +51,7 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Setup!.Goals.ShouldBe(["goal"]);
         response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
@@ -146,7 +147,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true)).ConfigureAwait(true);
 
         QueryResult result = await handler.ExecuteAsync(
-            Query() with { OriginalActorId = "other-actor" },
+            Query() with
+            {
+                OriginalActorId = "other-actor"
+            },
             TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeFalse();
@@ -161,7 +165,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true)).ConfigureAwait(true);
 
         QueryResult result = await handler.ExecuteAsync(
-            Query() with { EntityId = "other-project" },
+            Query() with
+            {
+                EntityId = "other-project"
+            },
             TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeFalse();
@@ -173,7 +180,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     public async Task ExecuteAsync_MismatchedPersistedIdentity_ReturnsSafeDenial()
     {
         GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
-            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with { ProjectId = "other-project" }).ConfigureAwait(true);
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with
+            {
+                ProjectId = "other-project"
+            }).ConfigureAwait(true);
 
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
@@ -186,7 +196,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     public async Task ExecuteAsync_InvalidPersistedDetail_ReturnsMinimalUnavailable()
     {
         GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
-            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with { Sequence = 0 }).ConfigureAwait(true);
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with
+            {
+                Sequence = 0
+            }).ConfigureAwait(true);
 
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
@@ -292,7 +305,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         const string StoreName = ConversationStartSetupProjectionHandler.StoreName;
         string key = ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId);
         string sentinelKey = ConversationStartSetupProjectionHandler.Key("foreign-tenant", ProjectId);
-        await store.SaveAsync(StoreName, sentinelKey, detail with { TenantId = "foreign-tenant" },
+        await store.SaveAsync(StoreName, sentinelKey, detail with
+        {
+            TenantId = "foreign-tenant"
+        },
             TestContext.Current.CancellationToken).ConfigureAwait(true);
         byte[] before = store.SnapshotRaw(StoreName, key)!;
         byte[] sentinelBefore = store.SnapshotRaw(StoreName, sentinelKey)!;
@@ -353,7 +369,8 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             configurePrincipal: principal =>
             {
                 ClaimsIdentity primary = (ClaimsIdentity)principal.Identity!;
-                foreach (Claim claim in primary.FindAll("eventstore:permission").ToArray()) primary.RemoveClaim(claim);
+                foreach (Claim claim in primary.FindAll("eventstore:permission").ToArray())
+                    primary.RemoveClaim(claim);
                 if (supplementary)
                     principal.AddIdentity(new ClaimsIdentity([new Claim("eventstore:permission", "projects:read")]));
             }).ConfigureAwait(true);

@@ -7,6 +7,8 @@ namespace Hexalith.Projects.Contracts.Tests.Ui;
 
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Hexalith.FrontComposer.Contracts.Attributes;
 using Hexalith.Projects.Contracts.Ui;
@@ -48,7 +50,7 @@ public sealed class ProjectResolutionTraceProjectionTests
         ProjectResolutionTraceProjection.ContractVersionValue.ShouldBe("projects.resolution-trace.ui.v1");
         typeof(ProjectResolutionTraceProjection)
             .GetProperty(nameof(ProjectResolutionTraceProjection.Result))!
-            .PropertyType.ShouldBe(typeof(ResolutionResult));
+            .PropertyType.ShouldBe(typeof(ResolutionResult?));
         typeof(ProjectResolutionTraceExclusionProjection)
             .GetProperty(nameof(ProjectResolutionTraceExclusionProjection.ReferenceState))!
             .PropertyType.ShouldBe(typeof(ReferenceState));
@@ -92,6 +94,41 @@ public sealed class ProjectResolutionTraceProjectionTests
                     .ShouldBeFalse($"{type.Name}.{property.Name} must stay metadata-only and trace-history-free.");
             }
         }
+    }
+
+    [Fact]
+    public void IncompleteAdvisorySerializesNullResultAndCoverageWithoutInventingSourceTime()
+    {
+        JsonSerializerOptions options = new(JsonSerializerDefaults.Web);
+        options.Converters.Add(new JsonStringEnumConverter());
+        DateTimeOffset evaluated = DateTimeOffset.Parse("2026-11-06T01:00:00Z");
+        ProjectResolutionTraceProjection incomplete = new()
+        {
+            Result = null,
+            Incomplete = true,
+            UnsupportedInputKinds = "file",
+            EvaluatedAt = evaluated,
+        };
+        string serialized = JsonSerializer.Serialize(incomplete, options);
+        using JsonDocument wire = JsonDocument.Parse(serialized);
+        wire.RootElement.GetProperty("result").ValueKind.ShouldBe(JsonValueKind.Null);
+        wire.RootElement.GetProperty("incomplete").GetBoolean().ShouldBeTrue();
+        wire.RootElement.GetProperty("unsupportedInputKinds").GetString().ShouldBe("file");
+        wire.RootElement.GetProperty("evaluatedAt").GetDateTimeOffset().ShouldBe(evaluated);
+        wire.RootElement.TryGetProperty("observedAt", out _).ShouldBeFalse();
+        serialized.ShouldNotContain("0001-01-01");
+        ProjectResolutionTraceProjection roundTrip = JsonSerializer.Deserialize<ProjectResolutionTraceProjection>(serialized, options)!;
+        roundTrip.Result.ShouldBeNull();
+        roundTrip.Incomplete.ShouldBeTrue();
+        roundTrip.UnsupportedInputKinds.ShouldBe("file");
+        ProjectResolutionTraceProjection complete = new()
+        {
+            Result = ResolutionResult.NoMatch,
+            EvaluatedAt = evaluated
+        };
+        using JsonDocument completed = JsonDocument.Parse(JsonSerializer.Serialize(complete, options));
+        completed.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
+        completed.RootElement.GetProperty("incomplete").GetBoolean().ShouldBeFalse();
     }
 
     [Fact]

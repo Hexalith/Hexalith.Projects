@@ -25,6 +25,8 @@ public static class LiveFixtureApplication
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         configure?.Invoke(builder);
         _ = builder.Services.AddSingleton<LiveFixtureState>();
+        if (builder.Configuration.GetValue<bool>("FixtureStateStore:Enabled"))
+            _ = builder.Services.AddSingleton<PersistedReadObserver>();
         _ = builder.Services.AddHttpClient<FixtureProxy>(static client => client.Timeout = TimeSpan.FromSeconds(10));
 
         // Fixture ingress is metadata-only: malformed requests become bodiless 400s instead of developer

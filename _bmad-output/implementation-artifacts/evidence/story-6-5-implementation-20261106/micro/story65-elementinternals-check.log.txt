@@ -1,0 +1,26 @@
+{"browser":"154.0.8037.57","nativeRoles":[["checkbox","Test checkbox"],["button","Test button"],["link","Link text"]],"playwrightCheckboxes":0}
+{"explicitRoleCheckPassed":true}
+{
+  "violations": [
+    {
+      "id": "label-content-name-mismatch",
+      "impact": "serious",
+      "nodes": [
+        {
+          "html": "<fluent-link href=\"/test\" tabindex=\"0\" role=\"link\" aria-label=\"Test link\">Link text<a inert=\"\" href=\"/test\"></a></fluent-link>",
+          "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+        }
+      ]
+    },
+    {
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": [
+        {
+          "html": "<fluent-checkbox aria-label=\"Test checkbox\" tabindex=\"0\" role=\"checkbox\" aria-checked=\"true\"></fluent-checkbox>",
+          "summary": "Fix any of the following:\n  Target has insufficient size (16px by 16px, should be at least 24px by 24px)\n  Target has insufficient space to its closest neighbors. Safe clickable space has a diameter of 16px instead of at least 24px."
+        }
+      ]
+    }
+  ]
+}

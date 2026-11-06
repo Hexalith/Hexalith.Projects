@@ -1,0 +1,158 @@
+// <copyright file="LegacyProjectDetailSource.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.UI.Diagnostics;
+
+using Hexalith.Projects.Client.Generated;
+using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.UI.Rendering;
+
+using ContractDiagnostic = Hexalith.Projects.Contracts.Models.ProjectOperatorDiagnostic;
+using GeneratedContextExplanation = Hexalith.Projects.Client.Generated.ProjectContextExplanation;
+using GeneratedDiagnostic = Hexalith.Projects.Client.Generated.ProjectOperatorDiagnostic;
+
+/// <summary>
+/// Generated-client backed source for the read-only Project detail inspector.
+/// </summary>
+public sealed class LegacyProjectDetailSource(IClient client) : ILegacyProjectDetailSource
+{
+    /// <inheritdoc/>
+    public Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken) => GetProjectDetailAsync(projectId, cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<ProjectDetailLoadResult> GetProjectDetailAsync(
+        string projectId,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectId);
+
+        string correlationId = Guid.NewGuid().ToString("N");
+        ContractDiagnostic detail;
+        try
+        {
+            Project project = await client.GetProjectAsync(
+                projectId,
+                correlationId,
+                ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+            detail = ProjectGeneratedContractMapper.ToContract(project);
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
+        {
+            return ProjectDetailLoadResult.FromFeedback(
+                ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 503)
+        {
+            return ProjectDetailLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Warning("data_unavailable", correlationId));
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 400)
+        {
+            return ProjectDetailLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Error("validation_error", correlationId));
+        }
+        catch (HexalithProjectsApiException)
+        {
+            return ProjectDetailLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Error("detail_query_failed", correlationId));
+        }
+        catch (Exception)
+        {
+            // Transport/timeout/deserialization failures must not crash the Blazor circuit or echo raw
+            // exception text; collapse to the same safe reason code as an unclassified API failure.
+            return ProjectDetailLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Error("detail_query_failed", correlationId));
+        }
+
+        ProjectConsoleFeedback? diagnosticFeedback = null;
+        ContractDiagnostic? diagnostic = null;
+        try
+        {
+            GeneratedDiagnostic generatedDiagnostic = await client.GetProjectOperatorDiagnosticsAsync(
+                projectId,
+                auditLimit: 25,
+                x_Correlation_Id: correlationId,
+                x_Hexalith_Freshness: ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+            diagnostic = ProjectGeneratedContractMapper.ToContract(generatedDiagnostic);
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
+        {
+            diagnosticFeedback = ProjectConsoleFeedback.FailClosed("safe_denial", correlationId);
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 503)
+        {
+            diagnosticFeedback = ProjectConsoleFeedback.Warning("data_unavailable", correlationId);
+        }
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 400)
+        {
+            diagnosticFeedback = ProjectConsoleFeedback.Error("validation_error", correlationId);
+        }
+        catch (HexalithProjectsApiException)
+        {
+            diagnosticFeedback = ProjectConsoleFeedback.Error("diagnostic_query_failed", correlationId);
+        }
+        catch (Exception)
+        {
+            // Bounded diagnostics are non-blocking; any transport/timeout failure degrades to safe
+            // feedback while the base detail stays rendered.
+            diagnosticFeedback = ProjectConsoleFeedback.Error("diagnostic_query_failed", correlationId);
+        }
+
+        GeneratedContextExplanation? contextExplanation = null;
+        try
+        {
+            contextExplanation = await client.GetProjectContextExplanationAsync(
+                projectId,
+                correlationId,
+                ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (HexalithProjectsApiException ex)
+        {
+            diagnosticFeedback ??= MapReferenceHealthFailure(ex.StatusCode, correlationId);
+        }
+        catch (Exception)
+        {
+            diagnosticFeedback ??= ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId);
+        }
+
+        ProjectConversationsPage? conversations = null;
+        try
+        {
+            conversations = await client.ListProjectConversationsAsync(
+                projectId,
+                pageSize: 100,
+                cursor: null!,
+                x_Correlation_Id: correlationId,
+                x_Hexalith_Freshness: ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (HexalithProjectsApiException ex)
+        {
+            diagnosticFeedback ??= MapReferenceHealthFailure(ex.StatusCode, correlationId);
+        }
+        catch (Exception)
+        {
+            diagnosticFeedback ??= ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId);
+        }
+
+        ContractDiagnostic merged = ProjectGeneratedContractMapper.Merge(detail, diagnostic);
+        return ProjectDetailLoadResult.FromDetail(
+            merged,
+            diagnosticFeedback,
+            ProjectReferenceHealthMapper.BuildRows(merged, contextExplanation, conversations));
+    }
+
+    private static ProjectConsoleFeedback MapReferenceHealthFailure(int statusCode, string correlationId)
+        => statusCode switch
+        {
+            400 => ProjectConsoleFeedback.Error("validation_error", correlationId),
+            401 or 403 or 404 => ProjectConsoleFeedback.FailClosed("safe_denial", correlationId),
+            503 => ProjectConsoleFeedback.Warning("data_unavailable", correlationId),
+            _ => ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId),
+        };
+}

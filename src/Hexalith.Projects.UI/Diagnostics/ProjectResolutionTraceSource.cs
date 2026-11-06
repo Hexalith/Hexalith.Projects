@@ -1,115 +1,44 @@
-// <copyright file="ProjectResolutionTraceSource.cs" company="Hexalith">
-// Copyright (c) Hexalith. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-// </copyright>
-
 namespace Hexalith.Projects.UI.Diagnostics;
 
-using Hexalith.Projects.Client.Generated;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.UI.Rendering;
 
-/// <summary>
-/// Generated-client backed source for explicit Project resolution trace queries.
-/// </summary>
-public sealed class ProjectResolutionTraceSource(IClient client) : IProjectResolutionTraceSource
+/// <summary>Loads unselected advisory observations through the supported SDK query.</summary>
+public sealed class ProjectResolutionTraceSource(ProjectReadQueryClient queries) : IProjectResolutionTraceSource
 {
-    /// <inheritdoc />
-    public async Task<ProjectResolutionTraceLoadResult> LoadTraceAsync(
-        ProjectResolutionTraceRequest request,
-        CancellationToken cancellationToken)
+    /// <inheritdoc/>
+    public async Task<ProjectResolutionTraceLoadResult> LoadTraceAsync(ProjectResolutionTraceRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-
-        string? conversationId = Normalize(request.ConversationId);
-        string[] folderIds = NormalizeIds(request.FolderIds);
-        string[] fileIds = NormalizeIds(request.FileIds);
-        ProjectConsoleFeedback? validation = Validate(request, conversationId, folderIds, fileIds);
-        if (validation is not null)
+        string? conversation = string.IsNullOrWhiteSpace(request.ConversationId) ? null : request.ConversationId.Trim();
+        string[] folders = RawIds(request.FolderIds);
+        string[] files = RawIds(request.FileIds);
+        int count = folders.Length + files.Length;
+        string? error = request.Mode switch
         {
-            return ProjectResolutionTraceLoadResult.FromFeedback(validation);
-        }
-
-        string correlationId = Guid.NewGuid().ToString("N");
-        try
-        {
-            ProjectResolution resolution = request.Mode == ProjectResolutionTraceRequest.ConversationMode
-                ? await client.ResolveProjectFromConversationAsync(
-                    conversationId!,
-                    request.IncludeArchived,
-                    correlationId,
-                    ReadConsistencyClass.Eventually_consistent,
-                    cancellationToken).ConfigureAwait(false)
-                : await client.ResolveProjectFromAttachmentsAsync(
-                    folderIds,
-                    fileIds,
-                    request.IncludeArchived,
-                    correlationId,
-                    ReadConsistencyClass.Eventually_consistent,
-                    cancellationToken).ConfigureAwait(false);
-
-            return ProjectResolutionTraceMapper.ToLoadResult(request, folderIds, fileIds, resolution);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 400)
-        {
-            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Error("validation_error"));
-        }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
-        {
-            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"));
-        }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 503)
-        {
-            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Warning("data_unavailable"));
-        }
-        catch (HexalithProjectsApiException)
-        {
-            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Error("resolution_trace_query_failed"));
-        }
-        catch (Exception)
-        {
-            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Error("resolution_trace_query_failed"));
-        }
-    }
-
-    private static ProjectConsoleFeedback? Validate(
-        ProjectResolutionTraceRequest request,
-        string? conversationId,
-        IReadOnlyList<string> folderIds,
-        IReadOnlyList<string> fileIds)
-    {
-        bool hasConversation = !string.IsNullOrWhiteSpace(conversationId);
-        bool hasAttachments = folderIds.Count > 0 || fileIds.Count > 0;
-
-        return request.Mode switch
-        {
-            ProjectResolutionTraceRequest.ConversationMode when !hasConversation => ProjectConsoleFeedback.Error("conversation_id_required"),
-            ProjectResolutionTraceRequest.ConversationMode when hasAttachments => ProjectConsoleFeedback.Error("mixed_trace_input"),
-            ProjectResolutionTraceRequest.AttachmentsMode when !hasAttachments => ProjectConsoleFeedback.Error("attachment_ids_required"),
-            ProjectResolutionTraceRequest.AttachmentsMode when hasConversation => ProjectConsoleFeedback.Error("mixed_trace_input"),
+            ProjectResolutionTraceRequest.ConversationMode when conversation is null => "conversation_id_required",
+            ProjectResolutionTraceRequest.ConversationMode when count != 0 => "mixed_trace_input",
+            ProjectResolutionTraceRequest.AttachmentsMode when conversation is not null => "mixed_trace_input",
+            ProjectResolutionTraceRequest.AttachmentsMode when count == 0 => "attachment_ids_required",
+            ProjectResolutionTraceRequest.AttachmentsMode when count > 32 => "attachment_limit_exceeded",
             ProjectResolutionTraceRequest.ConversationMode or ProjectResolutionTraceRequest.AttachmentsMode => null,
-            _ => ProjectConsoleFeedback.Error("trace_mode_required"),
+            _ => "trace_mode_required",
         };
+        if (error is not null)
+            return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Error(error));
+        // Preserve raw entries so duplicate inputs cannot bypass the server's 32-entry limit.
+        object payload = request.Mode == ProjectResolutionTraceRequest.ConversationMode
+            ? new ResolveProjectFromConversationQuery(conversation!, request.IncludeArchived)
+            : new ResolveProjectFromAttachmentsQuery(folders.Select(id => new ProjectAdvisoryAttachment("folder", id))
+                .Concat(files.Select(id => new ProjectAdvisoryAttachment("file", id))).ToArray(), request.IncludeArchived);
+        string discriminator = request.Mode == ProjectResolutionTraceRequest.ConversationMode
+            ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType;
+        ProjectReadResult<ProjectAdvisoryResolutionResponse> response = await queries.QueryAsync<ProjectAdvisoryResolutionResponse>(
+            "projects", discriminator, payload, cancellationToken).ConfigureAwait(false);
+        return response.Value is null ? ProjectResolutionTraceLoadResult.FromFeedback(response.Feedback!)
+            : ProjectResolutionTraceMapper.ToLoadResult(request, folders, files, response.Value);
     }
 
-    private static string[] NormalizeIds(IEnumerable<string>? ids)
-        => ids?.SelectMany(SplitInput)
-            .Select(Normalize)
-            .Where(static value => !string.IsNullOrWhiteSpace(value))
-            .Select(static value => value!)
-            .Distinct(StringComparer.Ordinal)
-            .Order(StringComparer.Ordinal)
-            .ToArray()
-            ?? [];
-
-    private static IEnumerable<string> SplitInput(string? value)
-        => string.IsNullOrWhiteSpace(value)
-            ? []
-            : value.Split([',', ';', '\n', '\r', '\t', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-    private static string? Normalize(string? value)
-        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    private static string[] RawIds(IEnumerable<string> ids)
+        => ids.SelectMany(value => value.Split([',', ';', '\n', '\r', '\t', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)).ToArray();
 }

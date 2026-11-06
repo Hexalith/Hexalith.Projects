@@ -45,6 +45,7 @@ public sealed class GetProjectContextQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ProjectContextReadResponse response = Deserialize(result);
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
         response.Setup.ShouldNotBeNull();

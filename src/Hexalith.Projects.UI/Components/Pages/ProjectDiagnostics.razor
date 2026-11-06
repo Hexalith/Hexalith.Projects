@@ -1,304 +1,104 @@
-@page "/projects/{ProjectId}"
+@page "/inspect/projects/{ProjectId}"
 @using Hexalith.Projects.Contracts.Models
-@using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.Contracts.Queries
 @using Hexalith.Projects.UI.Diagnostics
 @inject IProjectDetailSource Details
+@implements IDisposable
 
-@if (_loading)
-{
-    <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("project_detail_loading")" />
-}
-else if (_result?.Detail is not null)
-{
-    <ProjectDiagnosticHeader Diagnostic="@_result.Detail"
-                             TenantScope="@_result.TenantScope"
-                             Mode="@_result.Mode" />
-
-    @if (_result.DiagnosticFeedback is not null)
+<section class="project-detail-inspector" data-testid="project-detail-inspector" aria-labelledby="project-detail-heading" aria-busy="@_loading.ToString().ToLowerInvariant()">
+    <h1 id="project-detail-heading">Project @ProjectId</h1>
+    <FluentText>Tenant: @(_result?.TenantScope ?? "server-derived tenant"); read only</FluentText>
+    @if (Quarantined) { <FluentText role="status">Administrator quarantine inspection may disclose an audited name. This Project remains unavailable for context or Conversation start.</FluentText> }
+    <FluentCheckbox role="checkbox" aria-checked="@((_descriptive || Quarantined).ToString().ToLowerInvariant())" aria-disabled="@Quarantined.ToString().ToLowerInvariant()" Label="Descriptive inspection (separately authorized and audited; required in quarantine)" Value="@(_descriptive || Quarantined)" Disabled="@Quarantined" ValueChanged="InspectAsync" data-testid="project-detail-inspection" />
+    <FluentButton role="button" OnClick="LoadAsync" data-testid="project-detail-reread">Re-read supported observations</FluentButton>
+    @if (_loading) { <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("project_detail_loading")" /> }
+    else if (_result?.Open is { } opened)
     {
-        <ProjectFeedbackView Feedback="@_result.DiagnosticFeedback" />
-    }
-
-    <section class="project-detail-inspector"
-             data-testid="project-detail-inspector"
-             aria-labelledby="project-detail-inspector-heading">
-        <h2 id="project-detail-inspector-heading">Inspector</h2>
-        <div class="project-detail-inspector__tabs" role="tablist" aria-label="Project detail sections">
-            @foreach (string section in Sections)
-            {
-                <button type="button"
-                        role="tab"
-                        data-testid="@($"project-detail-tab-{section}")"
-                        aria-selected="@(section == _selectedSection)"
-                        @onclick="() => _selectedSection = section">
-                    @SectionLabel(section)
-                </button>
-            }
-        </div>
-
-        @switch (_selectedSection)
-        {
-            case MetadataSection:
-                <section role="tabpanel" data-testid="project-detail-section-metadata">
-                    <dl class="project-detail-inspector__facts">
-                        <div>
-                            <dt>Project ID</dt>
-                            <dd><code>@_result.Detail.ProjectId</code></dd>
-                        </div>
-                        <div>
-                            <dt>Name</dt>
-                            <dd>@_result.Detail.Name</dd>
-                        </div>
-                        <div>
-                            <dt>Description</dt>
-                            <dd>@(_result.Detail.Description ?? "No description")</dd>
-                        </div>
-                        <div>
-                            <dt>Created</dt>
-                            <dd><time datetime="@_result.Detail.CreatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@_result.Detail.CreatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
-                        </div>
-                        <div>
-                            <dt>Updated</dt>
-                            <dd><time datetime="@_result.Detail.UpdatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@_result.Detail.UpdatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
-                        </div>
-                        <div>
-                            <dt>Freshness</dt>
-                            <dd data-testid="project-detail-freshness">@FreshnessText(_result.Detail.Freshness)</dd>
-                        </div>
-                    </dl>
-                </section>
-                break;
-            case SetupSection:
-                <section role="tabpanel" data-testid="project-detail-section-setup">
-                    <dl class="project-detail-inspector__facts">
-                        <div>
-                            <dt>Setup metadata</dt>
-                            <dd>@(_result.Detail.SetupMetadata ?? "No setup metadata")</dd>
-                        </div>
-                        <div>
-                            <dt>Context activation</dt>
-                            <dd data-testid="project-detail-context-activation">
-                                @(_result.Detail.ContextActivation.Enabled ? "Enabled" : $"Blocked: {_result.Detail.ContextActivation.BlockedReasonCode ?? "not_available"}")
-                            </dd>
-                        </div>
-                    </dl>
-                    <div class="project-detail-inspector__setup">
-                        @RenderList("Goals", _result.Detail.ProjectSetup?.Goals)
-                        @RenderList("User instructions", _result.Detail.ProjectSetup?.UserInstructions)
-                        @RenderList("Preferred sources", _result.Detail.ProjectSetup?.PreferredSourceKinds.Select(s => s.ToString()))
-                        @RenderList("Excluded sources", _result.Detail.ProjectSetup?.ExcludedSourceKinds.Select(s => s.ToString()))
-                        <p data-testid="project-detail-conversation-defaults">
-                            Conversation defaults:
-                            @(_result.Detail.ProjectSetup?.ConversationStartDefaults?.LinkedSourcePolicy.ToString() ?? "None")
-                        </p>
-                    </div>
-                </section>
-                break;
-            case ReferencesSection:
-                <section role="tabpanel" data-testid="project-detail-section-references">
-                    @if (_result.ReferenceHealthRows.Count == 0)
-                    {
-                        <ProjectEmptyStateView State="@ProjectEmptyState.NoReferences()" ProjectionType="@typeof(ProjectDetailInspectorProjection)" />
-                    }
-                    else
-                    {
-                        <div class="project-reference-health">
-                        <table class="project-detail-inspector__table project-reference-health__matrix" data-testid="project-reference-health-matrix">
-                            <caption>Reference Health Matrix</caption>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Reference type</th>
-                                    <th scope="col">Reference ID</th>
-                                    <th scope="col">Owner</th>
-                                    <th scope="col">Inclusion state</th>
-                                    <th scope="col">Health state</th>
-                                    <th scope="col">Reason code</th>
-                                    <th scope="col">Diagnostic</th>
-                                    <th scope="col">Last checked</th>
-                                    <th scope="col">Freshness</th>
-                                    <th scope="col">Safe actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (ProjectReferenceHealthRowProjection reference in _result.ReferenceHealthRows)
-                                {
-                                    <tr data-testid="project-reference-health-row" tabindex="0">
-                                        <td data-testid="project-reference-kind">@reference.ReferenceKind</td>
-                                        <td>
-                                            <span>@(reference.DisplayLabel ?? "Unnamed reference")</span>
-                                            <code>@reference.ReferenceId</code>
-                                        </td>
-                                        <td data-testid="project-reference-owner">@reference.OwnerContext</td>
-                                        <td data-testid="project-reference-state">
-                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(reference.InclusionState)" ColumnHeader="Inclusion state" />
-                                            <span class="project-reference-health__status-text">@ProjectVocabularyDescriptors.Describe(reference.InclusionState).AccessibleName</span>
-                                        </td>
-                                        <td>
-                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(reference.HealthState)" ColumnHeader="Health state" />
-                                            <span class="project-reference-health__status-text">@ProjectVocabularyDescriptors.Describe(reference.HealthState).AccessibleName</span>
-                                        </td>
-                                        <td data-testid="project-reference-reason">@ReasonText(reference.ReasonCode)</td>
-                                        <td>
-                                            <span>@(reference.InclusionCheck?.ToString() ?? "none")</span>
-                                            <span>@(reference.DiagnosticCode ?? "none")</span>
-                                        </td>
-                                        <td data-testid="project-reference-last-checked">
-                                            <time datetime="@reference.LastCheckedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@reference.LastCheckedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time>
-                                        </td>
-                                        <td>
-                                            <span>@EvidenceFreshnessStateCode.ToLabel(reference.FreshnessTrustState)</span>
-                                            @if (!string.IsNullOrWhiteSpace(reference.ProjectionWatermark))
-                                            {
-                                                <code>@reference.ProjectionWatermark</code>
-                                            }
-                                        </td>
-                                        <td data-testid="project-reference-safe-actions">
-                                            <div class="project-reference-health__actions" aria-label="@($"Safe actions for {reference.ReferenceKind} {reference.ReferenceId}")">
-                                                <button type="button" aria-disabled="true">Inspect</button>
-                                                <button type="button" aria-disabled="true">Copy ID</button>
-                                                <span>@reference.SafeActionAvailabilityLabel</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        </div>
-                    }
-                </section>
-                break;
-            case ResolutionSection:
-                <section role="tabpanel" data-testid="project-detail-section-resolution">
-                    <ProjectResolutionTraceWorkbench ProjectId="@_result.Detail.ProjectId" />
-                </section>
-                break;
-            case AuditSection:
-                <section role="tabpanel" data-testid="project-detail-section-audit">
-                    <ProjectAuditTimelineSection Result="@_result" />
-                </section>
-                break;
-            case ActionsSection:
-                <section role="tabpanel" data-testid="project-detail-section-actions">
-                    <ProjectMaintenanceActionPanel Detail="@_result.Detail"
-                                                   ReferenceRows="@_result.ReferenceHealthRows"
-                                                   TenantScope="@_result.TenantScope"
-                                                   OnSucceeded="ReloadAsync" />
-                </section>
-                break;
-        }
-    </section>
-}
-else if (_result?.Feedback is not null)
-{
-    <ProjectFeedbackView Feedback="@_result.Feedback" />
-}
-
-@code {
-    private const string MetadataSection = "metadata";
-    private const string SetupSection = "setup";
-    private const string ReferencesSection = "references";
-    private const string ResolutionSection = "resolution";
-    private const string AuditSection = "audit";
-    private const string ActionsSection = "actions";
-    private static readonly string[] Sections =
-    [
-        MetadataSection,
-        SetupSection,
-        ReferencesSection,
-        ResolutionSection,
-        AuditSection,
-        ActionsSection,
-    ];
-
-    [Parameter]
-    public string? ProjectId { get; set; }
-
-    private bool _loading = true;
-    private ProjectDetailLoadResult? _result;
-    private string? _loadedProjectId;
-    private string _selectedSection = MetadataSection;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (string.Equals(_loadedProjectId, ProjectId, StringComparison.Ordinal))
-        {
-            return;
-        }
-
-        _loading = true;
-        _loadedProjectId = ProjectId;
-        _selectedSection = MetadataSection;
-        _result = string.IsNullOrWhiteSpace(ProjectId)
-            ? ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("invalid_project_id"))
-            : await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
-        _loading = false;
-    }
-
-    private static string SectionLabel(string section)
-        => section switch
-        {
-            MetadataSection => "Metadata",
-            SetupSection => "Setup",
-            ReferencesSection => "References",
-            ResolutionSection => "Resolution",
-            AuditSection => "Audit",
-            ActionsSection => "Actions",
-            _ => section,
-        };
-
-    private async Task ReloadAsync()
-    {
-        if (string.IsNullOrWhiteSpace(ProjectId))
-        {
-            return;
-        }
-
-        // A reload after a confirmed action refreshes the inspector only when it yields a detail; feedback
-        // (for example a transient read-model miss) keeps the current inspector and its action panel.
-        ProjectDetailLoadResult reloaded = await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
-        if (reloaded.Detail is not null)
-        {
-            _result = reloaded;
-        }
-    }
-
-    private static string FreshnessText(ProjectOperatorFreshnessMetadata freshness)
-        => string.IsNullOrWhiteSpace(freshness.ProjectionWatermark)
-            ? $"{freshness.ReadConsistency}; {freshness.TrustState}"
-            : $"{freshness.ReadConsistency}; {freshness.TrustState}; {freshness.ProjectionWatermark}";
-
-    private static string ReasonText(ProjectReasonCode? reason)
-        => reason is null
-            ? "none"
-            : $"{ProjectVocabularyDescriptors.Describe(reason.Value).DisplayLabel} ({reason.Value})";
-
-    private static RenderFragment RenderList(string heading, IEnumerable<string>? values)
-        => builder =>
-        {
-            string[] items = values?.Where(v => !string.IsNullOrWhiteSpace(v)).ToArray() ?? [];
-            builder.OpenElement(0, "section");
-            builder.OpenElement(1, "h3");
-            builder.AddContent(2, heading);
-            builder.CloseElement();
-            if (items.Length == 0)
-            {
-                builder.OpenElement(3, "p");
-                builder.AddContent(4, "None");
-                builder.CloseElement();
-            }
-            else
-            {
-                builder.OpenElement(5, "ul");
-                for (int i = 0; i < items.Length; i++)
+        <FluentAccordion>
+            <FluentAccordionItem Header="Open observation" Expanded="true">
+                <FluentText>Lifecycle: @opened.LifecycleState</FluentText>
+                <FluentText>Name: @(opened.Name ?? "Not disclosed")</FluentText>
+                <FluentText>Description: @(opened.Description ?? "Not disclosed")</FluentText>
+                <FluentText>Setup metadata: @(opened.SetupMetadata ?? "Not disclosed")</FluentText>
+                @if (opened.CreatedAt != default) { <FluentText>Created: @opened.CreatedAt.ToString("O"); Updated: @opened.UpdatedAt.ToString("O")</FluentText> }
+                @if (opened.Setup is { } setup)
                 {
-                    builder.OpenElement(6 + i, "li");
-                    builder.AddContent(100 + i, items[i]);
-                    builder.CloseElement();
+                    <FluentText>Goals: @string.Join("; ", setup.Goals)</FluentText>
+                    <FluentText>User instructions: @string.Join("; ", setup.UserInstructions)</FluentText>
+                    <FluentText>Preferred sources: @string.Join(", ", setup.PreferredSourceKinds); Excluded sources: @string.Join(", ", setup.ExcludedSourceKinds)</FluentText>
                 }
-
-                builder.CloseElement();
-            }
-
-            builder.CloseElement();
-        };
+                <ProjectReadSnapshot Snapshot="opened.Snapshot" TestId="project-open-snapshot" />
+                @foreach (ProjectReadReference reference in opened.References)
+                {
+                    <FluentText data-testid="project-open-reference">@reference.ReferenceKind: @reference.FolderId @reference.FileReferenceId @reference.MemoryReferenceId; @reference.ReferenceState; @reference.ReasonCode; Observed: @reference.ObservedAt.ToString("O")</FluentText>
+                }
+            </FluentAccordionItem>
+            <FluentAccordionItem Header="Context observation">
+                @if (_result.Context is { } context)
+                {
+                    <ProjectReadSnapshot Snapshot="context.Snapshot" TestId="project-context-snapshot" />
+                    <FluentText>Lifecycle: @context.Lifecycle; Setup: @(context.Setup is null ? "Omitted" : "Included")</FluentText>
+                    @foreach (ProjectContextReference reference in Included(context))
+                    {
+                        <FluentText data-testid="project-context-reference">@reference.ReferenceKind: @reference.ReferenceId; @reference.ReferenceState; @reference.ReasonCode; Observed: @reference.ObservedAt.ToString("O")</FluentText>
+                    }
+                    @foreach (ProjectContextExclusion excluded in context.Excluded)
+                    {
+                        <FluentText data-testid="project-context-omission">Omitted @excluded.ReferenceKind: @excluded.ReferenceId; @excluded.ReferenceState; @excluded.ReasonCode; @excluded.FailedCheck; @excluded.Diagnostic</FluentText>
+                    }
+                }
+                else if (_result.ContextFeedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
+            </FluentAccordionItem>
+            <FluentAccordionItem Header="Conversation-start observation">
+                @if (_result.Start is { } start)
+                {
+                    <FluentStack Orientation="Orientation.Vertical" data-testid="project-start-snapshot">
+                        <FluentText>State: @start.Snapshot.ResponseState</FluentText>
+                        <FluentText>As of: @start.Snapshot.AsOf.ToString("O")</FluentText>
+                        <FluentText>Project version: @start.Snapshot.ProjectVersion</FluentText>
+                        @foreach (ConversationStartComponent component in start.Snapshot.Components)
+                        { <FluentText>@component.Name — Included: @component.Included; Freshness: @component.Freshness; Reason: @component.Reason</FluentText> }
+                        <FluentText>Recovery guidance: @string.Join(", ", start.Snapshot.RecoveryActions)</FluentText>
+                        <FluentText>Setup: @(start.Setup is null ? "Omitted" : "Included"); Linked source policy: @start.Setup?.LinkedSourcePolicy</FluentText>
+                    </FluentStack>
+                }
+                else if (_result.StartFeedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
+                <FluentText>Owner evidence and first-response authorization retain their delivered limits. Open and context observations do not grant Conversation-start authority.</FluentText>
+            </FluentAccordionItem>
+            <FluentAccordionItem Header="Project suggestions"><ProjectResolutionTraceWorkbench ProjectId="opened.ProjectId" /></FluentAccordionItem>
+            <FluentAccordionItem Header="Capabilities">
+                <FluentText>Audit history is unavailable on this read surface. Recovery guidance is informational. Re-read uses supported Get operations; Refresh is unavailable.</FluentText>
+            </FluentAccordionItem>
+        </FluentAccordion>
+    }
+    else if (_result?.Feedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
+</section>
+@code {
+    [Parameter] public string? ProjectId { get; set; }
+    [SupplyParameterFromQuery(Name = "descriptive")] public bool Descriptive { get; set; }
+    [SupplyParameterFromQuery(Name = "quarantined")] public bool Quarantined { get; set; }
+    private readonly CancellationTokenSource _lifetime = new();
+    private CancellationTokenSource? _loadCancellation;
+    private int _loadGeneration;
+    private ProjectDetailLoadResult? _result;
+    private bool _loading = true;
+    private bool _descriptive;
+    protected override async Task OnParametersSetAsync() { _descriptive = Descriptive; await LoadAsync(); }
+    private async Task LoadAsync()
+    {
+        _loadCancellation?.Cancel();
+        _loadCancellation?.Dispose();
+        CancellationTokenSource request = _loadCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        int generation = ++_loadGeneration;
+        _loading = true; _result = null;
+        try { var result = string.IsNullOrWhiteSpace(ProjectId) ? ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"))
+            : await Details.InspectAsync(ProjectId, _descriptive, Quarantined, request.Token);
+            if (generation == _loadGeneration && !request.IsCancellationRequested) _result = result; }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
+        finally { if (generation == _loadGeneration) _loading = false; }
+    }
+    private Task InspectAsync(bool value) { _descriptive = value; return LoadAsync(); }
+    private static IEnumerable<ProjectContextReference> Included(ProjectContextReadResponse context)
+        => (context.ProjectFolder is { } folder ? new[] { folder } : []).Concat(context.Conversations).Concat(context.FileReferences).Concat(context.MemoryReferences);
+    public void Dispose() { ++_loadGeneration; _loadCancellation?.Cancel(); _loadCancellation?.Dispose(); _lifetime.Cancel(); _lifetime.Dispose(); }
 }

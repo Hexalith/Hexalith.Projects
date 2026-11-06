@@ -32,6 +32,20 @@ public partial class ProjectResolutionTraceProjection
     [Display(Name = "Contract version")]
     public string ContractVersion { get; set; } = ContractVersionValue;
 
+    /// <summary>Gets or sets computation time, which is not a source freshness watermark.</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public DateTimeOffset EvaluatedAt
+    {
+        get; set;
+    }
+    /// <summary>Gets or sets whether observations were omitted by coverage limits.</summary>
+    public bool Incomplete
+    {
+        get; set;
+    }
+    /// <summary>Gets or sets presented kinds with unsupported identity mapping.</summary>
+    public string UnsupportedInputKinds { get; set; } = string.Empty;
+
     /// <summary>Gets or sets the trace input mode: conversation or attachments.</summary>
     [ColumnPriority(1)]
     [Display(Name = "Input mode")]
@@ -42,12 +56,12 @@ public partial class ProjectResolutionTraceProjection
     [Display(Name = "Conversation ID")]
     public string? PresentedConversationId { get; set; }
 
-    /// <summary>Gets or sets deterministic, deduplicated folder ids for attachment traces.</summary>
+    /// <summary>Gets or sets presented folder ids, with raw entries counted before deduplication for attachment traces.</summary>
     [ProjectionFieldGroup("Input")]
     [Display(Name = "Folder IDs")]
     public string PresentedFolderIds { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets deterministic, deduplicated file ids for attachment traces.</summary>
+    /// <summary>Gets or sets presented file ids, with raw entries counted before deduplication for attachment traces.</summary>
     [ProjectionFieldGroup("Input")]
     [Display(Name = "File IDs")]
     public string PresentedFileIds { get; set; } = string.Empty;
@@ -61,12 +75,19 @@ public partial class ProjectResolutionTraceProjection
     [ColumnPriority(2)]
     [RelativeTime]
     [Display(Name = "Observed")]
-    public DateTimeOffset ObservedAt { get; set; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public DateTimeOffset ObservedAt
+    {
+        get; set;
+    }
 
     /// <summary>Gets or sets the shared resolution result vocabulary value.</summary>
     [ColumnPriority(3)]
     [Display(Name = "Result")]
-    public ResolutionResult Result { get; set; } = ResolutionResult.NoMatch;
+    public ResolutionResult? Result
+    {
+        get; set;
+    }
 
     /// <summary>Gets or sets the number of candidate rows in this transient trace result.</summary>
     [ProjectionFieldGroup("Result")]

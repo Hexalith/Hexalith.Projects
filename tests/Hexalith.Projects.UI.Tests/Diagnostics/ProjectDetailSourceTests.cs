@@ -1,4 +1,4 @@
-// <copyright file="ProjectDetailSourceTests.cs" company="Hexalith">
+// <copyright file="LegacyProjectDetailSourceTests.cs" company="Hexalith">
 // Copyright (c) Hexalith. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -24,7 +24,7 @@ using ContractReferenceState = Hexalith.Projects.Contracts.Ui.ReferenceState;
 /// <summary>
 /// Tests for the generated-client backed detail source.
 /// </summary>
-public sealed class ProjectDetailSourceTests
+public sealed class LegacyProjectDetailSourceTests
 {
     [Fact]
     public async Task SourceUsesGetProjectAndDiagnosticsWithEventualFreshness()
@@ -58,7 +58,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateConversations()));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -141,7 +141,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateConversations(trustSignal)));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -196,7 +196,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateConversations()));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -229,7 +229,7 @@ public sealed class ProjectDetailSourceTests
                 new Dictionary<string, IEnumerable<string>>(),
                 null!));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -270,7 +270,7 @@ public sealed class ProjectDetailSourceTests
                 new Dictionary<string, IEnumerable<string>>(),
                 null!));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-hidden", CancellationToken.None)
             .ConfigureAwait(true);
@@ -308,7 +308,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<Project>>(_ => throw new System.Net.Http.HttpRequestException("connection refused 10.0.0.1 secret"));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -358,7 +358,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateConversations()));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);
@@ -408,7 +408,7 @@ public sealed class ProjectDetailSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<ProjectConversationsPage>>(_ => throw new System.Net.Http.HttpRequestException("secret upstream body"));
 
-        var source = new ProjectDetailSource(client);
+        var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
             .GetProjectDetailAsync("project-001", CancellationToken.None)
             .ConfigureAwait(true);

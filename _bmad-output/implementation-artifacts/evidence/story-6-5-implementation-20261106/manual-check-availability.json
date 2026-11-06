@@ -1,0 +1,34 @@
+{
+  "story": "6.5",
+  "qualification": "tool-availability-only",
+  "featureAcceptance": false,
+  "command": "python3 - <<'PY'\nimport os,shutil\nfor name in ['orca','speech-dispatcher','espeak-ng','espeak','Xvfb','xdotool','chromium','google-chrome']:\n print(name,shutil.which(name))\nprint('displayAvailable',bool(os.environ.get('DISPLAY')))\nprint('accessibilityBusAvailable',bool(os.environ.get('AT_SPI_BUS_ADDRESS')))\nPY",
+  "exitCode": 0,
+  "result": {
+    "orca": null,
+    "speech-dispatcher": null,
+    "espeak-ng": null,
+    "espeak": null,
+    "Xvfb": "/usr/bin/Xvfb",
+    "xdotool": null,
+    "chromium": null,
+    "google-chrome": "/usr/bin/google-chrome",
+    "displayAvailable": true,
+    "accessibilityBusAvailable": false
+  },
+  "manualScreenReader": {
+    "status": "not-performed",
+    "reason": "The checked screen-reader and speech commands were absent, and AT_SPI_BUS_ADDRESS was unset."
+  },
+  "nativeBrowserZoom200Percent": {
+    "status": "not-performed",
+    "reason": "The automated journey uses CSS zoom and axe; these do not establish manual native-browser zoom acceptance."
+  },
+  "remainingAcceptance": "Retain browser and assistive-technology versions, checked routes, keyboard and reading-order findings, native 200% zoom findings, and any unresolved critical or serious findings before accepting the manual criterion.",
+  "outstandingAutomatedDetermination": {
+    "rule": "color-contrast",
+    "status": "incomplete",
+    "sourceReceipt": "browser-fresh/supported-read-css-zoom-200.json",
+    "requires": "Manual contrast evaluation; zero reported violations does not resolve an incomplete rule."
+  }
+}

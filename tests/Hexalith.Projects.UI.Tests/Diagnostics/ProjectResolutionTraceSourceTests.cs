@@ -1,4 +1,4 @@
-// <copyright file="ProjectResolutionTraceSourceTests.cs" company="Hexalith">
+// <copyright file="LegacyProjectResolutionTraceSourceTests.cs" company="Hexalith">
 // Copyright (c) Hexalith. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -24,7 +24,7 @@ using GeneratedResolutionResult = Hexalith.Projects.Client.Generated.ResolutionR
 /// <summary>
 /// Tests for the generated-client backed resolution trace source and mapper.
 /// </summary>
-public sealed class ProjectResolutionTraceSourceTests
+public sealed class LegacyProjectResolutionTraceSourceTests
 {
     [Fact]
     public async Task ConversationModeCallsGeneratedQueryWithEventuallyConsistentFreshness()
@@ -39,7 +39,7 @@ public sealed class ProjectResolutionTraceSourceTests
             .Returns(Task.FromResult(SingleCandidateResolution()));
 
         using var cts = new CancellationTokenSource();
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
         ProjectResolutionTraceLoadResult result = await source
             .LoadTraceAsync(ProjectResolutionTraceRequest.ForConversation(" conversation-001 ", includeArchived: true), cts.Token)
             .ConfigureAwait(true);
@@ -77,7 +77,7 @@ public sealed class ProjectResolutionTraceSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(MultipleCandidatesResolution()));
 
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
         ProjectResolutionTraceLoadResult result = await source
             .LoadTraceAsync(
                 ProjectResolutionTraceRequest.ForAttachments(
@@ -126,7 +126,7 @@ public sealed class ProjectResolutionTraceSourceTests
                 new Dictionary<string, IEnumerable<string>>(),
                 null!));
 
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
         ProjectResolutionTraceLoadResult result = await source
             .LoadTraceAsync(ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false), CancellationToken.None)
             .ConfigureAwait(true);
@@ -144,7 +144,7 @@ public sealed class ProjectResolutionTraceSourceTests
     public async Task SourceValidatesEmptyAndMixedInputsBeforeCallingClient()
     {
         IClient client = Substitute.For<IClient>();
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
 
         ProjectResolutionTraceLoadResult empty = await source
             .LoadTraceAsync(ProjectResolutionTraceRequest.ForConversation(" ", includeArchived: false), CancellationToken.None)
@@ -184,7 +184,7 @@ public sealed class ProjectResolutionTraceSourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<ProjectResolution>>(_ => throw new InvalidOperationException("transcript secret token raw ProblemDetails"));
 
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
         ProjectResolutionTraceLoadResult result = await source
             .LoadTraceAsync(ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false), CancellationToken.None)
             .ConfigureAwait(true);
@@ -213,7 +213,7 @@ public sealed class ProjectResolutionTraceSourceTests
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
 
         await Should.ThrowAsync<OperationCanceledException>(() => source.LoadTraceAsync(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false),
@@ -223,17 +223,17 @@ public sealed class ProjectResolutionTraceSourceTests
     [Fact]
     public void MapperDerivesResolvedNoMatchMultipleExcludedAndFailedClosedOutcomeLabels()
     {
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(
             SingleCandidateTrace().Trace!,
             []).ShouldBe("Resolved");
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(
             NoMatchTrace().Trace!,
             []).ShouldBe("NoMatch");
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(
             MultipleCandidatesTrace().Trace!,
             []).ShouldBe("MultipleCandidates");
 
-        ProjectResolutionTraceLoadResult excluded = ProjectResolutionTraceMapper.ToLoadResult(
+        ProjectResolutionTraceLoadResult excluded = LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false),
             [],
             [],
@@ -251,9 +251,9 @@ public sealed class ProjectResolutionTraceSourceTests
                     },
                 },
             });
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(excluded.Trace!, excluded.Exclusions).ShouldBe("Excluded");
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(excluded.Trace!, excluded.Exclusions).ShouldBe("Excluded");
 
-        ProjectResolutionTraceLoadResult failedClosed = ProjectResolutionTraceMapper.ToLoadResult(
+        ProjectResolutionTraceLoadResult failedClosed = LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false),
             [],
             [],
@@ -271,7 +271,7 @@ public sealed class ProjectResolutionTraceSourceTests
                     },
                 },
             });
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(failedClosed.Trace!, failedClosed.Exclusions).ShouldBe("FailedClosed");
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(failedClosed.Trace!, failedClosed.Exclusions).ShouldBe("FailedClosed");
     }
 
     [Fact]
@@ -279,7 +279,7 @@ public sealed class ProjectResolutionTraceSourceTests
     {
         // Policy-redacted is a deliberate policy exclusion (like archived), not unverifiable evidence,
         // so it must map to "Excluded" and never to "FailedClosed" per the documented Trace Mapping.
-        ProjectResolutionTraceLoadResult redacted = ProjectResolutionTraceMapper.ToLoadResult(
+        ProjectResolutionTraceLoadResult redacted = LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false),
             [],
             [],
@@ -298,7 +298,7 @@ public sealed class ProjectResolutionTraceSourceTests
                 },
             });
 
-        ProjectResolutionTraceMapper.DeriveOutcomeLabel(redacted.Trace!, redacted.Exclusions).ShouldBe("Excluded");
+        LegacyProjectResolutionTraceMapper.DeriveOutcomeLabel(redacted.Trace!, redacted.Exclusions).ShouldBe("Excluded");
     }
 
     [Theory]
@@ -320,7 +320,7 @@ public sealed class ProjectResolutionTraceSourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(MultipleCandidatesResolution()));
 
-        var source = new ProjectResolutionTraceSource(client);
+        var source = new LegacyProjectResolutionTraceSource(client);
         ProjectResolutionTraceLoadResult result = await source
             .LoadTraceAsync(
                 ProjectResolutionTraceRequest.ForAttachments([], [fileInput], includeArchived: false),
@@ -353,14 +353,14 @@ public sealed class ProjectResolutionTraceSourceTests
     }
 
     private static ProjectResolutionTraceLoadResult SingleCandidateTrace()
-        => ProjectResolutionTraceMapper.ToLoadResult(
+        => LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: true),
             [],
             [],
             SingleCandidateResolution());
 
     private static ProjectResolutionTraceLoadResult NoMatchTrace()
-        => ProjectResolutionTraceMapper.ToLoadResult(
+        => LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForConversation("conversation-001", includeArchived: false),
             [],
             [],
@@ -371,7 +371,7 @@ public sealed class ProjectResolutionTraceSourceTests
             });
 
     private static ProjectResolutionTraceLoadResult MultipleCandidatesTrace()
-        => ProjectResolutionTraceMapper.ToLoadResult(
+        => LegacyProjectResolutionTraceMapper.ToLoadResult(
             ProjectResolutionTraceRequest.ForAttachments(["folder-001"], ["file-001"], includeArchived: false),
             ["folder-001"],
             ["file-001"],

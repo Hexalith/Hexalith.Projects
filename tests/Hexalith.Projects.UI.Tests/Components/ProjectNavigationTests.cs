@@ -52,7 +52,7 @@ public sealed class ProjectNavigationTests : FrontComposerTestBase
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-navigation-project']").Count.ShouldBe(2));
         cut.Markup.ShouldContain("Customer Portal");
         cut.Markup.ShouldContain("Operations Console");
-        cut.Find("[data-testid='project-navigation-project']").GetAttribute("href").ShouldBe("/projects/project-001");
+        cut.Find("[data-testid='project-navigation-project']").GetAttribute("href").ShouldBe("/inspect/projects/project-001");
         cut.Markup.ShouldNotContain(nameof(ProjectInventoryRowProjection));
         cut.Markup.ShouldNotContain(nameof(ProjectWarningQueueItemProjection));
     }
@@ -65,6 +65,7 @@ public sealed class ProjectNavigationTests : FrontComposerTestBase
             .Returns(Task.FromResult(ProjectInventoryLoadResult.FromRows([Row("project-001", "Customer Portal")])));
         Services.AddSingleton(source);
 
+        Services.GetRequiredService<NavigationManager>().NavigateTo("/inspect/projects");
         RenderFragment body = builder => builder.AddMarkupContent(0, "<p>Body</p>");
         IRenderedComponent<MainLayout> cut = Render<MainLayout>(parameters => parameters
             .Add(p => p.Body, body));

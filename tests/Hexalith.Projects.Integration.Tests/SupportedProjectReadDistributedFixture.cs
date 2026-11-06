@@ -51,6 +51,12 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private static readonly JsonSerializerOptions Json = JsonSerializerOptions.Web;
     private readonly DateTimeOffset _startedAt = DateTimeOffset.UtcNow;
     private static CancellationToken Cancellation => TestContext.Current.CancellationToken;
+    /// <summary>Gets the actual issuer subject for native or real OIDC fixture authority.</summary>
+    private string PrimaryActor => _configuration.TryGetProperty("Browser", out JsonElement browser) ? browser.GetProperty("PrimaryActor").GetString()! : "actor-1";
+    /// <summary>Gets the actual distinct foreign issuer subject.</summary>
+    private string ForeignActor => _configuration.TryGetProperty("Browser", out JsonElement browser) ? browser.GetProperty("ForeignActor").GetString()! : "foreign-actor";
+    /// <summary>Gets the owner subject for one exact fixture Tenant.</summary>
+    private string ActorFor(string tenant) => tenant == ForeignTenant ? ForeignActor : PrimaryActor;
     /// <summary>Gets the owned primary tenant.</summary>
     internal string Tenant => Setting("Tenant");
     /// <summary>Gets the distinct populated foreign tenant.</summary>
@@ -84,6 +90,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Signs a synthetic public credential using trust distinct from workload trust.</summary>
     internal string HumanToken(string tenant, bool chatbot = true, bool inspection = false, bool administrator = false, bool foreignTransportGrant = false, bool projectAdministrator = false)
     {
+        if (_configuration.TryGetProperty("Browser", out JsonElement browser) && browser.GetProperty("Enabled").GetBoolean())
+            return browser.GetProperty(tenant == ForeignTenant ? "ForeignToken" : "TenantToken").GetString()!;
         List<Claim> claims = HumanClaims(tenant, ForeignTenant, chatbot, inspection, administrator, foreignTransportGrant, projectAdministrator);
         lock (_userSigning)
         {
@@ -143,7 +151,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         await ActivateFreshDeliveryWriterProtocolAsync(bootstrap).ConfigureAwait(false);
         foreach (string tenant in new[] { ForeignTenant, Tenant })
         {
-            string actor = tenant == Tenant ? "actor-1" : "foreign-actor";
+            string actor = ActorFor(tenant);
             Stopwatch projectReadiness = new(), folderReadiness = new();
             await CommandAsync(TenantPlatformScopes.Tenants, "tenants", tenant, "CreateTenant", new { TenantId = tenant, Name = "Synthetic tenant", Description = "Isolated read proof" }, Tenant).ConfigureAwait(false);
             StreamReadPage created = await StreamAsync(TenantPlatformScopes.Tenants, "tenants", tenant, tenant).ConfigureAwait(false);
@@ -181,7 +189,9 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             }, tenant).ConfigureAwait(false);
             await WaitForOrganizationAclReadinessAsync(tenant, actor, aclCommand).ConfigureAwait(false);
             await ProbeAbsentFolderMetadataAsync(tenant).ConfigureAwait(false);
-            foreach (string project in new[] { "project-a", "project-b" })
+            string[] projects = _configuration.TryGetProperty("Browser", out _) && tenant == ForeignTenant
+                ? ["foreign-project-a", "foreign-project-b"] : ["project-a", "project-b"];
+            foreach (string project in projects)
             {
                 string folder = "folder-" + project;
                 string createCommand = await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands.CreateFolder", new
@@ -241,7 +251,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <summary>Changes owned Folder authority through its command handler and waits for the actual head.</summary>
     internal async Task ChangeFolderAccessAsync(string tenant, string folder, bool revoke, bool seed = false)
     {
-        string id = Unique(), actor = tenant == ForeignTenant ? "foreign-actor" : "actor-1";
+        string id = Unique(), actor = ActorFor(tenant);
         string command = await CommandAsync(tenant, "folders", folder, "Hexalith.Folders.Commands." + (revoke ? "RevokeFolderAccess" : "GrantFolderAccess"), new
         {
             RequestSchemaVersion = "v1",
@@ -568,7 +578,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         return closed && protectedValues.All(value => !string.IsNullOrEmpty(value) && !body.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private IEnumerable<string> ProtectedValues() => new[] { Tenant, ForeignTenant, "actor-1", "foreign-actor", "project-a", "project-b", "folder-project",
+    private IEnumerable<string> ProtectedValues() => new[] { Tenant, ForeignTenant, PrimaryActor, ForeignActor, "project-a", "project-b", "folder-project",
         "legacy-a", "legacy-b", "Legacy project", "Restricted legacy description", "Restricted legacy setup reference", "Synthetic", "Foreign synthetic name", "Owned folder label", "delegation-1", "synthetic-client", "operator-web", "chatbot", "projects.read",
         Setting("UserIssuer"), Setting("UserKeyPath"), Setting("CertificatePassword"), Setting("EventStoreSecret"), Setting("ProjectsSecret"),
         Setting("ChannelToken"), Setting("ReceiptKey"), Setting("OwnerPrivateKey"), Setting("OwnerPublicKey"), HumanToken(Tenant) };
@@ -1404,7 +1414,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         Require(accepted is not null, "Real Tenants hosted bootstrap has no original submission receipt.");
         JsonElement value = accepted!.Value;
         string rootDigest = plane.RootElement.GetProperty("rootDigest").GetString()!;
-        Require(HostedBootstrapReceiptMatches(value, rootDigest), "Hosted bootstrap receipt binding failed.");
+        Require(HostedBootstrapReceiptMatches(value, rootDigest, PrimaryActor), "Hosted bootstrap receipt binding failed.");
         string message = value.GetProperty("MessageId").GetString()!;
         for (int attempt = 0; attempt < 240; attempt++)
         {
@@ -1429,11 +1439,11 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                     await WaitForStateAsync("projection:global-administrators:singleton").ConfigureAwait(false);
                     StreamReadPage stream = await ReadHostedBootstrapSourceAsync().ConfigureAwait(false);
                     Require(HostedBootstrapSourceMatches(stream, message,
-                        value.GetProperty("CorrelationId").GetString()!, "actor-1"),
+                        value.GetProperty("CorrelationId").GetString()!, PrimaryActor),
                         "Hosted bootstrap has no exactly bound persisted administrator event.");
                     using JsonDocument finalReceipt = JsonDocument.Parse(await File.ReadAllBytesAsync(receipt, Cancellation).ConfigureAwait(false));
                     JsonElement final = finalReceipt.RootElement;
-                    Require(HostedBootstrapReceiptMatches(final, rootDigest)
+                    Require(HostedBootstrapReceiptMatches(final, rootDigest, PrimaryActor)
                         && final.GetProperty("MessageId").GetString() == message
                         && final.GetProperty("CorrelationId").GetString() == value.GetProperty("CorrelationId").GetString()
                         && final.GetProperty("AttemptId").GetString() == value.GetProperty("AttemptId").GetString()
@@ -1475,7 +1485,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     /// <param name="receipt">The actual hosted submission receipt.</param>
     /// <param name="rootDigest">The selected private catalog root.</param>
     /// <returns>Whether every original binding and the acknowledgement shape agree.</returns>
-    internal static bool HostedBootstrapReceiptMatches(JsonElement receipt, string rootDigest)
+    internal static bool HostedBootstrapReceiptMatches(JsonElement receipt, string rootDigest, string expectedActor = "actor-1")
     {
         if (receipt.ValueKind != JsonValueKind.Object) return false;
         string[] fields = ["AttemptId", "RootDigest", "MessageId", "CorrelationId", "PrincipalId", "Phase", "HttpStatus"];
@@ -1483,7 +1493,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             .SequenceEqual(fields.Order(StringComparer.Ordinal)) != true) return false;
         if (fields.Where(field => field != "HttpStatus").Any(field => receipt.GetProperty(field).ValueKind != JsonValueKind.String)) return false;
         return !string.IsNullOrWhiteSpace(receipt.GetProperty("AttemptId").GetString())
-            && receipt.GetProperty("RootDigest").GetString() == rootDigest && receipt.GetProperty("PrincipalId").GetString() == "actor-1"
+            && receipt.GetProperty("RootDigest").GetString() == rootDigest && receipt.GetProperty("PrincipalId").GetString() == expectedActor
             && ByteAether.Ulid.Ulid.TryParse(receipt.GetProperty("MessageId").GetString(), null, out _)
             && ByteAether.Ulid.Ulid.TryParse(receipt.GetProperty("CorrelationId").GetString(), null, out _)
             && (receipt.GetProperty("Phase").GetString() == "attempted" && receipt.GetProperty("HttpStatus").ValueKind == JsonValueKind.Null
@@ -1593,7 +1603,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             before = await ReadFreshCutoverInventoryAsync(cancellation).ConfigureAwait(false);
             Require(!before.ContainsKey(ProjectionDeliveryCutoverObserver.WriterProtocolKey), "A fresh store unexpectedly already has a writer protocol marker.");
             if (ProjectionDeliveryCutoverObserver.IsQuiescentWithCompletedSource(before.ToDictionary(pair => pair.Key,
-                pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", "actor-1",
+                pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", PrimaryActor,
                 allowLegacy: true, dapr.JsonSerializerOptions)) break;
             await Task.Delay(100, cancellation).ConfigureAwait(false);
         }
@@ -1629,7 +1639,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         }
         before = await ReadFreshCutoverInventoryAsync(cancellation).ConfigureAwait(false);
         Require(ProjectionDeliveryCutoverObserver.IsQuiescentWithCompletedSource(before.ToDictionary(pair => pair.Key,
-            pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", "actor-1",
+            pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", PrimaryActor,
             allowLegacy: false, dapr.JsonSerializerOptions), "Actual bootstrap completion and otherwise empty delivery work were not proved before cutover.");
         DateTimeOffset submitted = DateTimeOffset.UtcNow;
         using HttpResponseMessage response = await SendHumanAsync("api/v1/admin/projections/delivery-writer-protocol/activate", new
@@ -1699,7 +1709,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
         StreamReadPage source, CancellationToken cancellation, string? requiredProjection = null)
     {
         Require(requiredProjection is null || domain == "projects" && requiredProjection == "project-reads", "Seed readiness projection selection is not finite.");
-        string actor = tenant == ForeignTenant ? "foreign-actor" : "actor-1";
+        string actor = ActorFor(tenant);
         Require(SeedSourceMatches(source, tenant, domain, aggregate, command, actor), "Seed delivery has no exact accepted command/source prefix.");
         string root = Path.GetDirectoryName(Setting("InvocationDirectory"))!;
         using JsonDocument plane = JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(root, "catalog-plane.json"), cancellation).ConfigureAwait(false));

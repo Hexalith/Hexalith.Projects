@@ -189,6 +189,87 @@
           }
         }
       ]
+    },
+    {
+      "name": "projects.read",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "projects.list",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "basic",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "web-origins",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "acr",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
     }
   ],
   "clients": [
@@ -318,7 +399,46 @@
             "access.token.claim": "true",
             "userinfo.token.claim": "true"
           }
+        },
+        {
+          "name": "projects-role-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "projects_role",
+            "claim.name": "projects:role",
+            "jsonType.label": "String",
+            "multivalued": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "ui-surface-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "eventstore:surface",
+            "claim.value": "ui",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
         }
+      ],
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "projects.read",
+        "projects.list"
       ]
     },
     {
@@ -332,8 +452,14 @@
       "standardFlowEnabled": true,
       "serviceAccountsEnabled": false,
       "fullScopeAllowed": true,
-      "redirectUris": ["http://localhost:*", "https://localhost:*"],
-      "webOrigins": ["http://localhost:*", "https://localhost:*"],
+      "redirectUris": [
+        "http://localhost:*",
+        "https://localhost:*"
+      ],
+      "webOrigins": [
+        "http://localhost:*",
+        "https://localhost:*"
+      ],
       "protocolMappers": [
         {
           "name": "audience-mapper",
@@ -423,7 +549,46 @@
             "access.token.claim": "true",
             "userinfo.token.claim": "true"
           }
+        },
+        {
+          "name": "projects-role-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "projects_role",
+            "claim.name": "projects:role",
+            "jsonType.label": "String",
+            "multivalued": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "ui-surface-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "eventstore:surface",
+            "claim.value": "ui",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
         }
+      ],
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "projects.read",
+        "projects.list"
       ]
     }
   ],
@@ -445,11 +610,46 @@
         }
       ],
       "attributes": {
-        "tenants": ["tenant-a", "tenant-b", "system"],
-        "current_tenant": ["tenant-a"],
-        "domains": ["orders", "inventory", "counter"],
-        "permissions": ["command:submit", "command:replay", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore", "projects:link_conversation", "projects:move_conversation", "projects:unlink_conversation", "projects:confirm_resolution", "projects:set_folder", "projects:link_file_reference", "projects:unlink_file_reference", "projects:link_memory", "projects:unlink_memory"],
-        "global_admin": ["true"]
+        "tenants": [
+          "tenant-a",
+          "tenant-b",
+          "system"
+        ],
+        "current_tenant": [
+          "tenant-a"
+        ],
+        "domains": [
+          "orders",
+          "inventory",
+          "counter"
+        ],
+        "permissions": [
+          "command:submit",
+          "command:replay",
+          "command:query",
+          "projects:list",
+          "projects:read",
+          "projects:create",
+          "projects:update_setup",
+          "projects:archive",
+          "projects:restore",
+          "projects:link_conversation",
+          "projects:move_conversation",
+          "projects:unlink_conversation",
+          "projects:confirm_resolution",
+          "projects:set_folder",
+          "projects:link_file_reference",
+          "projects:unlink_file_reference",
+          "projects:link_memory",
+          "projects:unlink_memory",
+          "projects:inspect_descriptive_metadata"
+        ],
+        "global_admin": [
+          "true"
+        ],
+        "projects_role": [
+          "TenantProjectAdministrator"
+        ]
       }
     },
     {
@@ -469,10 +669,39 @@
         }
       ],
       "attributes": {
-        "tenants": ["tenant-a"],
-        "current_tenant": ["tenant-a"],
-        "domains": ["orders", "projects"],
-        "permissions": ["command:submit", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore", "projects:link_conversation", "projects:move_conversation", "projects:unlink_conversation", "projects:confirm_resolution", "projects:set_folder", "projects:link_file_reference", "projects:unlink_file_reference", "projects:link_memory", "projects:unlink_memory"]
+        "tenants": [
+          "tenant-a"
+        ],
+        "current_tenant": [
+          "tenant-a"
+        ],
+        "domains": [
+          "orders",
+          "projects"
+        ],
+        "permissions": [
+          "command:submit",
+          "command:query",
+          "projects:list",
+          "projects:read",
+          "projects:create",
+          "projects:update_setup",
+          "projects:archive",
+          "projects:restore",
+          "projects:link_conversation",
+          "projects:move_conversation",
+          "projects:unlink_conversation",
+          "projects:confirm_resolution",
+          "projects:set_folder",
+          "projects:link_file_reference",
+          "projects:unlink_file_reference",
+          "projects:link_memory",
+          "projects:unlink_memory",
+          "projects:inspect_descriptive_metadata"
+        ],
+        "projects_role": [
+          "TenantOperator"
+        ]
       }
     },
     {
@@ -492,10 +721,18 @@
         }
       ],
       "attributes": {
-        "tenants": ["tenant-b"],
-        "current_tenant": ["tenant-b"],
-        "domains": ["inventory"],
-        "permissions": ["command:submit"]
+        "tenants": [
+          "tenant-b"
+        ],
+        "current_tenant": [
+          "tenant-b"
+        ],
+        "domains": [
+          "inventory"
+        ],
+        "permissions": [
+          "command:submit"
+        ]
       }
     },
     {
@@ -515,10 +752,18 @@
         }
       ],
       "attributes": {
-        "tenants": ["tenant-a"],
-        "current_tenant": ["tenant-a"],
-        "domains": ["orders"],
-        "permissions": ["command:query"]
+        "tenants": [
+          "tenant-a"
+        ],
+        "current_tenant": [
+          "tenant-a"
+        ],
+        "domains": [
+          "orders"
+        ],
+        "permissions": [
+          "command:query"
+        ]
       }
     },
     {
@@ -539,8 +784,12 @@
       ],
       "attributes": {
         "tenants": [],
-        "domains": ["orders"],
-        "permissions": ["command:submit"]
+        "domains": [
+          "orders"
+        ],
+        "permissions": [
+          "command:submit"
+        ]
       }
     }
   ]

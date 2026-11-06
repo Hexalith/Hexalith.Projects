@@ -19,6 +19,28 @@ public sealed record ProjectInventoryLoadResult(
     ProjectConsoleFeedback? Feedback,
     string TenantScope)
 {
+    /// <summary>Gets the delivered page with each independent row observation.</summary>
+    public Hexalith.Projects.Contracts.Queries.ProjectListPage? Page
+    {
+        get; init;
+    }
+
+    /// <summary>Gets the independent enumeration observation.</summary>
+    public Hexalith.Projects.Contracts.Queries.AdmissionSnapshot? Snapshot
+    {
+        get; init;
+    }
+    /// <summary>Gets the opaque next-page cursor.</summary>
+    public string? Cursor
+    {
+        get; init;
+    }
+    /// <summary>Gets whether the server observed further authorized rows.</summary>
+    public bool HasMore
+    {
+        get; init;
+    }
+
     /// <summary>Creates a successful inventory result.</summary>
     /// <param name="rows">The inventory rows.</param>
     /// <param name="tenantScope">The server-derived tenant scope label.</param>

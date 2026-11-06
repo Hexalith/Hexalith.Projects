@@ -1,0 +1,20 @@
+namespace Hexalith.Projects.Server.Tests.Folders;
+
+using Hexalith.Projects.Server.Folders;
+using Shouldly;
+using Xunit;
+
+/// <summary>Untrusted owner errors cannot enter support diagnostics as protected text.</summary>
+public sealed class DelegatedProjectFolderDirectoryPrivacyTests
+{
+    [Theory]
+    [InlineData(null, "owner-query-failed")]
+    [InlineData("private-sensitive-owner-reason", "owner-query-failed")]
+    [InlineData("eyJ.private.synthetic-token", "owner-query-failed")]
+    [InlineData("safe-denial", "safe-denial")]
+    [InlineData("actor-exception", "owner-query-execution-failed")]
+    [InlineData("actor-response-mismatch", "owner-response-mismatch")]
+    [InlineData("invalid-envelope", "invalid-owner-envelope")]
+    public void OwnerFailureDiagnosticsContainOnlyClosedCodes(string? remoteFailure, string expected)
+        => DelegatedProjectFolderDirectory.ClassifyOwnerFailure(remoteFailure).ShouldBe(expected);
+}

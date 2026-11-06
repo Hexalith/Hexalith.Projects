@@ -1,9 +1,10 @@
 @using Hexalith.Projects.Contracts.Ui
 @using Hexalith.Projects.UI.Diagnostics
 @inject IProjectInventorySource InventorySource
+@implements IDisposable
 
 <nav class="project-navigation" data-testid="project-navigation" aria-label="Projects">
-    <a class="project-navigation__home" data-testid="project-navigation-home" href="/projects">Projects</a>
+    <FluentLink role="link" class="project-navigation__home" data-testid="project-navigation-home" aria-label="Projects" Href="/inspect/projects">Projects</FluentLink>
 
     @if (_loading)
     {
@@ -19,17 +20,18 @@
     }
     else
     {
+        @if (_result?.HasMore == true) { <FluentText>First page of Projects. Open inventory for continuation.</FluentText> }
         <ul class="project-navigation__list">
             @foreach (ProjectInventoryRowProjection row in _result!.Rows)
             {
                 <li>
-                    <a class="project-navigation__project"
+                    <FluentLink role="link" class="project-navigation__project"
                        data-testid="project-navigation-project"
-                       href="@ProjectLink(row.ProjectId)"
+                       Href="@ProjectLink(row.ProjectId)"
                        aria-label="@($"Open project {DisplayName(row)}")">
                         <span>@DisplayName(row)</span>
                         <code>@row.ProjectId</code>
-                    </a>
+                    </FluentLink>
                 </li>
             }
         </ul>
@@ -37,20 +39,23 @@
 </nav>
 
 @code {
+    private readonly CancellationTokenSource _lifetime = new();
     private ProjectInventoryLoadResult? _result;
     private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
     {
         _result = await InventorySource
-            .ListProjectsAsync(null, CancellationToken.None)
+            .ListProjectsAsync(null, _lifetime.Token)
             .ConfigureAwait(true);
         _loading = false;
     }
+
+    public void Dispose() { _lifetime.Cancel(); _lifetime.Dispose(); }
 
     private static string DisplayName(ProjectInventoryRowProjection row)
         => string.IsNullOrWhiteSpace(row.Name) ? row.ProjectId : row.Name;
 
     private static string ProjectLink(string projectId)
-        => $"/projects/{Uri.EscapeDataString(projectId)}";
+        => $"/inspect/projects/{Uri.EscapeDataString(projectId)}";
 }

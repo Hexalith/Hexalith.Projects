@@ -46,8 +46,7 @@ public sealed class GetProjectContextQueryHandler(ProjectContextQueryExecutor ex
         }
 
         return QueryResult.FromPayload(
-            JsonSerializer.SerializeToElement(admission.ToReadResponse(), JsonOptions),
-            QueryType);
+            JsonSerializer.SerializeToElement(admission.ToReadResponse(), JsonOptions));
     }
 
     private static bool TryReadProjectId(QueryEnvelope query, out string projectId)

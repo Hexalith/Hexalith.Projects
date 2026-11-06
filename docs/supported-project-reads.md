@@ -1,5 +1,34 @@
 # Supported Project list/open implementation (Story 6.1)
 
+
+## Authenticated browser inspection (Story 6.5)
+
+The opt-in SDK read surface is `/inspect/projects` and `/inspect/projects/{projectId}`.
+The existing `/`, `/projects` and detail routes retain their REST comparison surface for Story 6.7;
+this implementation does not cut over those routes. The supported surface requires the FrontComposer
+server identity, current Tenant and session credential, including when local authentication is disabled.
+Safe Metadata is the default. Descriptive and quarantine inspection remain explicit, separately
+authorized requests; open, context and Conversation-start observations retain independent evidence.
+
+The AppHost supplies `EventStore:GatewayAddress`. Projects consumes the existing typed gateway SDK
+and FrontComposer credential relay. It owns no credential cache, token relay implementation or new
+production query endpoint. Audit history and maintenance controls are unavailable on this surface.
+File advisory identity mapping remains unsupported and incomplete results do not imply an exhaustive
+NoMatch or a selection.
+
+For focused local Debug/source verification, run:
+
+```bash
+E2E_SUPPORTED_READS_ONLY=1 npm --prefix tests/e2e run test:live:managed
+```
+
+The managed mode reuses the existing isolated actual-owner catalog/mTLS topology, owns a temporary
+HTTPS Keycloak, derives fixture actor identities from its real token subjects, seeds through supported
+commands, and runs one browser worker after writes converge. Only the test fixture host exposes
+hashed persisted observations; inspection audits are observed separately. The ordinary managed lane
+also preserves the retained comparison regression phase. Native browser zoom and assistive-technology
+review need separate manual receipts; CSS zoom and axe checks alone do not complete those reviews.
+
 **Latest local continuation — 2026-11-04:** The [verified startup checkpoint](../_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/sqlite-startup-ordering-cancellation-20261104/commands.json) passes 13 SDK controls and retains 28 passing canonical composition/topology controls, with clean builds. It sequences genuine native SQLite resolver initialization in the disposable Development fixture after live-61 proved a native startup lock failure. The user confirmed runtime coordination; a wholly fresh [live-62 coordinator](../_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-62/run.json) is running at isolated source manifest `1f4e55a334e7949abdfb78b266d9cca57513641dc2efd83e2443d594baa291aa`. Its final result is pending. Whole-chain observability scope and response-time tolerance remain unaccepted; passing outer-boundary controls do not resolve those requirements. Story 6.1 remains in progress. Earlier dated results remain historical evidence.
 
 **Current acceptance boundary — 2026-11-02:** [Approved E1–E7](../_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md) replaces the historical P0–P4/READY feature entry chain. The existing authenticated persisted Development lane below is the 6.1 feature-verification lane; inspect available receipts and run relevant missing coverage before accepting the feature at its recorded commit. Story 6.1 is in progress; DW-1 remains open and 6.5 blocked. Earlier local results remain dated source proof and do not accept packages, production enrollment, global READY or 6.7 equivalence/cutover. P0/P1R-remediation/P2/P3 remain open under Epic 8, current P1R usability stays false, and P4 is superseded. Exhaustive canonical output/key/watermark/cursor/normalization comparison is required by 6.7. No historical frozen proof intent or evidence is changed.

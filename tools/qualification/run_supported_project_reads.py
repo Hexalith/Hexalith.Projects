@@ -295,11 +295,11 @@ def test_group_members(group: int) -> dict[int, str]:
     return members
 
 
-def run_test_process(command, *, env, timeout, cleanup) -> subprocess.CompletedProcess:
+def run_test_process(command, *, env, timeout, cleanup, cwd=ROOT) -> subprocess.CompletedProcess:
     """A test runner owns a fresh process group; reap its helpers before any topology teardown."""
     environment = env.copy()
     environment["SUPPORTED_PROJECT_READ_DEADLINE"] = str(time.monotonic() + timeout)
-    process = subprocess.Popen(command, cwd=ROOT, env=environment, text=True, stdout=subprocess.PIPE,
+    process = subprocess.Popen(command, cwd=cwd, env=environment, text=True, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT, start_new_session=True)
     try:
         output, _ = process.communicate(timeout=timeout)
@@ -2263,12 +2263,17 @@ def main() -> int:
     parser.add_argument("--evidence", type=Path, help="New directory for sanitized evidence (must not exist).")
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--artifacts", type=Path, help="Private reusable Debug artifacts for iterative triage; omitted for fresh final verification.")
+    parser.add_argument("--browser", action="store_true", help="Verify actual OIDC browser reads in the owned actual-owner topology.")
     parser.add_argument("--regressions", action="store_true", help="Also run the complete Projects Integration and Server test projects before teardown.")
     parser.add_argument("--scenario", choices=SCENARIO_GROUPS, help=argparse.SUPPRESS)
     parser.add_argument("--resource-action", choices=("stop", "start", "restart"), help=argparse.SUPPRESS)
     parser.add_argument("--resource", choices=("folders", "projects"), default="folders", help=argparse.SUPPRESS)
     parser.add_argument("--ownership", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.browser and args.regressions:
+        parser.error("--browser and --regressions cannot be combined; run native regressions separately.")
+    if args.browser:
+        args.scenario = "main"
     if args.resource_action is not None:
         if args.ownership is None:
             parser.error("A private ownership identity is required for resource mutation.")
@@ -2435,7 +2440,13 @@ def main() -> int:
             (private / ("data-" + name)).mkdir(mode=0o700)
         user_issuer = f"https://127.0.0.1:{free_port()}/users"
         bootstrap_password = secrets.token_hex(32)
-        server, _ = issuer_server(private, user_issuer, bootstrap_password)
+        browser = None
+        if args.browser:
+            from supported_browser_reads import prepare_oidc
+            browser = prepare_oidc(ROOT, private, isolation, owned, run, free_port, bootstrap_password)
+            user_issuer = browser["Authority"]
+        else:
+            server, _ = issuer_server(private, user_issuer, bootstrap_password)
         dependencies = {}
         for role, port, image, command in (
             ("RedisHost", 6379, "redis:6", []),
@@ -2482,6 +2493,8 @@ def main() -> int:
                    "Tenant": isolation + "-tenant", "ForeignTenant": isolation + "-foreign",
                    "WriterProtocolSourceCommit": revisions["references/Hexalith.EventStore"],
                    "WriterProtocolSourceManifestSha256": hashlib.sha256((evidence / "source-manifest.json").read_bytes()).hexdigest()}
+        if browser is not None:
+            fixture["Browser"] = dict(browser, Enabled=True, TokenEndpoint=browser["Authority"] + "/protocol/openid-connect/token")
         discovery_configuration = private / "discovery.json"
         discovery_registry = private / "discovery.sqlite"
         discovery_configuration.write_text(json.dumps({"apiVersion": "dapr.io/v1alpha1", "kind": "Configuration",
@@ -2544,53 +2557,58 @@ def main() -> int:
         if len(candidates) != 1:
             raise RuntimeError("The fresh Debug test assembly is missing or ambiguous.")
         assembly = candidates[0]
-        test_command = ["dotnet", str(assembly), "-method", SCENARIO_TEST_TYPE + "." + SCENARIO_METHODS[args.scenario], "-xml", str(evidence / "distributed.xml")]
-        report["commands"].append(test_command)
-        report["nativeTestCommand"] = test_command.copy()
-        report["nativeTestAssemblyPath"] = str(assembly)
         report["testAssemblySha256"] = hashlib.sha256(assembly.read_bytes()).hexdigest()
-        result = run_test_process(test_command, env=env, timeout=args.timeout, cleanup=report.setdefault("testProcessCleanup", []))
-        # xUnit success/failure diagnostics use assertions containing statuses and closed reason codes only.
-        (evidence / "distributed.log").write_text(result.stdout)
-        assemblies = ET.parse(evidence / "distributed.xml").getroot().findall("assembly")
-        report["tests"] = require_native_scenario(assemblies, args.scenario, report["providerIsolationSha256"], str(assembly), report["testAssemblySha256"])
-        if result.returncode:
-            raise RuntimeError("Distributed assertions failed; inspect distributed.xml and the sanitized test log.")
-        matrix = json.loads((evidence / "matrix.json").read_text())
-        require_scenario_matrix(matrix, args.scenario, report["providerIsolationSha256"])
-        observer_control = json.loads((evidence / "provider-observer-control.json").read_text())
-        require_provider_observer_control(observer_control)
-        report["providerObserverControl"] = {key: observer_control[key] for key in ("verified", "domainKeyCount", "controlKeyCount", "binaryAndEscapingBoundariesExact")}
-        if args.scenario == "main":
-            report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
-            if not report["projectsRestart"].get("completed"):
-                raise RuntimeError("The main scenario did not complete its exact owned Projects restart.")
+        if args.browser:
+            from supported_browser_reads import run_browser
+            run_browser(ROOT, private, evidence, graph, endpoint, fixture, env, run, assembly, report, run_test_process, test_group_members)
         else:
-            replay = json.loads((evidence / "projection-replay.json").read_text())
-            report["projectionReplay"] = require_distributed_replay_evidence(matrix, replay, args.scenario)
-        report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
-        if args.regressions and args.scenario != "main":
-            raise RuntimeError("Complete regressions run only under the main scenario's owned runtime.")
-        if args.regressions:
-            regression_env = regression_environment(env, private / "endpoints.json")
-            report["regressions"] = {}
-            for lane in ("Integration", "Server"):
-                if lane == "Server":
-                    server_project = ROOT / "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
-                    run(["dotnet", "build", str(server_project), "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
-                lane_assembly = next((artifacts / ("bin/Hexalith.Projects." + lane + ".Tests")).glob("debug*/Hexalith.Projects." + lane + ".Tests.dll"))
-                regression_command = ["dotnet", str(lane_assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
-                if lane == "Integration":
-                    regression_command.extend(["-class-", "*SupportedProjectReadDistributedTests"])
-                report["commands"].append(regression_command)
-                regression = run_test_process(regression_command, env=regression_env, timeout=args.timeout,
-                                              cleanup=report.setdefault("testProcessCleanup", []))
-                (evidence / (lane.lower() + ".log")).write_text(regression.stdout)
-                lane_results = ET.parse(evidence / (lane.lower() + ".xml")).getroot().findall("assembly")
-                report["regressions"][lane] = require_complete_native_results(lane_results)
-                if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
-                    raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
-            capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
+            test_command = ["dotnet", str(assembly), "-method", SCENARIO_TEST_TYPE + "." + SCENARIO_METHODS[args.scenario], "-xml", str(evidence / "distributed.xml")]
+            report["commands"].append(test_command)
+            report["nativeTestCommand"] = test_command.copy()
+            report["nativeTestAssemblyPath"] = str(assembly)
+            report["testAssemblySha256"] = hashlib.sha256(assembly.read_bytes()).hexdigest()
+            result = run_test_process(test_command, env=env, timeout=args.timeout, cleanup=report.setdefault("testProcessCleanup", []))
+            # xUnit success/failure diagnostics use assertions containing statuses and closed reason codes only.
+            (evidence / "distributed.log").write_text(result.stdout)
+            assemblies = ET.parse(evidence / "distributed.xml").getroot().findall("assembly")
+            report["tests"] = require_native_scenario(assemblies, args.scenario, report["providerIsolationSha256"], str(assembly), report["testAssemblySha256"])
+            if result.returncode:
+                raise RuntimeError("Distributed assertions failed; inspect distributed.xml and the sanitized test log.")
+            matrix = json.loads((evidence / "matrix.json").read_text())
+            require_scenario_matrix(matrix, args.scenario, report["providerIsolationSha256"])
+            observer_control = json.loads((evidence / "provider-observer-control.json").read_text())
+            require_provider_observer_control(observer_control)
+            report["providerObserverControl"] = {key: observer_control[key] for key in ("verified", "domainKeyCount", "controlKeyCount", "binaryAndEscapingBoundariesExact")}
+            if args.scenario == "main":
+                report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
+                if not report["projectsRestart"].get("completed"):
+                    raise RuntimeError("The main scenario did not complete its exact owned Projects restart.")
+            else:
+                replay = json.loads((evidence / "projection-replay.json").read_text())
+                report["projectionReplay"] = require_distributed_replay_evidence(matrix, replay, args.scenario)
+            report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
+            if args.regressions and args.scenario != "main":
+                raise RuntimeError("Complete regressions run only under the main scenario's owned runtime.")
+            if args.regressions:
+                regression_env = regression_environment(env, private / "endpoints.json")
+                report["regressions"] = {}
+                for lane in ("Integration", "Server"):
+                    if lane == "Server":
+                        server_project = ROOT / "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+                        run(["dotnet", "build", str(server_project), "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
+                    lane_assembly = next((artifacts / ("bin/Hexalith.Projects." + lane + ".Tests")).glob("debug*/Hexalith.Projects." + lane + ".Tests.dll"))
+                    regression_command = ["dotnet", str(lane_assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
+                    if lane == "Integration":
+                        regression_command.extend(["-class-", "*SupportedProjectReadDistributedTests"])
+                    report["commands"].append(regression_command)
+                    regression = run_test_process(regression_command, env=regression_env, timeout=args.timeout,
+                                                  cleanup=report.setdefault("testProcessCleanup", []))
+                    (evidence / (lane.lower() + ".log")).write_text(regression.stdout)
+                    lane_results = ET.parse(evidence / (lane.lower() + ".xml")).getroot().findall("assembly")
+                    report["regressions"][lane] = require_complete_native_results(lane_results)
+                    if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
+                        raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
+                capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
         if hashlib.sha256(assembly.read_bytes()).hexdigest() != report["testAssemblySha256"]:
             raise RuntimeError("The selected native test assembly changed during verification.")
         report["testAssemblyUnchanged"] = True
@@ -2598,7 +2616,8 @@ def main() -> int:
             raise RuntimeError("Source inputs changed during verification; run again against stable sources.")
         if verify_source_references() != report["liveHostSourceReferences"]:
             raise RuntimeError("Live source-reference assets or runtime binaries changed during verification.")
-        report["matrixCompleted"] = True
+        report["matrixCompleted"] = not args.browser
+        report["browserMatrixCompleted"] = args.browser
         report["result"] = "passed"
     except BaseException as failure:
         report["result"] = "failed"

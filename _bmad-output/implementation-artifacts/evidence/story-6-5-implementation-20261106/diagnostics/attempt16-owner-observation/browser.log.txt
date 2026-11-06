@@ -1,0 +1,53 @@
+
+Running 1 test using 1 worker
+
+(node:2437255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › specs/projects-supported-read-browser.spec.ts:9:3 › supported OIDC SDK journeys preserve persisted domain state and separate inspection audits (1.1m)
+
+
+  1) [chromium] › specs/projects-supported-read-browser.spec.ts:9:3 › supported OIDC SDK journeys preserve persisted domain state and separate inspection audits 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('project-open-snapshot')
+    Timeout: 10000ms
+    - Expected substring  - 1
+    + Received string     + 3
+
+    - State: Complete
+    + State: Unavailable
+    +     As of: 2026-11-06T04:16:20.8057282+00:00
+    +     Project version: 3Project — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Folder — Included: False; Freshness: Unavailable; Reason: FolderUnavailable; Last verified: Not suppliedSetup — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Authorization — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:16:20.8057282+00:00References — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Recovery guidance: Retry
+
+    Call log:
+      - Expect "toContainText" getByTestId('project-open-snapshot') with timeout 10000ms
+      - waiting for getByTestId('project-open-snapshot')
+        - locator resolved to <div class="fluent-stack-vertical" data-testid="project-open-snapshot">…</div>
+        - unexpected value "State: Unavailable
+        As of: 2026-11-06T04:16:15.4199850+00:00
+        Project version: 3Project — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Folder — Included: False; Freshness: Unavailable; Reason: FolderUnavailable; Last verified: Not suppliedSetup — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Authorization — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:16:15.4199850+00:00References — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Recovery guidance: Retry"
+        8 × locator resolved to <div class="fluent-stack-vertical" data-testid="project-open-snapshot">…</div>
+          - unexpected value "State: Unavailable
+        As of: 2026-11-06T04:16:20.8057282+00:00
+        Project version: 3Project — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Folder — Included: False; Freshness: Unavailable; Reason: FolderUnavailable; Last verified: Not suppliedSetup — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Authorization — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:16:20.8057282+00:00References — Included: True; Freshness: Current; Reason: Current; Last verified: 2026-11-06T04:14:49.1670959+00:00Recovery guidance: Retry"
+
+
+      112 |         await expect(foreignPage.getByTestId('project-navigation-project').filter({ hasText: 'foreign-project-a' })).toBeVisible();
+      113 |         await Promise.all([page.goto('/inspect/projects/project-a'), foreignPage.goto('/inspect/projects/project-a')]);
+    > 114 |         await expect(page.getByTestId('project-open-snapshot')).toContainText('State: Complete');
+          |                                                                 ^
+      115 |         const denied = foreignPage.getByTestId('project-feedback-fail-closed');
+      116 |         await expect(denied).toContainText('safe_denial');
+      117 |         const foreignAbsence = await denied.innerText();
+        at /home/administrator/projects/hexalith/projects/tests/e2e/specs/projects-supported-read-browser.spec.ts:114:65
+
+    attachment #1: supported-read-after-foreign-close.json (application/json) ──────────────────────
+    test-results/projects-supported-read-br-aa548--separate-inspection-audits-chromium/attachments/supported-read-after-foreign-close-json-fa9784f50ac575e313e0040a56956cc2ea76f2e8.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/projects-supported-read-br-aa548--separate-inspection-audits-chromium/error-context.md
+
+  1 failed
+    [chromium] › specs/projects-supported-read-browser.spec.ts:9:3 › supported OIDC SDK journeys preserve persisted domain state and separate inspection audits 
+[zero-live-skip] collected=1 skipped=0 status=failed

@@ -12,6 +12,9 @@ using Hexalith.Projects.Contracts.Ui;
 /// </summary>
 public interface IProjectWarningsDashboardSource
 {
+    /// <summary>Loads one supported inventory page with independent evidence.</summary>
+    Task<ProjectWarningsDashboardLoadResult> LoadPageAsync(Hexalith.Projects.Contracts.Queries.ListProjectsQuery query, CancellationToken cancellationToken);
+
     /// <summary>Loads tenant-scoped visible projects and bounded warning diagnostics.</summary>
     /// <param name="lifecycle">Optional lifecycle filter delegated to the list endpoint.</param>
     /// <param name="cancellationToken">Cancellation token propagated to generated-client queries.</param>

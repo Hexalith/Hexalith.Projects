@@ -26,6 +26,32 @@ public sealed record ProjectDetailLoadResult(
     string TenantScope,
     string Mode)
 {
+    /// <summary>Gets the independent supported open observation.</summary>
+    public Hexalith.Projects.Contracts.Queries.GetProjectResponse? Open
+    {
+        get; init;
+    }
+    /// <summary>Gets the independent context observation.</summary>
+    public Hexalith.Projects.Contracts.Queries.ProjectContextReadResponse? Context
+    {
+        get; init;
+    }
+    /// <summary>Gets the independent Conversation-start observation without remapping its state.</summary>
+    public Hexalith.Projects.Contracts.Queries.ConversationStartSetupResponse? Start
+    {
+        get; init;
+    }
+    /// <summary>Gets safe context failure feedback.</summary>
+    public ProjectConsoleFeedback? ContextFeedback
+    {
+        get; init;
+    }
+    /// <summary>Gets safe Conversation-start failure feedback.</summary>
+    public ProjectConsoleFeedback? StartFeedback
+    {
+        get; init;
+    }
+
     /// <summary>Creates a successful detail result.</summary>
     /// <param name="detail">The detail DTO.</param>
     /// <param name="diagnosticFeedback">Optional non-blocking diagnostic feedback.</param>

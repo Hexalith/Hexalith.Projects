@@ -1,0 +1,19 @@
+native [
+  [ 'button', 'Evaluate suggestions' ],
+  [ 'link', 'Open project project-a' ],
+  [ 'textbox', 'Conversation ID' ],
+  [ 'textbox', 'File IDs (unsupported coverage)' ]
+]
+playwright - main:
+  - text: Conversation ID
+  - textbox "Conversation ID"
+  - text: File IDs (unsupported coverage)
+  - textbox "File IDs (unsupported coverage)"
+  - button "Evaluate suggestions"
+  - link "Open project project-a":
+    - /url: /inspect/projects/project-a
+    - text: project-a
+    - link:
+      - /url: /inspect/projects/project-a
+  - status
+{"package":"5.0.1","browser":"154.0.8037.57","textInputRoleFill":true,"textAreaRoleFill":true,"buttonKeyboardActivation":true,"linkNavigation":true}

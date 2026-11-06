@@ -1,0 +1,159 @@
+{
+  "kind": "interim16 native command receipt; final packet will bind final freeze",
+  "commands": [
+    {
+      "workingDirectory": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+      "environment": {
+        "AfterMicrosoftNETSdkTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+        "Configuration": "Debug",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildProps": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "HEXALITH_SOURCE_MAPPING_HASH": "18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+        "MSBUILDDISABLENODEREUSE": "1"
+      },
+      "build": [
+        "dotnet",
+        "build",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers"
+      ],
+      "buildLog": "/tmp/story65-server-build-16-after.log",
+      "test": [
+        "dotnet",
+        "bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.GetConversationStartSetupQueryHandlerTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Folders.DelegatedProjectFolderDirectoryPrivacyTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests",
+        "-xml",
+        "/tmp/story65-server-focused-tests-16.xml"
+      ],
+      "testLog": "/tmp/story65-server-focused-tests-16.log",
+      "testXml": "/tmp/story65-server-focused-tests-16.xml",
+      "artifacts": {
+        "buildLog": {
+          "path": "/tmp/story65-server-build-16-after.log",
+          "sha256": "e4a396685787295e1a78a4cd9e7656ce24b3122832012b009801107bc2a8893b"
+        },
+        "testLog": {
+          "path": "/tmp/story65-server-focused-tests-16.log",
+          "sha256": "ffd2db30018c175595ace26eb9979a9d1f948b61b513dec53011dcaa8af9a0fd"
+        },
+        "testXml": {
+          "path": "/tmp/story65-server-focused-tests-16.xml",
+          "sha256": "8824283fb7c799ba8036876229fb48f781312ed6907b7e94726ae4b9e29e5096"
+        }
+      },
+      "totals": {
+        "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 14 threads)]",
+        "id": "41507169-eafc-45ef-b8be-7bcd42c27102",
+        "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "run-date": "2026-11-06",
+        "run-time": "04:09:12",
+        "start-rtf": "2026-11-06T04:09:12.4607952+00:00",
+        "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+        "target-framework": ".NETCoreApp,Version=v10.0",
+        "errors": "0",
+        "failed": "3",
+        "finish-rtf": "2026-11-06T04:09:13.1400769+00:00",
+        "not-run": "0",
+        "passed": "192",
+        "skipped": "0",
+        "time": "0.680",
+        "time-rtf": "00:00:00.6800000",
+        "total": "195"
+      }
+    },
+    {
+      "workingDirectory": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+      "environment": {
+        "AfterMicrosoftNETSdkTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.final.targets",
+        "Configuration": "Debug",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.late.props",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildProps": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.targets",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story65-projects-credential-repair-source-mapping/source-mapping/SourceMapping.before-targets.props",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "HEXALITH_SOURCE_MAPPING_HASH": "18d3e8ef0de4e65bc49da4edec30d74464ede01f49c969156fe277ce0babd5aa",
+        "MSBUILDDISABLENODEREUSE": "1"
+      },
+      "build": [
+        "dotnet",
+        "build",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers"
+      ],
+      "buildLog": "/tmp/story65-server-build-16-after.log",
+      "test": [
+        "dotnet",
+        "bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.GetConversationStartSetupQueryHandlerTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Folders.DelegatedProjectFolderDirectoryPrivacyTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests",
+        "-method-",
+        "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites",
+        "-xml",
+        "/tmp/story65-server-focused-tests-16-unit.xml"
+      ],
+      "testLog": "/tmp/story65-server-focused-tests-16-unit.log",
+      "testXml": "/tmp/story65-server-focused-tests-16-unit.xml",
+      "artifacts": {
+        "buildLog": {
+          "path": "/tmp/story65-server-build-16-after.log",
+          "sha256": "e4a396685787295e1a78a4cd9e7656ce24b3122832012b009801107bc2a8893b"
+        },
+        "testLog": {
+          "path": "/tmp/story65-server-focused-tests-16-unit.log",
+          "sha256": "aed786d3f49369dc2a85919b3603d541d5c9dce429929584cf99416b71a40f67"
+        },
+        "testXml": {
+          "path": "/tmp/story65-server-focused-tests-16-unit.xml",
+          "sha256": "b5c224cf5bd307d0b46e75970525ddd9720ec484121ddf28c129da3888840244"
+        }
+      },
+      "totals": {
+        "environment": "64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 14 threads)]",
+        "id": "c115a794-f5e0-44b7-bb15-d351f1214d76",
+        "name": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "run-date": "2026-11-06",
+        "run-time": "04:09:57",
+        "start-rtf": "2026-11-06T04:09:57.1098370+00:00",
+        "test-framework": "xUnit.net v3 4.0.2+0c7aa4991f",
+        "target-framework": ".NETCoreApp,Version=v10.0",
+        "errors": "0",
+        "failed": "0",
+        "finish-rtf": "2026-11-06T04:09:57.7884794+00:00",
+        "not-run": "0",
+        "passed": "192",
+        "skipped": "0",
+        "time": "0.679",
+        "time-rtf": "00:00:00.6790000",
+        "total": "192"
+      },
+      "excluded": "3 source qualification cases require owned STORY61_DAPR endpoints; they failed explicitly in the preserved preceding attempt, not skipped/passed."
+    }
+  ],
+  "currentSourceFreeze": {
+    "manifestPath": "/tmp/story65-supported-browser-20261106-16/source-manifest.json",
+    "fileSha256": "62bfe8f53cb269fa315b748c26406565bdc61145881841d72ee5e50c77086abb",
+    "canonicalSha256": "7beb52c5fe6262c715c7e5b0f7945d1bf076c5bbbfb7249dc925a9742157dba5"
+  }
+}

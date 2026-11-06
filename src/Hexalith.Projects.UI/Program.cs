@@ -1,3 +1,4 @@
+using Hexalith.EventStore.Client.Registration;
 using Hexalith.FrontComposer.Contracts;
 using Hexalith.FrontComposer.Shell.Extensions;
 using Hexalith.FrontComposer.Shell.Options;
@@ -18,6 +19,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddFluentUIComponents();
+IHttpClientBuilder gatewayClient = builder.Services.AddEventStoreGatewayClient(options =>
+    options.BaseAddress = new Uri(builder.Configuration["EventStore:GatewayAddress"] ?? "http://eventstore"));
+builder.Services.AddScoped<ProjectReadQueryClient>();
+builder.Services.AddScoped<ILegacyProjectInventorySource, LegacyProjectInventorySource>();
+builder.Services.AddScoped<ILegacyProjectWarningsDashboardSource, LegacyProjectWarningsDashboardSource>();
+builder.Services.AddScoped<ILegacyProjectDetailSource, LegacyProjectDetailSource>();
+builder.Services.AddScoped<ILegacyProjectResolutionTraceSource, LegacyProjectResolutionTraceSource>();
 IHttpClientBuilder projectsClient = builder.Services.AddProjectsClient();
 builder.Services.AddScoped<IProjectInventorySource, ProjectInventorySource>();
 builder.Services.AddScoped<IProjectWarningsDashboardSource, ProjectWarningsDashboardSource>();
@@ -36,6 +44,7 @@ builder.Services.Configure<FcShellOptions>(builder.Configuration.GetSection("Hex
 // token on every outbound Projects call; absent settings keep auth-disabled local startup, and
 // partial settings fail closed at startup.
 bool authEnabled = builder.Services.AddProjectsUiSecurity(builder.Configuration, projectsClient);
+if (authEnabled) _ = gatewayClient.AddFrontComposerGatewayAuthorization();
 
 WebApplication app = builder.Build();
 

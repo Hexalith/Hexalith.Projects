@@ -29,7 +29,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void InventoryRendersRowsFiltersSelectorsAndDetailLinks()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row()],
@@ -37,7 +37,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 Dashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-inventory-grid']").ShouldNotBeNull());
         cut.Find("[data-testid='project-inventory-filter-lifecycle']").ShouldNotBeNull();
@@ -59,7 +59,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void InventoryRendersHealthyAndUnavailableDiagnosticsWithAccessibleDashboardCounts()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row(), Row("project-002", "Unavailable Project")],
@@ -70,7 +70,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 MixedFailureDashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
         var dashboardTiles = cut.FindAll("[data-testid='project-dashboard-tile']");
@@ -96,13 +96,13 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void InventoryRendersSafeFeedbackForDeniedLoad()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", "corr-001"))));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-feedback-fail-closed']").TextContent.ShouldContain("safe_denial"));
         cut.Markup.ShouldNotContain("secret");
@@ -112,12 +112,12 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void InventoryRendersEmptyStateWhenNoProjects()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows([], [], Dashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() =>
             cut.Find("[data-testid='project-inventory-empty']").TextContent.ShouldContain("No projects"));
@@ -129,7 +129,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void WarningsQueueFiltersByStateReasonAndReferenceType()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row()],
@@ -140,7 +140,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 Dashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
         cut.Find("[data-testid='project-warning-filter-state']").Change(ReferenceState.Stale.ToString());
@@ -157,7 +157,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void GroupedDashboardTileDrillInKeepsEveryCountedState()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row()],
@@ -169,7 +169,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 Dashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(3));
 
@@ -189,7 +189,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void DiagnosticDashboardTileDrillInMatchesCountWithoutChangingUnavailableStateFilter()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row(), Row("project-002", "Unavailable Project")],
@@ -200,7 +200,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 DiagnosticDrillInDashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
         cut.FindAll("[data-testid='project-dashboard-tile']")
@@ -227,7 +227,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public void DiagnosticDashboardTileYieldsToOtherWarningTiles()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(null, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row(), Row("project-002", "Unavailable Project")],
@@ -239,7 +239,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 DiagnosticDrillInDashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(3));
         ClickDashboardTile(cut, "Diagnostic unavailable");
@@ -263,7 +263,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public async Task DiagnosticDashboardTileSurvivesLifecycleTileReload()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(Arg.Any<ProjectLifecycle?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
                 [Row(), Row("project-002", "Unavailable Project")],
@@ -274,7 +274,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
                 DiagnosticDrillInDashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
         ClickDashboardTile(cut, "Diagnostic unavailable");
@@ -292,12 +292,12 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     [Fact]
     public async Task LifecycleDashboardTileReloadsWithSelectedLifecycle()
     {
-        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        ILegacyProjectWarningsDashboardSource source = Substitute.For<ILegacyProjectWarningsDashboardSource>();
         source.LoadAsync(Arg.Any<ProjectLifecycle?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows([Row()], [Warning()], Dashboard())));
         Services.AddSingleton(source);
 
-        IRenderedComponent<Home> cut = Render<Home>();
+        IRenderedComponent<LegacyHome> cut = Render<LegacyHome>();
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-warnings-dashboard']").ShouldNotBeNull());
 
         cut.FindAll("[data-testid='project-dashboard-tile']")
@@ -309,7 +309,7 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         await source.Received(1).LoadAsync(ProjectLifecycle.Archived, Arg.Any<CancellationToken>()).ConfigureAwait(true);
     }
 
-    private static void ClickDashboardTile(IRenderedComponent<Home> cut, string label)
+    private static void ClickDashboardTile(IRenderedComponent<LegacyHome> cut, string label)
         => cut.FindAll("[data-testid='project-dashboard-tile']")
             .Single(tile => tile.TextContent.Contains(label, StringComparison.Ordinal))
             .Click();

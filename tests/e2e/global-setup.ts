@@ -21,6 +21,12 @@ import { authorityFromAccessToken, ensureProjectsTenantAccess } from './support/
  */
 async function globalSetup(config: FullConfig): Promise<void> {
   if (process.env.E2E_LIVE_APPHOST !== '1') return;
+  if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
+    // The native fixture already seeded actual owners through real Keycloak credentials.
+    await rm(browserSessionStoragePath, { force: true });
+    await createBrowserSession(config);
+    return;
+  }
 
   // Never reuse a previous run's session; a stale cookie must not mask a broken login flow.
   await rm(browserSessionStoragePath, { force: true });

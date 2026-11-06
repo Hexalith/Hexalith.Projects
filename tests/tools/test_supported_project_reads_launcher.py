@@ -2168,5 +2168,179 @@ class SupportedReadScenarioCoordinatorTests(unittest.TestCase):
             finally: self.finish_dummy(child)
 
 
+
+class BrowserReceiptControls(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("supported_browser_reads", ROOT / "tools/qualification/supported_browser_reads.py")
+        self.browser = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.browser)
+
+    def receipt(self, root, **overrides):
+        attributes = dict(name="owned-tests.dll", total="1", passed="1", failed="0", skipped="0", errors="0", **{"not-run": "0"})
+        attributes.update(overrides)
+        document = ET.Element("assemblies")
+        assembly = ET.SubElement(document, "assembly", attributes)
+        case = ET.SubElement(ET.SubElement(assembly, "collection"), "test", dict(result="Pass",
+            type="Hexalith.Projects.Integration.Tests.SupportedProjectBrowserSeedTests", method="SeedRealOidcBrowserFixture"))
+        path = root / "seed.xml"
+        ET.ElementTree(document).write(path)
+        return path, document, case
+
+    def test_exact_seed_case_is_required_and_fingerprinted(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path, _, _ = self.receipt(Path(temporary))
+            result = self.browser.require_seed_receipt(path, "owned-tests.dll")
+            self.assertEqual(result["passed"], 1)
+            self.assertEqual(result["xmlSha256"], hashlib.sha256(path.read_bytes()).hexdigest())
+
+    def test_empty_failed_skipped_error_and_unrun_seed_receipts_refuse(self):
+        for override in [dict(total="0", passed="0"), dict(failed="1"), dict(skipped="1"), dict(errors="1"), {"not-run": "1"}]:
+            with self.subTest(override=override), tempfile.TemporaryDirectory() as temporary:
+                path, _, _ = self.receipt(Path(temporary), **override)
+                with self.assertRaises(RuntimeError): self.browser.require_seed_receipt(path, "owned-tests.dll")
+
+    def test_wrong_case_assembly_or_missing_case_refuses(self):
+        for kind in ("method", "type", "result", "assembly", "missing", "duplicate"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                path, document, case = self.receipt(Path(temporary))
+                if kind in ("method", "type", "result"): case.set(kind, "unexpected")
+                elif kind == "assembly": document.find("assembly").set("name", "other.dll")
+                elif kind == "missing": document.find("assembly/collection").remove(case)
+                else: document.find("assembly/collection").append(ET.Element("test", dict(case.attrib)))
+                ET.ElementTree(document).write(path)
+                with self.assertRaises(RuntimeError): self.browser.require_seed_receipt(path, "owned-tests.dll")
+
+    def test_missing_and_malformed_xml_refuses(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "missing.xml"
+            with self.assertRaises(RuntimeError): self.browser.require_seed_receipt(path, "owned-tests.dll")
+            path.write_text("not xml")
+            with self.assertRaises(RuntimeError): self.browser.require_seed_receipt(path, "owned-tests.dll")
+
+    def test_command_refusal_retains_only_closed_reason_and_hashes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "private.json"
+            path.write_text(json.dumps(dict(status=403, reasonCode="insufficient_permission",
+                reason="Not authorized for protected-tenant. The authenticated surface cannot invoke this operation.", token="protected-token")))
+            result = self.browser.safe_command_refusal(path)
+            self.assertEqual(result["closedReason"], "authenticated-surface-refused")
+            self.assertEqual(result["reasonCode"], "insufficient_permission")
+            self.assertNotIn("protected-", json.dumps(result))
+            path.write_text(json.dumps(dict(reasonCode="protected-arbitrary-code", detail="protected-name")))
+            self.assertNotIn("reasonCode", self.browser.safe_command_refusal(path))
+
+    def test_manual_hold_refuses_missing_shared_or_reused_directories_before_writing_access(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaises(RuntimeError): self.browser.manual_hold(root / "missing", {"password": "private-password"}, seconds=1)
+            shared = root / "shared"; shared.mkdir(mode=0o755); os.chmod(shared, 0o755)
+            with self.assertRaises(RuntimeError): self.browser.manual_hold(shared, {"password": "private-password"}, seconds=1)
+            self.assertFalse((shared / "access.json").exists())
+            reused = root / "reused"; reused.mkdir(mode=0o700); (reused / "release").touch()
+            with self.assertRaises(RuntimeError): self.browser.manual_hold(reused, {"password": "private-password"}, seconds=1)
+            self.assertFalse((reused / "access.json").exists())
+            target = root / "target"; target.mkdir(mode=0o700)
+            link = root / "link"; link.symlink_to(target, target_is_directory=True)
+            with self.assertRaises(RuntimeError): self.browser.manual_hold(link, {"password": "private-password"}, seconds=1)
+            self.assertFalse((target / "access.json").exists())
+
+    def test_manual_hold_access_is_private_and_removed_after_release(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            hold = Path(temporary) / "hold"; hold.mkdir(mode=0o700)
+            now = [0.0]; observed = {}
+            def sleep(seconds):
+                access = hold / "access.json"
+                observed["mode"] = access.stat().st_mode & 0o777
+                observed["access"] = json.loads(access.read_text())
+                now[0] += seconds
+                (hold / "release").touch()
+            receipt = self.browser.manual_hold(hold, {"password": "private-password", "username": "actor-1"}, seconds=60, poll=5, clock=lambda: now[0], sleep=sleep)
+            self.assertEqual(observed["mode"], 0o600)
+            self.assertEqual(observed["access"]["password"], "private-password")
+            self.assertTrue(receipt["released"]); self.assertTrue(receipt["accessRemoved"]); self.assertFalse(receipt["countedAsAutomatedProof"])
+            self.assertNotIn("private-password", json.dumps(receipt))
+            self.assertEqual(sorted(path.name for path in hold.iterdir()), [])
+
+    def test_manual_hold_limit_releases_and_removes_access_without_a_person(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            hold = Path(temporary) / "hold"; hold.mkdir(mode=0o700)
+            now = [0.0]
+            def sleep(seconds): now[0] += seconds
+            receipt = self.browser.manual_hold(hold, {"password": "private-password"}, seconds=12, poll=5, clock=lambda: now[0], sleep=sleep)
+            self.assertFalse(receipt["released"]); self.assertTrue(receipt["accessRemoved"])
+            self.assertGreaterEqual(receipt["heldSeconds"], 12)
+            self.assertFalse((hold / "access.json").exists())
+
+    def test_browser_regressions_combination_refuses_before_allocation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary) / "unallocated"
+            with patch.object(sys, "argv", ["launcher", "--browser", "--regressions", "--evidence", str(evidence)]), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as failure: LAUNCHER.main()
+            self.assertEqual(failure.exception.code, 2)
+            self.assertFalse(evidence.exists())
+
+
+class BrowserTelemetryCoverageTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location('supported_browser_reads', ROOT / 'tools/qualification/supported_browser_reads.py')
+        self.browser = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.browser)
+
+    def test_protected_marker_split_across_chunks_is_detected_without_retaining_text(self):
+        observation = self.browser._LogObservation(['private-client-secret'])
+        observation.accept(b'{"resourceName":"ui","content":"private-client-')
+        observation.accept(b'secret"}')
+        receipt = observation.receipt()
+        self.assertFalse(receipt['protectedMarkerAbsent'])
+        self.assertNotIn('private-client-secret', json.dumps(receipt))
+        self.assertEqual(receipt['logEntries'], 1)
+
+    def test_generic_jwt_detection_survives_chunks_and_long_payload_without_token_storage(self):
+        observation = self.browser._LogObservation(['known-marker'])
+        observation.accept(b'eyJabcdefgh.')
+        observation.accept(b'A' * 100000)
+        observation.accept(b'.abcdefgh')
+        self.assertFalse(observation.receipt()['jwtShapedCredentialAbsent'])
+        self.assertTrue(observation.receipt()['protectedMarkerAbsent'])
+
+    def test_ordinary_stream_hash_and_entry_count_survive_split_json_keys(self):
+        observation = self.browser._LogObservation(['private-marker'])
+        chunks = [b'{"resource', b'Name":"projects","content":"Current"}\n', b'{"resourceName":"ui","content":"Unavailable"}\n']
+        for chunk in chunks: observation.accept(chunk)
+        receipt = observation.receipt()
+        self.assertEqual(receipt['sha256'], hashlib.sha256(b''.join(chunks)).hexdigest())
+        self.assertEqual(receipt['logEntries'], 2)
+        self.assertEqual(receipt['capturedBytes'], sum(map(len, chunks)))
+        self.assertTrue(receipt['protectedMarkerAbsent'])
+        self.assertTrue(receipt['jwtShapedCredentialAbsent'])
+
+    def test_owned_reader_groups_and_descendants_are_removed_and_stderr_is_scanned(self):
+        actual_popen = subprocess.Popen
+        child = "import subprocess,sys,time; print('{\"resourceName\":\"owned-test\",\"content\":\"safe\"}',flush=True); sys.stderr.write('private-marker'); sys.stderr.flush(); subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)']); time.sleep(30)"
+        def reader_process(command, **options):
+            self.assertTrue(options['start_new_session'])
+            return actual_popen([sys.executable, '-c', child], **options)
+        monitor = self.browser._BrowserTelemetry(ROOT, ['private-marker'], LAUNCHER.test_group_members)
+        interval = {}
+        try:
+            with patch.object(subprocess, 'Popen', side_effect=reader_process): monitor.start()
+            interval['startedAtUtc'] = monitor.now()
+            interval['endedAtUtc'] = monitor.now()
+        finally:
+            receipt = monitor.finish(interval)
+        self.assertTrue(receipt['completeIntervalObserved'])
+        self.assertFalse(receipt['protectedMarkerAbsent'])
+        for value in receipt['resources'].values():
+            self.assertTrue(value['cleanup']['descendantsAbsent'])
+            self.assertFalse(value['stderr']['protectedMarkerAbsent'])
+            self.assertFalse(LAUNCHER.test_group_members(value['cleanup']['groupId']))
+
+    def test_missing_streams_cannot_claim_browser_interval_coverage(self):
+        monitor = self.browser._BrowserTelemetry(ROOT, ['private-marker'], lambda group: {})
+        with patch.object(self.browser.time, 'sleep'):
+            receipt = monitor.finish({'startedAtUtc': '2026-11-06T00:00:00+00:00', 'endedAtUtc': '2026-11-06T00:00:01+00:00'})
+        self.assertFalse(receipt['completeIntervalObserved'])
+
+
 if __name__ == "__main__":
     unittest.main()

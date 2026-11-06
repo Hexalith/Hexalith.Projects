@@ -38,6 +38,12 @@ for command_name in aspire jq npm npx; do
     require_command "$command_name"
 done
 
+if test "${E2E_SUPPORTED_READS_ONLY:-0}" = 1; then
+    cd "$repository_root"
+    exec python3 tools/qualification/run_supported_project_reads.py --browser --timeout "$resource_timeout_seconds" \
+        --evidence "${E2E_SUPPORTED_EVIDENCE:-/tmp/projects-supported-browser-$(date -u +%Y%m%d%H%M%S)-$$}"
+fi
+
 : "${KEYCLOAK_CLIENT_ID:?KEYCLOAK_CLIENT_ID is required}"
 : "${TEST_USER_USERNAME:?TEST_USER_USERNAME is required}"
 : "${TEST_USER_PASSWORD:?TEST_USER_PASSWORD is required}"
@@ -103,3 +109,11 @@ E2E_RUN_ID="$run_id-smoke" npx playwright test \
 E2E_RUN_ID="$run_id-full" npx playwright test \
     --project chromium \
     --workers 2
+
+cd "$repository_root"
+# The ordinary comparison lane owns no resources during the separate actual-owner/OIDC proof.
+aspire stop --apphost "$apphost" --non-interactive
+started=0
+rm -f "$browser_session_file"
+python3 tools/qualification/run_supported_project_reads.py --browser --timeout "$resource_timeout_seconds" \
+    --evidence "${E2E_SUPPORTED_EVIDENCE:-/tmp/projects-supported-browser-$(date -u +%Y%m%d%H%M%S)-$$}"

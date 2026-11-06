@@ -30,15 +30,15 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void DetailRendersHeaderSectionsSetupReferencesAndAudit()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(Substitute.For<IProjectMaintenanceActionSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -71,16 +71,16 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void DetailRendersNonBlockingDiagnosticFeedbackWhileShowingInspector()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(
                 Detail(),
                 ProjectConsoleFeedback.Warning("data_unavailable", "corr-001"))));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         // Base detail still renders; the bounded diagnostics failure degrades to non-blocking feedback.
@@ -91,14 +91,14 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void DetailRendersEmptyReferenceAndAuditStates()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(DetailWithoutReferencesOrAudit())));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -111,7 +111,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void MaintenancePanelRequiresDryRunAndConfirmationBeforeSubmit()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(
                 Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())),
@@ -120,11 +120,11 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-archive")));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(maintenance);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -155,7 +155,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ConfirmedActionKeepsTheInspectorWhenTheReloadReturnsFeedback()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(
                 Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())),
@@ -164,11 +164,11 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-archive")));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(maintenance);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -187,16 +187,16 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public async Task MaintenancePanelBlocksRelinkUntilExplicitReplacementTargetExists()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(maintenance);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -220,15 +220,15 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void MaintenancePanelEntersDryRunRequiredAndBlocksRestoreOnActiveProjectWithSafeFeedback()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(Substitute.For<IProjectMaintenanceActionSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -248,18 +248,18 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void MaintenancePanelRendersFailedStateAndSafeFeedbackWhenSourceRejects()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
         maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Rejected("corr-001", "task-001", "idempotency_conflict")));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
         Services.AddSingleton(maintenance);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -278,7 +278,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public async Task DetailRendersFullAuditTimelineAndReloadsBoundedLimit()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         IProjectAuditTimelineSource auditSource = Substitute.For<IProjectAuditTimelineSource>();
@@ -303,10 +303,10 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 ],
                 Freshness())));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(auditSource);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -341,17 +341,17 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     {
         ArgumentNullException.ThrowIfNull(feedback);
 
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         IProjectAuditTimelineSource auditSource = Substitute.For<IProjectAuditTimelineSource>();
         auditSource.GetAuditTimelineAsync("project-001", 25, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectAuditTimelineLoadResult.FromFeedback(feedback)));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(auditSource);
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -372,16 +372,16 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void DetailRendersReferenceHealthMatrixForAllReferenceKindsAndFailureStates()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(
                 DetailWithReferenceHealthRows(),
                 referenceHealthRows: ReferenceHealthRows())));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -405,15 +405,15 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void DetailRendersSafeFeedbackWhenBaseDetailIsDenied()
     {
-        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", "corr-001"))));
         Services.AddSingleton(source);
-        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-feedback-fail-closed']").TextContent.ShouldContain("safe_denial"));
@@ -424,10 +424,10 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersConversationTrace()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(
                 Arg.Is<ProjectResolutionTraceRequest>(request =>
                     request != null
@@ -439,7 +439,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -464,10 +464,10 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersAttachmentTraceAndExclusionEvidence()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(
                 Arg.Is<ProjectResolutionTraceRequest>(request =>
                     request != null
@@ -479,7 +479,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -508,10 +508,10 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersSafeValidationFeedback()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectResolutionTraceLoadResult.FromFeedback(
                 ProjectConsoleFeedback.Error("conversation_id_required"))));
@@ -519,7 +519,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -533,17 +533,17 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersNoMatchOutcome()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(NoMatchTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -560,17 +560,17 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersExcludedOutcomeFromArchivedEvidence()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ExcludedTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
@@ -586,17 +586,17 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     [Fact]
     public void ResolutionTraceWorkbenchRendersFailedClosedOutcomeFromDeniedEvidenceAndKeepsLongIdsReadable()
     {
-        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        ILegacyProjectDetailSource detailSource = Substitute.For<ILegacyProjectDetailSource>();
         detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
-        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        ILegacyProjectResolutionTraceSource traceSource = Substitute.For<ILegacyProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(FailedClosedTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
-        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());

@@ -1,4 +1,4 @@
-// <copyright file="ProjectInventorySourceTests.cs" company="Hexalith">
+// <copyright file="LegacyProjectInventorySourceTests.cs" company="Hexalith">
 // Copyright (c) Hexalith. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -19,7 +19,7 @@ using Xunit;
 /// <summary>
 /// Tests for the generated-client backed inventory source.
 /// </summary>
-public sealed class ProjectInventorySourceTests
+public sealed class LegacyProjectInventorySourceTests
 {
     [Fact]
     public async Task SourceUsesListProjectsWithEventualFreshnessAndLifecycleFilter()
@@ -32,7 +32,7 @@ public sealed class ProjectInventorySourceTests
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateResponse()));
 
-        var source = new ProjectInventorySource(client);
+        var source = new LegacyProjectInventorySource(client);
         ProjectInventoryLoadResult result = await source
             .ListProjectsAsync(ProjectLifecycle.Active, CancellationToken.None)
             .ConfigureAwait(true);
@@ -73,7 +73,7 @@ public sealed class ProjectInventorySourceTests
                 new Dictionary<string, IEnumerable<string>>(),
                 null!));
 
-        var source = new ProjectInventorySource(client);
+        var source = new LegacyProjectInventorySource(client);
         ProjectInventoryLoadResult result = await source
             .ListProjectsAsync(null, CancellationToken.None)
             .ConfigureAwait(true);
@@ -98,7 +98,7 @@ public sealed class ProjectInventorySourceTests
                 Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw new System.Net.Http.HttpRequestException("connection refused 10.0.0.1 secret"));
 
-        var source = new ProjectInventorySource(client);
+        var source = new LegacyProjectInventorySource(client);
         ProjectInventoryLoadResult result = await source
             .ListProjectsAsync(null, CancellationToken.None)
             .ConfigureAwait(true);

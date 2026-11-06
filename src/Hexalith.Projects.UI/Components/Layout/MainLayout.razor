@@ -1,11 +1,26 @@
 @inherits LayoutComponentBase
+@inject NavigationManager Navigation
 @using Hexalith.FrontComposer.Shell.Components.Layout
 
-<FrontComposerShell>
+<FrontComposerShell @key="_scope">
     <Navigation>
-        <ProjectNavigation />
+        @if (new Uri(Navigation.Uri).AbsolutePath.StartsWith("/inspect/", StringComparison.Ordinal))
+        { <ProjectNavigation /> }
+        else { <LegacyProjectNavigation /> }
     </Navigation>
     <ChildContent>
         @Body
     </ChildContent>
 </FrontComposerShell>
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState>? Authentication { get; set; }
+    private string _scope = string.Empty;
+    protected override async Task OnParametersSetAsync()
+    {
+        AuthenticationState? state = Authentication is null ? null : await Authentication;
+        _scope = string.Join("|", state?.User.FindFirst("sub")?.Value,
+            state?.User.FindFirst("eventstore:current-tenant")?.Value,
+            state?.User.FindFirst("hexalith:frontcomposer:token-session")?.Value);
+    }
+}
