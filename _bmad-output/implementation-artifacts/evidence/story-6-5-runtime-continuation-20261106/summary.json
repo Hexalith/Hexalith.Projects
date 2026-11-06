@@ -1,0 +1,155 @@
+{
+  "status": "in-progress",
+  "acceptance": "blocked: positive live Folder-advisory readiness and browser acceptance remain unavailable",
+  "productionReadiness": false,
+  "acceptedEquivalence": false,
+  "testedRevision": "32482b7e77e0b0faf46b523ece4ef2bbefd9e2fc",
+  "revisions": {
+    ".": "32482b7e77e0b0faf46b523ece4ef2bbefd9e2fc",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Memories": "246157a7ff8e2dcd8d356c833a77a02514490d2f",
+    "references/Hexalith.Platform": "c1997c60f31e08d945b44cb7aa2afd7800e8ff69",
+    "references/Hexalith.Folders": "e88c940000446e13d17d86a7288649d8653a7138",
+    "references/Hexalith.EventStore": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b",
+    "references/Hexalith.Tenants": "cf36618a2c27b5722a1ff811cfbbce4528c3c105",
+    "references/Hexalith.Parties": "1308ad000c79ebc394fc395588f9af91092e8c4c",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Conversations": "9a5c684de5ee4876448faa26737f6afd36cf33e7",
+    "references/Hexalith.Builds": "beb85e497957fedc66854013efd2cc4bd216ecbc",
+    "references/Hexalith.McpCli": "6173885d0132184a658b39ac421ec16848a3bb15",
+    "references/Hexalith.FrontComposer": "fbb9c3822dfa407e72739238cd472567f45f1e82"
+  },
+  "runs": [
+    {
+      "name": "reproduction",
+      "command": "E2E_SUPPORTED_READS_ONLY=1 E2E_SUPPORTED_EVIDENCE=/tmp/story65-implementation-repro-20261106-1645 npm --prefix tests/e2e run test:live:managed",
+      "exitCode": 1,
+      "result": "failed",
+      "failure": "The native browser seed did not execute its exact passing case without errors or skips.",
+      "nativeSeed": [
+        {
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "errors": 0
+        }
+      ],
+      "browserCasesCollected": 0,
+      "readinessAttempts": 30,
+      "allHttp200NullIncompleteZeroCandidates": true,
+      "readinessDurationMs": {
+        "min": 2494.2547,
+        "max": 2672.0853
+      },
+      "launcherControls": {
+        "command": [
+          "/usr/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/tools",
+          "-p",
+          "test_supported_project_reads_launcher.py",
+          "-v"
+        ],
+        "total": 142,
+        "passed": 142,
+        "failed": 0,
+        "skipped": 0
+      },
+      "sourceManifestSha256": "91e671fe85b698d5c9ca37e74c5f4d71e12f4b063f4ee29b6f8e3a975c52c8d3",
+      "preexistingResourcesPreserved": true,
+      "privateMaterialRemoved": true,
+      "allOwnedCleanupVerified": true
+    },
+    {
+      "name": "causal-comparison",
+      "command": "E2E_SUPPORTED_READS_ONLY=1 E2E_SUPPORTED_EVIDENCE=/tmp/story65-implementation-causal-20261106-2248 npm --prefix tests/e2e run test:live:managed",
+      "exitCode": 1,
+      "result": "failed",
+      "failure": "The native browser seed did not execute its exact passing case without errors or skips.",
+      "nativeSeed": [
+        {
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "errors": 0
+        }
+      ],
+      "browserCasesCollected": 0,
+      "readinessAttempts": 30,
+      "allHttp200NullIncompleteZeroCandidates": true,
+      "readinessDurationMs": {
+        "min": 2508.2934,
+        "max": 2785.599
+      },
+      "launcherControls": {
+        "command": [
+          "/usr/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/tools",
+          "-p",
+          "test_supported_project_reads_launcher.py",
+          "-v"
+        ],
+        "total": 142,
+        "passed": 142,
+        "failed": 0,
+        "skipped": 0
+      },
+      "sourceManifestSha256": "91e671fe85b698d5c9ca37e74c5f4d71e12f4b063f4ee29b6f8e3a975c52c8d3",
+      "preexistingResourcesPreserved": true,
+      "privateMaterialRemoved": true,
+      "allOwnedCleanupVerified": true
+    }
+  ],
+  "sourceInputCount": 17154,
+  "sourceInputsUnchangedAcrossBothRunsAndPostRunCheck": true,
+  "typeScript": {
+    "command": "npm --prefix tests/e2e run typecheck",
+    "exitCode": 0
+  },
+  "nativeDiagnosticControls": {
+    "command": "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -method Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SharedDeadlineIsNotRestartedBetweenDependentReads -method Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows -method Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle -xml /tmp/story65-implementation-causal-20261106-2248/native-deadline-security.xml",
+    "exitCode": 0,
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "assemblySha256": "34ea64b09830cefd990ebbb675c55de6be9e9baa26fdb001346b02e222f2bc76",
+    "freshRebuild": false,
+    "scope": "Existing diagnostic binary; focused behavior controls, not a complete current-source regression refresh."
+  },
+  "originalWindowAgeSeconds": null,
+  "originalWindowAgeLimitation": "No exact new-run Tenant timestamp bound was captured before owned private state cleanup. Earlier historical 139.080s receipt remains separate and is not reused.",
+  "timingLimitations": [
+    "External diagnostic observer; attached only to exact verified owned Projects/Folders/EventStore processes.",
+    "No raw trace, URL, query string, identifier, header or body retained; protected query logging remained disabled.",
+    "Zero EventPipe events lost, but classification coverage is partial: delegated-owner gateway requests were not classified.",
+    "No exact internal stage exhaustion, authorization denial cause or complete delegated chain is proved by the timing observer.",
+    "Diagnostic observation and concurrent comparison requests can affect timing; neither managed failure is an acceptance pass."
+  ],
+  "repairAssessment": "No safe Projects-owned repair was established. Scope-only and independent Complete open succeed, but advisory remains empty/incomplete. Required security observations, their final ordering, the shared two-second deadline, sibling sources and production policy were preserved.",
+  "nextBoundary": "Causal owner/runtime or accepted advisory-composition performance diagnosis that preserves every current authority observation and deadline. A change to security ordering, owner policy or budgets requires its own explicit decision; none is authorized by these results.",
+  "changes": "Evidence and spec continuation only; no production/test implementation, sibling, dependency, generated-client or sprint-status change.",
+  "preservation": {
+    "frozenBeforeSha256": "d6efba7d4594f26457e8de64ea8e45c6dabaaa64b640b4047306ec8a8794b918",
+    "frozenAfterSha256": "d6efba7d4594f26457e8de64ea8e45c6dabaaa64b640b4047306ec8a8794b918",
+    "frozenMatchesHead": true,
+    "sprintBeforeSha256": "50ad0c61b72d52b7e5a8237c51bd0873574d1fcdcaa8c877dbc9da1aef035587",
+    "sprintAfterSha256": "50ad0c61b72d52b7e5a8237c51bd0873574d1fcdcaa8c877dbc9da1aef035587",
+    "sprintMatchesHead": true,
+    "specBeforeSha256": "0e00a1ec9417198f17f6e053c9a45e57c7a5fe00ce1515429a08751dcb812a9b",
+    "specAfterSha256": "d2b8a7bcbadaf2dd2a724bd5ffb4743d0c75752addb52f99e73742090f173c0f"
+  },
+  "observerTemporaryToolsRemoved": true,
+  "retainedArtifactsKnownProtectedMarkersAbsent": true,
+  "retainedArtifactsJwtShapesAbsent": true
+}
