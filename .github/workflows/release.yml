@@ -93,13 +93,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: Hexalith/Hexalith.Builds
-          ref: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
+          ref: 163f3d0deac6b0db5ec4bdfcc0934b12e6adb46a
           path: .hexalith/builds-execution
           persist-credentials: false
       - name: Validate approved Builds actions identity
         shell: bash
         env:
-          BUILDS_EXECUTION_SHA: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
+          BUILDS_EXECUTION_SHA: 163f3d0deac6b0db5ec4bdfcc0934b12e6adb46a
         run: |
           set -euo pipefail
           checked_out_builds_sha="$(git -C .hexalith/builds-execution rev-parse HEAD)"
@@ -113,7 +113,7 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
-          dotnet-version: '10.0.x'
+          dotnet-version: '10.0.404'
       - name: Initialize Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
