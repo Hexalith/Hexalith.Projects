@@ -68,6 +68,18 @@ class WorkflowGateTests(unittest.TestCase):
         self.assertIn(diagnostic, result.stderr)
         self.assertNotIn("PASSED", result.stdout)
 
+    def test_unpublished_apphost_helpers_require_the_exact_source_mode_condition(self) -> None:
+        path = "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+        target = self.root / path
+        original = target.read_text()
+        marker = "  <ItemGroup Condition=\"'$(UseHexalithProjectReferences)' == 'true'\">"
+        self.assertEqual(1, original.count(marker))
+        for condition in ("", " Condition=\"'$(UseHexalithProjectReferences)' != 'true'\""):
+            with self.subTest(condition=condition):
+                target.write_text(original.replace(marker, "  <ItemGroup" + condition + ">", 1))
+                self.assert_rejected("unconditional sibling library ProjectReference")
+        target.write_text(original)
+
     def test_checkout_passes_without_submodules(self) -> None:
         self.assertFalse((self.root / "references").exists())
         result = self.run_gate()

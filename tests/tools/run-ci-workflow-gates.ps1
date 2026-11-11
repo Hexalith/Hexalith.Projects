@@ -1034,10 +1034,10 @@ foreach ($projectFile in $projectFiles) {
         $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
             $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
         $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
-        # Folders.Server, Folders.Workers, and Conversations.Server are unpackable
-        # web hosts. AppHost and server tests reference them only in source mode,
-        # and the consuming fixtures compile only under HEXALITH_SOURCE_FIXTURE.
-        $sourceOnlyUnpackableHosts = @(
+        # These exact hosts and internal tooling are not published as packages.
+        # They are permitted only in the named consumers with the strict source-mode
+        # condition; package mode must never include their implementation edges.
+        $sourceOnlyUnpackableDependencies = @(
             '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj',
             '$(HexalithFoldersRoot)/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj',
             '$(HexalithConversationsRoot)/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj'
@@ -1046,16 +1046,21 @@ foreach ($projectFile in $projectFiles) {
             'Hexalith.Projects.AppHost.csproj',
             'Hexalith.Projects.Server.Tests.csproj'
         )
-        $isSourceOnlyUnpackableHost = $sourceOnlyUnpackableConsumers -contains $projectFile.Name -and
-            $sourceOnlyUnpackableHosts -contains $normalizedInclude -and
+        $isSourceOnlyAppHostHelper = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
+            $normalizedInclude -in @(
+                '$(HexalithFoldersRoot)/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj',
+                '$(HexalithBuildsRoot)/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj'
+            )
+        $isSourceOnlyUnpackableDependency = (($sourceOnlyUnpackableConsumers -contains $projectFile.Name -and
+            $sourceOnlyUnpackableDependencies -contains $normalizedInclude) -or $isSourceOnlyAppHostHelper) -and
             $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'"
         $isConditionalSourceReference = $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'" -or
             $condition -eq "'`$(UseHexalithProjectReferences)' == 'true' and '`$(HexalithConversationsFromSource)' != 'false'"
-        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and -not $isConditionalSourceReference) {
+        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableDependency -and -not $isConditionalSourceReference) {
             $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has an unconditional sibling library ProjectReference: $($reference.Include)")
         }
 
-        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost) {
+        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableDependency) {
             $packageId = [System.IO.Path]::GetFileNameWithoutExtension($normalizedInclude)
             $matchingPackageReferences = @($projectXml.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq $packageId })
             $hasPackageModeReference = $false

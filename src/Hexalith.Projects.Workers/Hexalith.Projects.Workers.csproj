@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapr.AspNetCore" />
+    <PackageReference Include="Hexalith.EventStore.ServiceDefaults" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
     <PackageReference Include="Hexalith.EventStore.Contracts" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
     <PackageReference Include="Hexalith.Tenants.Client" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
     <PackageReference Include="Hexalith.Tenants.Contracts" Condition="'$(UseHexalithProjectReferences)' != 'true'" />

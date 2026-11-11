@@ -13,7 +13,8 @@
     <ProjectReference Include="..\Hexalith.Projects.E2E.Fixtures\Hexalith.Projects.E2E.Fixtures.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(SupportedProjectReadDistributed)' == 'true'">
-    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+    <PackageReference Include="Hexalith.EventStore.Testing" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" />
