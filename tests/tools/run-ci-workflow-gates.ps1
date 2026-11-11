@@ -1021,7 +1021,9 @@ foreach ($versionProperty in @('HexalithConversationsVersion', 'HexalithFoldersV
     }
 }
 
-$projectFiles = Get-ChildItem -Path $repositoryRoot -Recurse -Filter '*.csproj' -File |
+# Archived evidence copies are immutable observations, not active project graphs.
+$activeProjectRoots = @('src', 'tests') | ForEach-Object { Join-Path $repositoryRoot $_ }
+$projectFiles = Get-ChildItem -Path $activeProjectRoots -Recurse -Filter '*.csproj' -File |
     Where-Object { $_.FullName -notmatch '[\\/]references[\\/]' }
 foreach ($projectFile in $projectFiles) {
     [xml] $projectXml = Get-Content -Path $projectFile.FullName -Raw

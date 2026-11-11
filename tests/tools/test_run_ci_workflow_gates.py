@@ -80,6 +80,30 @@ class WorkflowGateTests(unittest.TestCase):
                 self.assert_rejected("unconditional sibling library ProjectReference")
         target.write_text(original)
 
+    def test_archived_project_copies_are_ignored_but_active_copies_remain_checked(self) -> None:
+        archive = Path("_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/"
+                       "isolation-20261103/final-source-20261103/raw-changes")
+        projects = (
+            (Path("src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj"),
+             "has no package-mode Hexalith.EventStore.ServiceDefaults reference"),
+            (Path("tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"),
+             "unconditional sibling library ProjectReference"),
+        )
+        for project, _ in projects:
+            target = self.root / archive / project
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / archive / project, target)
+        result = self.run_gate()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("PASSED", result.stdout)
+        for project, diagnostic in projects:
+            with self.subTest(project=project):
+                active = self.root / project
+                original = active.read_bytes()
+                shutil.copyfile(ROOT / archive / project, active)
+                self.assert_rejected(diagnostic)
+                active.write_bytes(original)
+
     def test_checkout_passes_without_submodules(self) -> None:
         self.assertFalse((self.root / "references").exists())
         result = self.run_gate()
