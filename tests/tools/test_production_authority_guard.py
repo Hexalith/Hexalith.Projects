@@ -115,6 +115,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
 
         deferred = GUARD.DEFAULT_DEFERRED_WORK.read_text(encoding="utf-8")
         deferred_sections = (
+            "### DW-1: Deliver and accept Story 6.5 supported-read prerequisites",
             "### DW-35: Accept the selected P1R baseline through the minimal gate.",
             "### DW-68: Keep the P1R coordinate qualification open until "
             "the minimal record is accepted.",
