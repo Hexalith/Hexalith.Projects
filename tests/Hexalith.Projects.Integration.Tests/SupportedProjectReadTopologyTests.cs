@@ -115,7 +115,6 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
     {
         IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder();
         Dictionary<string, string?> inputs = ValidInputs();
-        inputs["HexalithFoldersRoot"] = Path.Combine(TestRepositoryRoot.Find(), "references", "Hexalith.Folders");
         builder.Configuration.AddInMemoryCollection(inputs);
         string fixtureProject = Path.Combine(TestRepositoryRoot.Find(), "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
         var gateway = builder.AddProject("eventstore", fixtureProject);
@@ -388,8 +387,13 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         {
             spec = new { nameResolution = new { component = "sqlite", version = "v1", configuration = new { connectionString = Path.Combine(directory, "registry.sqlite") } } },
         }));
+        string foldersRoot = Path.Combine(TestRepositoryRoot.Find(), "references", "Hexalith.Folders");
+        string siblingFolders = Path.GetFullPath(Path.Combine(TestRepositoryRoot.Find(), "..", "Hexalith.Folders"));
+        if (!File.Exists(Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj"))
+            && File.Exists(Path.Combine(siblingFolders, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj"))) foldersRoot = siblingFolders;
         Dictionary<string, string?> inputs = new()
         {
+            ["HexalithFoldersRoot"] = foldersRoot,
             ["EnableKeycloak"] = "false", ["KeycloakPersistent"] = "false", ["Projects:E2E:LiveFixtures"] = "false",
             ["Dapr:RedisHost"] = "127.0.0.1:56379", ["Dapr:PlacementHostAddress"] = "127.0.0.1:55005", ["Dapr:SchedulerHostAddress"] = "127.0.0.1:55006",
             ["Projects:SupportedReads:IsolationId"] = "reads-1234567890abcdef", ["Projects:SupportedReads:UserIssuer"] = "https://127.0.0.1:54321/users",

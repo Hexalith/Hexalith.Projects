@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <DefineConstants Condition="'$(SupportedProjectReadDistributed)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_DISTRIBUTED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -15,6 +16,21 @@
   <ItemGroup Condition="'$(SupportedProjectReadDistributed)' == 'true'">
     <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <PackageReference Include="Hexalith.EventStore.Testing" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
+  </ItemGroup>
+  <!-- Package-mode structural tests compile the same pinned Platform helper without
+       adding its unpublished source dependencies to any product project. -->
+  <PropertyGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../references/Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../references/Hexalith.Platform</HexalithPlatformRoot>
+    <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../../Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../../Hexalith.Platform</HexalithPlatformRoot>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
+    <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
+    <PackageDownload Include="Hexalith.Builds.Module.Cli" Version="[4.48.1]" />
+    <Reference Include="Hexalith.Builds.Tooling">
+      <HintPath>$(NuGetPackageRoot)/hexalith.builds.module.cli/4.48.1/tools/net10.0/any/Hexalith.Builds.Tooling.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" />
