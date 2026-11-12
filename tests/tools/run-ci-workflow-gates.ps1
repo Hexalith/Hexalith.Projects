@@ -667,10 +667,14 @@ $expectedWorkflowGatesJob = (@'
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_run_g6_candidate_gate.py -v
 
+      - name: Initialize Builds for current G-6 policy fixtures
+        shell: bash
+        run: git -c submodule.recurse=false submodule update --init -- references/Hexalith.Builds
+
       - name: Validate current G-6 change selection
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_run_g6_ci_gate.py -v
+        run: python3 -m unittest tests/tools/test_run_g6_ci_gate.py tests/tools/test_current_g6_policy.py -v
 
       - name: Validate workflow policy regression fixtures
         env:
