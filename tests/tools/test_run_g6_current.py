@@ -23,7 +23,7 @@ SPEC.loader.exec_module(RUNNER)
 
 class CurrentRunnerPreflightTests(unittest.TestCase):
     def test_default_policy_matches_ci_and_explicit_override_is_preserved(self) -> None:
-        selected_policy = ROOT / "references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json"
+        selected_policy = ROOT / "references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json"
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
             root = Path(temporary)
@@ -66,7 +66,7 @@ class CurrentRunnerPreflightTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
             root = Path(temporary)
             policy = root / "policy.json"
-            policy.write_text(json.dumps({"tuple": {"daprRuntime": "1.18.2"}, "approval": {"decision": "approved"}}))
+            policy.write_text(json.dumps({"tuple": {"daprCli": "1.18.0", "daprRuntime": "1.18.2"}, "approval": {"decision": "approved"}}))
             audit = {"issues": [], "tupleApproved": True, "source": {}, "materialInputs": {"fingerprint": "a" * 64}}
             output = root / "result"
             with patch.dict(RUNNER.os.environ, {"ci": "true", "idebuild": "true", "VSCODE_PID": "123", "CALLER_SECRET": "protected-marker"}), \
@@ -109,7 +109,7 @@ class CurrentRunnerPreflightTests(unittest.TestCase):
 class CurrentRunnerImageTests(unittest.TestCase):
     IMAGE = "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb"
 
-    def control_plane_launches(self, runner=RUNNER):
+    def control_plane_launches(self, runner=RUNNER, version="1.18.2"):
         """Reach both real launch call sites without downloading tools or starting Docker."""
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
@@ -118,7 +118,8 @@ class CurrentRunnerImageTests(unittest.TestCase):
             (scratch / "runtime").mkdir(parents=True)
             (scratch / "runtime/daprd").touch()
             policy = root / "policy.json"
-            policy.write_text(json.dumps({"tuple": {"daprRuntime": "1.18.2"},
+            policy.write_text(json.dumps({"tuple": {"daprCli": "1.19.1" if version == "1.19.1" else "1.18.0",
+                                                    "daprRuntime": version},
                                           "approval": {"decision": "approved"}}))
             audit = {"issues": [], "tupleApproved": True, "source": {},
                      "materialInputs": {"fingerprint": "a" * 64}}
@@ -126,6 +127,7 @@ class CurrentRunnerImageTests(unittest.TestCase):
                  patch.object(runner.CURRENT_API, "builds_execution_sha", return_value="b" * 40), \
                  patch.object(runner.tempfile, "mkdtemp", return_value=str(scratch)), \
                  patch.object(runner.historical, "install"), \
+                 patch.object(runner, "install_current_tools"), \
                  patch.object(runner.historical, "Qualification") as qualification:
                 run = qualification.return_value
                 run.env = {"PATH": "/controlled-tools"}
@@ -147,6 +149,20 @@ class CurrentRunnerImageTests(unittest.TestCase):
 
     def test_both_control_plane_launches_use_the_approved_manifest(self) -> None:
         self.assertEqual([self.IMAGE, self.IMAGE], self.control_plane_launches())
+
+    def test_current_control_plane_launches_use_the_independently_measured_manifest(self) -> None:
+        image = "daprio/dapr@sha256:19e777232b0e6e461d893a794d40e800447db75e657736e6341e80a5e4c84f3e"
+        self.assertEqual([image, image], self.control_plane_launches(version="1.19.1"))
+
+    def test_current_mutable_tag_substitution_is_detected_at_actual_launch_calls(self) -> None:
+        image = "daprio/dapr@sha256:19e777232b0e6e461d893a794d40e800447db75e657736e6341e80a5e4c84f3e"
+        source = SCRIPT.read_text(encoding="utf-8")
+        self.assertEqual(1, source.count(image))
+        mutated = types.ModuleType("g6_current_mutable_image_negative_control")
+        exec(compile(source.replace(image, "daprio/dapr:1.19.1"), str(SCRIPT), "exec"), mutated.__dict__)
+        images = self.control_plane_launches(mutated, version="1.19.1")
+        self.assertEqual(["daprio/dapr:1.19.1"] * 2, images)
+        self.assertNotEqual([image] * 2, images)
 
     def test_mutable_tag_substitution_is_detected_at_the_launch_call_sites(self) -> None:
         source = SCRIPT.read_text(encoding="utf-8")

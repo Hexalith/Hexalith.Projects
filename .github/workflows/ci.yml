@@ -117,8 +117,8 @@ jobs:
       # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
       solution: Hexalith.Projects.CI.slnx
       additional-sdk-version: '10.0.404'
-      dapr-version: '1.18.0'
-      dapr-runtime-version: '1.18.2'
+      dapr-version: '1.19.1'
+      dapr-runtime-version: '1.19.1'
       test-platform: microsoft-testing-platform
       run-consumer-validation: true
       build-timeout-minutes: 30
@@ -198,9 +198,9 @@ jobs:
           python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v
           python3 references/Hexalith.Builds/Tools/test_package_readme.py -v
 
-      - name: Validate source mapper build boundary
+      - name: Validate source mapper and current tool boundaries
         shell: bash
-        run: python3 -m unittest tests/tools/test_g6_mapper_build.py -v
+        run: python3 -m unittest tests/tools/test_g6_mapper_build.py tests/tools/test_install_g6_current_tools.py -v
 
       - name: Pull pinned G-6 PostgreSQL fixture image
         run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
@@ -269,7 +269,7 @@ jobs:
               # packages while the rest of this source graph is restored.
               env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false
             fi
-          done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json)
+          done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json)
 
       - name: Audit and qualify current G-6 when required
         env:
@@ -279,7 +279,7 @@ jobs:
           python3 tests/tools/run_g6_ci_gate.py
           --event "$G6_EVENT_NAME"
           --base-sha "$G6_BASE_SHA"
-          --policy references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json
+          --policy references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json
           --output "$G6_OUTPUT"
 
       - name: Upload G-6 result and diagnostics

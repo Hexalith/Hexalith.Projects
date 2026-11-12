@@ -20,12 +20,13 @@ import uuid
 from pathlib import Path
 
 import run_g6_qualification as historical
+from install_g6_current_tools import install_current_tools
 
 
 ROOT = historical.ROOT
 EVENTSTORE = historical.EVENTSTORE
 BUILDS = historical.BUILDS
-POLICY = BUILDS / "Tools/g6-current-policy-2026-10-20.json"
+POLICY = BUILDS / "Tools/g6-current-policy-2026-11-12.json"
 AUDITOR = BUILDS / "Tools/g6_current.py"
 DEFAULT_OUTPUT = ROOT / ".g6-current-evidence/current"
 CURRENT_API = historical.module("g6_compact_validator", AUDITOR)
@@ -53,7 +54,14 @@ def conversations_source_mapping(run: historical.Qualification, scratch: Path) -
     other selected project keeps Conversations on packages.
     """
     prepared = scratch / "conversations-source-mapping.json"
-    command = ["dotnet", "run", "--project", str(MODULE_CLI), "--", "prepare-build",
+    # Compile with Builds' SDK before executing in the consumer's global.json context.
+    code = run.run("build Conversations source mapper",
+                   ["dotnet", "build", str(MODULE_CLI), "--configuration", "Release", "-m:1", "/nr:false"],
+                   BUILDS)
+    if code != 0:
+        raise RuntimeError(f"Conversations source mapper build failed (exit {code})")
+    assembly = MODULE_CLI.parent / "bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
+    command = ["dotnet", str(assembly), "prepare-build",
                "--manifest", "module/hexalith.module-manifest.v2.json", "--mode", "source",
                "--workspace", str(scratch / "conversations-source-mapping"), "--output", "json"]
     # The raw JSON names unsanitized scratch paths, so it stays in scratch, not in the log.
@@ -61,7 +69,7 @@ def conversations_source_mapping(run: historical.Qualification, scratch: Path) -
                    ["sh", "-c", 'out="$1"; shift; exec "$@" > "$out"', "sh", str(prepared), *command],
                    ROOT / CONVERSATIONS_PREFIX)
     if code != 0:
-        raise RuntimeError("Conversations source mapping could not be prepared")
+        raise RuntimeError(f"Conversations source mapping could not be prepared (exit {code})")
     data = json.loads(prepared.read_text(encoding="utf-8"))
     if data.get("status") != "prepared":
         raise RuntimeError("Conversations source mapping was not prepared")
@@ -174,13 +182,19 @@ def main(arguments: list[str] | None = None) -> int:
     support_count = dict(live_count)
     cleanup: dict = {}
     try:
-        historical.install(scratch, policy, environment=run.env)
+        dapr_pair = (policy["tuple"].get("daprCli"), policy["tuple"].get("daprRuntime"))
+        if dapr_pair == ("1.19.1", "1.19.1"):
+            install_current_tools(scratch, policy, BUILDS, run.env)
+        elif dapr_pair == ("1.18.0", "1.18.2"):
+            historical.install(scratch, policy, environment=run.env)
+        else:
+            raise RuntimeError("No explicit G6 installation route for the selected Dapr pair")
         tools = scratch / "tools"
         daprd = next((scratch / "runtime").rglob("daprd"))
         run.env["PATH"] = str(tools) + os.pathsep + run.env["PATH"]
         version_log = run.run("observe exact tool versions", ["python3", "-c",
             "import subprocess; [subprocess.run(c,check=True) for c in "
-            "[['dotnet','--version'],['aspire','--version'],['dapr','--runtime-path',"
+            "[['dotnet','--version'],['aspire','--version'],[" + repr(str(daprd)) + ",'--version'],['dapr','--runtime-path',"
             + repr(str(scratch / "runtime")) + ",'--version']]]"])
         if version_log != 0:
             errors.append("Selected SDK, Aspire, or Dapr version could not be observed")
@@ -192,10 +206,11 @@ def main(arguments: list[str] | None = None) -> int:
         suffix = uuid.uuid4().hex
         placement = f"g6-oq8-{suffix}-placement"
         scheduler = f"g6-oq8-{suffix}-scheduler"
-        # The approved 1.18.2 Linux amd64 registry manifest is part of this qualifier's
+        # Each explicitly selected Linux amd64 registry manifest is part of this qualifier's
         # material source closure. A mutable tag cannot substitute a different image.
         runtime_image = {
             "1.18.2": "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb",
+            "1.19.1": "daprio/dapr@sha256:19e777232b0e6e461d893a794d40e800447db75e657736e6341e80a5e4c84f3e",
         }[policy["tuple"]["daprRuntime"]]
         run.start_container(placement, runtime_image, ["./placement", "--port", "50005"], 50005)
         with socket.socket() as connection:

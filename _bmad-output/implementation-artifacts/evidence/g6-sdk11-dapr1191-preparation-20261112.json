@@ -1,0 +1,30 @@
+{
+  "scope": "Current G6 source qualification preparation and actual tool identity; full native G6 remains mandatory after final qualified pins",
+  "producerSource": "6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b",
+  "policy": "references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json",
+  "nativeG6Acceptance": false,
+  "imageAcceptance": false,
+  "candidateAcceptance": false,
+  "checks": {
+    "focusedTests": 60,
+    "focusedFailures": 0,
+    "retainedMutationControls": 103,
+    "actualToolVersions": {
+      "daprd": "1.19.1",
+      "dapr": "CLI version: 1.19.1 \nRuntime version: n/a",
+      "aspire": "13.6.5+b33d222049f1ecc3bc7257ec07b622fe550b2580"
+    },
+    "actualBinarySha256": {
+      "daprd": "b1ece5da76674bf6e15126aeb019fa58e444b5b8edf4d0ac59e32df895ae8fd2",
+      "dapr": "b651f5fcfe0b261ca6b26058dde31927efc8e17b12267d6743bdbeddca09bafd"
+    },
+    "installerSha256": "d1e46d014c321f723ed15abc34b84575911c1f0901e3b96033fe2551b4a44a52",
+    "sourceMapper": "Owner SDK compilation followed by prebuilt DLL execution in consumer context; failed build never executes stale binary; prerequisites retain original exit codes.",
+    "archiveRefusals": "Changed archive, absent identity, nonregular executable, existing target, unknown pair and actual executable version drift remain blocking.",
+    "imageRefusals": "Current exact1.19.1 amd64 manifest enforced at both actual launch call sites; mutable tag mutation detected.",
+    "unitFixtureScope": "Temporary nongit unit-test dependency fixture only; no nested repository initialization or mapped/native acceptance",
+    "unitFixtureRemoved": true
+  },
+  "historicalPolicyAndRunner": "Historical policy/approval and run_g6_qualification.py bytes unchanged. Only the current runner selects the new dated policy.",
+  "next": "New producer publication and qualified Platform source; exact topological source pins; fresh PostgreSQL two-sidecar test,33 cases/21 selectors,all selected source builds,source/evidence integrity and cleanup before native acceptance."
+}
