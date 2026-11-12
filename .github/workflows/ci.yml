@@ -198,6 +198,10 @@ jobs:
           python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v
           python3 references/Hexalith.Builds/Tools/test_package_readme.py -v
 
+      - name: Validate source mapper build boundary
+        shell: bash
+        run: python3 -m unittest tests/tools/test_g6_mapper_build.py -v
+
       - name: Pull pinned G-6 PostgreSQL fixture image
         run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
 
@@ -206,18 +210,37 @@ jobs:
         run: |
           set -euo pipefail
           mapping_workspace="${RUNNER_TEMP}/conversations-source-mapping"
-          mapping_json="${RUNNER_TEMP}/conversations-source-mapping.json"
-          mapping_env="${RUNNER_TEMP}/conversations-source-mapping.env"
+          mapping_diagnostics="${G6_OUTPUT}/source-mapping"
+          mkdir -p "$mapping_diagnostics"
+          mapping_json="${mapping_diagnostics}/conversations.json"
+          mapping_env="${mapping_diagnostics}/conversations.env"
+          mapping_builds_root="${PWD}/references/Hexalith.Builds"
+          mapping_assembly="${mapping_builds_root}/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
           rm -rf "$mapping_workspace"
+          mapping_status=0
           (
-            cd references/Hexalith.Conversations
-            dotnet run --project ../Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- \
+            cd "$mapping_builds_root" || exit "$?"
+            dotnet build src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj \
+              --configuration Release -m:1 /nr:false
+          ) > "${mapping_diagnostics}/build.stdout.log" 2> "${mapping_diagnostics}/build.stderr.log" || mapping_status=$?
+          if (( mapping_status != 0 )); then
+            cat "${mapping_diagnostics}/build.stdout.log" "${mapping_diagnostics}/build.stderr.log"
+            exit "$mapping_status"
+          fi
+          mapping_status=0
+          (
+            cd references/Hexalith.Conversations || exit "$?"
+            dotnet "$mapping_assembly" \
               prepare-build \
               --manifest module/hexalith.module-manifest.v2.json \
               --mode source \
               --workspace "$mapping_workspace" \
               --output json
-          ) > "$mapping_json"
+          ) > "$mapping_json" 2> "${mapping_diagnostics}/prepare.stderr.log" || mapping_status=$?
+          if (( mapping_status != 0 )); then
+            cat "${mapping_diagnostics}/prepare.stderr.log"
+            exit "$mapping_status"
+          fi
           python3 - "$mapping_json" "$mapping_env" <<'PY'
           import json
           import sys
