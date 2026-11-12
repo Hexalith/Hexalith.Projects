@@ -93,13 +93,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: Hexalith/Hexalith.Builds
-          ref: 163f3d0deac6b0db5ec4bdfcc0934b12e6adb46a
+          ref: 6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
           path: .hexalith/builds-execution
           persist-credentials: false
       - name: Validate approved Builds actions identity
         shell: bash
         env:
-          BUILDS_EXECUTION_SHA: 163f3d0deac6b0db5ec4bdfcc0934b12e6adb46a
+          BUILDS_EXECUTION_SHA: 6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
         run: |
           set -euo pipefail
           checked_out_builds_sha="$(git -C .hexalith/builds-execution rev-parse HEAD)"

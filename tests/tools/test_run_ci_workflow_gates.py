@@ -341,7 +341,7 @@ class WorkflowGateTests(unittest.TestCase):
             self.assertIn(f"{package_id} version must be owned", result.stderr)
 
     def test_mismatched_direct_builds_sha_names_its_scope(self) -> None:
-        self.replace(".github/workflows/ci.yml", "domain-ci.yml@163f3d0deac6b0db5ec4bdfcc0934b12e6adb46a",
+        self.replace(".github/workflows/ci.yml", "domain-ci.yml@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b",
                      "domain-ci.yml@" + "a" * 40)
         self.assert_rejected("Direct ci.yml reference executes Hexalith.Builds")
 
