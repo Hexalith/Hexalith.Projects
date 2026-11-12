@@ -354,8 +354,8 @@ jobs:
       - name: Initialize Dapr
         uses: ./references/Hexalith.Builds/Github/dapr-init
         with:
-          version: '1.18.0'
-          runtime-version: '1.18.2'
+          version: '1.19.1'
+          runtime-version: '1.19.1'
 
       - name: Install Aspire CLI
         run: dotnet tool install --global Aspire.Cli --version 13.6.5

@@ -104,6 +104,21 @@ class WorkflowGateTests(unittest.TestCase):
                 self.assert_rejected(diagnostic)
                 active.write_bytes(original)
 
+    def test_current_dapr_pair_is_exact_in_shared_ci_and_scheduled_e2e(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        original = path.read_text()
+        for before, after, diagnostic in (
+            ("      dapr-version: '1.19.1'", "      dapr-version: '1.18.0'", "CI must use the exact Dapr CLI 1.19.1"),
+            ("      dapr-runtime-version: '1.19.1'", "      dapr-runtime-version: '1.18.2'", "CI must use the exact Dapr runtime 1.19.1"),
+            ("          version: '1.19.1'", "          version: '1.18.0'", "Scheduled E2E must initialize the exact Dapr CLI 1.19.1"),
+            ("          runtime-version: '1.19.1'", "          runtime-version: '1.18.2'", "Scheduled E2E must initialize the exact Dapr runtime 1.19.1"),
+        ):
+            with self.subTest(before=before):
+                self.assertEqual(1, original.count(before))
+                path.write_text(original.replace(before, after))
+                self.assert_rejected(diagnostic)
+        path.write_text(original)
+
     def test_checkout_passes_without_submodules(self) -> None:
         self.assertFalse((self.root / "references").exists())
         result = self.run_gate()

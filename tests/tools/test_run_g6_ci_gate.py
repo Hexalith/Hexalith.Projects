@@ -26,7 +26,7 @@ POLICY = {"materialFiles": ["global.json", "references/Hexalith.Builds/Props/Dir
 class G6ChangeSelectionTests(unittest.TestCase):
     def test_default_and_explicit_policy_reach_audit_runner_and_validation(self) -> None:
         project_root = GATE.ROOT
-        policy_relative = Path("references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json")
+        policy_relative = Path("references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json")
         with tempfile.TemporaryDirectory() as temporary, patch.object(GATE, "ROOT", Path(temporary)):
             root = Path(temporary)
             selected_policy = root / policy_relative

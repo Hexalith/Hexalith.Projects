@@ -587,8 +587,8 @@ Require-Match $runbookPolicyText 'permanently active' 'The Trusted Publishing ru
 Require-Match $ci '^\s*push:\s*$' 'CI must run on pushes.'
 Require-Match $ci '^\s*pull_request:\s*$' 'CI must run on pull requests.'
 Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
-Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
-Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved Dapr 1.18.2 runtime exception.'
+Require-Match $ci "dapr-version:\s*'1\.19\.1'" 'CI must use the exact Dapr CLI 1.19.1.'
+Require-Match $ci "dapr-runtime-version:\s*'1\.19\.1'" 'CI must use the exact Dapr runtime 1.19.1.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
 # G-6 current proof is source-bound. Historical packet checks are retained as
 # archived test fixtures and are no longer required jobs in CI.
@@ -857,7 +857,7 @@ Require-Match $ci "if:\s*\$\{\{ github\.event_name == 'schedule' \}\}" 'E2E must
 Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the lockfile with lifecycle scripts disabled.'
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
-Require-Match $ci "runtime-version:\s*'1\.18\.2'" 'Scheduled E2E must initialize the approved Dapr 1.18.2 runtime.'
+Require-Match $ci "^\s*runtime-version:\s*'1\.19\.1'" 'Scheduled E2E must initialize the exact Dapr runtime 1.19.1.'
 Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.6\.5' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
@@ -900,6 +900,11 @@ if ($e2eJobs.Count -ne 1) {
 else {
     $e2eJobText = $e2eJobs[0].Text
     $e2eSteps = @(Get-NamedStepBlocks -JobText $e2eJobText)
+    $e2eDaprStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Initialize Dapr' -Owner 'Scheduled E2E'
+    if ($null -ne $e2eDaprStep) {
+        Require-Match $e2eDaprStep.Text "^\s*version:\s*'1\.19\.1'\s*$" 'Scheduled E2E must initialize the exact Dapr CLI 1.19.1.'
+        Require-Match $e2eDaprStep.Text "^\s*runtime-version:\s*'1\.19\.1'\s*$" 'Scheduled E2E must initialize the exact Dapr runtime 1.19.1.'
+    }
     $e2eRunStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Run managed AppHost E2E suite' -Owner 'Scheduled E2E'
     $e2eStopStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Stop the exact Projects AppHost' -Owner 'Scheduled E2E'
     Require-Match $e2eJobText '^\s*submodules:\s*false\s*$' 'Scheduled E2E must check out without recursive submodules.'
