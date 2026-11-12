@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-POLICY = Path("references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json")
+POLICY = Path("tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json")
 AUDITOR = Path("references/Hexalith.Builds/Tools/g6_current.py")
 RUNNER = Path("tools/qualification/run_g6_current.py")
 import re

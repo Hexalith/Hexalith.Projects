@@ -19,3 +19,11 @@ _bmad-output/implementation-artifacts/evidence/story-6-1-owner-source-20261105/s
 _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/owner-source.patch -text -whitespace
 _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/projects-test-fixture-proposal.patch -text -whitespace
 _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/apphost-startup.txt -text -whitespace
+
+tests/tools/run_g6_ci_gate.py whitespace=cr-at-eol
+
+tests/tools/test_run_g6_ci_gate.py whitespace=cr-at-eol
+
+tests/tools/test_run_g6_current.py whitespace=cr-at-eol
+
+tools/qualification/run_g6_current.py whitespace=cr-at-eol

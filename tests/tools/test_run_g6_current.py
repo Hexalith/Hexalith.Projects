@@ -23,7 +23,7 @@ SPEC.loader.exec_module(RUNNER)
 
 class CurrentRunnerPreflightTests(unittest.TestCase):
     def test_default_policy_matches_ci_and_explicit_override_is_preserved(self) -> None:
-        selected_policy = ROOT / "references/Hexalith.Builds/Tools/g6-current-policy-2026-11-12.json"
+        selected_policy = ROOT / "tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json"
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
             root = Path(temporary)

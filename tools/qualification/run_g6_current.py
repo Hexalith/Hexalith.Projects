@@ -26,7 +26,7 @@ from install_g6_current_tools import install_current_tools
 ROOT = historical.ROOT
 EVENTSTORE = historical.EVENTSTORE
 BUILDS = historical.BUILDS
-POLICY = BUILDS / "Tools/g6-current-policy-2026-11-12.json"
+POLICY = ROOT / "tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json"
 AUDITOR = BUILDS / "Tools/g6_current.py"
 DEFAULT_OUTPUT = ROOT / ".g6-current-evidence/current"
 CURRENT_API = historical.module("g6_compact_validator", AUDITOR)
