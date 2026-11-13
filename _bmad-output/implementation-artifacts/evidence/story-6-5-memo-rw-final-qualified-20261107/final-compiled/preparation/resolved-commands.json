@@ -1,0 +1,38 @@
+{
+  "preparedOnly": true,
+  "executionReleased": false,
+  "plannedCommands": [
+    [
+      "dotnet",
+      "restore",
+      "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configfile",
+      "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/NuGet.Config",
+      "-p:NuGetAudit=false",
+      "-p:Story65FinalBindingSha256=9c2f3ebfac36e1fe6be3e1ba591124b1204763cac851ca51eab633369a9c7d12",
+      "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configuration",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:NuGetAudit=false",
+      "-p:Story65FinalBindingSha256=9c2f3ebfac36e1fe6be3e1ba591124b1204763cac851ca51eab633369a9c7d12",
+      "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+    ],
+    [
+      "dotnet",
+      "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "all",
+      "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/final-binding.json",
+      "9c2f3ebfac36e1fe6be3e1ba591124b1204763cac851ca51eab633369a9c7d12",
+      "/tmp/story65-image-memo-rw-final-compiled-results-20261107"
+    ]
+  ]
+}

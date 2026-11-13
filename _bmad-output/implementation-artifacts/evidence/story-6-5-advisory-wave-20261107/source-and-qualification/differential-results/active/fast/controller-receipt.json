@@ -1,0 +1,67 @@
+{
+  "preparationOnly": false,
+  "mode": "active",
+  "group": "fast",
+  "case": null,
+  "command": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "active",
+    "fast",
+    "/tmp/story65-advisory-wave-prep-20261107/differential-results/active/fast/business-parity.json"
+  ],
+  "cwd": "/tmp/story65-advisory-wave-prep-20261107/differential",
+  "runtimeProcessorOverride": null,
+  "errorType": "none",
+  "artifacts": {
+    "projects.closed.json": {
+      "sha256": "5a1e43e9cdec69baaffb9b578b6e40ae17f566229e9843b0961cce1739f8ac1e",
+      "bytes": 511
+    },
+    "projects.jsonl": {
+      "sha256": "4e66e232604f15fa3f8c15db307e4a4287ed346afd8f2c9186125026929e9556",
+      "bytes": 66164
+    },
+    "window.control": {
+      "sha256": "f7c952e3fcf269b2b843284dafe2d5bc14b88088b529596741d69fd7ad3033bb",
+      "bytes": 46
+    }
+  },
+  "rows": 213,
+  "stageCounts": {
+    "Whole": 36,
+    "ComponentFile": 36,
+    "ComponentPolicy": 29,
+    "AclFile": 23,
+    "SettingsEnumerationSortDictionary": 20,
+    "AuthenticationSerialization": 24,
+    "ActorBoundary": 23,
+    "ResultTail": 22
+  },
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "projects",
+    "runOrdinal": 9101,
+    "admitted": 36,
+    "disposedOrUnwound": 36,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 0,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 0,
+    "ioFailures": 0,
+    "writtenRows": 213,
+    "writtenBytes": 66164,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 87249176341888,
+    "windowEndTicks": 87257176341888,
+    "frequency": 1000000000
+  },
+  "rawDependencyTracePersisted": false
+}

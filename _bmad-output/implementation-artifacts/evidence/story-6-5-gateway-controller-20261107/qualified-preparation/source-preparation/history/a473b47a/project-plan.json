@@ -1,0 +1,27 @@
+{
+  "preparationOnly": true,
+  "compiled": false,
+  "harnessAssemblyName": "Hexalith.EventStore.Server.Tests",
+  "targetFramework": "net10.0",
+  "configuration": "Debug",
+  "optimize": false,
+  "frameworkReference": "Microsoft.AspNetCore.App",
+  "projectReferences": [],
+  "packageReferences": [],
+  "excludeRawAssemblyReferences": [
+    "Hexalith.EventStore.Gateway.dll",
+    "Hexalith.EventStore.Server.Tests.dll",
+    "Hexalith.EventStore.dll"
+  ],
+  "includeSharedDependencies": "pinned ordinary Server.Tests/producer dependencies, excluding Gateway; exact Assembly sharing qualified at runtime",
+  "gatewayVariants": {
+    "oracle": "copy pinned ordinary Gateway.dll/PDB into TEMP",
+    "candidate": "complete actual Gateway project output to isolated TEMP; same AssemblyName/version; source-only override",
+    "loadContexts": "two noncollectible explicit ALCs; Gateway default fallback forbidden"
+  },
+  "constructor": "public reflective constructor, variant real Claims validators, shared NullLogger closed over variant controller type",
+  "endpoint": "variant ControllerTypeInfo/MethodInfo; shared MVC descriptor/result/task types",
+  "counterOwnership": "helper112 and Gateway bootstrap compiled ONLY into private Gateway, never into scratch driver",
+  "producerWritePathOpsOwner": "/tmp/story65-gateway-controller-ops-prep-20261107",
+  "noClassRename": true
+}

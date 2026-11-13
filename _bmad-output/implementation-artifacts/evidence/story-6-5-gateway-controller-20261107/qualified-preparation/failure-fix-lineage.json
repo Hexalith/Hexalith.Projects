@@ -1,0 +1,46 @@
+{
+  "exactOneLineFixes": [
+    {
+      "afterSha256": "eb28bee5c5e831f58fc5665ab3c818faca04979fe1d530c738c325591cf13413",
+      "afterSource": "/tmp/story65-gateway-controller-ops-prep-20261107/failed-attempt-3e3d/top-level/gateway-scratch.props",
+      "beforeSha256": "c307a5443a8789b0f9a6c781aa9ec70811e9a757da3305d46cfcf31ddb8d8790",
+      "beforeSource": "/tmp/story65-gateway-controller-ops-prep-20261107/failed-attempt-c090/top-level/gateway-scratch.props",
+      "exactPatch": "failure-fixes/cs2021-exact-one-line.patch",
+      "label": "cs2021",
+      "onlyOnePropertyLineRemoved": true,
+      "patchSha256": "22952c2d9991955d68113f9fd676d60c5c45bc472d9100a8ace0d7681c575072"
+    },
+    {
+      "afterSha256": "8e5ad54e89c3ec5b4a48d0a5b778d116a5e19b8a86075823e59fb43de3cb13a1",
+      "afterSource": "/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+      "beforeSha256": "eb28bee5c5e831f58fc5665ab3c818faca04979fe1d530c738c325591cf13413",
+      "beforeSource": "/tmp/story65-gateway-controller-ops-prep-20261107/failed-attempt-3e3d/top-level/gateway-scratch.props",
+      "exactPatch": "failure-fixes/documentation-exact-one-line.patch",
+      "label": "documentation",
+      "onlyOnePropertyLineRemoved": true,
+      "patchSha256": "0baf15e6facf6a494992d67bf0fc774e48253911c635a8b7283e0612eb2011eb"
+    }
+  ],
+  "ordinaryOutputsUnchanged": true,
+  "preservedFailures": [
+    {
+      "errorCode": "CS2021",
+      "exitCode": 1,
+      "label": "cs2021",
+      "log": "producer-history/scratch-producer-build.log",
+      "receipt": "producer-history/scratch-producer-receipt.json"
+    },
+    {
+      "exitCode": 1,
+      "label": "documentation",
+      "log": "producer-history/producer-attempts/attempt-fpbxwg1z/build.log",
+      "receipt": "producer-history/producer-attempts/attempt-fpbxwg1z/receipt.json",
+      "uniqueErrors": {
+        "CS1573": 2,
+        "CS1591": 102,
+        "CS1734": 1
+      }
+    }
+  ],
+  "successfulProducerReceipt": "producer-history/producer-attempts/attempt-lphthq92/receipt.json"
+}

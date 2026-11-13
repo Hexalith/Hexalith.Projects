@@ -1,0 +1,90 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "actualFreezeAndTryCaptureInvoked": true,
+  "canonicalCatalogBytes": 219012,
+  "actualCapturedChargedBytes": 339100,
+  "independentFullAccountingMatches": true,
+  "byteBudget": 4194304,
+  "collectionBudget": 4096,
+  "collectionCount": 85,
+  "maximumCollectionCount": 85,
+  "allCollectionShapesSupported": true,
+  "allCollectionCountsWithinLimit": true,
+  "bindingMemoCount": 1,
+  "bindingMemoRetainedBytes": 339100,
+  "bindingScopeCacheHits": 50,
+  "costs": {
+    "freeze": {
+      "iterations": 20,
+      "minimumMilliseconds": 0.0479,
+      "medianMilliseconds": 0.0505,
+      "maximumMilliseconds": 0.2015,
+      "totalMilliseconds": 1.1903000000000001
+    },
+    "capture": {
+      "iterations": 30,
+      "minimumMilliseconds": 0.0583,
+      "medianMilliseconds": 0.0678,
+      "maximumMilliseconds": 0.6423,
+      "totalMilliseconds": 3.2326
+    },
+    "coreWithWarmedDecodeMemo": {
+      "iterations": 30,
+      "minimumMilliseconds": 2.37,
+      "medianMilliseconds": 2.8936,
+      "maximumMilliseconds": 4.5647,
+      "totalMilliseconds": 94.58579999999999
+    },
+    "bindingWithWarmedMemo": {
+      "iterations": 30,
+      "minimumMilliseconds": 0.0381,
+      "medianMilliseconds": 0.0869,
+      "maximumMilliseconds": 1.7939,
+      "totalMilliseconds": 5.075200000000001
+    },
+    "freezeAndMemo": {
+      "iterations": 20,
+      "minimumMilliseconds": 0.0626,
+      "medianMilliseconds": 0.1281,
+      "maximumMilliseconds": 0.2337,
+      "totalMilliseconds": 2.8024999999999993
+    },
+    "freezeAndCore": {
+      "iterations": 20,
+      "minimumMilliseconds": 2.4422,
+      "medianMilliseconds": 2.8407,
+      "maximumMilliseconds": 5.7717,
+      "totalMilliseconds": 60.6996
+    }
+  },
+  "allSixCopiesContainRepairAndMatchProbeSdk": true,
+  "sixHostCopyReceipt": "six-host-sdk-copies.json",
+  "inProcessOwnerMemoHitsObserved": false,
+  "trustProofOrActivationCopyRetained": false,
+  "nativeCasesCollected": 0,
+  "browserCasesCollected": 0,
+  "intentionalCutoffResult": "failed",
+  "intentionalCutoffFailure": "KeyboardInterrupt",
+  "exactCleanupAndPreservationVerified": true,
+  "priorFailedRunPreserved": true,
+  "priorPositiveAttempts": 30,
+  "priorAllPositiveAttemptsFailed": true,
+  "priorMedianElapsedMilliseconds": 2468.6797500000002,
+  "capturedRevisions": {
+    ".": "9ae0571529cb4a9f3ad9750c8b834e6284d4f76b",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Memories": "246157a7ff8e2dcd8d356c833a77a02514490d2f",
+    "references/Hexalith.Platform": "c1997c60f31e08d945b44cb7aa2afd7800e8ff69",
+    "references/Hexalith.Folders": "e88c940000446e13d17d86a7288649d8653a7138",
+    "references/Hexalith.EventStore": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b",
+    "references/Hexalith.Tenants": "cf36618a2c27b5722a1ff811cfbbce4528c3c105",
+    "references/Hexalith.Parties": "1308ad000c79ebc394fc395588f9af91092e8c4c",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Conversations": "9a5c684de5ee4876448faa26737f6afd36cf33e7",
+    "references/Hexalith.Builds": "beb85e497957fedc66854013efd2cc4bd216ecbc",
+    "references/Hexalith.McpCli": "6173885d0132184a658b39ac421ec16848a3bb15",
+    "references/Hexalith.FrontComposer": "fbb9c3822dfa407e72739238cd472567f45f1e82"
+  },
+  "sourceManifest": "managed/source-manifest.json"
+}

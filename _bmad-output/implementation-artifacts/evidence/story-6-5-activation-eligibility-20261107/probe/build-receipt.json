@@ -1,0 +1,18 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "/tmp/story65-actual-activation-probe-20261107/Probe.csproj",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers"
+  ],
+  "exitCode": 0,
+  "warnings": 0,
+  "errors": 0,
+  "ownerProjectReferences": false,
+  "dependencies": "BCL and shared Microsoft.AspNetCore.App framework only; SDK assemblies loaded reflectively at probe time.",
+  "stdoutRetained": false
+}

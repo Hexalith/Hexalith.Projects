@@ -1,0 +1,1083 @@
+{
+  "diagnosticOnly": true,
+  "ownerEdits": false,
+  "hostsInstantiated": false,
+  "credentialsRead": false,
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "isServerGc": true,
+  "oracleDll": "/tmp/story65-canonical-codec-probe-20261107/bin/Release/net10.0/Hexalith.EventStore.Contracts.dll",
+  "oracleDllSha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+  "provenance": [
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/CanonicalCatalog.json",
+      "sha256": "d30010c9b1017f29c5ae9da9a39289d8865bfce91bd153b6000beaad0248f4c0"
+    },
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/V2CanonicalCatalog.json",
+      "sha256": "c8b28c28e017154f6ecf6f69a60e89448a9df7d4a4161809f4aeda8c398ec049"
+    },
+    {
+      "path": "deploy/dapr/eventstore-routing-catalog.json",
+      "sha256": "2579a2d99016508de5ee3102233a4ccf4cad3d951fa84b26c6766fcbf76cc43a"
+    }
+  ],
+  "parityChecks": 1560,
+  "parity": [
+    {
+      "api": "RouteCatalogCodec",
+      "completed": true
+    },
+    {
+      "api": "DocumentCodec",
+      "completed": true
+    },
+    {
+      "api": "DocumentHashSpanCodec",
+      "completed": true
+    },
+    {
+      "api": "DirectCodec",
+      "completed": true
+    }
+  ],
+  "corpus": [
+    {
+      "SchemaVersion": 1,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 4963
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 6333
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 0,
+      "bytes": 45317
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 64931
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 219012
+    }
+  ],
+  "leafCorpusCalls": 94,
+  "qualification": "Static schema1/2 golden fixtures plus tracked deployed30declaration/17policy catalog; schema3 derived by adding synthetic operation shapes.219012B envelope has1000synthetic schema fields. Not the removed runtime180leaf inventory. Every workload freshly clones current leaf collections and recomputes all94public leaf digests, or validates and encodes full219KB. Exact copied candidate source uses unchanged compiled baseline Validator (including its nested baseline digests), conservatively understating complete-global-path savings. All WriteCanonical traversal source unchanged. Rotating variant order; all samples/cold costs retained; no timing guarantee.",
+  "measurements": [
+    {
+      "workload": "fresh-static-derived-leaf-inventory",
+      "cold": [
+        {
+          "api": "RouteCatalogCodec",
+          "ms": 2.6539,
+          "allocated": 1644592,
+          "units": 94
+        },
+        {
+          "api": "DocumentCodec",
+          "ms": 2.1149,
+          "allocated": 1522632,
+          "units": 94
+        },
+        {
+          "api": "DocumentHashSpanCodec",
+          "ms": 2.1424,
+          "allocated": 1462912,
+          "units": 94
+        },
+        {
+          "api": "DirectCodec",
+          "ms": 2.0281,
+          "allocated": 1377632,
+          "units": 94
+        }
+      ],
+      "samples": [
+        {
+          "sample": 0,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.169885,
+          "cpuMs": 2.223925,
+          "allocatedBytes": 1644353,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DocumentCodec",
+          "meanMs": 2.2319375,
+          "cpuMs": 2.279725,
+          "allocatedBytes": 1522585,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 2.1348975,
+          "cpuMs": 2.18335,
+          "allocatedBytes": 1462865,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DirectCodec",
+          "meanMs": 2.2366675000000003,
+          "cpuMs": 2.685425,
+          "allocatedBytes": 1372761,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DocumentCodec",
+          "meanMs": 2.28534,
+          "cpuMs": 2.334375,
+          "allocatedBytes": 1516825,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 2.3278175,
+          "cpuMs": 2.7331499999999997,
+          "allocatedBytes": 1457105,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DirectCodec",
+          "meanMs": 2.149325,
+          "cpuMs": 2.195325,
+          "allocatedBytes": 1371825,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.28443,
+          "cpuMs": 2.7426500000000003,
+          "allocatedBytes": 1638593,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 2.36856,
+          "cpuMs": 2.633625,
+          "allocatedBytes": 1465195,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DirectCodec",
+          "meanMs": 2.4248675,
+          "cpuMs": 2.5012499999999998,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.564385,
+          "cpuMs": 2.35555,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DocumentCodec",
+          "meanMs": 2.3767050000000003,
+          "cpuMs": 3.0081499999999997,
+          "allocatedBytes": 1525033,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DirectCodec",
+          "meanMs": 2.18688,
+          "cpuMs": 2.46605,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.178135,
+          "cpuMs": 2.38785,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DocumentCodec",
+          "meanMs": 2.394975,
+          "cpuMs": 4.824825,
+          "allocatedBytes": 1525033,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 2.56798,
+          "cpuMs": 5.167625,
+          "allocatedBytes": 1464912,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "RouteCatalogCodec",
+          "meanMs": 1.5266600000000001,
+          "cpuMs": 3.049575,
+          "allocatedBytes": 1631241,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DocumentCodec",
+          "meanMs": 1.4845475000000001,
+          "cpuMs": 2.9010000000000002,
+          "allocatedBytes": 1508605,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 1.1614475,
+          "cpuMs": 1.2111750000000001,
+          "allocatedBytes": 1444953,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DirectCodec",
+          "meanMs": 1.0949925,
+          "cpuMs": 1.139775,
+          "allocatedBytes": 1359673,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DocumentCodec",
+          "meanMs": 1.1271775,
+          "cpuMs": 1.1747999999999998,
+          "allocatedBytes": 1504673,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 1.1042125,
+          "cpuMs": 1.152225,
+          "allocatedBytes": 1444953,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DirectCodec",
+          "meanMs": 1.13732,
+          "cpuMs": 1.863225,
+          "allocatedBytes": 1359673,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "RouteCatalogCodec",
+          "meanMs": 1.4145825,
+          "cpuMs": 1.543075,
+          "allocatedBytes": 1620287,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 1.089995,
+          "cpuMs": 1.144525,
+          "allocatedBytes": 1436745,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DirectCodec",
+          "meanMs": 1.0811975,
+          "cpuMs": 1.7924,
+          "allocatedBytes": 1351465,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "RouteCatalogCodec",
+          "meanMs": 1.0493074999999998,
+          "cpuMs": 2.0641749999999996,
+          "allocatedBytes": 1618233,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DocumentCodec",
+          "meanMs": 0.8714600000000001,
+          "cpuMs": 1.771675,
+          "allocatedBytes": 1496465,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DirectCodec",
+          "meanMs": 0.7937775,
+          "cpuMs": 1.6285250000000002,
+          "allocatedBytes": 1351465,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "RouteCatalogCodec",
+          "meanMs": 0.78182,
+          "cpuMs": 1.153025,
+          "allocatedBytes": 1618233,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DocumentCodec",
+          "meanMs": 0.70232,
+          "cpuMs": 0.7501249999999999,
+          "allocatedBytes": 1496465,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 0.672115,
+          "cpuMs": 0.7098,
+          "allocatedBytes": 1436745,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "RouteCatalogCodec",
+          "meanMs": 0.743085,
+          "cpuMs": 0.781025,
+          "allocatedBytes": 1618233,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DocumentCodec",
+          "meanMs": 0.6977975,
+          "cpuMs": 0.74915,
+          "allocatedBytes": 1496465,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 0.6739925,
+          "cpuMs": 0.7068749999999999,
+          "allocatedBytes": 1436745,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DirectCodec",
+          "meanMs": 0.662265,
+          "cpuMs": 0.6974,
+          "allocatedBytes": 1351465,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "workload": "complete-219KB-envelope-encode",
+      "cold": [
+        {
+          "api": "RouteCatalogCodec",
+          "ms": 4.5588,
+          "allocated": 8673560,
+          "units": 219012
+        },
+        {
+          "api": "DocumentCodec",
+          "ms": 3.9769,
+          "allocated": 8308160,
+          "units": 219012
+        },
+        {
+          "api": "DocumentHashSpanCodec",
+          "ms": 4.052,
+          "allocated": 8309232,
+          "units": 219012
+        },
+        {
+          "api": "DirectCodec",
+          "ms": 3.8334,
+          "allocated": 8013040,
+          "units": 219012
+        }
+      ],
+      "samples": [
+        {
+          "sample": 0,
+          "api": "RouteCatalogCodec",
+          "meanMs": 6.8884825,
+          "cpuMs": 11.0352,
+          "allocatedBytes": 8673656,
+          "units": 219012,
+          "gcDelta": [
+            14,
+            6,
+            6
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DocumentCodec",
+          "meanMs": 5.2983775,
+          "cpuMs": 8.656274999999999,
+          "allocatedBytes": 8308074,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 5.678475000000001,
+          "cpuMs": 9.900575,
+          "allocatedBytes": 8308135,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DirectCodec",
+          "meanMs": 6.5853399999999995,
+          "cpuMs": 8.281749999999999,
+          "allocatedBytes": 8012965,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DocumentCodec",
+          "meanMs": 6.7151225,
+          "cpuMs": 9.84155,
+          "allocatedBytes": 8308079,
+          "units": 219012,
+          "gcDelta": [
+            11,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 10.0109025,
+          "cpuMs": 10.661750000000001,
+          "allocatedBytes": 8308196,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DirectCodec",
+          "meanMs": 5.3553025,
+          "cpuMs": 8.34205,
+          "allocatedBytes": 8013076,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.988,
+          "cpuMs": 9.58565,
+          "allocatedBytes": 8673498,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 5.2575075,
+          "cpuMs": 9.176625,
+          "allocatedBytes": 8308080,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DirectCodec",
+          "meanMs": 5.08786,
+          "cpuMs": 8.033249999999999,
+          "allocatedBytes": 8012955,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.6533625,
+          "cpuMs": 9.607099999999999,
+          "allocatedBytes": 8673858,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DocumentCodec",
+          "meanMs": 5.44292,
+          "cpuMs": 9.938975000000001,
+          "allocatedBytes": 8308253,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DirectCodec",
+          "meanMs": 5.865385,
+          "cpuMs": 9.41715,
+          "allocatedBytes": 8013154,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "RouteCatalogCodec",
+          "meanMs": 6.999525,
+          "cpuMs": 9.5877,
+          "allocatedBytes": 8673502,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DocumentCodec",
+          "meanMs": 5.2505675,
+          "cpuMs": 8.718824999999999,
+          "allocatedBytes": 8308290,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 5.3905975,
+          "cpuMs": 9.2458,
+          "allocatedBytes": 8308270,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.562305,
+          "cpuMs": 9.51395,
+          "allocatedBytes": 8673853,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DocumentCodec",
+          "meanMs": 5.422784999999999,
+          "cpuMs": 8.982575,
+          "allocatedBytes": 8308079,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 6.401655,
+          "cpuMs": 10.283775,
+          "allocatedBytes": 8308338,
+          "units": 219012,
+          "gcDelta": [
+            11,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DirectCodec",
+          "meanMs": 5.107785,
+          "cpuMs": 7.853375,
+          "allocatedBytes": 8013265,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DocumentCodec",
+          "meanMs": 6.8984049999999995,
+          "cpuMs": 9.27585,
+          "allocatedBytes": 8308191,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 7.7581325,
+          "cpuMs": 9.52115,
+          "allocatedBytes": 8308150,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DirectCodec",
+          "meanMs": 5.0934175,
+          "cpuMs": 8.5777,
+          "allocatedBytes": 8012955,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.6712325,
+          "cpuMs": 9.783674999999999,
+          "allocatedBytes": 8673718,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 6.7202325,
+          "cpuMs": 8.80975,
+          "allocatedBytes": 8308079,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DirectCodec",
+          "meanMs": 5.376932500000001,
+          "cpuMs": 7.97225,
+          "allocatedBytes": 8013146,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.6045825,
+          "cpuMs": 9.489225000000001,
+          "allocatedBytes": 8673482,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DocumentCodec",
+          "meanMs": 6.3353850000000005,
+          "cpuMs": 9.926425,
+          "allocatedBytes": 8308257,
+          "units": 219012,
+          "gcDelta": [
+            11,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DirectCodec",
+          "meanMs": 5.1533375,
+          "cpuMs": 8.457275,
+          "allocatedBytes": 8012972,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.74423,
+          "cpuMs": 10.31005,
+          "allocatedBytes": 8673559,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DocumentCodec",
+          "meanMs": 5.270555,
+          "cpuMs": 8.90165,
+          "allocatedBytes": 8308229,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 5.4765375,
+          "cpuMs": 9.6095,
+          "allocatedBytes": 8308110,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.7227625,
+          "cpuMs": 9.451699999999999,
+          "allocatedBytes": 8673683,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DocumentCodec",
+          "meanMs": 6.483315,
+          "cpuMs": 8.818325,
+          "allocatedBytes": 8308099,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DocumentHashSpanCodec",
+          "meanMs": 9.95702,
+          "cpuMs": 9.652,
+          "allocatedBytes": 8308261,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DirectCodec",
+          "meanMs": 6.0361424999999995,
+          "cpuMs": 8.624500000000001,
+          "allocatedBytes": 8012977,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            3,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+}

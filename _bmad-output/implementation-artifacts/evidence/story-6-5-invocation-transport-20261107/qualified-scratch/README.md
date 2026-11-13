@@ -1,0 +1,9 @@
+This TEMP candidate records only source preparation, isolated SDK compilation and scratch differential qualification. It is not final Story6.5 feature acceptance. Native33, application/live diagnostic, ordinary restoration and MULTIPLE/browser acceptance remain pending. The historical ordinary1038 total is not increased or requalified by this packet.
+
+All80 eligible comparison cells (84 actual SendAsync entries per variant because redirect reenters),3 first-business canaries and one genuine excluded entry process passed. The excluded process separately compared20 cells/21 entries, lived through the8-second window plus4-second closure opportunity, and observed no recorder artifacts without helper reflection. This does not prove no helper cctor/worker execution or execution of all five real excluded hosts. Six real entry identities are metadata/source proof only.
+
+The83,662 closed numeric rows use only Whole/ComponentFile/ComponentPolicy, with all allocation/count columns zero. Original JSONL bytes/hash/row counts and deterministic gzip hashes are in the staging manifest. No window.control content, DLL/PDB/cache, request/response payload, proof/header/context values or dependency trace values are copied.
+
+Whole excludes eligibility/admission; transport excludes outer ResponseContentRead buffering. Missing children do not establish kind/result/outcome. Recursive Whole intervals can overlap. Residual wall time is unattributed; there is no join to previous probes or logical requests. The controlled synthetic catalog is not an installed Gateway inventory proof.
+
+Unexecuted07aa source preparation and disabled9848/468/62e producer generations are preserved as history. The07aa controller union-preservation gap was corrected before any build/run; it is not a failed runtime attempt. All three scratch builds and both facts executions passed on their first attempt, with zero warnings/errors and no source/fixture fix after execution began.

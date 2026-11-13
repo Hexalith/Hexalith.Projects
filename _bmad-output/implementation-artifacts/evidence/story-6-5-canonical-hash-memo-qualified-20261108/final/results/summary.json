@@ -1,0 +1,1370 @@
+[
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.63244,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.02096,
+    "MedianOwnerDisposeMilliseconds": 0.00539,
+    "MedianAllocatedBytesPerObservation": 1158104,
+    "ObservationMedianMilliseconds": 1.490218,
+    "ObservationP95Milliseconds": 1.589749
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.405437,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001182,
+    "MedianOwnerDisposeMilliseconds": 0.000491,
+    "MedianAllocatedBytesPerObservation": 1070496,
+    "ObservationMedianMilliseconds": 1.373396,
+    "ObservationP95Milliseconds": 1.551867
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.444302,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.002424,
+    "MedianOwnerDisposeMilliseconds": 0.001383,
+    "MedianAllocatedBytesPerObservation": 1158104,
+    "ObservationMedianMilliseconds": 1.413372,
+    "ObservationP95Milliseconds": 1.591332
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.841093,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.046138,
+    "MedianOwnerDisposeMilliseconds": 0.002976,
+    "MedianAllocatedBytesPerObservation": 1063824,
+    "ObservationMedianMilliseconds": 1.632381,
+    "ObservationP95Milliseconds": 1.674812
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.985281,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.001082,
+    "MedianOwnerDisposeMilliseconds": 0.000762,
+    "MedianAllocatedBytesPerObservation": 1075184,
+    "ObservationMedianMilliseconds": 1.7743295,
+    "ObservationP95Milliseconds": 83.832134
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.880786,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.004319,
+    "MedianOwnerDisposeMilliseconds": 0.001523,
+    "MedianAllocatedBytesPerObservation": 1033220,
+    "ObservationMedianMilliseconds": 1.7011175,
+    "ObservationP95Milliseconds": 2.476784
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.922556,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.037071,
+    "MedianOwnerDisposeMilliseconds": 0.003707,
+    "MedianAllocatedBytesPerObservation": 931826,
+    "ObservationMedianMilliseconds": 3.5416065,
+    "ObservationP95Milliseconds": 4.181634
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.65050575,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.001953,
+    "MedianOwnerDisposeMilliseconds": 0.000892,
+    "MedianAllocatedBytesPerObservation": 1083468,
+    "ObservationMedianMilliseconds": 2.2489790000000003,
+    "ObservationP95Milliseconds": 15.028529
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.562841,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001713,
+    "MedianOwnerDisposeMilliseconds": 0.001412,
+    "MedianAllocatedBytesPerObservation": 956662,
+    "ObservationMedianMilliseconds": 2.1089890000000002,
+    "ObservationP95Milliseconds": 4.804143
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.813256890625,
+    "MedianCpuMillisecondsPerObservation": 1.3920156250000009,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.092627,
+    "MedianOwnerDisposeMilliseconds": 0.006242,
+    "MedianAllocatedBytesPerObservation": 522258.875,
+    "ObservationMedianMilliseconds": 0.6881205,
+    "ObservationP95Milliseconds": 0.970766
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 1.5025655,
+    "MedianCpuMillisecondsPerObservation": 2.074578125000002,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.002344,
+    "MedianOwnerDisposeMilliseconds": 0.002234,
+    "MedianAllocatedBytesPerObservation": 1069609.875,
+    "ObservationMedianMilliseconds": 1.370054,
+    "ObservationP95Milliseconds": 2.201594
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.701760953125,
+    "MedianCpuMillisecondsPerObservation": 0.7949374999999996,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.003647,
+    "MedianOwnerDisposeMilliseconds": 0.004178,
+    "MedianAllocatedBytesPerObservation": 522264.125,
+    "ObservationMedianMilliseconds": 0.670582,
+    "ObservationP95Milliseconds": 0.844023
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.4093324453125,
+    "MedianCpuMillisecondsPerObservation": 0.9048515624999993,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.093048,
+    "MedianOwnerDisposeMilliseconds": 0.007064,
+    "MedianAllocatedBytesPerObservation": 534609.625,
+    "ObservationMedianMilliseconds": 0.746081,
+    "ObservationP95Milliseconds": 1.268084
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.7697360859375,
+    "MedianCpuMillisecondsPerObservation": 1.755640624999998,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.003096,
+    "MedianOwnerDisposeMilliseconds": 0.001693,
+    "MedianAllocatedBytesPerObservation": 1074748.625,
+    "ObservationMedianMilliseconds": 1.396064,
+    "ObservationP95Milliseconds": 2.321713
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.413634375,
+    "MedianCpuMillisecondsPerObservation": 1.000984374999998,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.003056,
+    "MedianOwnerDisposeMilliseconds": 0.003787,
+    "MedianAllocatedBytesPerObservation": 530839.75,
+    "ObservationMedianMilliseconds": 0.7498830000000001,
+    "ObservationP95Milliseconds": 1.076491
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.24603541796875,
+    "MedianCpuMillisecondsPerObservation": 1.0559843749999978,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.100081,
+    "MedianOwnerDisposeMilliseconds": 0.006773,
+    "MedianAllocatedBytesPerObservation": 547952.1875,
+    "ObservationMedianMilliseconds": 0.8408975000000001,
+    "ObservationP95Milliseconds": 1.838108
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.4287267265625,
+    "MedianCpuMillisecondsPerObservation": 1.7922734375000005,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.002896,
+    "MedianOwnerDisposeMilliseconds": 0.001663,
+    "MedianAllocatedBytesPerObservation": 1088223.1875,
+    "ObservationMedianMilliseconds": 1.423206,
+    "ObservationP95Milliseconds": 2.885916
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.24252940234375,
+    "MedianCpuMillisecondsPerObservation": 1.0085039062499987,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.003477,
+    "MedianOwnerDisposeMilliseconds": 0.003737,
+    "MedianAllocatedBytesPerObservation": 548967.5,
+    "ObservationMedianMilliseconds": 0.841754,
+    "ObservationP95Milliseconds": 1.745718
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.61136,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.028054,
+    "MedianOwnerDisposeMilliseconds": 0.002915,
+    "MedianAllocatedBytesPerObservation": 1183120,
+    "ObservationMedianMilliseconds": 1.576233,
+    "ObservationP95Milliseconds": 1.838981
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.489737,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000782,
+    "MedianOwnerDisposeMilliseconds": 0.000231,
+    "MedianAllocatedBytesPerObservation": 1095512,
+    "ObservationMedianMilliseconds": 1.458548,
+    "ObservationP95Milliseconds": 1.551566
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 1.494827,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001082,
+    "MedianOwnerDisposeMilliseconds": 0.000992,
+    "MedianAllocatedBytesPerObservation": 1183120,
+    "ObservationMedianMilliseconds": 1.462896,
+    "ObservationP95Milliseconds": 1.96972
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.757042,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.016942,
+    "MedianOwnerDisposeMilliseconds": 0.002114,
+    "MedianAllocatedBytesPerObservation": 1155460,
+    "ObservationMedianMilliseconds": 1.458002,
+    "ObservationP95Milliseconds": 1.520146
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.8083775,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000722,
+    "MedianOwnerDisposeMilliseconds": 0.00022,
+    "MedianAllocatedBytesPerObservation": 1102000,
+    "ObservationMedianMilliseconds": 1.5034895000000001,
+    "ObservationP95Milliseconds": 2.479369
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.757488,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001032,
+    "MedianOwnerDisposeMilliseconds": 0.001002,
+    "MedianAllocatedBytesPerObservation": 1148044,
+    "ObservationMedianMilliseconds": 1.4674749999999999,
+    "ObservationP95Milliseconds": 1.503955
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.39477475,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.019167,
+    "MedianOwnerDisposeMilliseconds": 0.001903,
+    "MedianAllocatedBytesPerObservation": 1130490,
+    "ObservationMedianMilliseconds": 1.436982,
+    "ObservationP95Milliseconds": 1.501279
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.52528925,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001172,
+    "MedianOwnerDisposeMilliseconds": 0.000271,
+    "MedianAllocatedBytesPerObservation": 1110284,
+    "ObservationMedianMilliseconds": 1.5604535,
+    "ObservationP95Milliseconds": 2.591408
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.3935135,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001022,
+    "MedianOwnerDisposeMilliseconds": 0.001062,
+    "MedianAllocatedBytesPerObservation": 1098772,
+    "ObservationMedianMilliseconds": 1.4359,
+    "ObservationP95Milliseconds": 1.503885
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.651291609375,
+    "MedianCpuMillisecondsPerObservation": 0.7610937500000006,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.079194,
+    "MedianOwnerDisposeMilliseconds": 0.007334,
+    "MedianAllocatedBytesPerObservation": 547270.375,
+    "ObservationMedianMilliseconds": 0.6476195,
+    "ObservationP95Milliseconds": 0.893879
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 1.480647921875,
+    "MedianCpuMillisecondsPerObservation": 1.8684843750000084,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.002505,
+    "MedianOwnerDisposeMilliseconds": 0.000722,
+    "MedianAllocatedBytesPerObservation": 1094606,
+    "ObservationMedianMilliseconds": 1.183272,
+    "ObservationP95Milliseconds": 1.809399
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.66065775,
+    "MedianCpuMillisecondsPerObservation": 1.1636718750000057,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.002786,
+    "MedianOwnerDisposeMilliseconds": 0.002896,
+    "MedianAllocatedBytesPerObservation": 547270.375,
+    "ObservationMedianMilliseconds": 0.6358955,
+    "ObservationP95Milliseconds": 0.848763
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.190506078125,
+    "MedianCpuMillisecondsPerObservation": 0.5994921874999974,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.083061,
+    "MedianOwnerDisposeMilliseconds": 0.006653,
+    "MedianAllocatedBytesPerObservation": 543726,
+    "ObservationMedianMilliseconds": 0.32500799999999996,
+    "ObservationP95Milliseconds": 0.5907
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.4371539140625,
+    "MedianCpuMillisecondsPerObservation": 1.0806328124999993,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.001714,
+    "MedianOwnerDisposeMilliseconds": 0.001463,
+    "MedianAllocatedBytesPerObservation": 1087383.25,
+    "ObservationMedianMilliseconds": 0.7780795,
+    "ObservationP95Milliseconds": 1.854375
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.182162234375,
+    "MedianCpuMillisecondsPerObservation": 0.4662265625000046,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.002384,
+    "MedianOwnerDisposeMilliseconds": 0.003777,
+    "MedianAllocatedBytesPerObservation": 544474.125,
+    "ObservationMedianMilliseconds": 0.29294050000000005,
+    "ObservationP95Milliseconds": 0.518449
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.10213776171875,
+    "MedianCpuMillisecondsPerObservation": 0.44281249999999517,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.091218,
+    "MedianOwnerDisposeMilliseconds": 0.006553,
+    "MedianAllocatedBytesPerObservation": 561832.9375,
+    "ObservationMedianMilliseconds": 0.3150785,
+    "ObservationP95Milliseconds": 1.101087
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.25069762109375,
+    "MedianCpuMillisecondsPerObservation": 1.1018984375000045,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.001663,
+    "MedianOwnerDisposeMilliseconds": 0.001513,
+    "MedianAllocatedBytesPerObservation": 1097111.75,
+    "ObservationMedianMilliseconds": 0.778476,
+    "ObservationP95Milliseconds": 1.926882
+  },
+  {
+    "Key": {
+      "Dataset": "public-catalog-fixture",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.114823765625,
+    "MedianCpuMillisecondsPerObservation": 0.4766249999999985,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.001624,
+    "MedianOwnerDisposeMilliseconds": 0.003607,
+    "MedianAllocatedBytesPerObservation": 561020.125,
+    "ObservationMedianMilliseconds": 0.3162205,
+    "ObservationP95Milliseconds": 1.185503
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.258999,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.01583,
+    "MedianOwnerDisposeMilliseconds": 0.003516,
+    "MedianAllocatedBytesPerObservation": 288112,
+    "ObservationMedianMilliseconds": 0.229336,
+    "ObservationP95Milliseconds": 0.366884
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.250202,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000581,
+    "MedianOwnerDisposeMilliseconds": 0.0003,
+    "MedianAllocatedBytesPerObservation": 264272,
+    "ObservationMedianMilliseconds": 0.220309,
+    "ObservationP95Milliseconds": 0.381182
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.253509,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001463,
+    "MedianOwnerDisposeMilliseconds": 0.000822,
+    "MedianAllocatedBytesPerObservation": 288112,
+    "ObservationMedianMilliseconds": 0.223065,
+    "ObservationP95Milliseconds": 0.256229
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.136809,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.011662,
+    "MedianOwnerDisposeMilliseconds": 0.001914,
+    "MedianAllocatedBytesPerObservation": 264264,
+    "ObservationMedianMilliseconds": 0.22150599999999998,
+    "ObservationP95Milliseconds": 0.230769
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.153078,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000782,
+    "MedianOwnerDisposeMilliseconds": 0.000391,
+    "MedianAllocatedBytesPerObservation": 263920,
+    "ObservationMedianMilliseconds": 0.212824,
+    "ObservationP95Milliseconds": 1.281916
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.1368515,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000932,
+    "MedianOwnerDisposeMilliseconds": 0.000942,
+    "MedianAllocatedBytesPerObservation": 276400,
+    "ObservationMedianMilliseconds": 0.222202,
+    "ObservationP95Milliseconds": 0.229216
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.08169075,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.014979,
+    "MedianOwnerDisposeMilliseconds": 0.001803,
+    "MedianAllocatedBytesPerObservation": 207452,
+    "ObservationMedianMilliseconds": 0.1926395,
+    "ObservationP95Milliseconds": 0.237553
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.092415,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001002,
+    "MedianOwnerDisposeMilliseconds": 0.00036,
+    "MedianAllocatedBytesPerObservation": 264104,
+    "ObservationMedianMilliseconds": 0.214287,
+    "ObservationP95Milliseconds": 0.241641
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.07956325,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001312,
+    "MedianOwnerDisposeMilliseconds": 0.000932,
+    "MedianAllocatedBytesPerObservation": 194826,
+    "ObservationMedianMilliseconds": 0.20175300000000002,
+    "ObservationP95Milliseconds": 0.252552
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.072178875,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.053094,
+    "MedianOwnerDisposeMilliseconds": 0.002314,
+    "MedianAllocatedBytesPerObservation": 93182.375,
+    "ObservationMedianMilliseconds": 0.06629399999999999,
+    "ObservationP95Milliseconds": 0.109974
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.161959109375,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000652,
+    "MedianOwnerDisposeMilliseconds": 0.00031,
+    "MedianAllocatedBytesPerObservation": 263366.375,
+    "ObservationMedianMilliseconds": 0.149596,
+    "ObservationP95Milliseconds": 0.213405
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.07076603125,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000891,
+    "MedianOwnerDisposeMilliseconds": 0.001082,
+    "MedianAllocatedBytesPerObservation": 93182.375,
+    "ObservationMedianMilliseconds": 0.066209,
+    "ObservationP95Milliseconds": 0.107048
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.045412,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.023456,
+    "MedianOwnerDisposeMilliseconds": 0.003427,
+    "MedianAllocatedBytesPerObservation": 93424.375,
+    "ObservationMedianMilliseconds": 0.069475,
+    "ObservationP95Milliseconds": 0.118471
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.0947990078125,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 1,
+    "MedianOwnerInitializeMilliseconds": 0.000932,
+    "MedianOwnerDisposeMilliseconds": 0.000321,
+    "MedianAllocatedBytesPerObservation": 263546.5,
+    "ObservationMedianMilliseconds": 0.1521565,
+    "ObservationP95Milliseconds": 0.222052
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.041978046875,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001493,
+    "MedianOwnerDisposeMilliseconds": 0.001763,
+    "MedianAllocatedBytesPerObservation": 93503.125,
+    "ObservationMedianMilliseconds": 0.069034,
+    "ObservationP95Milliseconds": 0.120314
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.0258504609375,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.083192,
+    "MedianOwnerDisposeMilliseconds": 0.003487,
+    "MedianAllocatedBytesPerObservation": 95131.625,
+    "ObservationMedianMilliseconds": 0.071579,
+    "ObservationP95Milliseconds": 0.12323
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.0515031328125,
+    "MedianCpuMillisecondsPerObservation": 0.2214375000000004,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.001072,
+    "MedianOwnerDisposeMilliseconds": 0.000681,
+    "MedianAllocatedBytesPerObservation": 264162.5,
+    "ObservationMedianMilliseconds": 0.1500325,
+    "ObservationP95Milliseconds": 0.263123
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "inventory",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.01978474609375,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001723,
+    "MedianOwnerDisposeMilliseconds": 0.001473,
+    "MedianAllocatedBytesPerObservation": 94242.875,
+    "ObservationMedianMilliseconds": 0.069415,
+    "ObservationP95Milliseconds": 0.113651
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.265803,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.01508,
+    "MedianOwnerDisposeMilliseconds": 0.001924,
+    "MedianAllocatedBytesPerObservation": 293696,
+    "ObservationMedianMilliseconds": 0.235097,
+    "ObservationP95Milliseconds": 0.358608
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.248138,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000631,
+    "MedianOwnerDisposeMilliseconds": 0.000251,
+    "MedianAllocatedBytesPerObservation": 269856,
+    "ObservationMedianMilliseconds": 0.216993,
+    "ObservationP95Milliseconds": 0.237272
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 3,
+    "MedianAmortizedWallMilliseconds": 0.265036,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001042,
+    "MedianOwnerDisposeMilliseconds": 0.000692,
+    "MedianAllocatedBytesPerObservation": 293696,
+    "ObservationMedianMilliseconds": 0.2361,
+    "ObservationP95Milliseconds": 0.237732
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.138825,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.009849,
+    "MedianOwnerDisposeMilliseconds": 0.001472,
+    "MedianAllocatedBytesPerObservation": 281984,
+    "ObservationMedianMilliseconds": 0.226546,
+    "ObservationP95Milliseconds": 0.235528
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.155002,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001012,
+    "MedianOwnerDisposeMilliseconds": 0.000261,
+    "MedianAllocatedBytesPerObservation": 269504,
+    "ObservationMedianMilliseconds": 0.24960549999999998,
+    "ObservationP95Milliseconds": 0.420578
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 6,
+    "MedianAmortizedWallMilliseconds": 0.1409595,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001302,
+    "MedianOwnerDisposeMilliseconds": 0.000681,
+    "MedianAllocatedBytesPerObservation": 276948,
+    "ObservationMedianMilliseconds": 0.2235045,
+    "ObservationP95Milliseconds": 0.26194
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.087002,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.011933,
+    "MedianOwnerDisposeMilliseconds": 0.001413,
+    "MedianAllocatedBytesPerObservation": 206836,
+    "ObservationMedianMilliseconds": 0.2327785,
+    "ObservationP95Milliseconds": 1.019755
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.09498975,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.000982,
+    "MedianOwnerDisposeMilliseconds": 0.000321,
+    "MedianAllocatedBytesPerObservation": 270048,
+    "ObservationMedianMilliseconds": 0.21667150000000002,
+    "ObservationP95Milliseconds": 0.251099
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "memo-cold",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 12,
+    "MedianAmortizedWallMilliseconds": 0.08125425,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001293,
+    "MedianOwnerDisposeMilliseconds": 0.000721,
+    "MedianAllocatedBytesPerObservation": 194798,
+    "ObservationMedianMilliseconds": 0.183297,
+    "ObservationP95Milliseconds": 0.234467
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.075051640625,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.064475,
+    "MedianOwnerDisposeMilliseconds": 0.005481,
+    "MedianAllocatedBytesPerObservation": 98766.375,
+    "ObservationMedianMilliseconds": 0.067612,
+    "ObservationP95Milliseconds": 0.104704
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.171333078125,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.000672,
+    "MedianOwnerDisposeMilliseconds": 0.000541,
+    "MedianAllocatedBytesPerObservation": 268950.375,
+    "ObservationMedianMilliseconds": 0.15410000000000001,
+    "ObservationP95Milliseconds": 0.250197
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 1
+    },
+    "Batches": 3,
+    "Observations": 192,
+    "MedianAmortizedWallMilliseconds": 0.078051328125,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.001263,
+    "MedianOwnerDisposeMilliseconds": 0.001974,
+    "MedianAllocatedBytesPerObservation": 98766.375,
+    "ObservationMedianMilliseconds": 0.0715395,
+    "ObservationP95Milliseconds": 0.123009
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.0413128125,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.069565,
+    "MedianOwnerDisposeMilliseconds": 0.002946,
+    "MedianAllocatedBytesPerObservation": 99345.875,
+    "ObservationMedianMilliseconds": 0.06964999999999999,
+    "ObservationP95Milliseconds": 0.128931
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.0863127265625,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.001353,
+    "MedianOwnerDisposeMilliseconds": 0.000631,
+    "MedianAllocatedBytesPerObservation": 269259.875,
+    "ObservationMedianMilliseconds": 0.140027,
+    "ObservationP95Milliseconds": 0.216401
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 2
+    },
+    "Batches": 3,
+    "Observations": 384,
+    "MedianAmortizedWallMilliseconds": 0.045529296875,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.002114,
+    "MedianOwnerDisposeMilliseconds": 0.001363,
+    "MedianAllocatedBytesPerObservation": 99165.875,
+    "ObservationMedianMilliseconds": 0.06644900000000001,
+    "ObservationP95Milliseconds": 0.124923
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "production",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.02233062109375,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 3,
+    "MedianOwnerInitializeMilliseconds": 0.070527,
+    "MedianOwnerDisposeMilliseconds": 0.002995,
+    "MedianAllocatedBytesPerObservation": 100172.8125,
+    "ObservationMedianMilliseconds": 0.06531200000000001,
+    "ObservationP95Milliseconds": 0.122097
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "control",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.05159828125,
+    "MedianCpuMillisecondsPerObservation": 0.20444531249999898,
+    "CpuBatchesBelow30Milliseconds": 0,
+    "MedianOwnerInitializeMilliseconds": 0.001413,
+    "MedianOwnerDisposeMilliseconds": 0.000601,
+    "MedianAllocatedBytesPerObservation": 269954.625,
+    "ObservationMedianMilliseconds": 0.139081,
+    "ObservationP95Milliseconds": 0.24127
+  },
+  {
+    "Key": {
+      "Dataset": "compiled-sample-owner",
+      "Workload": "identity",
+      "State": "warm",
+      "Variant": "candidate",
+      "Readers": 4
+    },
+    "Batches": 3,
+    "Observations": 768,
+    "MedianAmortizedWallMilliseconds": 0.02603446875,
+    "MedianCpuMillisecondsPerObservation": null,
+    "CpuBatchesBelow30Milliseconds": 2,
+    "MedianOwnerInitializeMilliseconds": 0.001934,
+    "MedianOwnerDisposeMilliseconds": 0.001513,
+    "MedianAllocatedBytesPerObservation": 100710,
+    "ObservationMedianMilliseconds": 0.0658785,
+    "ObservationP95Milliseconds": 0.124619
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-release-binding-alloc-owner-live-20261107"
+  },
+  "environmentRemovals": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "inheritedSourceMappingCleared": true,
+  "inheritedKeysActuallyRemoved": [],
+  "startedAtUtc": "2026-11-07T05:55:25.392515+00:00",
+  "stdoutStderr": "/tmp/story65-release-binding-alloc-owner-live-20261107-console.log",
+  "privateDiagnosticOverride": false,
+  "launcherPid": 2407363,
+  "launcherStartTicks": "6852644",
+  "ownerSupervisorPid": 2407361,
+  "ownerSupervisorStartTicks": "6852641",
+  "noTopologyCutoff": true,
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T06:01:21.650514+00:00",
+  "logSha256": "7a5a68777484746a4762dee676fa6c491cdd29f845d3b00f83ab4f0b6841e7f3"
+}

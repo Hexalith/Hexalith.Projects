@@ -1,0 +1,237 @@
+{
+  "preparationOnly": true,
+  "cases": [
+    {
+      "name": "query-issued-sync",
+      "fault": "direct-sync",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-issued-bound",
+      "fault": "",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-issued-unbound",
+      "fault": "",
+      "route": "process",
+      "bindings": false,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-bind-refused",
+      "fault": "cannot-bind",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-bind-missing-issuer",
+      "fault": "missing-command",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "noncanonical-untouched",
+      "fault": "",
+      "route": "api/v1/commands",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "null-request",
+      "fault": "null",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-missing",
+      "fault": "missing",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-resolution-invalidoperation",
+      "fault": "resolve-invalid",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-resolution-other",
+      "fault": "resolve-other",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-null-bounded-diagnostic",
+      "fault": "issuer-null",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-missing-fallback",
+      "fault": "missing-logger",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-sync-fault",
+      "fault": "issuer-sync-fault",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": true,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-async-fault",
+      "fault": "issuer-async-fault",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-cancel",
+      "fault": "issuer-cancel",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-invalidoperation",
+      "fault": "issuer-invalid",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "base-fault",
+      "fault": "base",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "base-cancel",
+      "fault": "base-cancel",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-resolution-throw",
+      "fault": "logger-resolution",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-throw",
+      "fault": "logger",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "outer-buffer-success",
+      "fault": "",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": true,
+      "slow": false
+    },
+    {
+      "name": "outer-buffer-fault",
+      "fault": "buffer",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": true,
+      "slow": false
+    },
+    {
+      "name": "issuer-source-sync-success",
+      "fault": "",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": true,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "held-issuer",
+      "fault": "held-issuer",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": true
+    },
+    {
+      "name": "held-base",
+      "fault": "held-base",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": true
+    }
+  ],
+  "fast": 23,
+  "slow": 2,
+  "cellsPerMode": 25,
+  "plannedBehavioralCells": 100,
+  "canaries": 3,
+  "nativePlannedSourceCases": 29,
+  "nativeExecuted": 0
+}

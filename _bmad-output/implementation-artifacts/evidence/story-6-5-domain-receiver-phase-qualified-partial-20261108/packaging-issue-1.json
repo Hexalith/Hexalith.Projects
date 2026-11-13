@@ -1,0 +1,7 @@
+{
+  "fileOnly": true,
+  "inputEvidenceUnchanged": true,
+  "closedIssue": "initial packaging expectation incorrectly required counter directory empty at restoration audit",
+  "actualFact": "restoration passed with closed counter metadata retained; audit explicitly records fixedCounterDirectoryEmptyAtAudit=false",
+  "fix": "preserve exact false state and partial archival phase; no private directory read/delete or runtime action"
+}

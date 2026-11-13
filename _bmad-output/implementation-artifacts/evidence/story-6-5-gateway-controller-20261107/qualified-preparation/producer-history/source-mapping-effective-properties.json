@@ -1,0 +1,43 @@
+{
+  "readOnlyOnly": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+    "-getProperty:MSBuildAllProjects,HEXALITH_SOURCE_MAPPING_HASH,Configuration,CustomBeforeDirectoryBuildProps,CustomAfterMicrosoftCommonProps,CustomBeforeDirectoryBuildTargets,CustomAfterDirectoryBuildTargets,AfterMicrosoftNETSdkTargets,Story65GatewayOriginalAfterSdkTargets,Story65GatewayLateGuardImported,HexalithSourceMappingApplies,HexalithPinnedModelCatalogBuild"
+  ],
+  "exitCode": 0,
+  "namedProperties": {
+    "MSBuildAllProjects": "/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props;;/home/administrator/.dotnet/sdk/10.0.403/Current/Microsoft.Common.targets/ImportAfter/Microsoft.TestPlatform.ImportAfter.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;/tmp/story65-gateway-controller-ops-prep-20261107/gateway-late-guard.targets",
+    "Story65GatewayOriginalAfterSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "Story65GatewayLateGuardImported": "true",
+    "HexalithSourceMappingApplies": "true",
+    "HexalithPinnedModelCatalogBuild": ""
+  },
+  "mappingEnvironmentOriginal": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "onlyEffectivePropertyChanged": "AfterMicrosoftNETSdkTargets",
+  "notClaimedAllSevenEffectiveValuesUnchanged": true,
+  "noOriginalMappingFileEdited": true
+}

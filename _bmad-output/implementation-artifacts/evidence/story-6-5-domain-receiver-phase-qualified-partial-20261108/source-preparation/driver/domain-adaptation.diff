@@ -1,0 +1,718 @@
+--- qualified-receiver-driver/CaseExpectation.cs
++++ domain-receiver-driver/CaseExpectation.cs
+@@ -0,0 +1,3 @@
++namespace Story65.DomainReceiverPhase;
++internal sealed record CaseExpectation(int Entries,int AuthorityAcquireCalls,int NextCalls,int ReleaseCallbacks,
++    int Faults,int Mask,string? ErrorType,bool OwnsDeferredResult);
+--- qualified-receiver-driver/CaseGroups.cs
++++ domain-receiver-driver/CaseGroups.cs
+@@ -1,13 +1,32 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ internal static class CaseGroups
+ {
+     internal static readonly IReadOnlyDictionary<string,string[]> All = new Dictionary<string,string[]>
+     {
+-        ["ingress"]=["bypass","invalid-channel","native-config-discovery","native-allows-refusal"],
+-        ["refusals"]=["receiver-not-ready","native-acquire-refusal","native-snapshot-refusal","technical-auth-refusal"],
+-        ["execution"]=["native-success","native-next-fault","native-next-cancellation","technical-success"],
+-        ["denial"]=["technical-grant-denial","technical-next-fault-release-precedence"],
+-        ["double-success"]=["technical-double-dispose-retry-success"],
+-        ["double-fault"]=["technical-double-dispose-second-fault"],
++        ["returns"]=["custom-no-lease-nonresult","custom-owned-nonresult","concrete-delayed-result","terminal-refusal-owned-result"],
++        ["faults"]=["concrete-result-fault","concrete-result-cancel","concrete-release-override","result-release-cancel-override"],
++        ["guard-next"]=["filter-next-fault","filter-next-cancel","guard-acquire-fault","guard-validation-fault"],
++        ["nested"]=["nested-two-results-success","nested-inner-result-fault"],
++        ["double-success"]=["filter-double-dispose-retry-success"],
++        ["double-fault"]=["filter-double-dispose-second-fault"],
++    };
++    internal static readonly IReadOnlyDictionary<string,CaseExpectation> Expected = new Dictionary<string,CaseExpectation>
++    {
++        ["custom-no-lease-nonresult"]=new(1,0,1,0,0,147,null,false),
++        ["custom-owned-nonresult"]=new(1,0,1,1,0,179,null,false),
++        ["concrete-delayed-result"]=new(1,1,1,1,0,255,null,true),
++        ["terminal-refusal-owned-result"]=new(1,1,0,1,0,255,null,true),
++        ["concrete-result-fault"]=new(1,1,1,1,1,255,"System.InvalidOperationException",true),
++        ["concrete-result-cancel"]=new(1,1,1,1,1,255,"System.OperationCanceledException",true),
++        ["concrete-release-override"]=new(1,1,1,1,2,255,"System.IO.IOException",true),
++        ["result-release-cancel-override"]=new(1,1,1,1,2,255,"System.OperationCanceledException",true),
++        ["filter-next-fault"]=new(1,1,1,1,1,191,"System.InvalidOperationException",false),
++        ["filter-next-cancel"]=new(1,1,1,1,1,191,"System.OperationCanceledException",false),
++        ["guard-acquire-fault"]=new(1,1,0,0,1,135,null,false),
++        ["guard-validation-fault"]=new(1,1,0,1,0,175,null,false),
++        ["nested-two-results-success"]=new(2,2,2,2,0,255,null,true),
++        ["nested-inner-result-fault"]=new(2,2,2,2,1,255,"System.InvalidOperationException",true),
++        ["filter-double-dispose-retry-success"]=new(1,0,1,2,1,179,"Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException",false),
++        ["filter-double-dispose-second-fault"]=new(1,0,1,2,2,179,"System.IO.IOException",false),
+     };
+ }
+--- qualified-receiver-driver/CaseResult.cs
++++ domain-receiver-driver/CaseResult.cs
+@@ -1,6 +1,6 @@
+-namespace Story65.ReceiverPhase;
+-internal sealed record CaseResult(string Case,bool Passed,int MiddlewareEntries,int AcquireCalls,int NextCalls,int ReleaseCallbacks,
+-    string? ErrorType,int Faults,bool TokenMatched,bool LifetimeMatched,bool CallerRestored,int ExpectedStageMask,
++namespace Story65.DomainReceiverPhase;
++internal sealed record CaseResult(string Case,bool Passed,int FilterEntries,int AuthorityAcquireCalls,int NextCalls,int ReleaseCallbacks,
++    string? ErrorType,int Faults,bool TokensMatched,bool LifetimeAndHandoffMatched,bool CallerRestored,int ExpectedStageMask,
+     long MinimumLastDisposeTicks,long MaximumLastDisposeTicks,long FirstDisposeHoldTicks,bool DoubleDisposeOrder,
+     bool ReleaseBoundaryRestored,bool ExactContextReachedNext,bool FirstDependencyProbeObserved,bool EntrySuppressionObserved)
+ {
+@@ -9,11 +9,14 @@
+         Check.Require(r.Length==20 && r[0] is string && r[1] is true, "closed-twenty-slot-result");
+         var x=new CaseResult((string)r[0],(bool)r[1],(int)r[2],(int)r[3],(int)r[4],(int)r[5],(string?)r[6],(int)r[7],
+             (bool)r[8],(bool)r[9],(bool)r[10],(int)r[11],(long)r[12],(long)r[13],(long)r[14],(bool)r[15],(bool)r[16],(bool)r[17],(bool)r[18],(bool)r[19]);
+-        Check.Require(CaseGroups.All.Values.SelectMany(x=>x).Contains(x.Case) && x.MiddlewareEntries==1
+-            && x.TokenMatched && x.LifetimeMatched && x.CallerRestored && (x.ExpectedStageMask&1)==1 && x.ExpectedStageMask<256,"semantic-result-valid");
+-        Check.Require(x.ErrorType is null or "System.InvalidOperationException" or "System.OperationCanceledException"
+-            or "System.IO.IOException", "closed-expected-error-type");
+-        if(x.Case.StartsWith("technical-double-dispose-",StringComparison.Ordinal))
++        Check.Require(CaseGroups.Expected.ContainsKey(x.Case),"closed-case-name");
++        CaseExpectation expected=CaseGroups.Expected[x.Case];
++        Check.Require(x.FilterEntries==expected.Entries && x.AuthorityAcquireCalls==expected.AuthorityAcquireCalls
++            && x.NextCalls==expected.NextCalls && x.ReleaseCallbacks==expected.ReleaseCallbacks && x.Faults==expected.Faults
++            && x.ErrorType==expected.ErrorType && x.ExpectedStageMask==expected.Mask,"exact-case-counts-mask-error");
++        Check.Require(x.TokensMatched && x.LifetimeAndHandoffMatched && x.CallerRestored
++            && x.ReleaseBoundaryRestored && x.ExactContextReachedNext,"semantic-lifetime-context-valid");
++        if(x.Case.StartsWith("filter-double-dispose-",StringComparison.Ordinal))
+             Check.Require(x.ReleaseCallbacks==2 && x.DoubleDisposeOrder && x.MinimumLastDisposeTicks>0
+                 && x.MaximumLastDisposeTicks>=x.MinimumLastDisposeTicks && x.FirstDisposeHoldTicks>x.MaximumLastDisposeTicks,"both-release-callbacks-and-bracket");
+         return x;
+--- qualified-receiver-driver/Check.cs
++++ domain-receiver-driver/Check.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Runtime.CompilerServices;
+ internal static class Check
+ {
+--- qualified-receiver-driver/CounterControl.cs
++++ domain-receiver-driver/CounterControl.cs
+@@ -1,12 +1,12 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ using System.Reflection;
+-// Reflection is restricted to the helper in this process's exact private SDK, never a driver copy.
++// Reflection is restricted to the helper in this process's exact private DomainService, never a driver copy.
+ internal sealed class CounterControl(RuntimeInputs inputs)
+ {
+     private const BindingFlags Flags=BindingFlags.Static|BindingFlags.NonPublic;
+-    private Type Counter => inputs.Sdk.GetType("Hexalith.PrivateCaptureCounter.CaptureCounters",true)!;
+-    private IDisposable? Begin() => (IDisposable?)inputs.Sdk.GetType("Hexalith.PrivateCaptureCounter.ReceiverPhaseBootstrap",true)!.GetMethod("Begin",Flags)!.Invoke(null,null);
++    private Type Counter => inputs.DomainService.GetType("Hexalith.PrivateCaptureCounter.CaptureCounters",true)!;
++    private IDisposable? Begin() => (IDisposable?)inputs.DomainService.GetType("Hexalith.PrivateCaptureCounter.ReceiverPhaseBootstrap",true)!.GetMethod("Begin",Flags)!.Invoke(null,null);
+     internal long Read(string name) => Convert.ToInt64(Counter.GetField(name,Flags)!.GetValue(null));
+     internal async Task ReadyAsync(string mode)
+     {
+--- qualified-receiver-driver/DriverEntry.cs
++++ domain-receiver-driver/DriverEntry.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Text.Json;
+ public static class DriverEntry
+ {
+--- qualified-receiver-driver/DriverFailure.cs
++++ domain-receiver-driver/DriverFailure.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Runtime.CompilerServices;
+ internal sealed class DriverFailure(string closedCheck,
+     [CallerFilePath] string file = "", [CallerLineNumber] int line = 0) : Exception
+--- qualified-receiver-driver/ExcludedDriver.cs
++++ domain-receiver-driver/ExcludedDriver.cs
+@@ -1,11 +1,11 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ internal static class ExcludedDriver
+ {
+     internal static async Task<object> RunAsync(RuntimeInputs inputs,FixtureAdapter api)
+     {
+         Check.Require(inputs.Role=="excluded" && inputs.Variant=="private","genuine-private-excluded-entry");
+-        object handle=await api.CreateAsync("native-success",FlowCanaryState.Probe).ConfigureAwait(false);
++        object handle=await api.CreateAsync("concrete-delayed-result",FlowCanaryState.Probe).ConfigureAwait(false);
+         try
+         {
+             using Activity activity=new("synthetic-excluded-flow");activity.Start();
+--- qualified-receiver-driver/FixtureAdapter.cs
++++ domain-receiver-driver/FixtureAdapter.cs
+@@ -1,9 +1,9 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Reflection;
+ internal sealed class FixtureAdapter
+ {
+     private readonly Type api;
+-    internal FixtureAdapter(RuntimeInputs inputs) => api=inputs.Companion.GetType("Hexalith.PrivateReceiverFixture.FixtureApi",true)!;
++    internal FixtureAdapter(RuntimeInputs inputs) => api=inputs.Companion.GetType("Hexalith.PrivateDomainReceiverFixture.FixtureApi",true)!;
+     private MethodInfo Method(string name) => api.GetMethod(name,BindingFlags.Public|BindingFlags.Static)!;
+     internal string[] Names() => (string[])Method("Names").Invoke(null,null)!;
+     internal Task<object> CreateAsync(string name,Action<int>? probe=null) => (Task<object>)Method("CreateAsync").Invoke(null,[name,probe])!;
+--- qualified-receiver-driver/FlowCanaryState.cs
++++ domain-receiver-driver/FlowCanaryState.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ internal static class FlowCanaryState
+ {
+@@ -15,7 +15,7 @@
+         && ReferenceEquals(Activity.Current,ExpectedActivity) && !ExecutionContext.IsFlowSuppressed(),"synthetic-caller-state-preserved");
+     internal static void Probe(int code)
+     {
+-        Check.Require(code is >=0 and <=3,"closed-flow-probe-code");
++        Check.Require(code is >=0 and <=6,"closed-flow-probe-code");
+         bool first=code==0;
+         if(first) Interlocked.CompareExchange(ref FirstProbe,ExecutionContext.IsFlowSuppressed()?1:0,-1);
+         bool detached=SuppressedInvocation && !first;
+--- qualified-receiver-driver/FocusedDriver.cs
++++ domain-receiver-driver/FocusedDriver.cs
+@@ -1,31 +1,59 @@
+-namespace Story65.ReceiverPhase;
+-using System.Diagnostics;
++namespace Story65.DomainReceiverPhase;
+ internal static class FocusedDriver
+ {
+     internal static async Task<object> RunAsync(string mode,string group,RuntimeInputs inputs,FixtureAdapter api)
+     {
+         Check.Require(CaseGroups.All.TryGetValue(group,out string[]? names),"closed-case-group");
+         var handles=new List<object>();
++        CounterControl? counters=null;
++        bool recording=false,executing=false;
++        long admitted=0,completed=0,active=0;
++        string currentCase=string.Empty;
++        int handoffChecks=0;
++        Action<int> probe=code=>
++        {
++            Check.Require(executing && code is >=0 and <=6,"probe-only-during-actual-execution");
++            if(code!=2 || !recording || !CaseGroups.Expected[currentCase].OwnsDeferredResult)return;
++            int count=CaseGroups.Expected[currentCase].Entries;
++            Check.Require(counters!.Read("Admitted")==admitted+count && counters.Read("Completed")==completed
++                && counters.Read("Active")==active+count,"all-transferred-captures-still-owned-at-filter-return");
++            handoffChecks++;
++        };
+         try
+         {
+-            foreach(string name in names!) handles.Add(await api.CreateAsync(name).ConfigureAwait(false));
+-            inputs.VerifyLoaded(); // All setup/fingerprint/startup and identity checks finish before READY.
+-            CounterControl? counters=inputs.Variant=="private"?new(inputs):null;
++            foreach(string name in names!)handles.Add(await api.CreateAsync(name,probe).ConfigureAwait(false));
++            inputs.VerifyLoaded(); // All actual fixture/catalog preparation finishes before READY.
++            counters=inputs.Variant=="private"?new(inputs):null;
+             if(counters is null){Protocol.Ready();await Protocol.ExpectAsync("GO").ConfigureAwait(false);}
+             else {await counters.ReadyAsync(mode).ConfigureAwait(false);if(mode=="pre-capped")await counters.FloodAsync().ConfigureAwait(false);}
+             var observations=new List<object>();
+             for(int index=0;index<names!.Length;index++)
+             {
+-                bool recording=counters is not null && mode!="disabled";
++                currentCase=names[index];handoffChecks=0;
++                recording=counters is not null && mode!="disabled";
+                 if(recording)counters!.Open();
+-                long admitted=counters?.Read("Admitted")??0,ordinal=recording?counters!.Read("Ordinal")+1:0;
+-                CaseResult result=CaseResult.Read(await api.ExecuteAsync(handles[index]).ConfigureAwait(false));
+-                Check.Require(result.Case==names[index],"exact-case-returned");
++                admitted=counters?.Read("Admitted")??0;completed=counters?.Read("Completed")??0;active=counters?.Read("Active")??0;
++                long ordinal=recording?counters!.Read("Ordinal")+1:0;
++                executing=true;
++                CaseResult result;
++                try {result=CaseResult.Read(await api.ExecuteAsync(handles[index]).ConfigureAwait(false));}
++                finally {executing=false;}
++                Check.Require(result.Case==currentCase,"exact-case-returned");
+                 long delta=(counters?.Read("Admitted")??0)-admitted;
+-                Check.Require(delta==(recording?1:0),"exact-per-case-private-admission");
+-                if(recording){Check.Require(counters!.Read("Ordinal")==ordinal,"one-own-local-ordinal");counters.Open();}
+-                observations.Add(new {Result=result,CaptureOrdinal=ordinal,AdmittedDelta=delta,
+-                    ActualStageRowsRequired=recording && mode=="active",SyntheticDurationBracketOnly=result.Case.StartsWith("technical-double-dispose-",StringComparison.Ordinal)});
++                Check.Require(delta==(recording?result.FilterEntries:0),"exact-per-filter-private-admission");
++                if(recording)
++                {
++                    Check.Require(counters!.Read("Ordinal")==ordinal+result.FilterEntries-1
++                        && counters.Read("Completed")==completed+result.FilterEntries && counters.Read("Active")==active,
++                        "all-own-consecutive-captures-close-after-business");
++                    counters.Open();
++                }
++                bool handoffRequired=recording && CaseGroups.Expected[currentCase].OwnsDeferredResult;
++                Check.Require(handoffChecks==(handoffRequired?1:0),"exact-deferred-handoff-observation");
++                long[] ordinals=recording?Enumerable.Range(0,result.FilterEntries).Select(i=>ordinal+i).ToArray():Array.Empty<long>();
++                observations.Add(new {Result=result,CaptureOrdinals=ordinals,AdmittedDelta=delta,
++                    ActualStageRowsRequired=recording && mode=="active",HandoffCounterObservationRequired=handoffRequired,
++                    HandoffChecks=handoffChecks,SyntheticDurationBracketOnly=result.Case.StartsWith("filter-double-dispose-",StringComparison.Ordinal)});
+             }
+             inputs.VerifyLoaded();
+             return new {Mode=mode,Group=group,Passed=true,Cases=observations,AllSetupBeforeReady=true,
+--- qualified-receiver-driver/FreshFlowCanary.cs
++++ domain-receiver-driver/FreshFlowCanary.cs
+@@ -1,15 +1,15 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ internal static class FreshFlowCanary
+ {
+     internal static async Task<object> RunAsync(string mode,RuntimeInputs inputs,FixtureAdapter api)
+     {
+         bool positive=mode=="canary-positive-control",suppressed=mode=="canary-suppressed";
+-        object first=await api.CreateAsync("native-success",FlowCanaryState.Probe).ConfigureAwait(false);
+-        object second=await api.CreateAsync("native-success",FlowCanaryState.Probe).ConfigureAwait(false);
++        object first=await api.CreateAsync("concrete-delayed-result",FlowCanaryState.Probe).ConfigureAwait(false);
++        object second=await api.CreateAsync("concrete-delayed-result",FlowCanaryState.Probe).ConfigureAwait(false);
+         try
+         {
+-            // No helper type/field/readiness reflection before this genuine first middleware invocation.
++            // No helper type/field/readiness reflection before this first complete filter/result/release call.
+             using Activity activity=new("synthetic-receiver-flow");activity.Start();
+             FlowCanaryState.ExpectedActivity=activity;FlowCanaryState.Local.Value=FlowCanaryState.Marker;FlowCanaryState.AssertCaller();
+             Protocol.Ready();await Protocol.ExpectAsync("GO").ConfigureAwait(false);
+@@ -35,7 +35,7 @@
+             counters.Open();CaseResult b=CaseResult.Read(await api.ExecuteAsync(second).ConfigureAwait(false));
+             Check.Require(counters.Read("Admitted")-admitted==1 && counters.Read("Ordinal")==ordinal,"second-canary-capture-admitted");
+             FlowCanaryState.AssertCaller();inputs.VerifyLoaded();
+-            Check.Require(Volatile.Read(ref FlowCanaryState.DrainObserved)==0 && FlowCanaryState.Checks>=4,"helper-worker-did-not-inherit-canary");
++            Check.Require(Volatile.Read(ref FlowCanaryState.DrainObserved)==0 && FlowCanaryState.Checks==14,"helper-worker-did-not-inherit-canary");
+             return new {Mode=mode,Passed=true,UnsafeDetectorPositive=false,HelperInspected=true,
+                 CallerPreserved=true,CanaryValuesPersisted=false,ExpectedStages=b.ExpectedStageMask,CaptureOrdinal=ordinal,ProbeChecks=FlowCanaryState.Checks};
+         }
+--- qualified-receiver-driver/NativeRunner.cs
++++ domain-receiver-driver/NativeRunner.cs
+@@ -1,18 +1,21 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Reflection;
+ internal static class NativeRunner
+ {
+     internal static readonly IReadOnlyDictionary<string,int> Selections=new Dictionary<string,int>
+     {
+-        ["TechnicalHttpInstalledMetadataTests"]=8,["TechnicalHttpNativeRpcTests"]=12,
+-        ["ReceiverImagePrecheckTests"]=20,["NativeDispatchDiagnosticsTests"]=7,
++        ["DevelopmentDomainRouteCatalogTests"]=14,["DomainSidecarCatalogLeaseTests"]=12,
++        ["CatalogReceiverScopeTests"]=41,["CatalogReceiverStateBoundaryTests"]=16,
++        ["CatalogReceiverVersionTests"]=7,["TechnicalHttpDomainPeerTests"]=12,
++        ["HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient"]=1,
+     };
+     internal static async Task<int> RunAsync(string selection,string xml,RuntimeInputs inputs)
+     {
+         Check.Require(Selections.ContainsKey(selection) && Path.IsPathFullyQualified(xml) && !File.Exists(xml),"closed-native-selection");
+         Assembly runner=Assembly.LoadFrom(Path.Combine(inputs.Directory,"xunit.v3.runner.inproc.console.dll"));
+         Type type=runner.GetType("Xunit.Runner.InProc.SystemConsole.ConsoleRunner",true)!;
+-        string[] argv=["-class","Hexalith.EventStore.Server.Tests.Routing."+selection,"-xml",xml];
++        string flag=selection.Contains(".",StringComparison.Ordinal)?"-method":"-class";
++        string[] argv=[flag,"Hexalith.EventStore.Server.Tests.Routing."+selection,"-xml",xml];
+         using IDisposable instance=(IDisposable)Activator.CreateInstance(type,[argv,inputs.Tests])!;
+         var entry=type.GetMethod("EntryPoint",BindingFlags.Instance|BindingFlags.Public,null,[typeof(TextReader),typeof(TextWriter)],null)!;
+         int code=await ((Task<int>)entry.Invoke(instance,[null,TextWriter.Null])!).ConfigureAwait(false);
+--- qualified-receiver-driver/Protocol.cs
++++ domain-receiver-driver/Protocol.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ internal static class Protocol
+ {
+--- qualified-receiver-driver/ReceiverDriver.csproj
++++ domain-receiver-driver/ReceiverDriver.csproj
+@@ -1,6 +1,6 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>net10.0</TargetFramework><AssemblyName>Story65.ReceiverPhase.Driver</AssemblyName>
++    <TargetFramework>net10.0</TargetFramework><AssemblyName>Story65.DomainReceiverPhase.Driver</AssemblyName>
+     <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><LangVersion>latest</LangVersion>
+     <Optimize>false</Optimize><DebugType>portable</DebugType><TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+     <NuGetAudit>false</NuGetAudit><EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+--- qualified-receiver-driver/RuntimeInputs.cs
++++ domain-receiver-driver/RuntimeInputs.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Diagnostics;
+ using System.Reflection;
+ using System.Runtime.Loader;
+@@ -10,6 +10,7 @@
+     internal string Role { get; }
+     internal string Directory { get; }
+     internal Assembly Sdk { get; }
++    internal Assembly DomainService { get; }
+     internal Assembly Tests { get; }
+     internal Assembly Companion { get; }
+     private readonly Dictionary<string,string> files;
+@@ -25,13 +26,15 @@
+         VerifyFiles();
+         AssemblyLoadContext.Default.Resolving += Resolve;
+         Sdk = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory,"Hexalith.EventStore.ServiceDefaults.dll"));
++        DomainService = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory,"Hexalith.EventStore.DomainService.dll"));
+         Tests = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory,"Hexalith.EventStore.Server.Tests.dll"));
+         Companion = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(Directory,"Hexalith.EventStore.Server.LiveSidecar.Tests.dll"));
+-        Check.Require(Sdk.GetName().Name == "Hexalith.EventStore.ServiceDefaults" && Tests.GetName().Name == "Hexalith.EventStore.Server.Tests"
++        Check.Require(Sdk.GetName().Name == "Hexalith.EventStore.ServiceDefaults" && DomainService.GetName().Name == "Hexalith.EventStore.DomainService" && Tests.GetName().Name == "Hexalith.EventStore.Server.Tests"
+             && Companion.GetName().Name == "Hexalith.EventStore.Server.LiveSidecar.Tests", "actual-assembly-identities");
+-        Check.Require(Hash(Sdk.Location) == root.GetProperty("sdkSha256").GetString(), "actual-sdk-variant-hash");
+-        if(Variant=="ordinary")Check.Require(Hash(Sdk.Location)=="6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542", "current-ordinary-sdk-required");
+-        foreach (Assembly a in new[] { Assembly.GetEntryAssembly()!, typeof(RuntimeInputs).Assembly, Sdk, Tests, Companion })
++        Check.Require(Hash(DomainService.Location) == root.GetProperty("domainServiceSha256").GetString(), "actual-domain-service-variant-hash");
++        Check.Require(Hash(Sdk.Location) == root.GetProperty("sdkSha256").GetString()
++            && Hash(Sdk.Location)=="6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542", "same-current-ordinary-sdk-required");
++        foreach (Assembly a in new[] { Assembly.GetEntryAssembly()!, typeof(RuntimeInputs).Assembly, Sdk, DomainService, Tests, Companion })
+         {
+             Check.Require(AssemblyLoadContext.GetLoadContext(a) == AssemblyLoadContext.Default, "all-business-default-context");
+             Check.Require(a.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration == "Debug"
+@@ -39,7 +42,7 @@
+         }
+         string entry = Assembly.GetEntryAssembly()!.GetName().Name!;
+         Check.Require(entry == root.GetProperty("entryAssemblyName").GetString(), "genuine-entry-metadata");
+-        Check.Require(entry == (Role switch { "projects" => "Hexalith.Projects.Server", "tenants" => "Hexalith.Tenants", "folders" => "Hexalith.Folders.Server", _ => "Story65.ReceiverPhase.Excluded" }), "fixed-entry-role-map");
++        Check.Require(entry == (Role switch { "projects" => "Hexalith.Projects.Server", "tenants" => "Hexalith.Tenants", "folders" => "Hexalith.Folders.Server", _ => "Story65.DomainReceiverPhase.Excluded" }), "fixed-entry-role-map");
+         VerifyLoaded();
+     }
+     internal static RuntimeInputs Load(string path, string expected)
+@@ -77,10 +80,11 @@
+                 && Hash(path)==h && AssemblyLoadContext.GetLoadContext(a)==AssemblyLoadContext.Default, "no-workspace-or-other-variant-fallback");
+         }
+         Check.Require(AppDomain.CurrentDomain.GetAssemblies().Count(a=>a.GetName().Name=="Hexalith.EventStore.ServiceDefaults")==1, "single-real-sdk-identity");
++        Check.Require(AppDomain.CurrentDomain.GetAssemblies().Count(a=>a.GetName().Name=="Hexalith.EventStore.DomainService")==1, "single-real-domain-service-identity");
+     }
+     internal object Facts() => new { Variant, Role, Runtime=Environment.Version.ToString(), Processors=Environment.ProcessorCount,
+-        SdkSha256=Hash(Sdk.Location), TestDllSha256=Hash(Tests.Location), CompanionSha256=Hash(Companion.Location),
+-        ActualDefaultContextOnly=true, HistoricalSdkFallback=false, RuntimeInputs=files.Count,
++        SdkSha256=Hash(Sdk.Location), DomainServiceSha256=Hash(DomainService.Location), TestDllSha256=Hash(Tests.Location), CompanionSha256=Hash(Companion.Location),
++        ActualDefaultContextOnly=true, HistoricalSdkOrDomainFallback=false, SameOrdinarySdkBothVariants=true, RuntimeInputs=files.Count,
+         Entry=Assembly.GetEntryAssembly()!.GetName().Name, BuildingSdk=typeof(RuntimeInputs).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(a=>a.Key=="BuildingSdk").Value };
+     internal static string Hash(string path) { using FileStream s=File.OpenRead(path); return Convert.ToHexStringLower(SHA256.HashData(s)); }
+ }
+--- qualified-receiver-driver/SafeFailure.cs
++++ domain-receiver-driver/SafeFailure.cs
+@@ -1,4 +1,4 @@
+-namespace Story65.ReceiverPhase;
++namespace Story65.DomainReceiverPhase;
+ using System.Reflection;
+ using System.Text.RegularExpressions;
+ internal sealed record SafeFailure(string ErrorType, string? ClosedCheck, string? AssertionFile, int? AssertionLine)
+@@ -7,7 +7,7 @@
+     {
+         while (error is TargetInvocationException { InnerException: { } inner }) error = inner;
+         if (error is DriverFailure own) return new("DriverFailure", own.ClosedCheck, own.AssertionFile, own.AssertionLine);
+-        if (error.GetType().FullName == "Hexalith.PrivateReceiverFixture.FixtureFailure")
++        if (error.GetType().FullName == "Hexalith.PrivateDomainReceiverFixture.FixtureFailure")
+         {
+             object? Read(string name) => error.GetType().GetProperty(name)?.GetValue(error)
+                 ?? error.GetType().GetField(name)?.GetValue(error);
+--- qualified-receiver-driver/runtime-manifest.template.json
++++ domain-receiver-driver/runtime-manifest.template.json
+@@ -1,22 +1,38 @@
+ {
+   "schema": 1,
+   "sourcePreparationSha256": "<ROOT_FINAL_SOURCE_PREPARATION_SHA256>",
+-  "fixtureApiSha256": "8ca40e33526b3d6f014dc1e4475311f833349de4bc774de466a4bdd47e4cbc71",
++  "fixtureApiSha256": "6a82c8705726aece454651a8e21d846f6abb2d68c02fc1a7ff7eed10335515c0",
+   "frameworkRoots": [
+     "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14",
+     "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14"
+   ],
+   "commonFiles": {
+-    "<ALL_CURRENT_TOPLEVEL_TEST_BIN_DLL_PDB_DEPS_RUNTIME_JSON_EXCEPT_SDK_PAIR>": {
++    "<ALL_CURRENT_TOPLEVEL_TEST_BIN_DLL_PDB_DEPS_RUNTIME_JSON_EXCEPT_DOMAINSERVICE_PAIR>": {
+       "path": "<ROOT_PINNED_PATH>",
+       "sha256": "<ROOT_PINNED_SHA256>"
+     },
+-    "Story65.ReceiverPhase.Driver.dll": {
++    "Story65.DomainReceiverPhase.Driver.dll": {
+       "path": "<NEW_COMPILED_DRIVER_DLL>",
+       "sha256": "<ROOT_PINNED_SHA256>"
+     },
+     "Hexalith.EventStore.Server.LiveSidecar.Tests.dll": {
+       "path": "<NEW_COMPILED_COMPANION_DLL>",
++      "sha256": "<ROOT_PINNED_SHA256>"
++    },
++    "Hexalith.EventStore.ServiceDefaults.dll": {
++      "path": "<CURRENT_ORDINARY_SDK6947_DLL>",
++      "sha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
++    },
++    "Hexalith.EventStore.ServiceDefaults.pdb": {
++      "path": "<CURRENT_ORDINARY_SDKFFA2_PDB>",
++      "sha256": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6"
++    },
++    "Story65.DomainReceiverPhase.Driver.pdb": {
++      "path": "<NEW_COMPILED_DRIVER_PDB>",
++      "sha256": "<ROOT_PINNED_SHA256>"
++    },
++    "Hexalith.EventStore.Server.LiveSidecar.Tests.pdb": {
++      "path": "<NEW_COMPILED_COMPANION_PDB>",
+       "sha256": "<ROOT_PINNED_SHA256>"
+     }
+   },
+@@ -85,21 +101,21 @@
+       }
+     },
+     "excluded": {
+-      "assemblyName": "Story65.ReceiverPhase.Excluded",
++      "assemblyName": "Story65.DomainReceiverPhase.Excluded",
+       "files": {
+-        "Story65.ReceiverPhase.Excluded.dll": {
++        "Story65.DomainReceiverPhase.Excluded.dll": {
+           "path": "<NEW_COMPILED_THIN_ENTRY_FILE>",
+           "sha256": "<ROOT_PINNED_SHA256>"
+         },
+-        "Story65.ReceiverPhase.Excluded.pdb": {
++        "Story65.DomainReceiverPhase.Excluded.pdb": {
+           "path": "<NEW_COMPILED_THIN_ENTRY_FILE>",
+           "sha256": "<ROOT_PINNED_SHA256>"
+         },
+-        "Story65.ReceiverPhase.Excluded.deps.json": {
++        "Story65.DomainReceiverPhase.Excluded.deps.json": {
+           "path": "<NEW_COMPILED_THIN_ENTRY_FILE>",
+           "sha256": "<ROOT_PINNED_SHA256>"
+         },
+-        "Story65.ReceiverPhase.Excluded.runtimeconfig.json": {
++        "Story65.DomainReceiverPhase.Excluded.runtimeconfig.json": {
+           "path": "<NEW_COMPILED_THIN_ENTRY_FILE>",
+           "sha256": "<ROOT_PINNED_SHA256>"
+         }
+@@ -116,28 +132,28 @@
+       "sha256": "<ROOT_PINNED_SHA256>"
+     }
+   },
+-  "sdk": {
++  "templateOnly": true,
++  "executionReleased": false,
++  "domainService": {
+     "ordinary": {
+       "dll": {
+-        "path": "<QUALIFIED_SDK_DLL>",
++        "path": "<ROOT_QUALIFIED_DLL_DOMAINSERVICE_VARIANT>",
+         "sha256": "<ROOT_PINNED_SHA256>"
+       },
+       "pdb": {
+-        "path": "<QUALIFIED_SDK_PDB>",
++        "path": "<ROOT_QUALIFIED_PDB_DOMAINSERVICE_VARIANT>",
+         "sha256": "<ROOT_PINNED_SHA256>"
+       }
+     },
+     "private": {
+       "dll": {
+-        "path": "<QUALIFIED_SDK_DLL>",
++        "path": "<ROOT_QUALIFIED_DLL_DOMAINSERVICE_VARIANT>",
+         "sha256": "<ROOT_PINNED_SHA256>"
+       },
+       "pdb": {
+-        "path": "<QUALIFIED_SDK_PDB>",
++        "path": "<ROOT_QUALIFIED_PDB_DOMAINSERVICE_VARIANT>",
+         "sha256": "<ROOT_PINNED_SHA256>"
+       }
+     }
+-  },
+-  "templateOnly": true,
+-  "executionReleased": false
++  }
+ }
+--- qualified-receiver-controller
++++ domain-receiver-controller
+@@ -6,26 +6,27 @@
+ import argparse, collections, hashlib, json, os, re, resource, selectors, shutil, signal, stat, subprocess, time
+ import xml.etree.ElementTree as ET
+ 
+-PREP=Path('/tmp/story65-receiver-phase-prep-20261107')
++PREP=Path('/tmp/story65-domain-receiver-phase-prep-20261108')
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+ PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
+ DOTNET='/home/administrator/.dotnet/dotnet'
+-API_SHA='8ca40e33526b3d6f014dc1e4475311f833349de4bc774de466a4bdd47e4cbc71'
++API_SHA='6a82c8705726aece454651a8e21d846f6abb2d68c02fc1a7ff7eed10335515c0'
+ GROUPS={
+- 'ingress':['bypass','invalid-channel','native-config-discovery','native-allows-refusal'],
+- 'refusals':['receiver-not-ready','native-acquire-refusal','native-snapshot-refusal','technical-auth-refusal'],
+- 'execution':['native-success','native-next-fault','native-next-cancellation','technical-success'],
+- 'denial':['technical-grant-denial','technical-next-fault-release-precedence'],
+- 'double-success':['technical-double-dispose-retry-success'],
+- 'double-fault':['technical-double-dispose-second-fault'],
++ 'returns':['custom-no-lease-nonresult','custom-owned-nonresult','concrete-delayed-result','terminal-refusal-owned-result'],
++ 'faults':['concrete-result-fault','concrete-result-cancel','concrete-release-override','result-release-cancel-override'],
++ 'guard-next':['filter-next-fault','filter-next-cancel','guard-acquire-fault','guard-validation-fault'],
++ 'nested':['nested-two-results-success','nested-inner-result-fault'],
++ 'double-success':['filter-double-dispose-retry-success'],
++ 'double-fault':['filter-double-dispose-second-fault'],
+ }
++EXPECTED={'custom-no-lease-nonresult': {'name': 'custom-no-lease-nonresult', 'entries': 1, 'authorityAcquireCalls': 0, 'nextCalls': 1, 'releaseCallbacks': 0, 'injectedFaults': 0, 'maskPerCapture': 147, 'errorType': None}, 'custom-owned-nonresult': {'name': 'custom-owned-nonresult', 'entries': 1, 'authorityAcquireCalls': 0, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 0, 'maskPerCapture': 179, 'errorType': None}, 'concrete-delayed-result': {'name': 'concrete-delayed-result', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 0, 'maskPerCapture': 255, 'errorType': None}, 'concrete-result-fault': {'name': 'concrete-result-fault', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 1, 'maskPerCapture': 255, 'errorType': 'System.InvalidOperationException'}, 'concrete-result-cancel': {'name': 'concrete-result-cancel', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 1, 'maskPerCapture': 255, 'errorType': 'System.OperationCanceledException'}, 'concrete-release-override': {'name': 'concrete-release-override', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 2, 'maskPerCapture': 255, 'errorType': 'System.IO.IOException'}, 'filter-next-fault': {'name': 'filter-next-fault', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 1, 'maskPerCapture': 191, 'errorType': 'System.InvalidOperationException'}, 'filter-next-cancel': {'name': 'filter-next-cancel', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 1, 'maskPerCapture': 191, 'errorType': 'System.OperationCanceledException'}, 'guard-acquire-fault': {'name': 'guard-acquire-fault', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 0, 'releaseCallbacks': 0, 'injectedFaults': 1, 'maskPerCapture': 135, 'errorType': None}, 'guard-validation-fault': {'name': 'guard-validation-fault', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 0, 'releaseCallbacks': 1, 'injectedFaults': 0, 'maskPerCapture': 175, 'errorType': None}, 'terminal-refusal-owned-result': {'name': 'terminal-refusal-owned-result', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 0, 'releaseCallbacks': 1, 'injectedFaults': 0, 'maskPerCapture': 255, 'errorType': None}, 'filter-double-dispose-retry-success': {'name': 'filter-double-dispose-retry-success', 'entries': 1, 'authorityAcquireCalls': 0, 'nextCalls': 1, 'releaseCallbacks': 2, 'injectedFaults': 1, 'maskPerCapture': 179, 'errorType': 'Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException'}, 'filter-double-dispose-second-fault': {'name': 'filter-double-dispose-second-fault', 'entries': 1, 'authorityAcquireCalls': 0, 'nextCalls': 1, 'releaseCallbacks': 2, 'injectedFaults': 2, 'maskPerCapture': 179, 'errorType': 'System.IO.IOException'}, 'nested-two-results-success': {'name': 'nested-two-results-success', 'entries': 2, 'authorityAcquireCalls': 2, 'nextCalls': 2, 'releaseCallbacks': 2, 'injectedFaults': 0, 'maskPerCapture': 255, 'errorType': None}, 'nested-inner-result-fault': {'name': 'nested-inner-result-fault', 'entries': 2, 'authorityAcquireCalls': 2, 'nextCalls': 2, 'releaseCallbacks': 2, 'injectedFaults': 1, 'maskPerCapture': 255, 'errorType': 'System.InvalidOperationException'}, 'result-release-cancel-override': {'name': 'result-release-cancel-override', 'entries': 1, 'authorityAcquireCalls': 1, 'nextCalls': 1, 'releaseCallbacks': 1, 'injectedFaults': 2, 'maskPerCapture': 255, 'errorType': 'System.OperationCanceledException'}}
+ STAGES=['Whole','ComponentFile','ComponentPolicy','AclFile','SettingsEnumerationSortDictionary','AuthenticationSerialization','ActorBoundary','ResultTail']
+ ZERO={'allocationMode','allocatedBytes','yielded','nullValue','authenticationAccepted','nonAuthenticationDiscarded','sensitiveSegmentExcluded','authenticationOtherExcluded'}
+ FIELDS=ZERO|{'role','runOrdinal','captureOrdinal','stage','elapsedTicks','frequency'}
+ CLOSED_FIELDS={'diagnosticOnly','featureAcceptance','role','runOrdinal','admitted','disposedOrUnwound','activeAtDrainEnd','queuedRowsDropped','closedRowsDropped','capRowsDropped','ioFailures','writtenRows','writtenBytes','queuedAtDrainEnd','incompleteHardDrain','countersFinal','lateDisposedOrDropCountersMayIncrease','maximumRows','maximumBytes','queueCapacity','windowStartTicks','windowEndTicks','frequency'}
+ MODES=['disabled','active','pre-capped','failing-sink']
+-NATIVE={'TechnicalHttpInstalledMetadataTests':8,'TechnicalHttpNativeRpcTests':12,'ReceiverImagePrecheckTests':20,'NativeDispatchDiagnosticsTests':7}
+-SEMANTIC_FIELDS={'Case','Passed','MiddlewareEntries','AcquireCalls','NextCalls','ReleaseCallbacks','ErrorType','Faults','TokenMatched','LifetimeMatched','CallerRestored','ExpectedStageMask','DoubleDisposeOrder','ReleaseBoundaryRestored','ExactContextReachedNext','FirstDependencyProbeObserved','EntrySuppressionObserved'}
++NATIVE={'DevelopmentDomainRouteCatalogTests':14,'DomainSidecarCatalogLeaseTests':12,'CatalogReceiverScopeTests':41,'CatalogReceiverStateBoundaryTests':16,'CatalogReceiverVersionTests':7,'TechnicalHttpDomainPeerTests':12,'HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient':1}
++SEMANTIC_FIELDS={'Case','Passed','FilterEntries','AuthorityAcquireCalls','NextCalls','ReleaseCallbacks','ErrorType','Faults','TokensMatched','LifetimeAndHandoffMatched','CallerRestored','ExpectedStageMask','DoubleDisposeOrder','ReleaseBoundaryRestored','ExactContextReachedNext','FirstDependencyProbeObserved','EntrySuppressionObserved'}
+ RESULT_FIELDS=SEMANTIC_FIELDS|{'MinimumLastDisposeTicks','MaximumLastDisposeTicks','FirstDisposeHoldTicks'}
+ 
+ 
+@@ -109,7 +110,7 @@
+ def preparation_inputs(expected):
+  p=PREP/'preparation-receipt.json';assert sha(p)==expected
+  d=load(p.read_bytes());inputs={str(p):expected}
+- source=d.get('sourceSha256',d.get('sourceControlsSha256'));assert isinstance(source,dict)and len(source)==56
++ source=d.get('sourceSha256',d.get('sourceControlsSha256'));assert isinstance(source,dict)and len(source)==59
+  for name,h in d['filesSha256'].items():
+   f=PREP/name;assert f.resolve().is_relative_to(PREP)and sha(f)==h;inputs[str(f)]=h
+  for field in ['currentExternalInputsSha256','sourceSha256','sourceControlsSha256','app147Sha256']:
+@@ -123,39 +124,40 @@
+ def stage_runtime(manifest,path,result):
+  assert manifest['schema']==1 and manifest['fixtureApiSha256']==API_SHA
+  assert manifest['frameworkRoots']==['/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14','/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14']
+- assert set(manifest['entries'])=={'projects','tenants','folders','excluded'}and set(manifest['sdk'])=={'ordinary','private'}
+- assert manifest['sdk']['ordinary']['dll']['sha256']=='6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542'
+- assert manifest['sdk']['ordinary']['pdb']['sha256']=='ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6'
+- assert manifest['sdk']['private']['dll']['sha256']!=manifest['sdk']['ordinary']['dll']['sha256']
++ assert set(manifest['entries'])=={'projects','tenants','folders','excluded'}and set(manifest['domainService'])=={'ordinary','private'}
++ assert manifest['domainService']['private']['dll']['sha256']!=manifest['domainService']['ordinary']['dll']['sha256']
++ assert all(manifest['domainService']['ordinary'][kind]['path']!=manifest['domainService']['private'][kind]['path']for kind in ['dll','pdb'])
+  inputs={str(path):sha(path)}
+  common=manifest['commonFiles'];assert all(Path(n).name==n for n in common)
+- assert 'Hexalith.EventStore.ServiceDefaults.dll'not in common and 'Hexalith.EventStore.ServiceDefaults.pdb'not in common
+- assert all(n in common for n in ['Story65.ReceiverPhase.Driver.dll','Hexalith.EventStore.Server.LiveSidecar.Tests.dll','Hexalith.EventStore.Server.Tests.dll','Hexalith.EventStore.Server.Tests.deps.json','Hexalith.EventStore.Server.Tests.runtimeconfig.json'])
++ assert 'Hexalith.EventStore.DomainService.dll'not in common and 'Hexalith.EventStore.DomainService.pdb'not in common
++ assert common['Hexalith.EventStore.ServiceDefaults.dll']['sha256']=='6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542'
++ assert common['Hexalith.EventStore.ServiceDefaults.pdb']['sha256']=='ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6'
++ assert all(n in common for n in ['Story65.DomainReceiverPhase.Driver.dll','Hexalith.EventStore.Server.LiveSidecar.Tests.dll','Hexalith.EventStore.Server.Tests.dll','Hexalith.EventStore.Server.Tests.deps.json','Hexalith.EventStore.Server.Tests.runtimeconfig.json'])
+  staged={}
+  for role,entry in manifest['entries'].items():
+   staged[role]={}
+-  assert entry['assemblyName']=={'projects':'Hexalith.Projects.Server','tenants':'Hexalith.Tenants','folders':'Hexalith.Folders.Server','excluded':'Story65.ReceiverPhase.Excluded'}[role]
++  assert entry['assemblyName']=={'projects':'Hexalith.Projects.Server','tenants':'Hexalith.Tenants','folders':'Hexalith.Folders.Server','excluded':'Story65.DomainReceiverPhase.Excluded'}[role]
+   assert len(entry['files'])==4 and set(entry['files'])=={entry['assemblyName']+s for s in ['.dll','.pdb','.deps.json','.runtimeconfig.json']}
+   variant_maps={}
+-  for variant,sdk in manifest['sdk'].items():
++  for variant,domain in manifest['domainService'].items():
+    directory=result/'runtime'/role/variant;directory.mkdir(mode=0o700,parents=True,exist_ok=False)
+    rows=dict(common)
+    for n,row in entry['files'].items():assert n not in rows;rows[n]=row
+    for n,row in manifest['resources'].items():assert n not in rows;rows[n]=row
+    assert set(manifest['resources'])=={'Hexalith.EventStore.slnx','deploy/dapr/eventstore-routing-catalog.json'}
+-   rows['Hexalith.EventStore.ServiceDefaults.dll']=sdk['dll'];rows['Hexalith.EventStore.ServiceDefaults.pdb']=sdk['pdb']
++   rows['Hexalith.EventStore.DomainService.dll']=domain['dll'];rows['Hexalith.EventStore.DomainService.pdb']=domain['pdb']
+    hashes={}
+    for name,row in rows.items():
+     relative=Path(name);assert not relative.is_absolute()and'..'not in relative.parts and set(row)=={'path','sha256'}
+     source=Path(row['path']);assert source.is_absolute()and sha(source)==row['sha256'];inputs[str(source)]=row['sha256']
+     target=directory/relative;target.parent.mkdir(mode=0o700,parents=True,exist_ok=True);assert not target.exists()
+     shutil.copyfile(source,target);target.chmod(0o600);assert sha(target)==row['sha256'];hashes[name]=row['sha256']
+-   binding={'schema':1,'variant':variant,'role':role,'entryAssemblyName':entry['assemblyName'],'sdkSha256':sdk['dll']['sha256'],
++   binding={'schema':1,'variant':variant,'role':role,'entryAssemblyName':entry['assemblyName'],'domainServiceSha256':domain['dll']['sha256'],'sdkSha256':common['Hexalith.EventStore.ServiceDefaults.dll']['sha256'],
+     'filesSha256':hashes,'frameworkRoots':manifest['frameworkRoots']}
+    file=directory/'runtime-binding.json';save(file,binding)
+    staged[role][variant]={'directory':directory,'entry':directory/(entry['assemblyName']+'.dll'),'binding':file,'bindingSha256':sha(file),'files':hashes}
+    variant_maps[variant]=hashes
+-  assert {n for n in variant_maps['ordinary']if variant_maps['ordinary'][n]!=variant_maps['private'][n]}=={'Hexalith.EventStore.ServiceDefaults.dll','Hexalith.EventStore.ServiceDefaults.pdb'}
++  assert {n for n in variant_maps['ordinary']if variant_maps['ordinary'][n]!=variant_maps['private'][n]}=={'Hexalith.EventStore.DomainService.dll','Hexalith.EventStore.DomainService.pdb'}
+  return staged,inputs
+ 
+ class Lines:
+@@ -177,13 +179,14 @@
+  def close(self):self.selector.close()
+ 
+ def validate_result(row):
+- assert set(row)==RESULT_FIELDS and row['Passed']is True and row['MiddlewareEntries']==1
++ assert set(row)==RESULT_FIELDS and row['Passed']is True
+  assert row['Case']in sum(GROUPS.values(),[])
+- assert row['ErrorType']in[None,'System.InvalidOperationException','System.OperationCanceledException','System.IO.IOException']
+- for k in ['MiddlewareEntries','AcquireCalls','NextCalls','ReleaseCallbacks','Faults','ExpectedStageMask','MinimumLastDisposeTicks','MaximumLastDisposeTicks','FirstDisposeHoldTicks']:assert type(row[k])is int and row[k]>=0
+- for k in SEMANTIC_FIELDS-{'Case','ErrorType','MiddlewareEntries','AcquireCalls','NextCalls','ReleaseCallbacks','Faults','ExpectedStageMask'}:assert type(row[k])is bool
+- assert row['TokenMatched']and row['LifetimeMatched']and row['CallerRestored']and 0<row['ExpectedStageMask']<256 and row['ExpectedStageMask']&1
+- if row['Case'].startswith('technical-double-dispose-'):
++ expected=EXPECTED[row['Case']]
++ assert(row['FilterEntries'],row['AuthorityAcquireCalls'],row['NextCalls'],row['ReleaseCallbacks'],row['Faults'],row['ExpectedStageMask'],row['ErrorType'])==(expected['entries'],expected['authorityAcquireCalls'],expected['nextCalls'],expected['releaseCallbacks'],expected['injectedFaults'],expected['maskPerCapture'],expected['errorType'])
++ for k in ['FilterEntries','AuthorityAcquireCalls','NextCalls','ReleaseCallbacks','Faults','ExpectedStageMask','MinimumLastDisposeTicks','MaximumLastDisposeTicks','FirstDisposeHoldTicks']:assert type(row[k])is int and row[k]>=0
++ for k in SEMANTIC_FIELDS-{'Case','ErrorType','FilterEntries','AuthorityAcquireCalls','NextCalls','ReleaseCallbacks','Faults','ExpectedStageMask'}:assert type(row[k])is bool
++ assert row['TokensMatched']and row['LifetimeAndHandoffMatched']and row['CallerRestored']and row['ReleaseBoundaryRestored']and row['ExactContextReachedNext']and 0<row['ExpectedStageMask']<256 and row['ExpectedStageMask']&1
++ if row['Case'].startswith('filter-double-dispose-'):
+   assert row['ReleaseCallbacks']==2 and row['DoubleDisposeOrder']and 0<row['MinimumLastDisposeTicks']<=row['MaximumLastDisposeTicks']<row['FirstDisposeHoldTicks']
+ 
+ def archive_rows(fd,directory,role,run,frequency,start,mode,business,recording):
+@@ -225,9 +228,11 @@
+  if mode=='active':
+   for observed in business['Cases']:
+    r=observed['Result'];expected={STAGES[i]for i in range(8)if r['ExpectedStageMask']&(1<<i)}
+-   actual=by_capture[observed['CaptureOrdinal']];assert set(actual)==expected
+-   if observed['SyntheticDurationBracketOnly']:
+-    last=actual[STAGES[5]];assert r['MinimumLastDisposeTicks']<=last<=r['MaximumLastDisposeTicks']<r['FirstDisposeHoldTicks']
++   assert len(observed['CaptureOrdinals'])==r['FilterEntries']
++   for ordinal in observed['CaptureOrdinals']:
++    actual=by_capture[ordinal];assert set(actual)==expected
++    if observed['SyntheticDurationBracketOnly']:
++     last=actual[STAGES[5]];assert r['MinimumLastDisposeTicks']<=last<=r['MaximumLastDisposeTicks']<r['FirstDisposeHoldTicks']
+  if mode in ['canary-current','canary-suppressed']:
+   assert set(by_capture[business['CaptureOrdinal']])=={STAGES[i]for i in range(8)if business['ExpectedStages']&(1<<i)}
+  artifacts={}
+@@ -255,6 +260,7 @@
+   for k in list(env):
+    if k in ['DOTNET_PROCESSOR_COUNT','DOTNET_ADDITIONAL_DEPS','DOTNET_SHARED_STORE','CustomBeforeDirectoryBuildProps','CustomAfterMicrosoftCommonProps','CustomBeforeDirectoryBuildTargets','CustomAfterDirectoryBuildTargets','AfterMicrosoftNETSdkTargets','CustomBeforeMicrosoftCommonTargets','HEXALITH_SOURCE_MAPPING_HASH','Configuration']:env.pop(k)
+   env.update(MSBUILDDISABLENODEREUSE='1',DOTNET_CLI_USE_MSBUILD_SERVER='0')
++  if mode=='native':assert env.get('XUNIT_PRINT_MAX_STRING_LENGTH')is None
+   assert len(list(Path('/proc/self/task').iterdir()))==1
+   def limits():resource.setrlimit(resource.RLIMIT_CPU,(45,46))
+   proc=subprocess.Popen(cmd,cwd=stage['directory'],env=env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,preexec_fn=limits)
+@@ -291,13 +297,22 @@
+    selection=next(r for r in reference['selections']if r['filter']=='Hexalith.EventStore.Server.Tests.Routing.'+group)
+    assert selection['expectedExecutions']==NATIVE[group]
+    expected_names=collections.Counter({(r['parsedXmlNameSha256'],r['type'],r['method']):r['multiplicity']for r in selection['expectedDisplayMultiset']})
+-   assert actual_names==expected_names and not tree.getroot().findall('.//errors/error')
++   assemblies=tree.getroot().findall('assembly')
++   assert actual_names==expected_names and not tree.getroot().findall('.//errors/error')and len(assemblies)==1
++   assert all(int(assemblies[0].get(k,'0'))==0 for k in ['errors','failed','skipped','not-run'])
+    receipt['nativeCases']=len(tests);receipt['nativeXmlSha256']=sha(work/'native.xml')
+   elif mode in MODES:
+    assert business['Mode']==mode and business['Group']==group and len(business['Cases'])==len(GROUPS[group])
+    for observed,name in zip(business['Cases'],GROUPS[group]):
+     assert observed['Result']['Case']==name;validate_result(observed['Result'])
+-    assert observed['AdmittedDelta']==(1 if recording else 0)
++    assert set(observed)=={'Result','CaptureOrdinals','AdmittedDelta','ActualStageRowsRequired','HandoffCounterObservationRequired','HandoffChecks','SyntheticDurationBracketOnly'}
++    assert observed['AdmittedDelta']==(observed['Result']['FilterEntries']if recording else 0)
++    if recording:
++     assert len(observed['CaptureOrdinals'])==observed['Result']['FilterEntries']
++     assert observed['CaptureOrdinals']==list(range(observed['CaptureOrdinals'][0],observed['CaptureOrdinals'][0]+observed['Result']['FilterEntries']))
++    else:assert observed['CaptureOrdinals']==[]
++    deferred=observed['Result']['Case']in['concrete-delayed-result','terminal-refusal-owned-result','concrete-result-fault','concrete-result-cancel','concrete-release-override','result-release-cancel-override','nested-two-results-success','nested-inner-result-fault']
++    assert observed['HandoffCounterObservationRequired']==(recording and deferred)and observed['HandoffChecks']==(1 if recording and deferred else 0)
+     assert observed['ActualStageRowsRequired']==(recording and mode=='active')
+   elif mode=='excluded':assert business['HelperInspected']is False and business['Admitted']is None and business['LivedTicks']>=12*business['Frequency']
+   else:assert business['CallerPreserved']is True and business['CanaryValuesPersisted']is False
+@@ -324,7 +339,9 @@
+  args=parser.parse_args();os.umask(0o077)
+  path=Path(args.runtime_manifest);assert path.is_absolute()and sha(path)==args.runtime_manifest_sha256
+  reference_path=Path(args.native_reference);assert sha(reference_path)==args.native_reference_sha256;reference=load(reference_path.read_bytes())
+- result=Path(args.result_root);assert result.is_absolute()and result.is_relative_to('/tmp')and result.name.startswith('story65-receiver-phase-')and not result.exists();result.mkdir(mode=0o700,parents=True)
++ assert reference['expectedTotal']==sum(NATIVE.values())==103 and reference['distinctRenderedIdentities']==103
++ assert {r['filter'].removeprefix('Hexalith.EventStore.Server.Tests.Routing.'):r['expectedExecutions']for r in reference['selections']}==NATIVE
++ result=Path(args.result_root);assert result.is_absolute()and result.is_relative_to('/tmp')and result.name.startswith('story65-domain-receiver-phase-')and not result.exists();result.mkdir(mode=0o700,parents=True)
+  before=preparation_inputs(args.preparation_sha256);manifest=load(path.read_bytes());assert manifest['sourcePreparationSha256']==args.preparation_sha256
+  staged,extra=stage_runtime(manifest,path,result);before.update(extra)
+  for role,variants in staged.items():
+@@ -341,24 +358,24 @@
+     row.update(sha256=sha(work/'controller-receipt.json'),passed=load((work/'controller-receipt.json').read_bytes())['passed'])
+  try:
+   # Fresh first-business canaries run before any other helper activity in their own process.
+-  for mode in ['canary-positive-control','canary-current','canary-suppressed']:one('folders','private',mode,'native-success')
+-  for role in ['projects','tenants']:one(role,'private','active','execution')
+-  one('excluded','private','excluded','native-success')
++  for mode in ['canary-positive-control','canary-current','canary-suppressed']:one('folders','private',mode,'concrete-delayed-result')
++  for role in ['projects','tenants']:one(role,'private','active','returns')
++  one('excluded','private','excluded','concrete-delayed-result')
+   for variant in ['ordinary','private']:
+    for selection in NATIVE:one('folders',variant,'native',selection)
+-   summary['nativePassesPerVariant'][variant]=47
++   summary['nativePassesPerVariant'][variant]=103
+   for mode in MODES:
+    for group in GROUPS:
+     original=one('folders','ordinary',mode,group);instrumented=one('folders','private',mode,group)
+     for a,b in zip(original['Cases'],instrumented['Cases']):
+      assert {k:a['Result'][k]for k in SEMANTIC_FIELDS}=={k:b['Result'][k]for k in SEMANTIC_FIELDS}
+      summary['focusedPairs']+=1
+-  assert summary['focusedPairs']==64
++  assert summary['focusedPairs']==64 and len(records)==68
+   summary.update(passed=True,processes=len(records))
+  finally:
+   after=preparation_inputs(args.preparation_sha256);after.update({p:sha(p)for p in extra});assert after==before
+   save(result/'inputs-after.json',after);summary['sourceAndRuntimeInputsUnchanged']=True
+   summary['receipts']=records;save(result/'qualification-summary.json',summary)
+- print(json.dumps({'passed':True,'focusedPairs':64,'nativePerVariant':47,'processes':len(records)}))
++ print(json.dumps({'passed':True,'focusedPairs':64,'nativePerVariant':103,'processes':len(records)}))
+ 
+ if __name__=='__main__':main()

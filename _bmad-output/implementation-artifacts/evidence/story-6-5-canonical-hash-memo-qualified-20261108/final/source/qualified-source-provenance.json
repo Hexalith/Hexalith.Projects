@@ -1,0 +1,17 @@
+{
+  "preparationOnly": true,
+  "sourceFilesSha256": {
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidator.cs": "b17415f8c00d1b41aeda25169b9e0e0d2b15d6467735af67aefad23a7ebb84b0",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogInventory.cs": "55bd36e7b1ec015af68fd98907270d957119422bd6916dd8ef2ef681a49caa56",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs": "1df7952b7a0816c6dfed1bdbaa2bde7db4dacf4650009c44986675d1e5d8588f"
+  },
+  "controlRule": "Full Codec/Validator/DecodeScope/ObservedInventory namespace-only copies. Identity methods + final Hash(byte[]) extracted byte-exact; wrapper class changed only for isolated harness.",
+  "candidateRule": "Only Hash<T>, unique scope-entry/accessors, separate helper differ. Original CanonicalBytes and all validators/Normalize/serialization callsites remain.",
+  "existingValidatedBytesMemoUnchanged": true,
+  "noPublicApiChange": true,
+  "noAuthorityDecisionMemo": true,
+  "missUsesSameCapturedElement": true,
+  "outsideOpenHostScopeOriginalHashPath": true
+}

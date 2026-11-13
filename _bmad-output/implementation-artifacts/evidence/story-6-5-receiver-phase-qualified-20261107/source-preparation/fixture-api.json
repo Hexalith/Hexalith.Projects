@@ -1,0 +1,48 @@
+{
+  "companionAssemblyName": "Hexalith.EventStore.Server.LiveSidecar.Tests",
+  "companionType": "Hexalith.PrivateReceiverFixture.FixtureApi",
+  "defaultContextOnlyNoCrossAlcBusinessTypes": true,
+  "members": {
+    "Names": "public static string[] Names()",
+    "CreateAsync": "public static Task<object> CreateAsync(string caseName, Action<int>? syntheticFlowProbe)",
+    "ExecuteAsync": "public static Task<object[]> ExecuteAsync(object opaqueHandle, bool suppressEntry)",
+    "DisposeAsync": "public static Task DisposeAsync(object opaqueHandle)"
+  },
+  "setupBeforeWindow": "CreateAsync finishes fixture/startup/capture/snapshot preparation before READY; it never touches the helper. ExecuteAsync enters the actual middleware exactly once.",
+  "opaqueHandleNeverSerialized": true,
+  "flowProbeCodesInRamOnly": {
+    "0": "first synchronous original dependency entry before its await (or next for bypass)",
+    "1": "after genuine Acquire Task.Yield",
+    "2": "actual downstream entry",
+    "3": "after genuine release Task.Yield"
+  },
+  "flowProbeReadsOnlySyntheticDriverStateAndNeverEntersRecorder": true,
+  "resultSlots": {
+    "0": "string closedCaseName",
+    "1": "bool passed (all semantic assertions already ran locally)",
+    "2": "int actualMiddlewareEntries",
+    "3": "int acquireCalls",
+    "4": "int nextCalls",
+    "5": "int releaseCallbacks",
+    "6": "string? expectedAndObservedErrorType (fixed known type name)",
+    "7": "int injectedFaultsTriggered",
+    "8": "bool originalRequestTokenIdentityMatched",
+    "9": "bool originalRemoteLifetimeMatched",
+    "10": "bool callerContextRestored",
+    "11": "int expectedStageMask (bit0 Whole through bit7 ResultTail)",
+    "12": "long minimumLastDisposeTicks (second callback duration, double-dispose only)",
+    "13": "long maximumLastDisposeTicks (first throw to actual middleware completion, double-dispose only)",
+    "14": "long firstDisposeHoldTicks (double-dispose only; must exceed slot13)",
+    "15": "bool doubleDisposeOrderMatched",
+    "16": "bool releaseBoundaryRestored",
+    "17": "bool exactContextReachedNext",
+    "18": "bool firstDependencyProbeObserved",
+    "19": "bool requestedEntrySuppressionObservedSynchronously"
+  },
+  "qualificationOnlySyntheticDurationBounds": "slots12-14 are closed synthetic elapsed bounds for the local exceptional-release assertion, not live request timestamps or joins",
+  "errors": "unexpected assertion throws FixtureFailure with ClosedCheck, AssertionFile basename and AssertionLine; never persist arbitrary exception messages or objects",
+  "originalVariant": "same API and companion bytes; no helper lookup, admission or stage assertions",
+  "privateVariant": "strict helper admission/stage checks after setup; first-business canaries occur before any helper Ready/reflection",
+  "controllerAndEntryCodeOwner": "pending Root assignment to reader; companion/cases/source/pins remain repair_owner_reads",
+  "buildLoadRunReleased": false
+}

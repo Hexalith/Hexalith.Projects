@@ -1,0 +1,16 @@
+--- a/driver/Assertions.cs
++++ b/driver/Assertions.cs
+@@ -67,9 +67,10 @@
+     {
+         Check.Require(original.Error?.GetType() == changed.Error?.GetType(), "Exception type changed.");
+         if (original.Error is ArgumentException left && changed.Error is ArgumentException right) Check.Require(left.ParamName == right.ParamName, "Exception parameter changed.");
+-        Check.Require(original.CallerCanceled == changed.CallerCanceled && original.ErrorTokenIsCaller == changed.ErrorTokenIsCaller
+-            && original.ChildAfterReturn == changed.ChildAfterReturn && original.UnboundedHeldAfterCallerCancel == changed.UnboundedHeldAfterCallerCancel,
+-            "Cancellation or late-child semantics changed.");
++        Check.Require(original.CallerCanceled == changed.CallerCanceled, "Caller cancellation state changed.");
++        Check.Require(original.ErrorTokenIsCaller == changed.ErrorTokenIsCaller, "Exception caller-token identity changed.");
++        Check.Require(original.ChildAfterReturn == changed.ChildAfterReturn, "Instantaneous acquisition child completion state changed.");
++        Check.Require(original.UnboundedHeldAfterCallerCancel == changed.UnboundedHeldAfterCallerCancel, "Unbounded caller wait semantics changed.");
+         if (original.Result is { } first && changed.Result is { } second)
+             Check.Require(first.Success == second.Success && first.ErrorMessage == second.ErrorMessage && first.ProjectionType == second.ProjectionType
+                 && (first.PayloadBytes is null) == (second.PayloadBytes is null)

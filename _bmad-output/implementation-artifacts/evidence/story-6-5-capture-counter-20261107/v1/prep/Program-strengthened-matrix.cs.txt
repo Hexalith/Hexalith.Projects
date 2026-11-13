@@ -1,0 +1,327 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Runtime.Versioning;
+using Hexalith.EventStore.ServiceDefaults.Routing;
+using Hexalith.PrivateCaptureCounter;
+using Microsoft.Extensions.Configuration;
+
+[SupportedOSPlatform("linux")]
+internal static class Program
+{
+    private const string Output = "/tmp/story65-capture-counter-private-20261107";
+    private const string Control = Output + "/window.control";
+    private static readonly BindingFlags Static = BindingFlags.Static | BindingFlags.NonPublic;
+    private static readonly BindingFlags Instance = BindingFlags.Instance | BindingFlags.NonPublic;
+    private static readonly string[] Cases = JsonDocument.Parse(File.ReadAllText("../differential-cases.json")).RootElement
+        .GetProperty("cases").EnumerateArray().Select(item => item.GetProperty("id").GetString()!).ToArray();
+    private static readonly string Fixtures = Path.Combine(Path.GetTempPath(), "capture-counter-synthetic-" + Guid.NewGuid().ToString("N"));
+    private sealed class FixtureException : Exception { }
+    private sealed record Read(string Operation, string Key, bool Null, bool Thrown);
+    private sealed class TrackingProvider(Dictionary<string, string?> data, string scenario, CancellationTokenSource cancellation) : ConfigurationProvider
+    {
+        internal readonly List<Read> Trace = [];
+        private int _ordinal, _declared;
+        public override void Load() => Data = new Dictionary<string, string?>(data, StringComparer.OrdinalIgnoreCase);
+        public override bool TryGet(string key, out string? value)
+        {
+            _ordinal++;
+            if (scenario == "cancel-during-enumeration" && _ordinal == 12) cancellation.Cancel();
+            if (scenario == "mutation-at-tryget-ordinal" && _ordinal == 12) Data["Authentication:Audience"] = "changed-synthetic";
+            if (key == "EventStore:RouteCatalog:DevelopmentBootstrap:DeclaredInvocations" && ++_declared == 2 && scenario == "declared-invocations-second-observation")
+                Data[key] = "["; // The original second observation must still produce the same JSON error.
+            if (scenario == "discarded-key-throws" && key == "ZDiscarded" || scenario == "null-key-value-then-later-throw" && key == "ZLater")
+            { Trace.Add(new("get", key, false, true)); throw new FixtureException(); }
+            bool result = base.TryGet(key, out value); Trace.Add(new("get", key, value is null, false)); return result;
+        }
+        public override IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string? parentPath)
+        { Trace.Add(new("children", parentPath ?? "", false, false)); return base.GetChildKeys(earlierKeys, parentPath); }
+    }
+    private sealed class Source(TrackingProvider provider) : IConfigurationSource
+    { public IConfigurationProvider Build(IConfigurationBuilder builder) => provider; }
+    private sealed record Result(byte[]? Observation, string Error, string? Parameter, Read[] Trace, long[] Expected, bool RepeatedChanged, bool TokenCancelled);
+
+    private static long Field(string name) => Convert.ToInt64(typeof(CaptureCounters).GetField(name, Static)!.GetValue(null));
+    private static void Set(string name, long value) => typeof(CaptureCounters).GetField(name, Static)!.SetValue(null, value);
+    private static void StartWorker() => CaptureCounters.Begin(Role.Unsupported);
+    private static void WriteControl(long start, long end, string? text = null)
+    {
+        File.WriteAllText(Control, text ?? $"7311\n{Stopwatch.Frequency}\n{start}\n{end}\n");
+        File.SetUnixFileMode(Control, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+    }
+    private static void Window(double seconds = 8)
+    { long now = Stopwatch.GetTimestamp(); WriteControl(now, now + (long)(seconds * Stopwatch.Frequency)); }
+    private static async Task<bool> Wait(Func<bool> test, int milliseconds = 10000)
+    {
+        long end = Stopwatch.GetTimestamp() + milliseconds * Stopwatch.Frequency / 1000;
+        while (Stopwatch.GetTimestamp() < end) { if (test()) return true; await Task.Delay(5); }
+        return test();
+    }
+
+    private static Dictionary<string, string?> Data(string scenario)
+    {
+        string component = Path.Combine(Fixtures, "component.json"), acl = Path.Combine(Fixtures, "acl.json");
+        string prefix = "EventStore:RouteCatalog:DevelopmentBootstrap:";
+        var data = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+        {
+            [prefix + "HostId"] = "gateway", [prefix + "ComponentPath"] = component, [prefix + "AccessControlPath"] = acl,
+            [prefix + "RequiredHostIds:0"] = "gateway", [prefix + "SelectedAppIds:0"] = "eventstore", [prefix + "DeclaredInvocations"] = "[]",
+            ["Authentication:Issuer"] = "synthetic", ["Authentication:Audience"] = "synthetic",
+            ["Authentication:BoundStreamRead:PublicKeys:fixture"] = "synthetic-placeholder", ["ZDiscarded"] = "synthetic",
+        };
+        switch (scenario)
+        {
+            case "empty-minimal":
+                foreach (string key in data.Keys.Where(key => key.StartsWith("Authentication:", StringComparison.Ordinal)).ToArray()) data.Remove(key);
+                break;
+            case "null-and-empty-values": data["Authentication:Authority"] = null; data["Authentication:AllowedDomains:0"] = ""; break;
+            case "mixed-case-prefixes-and-names": data["authentication:aLgOrItHm"] = "synthetic"; data["eVeNtStOrE:AuThEnTiCaTiOn:vaLidateIssuer"] = "false"; break;
+            case "deep-and-array-keys": data["Authentication:AllowedDomains:0:Nested:1"] = "synthetic"; data["EventStore:Authentication:AllowedCallers:0"] = "synthetic"; break;
+            case "sensitive-substrings": data["Authentication:Monkey:Issuer"] = "synthetic"; data["Authentication:Tokenish:Audience"] = "synthetic"; data["Authentication:Secreted:Authority"] = "synthetic"; break;
+            case "unrecognized-authentication-name": data["Authentication:Unrecognized"] = "synthetic"; break;
+            case "null-key-value-then-later-throw": data["Authentication:Authority"] = null; data["ZLater"] = "synthetic"; break;
+            case "declared-invocations-absent": data.Remove(prefix + "DeclaredInvocations"); break;
+            case "publickeys-and-token-presence": data["APP_API_TOKEN"] = "synthetic-placeholder"; data["DAPR_API_TOKEN"] = "synthetic-placeholder"; data["Authentication:BoundStreamRead:PublicKeys:other"] = "synthetic-placeholder"; break;
+            case "actor-owner-valid":
+            case "actor-owner-error":
+                data[prefix + "Directory"] = Fixtures; data[prefix + "ActorStateOwnersPath"] = Path.Combine(Fixtures, "gateway.actor-state-owners.json");
+                data["EventStore:RouteCatalog:DevelopmentActorStateOwners:0:AppId"] = "eventstore";
+                data["EventStore:RouteCatalog:DevelopmentActorStateOwners:0:HttpEndpoint"] = "http://127.0.0.1:1/";
+                data["EventStore:RouteCatalog:DevelopmentActorStateOwners:0:ApiToken"] = "synthetic-placeholder";
+                data["AdminServer:EventStoreAppId"] = "eventstore"; data["AdminServer:EventStoreDaprHttpEndpoint"] = "http://127.0.0.1:1/";
+                if (scenario == "actor-owner-error") data[prefix + "ActorStateOwnersPath"] = Path.Combine(Fixtures, "missing-boundary.json");
+                break;
+            case "component-file-error": data[prefix + "ComponentPath"] = Path.Combine(Fixtures, "missing-component.json"); break;
+            case "component-role-error": data[prefix + "AuthorityRole"] = "synthetic-invalid"; break;
+            case "acl-file-error": data[prefix + "AccessControlPath"] = Path.Combine(Fixtures, "missing-acl.json"); break;
+        }
+        return data;
+    }
+
+    private static long[] Expected(Read[] trace)
+    {
+        long[] counts = new long[6];
+        int[] starts = trace.Select((item, index) => (item, index)).Where(pair => pair.item.Operation == "children" && pair.item.Key == "").Select(pair => pair.index).ToArray();
+        foreach ((int start, int group) in starts.Select((index, group) => (index, group)))
+        {
+            int until = group + 1 < starts.Length ? starts[group + 1] : trace.Length;
+            int end = Array.FindLastIndex(trace, until - 1, until - start, item => item.Operation == "children" && item.Key == "Authentication:BoundStreamRead:PublicKeys");
+            if (end < start) end = until;
+            foreach (var item in trace[start..end].Where(item => item.Operation == "get" && !item.Thrown))
+            {
+                counts[0]++;
+                if (item.Null) { counts[1]++; continue; }
+                if (!item.Key.StartsWith("Authentication:", StringComparison.OrdinalIgnoreCase) && !item.Key.StartsWith("EventStore:Authentication:", StringComparison.OrdinalIgnoreCase)) { counts[3]++; continue; }
+                string[] segments = item.Key.Split(':');
+                if (segments.Any(segment => segment.Contains("Key", StringComparison.OrdinalIgnoreCase) || segment.Contains("Token", StringComparison.OrdinalIgnoreCase) || segment.Contains("Secret", StringComparison.OrdinalIgnoreCase))) { counts[4]++; continue; }
+                string[] names = ["Issuer", "Audience", "Algorithm", "Algorithms", "AllowedDomains", "AllowedOperations", "AllowedCallers", "MetadataOnlyCallers", "ValidateIssuer", "ValidateAudience", "ValidateLifetime", "RequireHttpsMetadata", "Authority"];
+                counts[segments.Any(segment => names.Contains(segment, StringComparer.OrdinalIgnoreCase)) ? 2 : 5]++;
+            }
+        }
+        return counts;
+    }
+
+    private static async Task<Result> Invoke(string scenario, bool instrumented)
+    {
+        using var cancellation = new CancellationTokenSource();
+        var provider = new TrackingProvider(Data(scenario), scenario, cancellation);
+        var configuration = new ConfigurationBuilder().Add(new Source(provider)).Build();
+        byte[]? bytes = null; string error = "none"; string? parameter = null; bool changed = false;
+        try
+        {
+            if (scenario == "initially-cancelled") cancellation.Cancel();
+            IConfiguration passed = scenario == "null-configuration" ? null! : configuration;
+            IReadOnlyList<Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration> declarations = scenario == "null-declarations" ? null! : [];
+            async Task<byte[]> Capture() => JsonSerializer.SerializeToUtf8Bytes(instrumented
+                ? await InstrumentedDevelopmentRouteCatalogInputs.CaptureAsync(passed, "eventstore", declarations, [], [], [], [], cancellation.Token)
+                : await DevelopmentRouteCatalogInputs.CaptureAsync(passed, "eventstore", declarations, [], [], [], [], cancellation.Token));
+            bytes = await Capture();
+            if (scenario == "repeated-capture-fresh-state")
+            {
+                provider.Set("Authentication:Audience", "changed-between-captures");
+                byte[] second = await Capture(); changed = !bytes.SequenceEqual(second);
+                bytes = JsonSerializer.SerializeToUtf8Bytes(new[] { bytes, second });
+            }
+        }
+        catch (Exception failure) { error = failure.GetType().Name; parameter = (failure as ArgumentException)?.ParamName; }
+        Read[] trace = provider.Trace.ToArray();
+        return new(bytes, error, parameter, trace, Expected(trace), changed, cancellation.IsCancellationRequested);
+    }
+
+    private static bool Outcome(string scenario, Result actual)
+    {
+        bool category = scenario switch
+        {
+            "discarded-key-throws" or "null-key-value-then-later-throw" => actual.Error == nameof(FixtureException),
+            "declared-invocations-second-observation" => actual.Error == nameof(JsonException),
+            "actor-owner-error" or "component-role-error" => actual.Error == "RouteCatalogUnavailableException",
+            "component-file-error" or "acl-file-error" => actual.Error == nameof(FileNotFoundException),
+            "initially-cancelled" => actual.Error is nameof(OperationCanceledException) or nameof(TaskCanceledException),
+            "null-configuration" or "null-declarations" => actual.Error == nameof(ArgumentNullException),
+            _ => actual.Error == "none" && actual.Observation is not null,
+        };
+        if (scenario == "repeated-capture-fresh-state") category &= actual.RepeatedChanged && actual.Trace.Count(item => item.Operation == "children" && item.Key == "") == 2;
+        if (scenario == "declared-invocations-second-observation") category &= actual.Trace.Count(item => item.Operation == "get" && item.Key == "EventStore:RouteCatalog:DevelopmentBootstrap:DeclaredInvocations") == 2;
+        if (scenario == "declared-invocations-absent") category &= actual.Trace.Count(item => item.Operation == "get" && item.Key == "EventStore:RouteCatalog:DevelopmentBootstrap:DeclaredInvocations") == 1;
+        if (scenario == "publickeys-and-token-presence") category &= actual.Trace.Count(item => item.Operation == "get" && item.Key == "Authentication:BoundStreamRead:PublicKeys:fixture") == 1;
+        if (scenario == "cancel-during-enumeration") category &= actual.TokenCancelled;
+        if (scenario == "null-configuration") category &= actual.Parameter == "configuration" && actual.Trace.Length == 0;
+        if (scenario == "null-declarations") category &= actual.Parameter == "declarations" && actual.Trace.Length == 0;
+        return category;
+    }
+
+    private static async Task<object> Matrix(string mode)
+    {
+        if (mode != "disabled")
+        {
+            long now = Stopwatch.GetTimestamp();
+            if (mode == "expired") WriteControl(now - Stopwatch.Frequency * 2, now - Stopwatch.Frequency);
+            else Window();
+        }
+        if (mode == "failing") File.WriteAllText(Output + "/gateway.jsonl", "synthetic-existing-output");
+        StartWorker();
+        if (mode != "disabled" && !await Wait(() => Field("WindowEnd") != 0)) throw new FixtureException();
+        if (mode == "capped")
+        {
+            object queue = typeof(CaptureCounters).GetField("Queue", Static)!.GetValue(null)!;
+            object writer = queue.GetType().GetProperty("Writer")!.GetValue(queue)!;
+            writer.GetType().GetMethod("TryComplete")!.Invoke(writer, [null]);
+        }
+        List<object> results = []; long[] expected = new long[6];
+        foreach (int concurrency in new[] { 1, 2, 4 }) foreach (string scenario in Cases.Concat(["cancel-during-enumeration", "null-configuration", "null-declarations"]))
+        {
+            var tasks = Enumerable.Range(0, concurrency).Select(async _ =>
+            {
+                Result baseline = await Invoke(scenario, false), actual = await Invoke(scenario, true);
+                bool same = baseline.Error == actual.Error && baseline.Parameter == actual.Parameter && baseline.Trace.SequenceEqual(actual.Trace)
+                    && (baseline.Observation is null ? actual.Observation is null : actual.Observation is not null && baseline.Observation.SequenceEqual(actual.Observation));
+                return (same, actual, outcome: Outcome(scenario, baseline) && Outcome(scenario, actual));
+            });
+            var pairs = await Task.WhenAll(tasks);
+            foreach (var pair in pairs) for (int i = 0; i < 6; i++) expected[i] += pair.actual.Expected[i];
+            results.Add(new { scenario, mode, concurrency, supplemental = !Cases.Contains(scenario), pairs = pairs.Length, equal = pairs.All(pair => pair.same), expectedOutcome = pairs.All(pair => pair.outcome), errorTypes = pairs.Select(pair => pair.actual.Error).Distinct().ToArray() });
+        }
+        if (mode is "active" or "capped" or "failing")
+        {
+            if (!await Wait(() => Field("WorkerClosed") != 0, 11000)) throw new FixtureException();
+            await Task.Delay(50);
+        }
+        long[] actualCounts = new long[6]; int settingRows = 0;
+        if (mode == "active")
+        {
+            foreach (string line in File.ReadLines(Output + "/gateway.jsonl"))
+            {
+                var row = JsonDocument.Parse(line).RootElement;
+                if (row.GetProperty("stage").GetString() != "SettingsEnumerationSortDictionary") continue;
+                string[] names = ["yielded", "nullValue", "authenticationAccepted", "nonAuthenticationDiscarded", "sensitiveSegmentExcluded", "authenticationOtherExcluded"];
+                for (int i = 0; i < 6; i++) actualCounts[i] += row.GetProperty(names[i]).GetInt64();
+                settingRows++;
+            }
+        }
+        bool all = results.All(item => (bool)item.GetType().GetProperty("equal")!.GetValue(item)!);
+        bool outcomes = results.All(item => (bool)item.GetType().GetProperty("expectedOutcome")!.GetValue(item)!);
+        return new { kind = "matrix", mode, cases = Cases.Length * 3, supplementalCases = 9, allPairsEqual = all, allExpectedOutcomes = outcomes, counterPartitionChecked = mode == "active", counterPartitionEqual = mode != "active" || expected.SequenceEqual(actualCounts), expectedCounts = expected, actualCounts, settingRows,
+            admitted = Field("Admitted"), disposedOrUnwound = Field("Completed"), queueDropped = Field("QueueDropped"), ioFailures = Field("IoFailures"), results };
+    }
+
+    [DllImport("libc", EntryPoint = "mkfifo")] private static extern int MkFifo(string name, uint mode);
+    private static async Task<object> Stress(string mode)
+    {
+        bool pass = true; long now = Stopwatch.GetTimestamp();
+        switch (mode)
+        {
+            case "fifo": if (MkFifo(Control, 0x180) != 0) throw new FixtureException(); break;
+            case "symlink": File.WriteAllText(Path.Combine(Fixtures, "target"), "synthetic"); File.CreateSymbolicLink(Control, Path.Combine(Fixtures, "target")); break;
+            case "future": WriteControl(now + 10 * Stopwatch.Frequency, now + 18 * Stopwatch.Frequency); break;
+            case "malformed": WriteControl(now, now + Stopwatch.Frequency, "synthetic-invalid"); break;
+            case "long-control": WriteControl(now, now + Stopwatch.Frequency, new string('1', 129)); break;
+            case "wrong-frequency": WriteControl(now, now + Stopwatch.Frequency, $"9\n1\n{now}\n{now + Stopwatch.Frequency}\n"); break;
+            case "long-window": WriteControl(now, now + 9 * Stopwatch.Frequency); break;
+            case "wrong-mode": Window(); File.SetUnixFileMode(Control, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead); break;
+            default: Window(mode is "hard-drain" or "midwindow-close" ? .3 : mode == "race" ? .5 : 8); break;
+        }
+        StartWorker();
+        if (mode is "fifo" or "symlink" or "future" or "malformed" or "long-control" or "wrong-frequency" or "long-window" or "wrong-mode")
+        {
+            await Task.Delay(150); pass = Field("WindowEnd") == 0;
+            if (mode is "fifo" or "symlink" or "wrong-mode") pass &= Field("IoFailures") > 0;
+            if (mode == "symlink") pass &= File.ReadAllText(Path.Combine(Fixtures, "target")) == "synthetic";
+            File.Delete(Control); Window(.3);
+            pass &= await Wait(() => Field("WindowEnd") != 0, 1500); // Progress proves a FIFO open did not block.
+            return new { kind = "stress", mode, pass, validControlAfterRefusalAccepted = Field("WindowEnd") != 0 };
+        }
+        if (!await Wait(() => Field("WindowEnd") != 0)) throw new FixtureException();
+        if (mode == "role") pass = CaptureCounters.Begin(Role.Unsupported) is null && CaptureCounters.Begin((Role)100) is null && Field("Admitted") == 0;
+        else if (mode == "midwindow-close")
+        {
+            var held = CaptureCounters.Begin(Role.Gateway) ?? throw new FixtureException();
+            await Task.Delay(400);
+            pass = CaptureCounters.Begin(Role.Gateway) is null && Field("WorkerClosed") == 0 && Field("Active") == 1;
+            held.Dispose(); pass &= await Wait(() => Field("WorkerClosed") != 0, 1500);
+            await Task.Delay(50);
+            var receipt = JsonDocument.Parse(File.ReadAllText(Output + "/gateway.closed.json")).RootElement;
+            pass &= receipt.GetProperty("admitted").GetInt64() == 1 && receipt.GetProperty("disposedOrUnwound").GetInt64() == 1
+                && receipt.GetProperty("writtenRows").GetInt64() == 1 && receipt.GetProperty("incompleteHardDrain").GetInt32() == 0
+                && receipt.GetProperty("countersFinal").GetInt32() == 1;
+        }
+        else if (mode == "hard-drain")
+        {
+            var held = CaptureCounters.Begin(Role.Gateway) ?? throw new FixtureException();
+            pass = await Wait(() => Field("WorkerClosed") != 0, 22000);
+            await Task.Delay(50);
+            var receipt = JsonDocument.Parse(File.ReadAllText(Output + "/gateway.closed.json")).RootElement;
+            pass &= receipt.GetProperty("incompleteHardDrain").GetInt32() == 1 && receipt.GetProperty("countersFinal").GetInt32() == 0 && receipt.GetProperty("activeAtDrainEnd").GetInt64() == 1;
+            held.Dispose(); pass &= Field("ClosedDropped") > 0;
+        }
+        else if (mode == "fault")
+        {
+            var capture = CaptureCounters.Begin(Role.Gateway) ?? throw new FixtureException();
+            var interval = capture.Stage(Stage.SettingsEnumerationSortDictionary, AllocationMode.SynchronousThread)!;
+            typeof(CaptureCounters).GetField("_counts", Instance)!.SetValue(capture, null);
+            typeof(CaptureCounters).GetField("_elapsed", Instance)!.SetValue(capture, null);
+            capture.Count(Hexalith.PrivateCaptureCounter.Count.Yielded); interval.Dispose(); capture.Dispose();
+            pass = Field("Active") == 0 && Field("IoFailures") >= 2;
+        }
+        else if (mode is "race" or "file-cap")
+        {
+            int count = mode == "race" ? 8000 : 100000;
+            await Task.WhenAll(Enumerable.Range(0, mode == "race" ? 16 : 4).Select(async _ =>
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    using var capture = CaptureCounters.Begin(Role.Gateway);
+                    if (mode == "file-cap" && i % 100 == 0) await Task.Delay(1);
+                    if (mode == "race" && i % 40 == 0) await Task.Yield();
+                }
+            }));
+            pass = await Wait(() => Field("WorkerClosed") != 0, 11000);
+            await Task.Delay(50);
+            var receipt = JsonDocument.Parse(File.ReadAllText(Output + "/gateway.closed.json")).RootElement;
+            pass &= receipt.GetProperty("admitted").GetInt64() == receipt.GetProperty("disposedOrUnwound").GetInt64()
+                && receipt.GetProperty("activeAtDrainEnd").GetInt64() == 0 && receipt.GetProperty("queuedAtDrainEnd").GetInt32() == 0
+                && receipt.GetProperty("countersFinal").GetInt32() == 1
+                && receipt.GetProperty("admitted").GetInt64() == receipt.GetProperty("writtenRows").GetInt64() + receipt.GetProperty("queuedRowsDropped").GetInt64() + receipt.GetProperty("capRowsDropped").GetInt64();
+            if (mode == "file-cap") pass &= receipt.GetProperty("capRowsDropped").GetInt64() > 0 && receipt.GetProperty("writtenBytes").GetInt64() <= 8L * 1024 * 1024;
+        }
+        return new { kind = "stress", mode, pass, admitted = Field("Admitted"), disposedOrUnwound = Field("Completed"), active = Field("Active"), queueDropped = Field("QueueDropped"), closedDropped = Field("ClosedDropped"), ioFailures = Field("IoFailures") };
+    }
+
+    public static async Task<int> Main(string[] args)
+    {
+        try
+        {
+            Directory.CreateDirectory(Fixtures); File.SetUnixFileMode(Fixtures, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+            File.WriteAllText(Path.Combine(Fixtures, "component.json"), "{}"); File.WriteAllText(Path.Combine(Fixtures, "acl.json"), "{}");
+            File.WriteAllText(Path.Combine(Fixtures, "gateway.actor-state-owners.json"), "[{\"AppId\":\"eventstore\",\"HttpEndpoint\":\"http://127.0.0.1:1/\",\"ApiTokenConfigured\":true}]");
+            object result = args[0] == "matrix" ? await Matrix(args[1]) : await Stress(args[1]);
+            string serialized = JsonSerializer.Serialize(result); Console.WriteLine(serialized);
+            var root = JsonDocument.Parse(serialized).RootElement;
+            bool pass = root.TryGetProperty("allPairsEqual", out var equal) ? equal.GetBoolean() && root.GetProperty("counterPartitionEqual").GetBoolean() && root.GetProperty("allExpectedOutcomes").GetBoolean() : root.GetProperty("pass").GetBoolean();
+            return pass ? 0 : 1;
+        }
+        catch (Exception failure) { Console.WriteLine(JsonSerializer.Serialize(new { kind = "driver-failure", failureType = failure.GetType().Name })); return 2; }
+        finally { try { Directory.Delete(Fixtures, recursive: true); } catch { } }
+    }
+}

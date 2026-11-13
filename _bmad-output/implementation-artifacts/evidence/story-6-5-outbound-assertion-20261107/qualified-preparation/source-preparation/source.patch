@@ -1,0 +1,41 @@
+--- DomainServiceWorkloadAssertionHandler.original.cs
++++ DomainServiceWorkloadAssertionHandler.private.cs
+@@ -1,5 +1,8 @@
+ using Hexalith.EventStore.DomainService;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
++using AssertionBootstrap = Hexalith.PrivateCaptureCounter.GatewayControllerBootstrap;
++using AssertionStage = Hexalith.PrivateCaptureCounter.Stage;
++using AssertionAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ using Microsoft.Extensions.DependencyInjection;
+ using Microsoft.Extensions.Logging;
+@@ -60,6 +63,7 @@
+     /// <inheritdoc />
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+     {
++        using var assertionCounters = AssertionBootstrap.Begin();
+         ArgumentNullException.ThrowIfNull(request);
+         if (TryGetDomainServiceTarget(request.RequestUri, out string? appId, out EventStoreDomainServiceRoute? route))
+         {
+@@ -74,11 +78,13 @@
+                 && request.Options.TryGetValue(CommandSourceAuthorityBinding.RequestBindings, out var sourceBindings) ? sourceBindings : null;
+             if (route.Operation == EventStoreWorkloadOperations.DomainServiceProcess && bindings is not null && issuer?.CanBindResources != true)
+                 throw new InvalidOperationException("CompleteCommandSourceUnavailable: the workload issuer cannot bind the exact request.");
++            using var issueTiming = assertionCounters?.Stage(AssertionStage.ComponentFile, AssertionAllocation.None);
+             string? assertion = issuer is null
+                 ? null
+                 : await issuer
+                     .IssueAsync(new WorkloadAssertionRequest(appId!, route!.Operation, bindings), cancellationToken)
+                     .ConfigureAwait(false);
++            issueTiming?.Dispose();
+             if (assertion is null)
+             {
+                 LogAssertionUnavailable(
+@@ -92,6 +98,7 @@
+             }
+         }
+ 
++        using var baseTiming = assertionCounters?.Stage(AssertionStage.ComponentPolicy, AssertionAllocation.None);
+         return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+     }
+ 

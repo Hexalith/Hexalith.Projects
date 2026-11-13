@@ -1,0 +1,33 @@
+{
+  "sourceReviewPassed": true,
+  "preparationReceiptSha256": "6afc47ed4afa474e3ea06971ef74af93bb090f038ff051bbc809ca78b7315157",
+  "createdUtc": "2026-11-08T05:01:31.794368+00:00",
+  "existingFrozen54PreparedAnd211ExternalPinsRehashed": true,
+  "reviewedFilesSha256": {
+    "candidate.patch": "ece31a57a32cf0517ccd68564816a3fe5d713dcc8402b7917eb7974c2f689f14",
+    "candidate/FingerprintKeyBuilder.cs": "796591f17aecbffae3ec8fedb896138589b1ec21a1446f99b378271ab3e950a1",
+    "candidate/FingerprintMemoOwner.cs": "f14ea3589b529cec4d33d97affef0ba81aaae871bd8db9fa4700b7ab4e369732",
+    "candidate/FingerprintScope.cs": "c60ed61551e1f4eef2d39e9a67ba0abf5821ed934df8a707aa710f2b540b0699",
+    "candidate/TechnicalHttpActionObservation.cs": "72bb44be0ac96c43eb09289827fef482f2698a55699da3aba5daac7c6a249f9b",
+    "candidate/TechnicalHttpObservationPass.cs": "daddb25a1f8d4a6906da23617f3681e3b0c4e039bcf61099392382a69316e5cd",
+    "harness/Parity.cs": "deba62572d956b635bf6a96f23f853d836f9f613f729caa68f4e4f9117fbaca3",
+    "harness/DiskImageAssembly.cs": "e733d8dd1588294923006541b9cf1db3fa5b4b7f31ede9ba016c6d068ec2c489",
+    "harness/ImageFixture.cs": "d6713be011fb582ac530fef1c2e6dc63f2f956506fcaf516945c1d07af96120d",
+    "harness/MutablePolicyProvider.cs": "52c3ee6457270d929f2ff44fe0ce6eaa1d24e7e8dedcd9da536fcd764e72e63a",
+    "harness/PrefixNamingPolicy.cs": "672ac3452243514d9e0025845f23cff6c7280116217902ae25fc1f4ff57af9e9",
+    "harness/ProviderOverlay.cs": "10dacff339cf8f0ca3d73bbf9119bcc743c7538ca4a5d7c23c8012eeb17598f7",
+    "harness/SchemaTrace.cs": "55d6d26aab2f3e28521946973c199516a219595ac2b272c47384d048ef677493",
+    "harness/TrackedJsonOptions.cs": "50851b916dea77abddff6a6a699ba2e2a6378ea840e2d39e29345fd8292b309c",
+    "harness/WrongConstraintResolver.cs": "f5f7a314db7e9f5e7038318149abbed97d9502b0af4dd0c76c54c903efb61d0d",
+    "harness/VariantHosts.cs": "e6524eb86b9d34cb8da3eb3acb7859743d1660bc9f2aa6d51387a46b4a175247"
+  },
+  "materialBlockers": [],
+  "coreReview": "Injective fixed request/response-v1 domains, typed ordered counts/nulls/int32/knownenum/length-prefixed ordinalUTF16 fields. Exact same private anonymous snapshot feeds miss Hash, at both original checkpoints. Nonempty constraints freshly observed and original Hash used. Generic/policy/filter/Schema/type/file/PE/MVID/Complete code unchanged. Shared256-entry/2MiB charged owner; scope/owner close and concurrent fallback preserve fresh computation.",
+  "parityReview": "Actual compiled oracle + namespace-only control + candidate compare full cold/warm endpoint descriptors. Direct key/bounds/ownership/concurrency controls are supplemented by actual constrained, oversize schema, reordered parameters, binding-refusal, request-before-response callback, schema/policy drift/fault/cancel identity and scratch file/PE/MVID Complete failures. No-start/unmarked-core witness and all eligible marked endpoint coverage remain explicit.",
+  "fixtureReview": "Policy/schema/constraint overlays act on real provider seams and compare callback order with original. Mutable descriptor changes restore in finally; scratch image path is the same per variant and deleted before reuse. Raw keys/schema/error messages remain in RAM; result is scalar check counts.",
+  "limits": [
+    "Source review is not compile/runtime/parity execution or a performance/host-deadline claim.",
+    "Pure request/response digests may remain after a later Complete refusal; future full observations and Complete still run and acceptance is never memoized.",
+    "Root independently owns driver/project/lifecycle review and any compile-only/runtime release; no production edits, builds, loads or hosts were run by this reviewer."
+  ]
+}

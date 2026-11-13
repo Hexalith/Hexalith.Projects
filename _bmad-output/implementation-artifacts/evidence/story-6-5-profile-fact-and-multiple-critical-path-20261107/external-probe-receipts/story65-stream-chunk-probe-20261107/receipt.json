@@ -1,0 +1,102 @@
+{
+  "diagnosticOnly": true,
+  "ownerSourceOrOutputsEdited": false,
+  "cwd": "/tmp",
+  "summary": [
+    {
+      "owner": "Hexalith.Folders.Server",
+      "inventoryCount": 67,
+      "retainedCount": 67,
+      "retainedChargedBytes": 27801184,
+      "medians": {
+        "64KiB": {
+          "inventoryMeanMs": 3.902049999999999,
+          "allocatedBytesPerInventory": 58120,
+          "readCallsPerInventory": 527,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 67,
+          "fullFreshBytesPerInventory": 27766880,
+          "memoHitsPerInventory": 67
+        },
+        "1MiB": {
+          "inventoryMeanMs": 3.9346849999999995,
+          "allocatedBytesPerInventory": 58120,
+          "readCallsPerInventory": 144,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 67,
+          "fullFreshBytesPerInventory": 27766880,
+          "memoHitsPerInventory": 67
+        },
+        "full-remaining": {
+          "inventoryMeanMs": 4.03016,
+          "allocatedBytesPerInventory": 58120,
+          "readCallsPerInventory": 134,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 67,
+          "fullFreshBytesPerInventory": 27766880,
+          "memoHitsPerInventory": 67
+        }
+      }
+    },
+    {
+      "owner": "Hexalith.Projects.Server",
+      "inventoryCount": 66,
+      "retainedCount": 66,
+      "retainedChargedBytes": 31312512,
+      "medians": {
+        "64KiB": {
+          "inventoryMeanMs": 4.23631,
+          "allocatedBytesPerInventory": 44248,
+          "readCallsPerInventory": 576,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 66,
+          "fullFreshBytesPerInventory": 31278720,
+          "memoHitsPerInventory": 66
+        },
+        "1MiB": {
+          "inventoryMeanMs": 4.18512,
+          "allocatedBytesPerInventory": 44248,
+          "readCallsPerInventory": 142,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 66,
+          "fullFreshBytesPerInventory": 31278720,
+          "memoHitsPerInventory": 66
+        },
+        "full-remaining": {
+          "inventoryMeanMs": 4.308445,
+          "allocatedBytesPerInventory": 44248,
+          "readCallsPerInventory": 132,
+          "readByteCallsPerInventory": 0,
+          "eofReadsPerInventory": 66,
+          "fullFreshBytesPerInventory": 31278720,
+          "memoHitsPerInventory": 66
+        }
+      }
+    }
+  ],
+  "artifacts": {
+    "Probe.csproj": "21eaca2ae8287016e834a9522edd57d2d8ab4cfb7c1a4581e823ed378758be3b",
+    "results.json": "e7cc055754e102527f2656d026857305079d3381f603d22cca9abda8f7f92385",
+    "run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build.log": "4ab194f63af469cedf3778b0b96b91d2baf122c8251511af4f7eeea916a65689",
+    "Program.cs": "9563f272ba8453c86ffe96efaa7939beaae3f8ae103847ab8609cad869f79d77"
+  },
+  "qualification": "Chunk loop is an external clone with actual SDK memo/locks; scope creation/binding is timed but final disposal is outside the timed return, identically across variants. All modes read every original byte and EOF; no chunk change was adopted.",
+  "buildArgv": [
+    "dotnet",
+    "build",
+    "/tmp/story65-stream-chunk-probe-20261107/Probe.csproj",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers"
+  ],
+  "runArgv": [
+    "dotnet",
+    "/tmp/story65-stream-chunk-probe-20261107/bin/Debug/net10.0/Probe.dll",
+    "/tmp/story65-stream-chunk-probe-20261107/results.json",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll"
+  ]
+}

@@ -1,0 +1,24 @@
+<Project>
+  <!-- Qualification only: these are project-local properties, never CLI-global output paths. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <Story65SdkOriginalAfterSdkTargets>$(AfterMicrosoftNETSdkTargets)</Story65SdkOriginalAfterSdkTargets>
+    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-invocation-transport-ops-prep-20261107/sdk-late-guard.targets</AfterMicrosoftNETSdkTargets>
+    <OutputPath>/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/bin/Debug/net10.0/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <IntermediateOutputPath>/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/obj/Debug/net10.0/</IntermediateOutputPath>
+    <!-- Keep the already-restored NuGet extensions/imports in the ordinary project, read-only. -->
+    <ProjectAssetsFile>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/obj/project.assets.json</ProjectAssetsFile>
+    <CoreCompileInputsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.csproj.CoreCompileInputs.cache</CoreCompileInputsCacheFile>
+    <ResolveAssemblyReferencesStateFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.csproj.AssemblyReference.cache</ResolveAssemblyReferencesStateFile>
+    <ProjectAssetsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.assets.cache</ProjectAssetsCacheFile>
+    <GeneratedAssemblyInfoFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <GeneratedGlobalUsingsFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.GlobalUsings.g.cs</GeneratedGlobalUsingsFile>
+    <GeneratedMSBuildEditorConfigFile>$(IntermediateOutputPath)Hexalith.EventStore.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig</GeneratedMSBuildEditorConfigFile>
+    <ProjectDepsFilePath>$(OutputPath)Hexalith.EventStore.ServiceDefaults.deps.json</ProjectDepsFilePath>
+    <ProjectRuntimeConfigFilePath>$(OutputPath)Hexalith.EventStore.ServiceDefaults.runtimeconfig.json</ProjectRuntimeConfigFilePath>
+    <PublishDir>/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/publish/</PublishDir>
+  </PropertyGroup>
+  <Import Project="/tmp/story65-invocation-transport-ops-prep-20261107/sdk-source.targets" />
+</Project>

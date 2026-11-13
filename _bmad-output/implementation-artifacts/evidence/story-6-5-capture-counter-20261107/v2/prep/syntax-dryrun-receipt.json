@@ -1,0 +1,39 @@
+{
+  "operationalPinsSha256": "862369299da7610790073b01791bb84f699029e901c5879ae8548068f3e8cb46",
+  "allFiveSyntaxPassed": true,
+  "noExecuteSupplied": true,
+  "nonexecutingCommands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-nobuild-prep-20261107/build_restore.py",
+        "--phase",
+        "private",
+        "--pins-sha256",
+        "862369299da7610790073b01791bb84f699029e901c5879ae8548068f3e8cb46"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-nobuild-prep-20261107/supervise_managed.py",
+        "--pins-sha256",
+        "862369299da7610790073b01791bb84f699029e901c5879ae8548068f3e8cb46"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-nobuild-prep-20261107/run_and_restore.py",
+        "--pins-sha256",
+        "862369299da7610790073b01791bb84f699029e901c5879ae8548068f3e8cb46"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    }
+  ]
+}

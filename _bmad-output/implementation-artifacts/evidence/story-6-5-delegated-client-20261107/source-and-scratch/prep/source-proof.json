@@ -1,0 +1,33 @@
+{
+  "preparationOnly": true,
+  "buildsExecuted": 0,
+  "runsExecuted": 0,
+  "hostsStarted": 0,
+  "repositoryFilesEdited": 0,
+  "sourcePath": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs",
+  "originalSha256": "c969d284411288c245c5833b15abb73dd93309c2671b08a03de18d694ee33a2c",
+  "privateSha256": "96b86cb2880e7d1cd5937c9c47dfa792a93029ee1f145b2c8d88b29f2fe426ae",
+  "renamedCopySha256": "8ddcb8ad726523fdec14cee4743cd7a209abb76eadb6d9eddb61ee239f361fd7",
+  "patchSha256": "556418d9c4de25da3b498b85881c51a4a25f65d9b81a170cd6c61b86a5960716",
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "bootstrapSha256": "8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375",
+  "insertedLines": 18,
+  "signatureAndCallEdits": [
+    {
+      "old": "InvokeOwnerAsync(query, request, workload, key, deadline is not null, operationToken)",
+      "new": "InvokeOwnerAsync(query, request, workload, key, deadline is not null, operationToken, delegatedTimings)"
+    },
+    {
+      "old": "        string workload, string key, bool bounded, CancellationToken cancellationToken)",
+      "new": "        string workload, string key, bool bounded, CancellationToken cancellationToken, ClientCounters? delegatedTimings = null)"
+    }
+  ],
+  "normalizationRestoresOriginalBytes": true,
+  "originalAwaitTernaryAndAsTaskUnchanged": true,
+  "originalSendAndJsonAwaitStatementsUnchanged": true,
+  "originalResponseThenRequestDisposalBeforePublicTimeoutCheck": true,
+  "originalLFBytesPreserved": true,
+  "allocationModeNoneCalls": 4,
+  "recorderCountCalls": 0,
+  "selection": "already-read validated workload == fixed projects literal only; no new configuration access"
+}

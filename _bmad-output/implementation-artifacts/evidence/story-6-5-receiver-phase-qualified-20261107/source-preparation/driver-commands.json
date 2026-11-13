@@ -1,0 +1,195 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "sourceQualificationReady": false,
+  "fixtureApiSha256": "8ca40e33526b3d6f014dc1e4475311f833349de4bc774de466a4bdd47e4cbc71",
+  "projects": [
+    "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj"
+  ],
+  "noPackageReferencesInOwnedDriverOrEntries": true,
+  "futureRestoreCommands": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "futureBuildCommands": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "futureQualificationCommand": [
+    "python3",
+    "/tmp/story65-receiver-phase-prep-20261107/qualification_controller.py",
+    "--runtime-manifest",
+    "<ROOT_NEW_EXACT_COMPILED_RUNTIME_MANIFEST>",
+    "--runtime-manifest-sha256",
+    "<ROOT_REVIEWED_RUNTIME_MANIFEST_SHA256>",
+    "--preparation-sha256",
+    "<ROOT_FINAL_SOURCE_PREPARATION_SHA256>",
+    "--native-reference",
+    "/tmp/story65-receiver-phase-ops-prep-20261107/native-reference-case-set.json",
+    "--native-reference-sha256",
+    "188290c760bcd13dbad01dcf133845cda5d82b42a46889ac6c6c2aa7e43f018b",
+    "--result-root",
+    "/tmp/story65-receiver-phase-qualification-20261107"
+  ],
+  "buildProcessorOverride": 2,
+  "runtimeProcessorOverride": null,
+  "expectedRuntime": "10.0.14",
+  "expectedNaturalProcessors": 14,
+  "focusedGroups": {
+    "ingress": 4,
+    "refusals": 4,
+    "execution": 4,
+    "denial": 2,
+    "double-success": 1,
+    "double-fault": 1
+  },
+  "focusedModes": [
+    "disabled",
+    "active",
+    "pre-capped",
+    "failing-sink"
+  ],
+  "focusedSemanticPairs": 64,
+  "focusedProcesses": 48,
+  "nativeCasesPerVariant": 47,
+  "nativeClassProcessesPerVariant": 4,
+  "nativeNotAddedToOrdinary1048": true,
+  "additionalRolePositiveProcesses": 2,
+  "additionalRolePositiveCases": 8,
+  "freshFirstBusinessCanaries": 3,
+  "excludedProcess": 1,
+  "plannedTotalProcesses": 62,
+  "hostLoopbackOnlyInsideActualPinnedNativeAndCompanionFixtures": true,
+  "noApplicationTopologyLifecycleOrRuntimeOverlayHostAuthorized": true,
+  "runtimeManifestStillNeedsExactPostBuildHashes": true,
+  "buildsLoadsRunsWindowsStarted": 0,
+  "controlPublication": "validated600temporary+atomiclinkNOREPLACE+unlinktemporary; GO only after publication",
+  "zeroDropRawValidation": "allnumericnonnegative; everycaptureWhole; childticks<=Whole; exactcontiguous1..admitted"
+}

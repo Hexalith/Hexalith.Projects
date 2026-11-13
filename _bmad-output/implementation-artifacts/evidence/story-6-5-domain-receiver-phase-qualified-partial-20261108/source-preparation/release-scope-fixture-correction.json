@@ -1,0 +1,16 @@
+{
+  "filePreparationOnly": true,
+  "buildsOrRuns": 0,
+  "reason": "original non-IResult inline disposal occurs inside live remote scope; a first failure unwinds it before catch retry",
+  "priorCaseHandle": {
+    "path": "/tmp/story65-domain-receiver-phase-prep-history-20261108/release-scope-fix-v1/companion/CaseHandle.cs",
+    "sha256": "e1b57f877a53141ce462ecca006e461f93ad072ffe4c866004144b92308cd5a0"
+  },
+  "correctedCaseHandleSha256": "36fc14331f0d23ef274553d98822d0495bf266f436cbe7aecda510a8d7591f8e",
+  "expectedInlineFirstOwnScopeActive": true,
+  "expectedCatchRetryOwnScopeAbsent": true,
+  "checkOriginalScopesAgainAfterReleaseYield": true,
+  "requireSdkLeaseClosedForExecutionStillTrue": true,
+  "slot16MeansOriginalBranchExpectedBoundaryNotAlwaysDisposed": true,
+  "apiCountsMasksAndCoreUnchanged": true
+}

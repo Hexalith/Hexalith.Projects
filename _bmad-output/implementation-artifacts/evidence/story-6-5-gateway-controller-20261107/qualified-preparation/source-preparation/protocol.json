@@ -1,0 +1,68 @@
+{
+  "preparationOnly": true,
+  "role": "gateway",
+  "stages": [
+    {
+      "number": 0,
+      "serialized": "Whole",
+      "alias": "WholeAction"
+    },
+    {
+      "number": 1,
+      "serialized": "ComponentFile",
+      "alias": "Signature"
+    },
+    {
+      "number": 2,
+      "serialized": "ComponentPolicy",
+      "alias": "Origin"
+    },
+    {
+      "number": 3,
+      "serialized": "AclFile",
+      "alias": "CatalogAcquire"
+    },
+    {
+      "number": 4,
+      "serialized": "SettingsEnumerationSortDictionary",
+      "alias": "Admission"
+    },
+    {
+      "number": 5,
+      "serialized": "AuthenticationSerialization",
+      "alias": "MediatorAndMarkerFinally"
+    },
+    {
+      "number": 6,
+      "serialized": "ActorBoundary",
+      "alias": "ResponseConstruction"
+    },
+    {
+      "number": 7,
+      "serialized": "ResultTail",
+      "alias": "OverlappingLeaseScope"
+    }
+  ],
+  "allocationMode": 0,
+  "allocatedBytes": 0,
+  "allSixCountColumns": 0,
+  "CountCalls": 0,
+  "maximumWindowSeconds": 8,
+  "maximumRows": 65536,
+  "maximumBytes": 8388608,
+  "queueCapacity": 4096,
+  "opaqueOrdinal": "private Gateway method invocation only",
+  "noClientRootTraceJoin": true,
+  "noMvcSerializationOrSocketTiming": true,
+  "stage7Overlaps456": true,
+  "sumStage7AsDisjoint": false,
+  "residualIsExactRelease": false,
+  "privateSinkKnownNames": [
+    "window.control",
+    "gateway.jsonl",
+    "gateway.closed.json"
+  ],
+  "workerFlowIsolation": "synchronous SuppressFlow bootstrap; separate NoInlining fixed Role.Gateway call",
+  "runtimeControl": "READY numeric frequency/timestamp then CASES_DONE/EXIT, strict terminal cases/passed/errorType; implementation awaits root review",
+  "ownedProcessLifecycle": "fresh scratch process/group, complete closed receipt, exact group absence before owned fixed-file archive/cleanup"
+}

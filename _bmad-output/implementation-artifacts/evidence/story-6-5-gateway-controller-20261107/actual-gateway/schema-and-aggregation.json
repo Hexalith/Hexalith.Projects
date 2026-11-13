@@ -1,0 +1,516 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "strictDuplicateFree14FieldRows": true,
+  "allZeroCountAllocationColumns": [
+    "allocatedBytes",
+    "allocationMode",
+    "authenticationAccepted",
+    "authenticationOtherExcluded",
+    "nonAuthenticationDiscarded",
+    "nullValue",
+    "sensitiveSegmentExcluded",
+    "yielded"
+  ],
+  "captures": 24,
+  "rows": 186,
+  "complete8": 18,
+  "withoutResponseConstruction": 6,
+  "aliases": {
+    "Whole": "Whole",
+    "ComponentFile": "Signature",
+    "ComponentPolicy": "Origin",
+    "AclFile": "CatalogAcquire",
+    "SettingsEnumerationSortDictionary": "Admission",
+    "AuthenticationSerialization": "Mediator",
+    "ActorBoundary": "ResponseConstruction",
+    "ResultTail": "LeaseScope"
+  },
+  "millisecondsByStage": {
+    "Whole": {
+      "n": 24,
+      "medianMs": 513.9195864999999,
+      "minMs": 70.037171,
+      "p95NearestRankMs": 560.572513,
+      "maxMs": 568.510841
+    },
+    "Signature": {
+      "n": 24,
+      "medianMs": 0.21451350000000002,
+      "minMs": 0.133116,
+      "p95NearestRankMs": 0.536152,
+      "maxMs": 1.270255
+    },
+    "Origin": {
+      "n": 24,
+      "medianMs": 0.22462700000000002,
+      "minMs": 0.118328,
+      "p95NearestRankMs": 0.304295,
+      "maxMs": 0.314375
+    },
+    "CatalogAcquire": {
+      "n": 24,
+      "medianMs": 30.369236,
+      "minMs": 23.95682,
+      "p95NearestRankMs": 37.94034,
+      "maxMs": 42.759669
+    },
+    "Admission": {
+      "n": 24,
+      "medianMs": 0.06597700000000001,
+      "minMs": 0.035278,
+      "p95NearestRankMs": 0.088781,
+      "maxMs": 0.094542
+    },
+    "Mediator": {
+      "n": 24,
+      "medianMs": 473.8550975,
+      "minMs": 21.173037,
+      "p95NearestRankMs": 518.233475,
+      "maxMs": 530.56535
+    },
+    "ResponseConstruction": {
+      "n": 18,
+      "medianMs": 0.009337999999999999,
+      "minMs": 0.005932,
+      "p95NearestRankMs": 0.113058,
+      "maxMs": 0.113058
+    },
+    "LeaseScope": {
+      "n": 24,
+      "medianMs": 480.9480935,
+      "minMs": 37.841602,
+      "p95NearestRankMs": 522.092903,
+      "maxMs": 534.01406
+    }
+  },
+  "pairedLocalCaptures": [
+    {
+      "opaqueLocalOrdinal": 1,
+      "phasesMilliseconds": {
+        "Whole": 550.085697,
+        "Signature": 0.536152,
+        "Origin": 0.274458,
+        "CatalogAcquire": 42.759669,
+        "Admission": 0.061959,
+        "Mediator": 501.261883,
+        "ResponseConstruction": 0.01031,
+        "LeaseScope": 504.514883
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 2.0005349999999567,
+      "leaseMinusRecordedChildrenMs": 3.180730999999984,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 2,
+      "phasesMilliseconds": {
+        "Whole": 514.908337,
+        "Signature": 0.192701,
+        "Origin": 0.226076,
+        "CatalogAcquire": 34.753884,
+        "Admission": 0.084483,
+        "Mediator": 472.739666,
+        "ResponseConstruction": 0.113058,
+        "LeaseScope": 479.06796
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.6677159999998707,
+      "leaseMinusRecordedChildrenMs": 6.130753000000051,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 3,
+      "phasesMilliseconds": {
+        "Whole": 553.189859,
+        "Signature": 0.212991,
+        "Origin": 0.263703,
+        "CatalogAcquire": 34.137599,
+        "Admission": 0.062761,
+        "Mediator": 514.725577,
+        "ResponseConstruction": 0.009819,
+        "LeaseScope": 518.558774
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.016792000000009466,
+      "leaseMinusRecordedChildrenMs": 3.7606169999999044,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 4,
+      "phasesMilliseconds": {
+        "Whole": 520.411411,
+        "Signature": 0.133116,
+        "Origin": 0.133196,
+        "CatalogAcquire": 34.038454,
+        "Admission": 0.042552,
+        "Mediator": 478.198472,
+        "ResponseConstruction": 0.008486,
+        "LeaseScope": 486.097316
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.009329000000093401,
+      "leaseMinusRecordedChildrenMs": 7.847805999999996,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 5,
+      "phasesMilliseconds": {
+        "Whole": 560.572513,
+        "Signature": 0.318674,
+        "Origin": 0.203772,
+        "CatalogAcquire": 37.94034,
+        "Admission": 0.050097,
+        "Mediator": 518.233475,
+        "ResponseConstruction": 0.009078,
+        "LeaseScope": 522.092903
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.01682400000004236,
+      "leaseMinusRecordedChildrenMs": 3.800252999999929,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 6,
+      "phasesMilliseconds": {
+        "Whole": 526.9671,
+        "Signature": 0.209042,
+        "Origin": 0.218571,
+        "CatalogAcquire": 29.386405,
+        "Admission": 0.071037,
+        "Mediator": 490.942571,
+        "ResponseConstruction": 0.009969,
+        "LeaseScope": 497.138243
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.01483899999999494,
+      "leaseMinusRecordedChildrenMs": 6.114666000000012,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 7,
+      "phasesMilliseconds": {
+        "Whole": 85.07784,
+        "Signature": 0.22337,
+        "Origin": 0.26998,
+        "CatalogAcquire": 28.559378,
+        "Admission": 0.084543,
+        "Mediator": 35.568999,
+        "LeaseScope": 56.008419
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.01669299999998941,
+      "leaseMinusRecordedChildrenMs": 20.35487700000001,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 8,
+      "phasesMilliseconds": {
+        "Whole": 87.930568,
+        "Signature": 0.148777,
+        "Origin": 0.170098,
+        "CatalogAcquire": 29.535738,
+        "Admission": 0.055577,
+        "Mediator": 48.142538,
+        "LeaseScope": 58.063983
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.011972000000007199,
+      "leaseMinusRecordedChildrenMs": 9.865867999999999,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 9,
+      "phasesMilliseconds": {
+        "Whole": 501.221537,
+        "Signature": 0.236975,
+        "Origin": 0.213471,
+        "CatalogAcquire": 27.217197,
+        "Admission": 0.070626,
+        "Mediator": 466.981661,
+        "ResponseConstruction": 0.005932,
+        "LeaseScope": 473.537342
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.01655199999999013,
+      "leaseMinusRecordedChildrenMs": 6.479123000000046,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 10,
+      "phasesMilliseconds": {
+        "Whole": 536.291631,
+        "Signature": 0.164286,
+        "Origin": 0.229841,
+        "CatalogAcquire": 28.137954,
+        "Admission": 0.059274,
+        "Mediator": 504.577399,
+        "ResponseConstruction": 0.008988,
+        "LeaseScope": 507.748158
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.011392000000171265,
+      "leaseMinusRecordedChildrenMs": 3.102496999999959,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 11,
+      "phasesMilliseconds": {
+        "Whole": 532.139579,
+        "Signature": 0.223039,
+        "Origin": 0.227979,
+        "CatalogAcquire": 30.890137,
+        "Admission": 0.06211,
+        "Mediator": 497.124161,
+        "ResponseConstruction": 0.011723,
+        "LeaseScope": 500.784868
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.013556000000050972,
+      "leaseMinusRecordedChildrenMs": 3.586873999999984,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 12,
+      "phasesMilliseconds": {
+        "Whole": 498.416666,
+        "Signature": 0.147303,
+        "Origin": 0.203331,
+        "CatalogAcquire": 23.95682,
+        "Admission": 0.066007,
+        "Mediator": 465.750482,
+        "ResponseConstruction": 0.006322,
+        "LeaseScope": 474.097781
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.011431000000015956,
+      "leaseMinusRecordedChildrenMs": 8.274970000000007,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 13,
+      "phasesMilliseconds": {
+        "Whole": 511.189252,
+        "Signature": 0.200806,
+        "Origin": 0.266246,
+        "CatalogAcquire": 32.523826,
+        "Admission": 0.035278,
+        "Mediator": 468.227282,
+        "ResponseConstruction": 0.005992,
+        "LeaseScope": 478.184476
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.013897999999983313,
+      "leaseMinusRecordedChildrenMs": 9.91592400000001,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 14,
+      "phasesMilliseconds": {
+        "Whole": 535.818988,
+        "Signature": 0.141803,
+        "Origin": 0.118328,
+        "CatalogAcquire": 25.489154,
+        "Admission": 0.070115,
+        "Mediator": 506.604142,
+        "ResponseConstruction": 0.009388,
+        "LeaseScope": 510.059955
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.009748000000001866,
+      "leaseMinusRecordedChildrenMs": 3.376309999999991,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 15,
+      "phasesMilliseconds": {
+        "Whole": 151.981091,
+        "Signature": 0.228429,
+        "Origin": 0.218431,
+        "CatalogAcquire": 36.819832,
+        "Admission": 0.094542,
+        "Mediator": 107.134879,
+        "LeaseScope": 114.697037
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.01736199999999144,
+      "leaseMinusRecordedChildrenMs": 7.4676159999999925,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 16,
+      "phasesMilliseconds": {
+        "Whole": 148.453258,
+        "Signature": 0.338963,
+        "Origin": 0.268817,
+        "CatalogAcquire": 35.018545,
+        "Admission": 0.069324,
+        "Mediator": 106.275365,
+        "LeaseScope": 112.806426
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.020506999999980735,
+      "leaseMinusRecordedChildrenMs": 6.461737000000014,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 17,
+      "phasesMilliseconds": {
+        "Whole": 504.530112,
+        "Signature": 0.216036,
+        "Origin": 0.226004,
+        "CatalogAcquire": 27.871696,
+        "Admission": 0.070916,
+        "Mediator": 468.097522,
+        "ResponseConstruction": 0.007855,
+        "LeaseScope": 476.201336
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.015039999999999054,
+      "leaseMinusRecordedChildrenMs": 8.02504299999999,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 18,
+      "phasesMilliseconds": {
+        "Whole": 540.779871,
+        "Signature": 0.155319,
+        "Origin": 0.143446,
+        "CatalogAcquire": 28.118408,
+        "Admission": 0.053242,
+        "Mediator": 507.989972,
+        "ResponseConstruction": 0.009288,
+        "LeaseScope": 512.328584
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.034113999999931366,
+      "leaseMinusRecordedChildrenMs": 4.276082000000001,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 19,
+      "phasesMilliseconds": {
+        "Whole": 550.374346,
+        "Signature": 0.223761,
+        "Origin": 0.231064,
+        "CatalogAcquire": 29.248335,
+        "Admission": 0.088781,
+        "Mediator": 517.173504,
+        "ResponseConstruction": 0.010741,
+        "LeaseScope": 520.65731
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.013875999999982014,
+      "leaseMinusRecordedChildrenMs": 3.3842840000000325,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 20,
+      "phasesMilliseconds": {
+        "Whole": 512.930836,
+        "Signature": 0.172652,
+        "Origin": 0.160529,
+        "CatalogAcquire": 30.068001,
+        "Admission": 0.064804,
+        "Mediator": 474.970529,
+        "ResponseConstruction": 0.011311,
+        "LeaseScope": 482.503683
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.025971000000026834,
+      "leaseMinusRecordedChildrenMs": 7.4570390000000435,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 21,
+      "phasesMilliseconds": {
+        "Whole": 568.510841,
+        "Signature": 0.262945,
+        "Origin": 0.314375,
+        "CatalogAcquire": 33.896206,
+        "Admission": 0.078331,
+        "Mediator": 530.56535,
+        "ResponseConstruction": 0.008496,
+        "LeaseScope": 534.01406
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.023255000000062864,
+      "leaseMinusRecordedChildrenMs": 3.361882999999957,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 22,
+      "phasesMilliseconds": {
+        "Whole": 511.685398,
+        "Signature": 1.270255,
+        "Origin": 0.304295,
+        "CatalogAcquire": 30.670471,
+        "Admission": 0.065947,
+        "Mediator": 467.757569,
+        "ResponseConstruction": 0.02614,
+        "LeaseScope": 479.392504
+      },
+      "complete8": true,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.0478729999999814,
+      "leaseMinusRecordedChildrenMs": 11.54284799999999,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 23,
+      "phasesMilliseconds": {
+        "Whole": 70.037171,
+        "Signature": 0.242307,
+        "Origin": 0.22325,
+        "CatalogAcquire": 31.711849,
+        "Admission": 0.054825,
+        "Mediator": 21.173037,
+        "LeaseScope": 37.841602
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.018163000000008367,
+      "leaseMinusRecordedChildrenMs": 16.61374,
+      "residualIsNotExactRelease": true
+    },
+    {
+      "opaqueLocalOrdinal": 24,
+      "phasesMilliseconds": {
+        "Whole": 70.618619,
+        "Signature": 0.186338,
+        "Origin": 0.173624,
+        "CatalogAcquire": 24.48584,
+        "Admission": 0.068291,
+        "Mediator": 25.081159,
+        "LeaseScope": 45.75908
+      },
+      "complete8": false,
+      "wholeMinusSignatureOriginAcquireLeaseMs": 0.013736999999991895,
+      "leaseMinusRecordedChildrenMs": 20.609629999999996,
+      "residualIsNotExactRelease": true
+    }
+  ],
+  "complete18MediatorWholeShare": {
+    "median": 0.931053100292581,
+    "min": 0.9112432585208629,
+    "max": 0.9454762771490286
+  },
+  "complete18LeaseMinusRecordedChildrenMs": {
+    "n": 18,
+    "medianMs": 5.195374000000006,
+    "minMs": 3.102496999999959,
+    "p95NearestRankMs": 11.54284799999999,
+    "maxMs": 11.54284799999999
+  },
+  "wholeMinusSignatureOriginAcquireLeaseMs": {
+    "n": 24,
+    "medianMs": 0.01662249999998977,
+    "minMs": 0.009329000000093401,
+    "p95NearestRankMs": 0.6677159999998707,
+    "maxMs": 2.0005349999999567
+  },
+  "stage7Overlaps456": true,
+  "noExactReleaseResidual": true,
+  "noOutcomeCancellationInferenceForMissingStages": true,
+  "noClientPriorRunRootRequestOrDownstreamCorrelation": true,
+  "noMvcSerializationSocketOrOrdinaryLatencyBenefitClaim": true,
+  "noOverheadSubtraction": true
+}

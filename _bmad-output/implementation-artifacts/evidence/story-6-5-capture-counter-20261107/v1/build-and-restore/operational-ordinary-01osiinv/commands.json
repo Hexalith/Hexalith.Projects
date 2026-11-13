@@ -1,0 +1,64 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:49:47.047343+00:00",
+    "finishedUtc": "2026-11-07T09:49:55.920582+00:00",
+    "exitCode": 0,
+    "log": "service-defaults-force-producer.log",
+    "logSha256": "c7c7b985410fdf26aeb49d927e2eea58488e4788315892ae9795a0f18e480926"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:49:55.920932+00:00",
+    "finishedUtc": "2026-11-07T09:53:17.940979+00:00",
+    "exitCode": 0,
+    "log": "apphost-force-source-graph.log",
+    "logSha256": "6d0455707c6d0d8bfd7c7a8a12fba23ddc6690ed3bb2f7c42c7e896884fd4fa3"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:53:17.941643+00:00",
+    "finishedUtc": "2026-11-07T09:53:26.155417+00:00",
+    "exitCode": 0,
+    "log": "integration-force-copy-carrier.log",
+    "logSha256": "1ce13629e1fff27fa934764594de88bf741fa575bd0f6a41f780323c7fd334ae"
+  }
+]

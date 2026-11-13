@@ -1,0 +1,28 @@
+{
+  "readOnlyTargetValidationOnly": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+    "-target:Story65ValidateGatewayCompilerPaths",
+    "-getProperty:Story65GatewayLateGuardImported,_HXWFinalTargetsImported",
+    "-getItem:_Story65GatewayOriginalController,_Story65GatewayPrivateController,_Story65GatewayHelper,_Story65GatewayBootstrap,_Story65GatewayWritable"
+  ],
+  "exitCode": 0,
+  "privateSource1Helper1Bootstrap1Original0": true,
+  "allCurrentResolvedWritePathsIsolated": true,
+  "futureGeneratedPathsStillRequireLateBuildGuard": true,
+  "compilerManifestWriterNotExecuted": true,
+  "isolatedProducerOutputStillAbsent": true,
+  "source52App147GatewayBinObjGateway34Domain98Unchanged": true,
+  "stdoutSha256": "af29508e573374dc0643ef01fc3fd26c3b5fd46a4d5c296f4495984b97a5211a",
+  "priorConditionSyntaxFailurePreserved": "history/readonly-guard-condition-syntax",
+  "noBuildResolveReferencesCoreCompileAssemblyLoadOrHost": true
+}

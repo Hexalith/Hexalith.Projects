@@ -1,0 +1,18 @@
+--- a/driver/SubjectFixture.cs
++++ b/driver/SubjectFixture.cs
+@@ -63,13 +63,14 @@
+         IRouteCatalogRemoteBoundary? callerBoundary = RouteCatalogRemoteExecution.Current;
+         IRouteCatalogRemoteBoundary priorBoundary = Substitute.For<IRouteCatalogRemoteBoundary>();
+         RouteCatalogRemoteExecution.Current = priorBoundary;
++        IRouteCatalogRemoteBoundary? expectedReleaseBoundary = suppressEntry ? null : priorBoundary;
+         bool MarkerRestored() => test.PriorMarker ? items.Inner.TryGetValue(variant.AdmissionKey, out var value) && ReferenceEquals(value, priorMarker)
+             : !items.Inner.ContainsKey(variant.AdmissionKey);
+         async Task ReleaseAsync()
+         {
+             Interlocked.Increment(ref state.Releases); state.Observe("lease.release.begin");
+             state.MarkerRestoredAtRelease = MarkerRestored();
+-            state.RemoteBoundaryRestoredAtRelease = ReferenceEquals(RouteCatalogRemoteExecution.Current, priorBoundary);
++            state.RemoteBoundaryRestoredAtRelease = ReferenceEquals(RouteCatalogRemoteExecution.Current, expectedReleaseBoundary);
+             Check.Require(state.MarkerRestoredAtRelease && state.RemoteBoundaryRestoredAtRelease, "Original admission/remote scope was not restored before release.");
+             state.ReleaseEntered.TrySetResult();
+             if (test.Fault is "held-release" or "cancel-release") await state.ReleaseContinue.Task.ConfigureAwait(false);

@@ -1,0 +1,88 @@
+{
+  "preparationOnly": true,
+  "roles": [
+    {
+      "role": "projects",
+      "resource": "projects",
+      "sourceProject": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "entryAssemblyName": "Hexalith.Projects.Server",
+      "entryDll": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "nativeApphost": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server",
+      "domainServiceDll": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sdkDll": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll"
+    },
+    {
+      "role": "tenants",
+      "resource": "tenants",
+      "sourceProject": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+      "entryAssemblyName": "Hexalith.Tenants",
+      "entryDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants.dll",
+      "nativeApphost": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants",
+      "domainServiceDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sdkDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll"
+    },
+    {
+      "role": "folders",
+      "resource": "folders",
+      "sourceProject": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "entryAssemblyName": "Hexalith.Folders.Server",
+      "entryDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+      "nativeApphost": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server",
+      "domainServiceDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sdkDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll"
+    }
+  ],
+  "fixedIdentityJsonFields": [
+    "Role",
+    "Resource",
+    "SourceProject",
+    "Pid",
+    "StartTicks",
+    "RequiredCommandToken",
+    "ExecutableSha256",
+    "Files"
+  ],
+  "requiredFilesLabels": [
+    "target-entry-assembly",
+    "domain-service-assembly",
+    "sdk-assembly",
+    "owner-config",
+    "source-audit"
+  ],
+  "mappedLabels": [
+    "target-entry-assembly",
+    "domain-service-assembly",
+    "sdk-assembly"
+  ],
+  "nativeAndDotnetOnlyFixedCoordinates": true,
+  "applicationNameMustEqualSelectedEntryAssemblyName": true,
+  "gatewayRoleOrLabelsAccepted": false,
+  "ownershipRequiresExternalManagedDcpSourceProjectPidStartProof": true,
+  "collectorDoesNotIndependentlyEstablishDcpOwnership": true,
+  "rawArgumentsEnvironmentOrMapsPrinted": false,
+  "cli": [
+    "collect IDENTITY_JSON NEW_OUTPUT_DIRECTORY",
+    "analyze OWNED_OUTPUT_DIRECTORY"
+  ],
+  "sanitizedOutputAllowlist": [
+    "identity-checks.json",
+    "attached.json",
+    "collection-receipt.json",
+    "cpu-summary.json",
+    "cpu-samples.jsonl",
+    "supervisor-receipt.json"
+  ],
+  "builds": 0,
+  "restores": 0,
+  "loads": 0,
+  "attaches": 0,
+  "hosts": 0,
+  "markerOccurrenceExactlyOnce": true,
+  "nativeMarkerPosition": 0,
+  "dotnetMarkerPositions": "1, or2 only following literalexec at1",
+  "argv0MustEqualActualProcExeCoordinate": true,
+  "postMapExistingFreshHashComparedToPinnedHash": true,
+  "noAdditionalPostMapFileReadAdded": true,
+  "safeCommandSensitiveAndOptionWhitelistPreserved": true,
+  "usageLabel": "ReceiverCpuProbe (nonalgorithm diagnostic-label correction)"
+}

@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="Story65PrivateDelegatedClientSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <ItemGroup>
+      <Compile Remove="DelegatedOwnerQueryClient.cs" />
+      <Compile Include="/tmp/story65-delegated-client-prep-20261107/DelegatedOwnerQueryClient.private.cs" />
+      <Compile Include="/tmp/story65-delegated-client-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-delegated-client-prep-20261107/AdvisoryWaveBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

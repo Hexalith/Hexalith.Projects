@@ -1,0 +1,25 @@
+{
+  "omissions": [
+    {
+      "originalPath": "/tmp/story65-receiver-phase-diagnostic-20261107/managed/run.json",
+      "originalSha256": "2424363ac84ff4307b1f589ca6949760735f7d4768b3ba0c41d281bf6aa5d004",
+      "handling": "fixed allowlist projection only; no raw copy"
+    },
+    {
+      "originalPath": "/tmp/story65-receiver-phase-diagnostic-20261107/launcher-console.log",
+      "originalSha256": "f453433e27d4e285525e9989fcb1461b417508848464442cc18d68deac38685e",
+      "handling": "hash only; no raw output"
+    },
+    {
+      "originalPath": "/tmp/story65-receiver-phase-diagnostic-20261107/managed-command.json",
+      "originalSha256": "d0fbaa3e25ea46e44be0ea726098e995f1cc503782e3fd323b390e24f1c9886b",
+      "handling": "hash only; managed command may carry private coordinates"
+    },
+    {
+      "originalPath": "/tmp/story65-receiver-phase-diagnostic-20261107/cleanup-observation-1.json",
+      "originalSha256": "70d155d41c5452d501336ecab52b761722ad4c1ad0744cf3c7c40e82d9228cfd",
+      "handling": "use equivalent final count/absence projection; no raw identities/CIDs"
+    }
+  ],
+  "noRawRuntimeUrlAuthEnvErrorOutputOrContainerIdCopies": true
+}

@@ -1,0 +1,761 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "passed": true,
+  "nativeStarted": true,
+  "nativeProcessAndDescendantsAbsent": true,
+  "counterDirectoryEmpty": true,
+  "caseCount": 29,
+  "sourceDerivedExpectedCases": 29,
+  "historical29RetentionClaimed": false,
+  "ordinaryUniqueNativeCountUnchanged": 1038,
+  "processes": [
+    {
+      "selection": {
+        "alias": "workload-handler-full-partial-class",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+        "expectedExecutions": 28,
+        "expectedDisplayMultiset": [
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "4cd13979e8c2e40b5d31e643fd70563fd629d0d6b664ad2196e2eb86f52930f7",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "58edaba4a762d75336f9cbf3bd043d04229dd2bb0a2d89028e7dbc82622d8046",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "6db54cd3a4494ff0cc82a672c30ae8fd1b6031c5b8599e38e87538480d179e29",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "7868c81a822002e19a03be03815ba13e03066b2638490bb01e157639f4d3b2e2",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "9b58552eacbb95cee583b55238f7a4701bfec7e44333ce9e469533cb24c2b56f",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "be7c75439838fcce227b58b5d726383ad473e9632e2af07c7648fcc1c46a78ea",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+            "parsedXmlNameSha256": "d9abad47acb1a59c794362727e7c64b9680682659c9544fdfa0f291c84d74045",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "AssertionUnavailableDiagnosticNeverLeaksIssuerResolutionExceptionOrForwardedCredentials",
+            "parsedXmlNameSha256": "fb80b28af63a5abc56d6a00df85478b73a8d37c1142fdf25c1aae7e2af3ac364",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+            "parsedXmlNameSha256": "04aeb9464f8d88e980bd06104b2bfbaa75399230cba7620eaaa42268e9c49b31",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+            "parsedXmlNameSha256": "496e9ba797dd08375c2133d85a5f4fabd234f56289fd5ba6589895ef016aae43",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "EventStoreServerClients_AttachAssertionsThatTheDomainServiceReceiverAccepts",
+            "parsedXmlNameSha256": "dede93e21a25b247b72ebea1d5ff5742ff35f15c8470eed531dd0e563a6da8a2",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+            "parsedXmlNameSha256": "58a1122627bf342bf961d339fb89abcd7b9cd4517528b45b4b6c78fa6e24d736",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+            "parsedXmlNameSha256": "988c17e79ce2a573ded0fa461fc78d22d1b014a914aac4fc2fff921a0e07685e",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+            "parsedXmlNameSha256": "aa7e68325cd620392a03000a23f27b0bd9eb01c462182ab3c5f4215749c4684a",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "HostTimeProviderFrozenInThePast_DoesNotChangeIssuedLifetimesOrReceiverAcceptance",
+            "parsedXmlNameSha256": "16bda7e8bde1052223abcc3f24f9e6ac02f4d9b7e8b74f18f550eaae88f5d3d5",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "OidcLegacyQueriesRemainUnboundWhileExplicitAuthorityQueriesFailClosed",
+            "parsedXmlNameSha256": "3e2ee8d8d36bc847d0fcc1cb1750d8ea74daeea7b70e3f33bae68046094bfde9",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "SendAsync_LeavesOtherRequestsUntouched",
+            "parsedXmlNameSha256": "917799c5d368f164c713575bd00739d07980b6d4b32782ef8a4a3739d42a4d15",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "SendAsync_ReplacesForwardedCredentialsWithFreshAssertion",
+            "parsedXmlNameSha256": "15721f786f4a0d38ebc58207b8fc0028c0f06c76ee4018e416064c8b2bdca6ff",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b",
+            "multiplicity": 3
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "295c4b415bcc3674788cd3c6c67d1737623832c59fa7418a8adc936f8d3c73c9",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "3dde706a9998545c5c576eb7fe5105b9a94a58b34cad914f7a7669ec4da6960f",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "727c35abc63a52c72f5357602b1e3697f753304e59093faf4c3125ab67d95d95",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "76e13bc7e62584ab51907351f90b4c1d0256a04e8156f29fa299166429daaf12",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "77b24fd9b7a75c5d8491fb5679d4ec48114b9f59882c29edaa4d7d8e69d4f8b4",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "9a5d8eb28b586a0b1b76cf3fca15243196a387f4a6912a17f2c24e1c8fe157ec",
+            "multiplicity": 1
+          },
+          {
+            "type": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "method": "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+            "parsedXmlNameSha256": "c90d96d6f1cd90e63f89c0b2567a8737a231111d2fdbbb14e545596f5c787393",
+            "multiplicity": 1
+          }
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateServer": true,
+      "passed": true,
+      "formatterGuard": {
+        "specificMaxStringEnvironmentOverrideAbsent": true,
+        "runnerConfigurationStringLimitOverrideAbsent": true,
+        "unchangedDefaultStringLimit": 50
+      },
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+        "-xml",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/native-private-29-wh18q7ma/workload-handler-full-partial-class.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T16:42:14.590538+00:00",
+      "pid": 3747349,
+      "processGroup": 3747349,
+      "startTicks": "10733718",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T16:42:15.471710+00:00",
+      "xmlSha256": "656e9e3794ae6897fa3d88ce7c5143faa9b7c47bc855eb7e717196d8070debc3",
+      "logSha256": "b86935f12a756d9baf52f800a626082ed794ae8dea5500a9901c8d5b66ed8a41",
+      "caseCount": 28,
+      "actualParsedDisplayIdentityShaTuples": [
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "SendAsync_LeavesOtherRequestsUntouched",
+          "917799c5d368f164c713575bd00739d07980b6d4b32782ef8a4a3739d42a4d15"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "77b24fd9b7a75c5d8491fb5679d4ec48114b9f59882c29edaa4d7d8e69d4f8b4"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "3dde706a9998545c5c576eb7fe5105b9a94a58b34cad914f7a7669ec4da6960f"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "9a5d8eb28b586a0b1b76cf3fca15243196a387f4a6912a17f2c24e1c8fe157ec"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "76e13bc7e62584ab51907351f90b4c1d0256a04e8156f29fa299166429daaf12"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "c90d96d6f1cd90e63f89c0b2567a8737a231111d2fdbbb14e545596f5c787393"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "727c35abc63a52c72f5357602b1e3697f753304e59093faf4c3125ab67d95d95"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+          "295c4b415bcc3674788cd3c6c67d1737623832c59fa7418a8adc936f8d3c73c9"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "HostTimeProviderFrozenInThePast_DoesNotChangeIssuedLifetimesOrReceiverAcceptance",
+          "16bda7e8bde1052223abcc3f24f9e6ac02f4d9b7e8b74f18f550eaae88f5d3d5"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "OidcLegacyQueriesRemainUnboundWhileExplicitAuthorityQueriesFailClosed",
+          "3e2ee8d8d36bc847d0fcc1cb1750d8ea74daeea7b70e3f33bae68046094bfde9"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "be7c75439838fcce227b58b5d726383ad473e9632e2af07c7648fcc1c46a78ea"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "58edaba4a762d75336f9cbf3bd043d04229dd2bb0a2d89028e7dbc82622d8046"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "6db54cd3a4494ff0cc82a672c30ae8fd1b6031c5b8599e38e87538480d179e29"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "4cd13979e8c2e40b5d31e643fd70563fd629d0d6b664ad2196e2eb86f52930f7"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "9b58552eacbb95cee583b55238f7a4701bfec7e44333ce9e469533cb24c2b56f"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "7868c81a822002e19a03be03815ba13e03066b2638490bb01e157639f4d3b2e2"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+          "d9abad47acb1a59c794362727e7c64b9680682659c9544fdfa0f291c84d74045"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "SendAsync_ReplacesForwardedCredentialsWithFreshAssertion",
+          "15721f786f4a0d38ebc58207b8fc0028c0f06c76ee4018e416064c8b2bdca6ff"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+          "58a1122627bf342bf961d339fb89abcd7b9cd4517528b45b4b6c78fa6e24d736"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+          "988c17e79ce2a573ded0fa461fc78d22d1b014a914aac4fc2fff921a0e07685e"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+          "aa7e68325cd620392a03000a23f27b0bd9eb01c462182ab3c5f4215749c4684a"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "EventStoreServerClients_AttachAssertionsThatTheDomainServiceReceiverAccepts",
+          "dede93e21a25b247b72ebea1d5ff5742ff35f15c8470eed531dd0e563a6da8a2"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "AssertionUnavailableDiagnosticNeverLeaksIssuerResolutionExceptionOrForwardedCredentials",
+          "fb80b28af63a5abc56d6a00df85478b73a8d37c1142fdf25c1aae7e2af3ac364"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+          "496e9ba797dd08375c2133d85a5f4fabd234f56289fd5ba6589895ef016aae43"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+          "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+          "04aeb9464f8d88e980bd06104b2bfbaa75399230cba7620eaaa42268e9c49b31"
+        ]
+      ],
+      "exactRenderedNameMultiplicityCounterAccepted": true,
+      "noUniquePerInputClaimForStaticTriple": true,
+      "failureBodyValuesPersistedInDerivedReceipt": false,
+      "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "joint-native-domain-query-resilience",
+        "flag": "-method",
+        "filter": "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests.FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+        "expectedExecutions": 1,
+        "expectedDisplayMultiset": [
+          {
+            "type": "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests",
+            "method": "FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+            "parsedXmlNameSha256": "7365787f62fa7d2ed183bfa130911cd223eb10bc51d304b4e055b1834c8e7113",
+            "multiplicity": 1
+          }
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateServer": true,
+      "passed": true,
+      "formatterGuard": {
+        "specificMaxStringEnvironmentOverrideAbsent": true,
+        "runnerConfigurationStringLimitOverrideAbsent": true,
+        "unchangedDefaultStringLimit": 50
+      },
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-method",
+        "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests.FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+        "-xml",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/native-private-29-wh18q7ma/joint-native-domain-query-resilience.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T16:42:15.483153+00:00",
+      "pid": 3747699,
+      "processGroup": 3747699,
+      "startTicks": "10733807",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T16:42:16.475411+00:00",
+      "xmlSha256": "fd89ac8149f523ba092bc3fda7319d60edd48d6d8071ed7be379d81b6ce33302",
+      "logSha256": "0d45b7fb8f3f6feac4a9d0d6559badc4b3bd7c4177e26cc20acd0c24e8e0a9f7",
+      "caseCount": 1,
+      "actualParsedDisplayIdentityShaTuples": [
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests",
+          "FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+          "7365787f62fa7d2ed183bfa130911cd223eb10bc51d304b4e055b1834c8e7113"
+        ]
+      ],
+      "exactRenderedNameMultiplicityCounterAccepted": true,
+      "noUniquePerInputClaimForStaticTriple": true,
+      "failureBodyValuesPersistedInDerivedReceipt": false,
+      "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    }
+  ],
+  "build": {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false",
+      "-p:EnablePrivateCatalogInvocationProof=true",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0,
+    "logSha256": "8048a580f113dc4e8cf08ce0e7e6e6a42f0e4ae9e7ccd2e1bda6c989818e6a57",
+    "allSevenEmittedMappingEnvironmentValues": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+      "Configuration": "Debug"
+    }
+  },
+  "privateServerBefore": {
+    "producerSha256": "8ffb55f7c153235af9beb9f687024852ed6de2a9094f65f710fe825e31f73dbd",
+    "producerPdbSha256": "b1a4a485b4a2e54631672ee2cb4b5243d8ed539c9d300b33928c5fd091644f09",
+    "testCopySha256": "8ffb55f7c153235af9beb9f687024852ed6de2a9094f65f710fe825e31f73dbd",
+    "testCopyPdbSha256": "b1a4a485b4a2e54631672ee2cb4b5243d8ed539c9d300b33928c5fd091644f09",
+    "testAssemblySha256": "02e4158a10761d189a6f819eed1c8265496e3f83fe9c1e17df108ef656c4a5ad"
+  },
+  "ordinarySdkBefore": {
+    "knownEight": {
+      "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+      "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+      "allEightOrdinarySdkCopiesCoherent": true,
+      "copies": [
+        {
+          "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        }
+      ]
+    },
+    "nativeCopySha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "nativeCopyPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "nativeCopyOrdinary": true
+  },
+  "domain98Before": {
+    "all98DomainCopiesRetainRecordedOrdinaryHashes": true,
+    "count": 98,
+    "notClaimedAll98SameGeneration": true,
+    "activeOrdinaryProducerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+  },
+  "ordinaryRootServerBefore": {
+    "mode": "rebuilt-source",
+    "ordinaryServerSourceSha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d",
+    "priorBaselineProducerSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+    "priorBaselinePdbSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+    "currentProducerSha256": "e8c85b4644403d03159a3f00535f780c2ee1f4570d3756c7598745dcb5db4a26",
+    "currentProducerPdbSha256": "630652a70b1d8bd19d84c2f045678a0c50f2060be546e93825d418575e4688ac",
+    "allTenPrivateMarkersAbsent": true,
+    "rebuiltKnownOutputsCoherentWithCurrentProducer": true,
+    "untouchedRootServerTestsRetainPriorHashes": true,
+    "allTenNaturallyMatchPriorBaseline": false,
+    "allTenSameGenerationClaimed": false,
+    "copies": [
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e8c85b4644403d03159a3f00535f780c2ee1f4570d3756c7598745dcb5db4a26",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "630652a70b1d8bd19d84c2f045678a0c50f2060be546e93825d418575e4688ac",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e8c85b4644403d03159a3f00535f780c2ee1f4570d3756c7598745dcb5db4a26",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "630652a70b1d8bd19d84c2f045678a0c50f2060be546e93825d418575e4688ac",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/ref/Hexalith.Projects.Server.dll",
+        "kind": "ref",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/refint/Hexalith.Projects.Server.dll",
+        "kind": "refint",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e8c85b4644403d03159a3f00535f780c2ee1f4570d3756c7598745dcb5db4a26",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "630652a70b1d8bd19d84c2f045678a0c50f2060be546e93825d418575e4688ac",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      }
+    ]
+  },
+  "source54Match": true,
+  "allTwoMappedPrivateServer": true,
+  "actualParsedDisplayIdentityShaTuples": [
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "SendAsync_LeavesOtherRequestsUntouched",
+      "917799c5d368f164c713575bd00739d07980b6d4b32782ef8a4a3739d42a4d15"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "77b24fd9b7a75c5d8491fb5679d4ec48114b9f59882c29edaa4d7d8e69d4f8b4"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "3dde706a9998545c5c576eb7fe5105b9a94a58b34cad914f7a7669ec4da6960f"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "9a5d8eb28b586a0b1b76cf3fca15243196a387f4a6912a17f2c24e1c8fe157ec"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "0d57e0132a47323d42bac775814f6fa931580f1e3c9a194342b7d530c5ca6d4b"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "76e13bc7e62584ab51907351f90b4c1d0256a04e8156f29fa299166429daaf12"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "c90d96d6f1cd90e63f89c0b2567a8737a231111d2fdbbb14e545596f5c787393"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "727c35abc63a52c72f5357602b1e3697f753304e59093faf4c3125ab67d95d95"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "TryGetDomainServiceTarget_ResolvesOnlyCanonicalDomainServiceMethods",
+      "295c4b415bcc3674788cd3c6c67d1737623832c59fa7418a8adc936f8d3c73c9"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "HostTimeProviderFrozenInThePast_DoesNotChangeIssuedLifetimesOrReceiverAcceptance",
+      "16bda7e8bde1052223abcc3f24f9e6ac02f4d9b7e8b74f18f550eaae88f5d3d5"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "OidcLegacyQueriesRemainUnboundWhileExplicitAuthorityQueriesFailClosed",
+      "3e2ee8d8d36bc847d0fcc1cb1750d8ea74daeea7b70e3f33bae68046094bfde9"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "be7c75439838fcce227b58b5d726383ad473e9632e2af07c7648fcc1c46a78ea"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "58edaba4a762d75336f9cbf3bd043d04229dd2bb0a2d89028e7dbc82622d8046"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "6db54cd3a4494ff0cc82a672c30ae8fd1b6031c5b8599e38e87538480d179e29"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "4cd13979e8c2e40b5d31e643fd70563fd629d0d6b664ad2196e2eb86f52930f7"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "9b58552eacbb95cee583b55238f7a4701bfec7e44333ce9e469533cb24c2b56f"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "7868c81a822002e19a03be03815ba13e03066b2638490bb01e157639f4d3b2e2"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticBoundsAudienceWithoutChangingTargetOrIssuance",
+      "d9abad47acb1a59c794362727e7c64b9680682659c9544fdfa0f291c84d74045"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "SendAsync_ReplacesForwardedCredentialsWithFreshAssertion",
+      "15721f786f4a0d38ebc58207b8fc0028c0f06c76ee4018e416064c8b2bdca6ff"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+      "58a1122627bf342bf961d339fb89abcd7b9cd4517528b45b4b6c78fa6e24d736"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+      "988c17e79ce2a573ded0fa461fc78d22d1b014a914aac4fc2fff921a0e07685e"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "EventStoreServerClients_InAuthorityMode_AttachOnlyTheExactAudienceAndOperationToken",
+      "aa7e68325cd620392a03000a23f27b0bd9eb01c462182ab3c5f4215749c4684a"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "EventStoreServerClients_AttachAssertionsThatTheDomainServiceReceiverAccepts",
+      "dede93e21a25b247b72ebea1d5ff5742ff35f15c8470eed531dd0e563a6da8a2"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "AssertionUnavailableDiagnosticNeverLeaksIssuerResolutionExceptionOrForwardedCredentials",
+      "fb80b28af63a5abc56d6a00df85478b73a8d37c1142fdf25c1aae7e2af3ac364"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+      "496e9ba797dd08375c2133d85a5f4fabd234f56289fd5ba6589895ef016aae43"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+      "DomainRoleCaptureDoesNotPromoteForeignNamespacesOrScopes",
+      "04aeb9464f8d88e980bd06104b2bfbaa75399230cba7620eaaa42268e9c49b31"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests",
+      "FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+      "7365787f62fa7d2ed183bfa130911cd223eb10bc51d304b4e055b1834c8e7113"
+    ]
+  ],
+  "exactRenderedNameMultiset": true,
+  "staticMultiplicity3NoUniquePerSourceInputClaim": true
+}

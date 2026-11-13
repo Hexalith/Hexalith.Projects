@@ -1,0 +1,30 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "copyOracleWithoutRebuild": {
+    "sourceDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+    "sourcePdb": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.pdb",
+    "dllSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "isolatedDll": "/tmp/story65-invocation-transport-ops-prep-20261107/isolated-oracle/Hexalith.EventStore.ServiceDefaults.dll",
+    "isolatedPdb": "/tmp/story65-invocation-transport-ops-prep-20261107/isolated-oracle/Hexalith.EventStore.ServiceDefaults.pdb",
+    "method": "verified byte copy only after rootrelease; no ordinary rebuild"
+  },
+  "candidateBuildCommand": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-invocation-transport-ops-prep-20261107/sdk-scratch.props"
+  ],
+  "noRebuildCleanRestoreGlobalOutputOverrideOrAssemblyLoad": true
+}

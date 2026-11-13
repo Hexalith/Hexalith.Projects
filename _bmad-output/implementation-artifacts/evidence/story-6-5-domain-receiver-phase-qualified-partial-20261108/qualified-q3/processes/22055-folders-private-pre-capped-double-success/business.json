@@ -1,0 +1,42 @@
+{
+  "Mode": "pre-capped",
+  "Group": "double-success",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "filter-double-dispose-retry-success",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 0,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 2,
+        "ErrorType": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException",
+        "Faults": 1,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 179,
+        "MinimumLastDisposeTicks": 6486282,
+        "MaximumLastDisposeTicks": 7832918,
+        "FirstDisposeHoldTicks": 201122427,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [
+        90583
+      ],
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": false,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": true
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

@@ -1,0 +1,30 @@
+{
+  "label": "02-ordinary-09-projects-workers",
+  "argv": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "-c",
+    "Debug",
+    "-t:Rebuild",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:BuildProjectReferences=false"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "startedUtc": "2026-11-08T03:44:20.587295+00:00",
+  "buildCpuOverride": "2",
+  "pid": 532410,
+  "processGroup": 532410,
+  "startTicks": "14706462",
+  "timedOut": false,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "pidAbsent": true,
+  "finishedUtc": "2026-11-08T03:44:23.599529+00:00",
+  "logSha256": "672d48306e906874ff7e69bafff0cf2dea53d9dd1973a5f90515a08a87a51dd4"
+}

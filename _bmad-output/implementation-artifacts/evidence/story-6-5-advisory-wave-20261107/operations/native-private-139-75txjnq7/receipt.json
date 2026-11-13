@@ -1,0 +1,194 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "notAdditionalUniqueCasesBeyondExisting1038": true,
+  "passed": true,
+  "buildStarted": true,
+  "nativeStarted": true,
+  "nativeProcessAndDescendantsAbsent": true,
+  "counterDirectoryEmpty": true,
+  "build": {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false",
+      "-p:EnablePrivateCatalogInvocationProof=true",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T11:26:21.137319+00:00",
+    "finishedUtc": "2026-11-07T11:26:31.769860+00:00",
+    "exitCode": 0,
+    "logSha256": "0ab341c435df77765a5d9805b4501dbf9fcfaad7e926385cb3ff37467df535b6",
+    "allSevenMappingValues": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+      "Configuration": "Debug"
+    },
+    "sameTwoProofFlags": true,
+    "noOverlayHookOnTestBuild": true
+  },
+  "privateServerBefore": {
+    "producerSha256": "0e0438087aa5c88456603133594f11b804cc7f44e214127e558eaa9aab431e10",
+    "producerPdbSha256": "5aa3c525e7a2b5393e6301971879b91a32f1e2b1bd8b3e9d847f9a1b454138f3",
+    "testCopySha256": "0e0438087aa5c88456603133594f11b804cc7f44e214127e558eaa9aab431e10",
+    "testCopyPdbSha256": "5aa3c525e7a2b5393e6301971879b91a32f1e2b1bd8b3e9d847f9a1b454138f3",
+    "privateMarkersPresent": true,
+    "testAssemblySha256": "80973fbb774c8e7fe0be121a7c0993b5dcd8ce4d7480c50be8dcdc6c0139c804"
+  },
+  "ordinarySdkBefore": {
+    "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "allEightOrdinarySdkCopiesCoherent": true,
+    "copies": [
+      {
+        "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      }
+    ]
+  },
+  "native": {
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "-xml",
+      "/tmp/story65-advisory-wave-ops-prep-20261107/native-private-139-75txjnq7/native-139.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+    "startedUtc": "2026-11-07T11:26:31.793807+00:00",
+    "finishedUtc": "2026-11-07T11:26:37.791647+00:00",
+    "identity": {
+      "pid": 1276694,
+      "startTicks": "8839365",
+      "processGroup": 1276694
+    },
+    "exitCode": 0,
+    "logSha256": "60d5283ded2be461bcbf49522f47832f8dc8c7b4ed3a6fa33d84c0e62e37cbd3",
+    "xmlSha256": "6d6113bfb5cfff7896a17ece7ae35e32ef1ea0899946d77fc04d918ff77a28a4",
+    "privateServerObservedMapped": true,
+    "acceptedMappedAliases": [
+      "test-copy"
+    ],
+    "mappedObservationRequired": true,
+    "processAndDescendantsAbsent": true,
+    "remainingOwnedGroupIdentities": [],
+    "targetOrGroupSignalsSent": false
+  },
+  "ordinarySdkAfter": {
+    "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "allEightOrdinarySdkCopiesCoherent": true,
+    "copies": [
+      {
+        "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      },
+      {
+        "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+        "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+        "ordinaryNoPrivateMarker": true
+      }
+    ]
+  },
+  "caseCount": 139,
+  "exactHistoricalCaseSetRetained": true,
+  "source50Match": true,
+  "ownedNativeExitCode": 0
+}

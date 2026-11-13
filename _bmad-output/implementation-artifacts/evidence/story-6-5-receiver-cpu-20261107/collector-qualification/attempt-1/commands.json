@@ -1,0 +1,192 @@
+[
+  {
+    "command": [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector/ReceiverCpuProbe.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector/NuGet.Config",
+      "--ignore-failed-sources",
+      "--disable-parallel",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector",
+    "startedUtc": "2026-11-07T19:18:01.998503+00:00",
+    "environmentRemoved": [
+      "AfterMicrosoftNETSdkTargets",
+      "Configuration",
+      "CustomAfterDirectoryBuildTargets",
+      "CustomAfterMicrosoftCommonProps",
+      "CustomBeforeDirectoryBuildProps",
+      "CustomBeforeDirectoryBuildTargets",
+      "CustomBeforeMicrosoftCommonTargets",
+      "DOTNET_PROCESSOR_COUNT",
+      "HEXALITH_SOURCE_MAPPING_HASH"
+    ],
+    "explicitEnvironment": {
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+    },
+    "runtimeProcessorOverride": "2",
+    "started": true,
+    "completed": true,
+    "targetAttachCalls": 0,
+    "applicationHostsStarted": 0,
+    "exitCode": 0,
+    "finishedUtc": "2026-11-07T19:18:02.594082+00:00",
+    "stdoutSha256": "2e211496b81b3c2106d0dfac405aedec77c39f0c77c1b3063c6a6bf3729f3d60",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector/ReceiverCpuProbe.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "--disable-build-servers",
+      "-m:1",
+      "/nr:false",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector",
+    "startedUtc": "2026-11-07T19:18:02.676461+00:00",
+    "environmentRemoved": [
+      "AfterMicrosoftNETSdkTargets",
+      "Configuration",
+      "CustomAfterDirectoryBuildTargets",
+      "CustomAfterMicrosoftCommonProps",
+      "CustomBeforeDirectoryBuildProps",
+      "CustomBeforeDirectoryBuildTargets",
+      "CustomBeforeMicrosoftCommonTargets",
+      "DOTNET_PROCESSOR_COUNT",
+      "HEXALITH_SOURCE_MAPPING_HASH"
+    ],
+    "explicitEnvironment": {
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+    },
+    "runtimeProcessorOverride": "2",
+    "started": true,
+    "completed": true,
+    "targetAttachCalls": 0,
+    "applicationHostsStarted": 0,
+    "exitCode": 0,
+    "finishedUtc": "2026-11-07T19:18:04.226109+00:00",
+    "stdoutSha256": "8ee9541bd435e62780f5049c5285426d8b2010b89820a112ffa0d28d3b65f566",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/CollectorSmoke.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/NuGet.Config",
+      "--ignore-failed-sources",
+      "--disable-parallel",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke",
+    "startedUtc": "2026-11-07T19:18:04.311466+00:00",
+    "environmentRemoved": [
+      "AfterMicrosoftNETSdkTargets",
+      "Configuration",
+      "CustomAfterDirectoryBuildTargets",
+      "CustomAfterMicrosoftCommonProps",
+      "CustomBeforeDirectoryBuildProps",
+      "CustomBeforeDirectoryBuildTargets",
+      "CustomBeforeMicrosoftCommonTargets",
+      "DOTNET_PROCESSOR_COUNT",
+      "HEXALITH_SOURCE_MAPPING_HASH"
+    ],
+    "explicitEnvironment": {
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+    },
+    "runtimeProcessorOverride": "2",
+    "started": true,
+    "completed": true,
+    "targetAttachCalls": 0,
+    "applicationHostsStarted": 0,
+    "exitCode": 0,
+    "finishedUtc": "2026-11-07T19:18:04.875728+00:00",
+    "stdoutSha256": "a2aa8a7752f6c8a3156a87db3f5e30744976035f027fdc682b662f5c913f1acc",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/CollectorSmoke.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "--disable-build-servers",
+      "-m:1",
+      "/nr:false",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke",
+    "startedUtc": "2026-11-07T19:18:04.960659+00:00",
+    "environmentRemoved": [
+      "AfterMicrosoftNETSdkTargets",
+      "Configuration",
+      "CustomAfterDirectoryBuildTargets",
+      "CustomAfterMicrosoftCommonProps",
+      "CustomBeforeDirectoryBuildProps",
+      "CustomBeforeDirectoryBuildTargets",
+      "CustomBeforeMicrosoftCommonTargets",
+      "DOTNET_PROCESSOR_COUNT",
+      "HEXALITH_SOURCE_MAPPING_HASH"
+    ],
+    "explicitEnvironment": {
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+    },
+    "runtimeProcessorOverride": "2",
+    "started": true,
+    "completed": true,
+    "targetAttachCalls": 0,
+    "applicationHostsStarted": 0,
+    "exitCode": 0,
+    "finishedUtc": "2026-11-07T19:18:06.271225+00:00",
+    "stdoutSha256": "299d60990f85c6f4da28c20f782554b5a20ae8388e98542308c7bc5015ef1217",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "command": [
+      "/home/administrator/.dotnet/dotnet",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/bin/Debug/net10.0/ReceiverCpuGuardSmoke.dll",
+      "/tmp/story65-receiver-cpu-prep-20261107/collector/bin/Debug/net10.0/ReceiverCpuProbe.dll"
+    ],
+    "cwd": "/tmp/story65-receiver-cpu-prep-20261107",
+    "startedUtc": "2026-11-07T19:18:06.352002+00:00",
+    "environmentRemoved": [
+      "AfterMicrosoftNETSdkTargets",
+      "Configuration",
+      "CustomAfterDirectoryBuildTargets",
+      "CustomAfterMicrosoftCommonProps",
+      "CustomBeforeDirectoryBuildProps",
+      "CustomBeforeDirectoryBuildTargets",
+      "CustomBeforeMicrosoftCommonTargets",
+      "DOTNET_PROCESSOR_COUNT",
+      "HEXALITH_SOURCE_MAPPING_HASH"
+    ],
+    "explicitEnvironment": {},
+    "runtimeProcessorOverride": null,
+    "started": true,
+    "completed": true,
+    "targetAttachCalls": 0,
+    "applicationHostsStarted": 0,
+    "exitCode": 1,
+    "finishedUtc": "2026-11-07T19:18:06.399743+00:00",
+    "stdoutSha256": "3a5d0dbdfc49a5bdde4048f0ee0688a38974c8bc6d174bcde8684236728afe14",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

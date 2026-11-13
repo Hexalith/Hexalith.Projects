@@ -1,0 +1,162 @@
+{
+  "sourceCommandsPath": "/tmp/story65-receiver-phase-prep-20261107/driver-commands.json",
+  "sourceCommandsSha256": "b6232839a53adff0695c37dd8389556777aaf28c420cc1230c296aabaf802cd0",
+  "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+  "restoreArgv": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "buildArgv": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "removeInheritedEnvironment": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "CustomAfterMicrosoftCommonTargets",
+    "HEXALITH_SOURCE_MAPPING_PATH",
+    "HexalithSourceMappingHash",
+    "HexalithSourceMappingMode",
+    "DOTNET_ADDITIONAL_DEPS",
+    "DOTNET_SHARED_STORE"
+  ],
+  "explicitBuildEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "runtimeProcessorOverride": null,
+  "sourceQualificationReady": false,
+  "compilationExecutionReleased": false,
+  "sdkAssemblyLoadFactsOrWindowExecutionReleased": false,
+  "allStandaloneNoProjectOrPackageReferences": true,
+  "postBuildRuntimeManifestReviewRequired": true
+}

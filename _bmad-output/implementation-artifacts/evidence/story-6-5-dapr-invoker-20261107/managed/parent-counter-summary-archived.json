@@ -1,0 +1,140 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRawSha256": "6b5a0e332158e721de2dcff0e75cd681b48be6efd703882f7c498f9d47997eba",
+  "captures": 25,
+  "rows": 186,
+  "stage6Overlaps345": true,
+  "stage7Overlaps23456": true,
+  "noClientRootRequestOrPriorRunPairing": true,
+  "noMissingStageOutcomeInference": true,
+  "noExactLeaseReleaseResidual": true,
+  "millisecondsByStage": {
+    "WholeInvoker": {
+      "count": 25,
+      "median": 403.543781,
+      "minimum": 0.555706,
+      "maximum": 2101.687244
+    },
+    "CatalogAcquire": {
+      "count": 25,
+      "median": 29.40808,
+      "minimum": 0.553642,
+      "maximum": 45.256943
+    },
+    "ResolveAndRegistration": {
+      "count": 23,
+      "median": 0.016351,
+      "minimum": 0.010471,
+      "maximum": 0.038104
+    },
+    "DaprRequestAndAuthorityBinding": {
+      "count": 23,
+      "median": 0.065105,
+      "minimum": 0.04144,
+      "maximum": 0.11195
+    },
+    "CreateClientAndSendDefaultBuffering": {
+      "count": 23,
+      "median": 389.701122,
+      "minimum": 1.291963,
+      "maximum": 2065.719093
+    },
+    "JsonBody": {
+      "count": 21,
+      "median": 0.033685,
+      "minimum": 0.02081,
+      "maximum": 0.105083
+    },
+    "OverlappingHttpOwnership": {
+      "count": 23,
+      "median": 389.809602,
+      "minimum": 1.335165,
+      "maximum": 2065.824116
+    },
+    "OverlappingLeaseOwnership": {
+      "count": 23,
+      "median": 393.24383,
+      "minimum": 17.394024,
+      "maximum": 2073.697599
+    }
+  },
+  "stageSetCounts": [
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire",
+        "ResolveAndRegistration",
+        "DaprRequestAndAuthorityBinding",
+        "CreateClientAndSendDefaultBuffering",
+        "JsonBody",
+        "OverlappingHttpOwnership",
+        "OverlappingLeaseOwnership"
+      ],
+      "captures": 21
+    },
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire"
+      ],
+      "captures": 2
+    },
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire",
+        "ResolveAndRegistration",
+        "DaprRequestAndAuthorityBinding",
+        "CreateClientAndSendDefaultBuffering",
+        "OverlappingHttpOwnership",
+        "OverlappingLeaseOwnership"
+      ],
+      "captures": 2
+    }
+  ],
+  "withinSameCapturePercentOfWhole": {
+    "CatalogAcquire": {
+      "count": 25,
+      "median": 7.626021972955636,
+      "minimum": 1.1539381967467888,
+      "maximum": 99.98476908749824
+    },
+    "ResolveAndRegistration": {
+      "count": 23,
+      "median": 0.003794601415394566,
+      "minimum": 0.0006799065599801683,
+      "maximum": 0.03872105373965803
+    },
+    "DaprRequestAndAuthorityBinding": {
+      "count": 23,
+      "median": 0.015657192607341337,
+      "minimum": 0.002608027586270326,
+      "maximum": 0.16628051012188635
+    },
+    "CreateClientAndSendDefaultBuffering": {
+      "count": 23,
+      "median": 91.26105454386932,
+      "minimum": 2.825427864476527,
+      "maximum": 98.41951441255232
+    },
+    "JsonBody": {
+      "count": 21,
+      "median": 0.008400729782978268,
+      "minimum": 0.0009901568399108577,
+      "maximum": 0.023142231199806722
+    },
+    "OverlappingHttpOwnership": {
+      "count": 23,
+      "median": 91.29195889784157,
+      "minimum": 2.9199074545275696,
+      "maximum": 98.42451814839285
+    },
+    "OverlappingLeaseOwnership": {
+      "count": 23,
+      "median": 92.3929722857037,
+      "minimum": 38.03944856390892,
+      "maximum": 98.84587910045096
+    }
+  }
+}

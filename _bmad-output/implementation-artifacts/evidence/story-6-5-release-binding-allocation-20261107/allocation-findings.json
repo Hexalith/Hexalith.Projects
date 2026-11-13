@@ -1,0 +1,120 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "collectionBeginUtc": "2026-11-07T05:59:55.1372142Z",
+  "collectionEndUtc": "2026-11-07T06:00:03.4709052Z",
+  "collectionReason": "duration",
+  "durationStopDrainRundownSucceeded": true,
+  "collectedBytes": 45227418,
+  "sampledAllocationByteEstimates": 6897291872,
+  "sampleCount": 54733,
+  "topTypes": [
+    {
+      "type": "System.Byte[]",
+      "totals": {
+        "Count": 17740,
+        "SampledBytes": 2881200096,
+        "ObservedObjectBytes": 1757909464
+      }
+    },
+    {
+      "type": "System.String",
+      "totals": {
+        "Count": 17954,
+        "SampledBytes": 1984906232,
+        "ObservedObjectBytes": 129982272
+      }
+    },
+    {
+      "type": "System.String[]",
+      "totals": {
+        "Count": 1535,
+        "SampledBytes": 163847456,
+        "ObservedObjectBytes": 194904
+      }
+    },
+    {
+      "type": "System.Int32[]",
+      "totals": {
+        "Count": 927,
+        "SampledBytes": 98902808,
+        "ObservedObjectBytes": 61560
+      }
+    },
+    {
+      "type": "System.Text.Json.JsonProperty[]",
+      "totals": {
+        "Count": 600,
+        "SampledBytes": 63990640,
+        "ObservedObjectBytes": 73536
+      }
+    },
+    {
+      "type": "Entry[System.String,System.Text.Json.Nodes.JsonNode][]",
+      "totals": {
+        "Count": 581,
+        "SampledBytes": 62077960,
+        "ObservedObjectBytes": 100464
+      }
+    },
+    {
+      "type": "OrderedIterator`2[System.Text.Json.JsonProperty,System.String]",
+      "totals": {
+        "Count": 561,
+        "SampledBytes": 59799624,
+        "ObservedObjectBytes": 53856
+      }
+    },
+    {
+      "type": "System.Comparison`1[System.Int32]",
+      "totals": {
+        "Count": 555,
+        "SampledBytes": 59197512,
+        "ObservedObjectBytes": 35520
+      }
+    },
+    {
+      "type": "System.Text.Json.Nodes.JsonValuePrimitive`1[System.String]",
+      "totals": {
+        "Count": 535,
+        "SampledBytes": 57133632,
+        "ObservedObjectBytes": 29960
+      }
+    },
+    {
+      "type": "System.Text.Json.Schema.JsonSchema",
+      "totals": {
+        "Count": 531,
+        "SampledBytes": 56790208,
+        "ObservedObjectBytes": 97704
+      }
+    },
+    {
+      "type": "System.Text.Json.WriteStackFrame[]",
+      "totals": {
+        "Count": 507,
+        "SampledBytes": 54172104,
+        "ObservedObjectBytes": 159336
+      }
+    },
+    {
+      "type": "System.Collections.Generic.List`1[System.String]",
+      "totals": {
+        "Count": 436,
+        "SampledBytes": 46471080,
+        "ObservedObjectBytes": 13952
+      }
+    }
+  ],
+  "noExactPerTypeAllocationClaim": true,
+  "individualRowsAndFrameDepthCapped": "See privacy-and-coverage.json; aggregate groups cover all54733 events.",
+  "conclusion": "Large allocation persists in this ordinary no-overlay Gateway; tracked image pool rent allocations were separately proven small. Full caller/stack analysis is needed to select a repair.",
+  "managedMultipleAttempts": 30,
+  "managedMultipleVerifiedPositives": 0,
+  "managedMultipleExternalMedianMs": 2396.5113,
+  "fixtureElapsedIncludesLaterEvidenceReads": true,
+  "nativeQualificationUniquePasses": 986,
+  "nativeQualificationOwner": 360,
+  "nativeQualificationProjects": 626,
+  "nativeQualificationDoesNotReplaceActualBrowserAcceptance": true
+}

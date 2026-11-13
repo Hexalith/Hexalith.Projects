@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-outbound-assertion-prep-20261107/AssertionProof.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "cwd": "/tmp/story65-outbound-assertion-prep-20261107",
+  "exitCode": 0,
+  "elapsedSeconds": 1.7234730659984052,
+  "buildOnlyProcessorOverride": "2",
+  "clearedMappingHooks": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "setEnv": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "logSha256": "14a56f9eb3fd53ebf5053f137e9f5333ed6fbe06857b5a4ed937e893072d95cb"
+}

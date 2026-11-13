@@ -1,0 +1,642 @@
+{
+  "saveOnly": true,
+  "noRuntimeOrSourceRepairDuringSave": true,
+  "copies": [
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/DESIGN.md",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/DESIGN.md",
+      "sha256": "967fe2e2e183c93697f4033b790469c68945baa169ab33de8f1bb5897261f621",
+      "bytes": 11268
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/adaptation.diff",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/adaptation.diff",
+      "sha256": "3506cb04a2fa8df80089bf4ab3cad4e935409a5064008d02c8973e33d7e97c88",
+      "bytes": 21403
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/closed-availability-observation.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/closed-availability-observation.json",
+      "sha256": "aa2983ef96cb92a903c7791794e5dad6c5ad28ae6a113f1722caddf7cfeddc83",
+      "bytes": 592
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/collect_window.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/collect_window.py",
+      "sha256": "5077e645d6f7cc1f90fb791e104aba967a7428d942beea6091f7d3a27eba76eb",
+      "bytes": 6125
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/commands.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/commands.json",
+      "sha256": "bd68f360e8b5a29034e578c4e2343ff80f2d027f4b5b730ec2cd70da7953f682",
+      "bytes": 1246
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/companion_latency.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/companion_latency.py",
+      "sha256": "c92a37a9762f7587aae69b7e2a03fc2d2bfb346f52d86dff177d796236816651",
+      "bytes": 3398
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/guard_cases.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/guard_cases.py",
+      "sha256": "71784ce7cdedfbee0a49d6555188e8eb218e53625bb9a881aa7197620cedeb4f",
+      "bytes": 10929
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/identity_guard_cases.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/identity_guard_cases.py",
+      "sha256": "b197f3d5b5322ca09798f32165245759a3506c1be5649b3dca3ec61d84209762",
+      "bytes": 9024
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/metrics_core.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/metrics_core.py",
+      "sha256": "47ee5fda10dea27391d56055687135a0138be7f734c3c7f50ce233dd8fafece1",
+      "bytes": 10901
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/plan.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/plan.json",
+      "sha256": "e9c82c47cd15a9657babcb8f2654655cd0bec5eb09d61f20ff0c34d9b93d3916",
+      "bytes": 3138
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/preparation-receipt.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/preparation-receipt.json",
+      "sha256": "966cb9008813c4937e9465e67751b234d593adba397675797072ececfc8f158b",
+      "bytes": 37526
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-20261108/sidecar_identity.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-20261108/sidecar_identity.py",
+      "sha256": "6886404fbe290970a52de26018569cefa8581a5e3fbe75889ab25649140337a9",
+      "bytes": 9460
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/DESIGN.md",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/DESIGN.md",
+      "sha256": "c2623e9e63a769347637e5fcabbeae924c28dd8bd0cc53d3484fd37a0e967a9d",
+      "bytes": 10399
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/closed-availability-observation.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/closed-availability-observation.json",
+      "sha256": "aa2983ef96cb92a903c7791794e5dad6c5ad28ae6a113f1722caddf7cfeddc83",
+      "bytes": 592
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/collect_window.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/collect_window.py",
+      "sha256": "5077e645d6f7cc1f90fb791e104aba967a7428d942beea6091f7d3a27eba76eb",
+      "bytes": 6125
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/commands.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/commands.json",
+      "sha256": "8353f117660d4e70e351d245702d90e8d83d87d28ac61f9efa59c9970504bb2b",
+      "bytes": 1165
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/companion_latency.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/companion_latency.py",
+      "sha256": "c92a37a9762f7587aae69b7e2a03fc2d2bfb346f52d86dff177d796236816651",
+      "bytes": 3398
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/guard_cases.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/guard_cases.py",
+      "sha256": "71784ce7cdedfbee0a49d6555188e8eb218e53625bb9a881aa7197620cedeb4f",
+      "bytes": 10929
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/metrics_core.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/metrics_core.py",
+      "sha256": "3e0fb3804e330a21d87b788944eb4161cea36b8c2086d55930cd95d07561790a",
+      "bytes": 10849
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/plan.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/plan.json",
+      "sha256": "355b4fee0a462b5985a1547511714ee77af8104c7d056b06448c836fd53c0763",
+      "bytes": 2790
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/preparation-receipt.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/preparation-receipt.json",
+      "sha256": "ad2715a1a441037f00a3f5d44e609ec7e1d378292f15ff26eece92bfacbeb3e2",
+      "bytes": 36961
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/sidecar_identity.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/ad2715a1/sidecar_identity.py",
+      "sha256": "6886404fbe290970a52de26018569cefa8581a5e3fbe75889ab25649140337a9",
+      "bytes": 9460
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/DESIGN.md",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/DESIGN.md",
+      "sha256": "6534fa9831c9aaf11bf57685ff49aae95375196f4fba2950047cf995a4d2ed9f",
+      "bytes": 9901
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/closed-availability-observation.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/closed-availability-observation.json",
+      "sha256": "aa2983ef96cb92a903c7791794e5dad6c5ad28ae6a113f1722caddf7cfeddc83",
+      "bytes": 592
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/collect_window.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/collect_window.py",
+      "sha256": "5077e645d6f7cc1f90fb791e104aba967a7428d942beea6091f7d3a27eba76eb",
+      "bytes": 6125
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/commands.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/commands.json",
+      "sha256": "8353f117660d4e70e351d245702d90e8d83d87d28ac61f9efa59c9970504bb2b",
+      "bytes": 1165
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/companion_latency.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/companion_latency.py",
+      "sha256": "c92a37a9762f7587aae69b7e2a03fc2d2bfb346f52d86dff177d796236816651",
+      "bytes": 3398
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/guard_cases.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/guard_cases.py",
+      "sha256": "71784ce7cdedfbee0a49d6555188e8eb218e53625bb9a881aa7197620cedeb4f",
+      "bytes": 10929
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/metrics_core.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/metrics_core.py",
+      "sha256": "3e0fb3804e330a21d87b788944eb4161cea36b8c2086d55930cd95d07561790a",
+      "bytes": 10849
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/plan.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/plan.json",
+      "sha256": "53129927343860b23e7c5289afca22c79b1e6389ea71097313ef8ad1c498e6c1",
+      "bytes": 2504
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/preparation-receipt.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/preparation-receipt.json",
+      "sha256": "c5473e5e4b128df45b95a86747400a54c3e8d81c62583907fba6b1b84a8c2d1d",
+      "bytes": 36772
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/sidecar_identity.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-prep-history-20261108/c5473e5e/sidecar_identity.py",
+      "sha256": "cc3cf2fabe2f59bb8677f8dc9ebb73fb7e5979bf6652222537c79922a05e17a6",
+      "bytes": 8956
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-guard-results-20261108/qualification-summary.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-guard-results-20261108/qualification-summary.json",
+      "sha256": "f6e72a35019ccabe1c02e50e3591e2929424216ef2de9d3e89802ca810cb1c4f",
+      "bytes": 1491
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-guard-results-20261108/root-release.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-guard-results-20261108/root-release.json",
+      "sha256": "4a40257f0dd6d794aefd1bd1dde67ae36d6e40aab04dc54aef527d06cdfa88a8",
+      "bytes": 24562
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/README.md",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/README.md",
+      "sha256": "0cc1dc13a7ac5b5ca43119bfffd18dbeeca55d754e95cd950c0932732dc7b900",
+      "bytes": 6281
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/adaptation.diff",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/adaptation.diff",
+      "sha256": "06318a694b3cdab246b7f58eb647cbc51654c37e8d09d0b2e643f39ba4a70f1a",
+      "bytes": 57259
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/audit.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/audit.py",
+      "sha256": "e03aebe2e34e0b57c62da556a75e6e2aef4fe57c956052a5613ab8e690a57142",
+      "bytes": 4455
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/commands.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/commands.json",
+      "sha256": "418158a1b610be1d290a40f430d2c0f55b10811b4d687263cc574c788a370ea7",
+      "bytes": 683
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/common.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/common.py",
+      "sha256": "aeb2ed221622a7fcd77714c248741084d4c69e2d93e1bbf38661ed06f679af19",
+      "bytes": 6244
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/current-app149-baseline.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/current-app149-baseline.json",
+      "sha256": "18745b4744897cbc481b231f75b43a7731eec80aa19c97fd1454d75db4afd73c",
+      "bytes": 36771
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/execution-pins.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/execution-pins.json",
+      "sha256": "bc63f04b6f58d909b332ec529f6747cd5685347e3b30f782bf33825d771481c8",
+      "bytes": 30335
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/ordinary-binding.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/ordinary-binding.json",
+      "sha256": "2c052367feaa7efb4d188fc0bfb268fadb9dc771b720fd0b2faa282c74d18ae3",
+      "bytes": 39201
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/plan.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/plan.json",
+      "sha256": "cb09b186debf2d8e73178a6f3d02dc1ce0c0d3bf5e92488dee1d1f75ac35d214",
+      "bytes": 2171
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/preparation-receipt.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/preparation-receipt.json",
+      "sha256": "cd30ceb6b9dc289c63316d0c4e5c9e83920fca9ee47addecc9c3cd4ade56217f",
+      "bytes": 41397
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/provenance.json",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/provenance.json",
+      "sha256": "c095f80cab7093d0134967a04f4a29e2cf9d85b21fe9a073d8a88fdcd917da50",
+      "bytes": 1945
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/supervise.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/supervise.py",
+      "sha256": "c3cced2fe08ecbfe9c89ef30386724886985d33dd4a41fcee2ca9fb3aade4e28",
+      "bytes": 6765
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metrics-integration-prep-20261108/watch.py",
+      "destination": "temp-sources/story65-dapr-retry-metrics-integration-prep-20261108/watch.py",
+      "sha256": "50193a24ecd3be8bccc371e4462f7283fb0f05ed0dba56385c61076777e6cc7a",
+      "bytes": 10982
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/FINDINGS.md",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/FINDINGS.md",
+      "sha256": "b9be42eea4e4a51f806d05e1873c94e91c29207b5f9530de9fe12127bc2910eb",
+      "bytes": 7795
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/SHA256SUMS",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/SHA256SUMS",
+      "sha256": "629a215598bc94c429c2122d2a05c69c5567b38fde5b073463436e4a2fb0ccbb",
+      "bytes": 2428
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/backoff-context.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/backoff-context.go",
+      "sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "bytes": 1110
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/backoff-exponential.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/backoff-exponential.go",
+      "sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "bytes": 7495
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/backoff-retry.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/backoff-retry.go",
+      "sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "bytes": 3773
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/backoff-tries.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/backoff-tries.go",
+      "sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "bytes": 724
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-component-monitoring.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-component-monitoring.go",
+      "sha256": "9305f14c2faa40de7ff097dc9dd7f9b19520a2adff5e5e0c89be5b1b78791449",
+      "bytes": 23338
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-go.mod",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-go.mod",
+      "sha256": "d218290004fa0583025e5a21d6478e6c1dfa07953102eb0288a0cdf433ae50d8",
+      "bytes": 29162
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-http-monitoring.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-http-monitoring.go",
+      "sha256": "e5eef4bb47dc230b63dbf3ded5a53b2e2f32c844fe54db2e18284e4a0bff732b",
+      "bytes": 13195
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-exporter.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-exporter.go",
+      "sha256": "dc44d69d8ae4401b4436b36113ba4849245466d91043c0be326ef90bf464b2d8",
+      "bytes": 4444
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-meter.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-meter.go",
+      "sha256": "1704162dbb312713dd5445e8798a690e7426c1e1056543e85e6c1596bf3f7195",
+      "bytes": 1282
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-utils.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-metrics-utils.go",
+      "sha256": "ef1b9b25c40e9005e246b377c18e404ed673a9aa04ab2c98a5cb5ffc8d07856e",
+      "bytes": 3377
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-metrics.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-metrics.go",
+      "sha256": "8dbce213d714433227d88da0421ca3e1b4ea4a3aa9bfb27dd72413dc6e7029fc",
+      "bytes": 3580
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-metrics.md",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-metrics.md",
+      "sha256": "b6a4fda9c0b55b202967e7f9cc5243e1ecf0ae8cd30933a455066a1ec546d1ef",
+      "bytes": 11835
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-policy.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-policy.go",
+      "sha256": "14a92807ca6aae49f75f048d16b8a3b306643b85e7931abc1aa0a1da62b964d3",
+      "bytes": 10904
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-monitoring-test.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-monitoring-test.go",
+      "sha256": "6d6e177d50c9dc99dfb2129edc70cfe45e145292ca52c4391f2494c0e36cb527",
+      "bytes": 23281
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-monitoring.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-monitoring.go",
+      "sha256": "ac8dbc512b1be8e05f96f874e3d88e642b7948b76405570310adbdec40fa4ca0",
+      "bytes": 6500
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-types.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency-types.go",
+      "sha256": "35ae34f15e5d6dce235797c7bba9af4b67f17e1ca46cac10d04db5fb66f344cf",
+      "bytes": 6453
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-resiliency.go",
+      "sha256": "faf488ed5a6a323853bb9b7af4702397dfd79203cae8ca535dc238fa51e4f6df",
+      "bytes": 36417
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/dapr-service-monitoring.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/dapr-service-monitoring.go",
+      "sha256": "364d658c5c7c9d67db7ea2bd9c9e93d1b38a96c029f22b84c1bbad5e91e54baf",
+      "bytes": 27127
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/kit-retry.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/kit-retry.go",
+      "sha256": "3598378437039484bdfb644f0ae51574a9463eab78926a2730b356557fd26159",
+      "bytes": 6857
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/local-source-inputs.json",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/local-source-inputs.json",
+      "sha256": "8e3d304b2f0717704bca67e8fa2a2557c994ef9fbdbe78f6d08a145d1101492b",
+      "bytes": 475
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/oc-view-aggregation-data.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/oc-view-aggregation-data.go",
+      "sha256": "ff777351162cae6ed45dbc7ab210458f025d2293880c0bcd7a2cdf1ad8bfacf9",
+      "bytes": 9309
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/oc-view-collector.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/oc-view-collector.go",
+      "sha256": "02f9a1f779e2db59b19982cf9fc3fbde0c325460f6b6b584a6cb4ce30b7ddee2",
+      "bytes": 2647
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/oc-view-data.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/oc-view-data.go",
+      "sha256": "21572639b69cfd2c39a3dd7f3d0e2c21db10367598be6fb0414a93a82c4a7c25",
+      "bytes": 3704
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/oc-view-view.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/oc-view-view.go",
+      "sha256": "6dceba5859db0a0f3d7ac12854f449368955fe23e3140be84333ebdc863a52f8",
+      "bytes": 6196
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/oc-view-worker.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/oc-view-worker.go",
+      "sha256": "4b09a6cb4a336ece565ed8dc2c7ea46bff7f2d35f6a18f00490a890a795ef7e7",
+      "bytes": 12496
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/ocprom-prometheus.go",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/ocprom-prometheus.go",
+      "sha256": "8d7319c1d2b777f10cd77657eee0d8581f1532844e39cf662b9b62911d92bb2d",
+      "bytes": 8653
+    },
+    {
+      "source": "/tmp/story65-dapr-retry-metric-semantics-20261108/source-urls.json",
+      "destination": "temp-sources/story65-dapr-retry-metric-semantics-20261108/source-urls.json",
+      "sha256": "bd3367883e5fa92bb356bb8a54497917d3715f2df67f247867c315f6a8e81e47",
+      "bytes": 6125
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/FINDINGS.md",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/FINDINGS.md",
+      "sha256": "ddcb298f4c15388e7be6a554cdde0c04d643c5b623c56c4a0490ec0b8f1da050",
+      "bytes": 6211
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/SHA256SUMS",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/SHA256SUMS",
+      "sha256": "c12e55e7a67abf712eb9be0fcc1c959657f92ad5a5fefa744e4b60614cfce167",
+      "bytes": 1103
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/component-monitoring.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/component-monitoring.go",
+      "sha256": "9305f14c2faa40de7ff097dc9dd7f9b19520a2adff5e5e0c89be5b1b78791449",
+      "bytes": 23338
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/direct-messaging.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/direct-messaging.go",
+      "sha256": "ccad5559ce7444904066fb865a37db76741ad7ef2a908aab04dee3de7f13fa8f",
+      "bytes": 24068
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/grpc-api.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/grpc-api.go",
+      "sha256": "21a46b494f9d70e89551d8d2802ada4b88579044c70ec63601b4cb0aca748b46",
+      "bytes": 51566
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/grpc-channel.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/grpc-channel.go",
+      "sha256": "3a6677e29634702b2c0f3c5b3aeded52203dc9dac0cb1c064dd9dd343b9554bf",
+      "bytes": 10083
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/grpc-proxy.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/grpc-proxy.go",
+      "sha256": "ff08ff20299c4f4e3a8d30152993b6a279729dbf89db8c7c92e26c53e20b31c8",
+      "bytes": 8962
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/http-channel.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/http-channel.go",
+      "sha256": "adbc3e13df6a8e54b257165596a1ee106ab74f0a456fb92248d5637b150adb27",
+      "bytes": 22483
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/http-directmessaging.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/http-directmessaging.go",
+      "sha256": "e21f456b086478f6ee5e6d580f8b12d88736b157fdcd2eb98f2d1d7495a5121c",
+      "bytes": 16764
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/invoke-method-response.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/invoke-method-response.go",
+      "sha256": "5418a4c9e20df65d23cf11b3ada0d90700e9ff818541d7cc74d21defee3557aa",
+      "bytes": 8613
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/metrics-utils.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/metrics-utils.go",
+      "sha256": "ef1b9b25c40e9005e246b377c18e404ed673a9aa04ab2c98a5cb5ffc8d07856e",
+      "bytes": 3377
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/opencensus-prometheus.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/opencensus-prometheus.go",
+      "sha256": "8d7319c1d2b777f10cd77657eee0d8581f1532844e39cf662b9b62911d92bb2d",
+      "bytes": 8653
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/service-monitoring.go",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/service-monitoring.go",
+      "sha256": "364d658c5c7c9d67db7ea2bd9c9e93d1b38a96c029f22b84c1bbad5e91e54baf",
+      "bytes": 27127
+    },
+    {
+      "source": "/tmp/story65-dapr-service-invocation-metric-semantics-20261108/source-urls.json",
+      "destination": "temp-sources/story65-dapr-service-invocation-metric-semantics-20261108/source-urls.json",
+      "sha256": "e5cc3de6d0089c2ee30aedbb7e1435e9dd8f10832c2b815ef47acad4dd051784",
+      "bytes": 2711
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-native-20261108/source-controls.json",
+      "destination": "temp-dependencies/story65-canonical-hash-native-20261108/source-controls.json",
+      "sha256": "ac281118fb9a0e9356e21c48254478da670229802926c6ab313b0e2127a94ff6",
+      "bytes": 11947
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-acceptance-prep-20261108/supervise.py",
+      "destination": "temp-dependencies/story65-canonical-hash-acceptance-prep-20261108/supervise.py",
+      "sha256": "07e7951dc03bdbc36d5758b07126fe9421bfaaa2c5c384e5083d9a0f92bd6525",
+      "bytes": 13658
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-acceptance-prep-20261108/audit.py",
+      "destination": "temp-dependencies/story65-canonical-hash-acceptance-prep-20261108/audit.py",
+      "sha256": "ce4be1f47e0746e43e3401024029e2d3bf66989258d2ab9b34cbcd768fabfedd",
+      "bytes": 4838
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/ownership.py",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/ownership.py",
+      "sha256": "c611b604ff809f8d08a807a119cc10b4cd4743d991b0f8342f29b07cec5c7ea3",
+      "bytes": 7563
+    },
+    {
+      "source": "/tmp/story65-advisory-boundary-span-diagnostic-20261108/managed/run.json",
+      "destination": "temp-dependencies/story65-advisory-boundary-span-diagnostic-20261108/managed/run.json",
+      "sha256": "1a5b1089da08ac39570fa7ad08e0bddaf70358a645f711b595fb6c174152228f",
+      "bytes": 68657
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/common.py",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/common.py",
+      "sha256": "458e2c828afa92d66229b007d52267d15af97f41a8e5e9a60b653417c9c728f5",
+      "bytes": 10184
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/own_live.py",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/own_live.py",
+      "sha256": "6040452422fd610358b1b3785594b6ca0f18796512c6b7c2307e4c2a20235ccf",
+      "bytes": 8150
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/watch_live.py",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/watch_live.py",
+      "sha256": "def11d436ab52fcc56c448b67aa4e5278c4ec09c9a0a15ae3f25b572b3b10c97",
+      "bytes": 5922
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/coordinate.py",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/coordinate.py",
+      "sha256": "47185b98079cc6dd623f068dab030b2de9f19cabbb5c33c58f186c0cf72a4127",
+      "bytes": 6162
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/launcher-plan.json",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/launcher-plan.json",
+      "sha256": "841bc1df45dce8d4fbe252754f11b3a3222cdc9e4c3da9aa2a75cf600e7c33c2",
+      "bytes": 523
+    },
+    {
+      "source": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/ordinary-binding.json",
+      "destination": "temp-dependencies/story65-canonical-current-gateway-cpu-prep-20261108/watcher/ordinary-binding.json",
+      "sha256": "1a38f8cddd0c3b9a327b0255d00ad534410ba6071e7ee0e173b3f487ae9031e0",
+      "bytes": 40596
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-native-20261108/final/completed-receipt.json",
+      "destination": "temp-dependencies/story65-canonical-hash-native-20261108/final/completed-receipt.json",
+      "sha256": "8b57c413c9dea0bcef2ea160ce81365485f348cde4c0ecb9aff7c17be72982a7",
+      "bytes": 48731
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-native-audit-20261108/independent-native-audit.json",
+      "destination": "temp-dependencies/story65-canonical-hash-native-audit-20261108/independent-native-audit.json",
+      "sha256": "857afbd14563603cf2b1f24f9785a5decf6687b0055b1c25034184eb499001c8",
+      "bytes": 119405
+    },
+    {
+      "source": "/tmp/story65-canonical-hash-memo-final-compiled-audit-20261108/independent-final-compiled-audit.json",
+      "destination": "temp-dependencies/story65-canonical-hash-memo-final-compiled-audit-20261108/independent-final-compiled-audit.json",
+      "sha256": "717fbecbd7a72196e1cb2ca2885c9aaaad263cc97780b9918bc9909f209c5a4f",
+      "bytes": 40123
+    },
+    {
+      "source": "/tmp/story-6-5-parent-baseline-ubp3ntoh.json",
+      "destination": "temp-dependencies/story-6-5-parent-baseline-ubp3ntoh.json",
+      "sha256": "b52148c33ba967a0ea1b3af8f0f0524f7136a60420559fdded28f1fae4c89a1d",
+      "bytes": 316
+    },
+    {
+      "source": "/tmp/story65-current-stage-20261107.json",
+      "destination": "detailed-state.json",
+      "sha256": "0147c3b8297edd0cda7c8605203998806e165e6fc2bb9184f0eec014da80e0df",
+      "bytes": 128887
+    }
+  ]
+}

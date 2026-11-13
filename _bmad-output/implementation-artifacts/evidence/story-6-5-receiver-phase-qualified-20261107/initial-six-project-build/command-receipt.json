@@ -1,0 +1,216 @@
+{
+  "passed": true,
+  "steps": [
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2334648,
+      "startTicks": "12869242",
+      "exitCode": 0,
+      "logSha256": "4121fa6c25efb13f7f1eae30a10f99e42b27821631923c0f3c51bb1a032f1c63",
+      "wallSeconds": 0.5498595279932488
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2334739,
+      "startTicks": "12869297",
+      "exitCode": 0,
+      "logSha256": "15c9ddeedc31bc272be14f26f65a162439e35e43d3fd93dbb2d0de4472400eea",
+      "wallSeconds": 0.49935841700062156
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2334765,
+      "startTicks": "12869347",
+      "exitCode": 0,
+      "logSha256": "5c11457e86b40f2e4bbbc8b0816675efe4641aa49ef1843f8b43547d7d9a5382",
+      "wallSeconds": 0.6152442599995993
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2334791,
+      "startTicks": "12869409",
+      "exitCode": 0,
+      "logSha256": "5c873f0b5a2e73ed003bf45086bc1fa1f1a2665c8d56d1ce28eb763f3a78a008",
+      "wallSeconds": 0.6342517130105989
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335039,
+      "startTicks": "12869472",
+      "exitCode": 0,
+      "logSha256": "fe37cccbf2f319d51201c68a50350edd79f30ef5743181115f82f4b62ab7f50a",
+      "wallSeconds": 0.5952672269922914
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335071,
+      "startTicks": "12869532",
+      "exitCode": 0,
+      "logSha256": "42cc66af8ffecaeb1ec99fe98d366b35b44d5c2ebb83909a740b84c7306db4de",
+      "wallSeconds": 0.6074077670054976
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/ReceiverDriver.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335096,
+      "startTicks": "12869593",
+      "exitCode": 0,
+      "logSha256": "fefba83973e2ff45742142026bf6db307b76ec4ab12e96da1fd0a273b31ae9e3",
+      "wallSeconds": 1.38916048000101
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/companion/ReceiverFixture.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335259,
+      "startTicks": "12869732",
+      "exitCode": 0,
+      "logSha256": "a31fb37f1220823e2c3bd8a9703051f20b8cebaa89ba266b47c8bed20c0fb34c",
+      "wallSeconds": 1.5684734219976235
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335560,
+      "startTicks": "12869888",
+      "exitCode": 0,
+      "logSha256": "8def71cc4a281c7e8ba891413b341812f7da64eb2b62c005bb5579a5d389957c",
+      "wallSeconds": 1.3457127750007203
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2335784,
+      "startTicks": "12870023",
+      "exitCode": 0,
+      "logSha256": "f70deb26ca6688ba845d6ce84c25bb00f6e39fe380a5e701cb1e3f5def9fd294",
+      "wallSeconds": 1.3663606829941273
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2336236,
+      "startTicks": "12870160",
+      "exitCode": 0,
+      "logSha256": "8a60b1ae007f1158b29ee9d6c694446d376d79080a6a07266a21a5398d41b26a",
+      "wallSeconds": 1.381808464997448
+    },
+    {
+      "command": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "pid": 2336412,
+      "startTicks": "12870298",
+      "exitCode": 0,
+      "logSha256": "7b10933531eb6ff21fd43b163980fe4426a017bb5daf352e870240215c498f37",
+      "wallSeconds": 1.3239423500053817
+    }
+  ],
+  "fixtureAssemblyLoadsOrExecutions": 0
+}

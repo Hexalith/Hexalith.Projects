@@ -1,0 +1,526 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Text;
+using Xunit.Runner.Common;
+using Xunit.Sdk;
+using Xunit.v3;
+using DiagnosticMessage = Xunit.Runner.Common.DiagnosticMessage;
+using ErrorMessage = Xunit.Runner.Common.ErrorMessage;
+
+#if XUNIT_AOT
+using System.Runtime.ExceptionServices;
+#endif
+
+namespace Xunit.Runner.InProc.SystemConsole;
+
+/// <summary>
+/// This class is the entry point for the in-process console-based runner used for
+/// xUnit.net v3 test projects.
+/// </summary>
+/// <param name="args">The arguments passed to the application; typically pulled from the Main method.</param>
+/// <param name="testAssembly">The optional test assembly; if <see langword="null"/>, <see cref="Assembly.GetEntryAssembly"/> is used
+/// to find the current assembly as the test assembly</param>
+// The signature of this constructor is used at runtime via reflection, and as such must not
+// be modified without creating forks inside InProcessTestProcessLauncher.
+public class ConsoleRunner(
+	string[] args,
+	Assembly? testAssembly = null) :
+		IDisposable
+{
+	readonly string[] args = Guard.ArgumentNotNull(args);
+	bool assemblyInfoMode;
+	AutomatedMode automatedMode;
+	readonly CancellationTokenSource cancellationTokenSource = new();
+	ConsoleHelper consoleHelper = default!;
+	bool executed;
+	readonly ManualResetEventSlim finishEvent = new(initialState: false);
+	IRunnerLogger? logger;
+	ITestPipelineStartup? pipelineStartup;
+	int shutdownForegroundThreadWaitSeconds = 10;
+	bool started;
+	readonly Assembly testAssembly = Guard.NotNull("Assembly.GetEntryAssembly() returned null", testAssembly ?? Assembly.GetEntryAssembly());
+
+	/// <summary>
+	/// Attempt to cancel the console runner execution.
+	/// </summary>
+	// The signature of this method is used at runtime via reflection, and as such must not
+	// be modified without creating forks inside InProcessTestProcessLauncher.
+	public void Cancel() =>
+		cancellationTokenSource.Cancel();
+
+	/// <inheritdoc/>
+	public void Dispose()
+	{
+		GC.SuppressFinalize(this);
+
+		cancellationTokenSource.Dispose();
+		finishEvent.Dispose();
+	}
+
+	/// <summary>
+	/// The entry point to begin running tests.
+	/// </summary>
+	/// <returns>The return value intended to be returned by the Main method.</returns>
+	// The signature of this method is used at runtime via reflection, and as such must not
+	// be modified without creating forks inside InProcessTestProcessLauncher.
+	public async Task<int> EntryPoint(
+		TextReader? consoleReader = null,
+		TextWriter? consoleWriter = null)
+	{
+		if (executed)
+			throw new InvalidOperationException("The EntryPoint method can only be called once.");
+
+		executed = true;
+
+		using var _ = new TraceAssertOverrideListener();
+
+		if (consoleWriter is null)
+			SetOutputEncoding();
+
+		consoleHelper = new(consoleReader ?? Console.In, consoleWriter ?? Console.Out);
+
+		var internalDiagnosticMessages = false;
+		var noColor = false;
+		var entryAssembly = Assembly.GetEntryAssembly();
+
+#if XUNIT_AOT
+		await using var runnerInit = await RunnerInitialization.Start(entryAssembly);
+		if (runnerInit.InitException is not null)
+			ExceptionDispatchInfo.Throw(runnerInit.InitException);
+
+		await using var engineInit = await EngineInitialization.Start(entryAssembly);
+		if (engineInit.InitException is not null)
+			ExceptionDispatchInfo.Throw(engineInit.InitException);
+#endif
+
+		try
+		{
+			var warnings = new List<string>();
+			var runnerReporters =
+				entryAssembly is not null
+					? RegisteredRunnerConfig.GetRunnerReporters(entryAssembly, out warnings)
+					: [];
+
+			var commandLine = new CommandLine(consoleHelper, testAssembly, args, runnerReporters);
+
+			if (commandLine.HelpRequested)
+			{
+				consoleHelper.WriteLine(ProjectAssemblyRunner.Banner);
+				consoleHelper.WriteLine("Copyright (C) .NET Foundation.");
+				consoleHelper.WriteLine();
+
+				if (commandLine.ParseWarnings.Count > 0)
+				{
+					foreach (var warning in commandLine.ParseWarnings)
+						consoleHelper.WriteLine("Warning: {0}", warning);
+
+					consoleHelper.WriteLine();
+				}
+
+				consoleHelper.WriteLine("usage: [:seed] [path/to/configFile.json] [options] [filters] [reporter] [resultFormat filename [...]]");
+
+				commandLine.PrintUsage();
+				return 2;
+			}
+
+#if !XUNIT_AOT
+			SerializationHelper.Instance.AddRegisteredSerializers(testAssembly, warnings);
+#endif
+
+			// We pick up the -automated flag early, because Parse() can throw and we want to use automated output
+			// to report any command line parsing problems.
+			var automatedRequested = commandLine.AutomatedRequested;
+			if (automatedRequested)
+			{
+				if (consoleReader is null)
+					Console.SetIn(TextReader.Null);
+				if (consoleWriter is null)
+					Console.SetOut(TextWriter.Null);
+
+				noColor = true;
+			}
+
+			var projectAssembly = commandLine.Parse();
+			warnings.AddRange(commandLine.ParseWarnings);
+
+			automatedMode = (automatedRequested, projectAssembly.Configuration.SynchronousMessageReporting) switch
+			{
+				(true, true) => AutomatedMode.Sync,
+				(true, _) => AutomatedMode.Async,
+				_ => AutomatedMode.Off,
+			};
+			var project = projectAssembly.Project;
+			var useAnsiColor = project.Configuration.UseAnsiColorOrDefault;
+			if (useAnsiColor)
+				consoleHelper.UseAnsiColor();
+
+			shutdownForegroundThreadWaitSeconds = projectAssembly.Configuration.ShutdownForegroundThreadWaitSecondsOrDefault;
+
+			if (project.Configuration.AssemblyInfoOrDefault)
+			{
+				assemblyInfoMode = true;
+				noColor = true;
+				await PrintAssemblyInfo(projectAssembly.ConfigFileName);
+				return 0;
+			}
+
+			if (project.Configuration.PauseOrDefault && automatedMode == AutomatedMode.Off)
+			{
+				consoleHelper.Write("Press any key to start execution...");
+
+				Console.ReadKey(true);
+
+				consoleHelper.WriteLine();
+			}
+
+			if (project.Configuration.DebugOrDefault)
+				Debugger.Launch();
+
+			var diagnosticMessages = projectAssembly.Configuration.DiagnosticMessagesOrDefault;
+			internalDiagnosticMessages = projectAssembly.Configuration.InternalDiagnosticMessagesOrDefault;
+
+			if (automatedMode == AutomatedMode.Off)
+				noColor = project.Configuration.NoColorOrDefault;
+
+			logger = new ConsoleRunnerLogger(!noColor, useAnsiColor, consoleHelper, waitForAcknowledgment: automatedMode == AutomatedMode.Sync);
+
+			var reporterMessageHandler = default(IRunnerReporterMessageHandler);
+
+			void onUnhandledException(object sender, UnhandledExceptionEventArgs e)
+			{
+				if (e.ExceptionObject is Exception ex)
+				{
+					if (automatedMode != AutomatedMode.Off)
+						logger.WriteMessageJson(ErrorMessage.FromException(ex, null));
+					else if (reporterMessageHandler is not null)
+						reporterMessageHandler.OnMessage(ErrorMessage.FromException(ex, null));
+					else
+						consoleHelper.WriteLine(ex.ToString());
+				}
+				else
+				{
+					if (automatedMode != AutomatedMode.Off)
+						logger.WriteMessageJson(new DiagnosticMessage("Error of unknown type thrown in application domain"));
+					else
+						consoleHelper.WriteLine("Error of unknown type thrown in application domain");
+				}
+
+				finishEvent.Wait();
+				Environment.Exit(2);
+			}
+
+			void onCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+			{
+				if (started && !cancellationTokenSource.IsCancellationRequested)
+				{
+					if (automatedMode != AutomatedMode.Off)
+						logger.WriteMessageJson(new DiagnosticMessage("Cancellation request received"));
+					else
+						consoleHelper.WriteLine("Cancelling... (Press Ctrl+C again to terminate)");
+
+					e.Cancel = true;
+					cancellationTokenSource.Cancel();
+				}
+			}
+
+			AppDomain.CurrentDomain.UnhandledException += onUnhandledException;
+			Console.CancelKeyPress += onCancelKeyPress;
+
+			var failCount = 0;
+
+			try
+			{
+#if XUNIT_AOT
+				var assemblyDisplayName = testAssembly.GetName().Name;
+#else
+				var assemblyDisplayName =
+					testAssembly.Location.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || testAssembly.Location.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+						? Path.GetFileNameWithoutExtension(testAssembly.Location)
+						: Path.GetFileName(testAssembly.Location);
+#endif
+
+				IMessageSink? diagnosticMessageSink =
+					automatedMode != AutomatedMode.Off
+						? new AutomatedDiagnosticMessageSink(logger)
+						: ConsoleDiagnosticMessageSink.TryCreate(consoleHelper, noColor, diagnosticMessages, internalDiagnosticMessages, assemblyDisplayName: assemblyDisplayName);
+
+				pipelineStartup = await ProjectAssemblyRunner.InvokePipelineStartup(testAssembly, diagnosticMessageSink);
+
+				try
+				{
+					var reporter = automatedMode != AutomatedMode.Off ? new JsonReporter() : project.RunnerReporter;
+					reporterMessageHandler = await reporter.CreateMessageHandler(logger, diagnosticMessageSink);
+
+					// Don't show warnings when listing in JSON format, because it will break the JSON output
+					if (warnings.Count != 0 && project.Configuration.List?.Format != ListFormat.Json)
+					{
+						if (reporter is not JsonReporter)
+						{
+							foreach (var warning in warnings)
+								logger.LogWarning(warning);
+
+							consoleHelper.WriteLine();
+						}
+						else
+							foreach (var warning in warnings)
+								logger.WriteMessageJson(new DiagnosticMessage("warning: " + warning));
+					}
+
+					if (!reporter.ForceNoLogo && !project.Configuration.NoLogoOrDefault)
+						consoleHelper.WriteLine(ProjectAssemblyRunner.Banner);
+
+					if (Debugger.IsAttached)
+					{
+						if (!noColor)
+							consoleHelper.SetForegroundColor(ConsoleColor.Yellow);
+
+						consoleHelper.WriteLine();
+						consoleHelper.WriteLine("* Note: Long running test detection and test timeouts are disabled due to an attached debugger *");
+						consoleHelper.WriteLine();
+
+						if (!noColor)
+							consoleHelper.ResetColor();
+					}
+
+					// Tell the project runner it's in automated mode even if it's not, when we're using the JSON reporter, so that messages
+					// get written as JSON rather than emitted as plain-text (and therefore munging up the parsing of the JSON results).
+					var runnerAutomatedMode = automatedMode switch
+					{
+						AutomatedMode.Off => reporter is JsonReporter ? AutomatedMode.Async : AutomatedMode.Off,
+						_ => automatedMode,
+					};
+
+					var projectRunner = new ProjectAssemblyRunner(testAssembly, runnerAutomatedMode, NullSourceInformationProvider.Instance, cancellationTokenSource);
+					if (project.Configuration.WaitForDebuggerOrDefault)
+					{
+						if (automatedMode == AutomatedMode.Off)
+							consoleHelper.WriteLine("Waiting for debugger to be attached... (press Ctrl+C to abort)");
+
+						while (true)
+						{
+							if (Debugger.IsAttached)
+								break;
+
+							await Task.Delay(10);
+						}
+					}
+
+					started = true;
+
+					if (project.Configuration.List is not null)
+						await ListAssembly(projectAssembly, logger, cancellationTokenSource);
+					else
+					{
+						// Default to false for console runners
+						projectAssembly.Configuration.PreEnumerateTheories ??= false;
+
+						failCount = await projectRunner.Run(projectAssembly, reporterMessageHandler, diagnosticMessageSink, logger, commandLine.ResultWriters, pipelineStartup);
+					}
+
+					if (cancellationTokenSource.IsCancellationRequested)
+						return -1073741510;    // 0xC000013A: The application terminated as a result of a CTRL+C
+				}
+				finally
+				{
+					try
+					{
+						if (pipelineStartup is not null)
+							await pipelineStartup.StopAsync();
+					}
+					catch (Exception ex)
+					{
+						reporterMessageHandler?.OnMessage(ErrorMessage.FromException(ex, null));
+						failCount = 1;
+					}
+					finally
+					{
+						var tempHandler = reporterMessageHandler;
+						reporterMessageHandler = null;
+
+						await tempHandler.SafeDisposeAsync();
+					}
+				}
+			}
+			finally
+			{
+				Console.CancelKeyPress -= onCancelKeyPress;
+				AppDomain.CurrentDomain.UnhandledException -= onUnhandledException;
+			}
+
+			if (project.Configuration.WaitOrDefault && automatedMode == AutomatedMode.Off)
+			{
+				consoleHelper.WriteLine();
+				consoleHelper.Write("Press any key to continue...");
+
+				Console.ReadKey();
+
+				consoleHelper.WriteLine();
+			}
+
+			finishEvent.Set();
+
+			return project.Configuration.IgnoreFailures == true || failCount == 0 ? 0 : 1;
+		}
+		catch (Exception ex)
+		{
+			if (!noColor)
+				consoleHelper.SetForegroundColor(ConsoleColor.Red);
+
+			if (automatedMode != AutomatedMode.Off)
+				logger?.WriteMessageJson(new DiagnosticMessage("error: " + ex.Message ?? "(null message)"));
+			else
+			{
+				consoleHelper.WriteLine("error: {0}", ex.Message ?? "(null message)");
+
+#if !DEBUG
+				if (internalDiagnosticMessages)
+#endif
+				{
+					if (!noColor)
+						consoleHelper.SetForegroundColor(ConsoleColor.DarkGray);
+
+					consoleHelper.WriteLine(ex.StackTrace);
+				}
+			}
+
+			return ex is ArgumentException ? 3 : 4;
+		}
+		finally
+		{
+			if (!noColor)
+				consoleHelper.ResetColor();
+		}
+	}
+
+	async ValueTask ListAssembly(
+		XunitProjectAssembly assembly,
+		IRunnerLogger logger,
+		CancellationTokenSource cancellationTokenSource)
+	{
+		var (listOption, listFormat) = assembly.Project.Configuration.List!.Value;
+		if (automatedMode != AutomatedMode.Off)
+			listFormat = ListFormat.Json;
+
+		// Default to false for console runners
+		assembly.Configuration.PreEnumerateTheories ??= false;
+
+		// Tell the project runner it's in automated mode even if it's not, when we're using the JSON list format, so that messages
+		// get written as JSON rather than emitted as plain-text (and therefore munging up the parsing of the JSON results).
+		var runnerAutomatedMode = automatedMode switch
+		{
+			AutomatedMode.Off => listFormat == ListFormat.Json ? AutomatedMode.Async : AutomatedMode.Off,
+			_ => automatedMode,
+		};
+
+		var assemblyFileName = Guard.ArgumentNotNull(assembly.AssemblyFileName);
+		var projectRunner = new ProjectAssemblyRunner(testAssembly, runnerAutomatedMode, cancellationTokenSource);
+		var testCases = new List<(ITestCase TestCase, bool PassedFilter)>();
+		await projectRunner.Discover(assembly, pipelineStartup, testCases: testCases);
+
+		var testCasesDiscovered = testCases.Count;
+		var filteredTestCases = testCases.Where(tc => tc.PassedFilter).SelectList(tc => tc.TestCase);
+
+		if (listOption != ListOption.Discovery)
+		{
+			var testCasesByAssembly = new Dictionary<string, List<ITestCase>> { [assemblyFileName] = filteredTestCases };
+			ConsoleProjectLister.List(consoleHelper, testCasesByAssembly, listOption, listFormat);
+		}
+		else
+			foreach (var testCase in filteredTestCases)
+				logger.WriteMessageJson(testCase.ToTestCaseDiscovered());
+	}
+
+	async ValueTask PrintAssemblyInfo(string? configFileName)
+	{
+		var testFramework = RegisteredEngineConfig.GetTestFramework(testAssembly, configFileName);
+		var maxParallelThreads = RegisteredEngineConfig.GetAssemblyParallelMaxThreads(testAssembly);
+		var parallelAlgorithm = RegisteredEngineConfig.GetAssemblyParallelAlgorithm(testAssembly);
+		var parallelMode = RegisteredEngineConfig.GetAssemblyParallelizationMode(testAssembly);
+
+		try
+		{
+			var assemblyInfo = new TestAssemblyInfo(
+				// Technically these next two are the versions of xunit.v3.runner.inproc.console and not xunit.v3.core; however,
+				// since they're all compiled and versioned together, we'll take the path of least resistance.
+				coreFramework: new Version(ThisAssembly.AssemblyVersion),
+				coreFrameworkInformational: ThisAssembly.AssemblyInformationalVersion,
+				maxParallelThreads,
+				parallelAlgorithm,
+				parallelMode,
+				targetFramework: testAssembly.GetTargetFramework(),
+				testFramework: testFramework.TestFrameworkDisplayName
+			);
+
+			consoleHelper.WriteLine(assemblyInfo.ToJson());
+		}
+		finally
+		{
+			if (testFramework is IAsyncDisposable asyncDisposable)
+				await asyncDisposable.SafeDisposeAsync();
+			else if (testFramework is IDisposable disposable)
+				disposable.SafeDispose();
+		}
+	}
+
+	/// <summary>
+	/// Creates a new <see cref="ConsoleRunner"/> instance and runs it via <see cref="EntryPoint"/>.
+	/// </summary>
+	/// <param name="args">The arguments passed to the application; typically pulled from the Main method.</param>
+	/// <returns>The return value intended to be returned by the Main method.</returns>
+	// Note: This returns Task instead of ValueTask, because it's called from the injected entry point, and we don't want to
+	// assume that the global entry point can use an async Main method (for acceptance testing purposes).
+	public static async Task<int> Run(string[] args)
+	{
+		using var runner = new ConsoleRunner(args);
+
+		var result = await runner.EntryPoint();
+
+		ThreadPool.QueueUserWorkItem(async _ =>
+		{
+			// Wait 1 second to begin with, so we don't pop the diagnostic message earlier than necessary
+			await Task.Delay(1_000);
+
+			if (!runner.assemblyInfoMode)
+			{
+				if (runner.automatedMode == AutomatedMode.Off)
+					Console.WriteLine("Waiting {0} seconds for foreground threads to exit...", runner.shutdownForegroundThreadWaitSeconds);
+				else
+					runner.logger?.WriteMessageJson(new DiagnosticMessage("Waiting {0} seconds for foreground threads to exit", runner.shutdownForegroundThreadWaitSeconds));
+			}
+
+			await Task.Delay(runner.shutdownForegroundThreadWaitSeconds * 1_000);
+
+			if (!runner.assemblyInfoMode)
+			{
+				if (runner.automatedMode == AutomatedMode.Off)
+				{
+					runner.consoleHelper.SetForegroundColor(ConsoleColor.Red);
+					Console.Error.WriteLine("[FATAL ERROR] Foreground threads were left running, forcing process exit");
+					runner.consoleHelper.ResetColor();
+				}
+				else
+					try
+					{
+						throw new TestPipelineException("Foreground threads were left running, forcing process exit");
+					}
+					catch (Exception ex)
+					{
+						runner.logger?.WriteMessageJson(ErrorMessage.FromException(ex, null));
+					}
+			}
+
+			Environment.Exit(1);
+		});
+
+		return result;
+	}
+
+	/// <summary>
+	/// Override this function to change the default output encoding for the system console.
+	/// The default is set to <see cref="Encoding.UTF8"/> to support our usage of Unicode
+	/// characters in output (for example, the up and down arrows printed for pointers with
+	/// mismatched assertion values).
+	/// </summary>
+	protected virtual void SetOutputEncoding() =>
+		Console.OutputEncoding = Encoding.UTF8;
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/home/administrator/.dotnet/dotnet",
+    "msbuild",
+    "/tmp/story65-gateway-controller-prep-20261107/GatewayProof.csproj",
+    "-p:Configuration=Debug",
+    "-getProperty:Configuration,Optimize,DefineConstants,DebugType,TargetFramework",
+    "-nologo",
+    "-nr:false"
+  ],
+  "cwd": "/tmp/story65-gateway-controller-prep-20261107",
+  "exitCode": 0,
+  "elapsedSeconds": 0.3210043800063431,
+  "buildOnlyProcessorOverride": "2",
+  "clearedMappingHooks": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "setEnv": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "logSha256": "3a3d2223ecd2a6cea5a19222b06d8e5b0889b79cb9fd1d8975d039c591d9b7ae"
+}

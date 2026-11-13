@@ -1,0 +1,65 @@
+{
+  "diagnosticOnly": true,
+  "ordinaryCurrentInputCount": 26,
+  "owningAssemblies": 7,
+  "allCurrentAndPrivateHashesVerified": true,
+  "reusedTimingBreadth": true,
+  "newTelemetryOnly": "Three ArrayPool delegate wrappers and selection/scalar loan/rent-allocation counters, including gated rootless calls.",
+  "rentAllocationBoundary": "GC.GetAllocatedBytesForCurrentThread immediately before inner.Rent and immediately after its normal return; no recorder action inside measured boundary.",
+  "returnSemantics": "Always inner.Return(array, clearArray), original arguments unchanged; no array history/strong loan retention.",
+  "outstandingLoanScope": "Current outstanding emitted at every successful gated Rent; max is actual collection peak. Separate all-time peak is labeled.",
+  "selectionScope": "Original Current/IsOpen evaluated once at original selection point.",
+  "poolCapacitiesFromOriginalSource": {
+    "privateShared": 2,
+    "technicalOrdinary": 1,
+    "streamOrdinary": 1
+  },
+  "rootlessPoolCoverage": "Gated no-coarse pool events anchor0 and flush at next coarse close; fixedlabels/numeric facts only.",
+  "cpuOverride": "DOTNET_PROCESSOR_COUNT explicitly unset; no ThreadPool/GC tuning.",
+  "observer": "No external observer; previous auxiliary JSON-read race remains separately retained. Built-in resource samples reused.",
+  "releaseBinding": "Reused binding.core anchors distinguish release-core from acquisitions.",
+  "affectedProjects": [
+    {
+      "project": "Hexalith.Projects.Server",
+      "projectPath": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.EventStore.DomainService",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+      "overlaidSourceFiles": 2,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.EventStore.Gateway",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+      "overlaidSourceFiles": 3,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.EventStore.ServiceDefaults",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "overlaidSourceFiles": 16,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.Folders.Server",
+      "projectPath": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.Projects.Integration.Tests",
+      "projectPath": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequired": true
+    },
+    {
+      "project": "Hexalith.EventStore.Contracts",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+      "overlaidSourceFiles": 2,
+      "forceRebuildRequired": true
+    }
+  ]
+}

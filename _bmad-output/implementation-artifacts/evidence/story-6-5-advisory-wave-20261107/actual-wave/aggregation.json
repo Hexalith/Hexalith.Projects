@@ -1,0 +1,112 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "localCaptures": 3,
+  "rows": 21,
+  "aliases": {
+    "Whole": "Whole",
+    "ComponentFile": "InitialScope",
+    "ComponentPolicy": "InitialFilterInputs",
+    "AclFile": "IndexRead",
+    "SettingsEnumerationSortDictionary": "DiscoveryParallel",
+    "AuthenticationSerialization": "FinalFilterInputs",
+    "ActorBoundary": "FinalCandidateParallel",
+    "ResultTail": "FinalScope"
+  },
+  "stages": {
+    "Whole": {
+      "n": 3,
+      "medianMs": 2001.263185,
+      "p95NearestRankMs": 2004.595303,
+      "maxMs": 2004.595303
+    },
+    "InitialScope": {
+      "n": 3,
+      "medianMs": 1.897887,
+      "p95NearestRankMs": 1.983098,
+      "maxMs": 1.983098
+    },
+    "InitialFilterInputs": {
+      "n": 3,
+      "medianMs": 617.003388,
+      "p95NearestRankMs": 634.854047,
+      "maxMs": 634.854047
+    },
+    "IndexRead": {
+      "n": 3,
+      "medianMs": 1.096923,
+      "p95NearestRankMs": 1.158071,
+      "maxMs": 1.158071
+    },
+    "DiscoveryParallel": {
+      "n": 3,
+      "medianMs": 609.488308,
+      "p95NearestRankMs": 631.27987,
+      "maxMs": 631.27987
+    },
+    "FinalFilterInputs": {
+      "n": 3,
+      "medianMs": 617.395792,
+      "p95NearestRankMs": 628.809745,
+      "maxMs": 628.809745
+    },
+    "FinalCandidateParallel": {
+      "n": 3,
+      "medianMs": 156.421874,
+      "p95NearestRankMs": 165.420093,
+      "maxMs": 165.420093
+    }
+  },
+  "pairedLocalMethodPhasesOnly": [
+    {
+      "opaqueLocalCaptureOrdinal": 1,
+      "phaseMilliseconds": {
+        "Whole": 2004.595303,
+        "InitialScope": 1.551537,
+        "InitialFilterInputs": 605.971576,
+        "IndexRead": 1.095234,
+        "DiscoveryParallel": 631.27987,
+        "FinalFilterInputs": 597.565764,
+        "FinalCandidateParallel": 165.420093
+      },
+      "wholeMinusSumOfRecordedPhaseMilliseconds": 1.7112290000002304,
+      "finalScopeRecorded": false
+    },
+    {
+      "opaqueLocalCaptureOrdinal": 2,
+      "phaseMilliseconds": {
+        "Whole": 2001.263185,
+        "InitialScope": 1.897887,
+        "InitialFilterInputs": 617.003388,
+        "IndexRead": 1.158071,
+        "DiscoveryParallel": 595.730833,
+        "FinalFilterInputs": 628.809745,
+        "FinalCandidateParallel": 156.421874
+      },
+      "wholeMinusSumOfRecordedPhaseMilliseconds": 0.24138700000003155,
+      "finalScopeRecorded": false
+    },
+    {
+      "opaqueLocalCaptureOrdinal": 3,
+      "phaseMilliseconds": {
+        "Whole": 2000.059904,
+        "InitialScope": 1.983098,
+        "InitialFilterInputs": 634.854047,
+        "IndexRead": 1.096923,
+        "DiscoveryParallel": 609.488308,
+        "FinalFilterInputs": 617.395792,
+        "FinalCandidateParallel": 135.04327
+      },
+      "wholeMinusSumOfRecordedPhaseMilliseconds": 0.19846599999982573,
+      "finalScopeRecorded": false
+    }
+  ],
+  "allCountAllocationColumnsZero": true,
+  "noRequestOrDownstreamCorrelation": true,
+  "instrumentedWallOnly": true,
+  "noOverheadSubtraction": true,
+  "wholeDisposedOrUnwoundDoesNotMeanSuccess": true,
+  "awaitedCallerCompletionDoesNotProveChildQuiescence": true,
+  "noInputCountOrOwnerResultAttribution": true,
+  "missingFinalScopeOnlyMeansNoRecordedEntry": true
+}

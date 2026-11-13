@@ -1,0 +1,88 @@
+--- a/src/Hexalith.EventStore/Controllers/QueriesController.cs
++++ b/src/Hexalith.EventStore/Controllers/QueriesController.cs
+@@ -25,6 +25,9 @@
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.Extensions.Options;
++using GatewayBootstrap = Hexalith.PrivateCaptureCounter.GatewayControllerBootstrap;
++using GatewayStage = Hexalith.PrivateCaptureCounter.Stage;
++using GatewayAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ namespace Hexalith.EventStore.Controllers;
+ 
+@@ -127,6 +130,14 @@
+     [RequestSizeLimit(1_048_576)]
+     public async Task<IActionResult> SubmitBoundOwnerAuthorityAsync(
+         [FromBody] BoundOwnerQueryRequest request, CancellationToken cancellationToken) {
++        const GatewayStage Signature = GatewayStage.ComponentFile;
++        const GatewayStage Origin = GatewayStage.ComponentPolicy;
++        const GatewayStage CatalogAcquire = GatewayStage.AclFile;
++        const GatewayStage Admission = GatewayStage.SettingsEnumerationSortDictionary;
++        const GatewayStage Mediator = GatewayStage.AuthenticationSerialization;
++        const GatewayStage ResponseConstruction = GatewayStage.ActorBoundary;
++        const GatewayStage LeaseScope = GatewayStage.ResultTail;
++        using var gatewayCounters = GatewayBootstrap.Begin();
+         if (request?.Query is not { } query || query.Payload is null || query.AdditionalProperties is { Count: > 0 }
+             || query.EntityId is not null || query.ProjectionType is not null || query.ProjectionActorType is not null
+             || query.Paging is not null || query.Search is not null || query.Filters is not null || query.OrderBy is not null
+@@ -134,6 +145,7 @@
+             return Forbid();
+         }
+ 
++        using var signatureTiming = gatewayCounters?.Stage(Signature, GatewayAllocation.None);
+         string? caller = User.FindFirst(EventStoreWorkloadAuthenticationDefaults.WorkloadClaimType)?.Value;
+         string? workloadSubject = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+         string? allowed = caller is null ? null : configuration?[$"Authentication:BoundOwnerQuery:AllowedQueries:{caller}"];
+@@ -143,11 +155,13 @@
+             && proof.Count == 1 && caller is not null
+             && BoundOwnerQueryProof.Verify(request, proof[0], caller,
+                 configuration?[$"Authentication:BoundStreamRead:PublicKeys:{caller}"], DateTimeOffset.UtcNow);
++        signatureTiming?.Dispose();
+         if (string.IsNullOrWhiteSpace(caller) || workloadSubject != "workload:" + caller
+             || !allowedQuery || !signed) {
+             return Forbid();
+         }
+ 
++        using var originTiming = gatewayCounters?.Stage(Origin, GatewayAllocation.None);
+         QueryCallerAuthority? ownerAuthority = null;
+         if (request.OriginatingQuery is not null || request.OriginatingAssertion is not null)
+         {
+@@ -173,6 +187,7 @@
+             };
+         }
+ 
++        originTiming?.Dispose();
+         string correlationId = HttpContext.Items[CorrelationIdMiddleware.HttpContextKey]?.ToString()
+             ?? Guid.NewGuid().ToString();
+         byte[] payload = JsonSerializer.SerializeToUtf8Bytes(query.Payload.Value);
+@@ -186,8 +201,12 @@
+                 ? [audience.Trim()] : null) { CallerAuthority = ownerAuthority };
+         if (query.QueryType == Hexalith.EventStore.Contracts.Projections.InspectProjectionCurrentQuery.QueryType)
+             return await InspectProjectionCurrentAsync(request, ownerAuthority, correlationId, cancellationToken).ConfigureAwait(false);
++        using var acquireTiming = gatewayCounters?.Stage(CatalogAcquire, GatewayAllocation.None);
+         var catalogLease = catalogAuthority is null ? null : await catalogAuthority.AcquireAsync(cancellationToken).ConfigureAwait(false);
++        acquireTiming?.Dispose();
++        using var leaseScopeTiming = gatewayCounters?.Stage(LeaseScope, GatewayAllocation.None);
+         await using var catalogRelease = new Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogLeaseReleaser(catalogLease).ConfigureAwait(false);
++        using var admissionTiming = gatewayCounters?.Stage(Admission, GatewayAllocation.None);
+         bool hadPriorAdmission = HttpContext.Items.TryGetValue(BoundOwnerCatalogAdmissionKey, out object? priorAdmission);
+         if (catalogLease?.Snapshot.Envelope.SchemaVersion == 3)
+         {
+@@ -196,13 +215,17 @@
+             HttpContext.Items[BoundOwnerCatalogAdmissionKey] = (HttpContext, submitted, User, HttpContext.GetEndpoint(),
+                 SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(submitted)), catalogLease.Snapshot.RootDigest, catalogLease.Snapshot.Epoch);
+         }
++        admissionTiming?.Dispose();
+         SubmitQueryResult result;
++        using var mediatorTiming = gatewayCounters?.Stage(Mediator, GatewayAllocation.None);
+         try { result = await mediator.Send(submitted, cancellationToken).ConfigureAwait(false); }
+         finally
+         {
+             if (hadPriorAdmission) HttpContext.Items[BoundOwnerCatalogAdmissionKey] = priorAdmission;
+             else HttpContext.Items.Remove(BoundOwnerCatalogAdmissionKey);
+         }
++        mediatorTiming?.Dispose();
++        using var responseTiming = gatewayCounters?.Stage(ResponseConstruction, GatewayAllocation.None);
+         Response.Headers.CacheControl = "no-store";
+         return Ok(new SubmitQueryResponse(result.CorrelationId, result.Payload,
+             Metadata: NormalizeProducerMetadata(result.Metadata)));

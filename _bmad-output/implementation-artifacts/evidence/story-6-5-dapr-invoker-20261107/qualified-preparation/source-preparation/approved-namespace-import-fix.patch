@@ -1,0 +1,10 @@
+--- 4c0ab85b/driver/SubjectFixture.cs
++++ current/driver/SubjectFixture.cs
+@@ -2,6 +2,7 @@
+ 
+ using System.Reflection;
+ using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.EventStore.Server.DomainServices;
+ using Hexalith.EventStore.ServiceDefaults.Routing;
+ using NSubstitute;

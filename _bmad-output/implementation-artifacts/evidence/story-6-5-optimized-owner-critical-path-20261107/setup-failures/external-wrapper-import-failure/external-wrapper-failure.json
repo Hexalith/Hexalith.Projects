@@ -1,0 +1,13 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRunSha256": "0ae78749334e1b67ae795cd67b87352def5e7f8e9ed2938f342f8dc21de0604f",
+  "failure": "ModuleNotFoundError",
+  "siblingModule": "supported_browser_reads",
+  "cause": "importlib execution did not add the original script directory to sys.path; failure occurred at main browser setup sibling import, before owned container creation.",
+  "externalCorrection": "Add original launcher script directory to sys.path before importlib execution.",
+  "correctedSiblingImportsVerified": true,
+  "cleanup": [],
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": true
+}

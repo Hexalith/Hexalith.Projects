@@ -1,0 +1,27 @@
+{
+  "label": "01-projects-build-1",
+  "argv": [
+    "dotnet",
+    "build",
+    "--no-restore",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests",
+  "startedUtc": "2026-11-08T03:41:05.528729+00:00",
+  "buildCpuOverride": "2",
+  "pid": 506833,
+  "processGroup": 506833,
+  "startTicks": "14686956",
+  "timedOut": false,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "pidAbsent": true,
+  "finishedUtc": "2026-11-08T03:41:23.751592+00:00",
+  "logSha256": "b9d037642adf627d1fc2f65ba16d3b6e07a3b9d5e67a8302f2e6fb93d0e59922"
+}

@@ -1,0 +1,42 @@
+{
+  "isolatedProducerOnly": true,
+  "completed": true,
+  "rootModulesUnchanged": true,
+  "coreInputsUnchanged": true,
+  "featureAcceptance": false,
+  "applicationBuilds": 0,
+  "assemblyLoads": 0,
+  "nativeTests": 0,
+  "hostsStarted": 0,
+  "command": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-scratch.props"
+  ],
+  "startedUtc": "2026-11-08T00:44:01.860177+00:00",
+  "exitCode": 0,
+  "buildLogSha256": "fe9ff26a908d60498c5218d57f45393bec2ed1d0be431f35618ea105e4913245",
+  "candidateDllSha256": "c54ead749a59764605a5ce8ae7ae6106b28ce56dfc8eefd7189ce80e3648225e",
+  "candidatePdbSha256": "43058507fd5d399276f499e48f9eeaec2a64c42493300f51dfaf3783b3f6ceb3",
+  "candidateRefSha256": "be2950fc441d02add06bcacdd67c8532ec708f00c8f26a223db70bfaad0b5034",
+  "candidateRefintSha256": "be2950fc441d02add06bcacdd67c8532ec708f00c8f26a223db70bfaad0b5034",
+  "sourceCorePrivateSha256": {
+    "DomainRouteCatalogFilter": "121ae30a04c76268f6fee5fa725730188579d7ec741ad3e293df27b1e5bb9a06",
+    "DomainRouteCatalogGuard": "50ba9c6b9200c6463aded2bb13f64af2ce5b775b94ce6520aded74e3d186f953",
+    "DomainRouteCatalogResult": "304eba32f8ec5ef2bc8832425a8996a2ebd721b2d58ec9b6bf777d39420f8ca7"
+  },
+  "compilerObservationProofSha256": "89392bb65b629dbb36ba77b815a1d799b77662fdc7ee3be18b17d517ab37ed7b",
+  "fixtureQualificationStillPending": true,
+  "byteEquivalenceNotClaimed": true
+}

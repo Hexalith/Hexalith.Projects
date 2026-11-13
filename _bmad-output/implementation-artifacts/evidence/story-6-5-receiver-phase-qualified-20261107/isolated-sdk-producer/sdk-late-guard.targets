@@ -1,0 +1,24 @@
+<Project>
+  <!-- Imported last, after the retained mapping.final.targets and SDK generator declarations. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <Story65SdkLateGuardImported>true</Story65SdkLateGuardImported>
+  </PropertyGroup>
+  <Target Name="Story65ValidateSdkCompilerPaths" DependsOnTargets="Story65ReceiverPhaseSourceSubstitution" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/obj/project.assets.json'" Text="Private qualification refused changed restored assets path." />
+    <ItemGroup>
+      <_Story65SdkWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+      <_Story65SdkWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+      <_Story65SdkOrdinaryInvocationHandler Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs'" />
+      <_Story65SdkOriginalHandler Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs'" />
+      <_Story65SdkPrivateHandler Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-receiver-phase-prep-20261107/TechnicalHttpRouteCatalogReceiver.private.cs'" />
+      <_Story65SdkHelper Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-receiver-phase-prep-20261107/CaptureCounters.cs'" />
+      <_Story65SdkBootstrap Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-receiver-phase-prep-20261107/ReceiverPhaseBootstrap.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65SdkOriginalHandler)' != '' or '@(_Story65SdkPrivateHandler->Count())' != '1' or '@(_Story65SdkHelper->Count())' != '1' or '@(_Story65SdkBootstrap->Count())' != '1' or '@(_Story65SdkOrdinaryInvocationHandler->Count())' != '1'" Text="Private qualification refused an unexpected handler compiler input set." />
+    <Error Condition="!$([System.String]::Copy('%(_Story65SdkWritable.FullPath)').StartsWith('/tmp/story65-receiver-phase-producer-prep-20261107/isolated-sdk/', System.StringComparison.Ordinal))" Text="Private qualification refused a compiler/generated/cache write outside its isolated output." />
+  </Target>
+  <Target Name="Story65GuardSdkBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateSdkCompilerPaths" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)');@(EmbeddedResource->'Resource|%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-writable-paths.txt" Lines="@(_Story65SdkWritable->'%(FullPath)')" Overwrite="true" />
+  </Target>
+</Project>

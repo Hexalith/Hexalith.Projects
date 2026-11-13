@@ -1,0 +1,30 @@
+{
+  "temporaryToolOnly": true,
+  "fixtureStarted": false,
+  "profilerAttached": false,
+  "sourceOrRepoBuilds": false,
+  "environmentOverrides": {
+    "DOTNET_PROCESSOR_COUNT": "unset",
+    "CustomBeforeMicrosoftCommonTargets": "unset",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "steps": [
+    {
+      "argv": [
+        "dotnet",
+        "restore",
+        "/tmp/story65-allocation-prep-20261107/AllocationProbe.csproj",
+        "--configfile",
+        "/tmp/story65-allocation-prep-20261107/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-parallel"
+      ],
+      "exitCode": 1,
+      "wallSeconds": 0.6861321280011907,
+      "log": "compile-1.log",
+      "logSha256": "79041559ede9e5433fbd7d08952b3490997c32af68aa8de5abf6ca66d93f8aea"
+    }
+  ],
+  "allStepsPassed": false
+}

@@ -1,0 +1,41 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "command": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-invocation-transport-ops-prep-20261107/sdk-scratch.props"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "selectedMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "buildOnlyEnvironment": {
+    "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "noGlobalOutputIntermediateOrAssetsOverrideOnCli": true,
+  "noRestoreRebuildCleanResolveReferencesOrCompilerInvocationDuringPreparation": true,
+  "futureBuildDoesResolveOrdinaryReferencesReadOnly": true,
+  "runtimeProcessorOverrideWillBeUnset": true,
+  "requiresRootReviewedProducerPinsAndCompleteWritableAudit": true
+}

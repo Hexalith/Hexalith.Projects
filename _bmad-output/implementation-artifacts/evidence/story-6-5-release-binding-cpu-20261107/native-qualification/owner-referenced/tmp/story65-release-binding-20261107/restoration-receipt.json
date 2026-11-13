@@ -1,0 +1,210 @@
+{
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "mappingSource": "/tmp/story65-owner-repair-native-20261107/mapping.log",
+  "mappingSha256": "ecd8d6b4819e5b1b9c9ca26a840925ed51aa2e77d19bd91c47580d7dc5a57977",
+  "explicitBuildEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+  },
+  "removedOverrideKeys": [],
+  "overlayInventory": "/tmp/story65-pool-rent-overlay-20261107/overlay-audit.json",
+  "overlayInventorySha256": "6bed36f80c8fd826f3b9470bd8361604ee6a6361e4fd8e1bf40da2519b08f688",
+  "commands": [
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T05:13:46.226642+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.EventStore.Contracts.log",
+      "exitCode": 0,
+      "logSha256": "b5e3cd5a55e555869f706e7617f84cb5fd62666f9123a19e70267a75843de413"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T05:13:50.223920+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.EventStore.ServiceDefaults.log",
+      "exitCode": 0,
+      "logSha256": "62cabeb9b64d0f04794576ff402b46fd1721e46eb01cbfa8eac859f61634fe4f"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T05:13:54.097236+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.EventStore.DomainService.log",
+      "exitCode": 0,
+      "logSha256": "54836ff8636d33529190388bb36a0c908c232b79ec6955ed5245e563c2c2ca20"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T05:13:58.345008+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.EventStore.Gateway.log",
+      "exitCode": 0,
+      "logSha256": "1e14daae77f83b7775e0eb15a7c2a6715e66e9ef80e8e6ba8455839270042199"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "startedAtUtc": "2026-11-07T05:14:03.058284+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.Folders.Server.log",
+      "exitCode": 0,
+      "logSha256": "4b05401a80295a30eb7ca060a8639860da3b03ae18523d14368fd4ad1c091215"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "startedAtUtc": "2026-11-07T05:14:07.281604+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.Projects.Server.log",
+      "exitCode": 0,
+      "logSha256": "b809b443aa812ac4e3022ae07562e03edf7f54eb61961fed104053a0c547fa54"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--no-restore",
+        "-t:Rebuild",
+        "-p:BuildProjectReferences=false",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "startedAtUtc": "2026-11-07T05:14:12.370856+00:00",
+      "log": "/tmp/story65-release-binding-20261107/restore-Hexalith.Projects.Integration.Tests.log",
+      "exitCode": 0,
+      "logSha256": "db93d4b92524e44a534c34965f157f135fee43b6424b1083859fcf8c55c21f35"
+    }
+  ],
+  "directAssemblies": [
+    {
+      "path": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "sha256": "92fe7bc55ac446775bd1f285247cbb807367f738f70a0b458b954704f38d8770",
+      "bytes": 677888,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sha256": "646c5ca76981c289bd77c1e68183193cb91b1305a54bc8e668552055e655a174",
+      "bytes": 1390080,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+      "sha256": "3217866af55943fcf1fa6483bd13f4735e21d515e2ed24421470f8e066ed42ab",
+      "bytes": 989184,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "sha256": "91a4061fdf929629e86851f27a64f9c30ebe12b8a2e6378aa12b6a08ed5a348a",
+      "bytes": 704512,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+      "sha256": "27efd0a8027c3b5d70cbb02c2ef1207e1301c44ff6685a8f88975768df92b415",
+      "bytes": 1020928,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll",
+      "sha256": "e2a2d92203039457cb3e31cbb067a3aef711f9a4b55dac3804e0149f802964fc",
+      "bytes": 837632,
+      "privateMarkers": false
+    },
+    {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "sha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+      "bytes": 990208,
+      "privateMarkers": false
+    }
+  ],
+  "allSevenForceRestored": true
+}

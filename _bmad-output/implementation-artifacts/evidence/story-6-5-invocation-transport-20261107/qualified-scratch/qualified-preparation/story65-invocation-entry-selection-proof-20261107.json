@@ -1,0 +1,179 @@
+{
+  "schema": "story65-invocation-entry-selection-proof-v1",
+  "observedAtUtc": "2026-11-07T17:28:36.344396+00:00",
+  "scope": "Current on-disk metadata for the six source-selected runtime entry DLLs; source-only interpretation of the proposed diagnostic bootstrap guard.",
+  "metadataReader": {
+    "path": "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+    "sha256": "3fc35de85fd5b62052f9fc6285d36950e1f7e2bea6b35c5e2d02ce8cf09d3a98",
+    "cachedPackageVersion": "0.27.0",
+    "commandArguments": [
+      "library",
+      "<entryDllPath>",
+      "--json"
+    ],
+    "consumedOutputFields": [
+      "assembly_info.assembly_name",
+      "assembly_info.assembly_version",
+      "assembly_info.architecture"
+    ],
+    "noInstallOrRestore": true,
+    "applicationAssemblyLoadedForThisProof": false,
+    "applicationRuntimeHostStarted": false
+  },
+  "runtimeProjectSelection": {
+    "path": "/home/administrator/projects/hexalith/projects/tools/qualification/run_supported_project_reads.py",
+    "sha256": "82306bfb7686a569c43e83213e8c79d5744a25255bcc89a48786b36892332d0e",
+    "assignmentStartLine": 1646,
+    "assignmentEndLine": 1653,
+    "parsedStaticallyWithoutImportOrExecution": true,
+    "matchesPriorSourceRoleProof": true,
+    "priorSourceRoleProof": {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/runtime-role-source-proof.json",
+      "sha256": "305abb72dbdbbff884aa55eeeac9dfb8fe5e2d56e833bd001caefa3b74d4545b"
+    },
+    "priorSourceRoleProofAll17SourcePinsStillMatch": true,
+    "previousManagedSourceFacts": {
+      "path": "/tmp/story65-outbound-assertion-diagnostic-20261107/pre-observation-closed-source-facts.json",
+      "sha256": "825312436f5c685ae11229cc98d88d361b4fd8438628fc7d8dbddb00244fc79e"
+    },
+    "previousManagedAllSixSourceProjectPathsMatched": true,
+    "previousManagedRuntimeEntryEvidence": {
+      "path": "/tmp/story65-outbound-assertion-diagnostic-20261107/runtime-private-server-proof.json",
+      "sha256": "115cfae6d6ac662918e66b2d3e3132e9cfe3e1164acd9d142e78d622531fa409"
+    }
+  },
+  "bootstrapSource": {
+    "path": "/tmp/story65-invocation-transport-prep-20261107/InvocationTransportBootstrap.cs",
+    "sha256": "40eb2532822ec0b759a69ec159926d4f9a87ad5a059ef23944f585107b3485f3",
+    "literalEligibleAssemblySimpleName": "Hexalith.EventStore",
+    "comparison": "StringComparison.Ordinal",
+    "guardPrecedesFlowSuppressionAndRecorderBeginInSource": true,
+    "fixedRoleOnlyAfterNameGuard": "Gateway",
+    "helperRemainsUnchangedSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+    "sourceGuardOnlyNoExecutionQualificationClaim": true
+  },
+  "entries": [
+    {
+      "role": "eventstore",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+      "sourceProjectSha256": "a836383eb18f9617b9a4bd24b385882d7dadf29f96e4be559c148aec763f0152",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Program.cs",
+      "programSourceSha256": "14319be3e4ccf0286766b29237789090825ce38d10cef66e3e314f11d417fe1c",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.dll",
+      "currentEntryDllSha256": "6c0a90befb506ff9d0afdcf4bb91afc58579512d624388b547d9644b18005a3c",
+      "metadataAssemblySimpleName": "Hexalith.EventStore",
+      "metadataAssemblyVersion": "4.1.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": true,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "68dc3cdef5b1839d146ad0355950ec4f31929f2fbcc2c17b73d9b27a8e8b38e9",
+      "currentHashMatchesPreviousManagedHash": false,
+      "previousManagedSourceProjectPathMatched": true
+    },
+    {
+      "role": "tenants",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+      "sourceProjectSha256": "88deae1482b4c7c8c384481f718bdcdb44e888d9dec26a0478f5b54d53a3588f",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Program.cs",
+      "programSourceSha256": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants.dll",
+      "currentEntryDllSha256": "243949fbf2b899d59f39025d95b3763eeb037785cf64aa3138f4e4443ad98411",
+      "metadataAssemblySimpleName": "Hexalith.Tenants",
+      "metadataAssemblyVersion": "7.0.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": false,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "828384635fc4d2d4ee62755ee681910ebf5a77afceddaa06db72f6378474e6c5",
+      "currentHashMatchesPreviousManagedHash": false,
+      "previousManagedSourceProjectPathMatched": true
+    },
+    {
+      "role": "projects",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "sourceProjectSha256": "532d75b6a36540122759bab0d4c1eb792b180622f8a50a2f3a0ac40b3de51705",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Program.cs",
+      "programSourceSha256": "365b37e238ab181dda447cd6051acfdb093b234f902e73d49ae7dab4fb32e1bd",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "currentEntryDllSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+      "metadataAssemblySimpleName": "Hexalith.Projects.Server",
+      "metadataAssemblyVersion": "1.0.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": false,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "e8c85b4644403d03159a3f00535f780c2ee1f4570d3756c7598745dcb5db4a26",
+      "currentHashMatchesPreviousManagedHash": false,
+      "previousManagedSourceProjectPathMatched": true
+    },
+    {
+      "role": "projects-workers",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+      "sourceProjectSha256": "24d387c182ce1ef84bf915e6f3d9940b27de5b19b5e357cbc2862133ef0d59ec",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Program.cs",
+      "programSourceSha256": "ab9364395a487640273b030b598feb9570cfa0f3c5e8b5259b17aedb9ad285d4",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.Projects.Workers.dll",
+      "currentEntryDllSha256": "7d42b8ca32d78092c3b9109c71c6580a27a2d791c22614d04bb37a223997d1e6",
+      "metadataAssemblySimpleName": "Hexalith.Projects.Workers",
+      "metadataAssemblyVersion": "1.0.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": false,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "7d42b8ca32d78092c3b9109c71c6580a27a2d791c22614d04bb37a223997d1e6",
+      "currentHashMatchesPreviousManagedHash": true,
+      "previousManagedSourceProjectPathMatched": true
+    },
+    {
+      "role": "folders",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "sourceProjectSha256": "99a917d9b60fe3291e3912cc7f618b93812232bf1192f8c4f6b58d1b34d57e50",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Program.cs",
+      "programSourceSha256": "9e2b0a9d867255a37d6edd083a2f0593cdcbef5f558d37db1a471f22abb167bc",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+      "currentEntryDllSha256": "caf01772460b329dde8b0d3ffcf605b2754d452b897be28592cef6c9da82d7d6",
+      "metadataAssemblySimpleName": "Hexalith.Folders.Server",
+      "metadataAssemblyVersion": "1.0.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": false,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "caf01772460b329dde8b0d3ffcf605b2754d452b897be28592cef6c9da82d7d6",
+      "currentHashMatchesPreviousManagedHash": true,
+      "previousManagedSourceProjectPathMatched": true
+    },
+    {
+      "role": "folders-workers",
+      "sourceProjectPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+      "sourceProjectSha256": "ab344ff830e721a4fca69bbd5c3948887101287d5724f47be72b7432e09e40e9",
+      "programSourcePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Program.cs",
+      "programSourceSha256": "f62ee5ec1392dd6652ff49db25a4236dbef6bd8a6d4deba979ff7efa944cfb21",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.Folders.Workers.dll",
+      "currentEntryDllSha256": "322f54af1b3494929ded0400694c2ec7283cdf9b8db424e4841d2aa3b113b6bb",
+      "metadataAssemblySimpleName": "Hexalith.Folders.Workers",
+      "metadataAssemblyVersion": "1.0.0.0",
+      "metadataArchitecture": "AnyCPU",
+      "eligibleUnderLiteralNameGuard": false,
+      "hashUnchangedAcrossMetadataRead": true,
+      "previousManagedEntryDllSha256": "322f54af1b3494929ded0400694c2ec7283cdf9b8db424e4841d2aa3b113b6bb",
+      "currentHashMatchesPreviousManagedHash": true,
+      "previousManagedSourceProjectPathMatched": true
+    }
+  ],
+  "entryCount": 6,
+  "matchingAssemblySimpleNameCount": 1,
+  "matchingRoles": [
+    "eventstore"
+  ],
+  "ineligibleRoles": [
+    "tenants",
+    "projects",
+    "projects-workers",
+    "folders",
+    "folders-workers"
+  ],
+  "allEntryHashesUnchangedAcrossReads": true,
+  "limits": [
+    "The current hashes describe restored files now on disk, not the earlier private managed generation; earlier entry hashes are recorded separately.",
+    "This proof does not start or observe a new process and does not establish a future process GetEntryAssembly value.",
+    "The name comparison selects diagnostic eligibility only and is not an authority or trust check. Assembly.SetEntryAssembly was not used.",
+    "External source-project, DCP/PID/start-time, mapped-source and actual entry-hash checks remain necessary for the managed diagnostic.",
+    "Absence of recorder initialization in the five excluded entry processes still requires the planned real-entry canaries; metadata-name matching alone does not execute that claim."
+  ]
+}

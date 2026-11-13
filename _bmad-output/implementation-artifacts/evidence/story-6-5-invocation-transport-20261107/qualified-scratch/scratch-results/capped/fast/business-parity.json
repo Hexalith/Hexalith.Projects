@@ -1,0 +1,220 @@
+{
+  "Mode": "capped",
+  "Group": "fast",
+  "Cases": 18,
+  "Passed": 18,
+  "ErrorType": "none",
+  "Failures": [],
+  "Captures": 19,
+  "InvocationComparisons": 19,
+  "StageExpectations": [
+    {
+      "Case": "owned-success",
+      "FirstOrdinal": 95882,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "borrowed-success",
+      "FirstOrdinal": 95883,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile"
+        ]
+      ]
+    },
+    {
+      "Case": "held-success",
+      "FirstOrdinal": 95884,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile"
+        ]
+      ]
+    },
+    {
+      "Case": "unsupported-basic-refusal",
+      "FirstOrdinal": 95885,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "undeclared-target-refusal",
+      "FirstOrdinal": 95886,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "pre-cancel-before-acquire",
+      "FirstOrdinal": 95887,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "cancel-before-enrollment",
+      "FirstOrdinal": 95888,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "transport-fault-retains",
+      "FirstOrdinal": 95889,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "transport-cancel-retains",
+      "FirstOrdinal": 95890,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "release-fault-overrides-response",
+      "FirstOrdinal": 95891,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "release-fault-overrides-validation",
+      "FirstOrdinal": 95892,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "borrowed-observer-refusal",
+      "FirstOrdinal": 95893,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "held-scope-closed-refusal",
+      "FirstOrdinal": 95894,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "ordinary-direct-nochildren",
+      "FirstOrdinal": 95895,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "control-nochildren",
+      "FirstOrdinal": 95896,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ]
+      ]
+    },
+    {
+      "Case": "outer-buffer-success",
+      "FirstOrdinal": 95897,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "outer-buffer-fault",
+      "FirstOrdinal": 95898,
+      "Entries": 1,
+      "ExpectedStages": [
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    },
+    {
+      "Case": "ordinary-redirect-reentry",
+      "FirstOrdinal": 95899,
+      "Entries": 2,
+      "ExpectedStages": [
+        [
+          "Whole"
+        ],
+        [
+          "Whole",
+          "ComponentFile",
+          "ComponentPolicy"
+        ]
+      ]
+    }
+  ],
+  "VariantIdentitiesQualified": true,
+  "SharedDependenciesQualified": true,
+  "TraceValuesPersisted": false,
+  "PayloadHeaderProofValuesPersisted": false,
+  "AllocationMode": "None",
+  "CountCalls": 0
+}

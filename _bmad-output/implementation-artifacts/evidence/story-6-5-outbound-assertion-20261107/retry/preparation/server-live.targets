@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="Story65OutboundAssertionSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Server'">
+    <ItemGroup>
+      <Compile Remove="DomainServices/DomainServiceWorkloadAssertionHandler.cs" />
+      <Compile Include="/tmp/story65-outbound-assertion-prep-20261107/DomainServiceWorkloadAssertionHandler.private.cs" />
+      <Compile Include="/tmp/story65-outbound-assertion-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-outbound-assertion-prep-20261107/GatewayControllerBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

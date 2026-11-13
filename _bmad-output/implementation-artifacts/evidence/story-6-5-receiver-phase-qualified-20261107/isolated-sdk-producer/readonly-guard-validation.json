@@ -1,0 +1,24 @@
+{
+  "pureValidationTargetOnly": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-receiver-phase-producer-prep-20261107/sdk-scratch.props",
+    "-target:HexalithVerifySourceMappingSelection;Story65ValidateSdkCompilerPaths",
+    "-getProperty:CustomBeforeDirectoryBuildProps,CustomAfterMicrosoftCommonProps,CustomBeforeDirectoryBuildTargets,CustomAfterDirectoryBuildTargets,AfterMicrosoftNETSdkTargets,HEXALITH_SOURCE_MAPPING_HASH,Configuration,Story65SdkOriginalAfterSdkTargets,Story65SdkLateGuardImported,HexalithSourceMappingApplies,_HXWObservedConfiguration,_HXWPreLateSelectionCaptured,_HXWFinalTargetsImported"
+  ],
+  "exitCode": 0,
+  "stdoutSha256": "03dc9887de19053be57f33a5504736a54c4ddc65c6091ee550271fadeb50a48b",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "targetHasOnlyItemGroupsAndErrors": true,
+  "originalHandlerAbsentPrivateHelperBootstrapExactlyOnce": true,
+  "allRootBaselinesUnchanged": true,
+  "noCopyBuildRestoreCleanResolveReferencesCoreCompileOrAssemblyLoad": true
+}

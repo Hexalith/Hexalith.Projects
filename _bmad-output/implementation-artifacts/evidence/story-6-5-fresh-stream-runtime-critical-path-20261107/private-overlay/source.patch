@@ -1,0 +1,546 @@
+--- src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs at 9ae0571529cb4a9f3ad9750c8b834e6284d4f76b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithProjectsServer-ProjectAdvisoryQueryExecutor.cs
+@@ -52,6 +52,7 @@
+ 
+     private async Task<QueryResult> ExecuteAsync(QueryEnvelope query, bool conversation, CancellationToken callerToken)
+     {
++        using var __focus1 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Advisory();
+         callerToken.ThrowIfCancellationRequested();
+         if (query.QueryType != (conversation ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType)) return Denied();
+         // One linked dependency budget begins with scope authorization, before validating caller input.
+@@ -224,6 +225,7 @@
+ 
+     private async Task<ProjectDetailItem?> DetailAsync(QueryEnvelope query, string id, bool includeArchived, Action omitted, CancellationToken token)
+     {
++        using var __focus6 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.detail");
+         token.ThrowIfCancellationRequested();
+         var entry = await store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail(query.TenantId, id), token).ConfigureAwait(false);
+         if (entry.Value is not { Detail: { } detail } model || string.IsNullOrEmpty(entry.ETag)
+@@ -236,6 +238,7 @@
+ 
+     private async Task<bool> ScopeAsync(QueryEnvelope query, CancellationToken token)
+     {
++        using var __focus2 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.scope");
+         token.ThrowIfCancellationRequested();
+         var result = await ProjectReadQueryAdmission.AuthorizeAsync(query, query.QueryType, false, gate, binding, token).ConfigureAwait(false);
+         if (result?.Retryable == true) throw new InvalidOperationException("Scope authorization unavailable.");
+@@ -252,6 +255,7 @@
+ 
+     private async Task<bool> ProjectAllowedAsync(QueryEnvelope query, string id, Action omitted, CancellationToken token)
+     {
++        using var __focus5 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.project-allowed");
+         token.ThrowIfCancellationRequested();
+         if (!binding.TryBind(query, out var context) || binding.HttpContext is not { } http) return false;
+         var result = await gate.AuthorizeSupportedResourceAsync(id, context, http, query.CorrelationId, token).ConfigureAwait(false);
+@@ -261,6 +265,7 @@
+ 
+     private async Task<bool> FolderAllowedAsync(QueryEnvelope query, string projectId, string? folderId, Action omitted, CancellationToken token)
+     {
++        using var __focus4 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.folder-allowed");
+         token.ThrowIfCancellationRequested();
+         if (folderId is null || !Identity(query.TenantId, folderId)) { omitted(); return false; }
+         try
+@@ -276,6 +281,7 @@
+ 
+     private async Task<string[]> FilterInputsAsync(string[] ids, QueryEnvelope query, Action omitted, CancellationToken token)
+     {
++        using var __focus3 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.filter-inputs");
+         ConcurrentBag<string> accepted = [];
+         await Parallel.ForEachAsync(ids, new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
+         {
+@@ -286,6 +292,7 @@
+ 
+     private async Task<(bool Denied, ConversationAdvisoryMetadataResult? Metadata)> ConversationAsync(QueryEnvelope query, string id, CancellationToken token)
+     {
++        using var __focus7 = global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsServer.Start("projects.conversation");
+         token.ThrowIfCancellationRequested();
+         QueryResult result = await conversations.ReadAsync(query.TenantId, id, token).ConfigureAwait(false);
+         if (!result.Success) return (result.ErrorMessage == "safe-denial", null);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreDomainService-DelegatedOwnerQueryClient.cs
+@@ -20,6 +20,7 @@
+     /// <summary>Sends an exact owner request through the existing signed bound-owner gateway route.</summary>
+     public async Task<QueryResult> InvokeAsync(SubmitQueryRequest query, CancellationToken cancellationToken = default)
+     {
++        using var __focus8 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreDomainService.Start("owner.client");
+         ArgumentNullException.ThrowIfNull(query);
+         HttpContext? context = accessor.HttpContext;
+         VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(context);
+@@ -62,7 +63,9 @@
+         using HttpRequestMessage message = dapr.CreateInvokeMethodRequest(gateway, "api/v1/queries/owner-authority/workload", request);
+         message.Headers.TryAddWithoutValidation(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
+         message.Headers.TryAddWithoutValidation(BoundOwnerQueryProof.HeaderName, BoundOwnerQueryProof.Issue(request, workload, key, clock.GetUtcNow()));
++        using var __focus9 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreDomainService.Start("owner.client-send");
+         using HttpResponseMessage response = await clients.CreateClient().SendAsync(message, cancellationToken).ConfigureAwait(false);
++        __focus9?.Dispose();
+         if (response.StatusCode == HttpStatusCode.NotFound)
+             return QueryResult.Failure("safe-denial");
+         if (!response.IsSuccessStatusCode) return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreGateway-QueriesController.cs
+@@ -127,6 +127,7 @@
+     [RequestSizeLimit(1_048_576)]
+     public async Task<IActionResult> SubmitBoundOwnerAuthorityAsync(
+         [FromBody] BoundOwnerQueryRequest request, CancellationToken cancellationToken) {
++        using var __focus10 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.owner");
+         if (request?.Query is not { } query || query.Payload is null || query.AdditionalProperties is { Count: > 0 }
+             || query.EntityId is not null || query.ProjectionType is not null || query.ProjectionActorType is not null
+             || query.Paging is not null || query.Search is not null || query.Filters is not null || query.OrderBy is not null
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreGateway-DaprDomainQueryInvoker.cs
+@@ -60,6 +60,7 @@
+ 
+     /// <inheritdoc/>
+     public async Task<QueryResult> InvokeAsync(QueryEnvelope query, CancellationToken cancellationToken = default) {
++        using var __focus11 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.invoker");
+         ArgumentNullException.ThrowIfNull(query);
+ 
+         var catalogLease = catalogAuthority is null ? null : await catalogAuthority.AcquireAsync(cancellationToken).ConfigureAwait(false);
+@@ -91,7 +92,9 @@
+                 query);
+             if (query.CallerAuthority is not null) httpRequest.Options.Set(QueryCallerAuthorityBinding.RequestBindings, QueryCallerAuthorityBinding.Bind(query));
+             HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+-            using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
++            using var __focus12 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.owner-send");
++        using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
++        __focus12?.Dispose();
+             if (httpResponse.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Forbidden) return QueryResult.Failure("safe-denial");
+             if (committed is not null && httpResponse.StatusCode == HttpStatusCode.ServiceUnavailable)
+                 throw new Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException("The committed query receiver refused catalog authority.");
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreGateway-StreamsController.cs
+@@ -105,6 +105,7 @@
+         StreamReadRequest request,
+         bool workloadOnly,
+         CancellationToken cancellationToken) {
++        using var __focus13 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.native-stream");
+         ArgumentNullException.ThrowIfNull(request);
+         if (workloadOnly && request.Tenant is null)
+             return ProblemWithReason(StatusCodes.Status400BadRequest, ProblemTypeUris.BadRequest,
+@@ -228,8 +229,10 @@
+                 {
+                     try
+                     {
+-                        metadataPair = await NativeSourceReadDiagnostics.ObservePair(actor.InspectSourceMetadataPairAsync(), identity,
++                        using var __focus14 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.actor-pair-await");
++        metadataPair = await NativeSourceReadDiagnostics.ObservePair(actor.InspectSourceMetadataPairAsync(), identity,
+                             configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
++        __focus14?.Dispose();
+                     }
+                     catch (NotSupportedException) { return StatusCode(StatusCodes.Status503ServiceUnavailable); }
+                     native = metadataPair?.Initial;
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogAuthority.cs
+@@ -191,6 +191,7 @@
+     /// <inheritdoc/>
+     public async Task<RouteCatalogDispatchLease> AcquireAsync(CancellationToken cancellationToken = default)
+     {
++        using var __focus15 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.acquire");
+         DispatchDiagnostics? diagnostics = DispatchDiagnostics.Create(_logger, cancellationToken);
+         await WaitForLocalAdmissionAsync(cancellationToken, diagnostics).ConfigureAwait(false);
+         RouteCatalogAdmissionGate? admission = null;
+@@ -206,6 +207,7 @@
+             using var decoding = BeginPrivateDecodeScope();
+             using var bindingComputation = BeginPrivateBindingScope();
+             using var imageComputation = BeginPrivateImageScope();
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(imageComputation is null ? "authority.image-scope.absent" : "authority.image-scope.present");
+             long started = Stopwatch.GetTimestamp();
+             bool completed = false;
+             try
+@@ -242,6 +244,7 @@
+ 
+     private async Task WaitForLocalAdmissionAsync(CancellationToken cancellationToken, DispatchDiagnostics? diagnostics)
+     {
++        using var __focus16 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.admission-wait");
+         using var stage = diagnostics?.Start(DispatchStageName.CatalogAdmissionWait);
+         await _localAdmission.WaitAsync(cancellationToken).ConfigureAwait(false);
+         stage?.Complete();
+@@ -263,6 +266,7 @@
+     internal async Task<RouteCatalogHeldMetadataDispatch?> GetHeldMetadataDispatchAsync(HttpRequestMessage request,
+         string appId, string method, CancellationToken cancellationToken)
+     {
++        using var __focus20 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.held-metadata");
+         cancellationToken.ThrowIfCancellationRequested();
+         if (method != "api/v1/streams/read/workload" || request.Method.Method != "POST" || !PrivateHeldMetadataEnabled()) return null;
+         var scopes = RouteCatalogRemoteCall.CaptureMetadataScopes(this);
+@@ -282,6 +286,7 @@
+             using var decoding = BeginPrivateDecodeScope();
+             using var bindingComputation = BeginPrivateBindingScope();
+             using var imageComputation = BeginPrivateImageScope();
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(imageComputation is null ? "authority.image-scope.absent" : "authority.image-scope.present");
+             var activation = System.Text.Json.JsonSerializer.Deserialize<RouteCatalogActivation>(held.Activation,
+                 System.Text.Json.JsonSerializerOptions.Web) ?? throw new RouteCatalogUnavailableException("The private issuer activation is unavailable.");
+             if (activation.RootDigest != held.Snapshot.RootDigest
+@@ -312,6 +317,7 @@
+     private async Task<RouteCatalogDispatchLease> AcquireCoreAsync(CancellationToken cancellationToken, DispatchDiagnostics? diagnostics,
+         RouteCatalogAdmissionGate admission, bool shortAdmission)
+     {
++        using var __focus17 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.acquire-core");
+         RequireLocalIdentity();
+         RouteCatalogActivation? captured = null;
+         long epoch = 0;
+@@ -398,6 +404,7 @@
+                     bool exchanged;
+                     using (var stage = diagnostics?.Start(DispatchStageName.CatalogCompareExchange))
+                     {
++            using var __focus27 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.cas");
+                         exchanged = await store.CompareExchangeAsync(next, etag, cancellationToken).ConfigureAwait(false);
+                         stage?.Complete();
+                     }
+@@ -431,6 +438,7 @@
+ 
+     private async Task<(RouteCatalogActivationState State, string ETag)> ReadAdmissionStateAsync(CancellationToken cancellationToken, DispatchDiagnostics? diagnostics)
+     {
++        using var __focus21 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.state-read");
+         using var stage = diagnostics?.Start(DispatchStageName.CatalogStateRead);
+         var result = await store.ReadAsync(cancellationToken).ConfigureAwait(false);
+         stage?.Complete();
+@@ -454,6 +462,7 @@
+     /// <summary>Rechecks independently observed local facts for a native read under its existing durable lease.</summary>
+     internal async Task ValidateNativeReadLeaseAsync(RouteCatalogDispatchLease lease, CancellationToken cancellationToken)
+     {
++        using var __focus19 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.native-revalidate");
+         ArgumentNullException.ThrowIfNull(lease);
+         using var decodingBoundary = RouteCatalogDecodeScope.Suppress();
+         using var bindingBoundary = RouteCatalogBindingScope.Suppress();
+@@ -461,6 +470,7 @@
+         using var decoding = BeginPrivateDecodeScope();
+         using var bindingComputation = BeginPrivateBindingScope();
+         using var imageComputation = BeginPrivateImageScope();
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(imageComputation is null ? "authority.image-scope.absent" : "authority.image-scope.present");
+         lease.RequireOpenForExecution();
+         if (lease.Activation is not { } activation
+             || lease.Snapshot.AuthorityCoordinates != store.Coordinates
+@@ -491,6 +501,7 @@
+ 
+     private async Task ReleaseAsync(string leaseId)
+     {
++        using var __focus22 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.release");
+         // Release writes share the local admission gate with acquisitions, so this
+         // host does not manufacture avoidable conflicts against its own new reads.
+         // A release called from a genuinely held admission phase keeps the original CAS path:
+@@ -504,6 +515,7 @@
+ 
+     private async Task ReleaseCoreAsync(string leaseId)
+     {
++        using var __focus23 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.release-core");
+         using var decodingBoundary = RouteCatalogDecodeScope.Suppress();
+         using var bindingBoundary = RouteCatalogBindingScope.Suppress();
+         using var imageBoundary = RouteCatalogImageDigestScope.Suppress();
+@@ -524,6 +536,7 @@
+ 
+     private async Task ValidateAsync(RouteCatalogActivation activation, CancellationToken cancellationToken, DispatchDiagnostics? diagnostics = null)
+     {
++        using var __focus18 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.validate");
+         long phase = RouteCatalogDecodeScope.Current is null ? 0 : Stopwatch.GetTimestamp();
+         RequireLocalIdentity();
+         string binding;
+@@ -540,6 +553,7 @@
+         phase = ReportDecodePhase("profile", phase);
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogHostCapture))
+         {
++            using var __focus24 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.host-capture");
+             if (store.Coordinates is not { } coordinates || observer is null
+                 || await observer.ObserveAsync(activation, coordinates, cancellationToken).ConfigureAwait(false) != local.Identity)
+                 throw new RouteCatalogUnavailableException("Configured host identity lacks matching independent registration, topology and authentication observations.", RouteCatalogRefusalReason.Inventory);
+@@ -548,6 +562,7 @@
+         phase = ReportDecodePhase("observer", phase);
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogTrust))
+         {
++            using var __focus25 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.trust");
+             await trust.ValidateAsync(activation, binding, cancellationToken).ConfigureAwait(false);
+             stage?.Complete();
+         }
+@@ -591,6 +606,7 @@
+             bool exchanged;
+             using (var stage = diagnostics?.Start(DispatchStageName.CatalogCompareExchange))
+             {
++            using var __focus26 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("catalog.cas");
+                 exchanged = await store.CompareExchangeAsync(next, etag, cancellationToken).ConfigureAwait(false);
+                 stage?.Complete();
+             }
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogImageDigestMemo.cs
+@@ -27,26 +27,39 @@
+     /// <summary>Compares every freshly captured byte after the caller's original required image observations.</summary>
+     internal bool TryCompute(Assembly assembly, ReadOnlySpan<byte> current, out string digest, out bool reused)
+     {
++        using var __focus28 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("image.memo.total");
+         lock (_gate)
+         {
+             digest = string.Empty;
+             reused = false;
+-            if (_closed || current.Length is 0 or > MaximumImageBytes) return false;
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.calls", current.Length);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.before.entries", _images.Count);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.before.charged-bytes", _retainedBytes);
++            if (_closed || current.Length is 0 or > MaximumImageBytes) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.reject"); global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.reject.reason-mask", _closed ? 1 : current.Length == 0 ? 2 : 4); return false; }
+             bool present = _images.TryGetValue(assembly, out var previous);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(present ? "image.memo.lookup.present" : "image.memo.lookup.absent");
+             if (present && current.SequenceEqual(previous.Bytes))
+             {
+                 digest = previous.Digest;
+                 reused = true;
++                global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.hit");
++                global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.retained-bytes", _retainedBytes);
++                global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.entries", _images.Count);
+                 return true;
+             }
+             int replacedBytes = present ? previous.Bytes.Length + 512 : 0;
+             int chargedBytes = current.Length + 512;
+-            if (!present && _images.Count == MaximumEntries || chargedBytes > MaximumRetainedBytes - (_retainedBytes - replacedBytes)) return false;
++            if (!present && _images.Count == MaximumEntries || chargedBytes > MaximumRetainedBytes - (_retainedBytes - replacedBytes)) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.reject"); global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.reject.reason-mask", (!present && _images.Count == MaximumEntries ? 8 : 0) | (chargedBytes > MaximumRetainedBytes - (_retainedBytes - replacedBytes) ? 16 : 0)); return false; }
+             // Hash the retained private copy, never a buffer returned later to the image pool.
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.miss");
++            using var __hash = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("image.memo.hash");
+             byte[] owned = current.ToArray();
+             digest = Convert.ToHexStringLower(SHA256.HashData(owned));
++            __hash?.Dispose();
+             _images[assembly] = (owned, digest);
+             _retainedBytes += chargedBytes - replacedBytes;
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.retained-bytes", _retainedBytes);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("image.memo.entries", _images.Count);
+             return true;
+         }
+     }
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogImageDigestScope.cs
+@@ -18,6 +18,7 @@
+     {
+         _ownsMemo = memo is null;
+         _memo = memo ?? new();
++        global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(_ownsMemo ? "image.scope.local-memo" : "image.scope.host-memo");
+         _prior = Active.Value;
+         Active.Value = this;
+     }
+@@ -49,7 +50,7 @@
+         lock (_gate)
+         {
+             digest = string.Empty;
+-            if (_closed || !_memo.TryCompute(assembly, current, out digest, out bool reused)) return false;
++            if (_closed || !_memo.TryCompute(assembly, current, out digest, out bool reused)) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(_closed ? "image.scope.try.closed" : "image.scope.try.memo-reject"); return false; }
+             if (reused) CacheHits++;
+             return true;
+         }
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-ObservedRouteCatalogHost.cs
+@@ -78,9 +78,12 @@
+     /// <inheritdoc/>
+     public async Task<RouteCatalogHostIdentity> ObserveAsync(RouteCatalogActivation activation, RouteCatalogStateCoordinates coordinates, CancellationToken cancellationToken)
+     {
++        using var __focus29 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("host.observe");
+         ArgumentNullException.ThrowIfNull(activation);
+         ArgumentNullException.ThrowIfNull(coordinates);
++        using var __focus30 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("host.capture");
+         RouteCatalogHostObservation actual = await capture(cancellationToken).ConfigureAwait(false);
++        __focus30?.Dispose();
+         if (actual.AuthorityCoordinates != coordinates)
+             throw new RouteCatalogUnavailableException("Observed authority coordinates disagree with the effective state store.", RouteCatalogRefusalReason.Configuration);
+         RouteCatalogHostIdentity identity = Identity(actual, out var inventory);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogInputs.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-DevelopmentRouteCatalogInputs.cs
+@@ -15,6 +15,7 @@
+         IReadOnlyList<IdempotencyCatalogEntry> admission, IReadOnlyList<RouteCatalogProjectionCapability> capabilities,
+         IReadOnlyList<RouteCatalogAuxiliaryOperation> auxiliary, CancellationToken token = default)
+     {
++        using var __focus31 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("host.configuration-inputs");
+         ArgumentNullException.ThrowIfNull(configuration);
+         ArgumentNullException.ThrowIfNull(declarations);
+         var section = configuration.GetSection("EventStore:RouteCatalog:DevelopmentBootstrap");
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/FiniteRouteCatalogReceiver.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-FiniteRouteCatalogReceiver.cs
+@@ -288,6 +288,7 @@
+     /// <summary>Returns actual retained metadata only after the receiver has installed its finite allow table.</summary>
+     public RouteCatalogReceiverSurface Observe()
+     {
++        using var __focus32 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("finite.observe");
+         if (_technicalComposite is not null) return _technicalComposite.Observe();
+         if (_surface is null) throw new RouteCatalogUnavailableException("The actual finite receiver fence has not captured its endpoint inventory.");
+         if (_currentEndpoints is null) return _surface;
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-TechnicalHttpRouteCatalogReceiver.cs
+@@ -241,6 +241,7 @@
+     /// <summary>Recaptures every real endpoint, retaining admission only for unchanged installed action identities.</summary>
+     public RouteCatalogReceiverSurface Observe()
+     {
++        using var __focus33 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("technical.observe");
+         if (!_ready.Task.IsCompletedSuccessfully) throw new RouteCatalogUnavailableException("The technical receiver has not captured its actual endpoint source.");
+         List<RouteCatalogReceiverEndpoint> endpoints = []; List<RouteCatalogTechnicalHttpEndpoint> technical = [];
+         var pass = new TechnicalHttpObservationPass(_services!);
+@@ -287,6 +288,7 @@
+     private async Task InvokeNativeAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,
+         RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback)
+     {
++        using var __focus34 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("native.receiver");
+         DispatchDiagnostics? diagnostics = DispatchDiagnostics.Create<TechnicalHttpRouteCatalogReceiver>(context.RequestServices, context.RequestAborted);
+         RouteCatalogDispatchLease? lease = null;
+         try
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogInvocationHandler.cs
+@@ -126,6 +126,7 @@
+     /// <inheritdoc/>
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+     {
++        using var __focus35 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("transport.guarded-send");
+         ArgumentNullException.ThrowIfNull(request);
+         if (_options?.Value is { DevelopmentFixture: true, Profile: "Development" } && DevelopmentActorStateTransport.GetOwner(request) is { } owner)
+             return await SendOwnerReadAsync(request, owner, cancellationToken).ConfigureAwait(false);
+@@ -231,6 +232,7 @@
+         }
+         async Task<HttpResponseMessage> SendTransportAsync(CancellationToken token)
+         {
++            using var __focus36 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Start("transport.actual-send");
+             using var stage = diagnostics?.Start(DispatchStageName.InvocationTransport);
+             HttpResponseMessage response = await invocation.SendAsync(request, token).ConfigureAwait(false);
+             stage?.Complete();
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreDomainService-DevelopmentDomainRouteCatalog.cs
+@@ -44,6 +44,7 @@
+             (CompiledRouteCatalogDeclarations.Read(owners), CompiledRouteCatalogDeclarations.ReadOperations(owners)));
+         return services.AddEventStoreDevelopmentRouteCatalogBootstrap(configuration, async (provider, token) =>
+         {
++            using var __capture = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreDomainService.Start("domain.capture");
+             using var scope = provider.CreateScope();
+             var local = scope.ServiceProvider;
+             var (declarations, operations) = compiled.Value;
+@@ -86,6 +87,7 @@
+     /// <summary>Preserves a fresh complete stream observation while allowing only the owning private scope's exact-byte computation reuse.</summary>
+     internal static string ReadExecutableDigest(Assembly assembly)
+     {
++        using var __assembly = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreDomainService.Counted("domain.executable.assembly");
+         using FileStream image = File.OpenRead(assembly.Location);
+         return RouteCatalogFreshStreamImageDigest.Compute(assembly, image);
+     }
+--- references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs at e88c940000446e13d17d86a7288649d8653a7138
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithFoldersServer-FolderOwnerReadQueryHandler.cs
+@@ -15,6 +15,7 @@
+ 
+     public async Task<QueryResult> ExecuteAsync(QueryEnvelope query, CancellationToken cancellationToken = default)
+     {
++        using var __focus37 = global::Hexalith.PrivateFocusedTiming.TimingHexalithFoldersServer.Start("folders.owner");
+         ArgumentNullException.ThrowIfNull(query);
+         VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(accessor.HttpContext);
+         if (caller is null || !ReferenceEquals(caller.Query, query) || query.CallerAuthority?.Origin != "delegated-owner-query")
+@@ -26,20 +27,24 @@
+                 || query.EntityId != query.AggregateId || query.Paging is not null) return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
+         }
+         catch (JsonException) { return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope); }
++        using var __focus38 = global::Hexalith.PrivateFocusedTiming.TimingHexalithFoldersServer.Start("folders.authorize-first");
+         LayeredFolderAuthorizationResult result = await authorization.AuthorizeCurrentMetadataReadAsync(new(
+             query.TenantId, query.UserId, "actor_present", "read_metadata", LayeredFolderOperationPolicy.StrictRead(),
+             EventStoreClaimTransformEvidence.Allowed(query.TenantId, query.UserId, query.CallerAuthority.Permissions),
+             query.AggregateId, query.CorrelationId, null, null, null), cancellationToken).ConfigureAwait(false);
++        __focus38?.Dispose();
+         if (!result.IsAllowed)
+         {
+             if (result.Decision.FreshnessClass == "stale") return Success(FolderOwnerReadOutcome.Stale);
+             if (!result.Decision.Retryable) return QueryResult.Failure("safe-denial");
+             return Success(FolderOwnerReadOutcome.Unavailable);
+         }
++        using var __focus39 = global::Hexalith.PrivateFocusedTiming.TimingHexalithFoldersServer.Start("folders.authorize-final");
+         LayeredFolderAuthorizationResult final = await authorization.AuthorizeCurrentMetadataReadAsync(new(
+             query.TenantId, query.UserId, "actor_present", "read_metadata", LayeredFolderOperationPolicy.StrictRead(),
+             EventStoreClaimTransformEvidence.Allowed(query.TenantId, query.UserId, query.CallerAuthority.Permissions),
+             query.AggregateId, query.CorrelationId, null, null, null), cancellationToken).ConfigureAwait(false);
++        __focus39?.Dispose();
+         if (!final.IsAllowed) return final.Decision.Retryable ? Success(FolderOwnerReadOutcome.Unavailable) : QueryResult.Failure("safe-denial");
+         if (!SameRevisions(result.AllowedContext, final.AllowedContext)) return Success(FolderOwnerReadOutcome.Unavailable);
+         FolderOwnerReadEvidence? evidence = FolderOwnerQueryBinding.IsVerified(query, accessor)
+--- tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs at 9ae0571529cb4a9f3ad9750c8b834e6284d4f76b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithProjectsIntegrationTests-SupportedProjectReadDistributedFixture.cs
+@@ -278,6 +278,7 @@
+ 
+     private async Task WaitForBrowserAdvisoryReadinessAsync(string credential)
+     {
++        global::Hexalith.PrivateFocusedTiming.TimingHexalithProjectsIntegrationTests.Open();
+         using var sidecar = new Dapr.Client.DaprClientBuilder()
+             .UseHttpEndpoint(_endpoints["eventstore-dapr-cli"]).UseGrpcEndpoint(_endpoints["state-grpc"]).Build();
+         var models = new Hexalith.EventStore.Client.Projections.DaprReadModelStore(sidecar);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-fresh-stream-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogFreshStreamImageDigest.cs
+@@ -16,14 +16,22 @@
+     /// <summary>Owns every borrowed buffer through complete EOF, comparison and hashing, including growth and failures.</summary>
+     internal static string Compute(Assembly assembly, Stream image, ArrayPool<byte> buffers)
+     {
++        using var __fresh = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("fresh.total");
+         if (RouteCatalogImageDigestScope.Current is not { IsOpen: true } scope)
++        {
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter(RouteCatalogImageDigestScope.Current is null ? "fresh.scope.absent" : "fresh.scope.closed");
++            using var __fallback = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("fresh.fallback.scope-hash");
+             return Convert.ToHexStringLower(SHA256.HashData(image));
++        }
++        global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.scope.open");
+         int requested = InitialCapacity(image);
+-        if (requested == 0) return Convert.ToHexStringLower(SHA256.HashData(image));
++        if (requested == 0) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.bypass.known-oversize"); using var __known = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("fresh.fallback.known-oversize-hash"); return Convert.ToHexStringLower(SHA256.HashData(image)); }
+         byte[]? bytes = null;
+         try
+         {
+             bytes = buffers.Rent(requested);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.capture.rent-request", requested);
++            global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.capture.rent-actual", bytes.Length);
+             int count = 0;
+             while (true)
+             {
+@@ -32,10 +40,14 @@
+                 {
+                     // A full allocation is never proof of EOF. Consume the next original byte before growing or falling back.
+                     int next = image.ReadByte();
+-                    if (next < 0) return Complete(scope, assembly, bytes.AsSpan(0, count));
++                    if (next < 0) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.eof.full-buffer", count); return Complete(scope, assembly, bytes.AsSpan(0, count)); }
+                     if (limit == RouteCatalogImageDigestMemo.MaximumImageBytes)
++                    {
++                        global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.bypass.observed-oversize", count + 1);
+                         return HashOversizedRemainder(image, bytes, count, (byte)next);
++                    }
+                     byte[] larger = buffers.Rent(Math.Min(RouteCatalogImageDigestMemo.MaximumImageBytes, limit * 2));
++                    global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.capture.grow", larger.Length);
+                     bytes.AsSpan(0, count).CopyTo(larger);
+                     buffers.Return(bytes);
+                     bytes = larger;
+@@ -43,7 +55,7 @@
+                 }
+                 int read = image.Read(bytes.AsSpan(count, Math.Min(ReadChunkBytes,
+                     Math.Min(bytes.Length, RouteCatalogImageDigestMemo.MaximumImageBytes) - count)));
+-                if (read == 0) return Complete(scope, assembly, bytes.AsSpan(0, count));
++                if (read == 0) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.eof.read-zero", count); return Complete(scope, assembly, bytes.AsSpan(0, count)); }
+                 count += read;
+             }
+         }
+@@ -57,7 +69,7 @@
+             if (image.CanSeek)
+             {
+                 long remaining = image.Length - image.Position;
+-                if (remaining > RouteCatalogImageDigestMemo.MaximumImageBytes) return 0;
++                if (remaining > RouteCatalogImageDigestMemo.MaximumImageBytes) { global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.hint.known-oversize-bytes", remaining); return 0; }
+                 return (int)Math.Clamp(remaining, 4096, RouteCatalogImageDigestMemo.MaximumImageBytes);
+             }
+         }
+@@ -67,16 +79,26 @@
+     }
+ 
+     private static string Complete(RouteCatalogImageDigestScope scope, Assembly assembly, ReadOnlySpan<byte> current)
+-        => scope.TryCompute(assembly, current, out string digest) ? digest : Convert.ToHexStringLower(SHA256.HashData(current));
++        {
++        using var __complete = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("fresh.complete");
++        global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.complete.bytes", current.Length);
++        return scope.TryCompute(assembly, current, out string digest) ? digest : Convert.ToHexStringLower(SHA256.HashData(current));
++    }
+ 
+     private static string HashOversizedRemainder(Stream image, byte[] bytes, int count, byte next)
+     {
++        using var __overflow = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counted("fresh.fallback.observed-oversize-hash");
++        long __consumed = count + 1;
+         using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+         hash.AppendData(bytes.AsSpan(0, count));
+         hash.AppendData([next]);
+         int read;
+         while ((read = image.Read(bytes.AsSpan(0, Math.Min(ReadChunkBytes, bytes.Length)))) != 0)
++        {
+             hash.AppendData(bytes.AsSpan(0, read));
++            __consumed += read;
++        }
++        global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreServiceDefaults.Counter("fresh.oversize.eof-bytes", __consumed);
+         return Convert.ToHexStringLower(hash.GetHashAndReset());
+     }
+ }

@@ -1,0 +1,7 @@
+{
+  "fileOnly": true,
+  "inputEvidenceUnchanged": true,
+  "closedIssue": "initial packaging expected thirteen primary private build records rather than twelve plus separate native artifact build",
+  "actualFact": "private primary commands12 and private native artifact build1 are separate; ordinary commands13 include native artifact restoration",
+  "fix": "preserve actual split and total, all exit0; no build rerun"
+}

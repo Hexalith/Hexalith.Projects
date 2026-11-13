@@ -1,0 +1,25 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-profile-fact-live-20261107"
+  },
+  "startedAtUtc": "2026-11-07T03:49:09.624239+00:00",
+  "stdoutStderr": "/tmp/story65-profile-fact-live-20261107-console.log",
+  "privateDiagnosticOverride": false,
+  "inheritedSourceMappingCleared": true,
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T03:57:01.393042+00:00",
+  "logSha256": "c7ce5fcccd5a08deb7f9b86ed1b0b82d9ff9317ab5707d17fa60167b0a378abe"
+}

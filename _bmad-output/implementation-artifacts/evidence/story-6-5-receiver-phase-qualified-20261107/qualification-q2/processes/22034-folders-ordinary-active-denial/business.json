@@ -1,0 +1,66 @@
+{
+  "Mode": "active",
+  "Group": "denial",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "technical-grant-denial",
+        "Passed": true,
+        "MiddlewareEntries": 1,
+        "AcquireCalls": 1,
+        "NextCalls": 0,
+        "ReleaseCallbacks": 1,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokenMatched": true,
+        "LifetimeMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 111,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinal": 0,
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "SyntheticDurationBracketOnly": false
+    },
+    {
+      "Result": {
+        "Case": "technical-next-fault-release-precedence",
+        "Passed": true,
+        "MiddlewareEntries": 1,
+        "AcquireCalls": 1,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 1,
+        "ErrorType": "System.IO.IOException",
+        "Faults": 2,
+        "TokenMatched": true,
+        "LifetimeMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 127,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinal": 0,
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "SyntheticDurationBracketOnly": false
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

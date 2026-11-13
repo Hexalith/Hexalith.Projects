@@ -1,0 +1,44 @@
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/ops_common.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/ops_common.py
+@@ -1,7 +1,7 @@
+ from pathlib import Path
+ import hashlib,json,os,re,stat
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+-PREP=Path('/tmp/story65-dapr-invoker-ops-prep-20261107/live')
++PREP=Path('/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry')
+ PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
+ SDK='Hexalith.EventStore.ServiceDefaults'
+ SDK_PRODUCER=ROOT/'references/Hexalith.EventStore/src'/SDK
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/native_qualification.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native_qualification.py
+@@ -30,7 +30,7 @@
+  suffix=name[len(typ+'.'+method):]if name.startswith(typ+'.'+method)else''
+  if selection['canonicalKind']=='exact-status-rendered-display-sha256':
+   digest=hashlib.sha256((t.get('name')or'').encode()).hexdigest()
+-  matches=[row['canonicalCase']for row in selection['exactRenderedDisplayIdentities']if row['exactRenderedDisplayNameSha256']==digest]
++  matches=[row['canonicalCase']for row in selection['exactRenderedDisplayIdentities']if row['exactParsedXmlNameSha256']==digest]
+   assert len(matches)==1 and matches[0][0]==typ and matches[0][1]==method
+   return tuple(matches[0])
+  if selection['canonicalKind']=='response-nested':
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/supervise_managed.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/supervise_managed.py
+@@ -3,7 +3,7 @@
+ from ops_common import *
+ 
+ parser=argparse.ArgumentParser();parser.add_argument('--execute',action='store_true');parser.add_argument('--pins-sha256');args=parser.parse_args()
+-EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-20261107')
++EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-retry-20261107')
+ command=[sys.executable,str(PREP/'launch_managed.py'),'--operational-pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED','--browser','--timeout','900','--evidence',str(EVIDENCE/'managed')]
+ plan={'preparationOnly':not args.execute,'command':command,'cwd':str(ROOT),'noNewRuntimeEnvironmentOrConfigurationKeys':True,'naturalCpuOverrideAbsent':True,'noRuntimeSourceHook':True,'fixedPrivateControlPath':str(PRIVATE/'window.control'),'eightSecondAdmissionOnlyAfterFailedMultiple':True,'noCutoffOrTargetSignals':True,'diagnosticOnly':True,'featureAcceptance':False}
+ def valid_multi(row):
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/run_and_restore.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/run_and_restore.py
+@@ -7,7 +7,7 @@
+ commands['native15']=[sys.executable,str(PREP/'native_qualification.py'),'--execute','--pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED']
+ if not args.execute:print(json.dumps({'preparationOnly':True,'commands':commands,'finally':'Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories.'},indent=2));raise SystemExit()
+ operational_pins(args.pins_sha256);sources();private_directory(require_empty=True)
+-EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-20261107');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native15Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
++EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-retry-20261107');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native15Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
+ try:
+  status['privateAttempted']=True;status['privateExitCode']=subprocess.run(commands['private'],cwd=ROOT).returncode
+  if status['privateExitCode']==0:

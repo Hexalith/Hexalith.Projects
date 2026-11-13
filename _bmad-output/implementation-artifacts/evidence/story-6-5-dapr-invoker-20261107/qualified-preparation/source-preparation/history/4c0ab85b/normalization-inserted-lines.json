@@ -1,0 +1,18 @@
+[
+  "using InvokerBootstrap = Hexalith.PrivateCaptureCounter.GatewayControllerBootstrap;\n",
+  "using InvokerStage = Hexalith.PrivateCaptureCounter.Stage;\n",
+  "using InvokerAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;\n",
+  "        using var invokerCounters = InvokerBootstrap.Begin();\n",
+  "        using var acquireTiming = invokerCounters?.Stage(InvokerStage.ComponentFile, InvokerAllocation.None);\n",
+  "        acquireTiming?.Dispose();\n",
+  "        using var leaseScopeTiming = invokerCounters?.Stage(InvokerStage.ResultTail, InvokerAllocation.None);\n",
+  "        using var resolveTiming = invokerCounters?.Stage(InvokerStage.ComponentPolicy, InvokerAllocation.None);\n",
+  "        resolveTiming?.Dispose();\n",
+  "            using var httpOwnedTiming = invokerCounters?.Stage(InvokerStage.ActorBoundary, InvokerAllocation.None);\n",
+  "            using var requestTiming = invokerCounters?.Stage(InvokerStage.AclFile, InvokerAllocation.None);\n",
+  "            requestTiming?.Dispose();\n",
+  "            using var sendTiming = invokerCounters?.Stage(InvokerStage.SettingsEnumerationSortDictionary, InvokerAllocation.None);\n",
+  "            sendTiming?.Dispose();\n",
+  "            using var jsonTiming = invokerCounters?.Stage(InvokerStage.AuthenticationSerialization, InvokerAllocation.None);\n",
+  "            jsonTiming?.Dispose();\n"
+]

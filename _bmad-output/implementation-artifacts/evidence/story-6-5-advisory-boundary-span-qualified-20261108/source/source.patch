@@ -1,0 +1,168 @@
+--- original/ProjectAdvisoryQueryExecutor.cs
++++ private/ProjectAdvisoryQueryExecutor.cs
+@@ -54,30 +54,46 @@
+     {
+         callerToken.ThrowIfCancellationRequested();
+         if (query.QueryType != (conversation ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType)) return Denied();
++        using var terminal = conversation ? null : Hexalith.PrivateCaptureCounter.AdvisoryTerminalCapture.Begin();
+         // One linked dependency budget begins with scope authorization, before validating caller input.
+         using CancellationTokenSource deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
+         deadline.CancelAfter(TimeSpan.FromSeconds(2));
+         CancellationToken token = deadline.Token;
+         try
+         {
+-            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
+-        }
+-        catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
++        try
++        {
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialScope);
++            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false))
++            {
++                terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered);
++                return Denied();
++            }
++        }
++        catch (OperationCanceledException) when (callerToken.IsCancellationRequested)
++        {
++            terminal?.Failure(Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation);
++            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.CallerCancellationRethrown);
++            throw;
++        }
+         catch (Exception exception)
+         {
++            terminal?.Failure(exception is OperationCanceledException ? Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation : Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Other);
++            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InitialScopeFallbackEntered);
+             LogFailure(query, exception);
+             return QueryResult.FromPayload(JsonSerializer.SerializeToElement(
+                 new ProjectAdvisoryResolutionResponse(null, [], clock.GetUtcNow(), true, []), Json));
+         }
++        terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.EnvelopeValidation);
+         if (query.AggregateId != "projects" || query.Paging is not null || query.IsGlobalAdmin
+-            || query.EntityId is not null && query.EntityId != query.AggregateId) return Invalid();
++            || query.EntityId is not null && query.EntityId != query.AggregateId) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }
+         string? conversationId = null;
+         bool includeArchived;
+         ProjectAdvisoryAttachment[] inputs = [];
+         if (conversation)
+         {
+             if (!Payload(query, ["conversationId", "includeArchived"], out ResolveProjectFromConversationQuery? input)
+-                || input is null || !Identity(query.TenantId, input.ConversationId)) return Invalid();
++                || input is null || !Identity(query.TenantId, input.ConversationId)) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }
+             conversationId = input.ConversationId; includeArchived = input.IncludeArchived;
+         }
+         else
+@@ -85,7 +101,7 @@
+             if (!Payload(query, ["attachments", "includeArchived"], out ResolveProjectFromAttachmentsQuery? input)
+                 || input?.Attachments is null || input.Attachments.Count > MaximumAttachments
+                 || input.Attachments.Any(item => item is null || item.ReferenceKind is not ("folder" or "file")
+-                    || !Identity(query.TenantId, item.ReferenceId))) return Invalid();
++                    || !Identity(query.TenantId, item.ReferenceId))) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }
+             inputs = input.Attachments.Distinct().OrderBy(item => item.ReferenceKind, StringComparer.Ordinal)
+                 .ThenBy(item => item.ReferenceId, StringComparer.Ordinal).ToArray();
+             includeArchived = input.IncludeArchived;
+@@ -97,12 +113,15 @@
+         void Omitted() => Interlocked.Exchange(ref incomplete, 1);
+         QueryResult Response(IReadOnlyList<ProjectResolutionCandidateEvidence> evidence)
+         {
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Response);
+             ProjectResolution resolved = new ProjectResolutionEngine().Resolve(
+                 new(query.TenantId, query.TenantId, includeArchived, evaluatedAt, query.CorrelationId, null), evidence);
+-            return QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectAdvisoryResolutionResponse(
++            QueryResult response = QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectAdvisoryResolutionResponse(
+                 incomplete != 0 && resolved.Candidates.Count == 0 ? null : resolved.Result,
+                 resolved.Candidates.Select(item => new ProjectAdvisoryCandidate(item.ProjectId, item.ReasonCodes, item.Rank, item.Score)).ToArray(),
+                 evaluatedAt, incomplete != 0, unsupportedFiles ? ["file"] : []), Json));
++            terminal?.ResponseReturned(incomplete != 0);
++            return response;
+         }
+ 
+         try
+@@ -110,13 +129,15 @@
+             ConversationAdvisoryMetadataResult? observed = null;
+             if (conversationId is not null)
+             {
++                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialConversation);
+                 var read = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);
+                 callerToken.ThrowIfCancellationRequested();
+-                if (read.Denied) return Denied();
++                if (read.Denied) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }
+                 observed = read.Metadata;
+                 if (observed?.Incomplete != false) Omitted();
+                 if (observed?.Metadata is null) { Omitted(); return Response([]); }
+             }
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialInputs);
+             string[] acceptedInputs = await FilterInputsAsync(inputs.Where(item => item.ReferenceKind == "folder")
+                 .Select(item => item.ReferenceId).ToArray(), query, Omitted, token).WaitAsync(token).ConfigureAwait(false);
+             ConcurrentDictionary<string, ProjectDetailItem> candidates = new(StringComparer.Ordinal);
+@@ -125,6 +146,7 @@
+                 : acceptedInputs.Length != 0;
+             if (hasSignal)
+             {
++                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Index);
+                 var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
+                     ProjectReadModelKeys.Index(query.TenantId), token).WaitAsync(token).ConfigureAwait(false);
+                 IEnumerable<string> ids = [];
+@@ -155,6 +177,7 @@
+                 }
+                 token.ThrowIfCancellationRequested();
+                 if (linked is not null) selected.Add(linked);
++                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Discovery);
+                 await Parallel.ForEachAsync(selected, new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
+                 {
+                     try
+@@ -178,14 +201,17 @@
+             // Re-read owner permission; none of the initial permission decisions is cached for disclosure.
+             if (conversationId is not null)
+             {
++                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalConversation);
+                 var final = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);
+                 callerToken.ThrowIfCancellationRequested();
+-                if (final.Denied) return Denied();
++                if (final.Denied) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }
+                 if (final.Metadata?.Metadata is null) { Omitted(); return Response([]); }
+                 if (final.Metadata != observed || final.Metadata.Incomplete) Omitted();
+                 observed = final.Metadata;
+             }
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalInputs);
+             acceptedInputs = await FilterInputsAsync(acceptedInputs, query, Omitted, token).WaitAsync(token).ConfigureAwait(false);
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalCandidates);
+             await Parallel.ForEachAsync(candidates.ToArray(), new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (pair, ct) =>
+             {
+                 try
+@@ -204,7 +230,8 @@
+                 catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                 catch (Exception exception) { LogFailure(query, exception); candidates.TryRemove(pair.Key, out _); Omitted(); }
+             }).WaitAsync(token).ConfigureAwait(false);
+-            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
++            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalScope);
++            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }
+             callerToken.ThrowIfCancellationRequested();
+             ProjectDetailItem[] visible = candidates.Values.OrderBy(item => item.ProjectId, StringComparer.Ordinal).ToArray();
+             if (observed?.Metadata is { } metadata)
+@@ -218,8 +245,23 @@
+                 "folder", id, ReferenceState.Included)).ToArray(), []), visible.Select(item => new AttachmentResolutionProjectCandidate(
+                     item.ProjectId, null, item.Lifecycle, [new("folder", item.ProjectFolder!.FolderId!, ReferenceState.Included)], [])).ToArray(), evaluatedAt));
+         }
+-        catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
+-        catch (Exception exception) { LogFailure(query, exception); Omitted(); return Response([]); }
++        catch (OperationCanceledException) when (callerToken.IsCancellationRequested)
++        {
++            terminal?.Failure(Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation);
++            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.CallerCancellationRethrown);
++            throw;
++        }
++        catch (Exception exception)
++        {
++            terminal?.Failure(exception is OperationCanceledException ? Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation : Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Other);
++            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.OperationFallbackEntered);
++            LogFailure(query, exception); Omitted(); return Response([]);
++        }
++        }
++        finally
++        {
++            terminal?.Close(callerToken.IsCancellationRequested, token.IsCancellationRequested);
++        }
+     }
+ 
+     private async Task<ProjectDetailItem?> DetailAsync(QueryEnvelope query, string id, bool includeArchived, Action omitted, CancellationToken token)

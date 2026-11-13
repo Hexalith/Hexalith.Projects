@@ -1,0 +1,107 @@
+{
+  "filePreparationOnly": true,
+  "builds": 0,
+  "runs": 0,
+  "sinkDirectoryAccesses": 0,
+  "adapterOriginalPath": "/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTerminalCapture.cs",
+  "adapterOriginalSha256": "9a210774ec8078ce8f27fe7d5513055d13e8d4bf56f582ffbd1688e365961a16",
+  "adapterCandidateSha256": "591a2363582336bebd27e1e50515aea58e937147c56f98a19a2bb91b8d2799a0",
+  "reverseBytesEqual": true,
+  "adapterPatchSha256": "fcb81e13a681124542a4757b2026b4c74d7d25f96593449ce1ac2bc6d2812d5a",
+  "adapterEdits": [
+    {
+      "before": "    private int _disposed;\n",
+      "after": "    private int _disposed;\n    private CaptureCounters.Interval? _activeSpan;\n    private int _seenSpanStages;\n    private bool _spansDisabled;\n"
+    },
+    {
+      "before": "        try { lock (_gate) { if (!_closed) _last = boundary; } } catch { }\n",
+      "after": "        try\n        {\n            lock (_gate)\n            {\n                if (_closed) return;\n                StopSpan();\n                _last = boundary;\n                StartSpan(boundary);\n            }\n        }\n        catch { }\n"
+    },
+    {
+      "before": "                if (_closed || _firstFailure != AdvisoryBoundary.None) return;\n",
+      "after": "                StopSpan();\n                if (_closed || _firstFailure != AdvisoryBoundary.None) return;\n"
+    },
+    {
+      "before": "                if (_closed) return;\n                _closed = true;\n",
+      "after": "                StopSpan();\n                if (_closed) return;\n                _closed = true;\n"
+    },
+    {
+      "before": "    private void Add(Count slot, int value)\n",
+      "after": "    // The original executor emits selected markers at most once. Unselected markers\n    // still end a selected interval. Never overwrite a prior helper stage on a repeat.\n    private void StartSpan(AdvisoryBoundary boundary)\n    {\n        if (_spansDisabled) return;\n        Stage? stage = boundary switch\n        {\n            AdvisoryBoundary.InitialScope => Stage.ComponentFile,\n            AdvisoryBoundary.InitialInputs => Stage.ComponentPolicy,\n            AdvisoryBoundary.Discovery => Stage.AclFile,\n            AdvisoryBoundary.FinalInputs => Stage.AuthenticationSerialization,\n            AdvisoryBoundary.FinalCandidates => Stage.ActorBoundary,\n            AdvisoryBoundary.Index => Stage.ResultTail,\n            _ => null,\n        };\n        if (stage is not { } selected) return;\n        int bit = 1 << (int)selected;\n        if ((_seenSpanStages & bit) != 0) { _spansDisabled = true; return; }\n        _seenSpanStages |= bit;\n        _activeSpan = _capture.Stage(selected, AllocationMode.None);\n        if (_activeSpan is null) _spansDisabled = true;\n    }\n\n    private void StopSpan()\n    {\n        CaptureCounters.Interval? active = _activeSpan;\n        _activeSpan = null;\n        try { active?.Dispose(); } catch { _spansDisabled = true; }\n    }\n\n    private void Add(Count slot, int value)\n"
+    }
+  ],
+  "unchangedAcceptedInputs": {
+    "CaptureCounters.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/CaptureCounters.cs",
+      "destination": "CaptureCounters.cs",
+      "sha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+      "byteExact": true
+    },
+    "AdvisoryWaveBootstrap.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/AdvisoryWaveBootstrap.cs",
+      "destination": "AdvisoryWaveBootstrap.cs",
+      "sha256": "8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375",
+      "byteExact": true
+    },
+    "AdvisoryBoundary.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/AdvisoryBoundary.cs",
+      "destination": "AdvisoryBoundary.cs",
+      "sha256": "089cf0de9217a8e68bf6a05f07edc158fe607f47311f5a463e70f67d00155f2b",
+      "byteExact": true
+    },
+    "AdvisoryExceptionKind.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/AdvisoryExceptionKind.cs",
+      "destination": "AdvisoryExceptionKind.cs",
+      "sha256": "35696886fedf076317043ff127eee13d2914105786cdb9ab609a5bc6be19124f",
+      "byteExact": true
+    },
+    "AdvisoryTermination.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTermination.cs",
+      "destination": "AdvisoryTermination.cs",
+      "sha256": "58e477989184f5af6ee09beacecca5167ea6840da2cce21709b0e64375be24cc",
+      "byteExact": true
+    },
+    "ProjectAdvisoryQueryExecutor.original.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/ProjectAdvisoryQueryExecutor.original.cs",
+      "destination": "ProjectAdvisoryQueryExecutor.original.cs",
+      "sha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d",
+      "byteExact": true
+    },
+    "ProjectAdvisoryQueryExecutor.private.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/ProjectAdvisoryQueryExecutor.private.cs",
+      "destination": "ProjectAdvisoryQueryExecutor.private.cs",
+      "sha256": "d36afcb5709e36eb0b8039133947b1fad93df56de0147e1b624842f0e77542fe",
+      "byteExact": true
+    },
+    "InstrumentedProjectAdvisoryQueryExecutor.cs": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/InstrumentedProjectAdvisoryQueryExecutor.cs",
+      "destination": "InstrumentedProjectAdvisoryQueryExecutor.cs",
+      "sha256": "8f2e887b2c56f35ef6ec8645c2f20aa6a504b253ccd5aa5833053da8fc0ccdae",
+      "byteExact": true
+    },
+    "source.patch": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/source.patch",
+      "destination": "source.patch",
+      "sha256": "8f650b4a79c2b60ea414353f61be424917d567653eeea40eab4279da638febed",
+      "byteExact": true
+    },
+    "normalization.json": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/normalization.json",
+      "destination": "normalization.json",
+      "sha256": "58947b7b192e19fed81cbe985dc4602128d6b254b827341fb24b441d9c885dc3",
+      "byteExact": true
+    },
+    "source-proof.json": {
+      "originalPath": "/tmp/story65-advisory-terminal-prep-20261108/source-proof.json",
+      "destination": "accepted-executor-source-proof.json",
+      "sha256": "b076f7053b2ed63126423bc3fbf3ce3de9583a8e039770c08dd52ca910f71522",
+      "byteExact": true
+    }
+  },
+  "acceptedPreparationReceiptPath": "/tmp/story65-advisory-terminal-prep-20261108/preparation-receipt.json",
+  "acceptedPreparationReceiptSha256": "138fdb2bf6ec823c4144ab8ce89ad2001478708eedbc238385854ea616824d5e",
+  "acceptedQualificationHandoffPath": "/tmp/story65-advisory-terminal-build-20261108/qualified-handoff.json",
+  "acceptedQualificationHandoffSha256": "145064ef35e86fb7581ff5eada0ba61f45b148363a4fee0e543abdfcd4b120af",
+  "priorUnexecutedProposalReceiptPath": "/tmp/story65-advisory-boundary-span-history-20261108/3f5d27db/preparation-receipt.json",
+  "priorUnexecutedProposalReceiptSha256": "3f5d27db1b8ce471a662cddd32adab1721dfc29c9f01c80ff71a18f5b1d33a52"
+}

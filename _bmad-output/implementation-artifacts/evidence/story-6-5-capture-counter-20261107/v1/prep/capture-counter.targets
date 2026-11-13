@@ -1,0 +1,11 @@
+<Project>
+  <!-- Preserve any independently emitted original hook via a CLI-only property; never replace the seven mapping values. -->
+  <Import Project="$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)" Condition="'$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)')" />
+  <Target Name="PrivateCaptureCounterOnly" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <ItemGroup>
+      <Compile Remove="Routing/DevelopmentRouteCatalogInputs.cs" />
+      <Compile Include="/tmp/story65-capture-counter-prep-20261107/DevelopmentRouteCatalogInputs.private.cs" />
+      <Compile Include="/tmp/story65-capture-counter-prep-20261107/CaptureCounters.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

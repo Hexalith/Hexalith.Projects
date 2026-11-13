@@ -1,0 +1,98 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "cells": [
+    {
+      "name": "valid-schema3-origin",
+      "slow": false,
+      "contract": "all8; exact in-flight identity, marker and remote scope restored; release1"
+    },
+    {
+      "name": "valid-no-origin",
+      "slow": false,
+      "contract": "original optional-origin branch; all later stages and release1"
+    },
+    {
+      "name": "initial-guard-forbid",
+      "slow": false,
+      "contract": "Whole only; no signature/config/acquire/mediator"
+    },
+    {
+      "name": "signature-forbid",
+      "slow": false,
+      "contract": "original signature observations unchanged; no origin/acquire/mediator"
+    },
+    {
+      "name": "origin-forbid",
+      "slow": false,
+      "contract": "original origin verification unchanged; no acquire/mediator"
+    },
+    {
+      "name": "acquire-throw",
+      "slow": false,
+      "contract": "exact injected acquire exception; no lease release"
+    },
+    {
+      "name": "admission-forbid",
+      "slow": false,
+      "contract": "surface/resolve admission branch; release1 despite early return"
+    },
+    {
+      "name": "mediator-throw-with-prior-marker",
+      "slow": false,
+      "contract": "original finally restores exact prior object before release1"
+    },
+    {
+      "name": "mediator-cancel",
+      "slow": false,
+      "contract": "original cancellation and finally restoration; release1"
+    },
+    {
+      "name": "response-header-throw",
+      "slow": false,
+      "contract": "response construction failure before release; no result exposed"
+    },
+    {
+      "name": "release-throw",
+      "slow": false,
+      "contract": "response constructed but action task faults; Whole/LeaseScope close after fault"
+    },
+    {
+      "name": "prior-marker-success",
+      "slow": false,
+      "contract": "original prior object restored; own variant admission verified only in flight"
+    },
+    {
+      "name": "delayed-release",
+      "slow": true,
+      "contract": "method task remains incomplete until exact release callback completes; phase6 already closed"
+    },
+    {
+      "name": "caller-cancel-during-release",
+      "slow": true,
+      "contract": "original uncancelable release still awaited; no new post-release cancellation check"
+    },
+    {
+      "name": "uncooperative-acquire-cancel",
+      "slow": true,
+      "contract": "original Acquire await remains pending until held child completes; original later cancellation behavior retained"
+    }
+  ],
+  "cellsPerMode": 15,
+  "recordingModes": [
+    "disabled",
+    "active",
+    "capped",
+    "failing-sink"
+  ],
+  "plannedCaseCells": 60,
+  "firstBusinessCanaries": [
+    "unsafe-positive-control",
+    "normal-caller-context",
+    "pre-suppressed-caller-context"
+  ],
+  "everyActionEligible": true,
+  "activeAdmissionsPerCell": 1,
+  "freshSlowProcessPerCellMode": true,
+  "nativeSourceDerivedCases": 40
+}

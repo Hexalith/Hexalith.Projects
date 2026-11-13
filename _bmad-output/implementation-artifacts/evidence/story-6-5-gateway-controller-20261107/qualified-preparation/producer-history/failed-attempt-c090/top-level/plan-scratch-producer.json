@@ -1,0 +1,26 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "sourceQualificationReady": false,
+  "applicationNativeAndHostsNotAuthorized": true,
+  "lane": "scratch-producer",
+  "command": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props"
+  ],
+  "onlyTempGatewayOutput": true,
+  "ordinaryRootModuleReadOnly": true,
+  "noRebuildCleanRestore": true
+}

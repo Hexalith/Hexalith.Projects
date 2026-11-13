@@ -1,0 +1,41 @@
+{
+  "preparationOnly": true,
+  "threePythonAstParsesPass": true,
+  "fiveNonexecutingPlans": [
+    {
+      "lane": "oracle-copy",
+      "exitCode": 0,
+      "sha256": "31ae7046a7bfc42c52b03792cb72661bf9cc885145ad71814ee2ce47a986cc0e",
+      "noBuildCopyLoadNativeOrHostExecuted": true
+    },
+    {
+      "lane": "scratch-producer",
+      "exitCode": 0,
+      "sha256": "f2b4652bf044fc1bf31c43f4ca6aab10a92aa9613351d7eb0a3a2d2598f6dfa8",
+      "noBuildCopyLoadNativeOrHostExecuted": true
+    },
+    {
+      "lane": "live-private",
+      "exitCode": 0,
+      "sha256": "8d396188f3a3a5e9870d619cec4966da33d85b88e652f0912f5b12d25c038978",
+      "noBuildCopyLoadNativeOrHostExecuted": true
+    },
+    {
+      "lane": "native40",
+      "exitCode": 0,
+      "sha256": "ba5b7543cf64919c7fa180b8f4c9d8b6c331cdea43e3a01d0607bf5feb7e5a6e",
+      "noBuildCopyLoadNativeOrHostExecuted": true
+    },
+    {
+      "lane": "managed-restore",
+      "exitCode": 0,
+      "sha256": "bf1736b40fa8d4651947751cecd51f619e3254960a3874755a86a34815825773",
+      "noBuildCopyLoadNativeOrHostExecuted": true
+    }
+  ],
+  "readOnlyDocsFalseGeneratedFalseBothPathsEmpty": true,
+  "sourceQualificationReady": false,
+  "producerBuildReleased": false,
+  "producerPinsSha256": "227c3ba1ac9dbd3923b034ebe33a810000183af2135efc0b90aa018abf55ff71",
+  "retryDiffSha256": "016f07e7b046db7b71b70f412a1bfaec4a9c8edc949cdb518512adfa89acfd92"
+}

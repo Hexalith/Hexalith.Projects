@@ -1,0 +1,65 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRawSha256": "cedf6c9e209c70b603120dc7328a98a3ee38c2537864c240bb37b382b9cda7b5",
+  "captures": 1502,
+  "rows": 3025,
+  "wholeAndBaseExcludeOuterHttpClientResponseContentReadBuffering": true,
+  "populationIncludesAllFactoryRequestsEnteringHandlerIncludingNonCanonical": true,
+  "issuerClientExcludedByUnchangedFilter": true,
+  "fixedGatewayRoleOnlySelectedSixRuntimeComposition": true,
+  "noClientControllerInvokerRootOrPriorRunPairing": true,
+  "noMissingStageOutcomeInference": true,
+  "noExactDisposalOrTransportAttribution": true,
+  "millisecondsByStage": {
+    "WholeHandler": {
+      "count": 1502,
+      "median": 1.1258970000000001,
+      "minimum": 0.475181,
+      "maximum": 2065.861279
+    },
+    "IssuerValueTask": {
+      "count": 21,
+      "median": 4.183066,
+      "minimum": 3.870231,
+      "maximum": 6.257653
+    },
+    "BaseSendAsync": {
+      "count": 1502,
+      "median": 1.1201025,
+      "minimum": 0.473427,
+      "maximum": 2061.84452
+    }
+  },
+  "stageSetCounts": [
+    {
+      "stages": [
+        "WholeHandler",
+        "BaseSendAsync"
+      ],
+      "captures": 1481
+    },
+    {
+      "stages": [
+        "WholeHandler",
+        "IssuerValueTask",
+        "BaseSendAsync"
+      ],
+      "captures": 21
+    }
+  ],
+  "withinSameCapturePercentOfWhole": {
+    "IssuerValueTask": {
+      "count": 21,
+      "median": 1.1255964890884471,
+      "minimum": 0.19354024593245692,
+      "maximum": 1.9608486000557015
+    },
+    "BaseSendAsync": {
+      "count": 1502,
+      "median": 99.7038548339546,
+      "minimum": 59.68881202632354,
+      "maximum": 99.96598635303137
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "filePreparationOnly": true,
+  "sourcePinsReady": true,
+  "sourceQualificationReady": false,
+  "readOnlyEvaluationReleased": true,
+  "isolatedBuildReleased": false,
+  "applicationNativeHostsWindowsReleased": false,
+  "producer": "Hexalith.EventStore.DomainService",
+  "coreSourceReviewPending": false,
+  "coreCandidates": {
+    "DomainRouteCatalogFilter": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs",
+      "originalSha256": "3687e39c6e0fdd44c2c8b07da4bd389d60dbf3c66f19a25b1baf252f94b3fd9d",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogFilter.private.cs",
+      "privateSha256": "121ae30a04c76268f6fee5fa725730188579d7ec741ad3e293df27b1e5bb9a06"
+    },
+    "DomainRouteCatalogGuard": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuard.cs",
+      "originalSha256": "5727c26eb6589389f483f51e8ee3895344d790676e0758941a436cd4381a238e",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogGuard.private.cs",
+      "privateSha256": "50ba9c6b9200c6463aded2bb13f64af2ce5b775b94ce6520aded74e3d186f953"
+    },
+    "DomainRouteCatalogResult": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs",
+      "originalSha256": "9b4bf0f605d150273381baeeb587b96b83906672689bff92e80b65fe4cb9760d",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogResult.private.cs",
+      "privateSha256": "304eba32f8ec5ef2bc8832425a8996a2ebd721b2d58ec9b6bf777d39420f8ca7"
+    }
+  },
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "bootstrapSha256": "ff22ad6362bf4f7dea2ffaa782066dc719f1fcbf6e9205e50ee3df9df30df495",
+  "priorSourceControls": 56,
+  "newDistinctOriginalControls": 3,
+  "sourceControlUnion": 59,
+  "ordinarySdkDllSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+  "ordinarySdkPdbSha256": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6",
+  "sdk137AllOrdinaryMarkerFreeAndUnchanged": true,
+  "sdkProducerAndEightOwnedCopiesExactQualifiedPair": true,
+  "isolatedOutputRoot": "/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-domain",
+  "oracleRoot": "/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-oracle",
+  "project": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+  "isolatedCommandShape": [
+    "dotnet",
+    "build",
+    "<exactDomainProject>",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=<newDomainScratchProps>"
+  ],
+  "ordinaryBaseAssetsExtensionsUnchangedReadOnly": true,
+  "onlyDomainProjectOutputIntermediateCacheGeneratedPathsRedirected": true,
+  "optionalDocsAndCompilerGeneratedPathsRedirectedOnlyIfFeatureAlreadyEnabled": true,
+  "noUnconditionalOptionalFeatureActivation": true,
+  "allSevenEmittedMappingValuesRetained": true,
+  "oneEffectiveAfterSdkPropertyAppendedOriginalFirstGuardLast": true,
+  "lateManifestForBothIsolatedAndLiveBuilds": [
+    "actualCompileIncludingMsbuildGenerated",
+    "AdditionalFiles",
+    "Analyzers",
+    "ReferencePathWithRefAssemblies",
+    "EmbeddedResources",
+    "SourceLinkPath",
+    "resolvedWritePaths",
+    "effectiveConfigurationOptimizeDebugTypeDefineConstantsAndExistingProofFlags"
+  ],
+  "manifestMeansCscInputsNotUnemittedRoslynGeneratorOutputs": true,
+  "postBuildEachInputHasPathKindSha256AndOwnGeneration": true,
+  "byteEquivalenceAcrossDistinctGenerationsNotClaimed": true,
+  "noAssemblyLoadsMetadataEvaluationOrBuildsExecuted": false,
+  "actualReadonlyEvaluationsPassed": 3,
+  "noAssemblyLoadsCompilerBuildCopyNativeOrHostsExecuted": true,
+  "readOnlyEvidenceNoCSharpCompilationClaim": true
+}

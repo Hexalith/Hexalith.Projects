@@ -1,0 +1,170 @@
+{
+  "scratchQualificationOnly": true,
+  "featureAcceptance": false,
+  "allPassed": true,
+  "passingBehavioralCells": 120,
+  "passingFreshCanaries": 3,
+  "controlledProcesses": 19,
+  "strictValidatedRows": 111752,
+  "allCountAndAllocationColumnsZero": true,
+  "stageCounts": {
+    "Whole": 111570,
+    "ComponentFile": 31,
+    "ComponentPolicy": 30,
+    "AclFile": 26,
+    "SettingsEnumerationSortDictionary": 24,
+    "AuthenticationSerialization": 15,
+    "ActorBoundary": 26,
+    "ResultTail": 30
+  },
+  "casesByMode": {
+    "canary-positive-control": 1,
+    "canary-current": 1,
+    "canary-suppressed": 1,
+    "disabled": 30,
+    "active": 30,
+    "capped": 30,
+    "failing-sink": 30
+  },
+  "source53App147AndVariantsBeforeAfterIdentical": true,
+  "shared131InputsUnchanged": true,
+  "processIdentitiesAbsent": 19,
+  "privateDirectoryPinnedEmpty": true,
+  "controllerReceipts": [
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/canary-positive-control/canary/controller-receipt.json",
+      "sha256": "af05da5e136915bbe02121cb3a83f8e3c6b61ef5275d211caf19b22e4a81178a",
+      "mode": "canary-positive-control",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/canary-current/canary/controller-receipt.json",
+      "sha256": "60a09c8c01b1dc54a0d2050406197384fd4b0f2089a3922cffbb4a7811b7319d",
+      "mode": "canary-current",
+      "cases": 1,
+      "rows": 8
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/canary-suppressed/canary/controller-receipt.json",
+      "sha256": "eb9418776500d0d9dfeadfa5d8ad68cfd27c235effa87a5960bde9dc415af50f",
+      "mode": "canary-suppressed",
+      "cases": 1,
+      "rows": 8
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/disabled/fast/controller-receipt.json",
+      "sha256": "8b8b4e543e68713731466f71767734bf6a579eb3880ad3bd3574bd77914953be",
+      "mode": "disabled",
+      "cases": 27,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/disabled/held-release/controller-receipt.json",
+      "sha256": "327267d694aa70ccafb6eedf6eadc1dc95239438b747a91ac1f35aaf6282e2ed",
+      "mode": "disabled",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/disabled/caller-cancel-release/controller-receipt.json",
+      "sha256": "257cc0a051df55287ab2ccfb509bbe331ea418994b613ba959550b5c174f8f85",
+      "mode": "disabled",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/disabled/uncooperative-acquire-cancel/controller-receipt.json",
+      "sha256": "8961e33087b91b4c76056d37565c1ff354eaffb1b9660054cebf81fc3ab398ce",
+      "mode": "disabled",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/active/fast/controller-receipt.json",
+      "sha256": "0f2313ce5f72c5cdb6c2f2caadbc155684e46200cc3fc7d56561c84010257d1b",
+      "mode": "active",
+      "cases": 27,
+      "rows": 174
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/active/held-release/controller-receipt.json",
+      "sha256": "70397ce9a93ff6518b471393ab18fa47e032d5b5deb6048f41ff756780d743f6",
+      "mode": "active",
+      "cases": 1,
+      "rows": 8
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/active/caller-cancel-release/controller-receipt.json",
+      "sha256": "130d988f52661022b722e01b4663f3c5821d57d862d035593aea8fee964c87a5",
+      "mode": "active",
+      "cases": 1,
+      "rows": 8
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/active/uncooperative-acquire-cancel/controller-receipt.json",
+      "sha256": "1f5c78e651f257455c79b558cd4443b104faa3359d354194f4901e87d061c371",
+      "mode": "active",
+      "cases": 1,
+      "rows": 8
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/capped/fast/controller-receipt.json",
+      "sha256": "98e0f2d34e24fee812f52990e25cf4b1f02a818fd20cc16d664560094bf7a2fc",
+      "mode": "capped",
+      "cases": 27,
+      "rows": 27878
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/capped/held-release/controller-receipt.json",
+      "sha256": "8b46d19f42b6647a8d804009dcae3fd0e22b0e0fa6a2f72d5d0a4774f8e37aef",
+      "mode": "capped",
+      "cases": 1,
+      "rows": 27884
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/capped/caller-cancel-release/controller-receipt.json",
+      "sha256": "ead6ca4d6fe72bf7cdb9a10021ad42d0f2b4e5523244729bd3d93963f17ab744",
+      "mode": "capped",
+      "cases": 1,
+      "rows": 27886
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/capped/uncooperative-acquire-cancel/controller-receipt.json",
+      "sha256": "7d502deda37a97570df2780058c96ce9f0b5a76da51e63dfa5cf4436918a5f9b",
+      "mode": "capped",
+      "cases": 1,
+      "rows": 27890
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/failing-sink/fast/controller-receipt.json",
+      "sha256": "57560d2455a3b7d27cb864309df8b15c198111765772dd5d2bba2a8c69051b63",
+      "mode": "failing-sink",
+      "cases": 27,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/failing-sink/held-release/controller-receipt.json",
+      "sha256": "91c66e3e63c5e874d4a60b8ac213541986ac885abe47955b6506ee4a3470b92e",
+      "mode": "failing-sink",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/failing-sink/caller-cancel-release/controller-receipt.json",
+      "sha256": "7ec26856010ec8e40b066f35a5c373147d803fc2acbd61626c069a0d5d6dca13",
+      "mode": "failing-sink",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-dapr-invoker-prep-20261107/results-qualified-initial/failing-sink/uncooperative-acquire-cancel/controller-receipt.json",
+      "sha256": "7120cc590a743adec4384a313343b48eb9306ca09f1a2eeb8aeefec75a17f736",
+      "mode": "failing-sink",
+      "cases": 1,
+      "rows": 0
+    }
+  ],
+  "native15Executed": false,
+  "hostsStarted": 0
+}

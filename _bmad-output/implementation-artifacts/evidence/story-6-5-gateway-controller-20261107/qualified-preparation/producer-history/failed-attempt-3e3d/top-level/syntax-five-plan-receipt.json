@@ -1,0 +1,71 @@
+{
+  "preparationOnly": true,
+  "threePythonAstParsesPass": true,
+  "fiveNonexecutingPlans": [
+    {
+      "lane": "oracle-copy",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/ops_plan.py",
+        "--lane",
+        "oracle-copy"
+      ],
+      "exitCode": 0,
+      "sha256": "31ae7046a7bfc42c52b03792cb72661bf9cc885145ad71814ee2ce47a986cc0e",
+      "noBuildOrCopyOrLoadOrNativeOrHostExecuted": true
+    },
+    {
+      "lane": "scratch-producer",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/ops_plan.py",
+        "--lane",
+        "scratch-producer"
+      ],
+      "exitCode": 0,
+      "sha256": "f2b4652bf044fc1bf31c43f4ca6aab10a92aa9613351d7eb0a3a2d2598f6dfa8",
+      "noBuildOrCopyOrLoadOrNativeOrHostExecuted": true
+    },
+    {
+      "lane": "live-private",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/ops_plan.py",
+        "--lane",
+        "live-private"
+      ],
+      "exitCode": 0,
+      "sha256": "8d396188f3a3a5e9870d619cec4966da33d85b88e652f0912f5b12d25c038978",
+      "noBuildOrCopyOrLoadOrNativeOrHostExecuted": true
+    },
+    {
+      "lane": "native40",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/ops_plan.py",
+        "--lane",
+        "native40"
+      ],
+      "exitCode": 0,
+      "sha256": "ba5b7543cf64919c7fa180b8f4c9d8b6c331cdea43e3a01d0607bf5feb7e5a6e",
+      "noBuildOrCopyOrLoadOrNativeOrHostExecuted": true
+    },
+    {
+      "lane": "managed-restore",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/ops_plan.py",
+        "--lane",
+        "managed-restore"
+      ],
+      "exitCode": 0,
+      "sha256": "bf1736b40fa8d4651947751cecd51f619e3254960a3874755a86a34815825773",
+      "noBuildOrCopyOrLoadOrNativeOrHostExecuted": true
+    }
+  ],
+  "readOnlyEmitFalseAndGeneratedPathEmpty": true,
+  "sourceQualificationReady": false,
+  "producerBuildReleased": false,
+  "producerPinsSha256": "fb5462d113446efcb94accf1c90121658eaca1b1db059ce67dc44e97fd5799a9",
+  "retryDiffSha256": "bb2ee2ddaf8ff286d0773731cdef8b0b86223db3df320d63aa75b5172301ded9"
+}

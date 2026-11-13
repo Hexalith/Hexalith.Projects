@@ -1,0 +1,31 @@
+{
+  "insertedLines": [
+    "using InvocationBootstrap = Hexalith.PrivateCaptureCounter.InvocationTransportBootstrap;\n",
+    "using InvocationCounters = Hexalith.PrivateCaptureCounter.CaptureCounters;\n",
+    "using InvocationStage = Hexalith.PrivateCaptureCounter.Stage;\n",
+    "using InvocationAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;\n",
+    "        using var invocationCounters = InvocationBootstrap.Begin();\n",
+    "            using var ownedReleaseTiming = invocationCounters?.Stage(InvocationStage.ComponentPolicy, InvocationAllocation.None);\n",
+    "            ownedReleaseTiming?.Dispose();\n",
+    "            using var transportTiming = privateCounters?.Stage(InvocationStage.ComponentFile, InvocationAllocation.None);\n",
+    "            transportTiming?.Dispose();\n"
+  ],
+  "sameClassPrivateSignatureAndCalls": [
+    {
+      "original": "return await SendLeasedAsync(request, appId, method, rawMethod, invocation, borrowed, cancellationToken, diagnostics).ConfigureAwait(false);",
+      "private": "return await SendLeasedAsync(request, appId, method, rawMethod, invocation, borrowed, cancellationToken, diagnostics, privateCounters: invocationCounters).ConfigureAwait(false);"
+    },
+    {
+      "original": "return await SendLeasedAsync(held.Request!, appId, method, rawMethod, invocation, held.Lease, cancellationToken, diagnostics, held).ConfigureAwait(false);",
+      "private": "return await SendLeasedAsync(held.Request!, appId, method, rawMethod, invocation, held.Lease, cancellationToken, diagnostics, held, invocationCounters).ConfigureAwait(false);"
+    },
+    {
+      "original": "return await SendLeasedAsync(request, appId, method, rawMethod, invocation, lease, cancellationToken, diagnostics).ConfigureAwait(false);",
+      "private": "return await SendLeasedAsync(request, appId, method, rawMethod, invocation, lease, cancellationToken, diagnostics, privateCounters: invocationCounters).ConfigureAwait(false);"
+    },
+    {
+      "original": "DispatchDiagnostics? diagnostics, RouteCatalogHeldMetadataDispatch? held = null)\n",
+      "private": "DispatchDiagnostics? diagnostics, RouteCatalogHeldMetadataDispatch? held = null, InvocationCounters? privateCounters = null)\n"
+    }
+  ]
+}

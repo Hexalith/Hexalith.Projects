@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-dapr-invoker-prep-20261107/InvokerProof.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "cwd": "/tmp/story65-dapr-invoker-prep-20261107",
+  "exitCode": 1,
+  "elapsedSeconds": 1.5349147790111601,
+  "buildOnlyProcessorOverride": "2",
+  "clearedMappingHooks": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "setEnv": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "logSha256": "967819465a5fb1aa0e7747a7f60d8af1737bcb40c705960585118b0619857663"
+}

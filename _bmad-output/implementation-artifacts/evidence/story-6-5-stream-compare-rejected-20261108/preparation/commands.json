@@ -1,0 +1,54 @@
+{
+  "preparationOnly": true,
+  "restoreBuildRunAuthorized": false,
+  "cwd": "/tmp/story65-stream-compare-prep-20261108/harness",
+  "sdkSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+  "buildEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "buildEnvironmentOnly": {
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "runtimeProcessorOverrideAbsent": true,
+  "restore": [
+    "dotnet",
+    "restore",
+    "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+    "--configfile",
+    "/tmp/story65-stream-compare-prep-20261108/harness/NuGet.Config",
+    "-p:NuGetAudit=false",
+    "-p:Story65ReviewedPreparationSha256=ROOT_REVIEWED_SHA_REQUIRED",
+    "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+  ],
+  "build": [
+    "dotnet",
+    "build",
+    "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:Story65ReviewedPreparationSha256=ROOT_REVIEWED_SHA_REQUIRED",
+    "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+  ],
+  "run": [
+    "dotnet",
+    "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "all",
+    "/tmp/story65-stream-compare-prep-20261108/preparation-receipt.json",
+    "ROOT_RELEASED_SHA_REQUIRED",
+    "FRESH_OUTPUT_DIRECTORY_REQUIRED"
+  ],
+  "noProjectPackageReferences": true,
+  "outputsOnlyFreshTempHarnessBinObjAndFreshResults": true
+}

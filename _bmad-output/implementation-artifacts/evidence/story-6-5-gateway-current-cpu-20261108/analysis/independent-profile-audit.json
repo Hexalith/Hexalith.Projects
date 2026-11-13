@@ -1,0 +1,278 @@
+{
+  "passed": true,
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "createdUtc": "2026-11-08T03:05:05.127277+00:00",
+  "auditSourceSha256": "0bb8f38a35eaeae46242be3be1ebdb3e21e3c70460bf797ff61773fff3af6c08",
+  "evidenceSha256": {
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway/cpu-summary.json": "d02261038a87fa2c68fde9386ab4fcc4b632fc37d9d21088f9f0f07fae56adda",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/watcher-receipt.json": "501be8e5859c8ee7bf3e3adf29da93ba598b3b7892b22c85b28be764ca2f5392",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/coordinator-receipt.json": "52f08c480ed04f89c6b966f7cc3ec446e1d31d6efeda501169a8c878e38f1599",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway/attached.json": "f178fc6758ecd82fa8095f96f43bb441432128635f45967265c8ea21d514e5ac",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway/collection-receipt.json": "cbdc5ac3d6558f3f8da9e2c48dfa75910bf725e3c8a7a78cacb898c0f438a005",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway/identity-checks.json": "05ed8d94f1a28128151d044daa57d2d962bd2d6918f9fb3f524c8cf1496a2933",
+    "/tmp/story65-gateway-current-cpu-owner-live-20261108-supervisor.json": "bb1ade53c974202035ae8547c7fd4581fbf9874ccb052a96f0aa870cb6cb6315",
+    "/tmp/story65-gateway-current-cpu-owner-live-20261108-independent-cleanup-source-audit.json": "1dcf149d8053436d386c209a0ab9973ad645f78c4626f84da6c2d9c39c6180f5",
+    "/tmp/story65-gateway-current-cpu-evidence-20261108/cpu-interpretation.json": "480e5790ae27c4bd4235c2bb4d11ac480eb026cebbdb12d504d12cbe4cfe4004",
+    "/tmp/story65-gateway-current-cpu-prep-20261108/watcher/execution-pins.json": "7cdb317a07f5f72540f7558c39019d36e4ef4bf507a4db29dc729019862e8405",
+    "/tmp/story65-gateway-current-cpu-prep-20261108/watcher/source-controls.json": "57830bd15b8dad91dbe871738490a78c1206886a7282381bc1fccadd2e8d7ae9",
+    "/tmp/story65-gateway-current-cpu-prep-20261108/watcher/current-app147-prelaunch.json": "41ae99313c8ae08a339d8ff5d06b2dadad5e086cebc32d927694753e8ab4f3c2",
+    "/tmp/story65-gateway-current-cpu-prep-20261108/collector-guard-map.json": "b12aaa4e0cbf9b2cc6e261feb62a120ade27eac48cb7c9a6e860087fc39ca401",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway/cpu-samples.jsonl": "a1089c5c2a0b56b3a19cc7614177b6eff7632da7ecdd9b8b4dd984a1e6b02fd8",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway.collect-supervisor.json": "33b32dbda181bea724b71f317bc5c568277e0c3bac227f820298e6a55bac14bc",
+    "/tmp/story65-gateway-current-cpu-owner-profile-20261108/gateway.analyze-supervisor.json": "c1e9cdccd071fd8e335a1f2858bf9082c986cb48a0086955a0025d2a7b823a67",
+    "/tmp/story65-gateway-current-cpu-owner-live-20261108/source-manifest.json": "73529e3eb84eefd90939ab1c5a4b1d405f0c85a10dfc7e80475ce9b18d1d6d3a",
+    "/tmp/story65-gateway-current-cpu-owner-live-20261108/browser-seed.xml": "f4324ef87e7d1527bef6607deca4ef918e3f538dd6d1cac6a87e56d48e7248b2",
+    "/tmp/story65-gateway-current-cpu-owner-live-20261108/browser-advisory-seed-readiness.jsonl": "eb4d623b979a5ca2b4cf8f18fc5ac91be5cce751e7587c770e8817e369349c02"
+  },
+  "strictRows": 126709,
+  "strictRowFieldCount": 5,
+  "stackGroupCount": 1281,
+  "groupCountAndTypeAndThreadIntervalAndSanitizerAllReconciled": true,
+  "sampleTypeCounts": {
+    "External": 119998,
+    "Managed": 6711
+  },
+  "sampledThreads": 21,
+  "unresolvedFrameSampleOccurrences": 14023,
+  "lostEvents": 0,
+  "missingOrTruncatedStacks": 0,
+  "rowOrGroupCapsReached": false,
+  "suspensionPairs": 6701,
+  "suspensionOverwriteAndUnpairedRestarts": {
+    "overwritten": 56,
+    "unpairedRestarts": 56,
+    "unpairedStarts": 0
+  },
+  "gcCyclePairs": 65,
+  "unpairedGcStarts": 0,
+  "allInterpretationClassPartitionsAndGcWallAggregatesRecomputed": true,
+  "freshStreamFirstManaged": null,
+  "managedFirstHexalithTop12": [
+    {
+      "frame": "[no retained Hexalith frame]",
+      "samples": 1021,
+      "fractionOfClassSamples": 0.15213828043510655
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly,class System.Buffers.ArrayPool`1<unsigned int8>)",
+      "samples": 819,
+      "fractionOfClassSamples": 0.12203844434510505
+    },
+    {
+      "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.WriteCanonical(class System.Text.Json.Utf8JsonWriter,value class System.Text.Json.JsonElement)",
+      "samples": 451,
+      "fractionOfClassSamples": 0.06720309938906273
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogInputs+<CaptureAsync>d__0.MoveNext()",
+      "samples": 361,
+      "fractionOfClassSamples": 0.05379228132916108
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.DescribeCore(class Microsoft.AspNetCore.Routing.RouteEndpoint,class System.IServiceProvider,class Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpObservationPass)",
+      "samples": 348,
+      "fractionOfClassSamples": 0.05185516316495306
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.Hash(!!0)",
+      "samples": 260,
+      "fractionOfClassSamples": 0.038742363284160336
+    },
+    {
+      "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.CanonicalBytes(!!0)",
+      "samples": 241,
+      "fractionOfClassSamples": 0.03591119058262554
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<ReadAsync>d__7.MoveNext()",
+      "samples": 190,
+      "fractionOfClassSamples": 0.028311727015347937
+    },
+    {
+      "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Hash(!!0)",
+      "samples": 181,
+      "fractionOfClassSamples": 0.026970645209357772
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestMemo.TryCompute(class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>,class System.String&,bool&)",
+      "samples": 180,
+      "fractionOfClassSamples": 0.02682163611980331
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendOrdinaryAsync>d__30.MoveNext()",
+      "samples": 165,
+      "fractionOfClassSamples": 0.024586499776486366
+    },
+    {
+      "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadValidatedDocument(value class System.ReadOnlyMemory`1<unsigned int8>)",
+      "samples": 161,
+      "fractionOfClassSamples": 0.023990463418268514
+    }
+  ],
+  "managedLeafTop10": [
+    {
+      "frame": "System.Threading.Thread.<PollGC>g__PollGCWorker|67_0()",
+      "samples": 2767,
+      "fractionOfClassSamples": 0.4123081507971986
+    },
+    {
+      "frame": "System.Threading.Monitor.Enter_Slowpath(class System.Object)",
+      "samples": 578,
+      "fractionOfClassSamples": 0.08612725376247951
+    },
+    {
+      "frame": "System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+      "samples": 463,
+      "fractionOfClassSamples": 0.06899120846371629
+    },
+    {
+      "frame": "System.IO.Strategies.BufferedFileStreamStrategy.ReadSpan(value class System.Span`1<unsigned int8>,value class System.ArraySegment`1<unsigned int8>)",
+      "samples": 412,
+      "fractionOfClassSamples": 0.061391744896438685
+    },
+    {
+      "frame": "System.Security.Cryptography.SHA256.HashData(unsigned int8[])",
+      "samples": 402,
+      "fractionOfClassSamples": 0.059901654000894054
+    },
+    {
+      "frame": "[unresolved]",
+      "samples": 359,
+      "fractionOfClassSamples": 0.05349426315005215
+    },
+    {
+      "frame": "System.Threading.LowLevelLifoSemaphore.WaitForSignal(int32)",
+      "samples": 261,
+      "fractionOfClassSamples": 0.038891372373714796
+    },
+    {
+      "frame": "System.Threading.PortableThreadPool+WorkerThread.MaybeAddWorkingWorker(class System.Threading.PortableThreadPool)",
+      "samples": 179,
+      "fractionOfClassSamples": 0.026672627030248846
+    },
+    {
+      "frame": "System.MemoryExtensions.SequenceEqual(value class System.ReadOnlySpan`1<!!0>,value class System.ReadOnlySpan`1<!!0>)",
+      "samples": 170,
+      "fractionOfClassSamples": 0.025331545224258678
+    },
+    {
+      "frame": "System.Reflection.PortableExecutable.PEReader.Dispose()",
+      "samples": 158,
+      "fractionOfClassSamples": 0.023543436149605124
+    }
+  ],
+  "managedInclusiveTop10": [
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0+<<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0>d.MoveNext()",
+      "samples": 3907,
+      "fractionOfClassSamples": 0.5821785128892862
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost+<ObserveAsync>d__5.MoveNext()",
+      "samples": 3905,
+      "fractionOfClassSamples": 0.5818804947101773
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1+<<AddEventStoreRouteCatalogObservation>b__1>d.MoveNext()",
+      "samples": 3905,
+      "fractionOfClassSamples": 0.5818804947101773
+    },
+    {
+      "frame": "Hexalith.EventStore.Server.Routing.RunScopedRouteCatalogGateway+<>c__DisplayClass1_0+<<AddEventStoreRunScopedCatalogGateway>b__1>d.MoveNext()",
+      "samples": 3904,
+      "fractionOfClassSamples": 0.5817314856206228
+    },
+    {
+      "frame": "Hexalith.EventStore.Server.DomainServices.DomainServiceWorkloadAssertionHandler+<SendAsync>d__4.MoveNext()",
+      "samples": 3856,
+      "fractionOfClassSamples": 0.5745790493220087
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendAsync>d__25.MoveNext()",
+      "samples": 3847,
+      "fractionOfClassSamples": 0.5732379675160185
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendOrdinaryAsync>d__30.MoveNext()",
+      "samples": 3835,
+      "fractionOfClassSamples": 0.571449858441365
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireCoreAsync>d__33.MoveNext()",
+      "samples": 3617,
+      "fractionOfClassSamples": 0.5389658769184921
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<ReadAsync>d__7.MoveNext()",
+      "samples": 3497,
+      "fractionOfClassSamples": 0.5210847861719565
+    },
+    {
+      "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReadAdmissionStateAsync>d__34.MoveNext()",
+      "samples": 3202,
+      "fractionOfClassSamples": 0.47712710475338993
+    }
+  ],
+  "domainReadDigestInclusiveManagedSamples": 0,
+  "externalCryptoApiVisibleSamples": 15,
+  "externalDecodePkcs8Samples": 0,
+  "externalRsaSignHashSamples": 0,
+  "source59CurrentAllMatch": true,
+  "all267InputsCurrentExceptPermittedFreshApp147Generations": true,
+  "freshApp147GenerationDifferences": [
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants.dll",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Server.dll"
+  ],
+  "all147CurrentMarkerFree": true,
+  "mappedIdentityLabelsAndCurrentProducerCopyDllPdbMatched": true,
+  "watcherAllFourMappedPathsAndPrePostGenerationProofsMatch": true,
+  "collectorOnlyGatewayMappedHashIndependentlyEqualsPinned": true,
+  "oldCollectorLimitations": [
+    "SafeCommand accepts broader native/dotnet marker positioning than later receiver collector; external watcher proves exact source/DCP owned entry and immutable PID/start/path/hash. No newer positional guard is claimed.",
+    "Collector verifies only Gateway map and emits its fresh mapped hash as Matches=true without equality enforcement. This audit independently checked actual emitted hash equals pinned Gateway; watcher independently requires entry/Gateway/SDK/Domain maps with current producer-copy DLL/PDB before and after.",
+    "Old collector has no SourceProject identity field. Actual graph resource eventstore, collector Resource eventstorehost and Rolegateway are distinct fixed bindings; source ownership is established by the external watcher."
+  ],
+  "ordinarySdkSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+  "domainSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178",
+  "normalDurationBounded8SecondCollection": true,
+  "rawAndEtlxHashChainsMatchAndAllNonallowlistedFilesAbsent": true,
+  "privateIdentityAbsent": true,
+  "privateOwnerPermissions": {
+    "directory": "0700",
+    "files": "0600"
+  },
+  "all5DiagnosticIdentitiesAnd3GroupsFreshlyAbsent": true,
+  "all21ManagedIdentitiesAndNativeSeedGroupFreshlyAbsent": true,
+  "freshProcPermissionErrors": 0,
+  "fiveContainersAbsentFromClosedIndependentCleanupAudit": true,
+  "cleanupClosedFullManifestZeroMismatches": true,
+  "closedFullManifestCount": 17355,
+  "currentFullManifestPostclosureDocumentationDelta": [],
+  "specExcludedFromLiveManifest": true,
+  "currentSpecSha256OutsideLiveManifest": "3369d092d05d0256ce5b9b631728b3c8271fe923742c7ad33311c2f557041284",
+  "noSpecHistoricalByteEqualityClaimed": true,
+  "outcome": {
+    "managedExitCode": 1,
+    "watcherExitCode": 0,
+    "singleAttempts": 1,
+    "singleVerifiedPositives": 1,
+    "multipleAttempts": 30,
+    "multipleVerifiedPositives": 0,
+    "onlySeedXmlTestFailed": true,
+    "browserAcceptanceAssertionsObserved": 0,
+    "matrixCompleted": false
+  },
+  "limits": [
+    "All Gateway-process samples, not query- or request-attributed; no joins to earlier phase ordinals, roots, services, outcomes or expiry.",
+    "Sample counts and Managed/External classifications are not exact CPU durations or blocked time. Safepoint/sampler perturbation and unresolved frames remain.",
+    "Inclusive frame counts overlap. GC collection-cycle wall intervals include concurrent/background work; suspension overwrites/unpaired restarts remain explicit.",
+    "Closed and current full manifests both match17355 paths. The current spec is outside that live-manifest coverage; no claim about its historical byte equality is made.",
+    "Prior native1048 was not requalified or inflated by this diagnostic run."
+  ]
+}

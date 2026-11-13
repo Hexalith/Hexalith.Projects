@@ -1,0 +1,28 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-release-binding-allocation-live-20261107"
+  },
+  "startedAtUtc": "2026-11-07T05:43:39.417051+00:00",
+  "stdoutStderr": "/tmp/story65-release-binding-allocation-live-20261107-console.log",
+  "privateDiagnosticOverride": false,
+  "inheritedSourceMappingCleared": true,
+  "environmentRemovals": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "reason": "Qualify owned release binding reuse with ordinary source and natural available14 CPUs; attach separate private allocation sampler only after an actual MULTIPLE readiness failure.",
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T05:49:43.794907+00:00",
+  "logSha256": "778898b0a29def96f705730febfbfb84e03cd49541d7ea986f455cf7ef0d31db"
+}

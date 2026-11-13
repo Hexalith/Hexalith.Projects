@@ -1,0 +1,55 @@
+{
+  "sourceOnly": true,
+  "compileReleased": false,
+  "executionReleased": false,
+  "productionApproval": false,
+  "target": "Only Codec.Hash<T> pure canonical writer + SHA after the original serialization produces one immutable owned element.",
+  "datasets": [
+    "unchanged public catalog fixture, all declarations and idempotency/descriptor schemas",
+    "actual compiled SampleCatalog declarations and operation schemas"
+  ],
+  "workloads": [
+    "whole ObservedRouteCatalogInventory with fresh scope and owned clones",
+    "whole ObservedRouteCatalogHost.Identity, retaining original extra identity hashes"
+  ],
+  "variants": [
+    "actual compiled Contracts + SDK",
+    "namespace-only copied control",
+    "post-serialization canonical-hash memo candidate"
+  ],
+  "warmIterationsPerWorker": 64,
+  "memoColdIterationsPerWorker": 1,
+  "readers": [
+    1,
+    2,
+    4
+  ],
+  "cyclicOrders": 3,
+  "expectedBatches": 216,
+  "expectedTimedObservations": 16380,
+  "coldMeaning": "One new shared owner per batch; simultaneous cold readers may share computations published by another reader. Runtime/file/JIT cold is not claimed.",
+  "timing": "Fresh outer input + all original Inventory clones/validators/Normalize/serialization + fresh scope enter/dispose; owner disposal measured separately; batch amortized wall is not observation latency.",
+  "cpuQuantization": "Preserve raw process CPU; normalized summary CPU omitted if any grouped batch is below30ms.",
+  "memoBound": {
+    "keys": 512,
+    "retainedChargeBytes": 4194304,
+    "charge": "128 + 2*(key UTF16 length + digest UTF16 length)",
+    "noTotalClrHeapMeasurementClaim": true
+  },
+  "futureAuthorityIntegrationNotImplemented": [
+    "BeginPrivateDecodeScope host-enabled branch",
+    "ReleaseCoreAsync direct host-memo scope entry"
+  ],
+  "futureIntegrationConstraint": "Preserve PrivateScopedDecodeEnabled/PrivateHostMemoEnabled call counts and option observation order; no production or public API changes in this scratch lane.",
+  "noRawObservedHostHashExtension": true,
+  "noAuthorityOrConfigCaching": true,
+  "allOriginalByteMemoBudgetsUnchanged": true,
+  "futureRunGuard": {
+    "cpuSeconds": 120,
+    "wallSeconds": 180,
+    "rssBytes": 2147483648,
+    "reuseExistingOwnedRunOne": true
+  },
+  "builds": 0,
+  "runs": 0
+}

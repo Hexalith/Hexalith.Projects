@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/Differential.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "cwd": "/tmp/story65-advisory-wave-prep-20261107/differential",
+  "exitCode": 1,
+  "elapsedSeconds": 1.6822316646575928,
+  "buildOnlyProcessorOverride": "2",
+  "clearedMappingHookVariables": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "envSet": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "logSha256": "03b73dc17d8e6b1cde51456ec54a27a4c80f9421a4130b594da03c1b9abfa380"
+}

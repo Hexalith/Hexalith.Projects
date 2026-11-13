@@ -1,0 +1,4156 @@
+{
+  "createdUtc": "2026-11-07T08:06:33.852091+00:00",
+  "diagnosticOnly": true,
+  "finalCompiledImplementation": true,
+  "ownerBuildsByProbe": false,
+  "hostsStarted": false,
+  "featureAcceptance": false,
+  "deadlineGainClaimed": false,
+  "sourceSha256": {
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs": "6c265a315fb853015ee636dd99fdb0493849f50a1dc24be45452c28d09a740fc",
+    "src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "d392bac66f6954b4d84f7e924e65b280929482fca9a7579e7fcc8e51a55d28f6",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs": "167749aa7b980712d36b4b234929ec561814cff4993f9edbea357f082a1cf62b",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": "17089c99b1370c8fae56f3418d92293e17d6db0cb9cfba75d0b086ff341be70d",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpParsedTemplate.cs": "94aa362810493d87945bf4137824d0f5dae996545f2dba2847317d0ca5889415",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": "71a9dc98cedde0a3f1651f3ec06b9812416b91e0a62595914a2fb7014ccf8c94",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteTemplate.cs": "8e93cd4eca3112b1b8cade1e594e66e98d66ff193e54dcf273f449ebe8672a0e",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": "b085ff4de038eac60ca4a2539df24573c8678c4e215fc7f21ce179e38c51bac8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs": "fe9038e346121082bd1e017ff58b816c7388dbaf7390c2690c91cff8141f70ee",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs": "64123712fcc3c7f6304dc99aa10ad659e6c9052113ce472a65bc6e52c1a19578",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs": "c01570410e73b7660a470bced9d0b1606815d19f3821ddeb1fd2c97e47e63374",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs": "81dd6632eb070b86d97b91d3c7b419d1f0d3b2f07ac7bc4bb00cf91c86a363e1",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs": "dbdcb49c07f9d544ec07c3353fea93bffff02f3fb51684b29f6aa996b6c9df23",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs": "10c05e91f8b057c67f1b64e3ab7639fd169d6ac9075e1fbdbd43da17559ce0f2",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImageActorOptions.cs": "345bd514002aacf24601235f5fadf3ebd166d48214bc48954540cc78690c4bcc",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckFixture.cs": "987326e6b051812f17121d3e9bdcde3890d0611edcd2cfd47be104361a30daec",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckTests.cs": "8682918102b23d2053ab5676d5d2c10c282025b797b30fcd7934885fb3a97422",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs": "ba9c972766dc8d87ae765eb115bfdc94fc3d9e3f80fcd1fa1ca9e85f3b24dbef",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingCollection.cs": "90650a5bd96d7d8faf53ad5a2f2312cde8fdd272c787bb890cfcf6760b6a9a89",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpFixture.cs": "f0d3e1ea600121427861441327ccc6b217c617787396d407921d5614f77f278b",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpHandler.cs": "942fec05cea5c6e24cedf7e086e6d473671928bf0673107d960e1a627314ebd6",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingReuseTests.cs": "f8ef709f55b09b87e1eeb6f50758aecba75c02276e97304ab38ec74a74b772f8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs": "36bcb838fc8870726b736f3f43f20db1ef43ff3329e61d33d6714a869fa06ca5",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDiskImageAssembly.cs": "3487e8aa0120f8f651cc2be358e886aea6230c7fc230d0caf5624dceed0f9f15",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolCollection.cs": "87eb190e55c0935f63cd005451ca8cd080a28291ba10cf2efe16c4ee0687bbf9",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolTests.cs": "b6dd8697c596ab1d4d6e8e73efbe27367c76a8389c956fef322ba57ab478475f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs": "da26e9b3f9c85a87ef0613b62c69b9712d50dcad7af0484a5dd5f7dd453fe8fd",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "11893e7b57d2edeef88b1e2f7504dfa7d1470bc321982194df089c5d75c2689f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs": "3283f0204a07aee0a8dce644fc6bd142c26f000df28c8765a90ae13ea741defa",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs": "ad5addf2a5998855a9b68cc178edb5a9c2330fbb1b344f60199b2252334f354d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs": "38d4c35756651bc001f7c874d5b1985503bf0b4c1e48aab083c593388ccf984b",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpParsedTemplateTests.cs": "127fa2e817d0a4a3e8ad45a8f2137bd0d4f7df050871dc6d5ceeae56398cf313"
+  },
+  "commands": [
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-template-parse-final-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Debug",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-p:Optimize=false",
+        "-p:DebugType=portable",
+        "-p:DebugSymbols=true",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-template-parse-final-probe-20261107",
+      "removedEnvironment": [
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration",
+        "DOTNET_PROCESSOR_COUNT"
+      ],
+      "explicitEnvironment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      },
+      "startedAtUtc": "2026-11-07T08:03:21.463329+00:00",
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/story65-template-parse-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "/tmp/story65-template-parse-final-probe-20261107/results.json"
+      ],
+      "cwd": "/tmp/story65-template-parse-final-probe-20261107",
+      "removedEnvironment": [
+        "DOTNET_PROCESSOR_COUNT",
+        "DOTNET_TieredCompilation",
+        "DOTNET_TC_QuickJit",
+        "DOTNET_ReadyToRun",
+        "COMPlus_TieredCompilation"
+      ],
+      "startedAtUtc": "2026-11-07T08:03:23.548826+00:00",
+      "exitCode": 0,
+      "finishedAtUtc": "2026-11-07T08:03:35.422121+00:00"
+    }
+  ],
+  "files": {
+    "Probe.csproj": "da80bf1b619c739842d86a322a468a8e4e5c63ab8cb7dcba68a554cc9198fdb1",
+    "GrantConfiguration.cs": "f146b2c805d513c9e412814a0bce8e0060aba2621d2cef28962a17f60bfb3d0e",
+    "FreshGrantObservation.cs": "e46209ce4183671409320e9f6e3d46d8cbe2dc7e735159da4ea8195420ceb866",
+    "results.json": "fbe59edc532c477bfafcc305e06328121b93eb362ebf7a8fdf16c438d089a4dc",
+    "GrantWorker.cs": "0c79eaf5632fc7ba4964496feec1c8ea172227237cbe6649d30143c0f0e33839",
+    "QualifiedProfiles.cs": "d23f4bfab76d54c5ca419536fe3c441eb1641ff09e446a056021dae0e07e33b6",
+    "build-command.json": "0196be80caa1cec87a95587090f04d1fa41a7e1f46ad88b2713bf0c31dd40d5f",
+    "GrantCorpus.cs": "def0b93ad85a43cff78736961549966cdb29134a699f400671164aa763e4080c",
+    "run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run-command.json": "12e7dcbdf2b65fe717eda068485f67c21fac95fef9859467a614f8be09580f09",
+    "ProfileControllerFeatureProvider.cs": "f45b32925c71571124c4a41eda84e650f935d78dacaa3e120550aae0d568669e",
+    "ConcreteGrants.cs": "0d9efd165dcf66e16d267dfc784b2caa43e2577f8877da211b281f5ac655e94d",
+    "PlainRouteTemplate.cs": "2e5c882b350a5c500c28511a6dd20c08c11a37ddc8119dd82a0d7c05591360f4",
+    "build.log": "4b565867ff215e2aeb8b12f188db17ab3dd87ae417806bcb35009c04a6edb41d",
+    "Program.cs": "e1ab187e66cd9982e04e7a053807f967c3d2a1abadd6f915ecaa81d9ca13bbe1",
+    "PlainGrantObservation.cs": "b2bc4bb8dfc1d30e6c0db33a30f6b64be506b583a724aa14910fdb30104f1ffa"
+  },
+  "resultsPath": "/tmp/story65-template-parse-final-probe-20261107/results.json",
+  "resultsSha256": "fbe59edc532c477bfafcc305e06328121b93eb362ebf7a8fdf16c438d089a4dc",
+  "oracle": {
+    "FullName": "Hexalith.EventStore.ServiceDefaults, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-template-parse-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+    "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "probe": {
+    "FullName": "Hexalith.EventStore.Server.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-template-parse-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "sha256": "83352fa2888b0054c223a65b05f854ee0c544a8962086bc69b28e8232602672e",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "runtime": {
+    "version": "10.0.14",
+    "sdk": "10.0.403",
+    "processorCount": 14,
+    "serverGc": true
+  },
+  "baseline": "Copied unchanged ConcreteGrants pipeline calls actual current compiled3argMatches, whose body is byte-identical to the prior ordinary path.",
+  "unchangedCopyControl": "Identical copied ConcreteGrants pipeline calls the byte-identical source copy of3argMatches using the actual original framework resolver service provider.",
+  "candidate": "Actual current compiled private ConcreteGrants -> TechnicalHttpObservationPass.MatchesTemplate -> actual TechnicalHttpParsedTemplate. No prototype helper is timed.",
+  "fairness": {
+    "allDebugOptimizeFalsePortableSymbols": true,
+    "oracleAndProbeDisableJitOptimization": true,
+    "ordinary3argBodyByteIdentical": true,
+    "freshBaselineConcreteGrantsBodyByteIdenticalAfterSingleCallRestore": true,
+    "matchedWarmupPassesPerWorkerVariant": 24,
+    "samples": 7,
+    "passesPerWorkerSample": 12,
+    "rotatedFirstVariant": true,
+    "independentFreshPassAndEmptyCacheEachIteration": true
+  },
+  "qualifiedProfiles": [
+    {
+      "Name": "Hexalith.EventStore.Gateway",
+      "endpointCount": 35,
+      "invocationCount": 34,
+      "Endpoints": [
+        {
+          "Pattern": "/api/v1/admin/projections/delivery-writer-protocol/activate",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664203:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ActivateDeliveryWriterProtocolAsync(Hexalith.EventStore.Controllers.ProjectionDeliveryCutoverRequestBody, System.Threading.CancellationToken)",
+          "RequestDigest": "3856efd214c1587d24c8fb02dc5021b39b99ae0aacc4ea4970452eb38ada178e",
+          "ResponseDigest": "235e805e4cfa770bc37406e16f7fc468a7c0b48aa2c5757c7fd3e5cd2f2f163d",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "146fecee8185db112424fd32c4d37021ed7bcae08cc2da9a94eed9435fef5be9"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/platform/global-administrators/delivery-reconciliation",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664218:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ReconcileGlobalAdministratorsDeliveryFromEventStoreAsync(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "1d1131114352bea1aa94b00479dfdbfbc76e4adc3e10944daedea386ea078e11",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "7af7db02762e8b83646acc11af42ca0643bec17edfcdcff4871ecc0d72f2a1f3"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/source-guard/{domain}/{aggregateId}/{projectionName}/activate",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664220:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ActivateSourceGuardAsync(System.String, System.String, System.String, System.String, Hexalith.EventStore.Controllers.ProjectionSourceGuardQualificationRequestBody, System.Threading.CancellationToken)",
+          "RequestDigest": "322fc3476577f0ddc1e5b73509b31fdb4e51f231bfe5457771094ca390ec5be9",
+          "ResponseDigest": "92bf3c30b0d88b2ccce290b625183421df085263cb31bd82d55aefce3b14d553",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "529849c53a93496cd33ebac2898674d1f165b5b43c236defb01605aeb8cb54f1"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/source-guard/{domain}/{aggregateId}/{projectionName}/qualify",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664219:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] QualifySourceGuardAsync(System.String, System.String, System.String, System.String, Hexalith.EventStore.Controllers.ProjectionSourceGuardQualificationRequestBody, System.Threading.CancellationToken)",
+          "RequestDigest": "322fc3476577f0ddc1e5b73509b31fdb4e51f231bfe5457771094ca390ec5be9",
+          "ResponseDigest": "92bf3c30b0d88b2ccce290b625183421df085263cb31bd82d55aefce3b14d553",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "529849c53a93496cd33ebac2898674d1f165b5b43c236defb01605aeb8cb54f1"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/source-proof/{domain}/{aggregateId}/bootstrap",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664222:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] BootstrapSourceProofAsync(System.String, System.String, System.String, Hexalith.EventStore.Controllers.ProjectionSourceBootstrapRequestBody, System.Threading.CancellationToken)",
+          "RequestDigest": "068803a03ff12c494e0aebd1fdabdef286ee45ddaccdc0b7d5bf2a13ce09850e",
+          "ResponseDigest": "0abb9274a682757fa92a2446837c06805a533557b1d85a6702b0cebd7c9ad5d3",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "146fecee8185db112424fd32c4d37021ed7bcae08cc2da9a94eed9435fef5be9"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{domain}/{projectionType}/shared-source-rebuild/{operationId}",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664194:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RebuildSharedSource(System.String, System.String, System.String, System.String, Hexalith.EventStore.Controllers.SharedSourceRebuildRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "089004986ebdb984c26b6745c7957ff2bbbf80eb8b7b966b40c9c45050216221",
+          "ResponseDigest": "5f3bbe197fc6a8e2df3518485d30e46cbcdff3cb4d113d180563d60fb006a6b0",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "2fc90651205df7fe86f4c47c9193b4ff19331373f4b0702ab363b7072c9d5bb3"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/cancel",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664200:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CancelProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "f003d028721f4b761dea274b7b7c0b575290fb1ce32fadd75692e37c4889af78",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "b105bc9fcd830cbebc8e1160440b01d275843da0fb9d605ee538ca285c574b9a"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/delivery-reconciliation/{domain}/{aggregateId}",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664204:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ReconcileDeliveryFromEventStoreAsync(System.String, System.String, System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "e1a5824498181c7b2410ca1dec6c9cfe15ebadc9667c98e00882ae369ea62da9",
+          "ResponseDigest": "ae92d97a60b2a728aedc1da5689d9584093aafae8092f435f9a19c1c3a84d912",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "146fecee8185db112424fd32c4d37021ed7bcae08cc2da9a94eed9435fef5be9"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/erase",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664202:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] EraseProjectionAsync(System.String, System.String, Hexalith.EventStore.Contracts.Streams.ProjectionEraseRequestBody, System.Threading.CancellationToken)",
+          "RequestDigest": "07a64fe78254d06308628eed0cc6908c55dee445aa12375b55f32551412dc7b4",
+          "ResponseDigest": "c4c990998ed518297d08ac83821702ee36192095ab534e177d58ceecb2189d5b",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "146fecee8185db112424fd32c4d37021ed7bcae08cc2da9a94eed9435fef5be9"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/pause",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664196:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] PauseProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "f003d028721f4b761dea274b7b7c0b575290fb1ce32fadd75692e37c4889af78",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "b105bc9fcd830cbebc8e1160440b01d275843da0fb9d605ee538ca285c574b9a"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/rebuild-status",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664195:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRebuildStatus(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "23638a4a6a1f1ef1e63715aba962ad1429ca0058d45559a0948dbdeaac921273",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "2fc90651205df7fe86f4c47c9193b4ff19331373f4b0702ab363b7072c9d5bb3"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/replay",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664199:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ReplayProjection(System.String, System.String, Hexalith.EventStore.Contracts.Streams.ProjectionReplayRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "326dedd825aa5bd6160cc8f30e19349f16d5587e31e1b94ed60e27052b3d19ee",
+          "ResponseDigest": "4eac77540c37bb80bea7b2cde7773c468b8d2f6b70b50e542b9f6e8e24192684",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "cccaa7e6d528628760775ec7596190946a40fb0e5e8e10b5a384c621105f8d41"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/reset",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664198:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ResetProjection(System.String, System.String, Hexalith.EventStore.Contracts.Streams.ProjectionResetRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "33d50faa535a80a52df633c5ea2c55e475eddfb6936d4f1a503bc5b13adb411e",
+          "ResponseDigest": "4eac77540c37bb80bea7b2cde7773c468b8d2f6b70b50e542b9f6e8e24192684",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "cccaa7e6d528628760775ec7596190946a40fb0e5e8e10b5a384c621105f8d41"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/resume",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664197:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ResumeProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "f003d028721f4b761dea274b7b7c0b575290fb1ce32fadd75692e37c4889af78",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "b105bc9fcd830cbebc8e1160440b01d275843da0fb9d605ee538ca285c574b9a"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/retry",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664201:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RetryProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "b7224cdd70045185c2e60fd58b5d4f961e1402863784896116182e70dfef6a14",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "701bc0bef7d75cd9b926b6e75459bd2df0e5681b79eef2b2c7381b9182f720aa"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/snapshot",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664226:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Hexalith.EventStore.Admin.Abstractions.Models.Common.AdminOperationResult]] CreateSnapshot(Hexalith.EventStore.Admin.Abstractions.Models.Storage.ManualSnapshotRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "49e09435435db3aaab7e50f2848263d9c4d348d823647069e2743926b2595e95",
+          "ResponseDigest": "31996251ed15017098308843f03ec62be9abf7ce64d9bfa266797ad638569569",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "1367cff9ca5d1dd3d5f228d36e0b3426c3dffce1f802fd39668908550f802e9b"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/snapshot-policy",
+          "Methods": [
+            "DELETE"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664225:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Hexalith.EventStore.Admin.Abstractions.Models.Common.AdminOperationResult]] DeleteSnapshotPolicy(Hexalith.EventStore.Admin.Abstractions.Models.Storage.SnapshotPolicyDeleteRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "c7d1e879079b0f68be78d79932ee13f7a843d3a1419a47f3f3bba2269a195051",
+          "ResponseDigest": "31996251ed15017098308843f03ec62be9abf7ce64d9bfa266797ad638569569",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "1367cff9ca5d1dd3d5f228d36e0b3426c3dffce1f802fd39668908550f802e9b"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/snapshot-policy",
+          "Methods": [
+            "PUT"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664224:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Hexalith.EventStore.Admin.Abstractions.Models.Common.AdminOperationResult]] SetSnapshotPolicy(Hexalith.EventStore.Admin.Abstractions.Models.Storage.SnapshotPolicySetRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "40b8cc8f102aaddba41940627d1e2d2a436dd59d6d844c6c1b5620e819e144f8",
+          "ResponseDigest": "31996251ed15017098308843f03ec62be9abf7ce64d9bfa266797ad638569569",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "1367cff9ca5d1dd3d5f228d36e0b3426c3dffce1f802fd39668908550f802e9b"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/commands",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664192:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRecentCommands(System.String, System.String, System.String, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "91fe2c6b95461482798e9c08a5c5d724ff4cba335870d30969ac78d8e7b930f1",
+          "ResponseDigest": "92c8b9afbfada266b96837c3e81327d2d23e6b7a689f79d9a82b7069ac072c66",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "529849c53a93496cd33ebac2898674d1f165b5b43c236defb01605aeb8cb54f1"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/bisect",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664240:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] BisectAggregateStateAsync(System.String, System.String, System.String, Int64, Int64, System.String, Int32, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "16f03aa70da29b197f29dc0d546133c2d5a037b7f820712098c7b6287f2ec537",
+          "ResponseDigest": "d94e0698edf675fdcaf751291e725869aca4aea4a6d75e84ad3426baea7e2de3",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/blame",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664242:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAggregateBlameAsync(System.String, System.String, System.String, System.Nullable`1[System.Int64], Int32, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "8fcd45436c2aad318028633291dba015fe68875b8f6b2b793419bc30375d201f",
+          "ResponseDigest": "e7d2b851a90de70c7a2993614e01fa3e51b53d416212c13286248b2d7c8cd3f7",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/causation",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664248:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TraceCausationChainAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "9c0755ba35b60badb2cf1573fdf85ba059d6f2dfa63ff30d1d3b689f41723245",
+          "ResponseDigest": "6c79cc56d7d9747e2d7c2eecb6fafc654e109233f8a4ef256c3d38efd416ddc3",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/diff",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664241:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] DiffAggregateStateAsync(System.String, System.String, System.String, Int64, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "49c9002669e1064dc3fd202b7a7cb5760cb5eac8860acd0a76ecd092dc9b608a",
+          "ResponseDigest": "652785bd7da8ffd816615dc8d789c0e80166c270390060ac0826ebb311b62745",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/events/{sequenceNumber:long}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664244:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEventDetailAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "1b7169f7e881e650a3f7e9fa1edb2f889d6bda4f9cfacb7aad2ab03f05ee38c5",
+          "ResponseDigest": "e20dc397eb9aad7a914430e7e4fbfe7519c131c713102aca7c3f3d86f9505222",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/sandbox",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664247:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SandboxCommandAsync(System.String, System.String, System.String, Hexalith.EventStore.Admin.Abstractions.Models.Streams.SandboxCommandRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "207b53bf6542fbbabbd67e64792e713a776de50d344299f2bbc9b1314021cad7",
+          "ResponseDigest": "06b5db2854c8464ced9ba6a8cf8bcc05fb19bccb680b9e0ca8064b86950dc81f",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/state",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664243:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAggregateStateAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "9c0755ba35b60badb2cf1573fdf85ba059d6f2dfa63ff30d1d3b689f41723245",
+          "ResponseDigest": "d6e8ec2cb5e14618ba8394828fef362873d222fb2c6db664d544aadac70fe92e",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "5996ef3ce17003d45aeab6691aa70883edf492deeefd73076f8db029f3182e05"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/step",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664245:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEventStepFrameAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "9c0755ba35b60badb2cf1573fdf85ba059d6f2dfa63ff30d1d3b689f41723245",
+          "ResponseDigest": "4107f8b34caa903f6623545827157e945843f294b4a22c9182071e7c67c50bd9",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "0fe7b72f94fce97b653856d016247157d7a615dea5123cba81d04ef8a971f3e4"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/timeline",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664246:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStreamTimelineAsync(System.String, System.String, System.String, System.Nullable`1[System.Int64], System.Nullable`1[System.Int64], Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "324a26ae88bb10d5d29aa417b23a354dc80b3fd1a309dddbf4dc5d1bc669bf39",
+          "ResponseDigest": "264066744a4df7d5afbe6f63677b983f033302b49431f7316fe3213eb0ace5c1",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "75568913f3f28236bd86111948b18e0f63c0f7dfa046707ad28e7a50f21449eb"
+        },
+        {
+          "Pattern": "/api/v1/admin/traces/{tenantId}/{correlationId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664269:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCorrelationTraceMap(System.String, System.String, System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "d65f11ea50d552f70c408ec86b5b525c43fd2bd6bca2ba63ed01c428e13480be",
+          "ResponseDigest": "9dd98b9b7b9f71c2327bf7ef849a233ab50a97c2095d56524ef1d8f35dab1ed5",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "75568913f3f28236bd86111948b18e0f63c0f7dfa046707ad28e7a50f21449eb"
+        },
+        {
+          "Pattern": "/api/v1/commands/status/workload/{tenant}/{messageId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664284:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWorkloadStatus(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "b5391d42e12961fcef28e780e0f326f125125937ca644c8fcf2d8de5f0c875e8",
+          "ResponseDigest": "c2f645087c56ac2c55cf1d72c4fd0724f212728406d268c6ad72d04998551962",
+          "Policies": [
+            "DaprInternal:eventstore:command-status"
+          ],
+          "PolicyDigest": "e9be205b24cd0b027195ef3b4f6c4f9803b5e27b5f01ec8a9495abb600b05131",
+          "FilterDigest": "29932bae8318d84f2d209726c324a7c54f5ec82d39de02a9cc557789cefc26a8",
+          "CredentialKind": "workload"
+        },
+        {
+          "Pattern": "/api/v1/commands/status/{messageId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664283:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStatus(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "45710abbee5ceb9043d8723d3dac3538e502bbd3874576b64855adb72b121d6b",
+          "ResponseDigest": "7b20b35f7c6fd78f3777593dacb25581df68d2f5243662e76e22d0e1863c37fa",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "d1f0117903f9db6b513d6b6d2a2d0af9f33798de98e9c92cf63315fbf6bcc1b6"
+        },
+        {
+          "Pattern": "/api/v1/commands/validate",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664291:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Validate(Hexalith.EventStore.Contracts.Validation.ValidateCommandRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "9d9657ed85c0a9f93d84c2fd219d90e79b64f3f5fcbfb73ba9fab830481742ef",
+          "ResponseDigest": "179e02020bc55a7dbb47a4de06d08a1cb9a15e0c8354f6303eef728e54fa9184",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "03f0350b23315d0b141c956e86abc7bb02e986bf7e32f25c306f5231c81c6726"
+        },
+        {
+          "Pattern": "/api/v1/identity-history/read",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664499:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[Hexalith.EventStore.Contracts.Streams.RetainedIdentityHistoryReadResult]] ReadAsync(Hexalith.EventStore.Contracts.Streams.RetainedIdentityHistoryReadRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "88cdfdf3e4c26f794ee7f846b06b718cbd98db2d54f5d5c9367d0add91016c77",
+          "ResponseDigest": "05652ecbf4caa14d487efe563d0d75f24c1dffce6084b7d8c1bc947b60ad8981",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "5af18840719e992c164bd9bd8024f8c9bf886b189a3b0aafd62a8a6705f07339"
+        },
+        {
+          "Pattern": "/api/v1/queries/validate",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664489:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Validate(Hexalith.EventStore.Contracts.Validation.ValidateQueryRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "4b07fc0afde6c2fd31df0872bb73986404d7672fe457a580dd21e2d8ec7d69bc",
+          "ResponseDigest": "179e02020bc55a7dbb47a4de06d08a1cb9a15e0c8354f6303eef728e54fa9184",
+          "Policies": [
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d6f2adf8fe1b0f8c1e3c126a811d4be4e8b4f504818d9076beaba955b1b250af",
+          "FilterDigest": "03f0350b23315d0b141c956e86abc7bb02e986bf7e32f25c306f5231c81c6726"
+        },
+        {
+          "Pattern": "/api/v1/trusted-effects",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Gateway, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:2ea7e45b-2840-4823-9f6b-1d5e30e65f3d:4eedb23c4baa389d54b7fc1e5bce3f26f57464703ce8c3ab13a89344a8b72183:100664535:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SubmitAsync(Hexalith.EventStore.Contracts.Effects.TrustedEffectSubmitRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "49f273daf4637a4d296ca0b798a3b5bb6b0a01379a99076e48033f482ed449e3",
+          "ResponseDigest": "c9c235049aa34827318b3b46528bccd1ac5ff8907c156c2c555d5bb0f57b995e",
+          "Policies": [
+            "DaprInternal:eventstore:trusted-effect"
+          ],
+          "PolicyDigest": "137f2b5e3c56319a6ed2b9bc93320028a9ad286941394b841958444b52a64164",
+          "FilterDigest": "ae6a69a565af1a446c9956565b52ed1d742f59078d5d83945f9189b680149709",
+          "CredentialKind": "workload"
+        }
+      ],
+      "Invocations": [
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/delivery-writer-protocol/activate",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/platform/global-administrators/delivery-reconciliation",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/source-guard/orders/owned/owned/activate",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/source-guard/orders/owned/owned/qualify",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/source-proof/orders/owned/bootstrap",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/orders/owned/shared-source-rebuild/owned",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/cancel",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/delivery-reconciliation/orders/owned",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/erase",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/pause",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/rebuild-status",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/replay",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/reset",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/resume",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/retry",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/snapshot",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/snapshot-policy",
+          "HttpMethods": [
+            "DELETE",
+            "PUT"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/commands",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/bisect",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/blame",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/causation",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/diff",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/events/7",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/sandbox",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/state",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/step",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/timeline",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/traces/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/commands/status/workload/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/commands/status/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/commands/validate",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/identity-history/read",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/queries/validate",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/trusted-effects",
+          "HttpMethods": [
+            "POST"
+          ]
+        }
+      ],
+      "Refused": []
+    },
+    {
+      "Name": "Hexalith.EventStore.Admin.Server",
+      "endpointCount": 68,
+      "invocationCount": 64,
+      "Endpoints": [
+        {
+          "Pattern": "/api/v1/admin/backups",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663808:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetBackupJobs(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "80b57743077073d67b19cb3fa3d983fe1d3deab8faa701d87b1be07b35fe7f77",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/admissions",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663814:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SubmitAdmission(Hexalith.EventStore.Contracts.Security.RestoredBackupAdmissionRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "4ee3e7751e8316c5d98ce82d5b1cc5c4fbbe992d9970cffd861bf04bc398337c",
+          "ResponseDigest": "c39b8a209db665d0ddee540e1a262d93d01f7b50bcb0a2335cddb59e0c2b4ac6",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "b8974618659f36867ae4d1fc40a42b943aae85e8f03df17c65e25ec4d7317553"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/admissions/{tenantId}/{admissionId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663816:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAdmission(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "f0ab1ddd92fce9400c5875eb34fb08e0f044aa4e8736663a307a6b6dfced9b4c",
+          "ResponseDigest": "f756620799b2860d6155ff41d7cb5d275b7e15f56474df6c07d9b2132ed732fd",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "0633ec0fd11b5613939c35792887add6a3348e45d595e53213fc59f14d9e12d2"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/admissions/{tenantId}/{admissionId}/decision",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663815:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SubmitAdmissionDecision(System.String, System.String, Hexalith.EventStore.Contracts.Security.RestoredBackupAdmissionState, System.Threading.CancellationToken)",
+          "RequestDigest": "7c450d0a926d706e6e9b764609844728dd08b7ebef0c96898f581fec83cbd21f",
+          "ResponseDigest": "91f9889736c3bf24ec4f6400f6545ceff4a57551e718d72b2aa79dba27238a7e",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "6198929b6b4d03ce4d7d4888429d70487eff4dcab927bf306267ca1d1866d7cf"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/crypto-shredding/workflows",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663817:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SubmitCryptoShreddingWorkflow(Hexalith.EventStore.Contracts.Security.CryptoShreddingWorkflowRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "4ab7a0b9ee340bc3918ada6c0e921021bb30d6db1db2ad33e01b48be36816e9c",
+          "ResponseDigest": "a8a80cb0e109f51481adb539649d912220289ad9684edd985bcc826af8e4f6b8",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "f050dde2e4dba02c42c84cda4bdf644f0d86c9a2dcc015709e7f1d13bf295a40"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/crypto-shredding/workflows/{tenantId}/{workflowId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663818:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCryptoShreddingWorkflow(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5e54ee2fb18ad6f93a1824fcfaf4ce99ca27f55699212404ee9c6440724f11e3",
+          "ResponseDigest": "947bb97881f72c7fa0c569adac228afe29d3d72eacb9a46dd3fcd80b4c8c1c81",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "0633ec0fd11b5613939c35792887add6a3348e45d595e53213fc59f14d9e12d2"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/export-stream",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663812:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExportStream(Hexalith.EventStore.Admin.Abstractions.Models.Storage.StreamExportRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "dafac3daad38b699a399310c6377ddee3ead23a36005eca7637cb71a66a191d2",
+          "ResponseDigest": "1d2a9ab78e85347f1a1004e5cccf2eb980a31bbd40786906ff499db490082396",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "31548f2302992cca96ca28829e0af439694880b87186e03178a9c38288e431e2"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/import-stream",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663813:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ImportStream(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "40320d6dc81c56c77894c2c93a99e89d186b066eddba4e46c4b95cb743164095",
+          "ResponseDigest": "3cd03756b93c5c8757b0b8c095923927e5ad0903a57b2b97a724a695aa877b26",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "6034c5fb35e3e62299b4d71c76436c001e46a29919ab19c67b4e17f1ce198f36"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/{backupId}/restore",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663811:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TriggerRestore(System.String, System.Nullable`1[System.DateTimeOffset], Boolean, System.Threading.CancellationToken)",
+          "RequestDigest": "0b0e831bbadad81b11334f36872c0b9781dcc9351f3476a764172b8c6dd54c48",
+          "ResponseDigest": "808a6e5985f6cf126ed38336819ba59809df529471839cdd81d333470b366c12",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "4cdfa76e20c8b4397e8b40646f4ef3eaf11551f7c2cd09cdfbc852b464eb7685"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/{backupId}/validate",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663810:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ValidateBackup(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "6118c5979ab0e75606e2a9f6ffb347d074580bd42d17d401a64a81e1daf2f80b",
+          "ResponseDigest": "808a6e5985f6cf126ed38336819ba59809df529471839cdd81d333470b366c12",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "4cdfa76e20c8b4397e8b40646f4ef3eaf11551f7c2cd09cdfbc852b464eb7685"
+        },
+        {
+          "Pattern": "/api/v1/admin/backups/{tenantId:regex(^(?!export-stream$|import-stream$).+$)}",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663809:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TriggerBackup(System.String, System.String, Boolean, System.Threading.CancellationToken)",
+          "RequestDigest": "ab5585ccc3ff9a74ed47d6ecb8b4a7db20c4b24955c6a6f9260f263cd686ad16",
+          "ResponseDigest": "808a6e5985f6cf126ed38336819ba59809df529471839cdd81d333470b366c12",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "8ef90dabdebe82a0a71cb39ebb893ffd3208865bba48fe89961f3287e4e28d76"
+        },
+        {
+          "Pattern": "/api/v1/admin/consistency/checks",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663832:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetChecks(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "01787e5d4468921c17ff0815a187c80d558c9b39acdc038f42095a6f51f3df4e",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/consistency/checks",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663833:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TriggerCheck(Hexalith.EventStore.Admin.Server.Models.ConsistencyCheckRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "6a65e59219f0fa4b6d2d03287e3649495eb484921dd6e37bdafbb691e7ab8b77",
+          "ResponseDigest": "ab9f84840b080f40e751ee147e1afb2ae06e1b1fede4112a8b78a5ae820b42b3",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "52d7e5e5bfdcc770fd516f3a0b01741445c20088343b6dde16dab9aba2a496cc"
+        },
+        {
+          "Pattern": "/api/v1/admin/consistency/checks/{checkId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663831:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCheckResult(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "31f0c3d964d8b44ea4644424f66a0708230f1a6b844b7acdea59d5c697e45055",
+          "ResponseDigest": "507ef2d402581c4c203c2da9dda674b26007a3bf5e8d60b751b1278a157b002c",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "e5c3aec1076e025676eda260e1986a5e594038597a8ddb82f5e3a4565f976647"
+        },
+        {
+          "Pattern": "/api/v1/admin/consistency/checks/{checkId}/cancel",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663834:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CancelCheck(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "31f0c3d964d8b44ea4644424f66a0708230f1a6b844b7acdea59d5c697e45055",
+          "ResponseDigest": "21ce62c96cbf8b38cb460a9be70fb71d59701c1eecaa38ed7fe9bea2a7843d9d",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "9cf542c3ce81c829727e16520a25b10476273467b2a588f488bcb219a66f6c0c"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/actors",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663848:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetActorRuntimeInfoAsync(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "46d9831e3420654e364d30bd22eff878f01dc7438932b50239db1662b44962e9",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/actors/{actorType}/state",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663849:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetActorInstanceStateAsync(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "bbba8793aa49fba53f747989df0ca4fea38fe73fd26ccf25a4593f509d41ae2d",
+          "ResponseDigest": "73f3e73bb7467b87b7f6fb3341d5acaed34ca37111f8a01117ad75ccab37b0f8",
+          "Policies": [
+            "AdminFull",
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "c3c2d69d7d1c2bfc396cf983515125c8fb2e78bc1fbb42112fba77108b3e9db7",
+          "FilterDigest": "e59c9dbdf53dfe8623337c33bca7b8e2de3bf1b41d87dc717285c992abc3f46b"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/components",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663845:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetComponents(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "5d1459535f8c609bebe68862af443b88e5a40ac4b8fc071d9a843e3df926f958",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/overview",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663847:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetInfrastructureOverview(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "36f2719b20486446fa35dd1691ee4a999a87f59ce3c57c03660309376641c62f",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/pubsub",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663850:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetPubSubOverviewAsync(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "14f9de0a4658c7b9842671597e0065899f33f58692609011b990a3487089f457",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/resiliency",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663851:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetResiliencySpecAsync(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "6a0d37009de238372ab5cf552864cb12467070c7a498c75aa2f372fcb761ce8b",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "941afbf59b449192dbe863426d55a02d5c443a1289eb55ef309d5c3dce6cc266"
+        },
+        {
+          "Pattern": "/api/v1/admin/dapr/sidecar",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663846:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSidecar(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "e635bde6e5abf548d01d1e184dec69dea297f797643159bd1fa3ed013700f531",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "7d129d185e996aaddceddc0bc7effdb2060cb53eaa55db7b9d29c8dc155dd229"
+        },
+        {
+          "Pattern": "/api/v1/admin/dead-letters",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663858:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListDeadLetters(System.String, Int32, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "01b84fd4c3d67ecf2d07ae354cc3b8aa670e300e9c715e74f800de7e1c52568a",
+          "ResponseDigest": "c5d17dd034c0bdc161bba1520cd2102175b28e27b90004b28b0a111f925d75df",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/dead-letters/count",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663857:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDeadLetterCount(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "f1bf2e1ee1ec6fd59b72b6c5d3716aba7aae64b77a39b54b5dda3aa70e3d6d61",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/dead-letters/{tenantId}/archive",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663861:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ArchiveDeadLetters(System.String, Hexalith.EventStore.Admin.Server.Models.DeadLetterActionRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "f9426d2a0055755e0180908faf1b6d5c8f272f0e72c566404e45c2ab28379e1e",
+          "ResponseDigest": "c57601415a72eab47dd46bc90582f9c472e23a43565edc2ce21f7914030f34a9",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "47514f0e88f065e0e72798bcc7172cfba0e5aafdf98b7bb48099b35f7f89c3f8"
+        },
+        {
+          "Pattern": "/api/v1/admin/dead-letters/{tenantId}/retry",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663859:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RetryDeadLetters(System.String, Hexalith.EventStore.Admin.Server.Models.DeadLetterActionRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "f9426d2a0055755e0180908faf1b6d5c8f272f0e72c566404e45c2ab28379e1e",
+          "ResponseDigest": "c57601415a72eab47dd46bc90582f9c472e23a43565edc2ce21f7914030f34a9",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "47514f0e88f065e0e72798bcc7172cfba0e5aafdf98b7bb48099b35f7f89c3f8"
+        },
+        {
+          "Pattern": "/api/v1/admin/dead-letters/{tenantId}/skip",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663860:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SkipDeadLetters(System.String, Hexalith.EventStore.Admin.Server.Models.DeadLetterActionRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "f9426d2a0055755e0180908faf1b6d5c8f272f0e72c566404e45c2ab28379e1e",
+          "ResponseDigest": "c57601415a72eab47dd46bc90582f9c472e23a43565edc2ce21f7914030f34a9",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "47514f0e88f065e0e72798bcc7172cfba0e5aafdf98b7bb48099b35f7f89c3f8"
+        },
+        {
+          "Pattern": "/api/v1/admin/health",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663870:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemHealth(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "06cb2df8b360ef5becf18e2c3e9731773e3e682cd1e728cff74d70f1d1d385a3",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/health/dapr",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663871:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDaprComponentStatus(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "572bfe22eddbfe0e35a255cb2a253bbdbfea4177bdfa6fa992988efe37714832",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/health/dapr/history",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663872:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetComponentHealthHistoryAsync(System.Nullable`1[System.DateTimeOffset], System.Nullable`1[System.DateTimeOffset], System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5e2b04af805c33c838d558c81175ac29c8dd7f88e08ca7fa2ba83e15f2b0e3ec",
+          "ResponseDigest": "033e9ff8214a9c8dfabee6a29cb9f101a2a8e32051b547f4f5490ffd2bd02057",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "a502209c12fcbc8e84ec275685a2730648130c3d90dc5516a974006cf9c69712"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663878:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListProjections(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "98c38dccf2dc9ed3c1cd2b4d0ce23556b32f3f4c90a1eb4cec14ef2ec9b8920e",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663879:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetProjectionDetail(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "1f56afc1dc86f04f0e8aa5687a5f1e6052a6cc25d6b0c3d9997a9d6904ee733e",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "65333f7996c6aa3ee104e29496f93092b37fb9ed7971bc2634b68ca992d608ac"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/pause",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663880:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] PauseProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "dde7f736697c76b3c24931971c148b66573f192fc019b82fea8d7e9d5cff8758",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/replay",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663883:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ReplayProjection(System.String, System.String, Hexalith.EventStore.Admin.Server.Models.ProjectionReplayRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "2fe800098bad33f0cb0848caa525e7debe613318acd43bc2475d36c63e4c2809",
+          "ResponseDigest": "701b776a89748eaf5f43f3d9c753fd61f87e8647eee570530275b01a9528ac53",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "32da7bc10c8b1962d99edef7fc345e48f8ffa3c32a16ed4557f38fc913c8caa8"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/reset",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663882:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ResetProjection(System.String, System.String, Hexalith.EventStore.Admin.Server.Models.ProjectionResetRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "5db8348428b8b9cb8734cd7573d13e54e67a5212c6627674afb247485650b85c",
+          "ResponseDigest": "701b776a89748eaf5f43f3d9c753fd61f87e8647eee570530275b01a9528ac53",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "32da7bc10c8b1962d99edef7fc345e48f8ffa3c32a16ed4557f38fc913c8caa8"
+        },
+        {
+          "Pattern": "/api/v1/admin/projections/{tenantId}/{projectionName}/resume",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663881:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ResumeProjection(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "259f2ad09a660936aecff5cc121873ab6d2d63eab0bad64bf658b6e2e455cfad",
+          "ResponseDigest": "dde7f736697c76b3c24931971c148b66573f192fc019b82fea8d7e9d5cff8758",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/compaction-jobs",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663895:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCompactionJobs(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "681038b4282e6e5ab1afba49683497c6c0caae5bd3b2801e3900c317748980f4",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/hot-streams",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663893:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetHotStreams(System.String, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "cfab8d3e4843940c2b9aaead0d659490c5845a26912d6cc07f11039fc2f43e99",
+          "ResponseDigest": "75fadf62133f0bc33a4df4cc2e82d1a0baa5b837e5e970b0937296a35e928081",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/overview",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663892:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStorageOverview(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "fbcfa7624db946cde4d5b2780713cfec448bb5a27691f1b3a3f8251b245ece1d",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/snapshot-policies",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663894:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSnapshotPolicies(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "cb73b1f45768bd2d5ef505b176343ac23fb32449fbed4e0ff2753e739530c143",
+          "ResponseDigest": "04358c4026751a49c4b025a9303cf068d0731fde9585db42dcb36a403d255970",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/{tenantId}/compact",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663896:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TriggerCompaction(System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5e82a9e3e5efe8c20d4671f9fb9eaf38c1116fec91414761135734c0687dbb8b",
+          "ResponseDigest": "808a6e5985f6cf126ed38336819ba59809df529471839cdd81d333470b366c12",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "8ef90dabdebe82a0a71cb39ebb893ffd3208865bba48fe89961f3287e4e28d76"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/{tenantId}/{domain}/{aggregateId}/snapshot",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663897:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateSnapshot(System.String, System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "e85455fa1d1e0124a441e4c77544a29a96ea914d363a83fa18515d0c61e7e836",
+          "ResponseDigest": "dde7f736697c76b3c24931971c148b66573f192fc019b82fea8d7e9d5cff8758",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/{tenantId}/{domain}/{aggregateType}/snapshot-policy",
+          "Methods": [
+            "DELETE"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663899:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] DeleteSnapshotPolicy(System.String, System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "9ed869003fc1438f40052e85f25a1f7b4c24f70af244a71cd819c991e8f95147",
+          "ResponseDigest": "2c214595dad96141bd306b696f3d7f0495ef42db63d18ec99b62026c57c7caa8",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "65333f7996c6aa3ee104e29496f93092b37fb9ed7971bc2634b68ca992d608ac"
+        },
+        {
+          "Pattern": "/api/v1/admin/storage/{tenantId}/{domain}/{aggregateType}/snapshot-policy",
+          "Methods": [
+            "PUT"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663898:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SetSnapshotPolicy(System.String, System.String, System.String, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "3c38f63c88b3a4fba018a44cf595dd51ddec2851e803decdae89dc2dc22ccd84",
+          "ResponseDigest": "dde7f736697c76b3c24931971c148b66573f192fc019b82fea8d7e9d5cff8758",
+          "Policies": [
+            "AdminOperator",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "cb9407c2b463680b0bec57958358a81d9e001957ca686312681652c1098b6f55",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/GetRecentlyActiveStreams",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663916:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRecentlyActiveStreamsAsync(System.String, System.String, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "5c7c35bea510bbad9ee001057d2a16b3cd6e03d17bcd1af389c72a4b69681358",
+          "ResponseDigest": "a955cf21557d9a5918333d8d61ee9e2e60c7eacd87e3fbec6b973498188b7da0",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/commands",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663915:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRecentCommandsAsync(System.String, System.String, System.String, Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "91fe2c6b95461482798e9c08a5c5d724ff4cba335870d30969ac78d8e7b930f1",
+          "ResponseDigest": "6418e97ff17c52f44ba24e6c7c0ac91ae03e980ba8cc5dee1f0a537d18bc0bdc",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/bisect",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663909:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] BisectAggregateStateAsync(System.String, System.String, System.String, Int64, Int64, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "d7851be347994bec8cd81c8c5283eb777fde3efb67392d133d9e2dc07e423b63",
+          "ResponseDigest": "ee9de1144f9acd5992767999aa48a5025c43b23224bed31321f0bbeac3154dc4",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/blame",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663911:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAggregateBlameAsync(System.String, System.String, System.String, System.Nullable`1[System.Int64], System.Threading.CancellationToken)",
+          "RequestDigest": "13e75bdbfabe90bc5a6e2de2a5b196111b20d46b54c0c927af237928c1b5e31a",
+          "ResponseDigest": "0fbda93c32d59a504c315146b85257602ebba9c40e584dde233b066baf3baae1",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/causation",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663919:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] TraceCausationChainAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "96d8df0aff802b440dcafc657eafefa719d8860980bf56e8e82d3cefff4151cc",
+          "ResponseDigest": "cf6d286b1a73b8e6f7f58c9556ab08184bb7399638b3554093d73ac45e8fa760",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/diff",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663910:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] DiffAggregateStateAsync(System.String, System.String, System.String, Int64, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "4a7dee162a59ef423b967f3f6c770f2444c63681c6dcbd995571260fd4f2452f",
+          "ResponseDigest": "d2070f7545dba90ba4ac8093b41825907a1da9a42be1a6ff331b363f8495b178",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/events/{sequenceNumber:long}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663913:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEventDetailAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "1b7169f7e881e650a3f7e9fa1edb2f889d6bda4f9cfacb7aad2ab03f05ee38c5",
+          "ResponseDigest": "4c2067715e81d50ac290bdfe6b1f6764b29eeb3059e58cb8ff7ab15489aad0c0",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/sandbox",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663918:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SandboxCommandAsync(System.String, System.String, System.String, Hexalith.EventStore.Admin.Abstractions.Models.Streams.SandboxCommandRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "207b53bf6542fbbabbd67e64792e713a776de50d344299f2bbc9b1314021cad7",
+          "ResponseDigest": "bdcb04a1af610acfa5a5feda8f8c2474c855255655386c91249fdf36a1c26d1d",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "a305afe3eca9312e4bec95c2e48ffe16f9da9b16a102fb805e0ae2915cde685b"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/state",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663912:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAggregateStateAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "96d8df0aff802b440dcafc657eafefa719d8860980bf56e8e82d3cefff4151cc",
+          "ResponseDigest": "7e359728b82c4494444fb8bd4cf625e17f399d48874ddc486baaf3e5b5ad4065",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/step",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663914:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetEventStepFrameAsync(System.String, System.String, System.String, Int64, System.Threading.CancellationToken)",
+          "RequestDigest": "9c0755ba35b60badb2cf1573fdf85ba059d6f2dfa63ff30d1d3b689f41723245",
+          "ResponseDigest": "4dd588891b62c37648c909a4c27d3813db91a0a4fdc01959440af7e6b97abea1",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "f7c6462d819682732f507cabc708dab2300529b7c5b2674386f91258c6e46fea"
+        },
+        {
+          "Pattern": "/api/v1/admin/streams/{tenantId}/{domain}/{aggregateId}/timeline",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663917:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetStreamTimelineAsync(System.String, System.String, System.String, System.Nullable`1[System.Int64], System.Nullable`1[System.Int64], Int32, System.Threading.CancellationToken)",
+          "RequestDigest": "af059ad0652db9069947847e649a1d948489c9853670a8562a0d9951e81c2d2e",
+          "ResponseDigest": "0e3591c84354c9d95b2f02f9ea426dc4439d936358ba4524ba0c449245a6a7d8",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "485d356065071484f222f067bf49fe48460e5bb52dd31407a213a0533134fa7a"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663936:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListTenantsAsync(System.Threading.CancellationToken)",
+          "RequestDigest": "31cbd3d60077138de5a72d584df545d2b71d801673a38510e972496991531734",
+          "ResponseDigest": "7003dfffea8bf5924dd2d341af95a703c39a184c34aae1ef1c86d27fc81ec961",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "6d4e8f94dea0aed2f5d4bdd5614644b83f373588f6ef1f5b73bce31e15f8c589"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663931:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateTenantAsync(Hexalith.EventStore.Admin.Abstractions.Models.Tenants.CreateTenantRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "3f102ddb829273dd25c453c4ea2217fa1fdffc035a2bee0fab76007da5e3bd4f",
+          "ResponseDigest": "3e7aa797a29efc4174e6cb9d600706bf3591a92adbc83770ffad2bcafb667cc8",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "425f68180ebe0f16322679711654f0fdceb2f8e1f96d628b38a71ecef416f2af"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663934:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTenantDetailAsync(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5f0f35fb7a1cb181cfe5116471a7ce952d793cdcff4896826c313629cdc624ff",
+          "ResponseDigest": "8631c09e36b0cf2c5ba3fe0bd277cc6e8eaad20284a5a5d65a964cf1b2650dfd",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "11b83a9b9cee47f6ee44e10fb54e8a1ea85718fe1b7de581c44e53eccb8e80ca"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/change-role",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663930:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ChangeUserRoleAsync(System.String, Hexalith.EventStore.Admin.Abstractions.Models.Tenants.ChangeTenantUserRoleRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "59469e3aa685249d34e1ec3012b5b794356b743653ddfd20ff0ce3fdb79a5bd0",
+          "ResponseDigest": "3e7aa797a29efc4174e6cb9d600706bf3591a92adbc83770ffad2bcafb667cc8",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "425f68180ebe0f16322679711654f0fdceb2f8e1f96d628b38a71ecef416f2af"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/disable",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663932:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] DisableTenantAsync(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5f0f35fb7a1cb181cfe5116471a7ce952d793cdcff4896826c313629cdc624ff",
+          "ResponseDigest": "e72ba0984e7f09191bdbc65822c64ed58be70241d68d7265b4edeb9a1753d35c",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "bc043c7929187f7c024ad125d2bfca6877b7f119aae59e9d2e090a19410c3629"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/enable",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663933:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] EnableTenantAsync(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5f0f35fb7a1cb181cfe5116471a7ce952d793cdcff4896826c313629cdc624ff",
+          "ResponseDigest": "e72ba0984e7f09191bdbc65822c64ed58be70241d68d7265b4edeb9a1753d35c",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "bc043c7929187f7c024ad125d2bfca6877b7f119aae59e9d2e090a19410c3629"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/remove-user",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663937:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RemoveUserFromTenantAsync(System.String, Hexalith.EventStore.Admin.Abstractions.Models.Tenants.RemoveTenantUserRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "9eaf42d61fad95a41ac914778dc204a0074d3f104d5516b1d25fe197d0a8f569",
+          "ResponseDigest": "3e7aa797a29efc4174e6cb9d600706bf3591a92adbc83770ffad2bcafb667cc8",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "425f68180ebe0f16322679711654f0fdceb2f8e1f96d628b38a71ecef416f2af"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/users",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663935:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTenantUsersAsync(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "5f0f35fb7a1cb181cfe5116471a7ce952d793cdcff4896826c313629cdc624ff",
+          "ResponseDigest": "b130c1d8e90aed1972dcaff700b2f64327100d00c79de3c2d0e98635c0d5e26c",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "11b83a9b9cee47f6ee44e10fb54e8a1ea85718fe1b7de581c44e53eccb8e80ca"
+        },
+        {
+          "Pattern": "/api/v1/admin/tenants/{tenantId}/users",
+          "Methods": [
+            "POST"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663929:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AddUserToTenantAsync(System.String, Hexalith.EventStore.Admin.Abstractions.Models.Tenants.AddTenantUserRequest, System.Threading.CancellationToken)",
+          "RequestDigest": "cafd96eee991d1cfede929963789bb5710822f713f584f4efdb735af26c4c79a",
+          "ResponseDigest": "3e7aa797a29efc4174e6cb9d600706bf3591a92adbc83770ffad2bcafb667cc8",
+          "Policies": [
+            "AdminFull",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "35f8238c548857210ffd00f26116e2151c38e458469fec3d8a4499f1babd5e8a",
+          "FilterDigest": "425f68180ebe0f16322679711654f0fdceb2f8e1f96d628b38a71ecef416f2af"
+        },
+        {
+          "Pattern": "/api/v1/admin/traces/{tenantId}/{correlationId}",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663948:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCorrelationTraceMap(System.String, System.String, System.String, System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "d65f11ea50d552f70c408ec86b5b525c43fd2bd6bca2ba63ed01c428e13480be",
+          "ResponseDigest": "6406def94d5c05c1d39942e657fd7f3b6c28238fcc996f7b8e35ce5e3a646cf1",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "8361794cff830d1feffba7e76bc4440429cb54bce84583c243474182fd4b8be2"
+        },
+        {
+          "Pattern": "/api/v1/admin/types/aggregates",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663956:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListAggregateTypes(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "642dcb1e04d896a73c62ec687ce227750389076e4505f841f84aabe7a26d90b2",
+          "ResponseDigest": "2a6019634e0b84ac24adb46e9d2fc0af73d09776b8452a5aa10fd21729457fd9",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/types/commands",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663955:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListCommandTypes(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "642dcb1e04d896a73c62ec687ce227750389076e4505f841f84aabe7a26d90b2",
+          "ResponseDigest": "19ac41d280ff3f730d11d8c18f70623051d251fe9d82627f01e971672a655bae",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        },
+        {
+          "Pattern": "/api/v1/admin/types/events",
+          "Methods": [
+            "GET"
+          ],
+          "ActionIdentity": "Hexalith.EventStore.Admin.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null:7af9a0e6-649e-4568-bf37-e580a76428fc:b7a710dcc5925a0467a2ee3f92f89ae4f27de638ee87870cf9c92b442fc1c15d:100663954:System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ListEventTypes(System.String, System.Threading.CancellationToken)",
+          "RequestDigest": "642dcb1e04d896a73c62ec687ce227750389076e4505f841f84aabe7a26d90b2",
+          "ResponseDigest": "65e0aec88f9f168ae6cc0bc97c38894a6a35b5f5b396320b99691a1896dc511a",
+          "Policies": [
+            "AdminReadOnly",
+            "EventStoreHuman"
+          ],
+          "PolicyDigest": "d66312e305d594e4d621f73980383aeec6e0921604c712bc65fe89080d835183",
+          "FilterDigest": "bcd8d1d635b59754e3d8f5ce82a7bceeb0d093af78c0dd1d311ac0cbacc74863"
+        }
+      ],
+      "Invocations": [
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/admissions",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/admissions/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/admissions/tenant-a/owned/decision",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/crypto-shredding/workflows",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/crypto-shredding/workflows/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/export-stream",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/import-stream",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/owned/restore",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/owned/validate",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/backups/tenant-a",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/consistency/checks",
+          "HttpMethods": [
+            "GET",
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/consistency/checks/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/consistency/checks/owned/cancel",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/actors",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/actors/owned/state",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/components",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/overview",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/pubsub",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/resiliency",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dapr/sidecar",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dead-letters",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dead-letters/count",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dead-letters/tenant-a/archive",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dead-letters/tenant-a/retry",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/dead-letters/tenant-a/skip",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/health",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/health/dapr",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/health/dapr/history",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/pause",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/replay",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/reset",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/projections/tenant-a/owned/resume",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/compaction-jobs",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/hot-streams",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/overview",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/snapshot-policies",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/tenant-a/compact",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/tenant-a/orders/owned/snapshot",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/storage/tenant-a/orders/owned/snapshot-policy",
+          "HttpMethods": [
+            "DELETE",
+            "PUT"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/GetRecentlyActiveStreams",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/commands",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/bisect",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/blame",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/causation",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/diff",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/events/7",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/sandbox",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/state",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/step",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/streams/tenant-a/orders/owned/timeline",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants",
+          "HttpMethods": [
+            "GET",
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a/change-role",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a/disable",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a/enable",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a/remove-user",
+          "HttpMethods": [
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/tenants/tenant-a/users",
+          "HttpMethods": [
+            "GET",
+            "POST"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/traces/tenant-a/owned",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/types/aggregates",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/types/commands",
+          "HttpMethods": [
+            "GET"
+          ]
+        },
+        {
+          "CallerAppId": "generated-static-profile-caller",
+          "Method": "/api/v1/admin/types/events",
+          "HttpMethods": [
+            "GET"
+          ]
+        }
+      ],
+      "Refused": []
+    }
+  ],
+  "corpusProvenance": "Separate Gateway35/34 and Admin68/64 actual MVC Describe/Complete-qualified marked descriptions and unique generated path/verb declarations. Never-started metadata applications. This is a representative static cohort, not removed private live inventory/configuration.",
+  "controls": [
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "fresh",
+      "Reads": 35,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "copy",
+      "Reads": 35,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "actual",
+      "Reads": 35,
+      "RetainedCount": 1,
+      "RetainedBytes": 84704
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "fresh",
+      "Reads": 68,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "copy",
+      "Reads": 68,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "actual",
+      "Reads": 68,
+      "RetainedCount": 1,
+      "RetainedBytes": 97088
+    }
+  ],
+  "parityChecks": 30,
+  "mediansAndAllSamples": {
+    "Hexalith.EventStore.Gateway|2": {
+      "fresh": {
+        "meanPassMs": 8.515941666666667,
+        "processCpuMsPerPass": 8.566708333333333,
+        "allocatedBytesPerPass": 4798862,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 8.515941666666667,
+            "elapsedMs": 103.202,
+            "allocatedBytesPerPass": 4798900,
+            "processAllocatedBytes": 115187864,
+            "processCpuMs": 205.601,
+            "reads": 840,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 10.763983333333334,
+            "elapsedMs": 129.7507,
+            "allocatedBytesPerPass": 4798862,
+            "processAllocatedBytes": 115187000,
+            "processCpuMs": 282.098,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 9.479516666666667,
+            "elapsedMs": 114.3161,
+            "allocatedBytesPerPass": 4798829,
+            "processAllocatedBytes": 115186176,
+            "processCpuMs": 239.859,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 9.0795625,
+            "elapsedMs": 112.0869,
+            "allocatedBytesPerPass": 4798943,
+            "processAllocatedBytes": 115188912,
+            "processCpuMs": 246.056,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 7.237966666666666,
+            "elapsedMs": 87.6228,
+            "allocatedBytesPerPass": 4798859,
+            "processAllocatedBytes": 115188488,
+            "processCpuMs": 176.182,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.292087500000001,
+            "elapsedMs": 76.1426,
+            "allocatedBytesPerPass": 4798900,
+            "processAllocatedBytes": 115187880,
+            "processCpuMs": 169.668,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.6518625,
+            "elapsedMs": 80.3517,
+            "allocatedBytesPerPass": 4798855,
+            "processAllocatedBytes": 115186808,
+            "processCpuMs": 144.661,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "copy": {
+        "meanPassMs": 7.7649791666666665,
+        "processCpuMsPerPass": 9.231625,
+        "allocatedBytesPerPass": 4798901,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 7.7649791666666665,
+            "elapsedMs": 94.0575,
+            "allocatedBytesPerPass": 4798921,
+            "processAllocatedBytes": 115188384,
+            "processCpuMs": 199.4,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 9.294445833333333,
+            "elapsedMs": 112.3221,
+            "allocatedBytesPerPass": 4798944,
+            "processAllocatedBytes": 115188920,
+            "processCpuMs": 224.479,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 9.740179166666666,
+            "elapsedMs": 117.6539,
+            "allocatedBytesPerPass": 4798937,
+            "processAllocatedBytes": 115188824,
+            "processCpuMs": 260.799,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 9.337837500000001,
+            "elapsedMs": 112.75,
+            "allocatedBytesPerPass": 4798893,
+            "processAllocatedBytes": 115187664,
+            "processCpuMs": 242.827,
+            "reads": 840,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 7.751270833333333,
+            "elapsedMs": 93.4493,
+            "allocatedBytesPerPass": 4798829,
+            "processAllocatedBytes": 115186176,
+            "processCpuMs": 221.559,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.870066666666666,
+            "elapsedMs": 82.8063,
+            "allocatedBytesPerPass": 4798859,
+            "processAllocatedBytes": 115186872,
+            "processCpuMs": 158.43,
+            "reads": 840,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.472316666666667,
+            "elapsedMs": 78.5332,
+            "allocatedBytesPerPass": 4798901,
+            "processAllocatedBytes": 115187960,
+            "processCpuMs": 162.682,
+            "reads": 840,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "actual": {
+        "meanPassMs": 3.269633333333333,
+        "processCpuMsPerPass": 3.2282083333333333,
+        "allocatedBytesPerPass": 1699545,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 3.4055541666666667,
+            "elapsedMs": 41.2322,
+            "allocatedBytesPerPass": 1699457,
+            "processAllocatedBytes": 40801192,
+            "processCpuMs": 77.477,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 3.269633333333333,
+            "elapsedMs": 39.8096,
+            "allocatedBytesPerPass": 1699545,
+            "processAllocatedBytes": 40803272,
+            "processCpuMs": 84.295,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 4.0041166666666665,
+            "elapsedMs": 48.8714,
+            "allocatedBytesPerPass": 1699545,
+            "processAllocatedBytes": 40803272,
+            "processCpuMs": 94.146,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 3.5069375,
+            "elapsedMs": 42.5443,
+            "allocatedBytesPerPass": 1699534,
+            "processAllocatedBytes": 40803008,
+            "processCpuMs": 80.747,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 2.547445833333333,
+            "elapsedMs": 30.8507,
+            "allocatedBytesPerPass": 1699545,
+            "processAllocatedBytes": 40803296,
+            "processCpuMs": 62.29,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 2.4867791666666665,
+            "elapsedMs": 30.1041,
+            "allocatedBytesPerPass": 1699487,
+            "processAllocatedBytes": 40801888,
+            "processCpuMs": 56.135,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 2.9594583333333335,
+            "elapsedMs": 35.7739,
+            "allocatedBytesPerPass": 1699607,
+            "processAllocatedBytes": 40804768,
+            "processCpuMs": 49.504,
+            "reads": 840,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.EventStore.Gateway|4": {
+      "fresh": {
+        "meanPassMs": 3.1866854166666667,
+        "processCpuMsPerPass": 3.8104791666666666,
+        "allocatedBytesPerPass": 4780087,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.8585562499999995,
+            "elapsedMs": 47.7519,
+            "allocatedBytesPerPass": 4798351,
+            "processAllocatedBytes": 230343488,
+            "processCpuMs": 201.582,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.481514583333333,
+            "elapsedMs": 42.3469,
+            "allocatedBytesPerPass": 4793096,
+            "processAllocatedBytes": 230090488,
+            "processCpuMs": 182.903,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.0283187500000004,
+            "elapsedMs": 36.9472,
+            "allocatedBytesPerPass": 4779972,
+            "processAllocatedBytes": 229460536,
+            "processCpuMs": 184.443,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.549152083333333,
+            "elapsedMs": 43.2998,
+            "allocatedBytesPerPass": 4780087,
+            "processAllocatedBytes": 229465328,
+            "processCpuMs": 200.011,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.1049208333333334,
+            "elapsedMs": 38.383,
+            "allocatedBytesPerPass": 4780066,
+            "processAllocatedBytes": 229464296,
+            "processCpuMs": 161.232,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.1866854166666667,
+            "elapsedMs": 39.4954,
+            "allocatedBytesPerPass": 4780095,
+            "processAllocatedBytes": 229465872,
+            "processCpuMs": 178.575,
+            "reads": 1680,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 2.9386291666666664,
+            "elapsedMs": 38.9321,
+            "allocatedBytesPerPass": 4779972,
+            "processAllocatedBytes": 229459816,
+            "processCpuMs": 155.768,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "copy": {
+        "meanPassMs": 2.9932083333333335,
+        "processCpuMsPerPass": 3.814541666666667,
+        "allocatedBytesPerPass": 4780095,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.5669000000000004,
+            "elapsedMs": 43.8982,
+            "allocatedBytesPerPass": 4798358,
+            "processAllocatedBytes": 230342832,
+            "processCpuMs": 213.386,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.3936666666666664,
+            "elapsedMs": 41.4006,
+            "allocatedBytesPerPass": 4798351,
+            "processAllocatedBytes": 230342536,
+            "processCpuMs": 183.098,
+            "reads": 1680,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 2.7846895833333334,
+            "elapsedMs": 34.1522,
+            "allocatedBytesPerPass": 4780081,
+            "processAllocatedBytes": 229465760,
+            "processCpuMs": 183.958,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 3.1120354166666666,
+            "elapsedMs": 38.0179,
+            "allocatedBytesPerPass": 4780095,
+            "processAllocatedBytes": 229465696,
+            "processCpuMs": 198.547,
+            "reads": 1680,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 2.8177541666666666,
+            "elapsedMs": 34.8391,
+            "allocatedBytesPerPass": 4780095,
+            "processAllocatedBytes": 229465840,
+            "processCpuMs": 172.274,
+            "reads": 1680,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 2.8785208333333334,
+            "elapsedMs": 34.8359,
+            "allocatedBytesPerPass": 4780081,
+            "processAllocatedBytes": 229465040,
+            "processCpuMs": 163.942,
+            "reads": 1680,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 2.9932083333333335,
+            "elapsedMs": 36.5234,
+            "allocatedBytesPerPass": 4780112,
+            "processAllocatedBytes": 229466512,
+            "processCpuMs": 174.234,
+            "reads": 1680,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "actual": {
+        "meanPassMs": 1.1508104166666666,
+        "processCpuMsPerPass": 1.2581458333333333,
+        "allocatedBytesPerPass": 1698283,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.1977541666666667,
+            "elapsedMs": 15.0016,
+            "allocatedBytesPerPass": 1699411,
+            "processAllocatedBytes": 81593376,
+            "processCpuMs": 56.475,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.3465916666666669,
+            "elapsedMs": 16.7868,
+            "allocatedBytesPerPass": 1699246,
+            "processAllocatedBytes": 81585680,
+            "processCpuMs": 60.391,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.439675,
+            "elapsedMs": 17.5338,
+            "allocatedBytesPerPass": 1698296,
+            "processAllocatedBytes": 81540080,
+            "processCpuMs": 100.072,
+            "reads": 1680,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.1345583333333333,
+            "elapsedMs": 14.1672,
+            "allocatedBytesPerPass": 1698158,
+            "processAllocatedBytes": 81532736,
+            "processCpuMs": 63.578,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.126625,
+            "elapsedMs": 13.9587,
+            "allocatedBytesPerPass": 1698283,
+            "processAllocatedBytes": 81538560,
+            "processCpuMs": 56.497,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.1347125,
+            "elapsedMs": 14.3967,
+            "allocatedBytesPerPass": 1698174,
+            "processAllocatedBytes": 81533480,
+            "processCpuMs": 52.578,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Gateway",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 1.1508104166666666,
+            "elapsedMs": 14.6202,
+            "allocatedBytesPerPass": 1698283,
+            "processAllocatedBytes": 81538704,
+            "processCpuMs": 65.711,
+            "reads": 1680,
+            "gcDelta": [
+              2,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.EventStore.Admin.Server|2": {
+      "fresh": {
+        "meanPassMs": 12.255533333333332,
+        "processCpuMsPerPass": 15.387916666666667,
+        "allocatedBytesPerPass": 15903170,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 11.9324625,
+            "elapsedMs": 143.3237,
+            "allocatedBytesPerPass": 15903170,
+            "processAllocatedBytes": 381697768,
+            "processCpuMs": 428.197,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 12.114104166666666,
+            "elapsedMs": 146.598,
+            "allocatedBytesPerPass": 15903024,
+            "processAllocatedBytes": 381693728,
+            "processCpuMs": 369.31,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 31.154708333333332,
+            "elapsedMs": 374.059,
+            "allocatedBytesPerPass": 15903274,
+            "processAllocatedBytes": 381700224,
+            "processCpuMs": 697.365,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 12.370170833333333,
+            "elapsedMs": 148.9402,
+            "allocatedBytesPerPass": 15903177,
+            "processAllocatedBytes": 381696664,
+            "processCpuMs": 365.019,
+            "reads": 1632,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 12.014020833333333,
+            "elapsedMs": 144.4887,
+            "allocatedBytesPerPass": 15903110,
+            "processAllocatedBytes": 381695720,
+            "processCpuMs": 350.026,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 12.255533333333332,
+            "elapsedMs": 147.3928,
+            "allocatedBytesPerPass": 15903289,
+            "processAllocatedBytes": 381701152,
+            "processCpuMs": 359.057,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 15.519141666666664,
+            "elapsedMs": 186.3702,
+            "allocatedBytesPerPass": 15903078,
+            "processAllocatedBytes": 381693800,
+            "processCpuMs": 411.971,
+            "reads": 1632,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "copy": {
+        "meanPassMs": 13.344179166666668,
+        "processCpuMsPerPass": 16.349375,
+        "allocatedBytesPerPass": 15903127,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 11.936766666666665,
+            "elapsedMs": 143.8665,
+            "allocatedBytesPerPass": 15903202,
+            "processAllocatedBytes": 381697328,
+            "processCpuMs": 355.353,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 15.90225,
+            "elapsedMs": 191.1173,
+            "allocatedBytesPerPass": 15903116,
+            "processAllocatedBytes": 381696576,
+            "processCpuMs": 447.75,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 18.902204166666667,
+            "elapsedMs": 228.1844,
+            "allocatedBytesPerPass": 15903036,
+            "processAllocatedBytes": 381693384,
+            "processCpuMs": 474.65,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 13.344179166666668,
+            "elapsedMs": 160.8104,
+            "allocatedBytesPerPass": 15903447,
+            "processAllocatedBytes": 381703336,
+            "processCpuMs": 392.385,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 12.336120833333334,
+            "elapsedMs": 148.3337,
+            "allocatedBytesPerPass": 15902995,
+            "processAllocatedBytes": 381691784,
+            "processCpuMs": 362.704,
+            "reads": 1632,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 13.328904166666666,
+            "elapsedMs": 160.513,
+            "allocatedBytesPerPass": 15903127,
+            "processAllocatedBytes": 381695560,
+            "processCpuMs": 390.923,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 29.47937083333333,
+            "elapsedMs": 354.1848,
+            "allocatedBytesPerPass": 15903357,
+            "processAllocatedBytes": 381701656,
+            "processCpuMs": 693.648,
+            "reads": 1632,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "actual": {
+        "meanPassMs": 6.603254166666666,
+        "processCpuMsPerPass": 7.763833333333333,
+        "allocatedBytesPerPass": 5443823,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.5680625,
+            "elapsedMs": 79.6235,
+            "allocatedBytesPerPass": 5443764,
+            "processAllocatedBytes": 130669440,
+            "processCpuMs": 218.902,
+            "reads": 1632,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 11.181279166666668,
+            "elapsedMs": 135.1178,
+            "allocatedBytesPerPass": 5444206,
+            "processAllocatedBytes": 130680768,
+            "processCpuMs": 262.499,
+            "reads": 1632,
+            "gcDelta": [
+              4,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.603254166666666,
+            "elapsedMs": 79.4115,
+            "allocatedBytesPerPass": 5443807,
+            "processAllocatedBytes": 130670544,
+            "processCpuMs": 171.511,
+            "reads": 1632,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.524975,
+            "elapsedMs": 78.7024,
+            "allocatedBytesPerPass": 5443943,
+            "processAllocatedBytes": 130675056,
+            "processCpuMs": 182.875,
+            "reads": 1632,
+            "gcDelta": [
+              4,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.5732375,
+            "elapsedMs": 79.3394,
+            "allocatedBytesPerPass": 5444037,
+            "processAllocatedBytes": 130677304,
+            "processCpuMs": 186.332,
+            "reads": 1632,
+            "gcDelta": [
+              4,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 6.736249999999999,
+            "elapsedMs": 81.0463,
+            "allocatedBytesPerPass": 5443823,
+            "processAllocatedBytes": 130670440,
+            "processCpuMs": 174.454,
+            "reads": 1632,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 2,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 24,
+            "meanPassMs": 8.286775,
+            "elapsedMs": 99.9378,
+            "allocatedBytesPerPass": 5443792,
+            "processAllocatedBytes": 130670272,
+            "processCpuMs": 200.103,
+            "reads": 1632,
+            "gcDelta": [
+              3,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.EventStore.Admin.Server|4": {
+      "fresh": {
+        "meanPassMs": 13.138420833333335,
+        "processCpuMsPerPass": 14.80325,
+        "allocatedBytesPerPass": 15902553,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 13.93435625,
+            "elapsedMs": 167.7234,
+            "allocatedBytesPerPass": 15902995,
+            "processAllocatedBytes": 763380128,
+            "processCpuMs": 724.329,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 21.129539583333337,
+            "elapsedMs": 254.1724,
+            "allocatedBytesPerPass": 15902601,
+            "processAllocatedBytes": 763361040,
+            "processCpuMs": 867.996,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 13.655454166666667,
+            "elapsedMs": 164.7094,
+            "allocatedBytesPerPass": 15902553,
+            "processAllocatedBytes": 763357408,
+            "processCpuMs": 714.977,
+            "reads": 3264,
+            "gcDelta": [
+              19,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 13.138420833333335,
+            "elapsedMs": 158.6211,
+            "allocatedBytesPerPass": 15902536,
+            "processAllocatedBytes": 763356688,
+            "processCpuMs": 710.556,
+            "reads": 3264,
+            "gcDelta": [
+              19,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 12.857427083333334,
+            "elapsedMs": 155.47,
+            "allocatedBytesPerPass": 15902506,
+            "processAllocatedBytes": 763355240,
+            "processCpuMs": 691.975,
+            "reads": 3264,
+            "gcDelta": [
+              19,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 13.10691458333333,
+            "elapsedMs": 158.2734,
+            "allocatedBytesPerPass": 15902584,
+            "processAllocatedBytes": 763359016,
+            "processCpuMs": 702.637,
+            "reads": 3264,
+            "gcDelta": [
+              19,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "fresh",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 12.831983333333334,
+            "elapsedMs": 156.2683,
+            "allocatedBytesPerPass": 15902537,
+            "processAllocatedBytes": 763356784,
+            "processCpuMs": 698.294,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "copy": {
+        "meanPassMs": 13.146922916666668,
+        "processCpuMsPerPass": 14.889625,
+        "allocatedBytesPerPass": 15902527,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 16.15662916666667,
+            "elapsedMs": 196.3229,
+            "allocatedBytesPerPass": 15902888,
+            "processAllocatedBytes": 763373904,
+            "processCpuMs": 769.138,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 14.22818125,
+            "elapsedMs": 174.8526,
+            "allocatedBytesPerPass": 15903021,
+            "processAllocatedBytes": 763381520,
+            "processCpuMs": 728.961,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 14.682054166666665,
+            "elapsedMs": 176.8804,
+            "allocatedBytesPerPass": 15902456,
+            "processAllocatedBytes": 763352856,
+            "processCpuMs": 738.326,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 12.782572916666666,
+            "elapsedMs": 155.1954,
+            "allocatedBytesPerPass": 15902501,
+            "processAllocatedBytes": 763355104,
+            "processCpuMs": 681.949,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 12.970685416666667,
+            "elapsedMs": 158.5454,
+            "allocatedBytesPerPass": 15902527,
+            "processAllocatedBytes": 763357608,
+            "processCpuMs": 687.972,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 13.146922916666668,
+            "elapsedMs": 160.3233,
+            "allocatedBytesPerPass": 15902583,
+            "processAllocatedBytes": 763358992,
+            "processCpuMs": 714.702,
+            "reads": 3264,
+            "gcDelta": [
+              20,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "copy",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 12.923079166666668,
+            "elapsedMs": 157.0506,
+            "allocatedBytesPerPass": 15902433,
+            "processAllocatedBytes": 763351656,
+            "processCpuMs": 695.402,
+            "reads": 3264,
+            "gcDelta": [
+              19,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "actual": {
+        "meanPassMs": 7.226829166666666,
+        "processCpuMsPerPass": 7.736104166666667,
+        "allocatedBytesPerPass": 5443723,
+        "allSamples": [
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 6.973866666666666,
+            "elapsedMs": 85.097,
+            "allocatedBytesPerPass": 5443951,
+            "processAllocatedBytes": 261343328,
+            "processCpuMs": 353.05,
+            "reads": 3264,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 18.3659125,
+            "elapsedMs": 221.0671,
+            "allocatedBytesPerPass": 5443840,
+            "processAllocatedBytes": 261338144,
+            "processCpuMs": 562.125,
+            "reads": 3264,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 7.743904166666667,
+            "elapsedMs": 94.5824,
+            "allocatedBytesPerPass": 5443741,
+            "processAllocatedBytes": 261334416,
+            "processCpuMs": 384.112,
+            "reads": 3264,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 7.353322916666667,
+            "elapsedMs": 90.9654,
+            "allocatedBytesPerPass": 5443605,
+            "processAllocatedBytes": 261326624,
+            "processCpuMs": 369.29,
+            "reads": 3264,
+            "gcDelta": [
+              6,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 7.226829166666666,
+            "elapsedMs": 88.027,
+            "allocatedBytesPerPass": 5443723,
+            "processAllocatedBytes": 261333616,
+            "processCpuMs": 371.333,
+            "reads": 3264,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 7.061908333333332,
+            "elapsedMs": 85.8557,
+            "allocatedBytesPerPass": 5443618,
+            "processAllocatedBytes": 261328624,
+            "processCpuMs": 369.714,
+            "reads": 3264,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          },
+          {
+            "profile": "Hexalith.EventStore.Admin.Server",
+            "workers": 4,
+            "variant": "actual",
+            "iterationsPerWorker": 12,
+            "passes": 48,
+            "meanPassMs": 7.2059500000000005,
+            "elapsedMs": 87.3806,
+            "allocatedBytesPerPass": 5443714,
+            "processAllocatedBytes": 261332952,
+            "processCpuMs": 375.072,
+            "reads": 3264,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "pairedAnalysis": {
+    "Hexalith.EventStore.Gateway|2": {
+      "meanPassMs": {
+        "medianPercentChange": -60.47767665871356,
+        "totalPercentChange": -61.77253879904382
+      },
+      "processCpuMs": {
+        "medianPercentChange": -65.77930471930928,
+        "totalPercentChange": -65.53613933236575
+      }
+    },
+    "Hexalith.EventStore.Gateway|4": {
+      "meanPassMs": {
+        "medianPercentChange": -63.71485585381269,
+        "totalPercentChange": -63.146668241091895
+      },
+      "processCpuMs": {
+        "medianPercentChange": -66.98195218230428,
+        "totalPercentChange": -63.99391386730395
+      }
+    },
+    "Hexalith.EventStore.Admin.Server|2": {
+      "meanPassMs": {
+        "medianPercentChange": -45.28694771560312,
+        "totalPercentChange": -51.12354313367538
+      },
+      "processCpuMs": {
+        "medianPercentChange": -49.89986822603755,
+        "totalPercentChange": -53.14653574621471
+      }
+    },
+    "Hexalith.EventStore.Admin.Server|4": {
+      "meanPassMs": {
+        "medianPercentChange": -43.843832922684065,
+        "totalPercentChange": -38.47076640323836
+      },
+      "processCpuMs": {
+        "medianPercentChange": -46.33722316557679,
+        "totalPercentChange": -45.513117021251624
+      }
+    }
+  },
+  "firstTimedAfterParity": [
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "fresh",
+      "elapsedMs": 5.5156,
+      "allocatedBytes": 4797904,
+      "Reads": 35,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "copy",
+      "elapsedMs": 5.5752,
+      "allocatedBytes": 4798528,
+      "Reads": 35,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Gateway",
+      "variant": "actual",
+      "elapsedMs": 2.3097,
+      "allocatedBytes": 1698944,
+      "Reads": 35,
+      "RetainedCount": 1,
+      "RetainedBytes": 84704
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "fresh",
+      "elapsedMs": 20.4449,
+      "allocatedBytes": 15976448,
+      "Reads": 68,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "copy",
+      "elapsedMs": 21.3381,
+      "allocatedBytes": 15973968,
+      "Reads": 68,
+      "RetainedCount": 0,
+      "RetainedBytes": 0
+    },
+    {
+      "profile": "Hexalith.EventStore.Admin.Server",
+      "variant": "actual",
+      "elapsedMs": 10.3472,
+      "allocatedBytes": 5446216,
+      "Reads": 68,
+      "RetainedCount": 1,
+      "RetainedBytes": 97088
+    }
+  ],
+  "coldQualification": "First complete pass after metadata/parity includes JIT effects; every independent pass starts an empty syntax memo. No process-cold comparative claim.",
+  "priorQualifiedPrototypeReceipt": {
+    "path": "/tmp/story65-template-parse-qualified-probe-20261107/command-receipt.json",
+    "sha256": "cc4878c7373027e980eaef3562524a6c3622ac08a1d7ff909030337c6c8ed9f1"
+  },
+  "limits": [
+    "No ordinary runtime/deadline/browser acceptance inferred.",
+    "Constraint execution/order and fresh mutable context/value behavior are additionally qualified in owner32native cases;30final benchmark controls cover full grants/config/error parity.",
+    "No shared parse cache across threads or passes; count1/raw512/charged1MiB bounds unchanged."
+  ]
+}

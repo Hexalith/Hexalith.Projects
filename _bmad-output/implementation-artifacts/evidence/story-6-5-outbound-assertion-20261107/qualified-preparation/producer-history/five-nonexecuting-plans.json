@@ -1,0 +1,153 @@
+{
+  "allPassed": true,
+  "syntaxFiles": [
+    "audit_server_paths.py",
+    "ops_plan.py",
+    "scratch_producer.py",
+    "validate_readonly.py"
+  ],
+  "plans": {
+    "oracle-copy": {
+      "preparationOnly": true,
+      "executed": false,
+      "sourceQualificationReady": false,
+      "applicationNativeAndHostsNotAuthorized": true,
+      "lane": "oracle-copy",
+      "oracle": {
+        "sourceDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+        "sourcePdb": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/bin/Debug/net10.0/Hexalith.EventStore.Server.pdb",
+        "dllSha256": "a5949d4a518ce1691fb1971813e30dc034802c5365182630d06fbc3c2369faf7",
+        "pdbSha256": "39c5c8c6a05b0840edcfae0b60b9b4b21e5cbfa3099b238fff1a503c54ce2d2b",
+        "isolatedDll": "/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-oracle/Hexalith.EventStore.Server.dll",
+        "isolatedPdb": "/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-oracle/Hexalith.EventStore.Server.pdb",
+        "method": "verified byte copy only after rootrelease; no ordinary rebuild"
+      },
+      "noAssemblyLoad": true
+    },
+    "scratch-producer": {
+      "preparationOnly": true,
+      "executed": false,
+      "sourceQualificationReady": false,
+      "applicationNativeAndHostsNotAuthorized": true,
+      "lane": "scratch-producer",
+      "command": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+        "-c",
+        "Debug",
+        "-t:Build",
+        "-m:1",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-p:BuildProjectReferences=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-outbound-assertion-ops-prep-20261107/server-scratch.props"
+      ],
+      "ordinaryRootModulesReadOnly": true,
+      "onlyServerOutputTemp": true,
+      "noRestoreRebuildCleanOrGlobalOutputOverrides": true
+    },
+    "live-private": {
+      "preparationOnly": true,
+      "executed": false,
+      "sourceQualificationReady": false,
+      "applicationNativeAndHostsNotAuthorized": true,
+      "lane": "live-private",
+      "orderedProjects": {
+        "server-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+        "gateway-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+        "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+        "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+        "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+        "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+        "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+        "folders-eventstore-carrier": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+        "apphost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "integration": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+      },
+      "primaryBuildCount": 11,
+      "nativeAdditionalBuildCount": 1,
+      "onlyServerCompileSubstitution": true,
+      "requiredGatewayConsumerBuildUsesOrdinaryGatewaySources": true,
+      "futureReferenceGenerationScopeNeedsRootReview": true
+    },
+    "native29": {
+      "preparationOnly": true,
+      "executed": false,
+      "sourceQualificationReady": false,
+      "applicationNativeAndHostsNotAuthorized": true,
+      "lane": "native29",
+      "nativePlan": {
+        "preparationOnly": true,
+        "executed": false,
+        "expectedExecutionCount": 29,
+        "sourceCaseIdentityDistinctFromRenderedDisplayIdentity": true,
+        "selections": [
+          {
+            "flag": "-class",
+            "filter": "Hexalith.EventStore.Server.Tests.DomainServices.DomainServiceWorkloadAssertionHandlerTests",
+            "executions": 28,
+            "distinctRenderedNames": 26,
+            "oneExactRenderedNameMultiplicity": 3,
+            "allPartialFilesSelectedNoSkip": true
+          },
+          {
+            "flag": "-method",
+            "filter": "Hexalith.EventStore.Server.Tests.Queries.DomainQueryResilienceTests.FailedTargetCircuitDoesNotBlockAnotherNativeQueryTarget",
+            "executions": 1,
+            "primaryCatalogJointMandatory": true
+          }
+        ],
+        "strictExactReporterEncodedNameMultisetRequired": true,
+        "argumentFormatterThenXmlReporterEscapingRequired": true,
+        "noUniqueXmlPerInputClaimForThreeCollidingStaticUriControls": true,
+        "allPassZeroErrorsFailuresSkipsAndExactTypeMethodCounts": true,
+        "runnerTestEnvConfigArgumentsUnchanged": true,
+        "sourceFixtureSha256": {
+          "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/DomainServices/DomainServiceWorkloadAssertionHandlerTests.cs": "c77d0cab425bd1c7b246a2c487a8bb5e9492ce4b2a6b74e219184a9766fd4021",
+          "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/DomainServices/DomainServiceWorkloadAssertionHandlerTests.Diagnostics.cs": "b2b118c89f5e45be39832b2802d146191992f733105a1a1319bd3f0f40658608",
+          "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/DomainServices/DomainServiceWorkloadAssertionHandlerTests.QueryCompatibility.cs": "4d945f104ad55e940f2b3c668f8eaff400b17911b668631cbe26fd03e5404e9e",
+          "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Queries/DomainQueryResilienceTests.cs": "12f4a451fea97685cbcecae61d262e9c6e1259eae78deab506956c0d55d09167"
+        },
+        "notClaimedSubsetOrAdditionalOrdinary1038": true,
+        "actualPrivateServerMapEveryNativeProcessMandatory": true,
+        "sameStartBeforeAfterMapAndFinalProducerTestCopyDllPdbCoherence": true,
+        "postSpawnAbsenceFalseBeforeFallibleChecks": true,
+        "nativeProcessAndGroupAbsenceMandatoryBeforeManagedOrRestoration": true,
+        "historicalClass28Corroboration": {
+          "proof": "/tmp/story65-outbound-assertion-ops-prep-20261107/historical-native28-corroboration.json",
+          "proofSha256": "48550eb1f41a5d8cb9d347d4a433bf39245a30091c860a6e8cedc0998627c132",
+          "xmlSha256": "e31ffa3e2801e117ba9c258734bbaf35dbd599c76ca860dcd01079529234e749",
+          "passes": 28,
+          "distinctRenderedIdentities": 26,
+          "multiplicity3": true,
+          "joint1NotCorroborated": true,
+          "newExecutionOrCurrentQualificationNotClaimed": true
+        }
+      }
+    },
+    "managed-restore": {
+      "preparationOnly": true,
+      "executed": false,
+      "sourceQualificationReady": false,
+      "applicationNativeAndHostsNotAuthorized": true,
+      "lane": "managed-restore",
+      "futureWindow": "8seconds after genuine failed MULTIPLE/no genuinepositive/sufficientattemptwindows; only actualEventStore fixedGateway DI population",
+      "threeLocalStagesOnly": [
+        "Whole",
+        "IssueAsyncValueTask",
+        "BaseSend"
+      ],
+      "privateServerMapMandatory": true,
+      "sixExistingRuntimeProfilesUnchanged": true,
+      "noSignalsCutoffConfigOrDeadlineChanges": true,
+      "ordinaryRestoreAfterEveryPartialPrivateBuild": true,
+      "restore": "Server producer then Gateway and changed/new/private+known affected carrier union plus native artifacts; unrelated recorded generations retained",
+      "allPrivateReadinessOrBrowserSuccessRemainsDiagnostic": true
+    }
+  }
+}

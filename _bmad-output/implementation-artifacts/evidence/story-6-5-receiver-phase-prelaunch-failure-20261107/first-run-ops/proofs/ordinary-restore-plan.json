@@ -1,0 +1,26 @@
+{
+  "preparationOnly": true,
+  "phase": "ordinary",
+  "sourceChecks": "required before execution; pending qualification",
+  "privateDirectory": "fresh expected identity/empty guard only at execution",
+  "primaryBuilds": 13,
+  "ordinaryMinimumBuildsIncludingNative": 14,
+  "sevenMappingValuesPreserved": true,
+  "newRuntimeEnvironmentKeys": false,
+  "strategy": "FORCE SDK then DomainService/Server/Gateway/six entries/inactive Folders.EventStore/AppHost/Integration, refsfalse. Ordinary also native Server.Tests and remaining stale SDK union. Dependency generations independently scoped.",
+  "projects": {
+    "sdk-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+    "domain-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "server-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+    "gateway-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+    "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+    "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+    "folders-eventstore": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+    "apphost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+    "integration": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+  }
+}

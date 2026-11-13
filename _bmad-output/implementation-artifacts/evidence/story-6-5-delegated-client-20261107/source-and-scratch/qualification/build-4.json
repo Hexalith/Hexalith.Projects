@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-delegated-client-prep-20261107/Differential.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "cwd": "/tmp/story65-delegated-client-prep-20261107",
+  "exitCode": 0,
+  "elapsedSeconds": 1.6933950129896402,
+  "buildOnlyProcessorOverride": "2",
+  "clearedMappingHooks": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "setEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "logSha256": "dbb7196ba5f75de5a1dd77b38cd36e766da41e1b52e8e8ee96401e2d38e1f1bd"
+}

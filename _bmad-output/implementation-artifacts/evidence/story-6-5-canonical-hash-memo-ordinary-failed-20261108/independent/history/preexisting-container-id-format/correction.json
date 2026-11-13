@@ -1,0 +1,17 @@
+{
+  "readOnlyAuditOnly": true,
+  "priorAttemptExitCode": 1,
+  "exceptionType": "AssertionError",
+  "classification": "Original preexisting_resources stores Docker running-container short IDs, while auditor compared full64 IDs from --all --no-trunc",
+  "originalPreservationCommand": [
+    "docker",
+    "ps",
+    "--format",
+    "{{.ID}}"
+  ],
+  "correction": "Use the exact original short-ID/running-container observation for baseline subset preservation; exact full64 owned IDs remain independently inspected and absent",
+  "noOwnedCleanupOrInputsChanged": true,
+  "all21RecordedIdentitiesAndSeedGroupAnd5ExactOwnedContainersHadAlreadyPassed": true,
+  "oldAuditSha256": "ff67de28047b50ca926559a227c54383c3f928aca27958448889c69544568ecf",
+  "newAuditSha256": "df9ea0b30ec9420b09da400c8d88bde0d4c09f001ca4cb43a4a844283a3bafba"
+}

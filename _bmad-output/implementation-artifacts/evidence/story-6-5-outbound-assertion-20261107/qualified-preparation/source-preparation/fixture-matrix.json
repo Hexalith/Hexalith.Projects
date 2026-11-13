@@ -1,0 +1,260 @@
+{
+  "preparationOnly": true,
+  "cases": [
+    {
+      "name": "query-issued-sync",
+      "fault": "direct-sync",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-issued-bound",
+      "fault": "",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-issued-unbound",
+      "fault": "",
+      "route": "process",
+      "bindings": false,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-bind-refused",
+      "fault": "cannot-bind",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "command-bind-missing-issuer",
+      "fault": "missing-command",
+      "route": "process",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "noncanonical-untouched",
+      "fault": "",
+      "route": "api/v1/commands",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "null-request",
+      "fault": "null",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-missing",
+      "fault": "missing",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-resolution-invalidoperation",
+      "fault": "resolve-invalid",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-resolution-other",
+      "fault": "resolve-other",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-null-bounded-diagnostic",
+      "fault": "issuer-null",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-missing-fallback",
+      "fault": "missing-logger",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-sync-fault",
+      "fault": "issuer-sync-fault",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": true,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-async-fault",
+      "fault": "issuer-async-fault",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-cancel",
+      "fault": "issuer-cancel",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "issuer-invalidoperation",
+      "fault": "issuer-invalid",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "base-fault",
+      "fault": "base",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "base-cancel",
+      "fault": "base-cancel",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-resolution-throw",
+      "fault": "logger-resolution",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "logger-throw",
+      "fault": "logger",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "outer-buffer-success",
+      "fault": "",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": true,
+      "slow": false
+    },
+    {
+      "name": "outer-buffer-fault",
+      "fault": "buffer",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": true,
+      "slow": false
+    },
+    {
+      "name": "issuer-source-sync-success",
+      "fault": "",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": true,
+      "outerBuffer": false,
+      "slow": false
+    },
+    {
+      "name": "held-issuer",
+      "fault": "held-issuer",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": true
+    },
+    {
+      "name": "held-base",
+      "fault": "held-base",
+      "route": "query",
+      "bindings": true,
+      "sourceSync": false,
+      "outerBuffer": false,
+      "slow": true
+    }
+  ],
+  "fourModes": [
+    "disabled",
+    "active",
+    "capped",
+    "failing-sink"
+  ],
+  "sourceComparison": "compiled current same-identity original Server versus isolated actual private Server; no copied implementation oracle",
+  "meaningfulChecks": [
+    "exact expected result/error before parity; injected object identity propagates; only DI InvalidOperation swallowed",
+    "original request/response references and content/options/URI preserved; neither disposed by handler",
+    "canonical header removal before issuer DI, exact replacement, noncanonical untouched",
+    "query/command binding dictionary identity; CanBindResources exact short-circuit counts",
+    "original service/issuer/generated logger/read order; all diagnostics bounded in memory",
+    "IValueTaskSource exactly one GetResult and original sync/async registration; actual completion joined",
+    "held issuer/base retain original pending work under cancellation; no invented postcheck",
+    "HttpClient buffer begins after selected handler returned; buffer-failure response cleanup belongs to outer caller",
+    "per-run cancellation-token topology normalized across runs",
+    "actual first-business provider/issuer flow state and fakeawait/caller continuity before helper reflection"
+  ],
+  "bindings": "fully synthetic opaque dictionaries on actual platform option keys, original reference forwarded; native joint graph later checks actual production binding/fence composition",
+  "noRawTraceOrHeadersBindingsLoggerValuesPersisted": true,
+  "strictRecorderStagesOnly": [
+    "Whole",
+    "ComponentFile",
+    "ComponentPolicy"
+  ],
+  "missingStagesDoNotEstablishOutcomeOrResult": true,
+  "native29": "full28 partial class +exactjoint1;16 Send/12static in isolated class, joint retains RouteCatalogInvocationHandler",
+  "nativeNamePolicy": "exact rendered-name multiset;28 class executions26distinctnames with static URI collisionmultiplicity3; no per-input identity claim for triple; no ordinary1038inflation",
+  "nativeOrHostRuns": 0
+}

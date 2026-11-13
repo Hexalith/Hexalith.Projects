@@ -1,0 +1,608 @@
+{
+  "diagnosticOnly": true,
+  "ownerEdits": false,
+  "hostsInstantiated": false,
+  "credentialsRead": false,
+  "buildFairness": {
+    "oracleConfiguration": "Debug",
+    "candidateConfiguration": "Debug",
+    "oracleDebuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "candidateDebuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "oracleJitOptimizerDisabled": true,
+    "candidateJitOptimizerDisabled": true,
+    "oracleJitTrackingEnabled": true,
+    "candidateJitTrackingEnabled": true,
+    "runtimeFlags": {
+      "DOTNET_TieredCompilation": "absent",
+      "DOTNET_TC_QuickJit": "absent",
+      "DOTNET_ReadyToRun": "absent",
+      "COMPlus_TieredCompilation": "absent",
+      "DOTNET_PROCESSOR_COUNT": "absent"
+    }
+  },
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "isServerGc": true,
+  "oracleDll": "/tmp/story65-canonical-codec-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+  "oracleDllSha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+  "provenance": [
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/CanonicalCatalog.json",
+      "sha256": "d30010c9b1017f29c5ae9da9a39289d8865bfce91bd153b6000beaad0248f4c0"
+    },
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/V2CanonicalCatalog.json",
+      "sha256": "c8b28c28e017154f6ecf6f69a60e89448a9df7d4a4161809f4aeda8c398ec049"
+    },
+    {
+      "path": "deploy/dapr/eventstore-routing-catalog.json",
+      "sha256": "2579a2d99016508de5ee3102233a4ccf4cad3d951fa84b26c6766fcbf76cc43a"
+    }
+  ],
+  "parityChecks": 1560,
+  "parity": [
+    {
+      "api": "RouteCatalogCodec",
+      "completed": true
+    },
+    {
+      "api": "DocumentCodec",
+      "completed": true
+    },
+    {
+      "api": "DocumentHashSpanCodec",
+      "completed": true
+    },
+    {
+      "api": "DirectCodec",
+      "completed": true
+    }
+  ],
+  "corpus": [
+    {
+      "SchemaVersion": 1,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 4963
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 6333
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 0,
+      "bytes": 45317
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 64931
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 219012
+    }
+  ],
+  "leafCorpusCalls": 94,
+  "qualification": "Static schema1/2 golden fixtures plus tracked deployed30declaration/17policy catalog; schema3 derived by adding synthetic operation shapes.219012B envelope has1000synthetic schema fields. Not the removed runtime180leaf inventory. Every workload freshly clones current leaf collections and recomputes all94public leaf digests, or validates and encodes full219KB. Exact copied candidate source uses unchanged compiled baseline Validator (including its nested baseline digests), conservatively understating complete-global-path savings. All WriteCanonical traversal source unchanged. Rotating variant order; all samples and first timed workload costs after parity (not process/JIT cold) retained; no timing guarantee.",
+  "measurements": [
+    {
+      "workload": "fresh-static-derived-leaf-inventory",
+      "cold": [
+        {
+          "api": "RouteCatalogCodec",
+          "ms": 4.5581,
+          "allocated": 1647560,
+          "units": 94
+        },
+        {
+          "api": "DirectCodec",
+          "ms": 2.0906,
+          "allocated": 1377584,
+          "units": 94
+        }
+      ],
+      "samples": [
+        {
+          "sample": 0,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.145645,
+          "cpuMs": 2.077925,
+          "allocatedBytes": 1644353,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DirectCodec",
+          "meanMs": 1.95167,
+          "cpuMs": 1.987275,
+          "allocatedBytes": 1377585,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DirectCodec",
+          "meanMs": 1.9669450000000002,
+          "cpuMs": 2.003325,
+          "allocatedBytes": 1377585,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.188445,
+          "cpuMs": 2.673325,
+          "allocatedBytes": 1639255,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.0919125000000003,
+          "cpuMs": 2.1277999999999997,
+          "allocatedBytes": 1638593,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DirectCodec",
+          "meanMs": 2.0688175,
+          "cpuMs": 2.619625,
+          "allocatedBytes": 1373957,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DirectCodec",
+          "meanMs": 2.0624175,
+          "cpuMs": 2.091075,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.0962275000000004,
+          "cpuMs": 2.1518249999999997,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.0940625,
+          "cpuMs": 2.2481750000000003,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DirectCodec",
+          "meanMs": 2.02991,
+          "cpuMs": 2.05865,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DirectCodec",
+          "meanMs": 2.0450749999999998,
+          "cpuMs": 2.6178,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.0547925,
+          "cpuMs": 2.1579249999999996,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "RouteCatalogCodec",
+          "meanMs": 2.05452,
+          "cpuMs": 2.288025,
+          "allocatedBytes": 1646801,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DirectCodec",
+          "meanMs": 2.1563849999999998,
+          "cpuMs": 3.19635,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DirectCodec",
+          "meanMs": 2.0738225,
+          "cpuMs": 4.183425,
+          "allocatedBytes": 1380033,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "RouteCatalogCodec",
+          "meanMs": 1.9205774999999998,
+          "cpuMs": 3.801125,
+          "allocatedBytes": 1645248,
+          "units": 94,
+          "gcDelta": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "RouteCatalogCodec",
+          "meanMs": 1.2789375,
+          "cpuMs": 2.587275,
+          "allocatedBytes": 1631241,
+          "units": 94,
+          "gcDelta": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DirectCodec",
+          "meanMs": 1.1591675000000001,
+          "cpuMs": 2.26295,
+          "allocatedBytes": 1364473,
+          "units": 94,
+          "gcDelta": [
+            11,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "workload": "complete-219KB-envelope-encode",
+      "cold": [
+        {
+          "api": "RouteCatalogCodec",
+          "ms": 6.2063,
+          "allocated": 8701208,
+          "units": 219012
+        },
+        {
+          "api": "DirectCodec",
+          "ms": 5.9525,
+          "allocated": 8040992,
+          "units": 219012
+        }
+      ],
+      "samples": [
+        {
+          "sample": 0,
+          "api": "RouteCatalogCodec",
+          "meanMs": 7.2161575,
+          "cpuMs": 12.082675,
+          "allocatedBytes": 8688696,
+          "units": 219012,
+          "gcDelta": [
+            20,
+            9,
+            9
+          ]
+        },
+        {
+          "sample": 0,
+          "api": "DirectCodec",
+          "meanMs": 5.473565,
+          "cpuMs": 9.4566,
+          "allocatedBytes": 8012996,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            5,
+            4
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "DirectCodec",
+          "meanMs": 6.300615,
+          "cpuMs": 9.700375,
+          "allocatedBytes": 8013049,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 1,
+          "api": "RouteCatalogCodec",
+          "meanMs": 6.9738225,
+          "cpuMs": 10.346625,
+          "allocatedBytes": 8673482,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "RouteCatalogCodec",
+          "meanMs": 8.4938425,
+          "cpuMs": 9.158425,
+          "allocatedBytes": 8673760,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 2,
+          "api": "DirectCodec",
+          "meanMs": 7.534924999999999,
+          "cpuMs": 8.46185,
+          "allocatedBytes": 8013101,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "DirectCodec",
+          "meanMs": 5.1503950000000005,
+          "cpuMs": 8.564725,
+          "allocatedBytes": 8013144,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 3,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.78146,
+          "cpuMs": 9.629375,
+          "allocatedBytes": 8673478,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.9730575,
+          "cpuMs": 9.8582,
+          "allocatedBytes": 8673731,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 4,
+          "api": "DirectCodec",
+          "meanMs": 5.25843,
+          "cpuMs": 8.849325,
+          "allocatedBytes": 8013169,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "DirectCodec",
+          "meanMs": 7.189279999999999,
+          "cpuMs": 9.3995,
+          "allocatedBytes": 8012980,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            4,
+            3
+          ]
+        },
+        {
+          "sample": 5,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.8337575,
+          "cpuMs": 8.441849999999999,
+          "allocatedBytes": 8673703,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "RouteCatalogCodec",
+          "meanMs": 5.6200175,
+          "cpuMs": 9.256625,
+          "allocatedBytes": 8673533,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 6,
+          "api": "DirectCodec",
+          "meanMs": 5.2260425,
+          "cpuMs": 8.411624999999999,
+          "allocatedBytes": 8012987,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "DirectCodec",
+          "meanMs": 6.9302025,
+          "cpuMs": 9.9908,
+          "allocatedBytes": 8013147,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            4,
+            3
+          ]
+        },
+        {
+          "sample": 7,
+          "api": "RouteCatalogCodec",
+          "meanMs": 6.214225,
+          "cpuMs": 9.25095,
+          "allocatedBytes": 8673521,
+          "units": 219012,
+          "gcDelta": [
+            10,
+            4,
+            4
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "RouteCatalogCodec",
+          "meanMs": 8.0256125,
+          "cpuMs": 11.175475,
+          "allocatedBytes": 8673496,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            3,
+            3
+          ]
+        },
+        {
+          "sample": 8,
+          "api": "DirectCodec",
+          "meanMs": 8.2624325,
+          "cpuMs": 8.7238,
+          "allocatedBytes": 8012954,
+          "units": 219012,
+          "gcDelta": [
+            9,
+            4,
+            3
+          ]
+        }
+      ]
+    }
+  ]
+}

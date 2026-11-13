@@ -1,0 +1,87 @@
+<Project>
+<Target Name="FocusedHexalithProjectsServer" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+<ItemGroup>
+<Compile Remove="Queries/ProjectAdvisoryQueryExecutor.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithProjectsServer-ProjectAdvisoryQueryExecutor.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithProjectsServer.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithEventStoreDomainService" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+<ItemGroup>
+<Compile Remove="DelegatedOwnerQueryClient.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreDomainService-DelegatedOwnerQueryClient.cs" />
+<Compile Remove="DevelopmentDomainRouteCatalog.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreDomainService-DevelopmentDomainRouteCatalog.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreDomainService.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithEventStoreGateway" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+<ItemGroup>
+<Compile Remove="../Hexalith.EventStore/Controllers/QueriesController.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreGateway-QueriesController.cs" />
+<Compile Remove="../Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreGateway-DaprDomainQueryInvoker.cs" />
+<Compile Remove="../Hexalith.EventStore/Controllers/StreamsController.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreGateway-StreamsController.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreGateway.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithEventStoreServiceDefaults" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+<ItemGroup>
+<Compile Remove="Routing/RouteCatalogAuthority.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogAuthority.cs" />
+<Compile Remove="Routing/RouteCatalogImageDigestMemo.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogImageDigestMemo.cs" />
+<Compile Remove="Routing/RouteCatalogImageDigestScope.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogImageDigestScope.cs" />
+<Compile Remove="Routing/ObservedRouteCatalogHost.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-ObservedRouteCatalogHost.cs" />
+<Compile Remove="Routing/DevelopmentRouteCatalogInputs.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-DevelopmentRouteCatalogInputs.cs" />
+<Compile Remove="Routing/FiniteRouteCatalogReceiver.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-FiniteRouteCatalogReceiver.cs" />
+<Compile Remove="Routing/TechnicalHttpRouteCatalogReceiver.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-TechnicalHttpRouteCatalogReceiver.cs" />
+<Compile Remove="Routing/RouteCatalogInvocationHandler.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogInvocationHandler.cs" />
+<Compile Remove="Routing/RouteCatalogFreshStreamImageDigest.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogFreshStreamImageDigest.cs" />
+<Compile Remove="Routing/RouteCatalogBindingMemo.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogBindingMemo.cs" />
+<Compile Remove="Routing/RouteCatalogBindingInput.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogBindingInput.cs" />
+<Compile Remove="Routing/RouteCatalogActivationBinding.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-RouteCatalogActivationBinding.cs" />
+<Compile Remove="Routing/TechnicalHttpObservationPass.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-TechnicalHttpObservationPass.cs" />
+<Compile Remove="Routing/TechnicalHttpActionObservation.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-TechnicalHttpActionObservation.cs" />
+<Compile Remove="Routing/ObservedRouteCatalogInventory.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults-ObservedRouteCatalogInventory.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreServiceDefaults.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithFoldersServer" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Folders.Server'">
+<ItemGroup>
+<Compile Remove="Queries/FolderOwnerReadQueryHandler.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithFoldersServer-FolderOwnerReadQueryHandler.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithFoldersServer.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithProjectsIntegrationTests" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Integration.Tests'">
+<ItemGroup>
+<Compile Remove="SupportedProjectReadDistributedFixture.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithProjectsIntegrationTests-SupportedProjectReadDistributedFixture.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithProjectsIntegrationTests.cs" />
+</ItemGroup>
+</Target>
+<Target Name="FocusedHexalithEventStoreContracts" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Contracts'">
+<ItemGroup>
+<Compile Remove="Routing/RouteCatalogCodec.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreContracts-RouteCatalogCodec.cs" />
+<Compile Remove="Routing/RouteCatalogDecodeScope.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreContracts-RouteCatalogDecodeScope.cs" />
+<Compile Include="/tmp/story65-multiple-overlay-20261107/TimingHexalithEventStoreContracts.cs" />
+</ItemGroup>
+</Target>
+</Project>

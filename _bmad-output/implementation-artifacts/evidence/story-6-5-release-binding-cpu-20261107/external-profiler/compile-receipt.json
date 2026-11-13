@@ -1,0 +1,45 @@
+{
+  "temporaryDebugToolOnly": true,
+  "steps": [
+    {
+      "argv": [
+        "dotnet",
+        "restore",
+        "/tmp/story65-cpu-prep-20261107/CpuProbe.csproj",
+        "--configfile",
+        "/tmp/story65-cpu-prep-20261107/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-parallel"
+      ],
+      "exitCode": 0,
+      "wallSeconds": 0.584734299001866,
+      "log": "build-1.log",
+      "logSha256": "cc6dea3cf12272c3b1825c124fe2720fb7c0fab9cc32ceb747b21dc85604abd3"
+    },
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-cpu-prep-20261107/CpuProbe.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "--disable-build-servers",
+        "-m:1",
+        "/nr:false"
+      ],
+      "exitCode": 0,
+      "wallSeconds": 1.5568629600020358,
+      "log": "build-2.log",
+      "logSha256": "1d3872e4d3c677d7f71a9f3de1028d3a126c66c8e111e3b951a493cc78f1962e"
+    }
+  ],
+  "profilerAttached": false,
+  "repositorySourceOrBinaryBuild": false,
+  "environmentOverrides": {
+    "DOTNET_PROCESSOR_COUNT": "unset",
+    "CustomBeforeMicrosoftCommonTargets": "unset",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  }
+}

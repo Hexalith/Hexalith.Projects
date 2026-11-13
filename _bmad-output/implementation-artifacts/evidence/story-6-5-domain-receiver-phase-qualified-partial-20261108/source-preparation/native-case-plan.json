@@ -1,0 +1,163 @@
+{
+  "filePreparationOnly": true,
+  "RootSelectionApproved": false,
+  "qualificationReady": false,
+  "sourceDerivedExpectedExecutions": 103,
+  "processSelections": 7,
+  "selections": [
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentDomainRouteCatalogTests.cs",
+      "sourceSha256": "6c33aef52ab0ad6ec816264e8540e5c05ec4b1876efe50ceb1d86cef6591ebba",
+      "class": "DevelopmentDomainRouteCatalogTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentDomainRouteCatalogTests",
+      "expectedExecutions": 14,
+      "methods": [
+        {
+          "method": "ActualReceiversMustMatchTheCompleteDeclaredInventoryAndCanonicalPolicies",
+          "expectedExecutions": 14
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DomainSidecarCatalogLeaseTests.cs",
+      "sourceSha256": "3a0d178f3a48fb8831e9f72d4112fa6d7c232d1ad5c8d4597549ca57e4a0bfef",
+      "class": "DomainSidecarCatalogLeaseTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.DomainSidecarCatalogLeaseTests",
+      "expectedExecutions": 12,
+      "methods": [
+        {
+          "method": "UncommittedCallbackCannotExecuteRealProcessor",
+          "expectedExecutions": 1
+        },
+        {
+          "method": "ExactCommittedSidecarExecutesWithoutSyntheticSenderHeaders",
+          "expectedExecutions": 1
+        },
+        {
+          "method": "MissingOrWrongRealChannelStillRefuses",
+          "expectedExecutions": 2
+        },
+        {
+          "method": "MutatedSubscriptionBindingCannotActivateOrExecute",
+          "expectedExecutions": 5
+        },
+        {
+          "method": "PendingGenerationRefusesAndExactPendingRollbackRestoresCommittedCallback",
+          "expectedExecutions": 1
+        },
+        {
+          "method": "ActualPendingRemoteMutationBlocksRetirementUntilKnownCompletion",
+          "expectedExecutions": 1
+        },
+        {
+          "method": "AmbiguousRealRemoteCompletionRetainsFenceAfterProcessorCatchesFailure",
+          "expectedExecutions": 1
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/CatalogReceiverScopeTests.cs",
+      "sourceSha256": "4aac483d0cca467057ff1b89b7866f475947d3c10e6ae91ab896fea0500607a0",
+      "class": "CatalogReceiverScopeTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverScopeTests",
+      "expectedExecutions": 41,
+      "methods": [
+        {
+          "method": "ReceiverRequiresCurrentRootAndEpochBeforeAnyHandlerEffect",
+          "expectedExecutions": 9
+        },
+        {
+          "method": "EveryAuxiliaryReceiverShapeBindsExactDomainTenantAndSelectedProjection",
+          "expectedExecutions": 24
+        },
+        {
+          "method": "ReceiverIndependentlyRequiresMandatoryDelegatedCallerContext",
+          "expectedExecutions": 2
+        },
+        {
+          "method": "ReceiverLeaseRemainsThroughAsyncResultStreamingAndCancellation",
+          "expectedExecutions": 2
+        },
+        {
+          "method": "ReconstructionUsesOnlyRelevantCommandTenantScopeAndCanonicalOperation",
+          "expectedExecutions": 4
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/CatalogReceiverStateBoundaryTests.cs",
+      "sourceSha256": "873a31351542208851628fa1be0952bde27d0ad8dc92a028e6a6abd73f99c99d",
+      "class": "CatalogReceiverStateBoundaryTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverStateBoundaryTests",
+      "expectedExecutions": 16,
+      "methods": [
+        {
+          "method": "ConcreteSdkStateRpcAmbiguitySurvivesNormalIndeterminateHttpResponse",
+          "expectedExecutions": 16
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/CatalogReceiverVersionTests.cs",
+      "sourceSha256": "58ec4c2ec0d7919a6498b9cca15f2ca29372dd969f7e769995039fb29a48e1a1",
+      "class": "CatalogReceiverVersionTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverVersionTests",
+      "expectedExecutions": 7,
+      "methods": [
+        {
+          "method": "SdkReceiverUsesCommittedVersionAndRejectsExplicitConflictsBeforeProcessing",
+          "expectedExecutions": 7
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpDomainPeerTests.cs",
+      "sourceSha256": "f650092687ac25773f426add60ab1868e78111b3b6bbd79cea0840f727bac63c",
+      "class": "TechnicalHttpDomainPeerTests",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpDomainPeerTests",
+      "expectedExecutions": 12,
+      "methods": [
+        {
+          "method": "ExistingDomainBoundaryRetainsAbsentTechnicalSchemaTwoGenerationGuard",
+          "expectedExecutions": 4
+        },
+        {
+          "method": "CompiledSchemaThreeDomainUsesActualWorkloadAndCompleteActivationBinding",
+          "expectedExecutions": 8
+        }
+      ]
+    },
+    {
+      "source": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HeldMetadataDispatchTests.cs",
+      "sourceSha256": "af1fdebde58c7d2b2c89b6e86f5472e50d912f934f6e6bb33cbd8212138e3e5f",
+      "class": "HeldMetadataDispatchTests",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient",
+      "expectedExecutions": 1,
+      "methods": [
+        {
+          "method": "RealDomainFilterAndResultComposeWithSdkMetadataClient",
+          "expectedExecutions": 1
+        }
+      ]
+    }
+  ],
+  "exactRenderedXmlMultisetStillNeedsPrimaryFormatterDerivation": true,
+  "oldTechnical47SelectionNotReused": true,
+  "ordinary1048NotInflatedOrRerunClaimed": true,
+  "historicalCurrentOwnerRegressionCorroborationOnly": {
+    "path": "/tmp/story65-memo-rw-owner-native-20261107/regression412.xml",
+    "sha256": "46b850f14ef40a6067ee20a204a460f8e33a3c84bb40ccf61c7e8da7afe11284",
+    "selectedExecutions": 1,
+    "method": "RealDomainFilterAndResultComposeWithSdkMetadataClient",
+    "notFull103Retention": true
+  },
+  "actualNativeExecutions": 0,
+  "frameworkAssemblyLoadsBuildsHostsCounterWindows": 0
+}

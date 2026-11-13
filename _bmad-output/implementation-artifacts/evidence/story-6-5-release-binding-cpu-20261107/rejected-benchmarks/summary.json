@@ -1,0 +1,244 @@
+{
+  "diagnosticOnly": true,
+  "noProductionRepairSelectedFromTheseComparisons": true,
+  "benchmarks": [
+    {
+      "name": "story65-canonical-codec-probe-20261107",
+      "commandReceiptSha256": "010445489481490a947fd06e788a074470dcbfadd37ef6fe5bb213586296289e",
+      "productionSourceChanges": false,
+      "qualification": "FairDebug comparison did not show a reliable wall-time gain; rejected before production implementation. Earlier unfair/preliminary comparisons remain separately qualified in exact receipts.",
+      "retainedFiles": [
+        {
+          "file": "CodecProbeApi.cs",
+          "sha256": "7a164e41a4dab6d914092471246bd8b35a2061949769bc6a5d63663308c6801b"
+        },
+        {
+          "file": "Probe.csproj",
+          "sha256": "532d5b9784ad34338ec646650296c6b9d8244a137703e30c757f39ecba94b467"
+        },
+        {
+          "file": "build-debug-fair.log",
+          "sha256": "58a6f493185181641777398891ee55bbdc101e37eead5ca4336f3794a93ee88e"
+        },
+        {
+          "file": "DocumentHashSpanCodec.cs",
+          "sha256": "21338c0c5cbc681b7841d5bec99b829fc01efe050c3a54490254e855334cb66a"
+        },
+        {
+          "file": "source-oracle.json",
+          "sha256": "48231f91da40048cb563aba12ff8aaef3c5b3009b8f996641145d0ba4a7d5c37"
+        },
+        {
+          "file": "results.json",
+          "sha256": "286cab9e4f99e398f79c4bb3d4655e5b1c94cb3aa5a74c731b77f0b765723b60"
+        },
+        {
+          "file": "DocumentCodec.cs",
+          "sha256": "7832a9d23bf100ddffcb24a9da03c3313bbbec26919b677880eb949e2b6fa671"
+        },
+        {
+          "file": "ConverterProbe.cs",
+          "sha256": "1154e4b847c3e8bfc44492a16015d2302ea35d7d069c157971c045e3e04047fa"
+        },
+        {
+          "file": "run.log",
+          "sha256": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5"
+        },
+        {
+          "file": "debug-fair-results.json",
+          "sha256": "c007fda47d711238f8d361a36f913b998e26a1dbadfa93cad99e2a9cf89e708f"
+        },
+        {
+          "file": "CountingProbeConverter.cs",
+          "sha256": "4cc001900240e1d836028156ec53521a8bb5652f070705adc10c72b830cd9abe"
+        },
+        {
+          "file": "build-corrected.log",
+          "sha256": "12ed4e258788630fbd5102556946f68b633d765aa1d31cff3617ccb7ca48466f"
+        },
+        {
+          "file": "Program.release-preliminary.cs.txt",
+          "sha256": "cab3458625930eecde2b576a4672871e138dadc95a951b126a93e018c790fdfa"
+        },
+        {
+          "file": "build.log",
+          "sha256": "e5eccbee518fff4066ff67c348ea73f82d15fc2f3ad57a0bff18f1b5918a1cf9"
+        },
+        {
+          "file": "Program.cs",
+          "sha256": "9fc8c2a3a5bf66e9c5d45932988596db446ca87cf4bc7af88ddc00b3206644fd"
+        },
+        {
+          "file": "command-receipt.json",
+          "sha256": "010445489481490a947fd06e788a074470dcbfadd37ef6fe5bb213586296289e"
+        },
+        {
+          "file": "build-confirmation.log",
+          "sha256": "c6ca77abf90afaa7a841b014921c5f39501adbf05a37aa57478139f33309d0de"
+        },
+        {
+          "file": "DirectCodec.cs",
+          "sha256": "b255e222a96ec16704248f6ff2c3b3061892376a6a161a20b39fa13281e5f928"
+        },
+        {
+          "file": "run-debug-fair.log",
+          "sha256": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5"
+        },
+        {
+          "file": "Program.primary.cs.txt",
+          "sha256": "71a6c41d405dc976b8bb9771cf16b6febec9d620a7a72e03daca2146afaefb0d"
+        }
+      ],
+      "binObjDepsRetained": false
+    },
+    {
+      "name": "story65-native-format-probe-20261107",
+      "commandReceiptSha256": "1f506c6a17221b0c1e9353057fced24679a83b64adb5dfd9b26f1a87b2a76ec8",
+      "productionSourceChanges": false,
+      "qualification": "FairDebug comparison did not show a reliable wall-time gain; rejected before production implementation. Earlier unfair/preliminary comparisons remain separately qualified in exact receipts.",
+      "retainedFiles": [
+        {
+          "file": "run-command-metadata-only.json",
+          "sha256": "b831e00b8e30a72cbc868dec09905982541a8a4e28aee045c4d89cccea02dab9"
+        },
+        {
+          "file": "run-command-steady.json",
+          "sha256": "cec0fb910a18a866eb04886875848f73c460875bb7bc1d8ca033fb5b505a6401"
+        },
+        {
+          "file": "results.json.method-only",
+          "sha256": "393b978ccd77e6803fdd697d4557ec7a78ec01e22fd912e9db9fcdc3db660dae"
+        },
+        {
+          "file": "build-command-corrected.json",
+          "sha256": "7d7591b367e2d559cc79592fdf72ad52320beeac101c3275e8ed1df428b77049"
+        },
+        {
+          "file": "Probe.csproj",
+          "sha256": "da80bf1b619c739842d86a322a468a8e4e5c63ab8cb7dcba68a554cc9198fdb1"
+        },
+        {
+          "file": "run-joined.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "NativeFormattingMemo.cs.method-only",
+          "sha256": "bec4612939033840a7c1fa718253ae5a91c8eeca28b04aaa0d0e6ebd563a9353"
+        },
+        {
+          "file": "results.json",
+          "sha256": "393b978ccd77e6803fdd697d4557ec7a78ec01e22fd912e9db9fcdc3db660dae"
+        },
+        {
+          "file": "steady-results.json",
+          "sha256": "ffa22dba2d7f9fd915adb89bd6d1e80e2187d8d1f3e58815d822d0b7fb2e9dc9"
+        },
+        {
+          "file": "run-command-corroboration.json",
+          "sha256": "f097e438e1b97a776561aefd5f968eee3e87aa85f8ede91452001d3d4a5104c3"
+        },
+        {
+          "file": "build-corroboration.log",
+          "sha256": "48fd8f25b482881076eda8348f76d6787596603571bd397026d8a4c11a94557d"
+        },
+        {
+          "file": "build-steady.log",
+          "sha256": "1aa18d40fc00c7c089031ea99b9f1850518097ac1a704bb5d5ef4930d229aad5"
+        },
+        {
+          "file": "NativeFormattingMemo.cs",
+          "sha256": "d6b9fda14d2cdbe26e9c5c0b770b478d45851522f24a1a8bc333667b8dc58e0e"
+        },
+        {
+          "file": "corroboration-results.json",
+          "sha256": "bf4167cbdce05dae439a617b23f1baeda57a46c74245077a3856ac53162ee9cf"
+        },
+        {
+          "file": "build-command.json",
+          "sha256": "45ee238b1f64f18417b2b8bd00bc9a0e331f87ad1a2d4c70497e01a126c813e5"
+        },
+        {
+          "file": "build-command-corroboration.json",
+          "sha256": "7d7591b367e2d559cc79592fdf72ad52320beeac101c3275e8ed1df428b77049"
+        },
+        {
+          "file": "FormattingNativeActorReceiver.cs.method-only",
+          "sha256": "5f2fe3420a334512e2d06ecf53dbba58794861368dcf8950ce3993ace7d34877"
+        },
+        {
+          "file": "run-corroboration.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "joined-results.json",
+          "sha256": "a625aeb247182f90c5dd6df7c41b073e965ca956e0187676d8a998639de50fe9"
+        },
+        {
+          "file": "run.log",
+          "sha256": "4fefa59dd7209c7c94b3a46d5522195a9c838eca7f7f19bfd72a79b674384dcb"
+        },
+        {
+          "file": "run-command.json",
+          "sha256": "ebe7f967ffc38bf22cc2ad1cb822b6e96556dda490b906b7b9e1ad8867586587"
+        },
+        {
+          "file": "run-metadata-only.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "build-joined.log",
+          "sha256": "8e4d51aea3d58b7f20f03e2ed62d33819676df1c801bc24740e1eb7c1d9f2faf"
+        },
+        {
+          "file": "run-command-joined.json",
+          "sha256": "a8c85ad85b8b89632eac3535f94b1dfd3cf497cd98bcb48a5178ef1cfd19da47"
+        },
+        {
+          "file": "FormattingNativeActorReceiver.cs",
+          "sha256": "118ce02f4cff39edf8e312effde4cd4dae145f90d326049ecdeda334bae2ce8a"
+        },
+        {
+          "file": "build-command-steady.json",
+          "sha256": "7d7591b367e2d559cc79592fdf72ad52320beeac101c3275e8ed1df428b77049"
+        },
+        {
+          "file": "build-corrected.log",
+          "sha256": "e042c7d198a9f677d32ef3bcb9987a2f1d95b4ef570f893bdc822162f76dd437"
+        },
+        {
+          "file": "run-steady.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "build.log",
+          "sha256": "2a996765608509645ac075058701872e253ac9b737929dbb82239b1f9c7ff266"
+        },
+        {
+          "file": "Program.cs",
+          "sha256": "63de183f389b5a0d85c0be9580763228b0ea14e6ba2498dfc946922796f4f022"
+        },
+        {
+          "file": "command-receipt.json",
+          "sha256": "1f506c6a17221b0c1e9353057fced24679a83b64adb5dfd9b26f1a87b2a76ec8"
+        },
+        {
+          "file": "build-metadata-only.log",
+          "sha256": "48fd8f25b482881076eda8348f76d6787596603571bd397026d8a4c11a94557d"
+        },
+        {
+          "file": "build-command-joined.json",
+          "sha256": "7d7591b367e2d559cc79592fdf72ad52320beeac101c3275e8ed1df428b77049"
+        },
+        {
+          "file": "Program.cs.method-only",
+          "sha256": "692c8a1d788f88f31a8562f7cbdef698c840a7c950802ebd2a7ac9e02bb53006"
+        },
+        {
+          "file": "build-command-metadata-only.json",
+          "sha256": "7d7591b367e2d559cc79592fdf72ad52320beeac101c3275e8ed1df428b77049"
+        }
+      ],
+      "binObjDepsRetained": false
+    }
+  ]
+}

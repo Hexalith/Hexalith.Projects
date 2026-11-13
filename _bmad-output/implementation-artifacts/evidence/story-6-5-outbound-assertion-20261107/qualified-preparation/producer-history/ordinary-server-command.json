@@ -1,0 +1,21 @@
+{
+  "readOnlyPropertyAndItemEvaluationOnly": true,
+  "noBuildRestoreCleanResolveReferencesCoreCompileOrWriteGeneratingTargets": true,
+  "itemGroupOnlySubstitutionTargetRequested": false,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-getProperty:Story65ServerLateGuardImported,Story65ServerOriginalAfterSdkTargets,AfterMicrosoftNETSdkTargets,_HXWFinalTargetsImported,HexalithSourceMappingApplies,_HXWObservedConfiguration,_HXWPreLateSelectionCaptured,Configuration,Optimize,DefineConstants,DebugType,UseHexalithProjectReferences,UseNuGetDeps,EnablePrivateCatalogInvocationProof,EnablePrivateOwnerSourceReadProof,BuildProjectReferences,GenerateDocumentationFile,EmitCompilerGeneratedFiles,NoWarn,TreatWarningsAsErrors,BaseOutputPath,OutputPath,OutDir,TargetDir,TargetPath,TargetRefPath,BaseIntermediateOutputPath,IntermediateOutputPath,MSBuildProjectExtensionsPath,ProjectAssetsFile,ProjectAssetsCacheFile,DocumentationFile,GeneratedAssemblyInfoFile,GeneratedGlobalUsingsFile,GeneratedMSBuildEditorConfigFile,CompilerGeneratedFilesOutputPath,ProjectDepsFilePath,ProjectRuntimeConfigFilePath,PublishDir,SourceLink,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,CleanFile,GeneratedDocumentationFile,FileListAbsolute,AppendTargetFrameworkToOutputPath,AppendRuntimeIdentifierToOutputPath",
+    "-getItem:Compile,AdditionalFiles,Analyzer,EmbeddedResource,IntermediateAssembly,IntermediateRefAssembly,FileWrites"
+  ],
+  "exitCode": 0,
+  "stdoutSha256": "fee436882d237068bef9bbc7d871b77af2fa1cd8c8fc27bae67307c7dd0ceeb9",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

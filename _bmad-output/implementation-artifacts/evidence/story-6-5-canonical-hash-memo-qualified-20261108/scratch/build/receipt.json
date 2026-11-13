@@ -1,0 +1,44 @@
+{
+  "compileOnly": true,
+  "steps": [
+    {
+      "stage": "restore",
+      "command": [
+        "dotnet",
+        "restore",
+        "/tmp/story65-canonical-hash-memo-prep-20261108/harness/CanonicalHashBenchmark.csproj",
+        "--configfile",
+        "/tmp/story65-canonical-hash-memo-prep-20261108/harness/NuGet.Config",
+        "-p:Story65ReviewedPreparationSha256=b71a98b509cba924f695f6de8ecf551b6ced220a4bb5e0e9d7f89b551156e288",
+        "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+        "-p:Story65QualifiedContractsSha256=067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+        "-p:NuGetAudit=false"
+      ],
+      "exitCode": 0,
+      "wallSeconds": 0.565515859023435,
+      "logSha256": "883a98215c408be4e81d763e32bb1d41cf3cd8baafd9a877c78d9edb1f7cf952"
+    },
+    {
+      "stage": "build",
+      "command": [
+        "dotnet",
+        "build",
+        "/tmp/story65-canonical-hash-memo-prep-20261108/harness/CanonicalHashBenchmark.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:Story65ReviewedPreparationSha256=b71a98b509cba924f695f6de8ecf551b6ced220a4bb5e0e9d7f89b551156e288",
+        "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+        "-p:Story65QualifiedContractsSha256=067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+        "-p:NuGetAudit=false"
+      ],
+      "exitCode": 1,
+      "wallSeconds": 1.7687543420179281,
+      "logSha256": "25477c331c06c229387feb7739b407ddb7e345d944180811824f2b6e799cf702"
+    }
+  ],
+  "all930InputsAnd45PreparedUnchanged": true,
+  "compiledArtifactsSha256": {},
+  "runtimeInvocations": 0
+}

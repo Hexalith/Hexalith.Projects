@@ -1,0 +1,24 @@
+{
+  "readOnlyPropertyAndItemEvaluationOnly": true,
+  "noBuildRestoreCleanPublishOrTargetsRequested": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-target:Story65GatewayControllerSourceSubstitution",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+    "-getProperty:Story65GatewayLateGuardImported,Story65GatewayOriginalAfterSdkTargets,AfterMicrosoftNETSdkTargets,_HXWFinalTargetsImported,Configuration,Optimize,DefineConstants,DebugType,UseHexalithProjectReferences,UseNuGetDeps,EnablePrivateCatalogInvocationProof,EnablePrivateOwnerSourceReadProof,BuildProjectReferences,GenerateDocumentationFile,NoWarn,TreatWarningsAsErrors,BaseOutputPath,OutputPath,OutDir,TargetDir,TargetPath,TargetRefPath,BaseIntermediateOutputPath,IntermediateOutputPath,MSBuildProjectExtensionsPath,ProjectAssetsFile,ProjectAssetsCacheFile,DocumentationFile,GeneratedAssemblyInfoFile,GeneratedGlobalUsingsFile,GeneratedMSBuildEditorConfigFile,CompilerGeneratedFilesOutputPath,EmitCompilerGeneratedFiles,ProjectDepsFilePath,ProjectRuntimeConfigFilePath,PublishDir,SourceLink,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,CleanFile,GeneratedDocumentationFile,FileListAbsolute,AppendTargetFrameworkToOutputPath,AppendRuntimeIdentifierToOutputPath",
+    "-getItem:Compile,AdditionalFiles,Analyzer,EmbeddedResource,IntermediateAssembly,IntermediateRefAssembly,FileWrites"
+  ],
+  "startedUtc": "2026-11-07T14:03:07.361266+00:00",
+  "finishedUtc": "2026-11-07T14:03:08.069708+00:00",
+  "exitCode": 0,
+  "stdoutSha256": "ff691d8e90ed343f551e73adbbfe08c910c2b49e35b5bd2803ded5b399ade02d",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

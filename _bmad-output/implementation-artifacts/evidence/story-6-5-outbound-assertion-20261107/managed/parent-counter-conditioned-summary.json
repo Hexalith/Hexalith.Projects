@@ -1,0 +1,54 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "rawSha256": "cedf6c9e209c70b603120dc7328a98a3ee38c2537864c240bb37b382b9cda7b5",
+  "groupsByNumericStagePresenceOnly": [
+    {
+      "issuerExpressionStagePresent": false,
+      "captures": 1481,
+      "millisecondsByStage": {
+        "Whole": {
+          "count": 1481,
+          "median": 1.112404,
+          "minimum": 0.475181,
+          "maximum": 6.678197
+        },
+        "ComponentPolicy": {
+          "count": 1481,
+          "median": 1.106043,
+          "minimum": 0.473427,
+          "maximum": 6.675914
+        }
+      },
+      "noTokenOrOutcomeInference": true,
+      "noRequestKindIdentityOrPriorProbeJoin": true
+    },
+    {
+      "issuerExpressionStagePresent": true,
+      "captures": 21,
+      "millisecondsByStage": {
+        "Whole": {
+          "count": 21,
+          "median": 372.75665,
+          "minimum": 319.12984,
+          "maximum": 2065.861279
+        },
+        "ComponentFile": {
+          "count": 21,
+          "median": 4.183066,
+          "minimum": 3.870231,
+          "maximum": 6.257653
+        },
+        "ComponentPolicy": {
+          "count": 21,
+          "median": 368.632259,
+          "minimum": 312.853531,
+          "maximum": 2061.84452
+        }
+      },
+      "noTokenOrOutcomeInference": true,
+      "noRequestKindIdentityOrPriorProbeJoin": true
+    }
+  ],
+  "wholeAndBaseExcludeOuterHttpClientBuffering": true
+}

@@ -1,0 +1,846 @@
+{
+  "diagnosticOnly": true,
+  "ownerSourcesEdited": false,
+  "hostsConstructed": false,
+  "credentialsRead": false,
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "processorOverride": null,
+  "isServerGc": true,
+  "slots": 4,
+  "workers": 4,
+  "inventory": [
+    {
+      "assembly": "Dapr.Actors",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Dapr.Actors.dll",
+      "bytes": 218112,
+      "sha256": "8b4ac5fb122eeb1d25fad4b3b24f76a832c05377ae581f306b915707d94e5201",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Dapr.Actors.AspNetCore",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Dapr.Actors.AspNetCore.dll",
+      "bytes": 26624,
+      "sha256": "9caf16d3f2591b81215f1cd1c5ea123c9633407046003a7021fc5d1a9333f5b6",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Dapr.AspNetCore",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Dapr.AspNetCore.dll",
+      "bytes": 57344,
+      "sha256": "40c6315dec475ef6e2665b3e2b18beeeb7cf11a241e9c15f95dd7cc20a709473",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.Admin.Abstractions",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Admin.Abstractions.dll",
+      "bytes": 239104,
+      "sha256": "8b868e3494061b16533c0e4592927876362683cffda48c6e3ab04a3346c63a17",
+      "reasons": [
+        "technical parameter/response type identity"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.Contracts",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "bytes": 990208,
+      "sha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+      "reasons": [
+        "technical parameter/response type identity"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.DomainService",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "bytes": 1390080,
+      "sha256": "f2c68ef918e24e64efcd7bd0ff54586b117b0705babddde7952529d5c284fcfe",
+      "reasons": [
+        "technical parameter/response type identity"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.Gateway",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+      "bytes": 989184,
+      "sha256": "2e95d21529d7753c092e191745f3afb69cb30a66c500ac2a3c85b81a50c30432",
+      "reasons": [
+        "marked technical controller code",
+        "fresh service filter code",
+        "technical parameter/response type identity"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.Server",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+      "bytes": 4748800,
+      "sha256": "6965b3bbbc439741308d2cc2f364926a219a0be0023eb9ff68adac1854688b9d",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Hexalith.EventStore.ServiceDefaults",
+      "location": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "bytes": 704000,
+      "sha256": "19e1fb8b062e35f6c62a11de7e2171c556d0481af6982ad4f4619eaa103516be",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Microsoft.AspNetCore.Diagnostics.HealthChecks",
+      "location": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Diagnostics.HealthChecks.dll",
+      "bytes": 41808,
+      "sha256": "c13e5e4a0daa200a767d7240cb52949b189147e5b911c0fe316814808840b519",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Microsoft.AspNetCore.Mvc.Core",
+      "location": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Mvc.Core.dll",
+      "bytes": 1941800,
+      "sha256": "a0bd7fabc23de2119a8494db0b67673fab95a06743b58bd7221d235fed56931c",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    },
+    {
+      "assembly": "Microsoft.AspNetCore.Routing",
+      "location": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Routing.dll",
+      "bytes": 860968,
+      "sha256": "e75be50990e0d6d08ccb178204b5cdf3a6ebf97323f8be532c13ec9fecff0330",
+      "reasons": [
+        "actual native/callback/constraint/global-filter code observer"
+      ]
+    }
+  ],
+  "imageCount": 12,
+  "fullFreshBytesPerInventory": 24416064,
+  "SDK": {
+    "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+    "sha256": "19e1fb8b062e35f6c62a11de7e2171c556d0481af6982ad4f4619eaa103516be"
+  },
+  "exactPath": "Actual SDK AssemblyIdentity(Assembly,ArrayPool\u003Cbyte\u003E) includes every original File.OpenRead/Length/ReadExactly, exact MemoryStream logical length, PE/MVID, actual SDK shared bounded memo and full-byte compare. One actual SDK private scope per complete initial\u002BComplete pair, including disposal; shared memo survives loops. Reflection scope entry/hit access overhead is identical across capacities.",
+  "inventoryQualification": "Source-derived metadata census for marked Gateway action parameter/response/filter assemblies plus actual native/callback/constraint/global-filter code; no endpoint, DI or host construction. Expected 12 unique images corroborates runtime census; names/order were not retained in runtime timing. Sorted FullName order is used identically for both observations and all capacities.",
+  "trackingQualification": "Separate tracking samples wrap actual ArrayPool. Only per-rent thread allocation deltas and numeric counters; no allocated-array history or strong loan references retained. Primary timings use unwrapped actual ArrayPool. All worker threads are dedicated and start together; continuous loops have no per-image/per-inventory barriers. Separate aligned sample adds an inventory-start barrier.",
+  "cold": {
+    "iterationsPerWorker": 1,
+    "inventories": 4,
+    "observationsPerInventory": 2,
+    "imagesPerObservation": 12,
+    "elapsedMs": 35.293,
+    "throughputInventoriesPerSecond": 113.33692233587398,
+    "meanCaptureMs": 33.343875000000004,
+    "allocatedBytesPerInventory": 15089844,
+    "processAllocatedBytes": 60377256,
+    "processCpuMs": 76.651,
+    "gcDelta": [
+      6,
+      6,
+      6
+    ],
+    "outputRows": [
+      {
+        "Worker": 0,
+        "ElapsedMs": 33.4072,
+        "MeanCaptureMs": 33.3881,
+        "AllocatedBytes": 12039656,
+        "MemoHits": 24
+      },
+      {
+        "Worker": 1,
+        "ElapsedMs": 33.3586,
+        "MeanCaptureMs": 33.3132,
+        "AllocatedBytes": 12286584,
+        "MemoHits": 22
+      },
+      {
+        "Worker": 2,
+        "ElapsedMs": 33.3798,
+        "MeanCaptureMs": 33.3524,
+        "AllocatedBytes": 18813000,
+        "MemoHits": 18
+      },
+      {
+        "Worker": 3,
+        "ElapsedMs": 33.3232,
+        "MeanCaptureMs": 33.3218,
+        "AllocatedBytes": 17220136,
+        "MemoHits": 20
+      }
+    ]
+  },
+  "samples": [
+    {
+      "sample": 0,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 230.1223,
+        "throughputInventoriesPerSecond": 417.1694790118124,
+        "meanCaptureMs": 9.5807,
+        "allocatedBytesPerInventory": 130881,
+        "processAllocatedBytes": 12564976,
+        "processCpuMs": 659.444,
+        "gcDelta": [
+          2,
+          1,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 229.9583,
+            "MeanCaptureMs": 9.581216666666664,
+            "AllocatedBytes": 3141264,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 230.0177,
+            "MeanCaptureMs": 9.583654166666667,
+            "AllocatedBytes": 3141040,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 229.9859,
+            "MeanCaptureMs": 9.582308333333335,
+            "AllocatedBytes": 3141264,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 229.8348,
+            "MeanCaptureMs": 9.575620833333334,
+            "AllocatedBytes": 3141040,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 1,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 232.3428,
+        "throughputInventoriesPerSecond": 413.1825905515471,
+        "meanCaptureMs": 9.671013541666666,
+        "allocatedBytesPerInventory": 130886,
+        "processAllocatedBytes": 12565512,
+        "processCpuMs": 662.495,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 232.1461,
+            "MeanCaptureMs": 9.671966666666664,
+            "AllocatedBytes": 3141096,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 231.9698,
+            "MeanCaptureMs": 9.66475,
+            "AllocatedBytes": 3141488,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 232.1417,
+            "MeanCaptureMs": 9.671912500000001,
+            "AllocatedBytes": 3141040,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 232.2229,
+            "MeanCaptureMs": 9.675424999999999,
+            "AllocatedBytes": 3141520,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 2,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 237.1509,
+        "throughputInventoriesPerSecond": 404.8055478600334,
+        "meanCaptureMs": 9.866933333333332,
+        "allocatedBytesPerInventory": 131153,
+        "processAllocatedBytes": 12591064,
+        "processCpuMs": 709.374,
+        "gcDelta": [
+          3,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 236.6977,
+            "MeanCaptureMs": 9.861629166666665,
+            "AllocatedBytes": 3147312,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 236.7319,
+            "MeanCaptureMs": 9.8630125,
+            "AllocatedBytes": 3147568,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 236.8273,
+            "MeanCaptureMs": 9.867195833333332,
+            "AllocatedBytes": 3148056,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 237.0351,
+            "MeanCaptureMs": 9.875895833333333,
+            "AllocatedBytes": 3147760,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 3,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 238.5842,
+        "throughputInventoriesPerSecond": 402.3736693377013,
+        "meanCaptureMs": 9.804605208333333,
+        "allocatedBytesPerInventory": 131649,
+        "processAllocatedBytes": 12638704,
+        "processCpuMs": 694.54,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 235.7043,
+            "MeanCaptureMs": 9.820133333333334,
+            "AllocatedBytes": 3159696,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 232.1649,
+            "MeanCaptureMs": 9.672675000000002,
+            "AllocatedBytes": 3159696,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 234.9964,
+            "MeanCaptureMs": 9.7909125,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 238.4522,
+            "MeanCaptureMs": 9.934699999999998,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 4,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 233.651,
+        "throughputInventoriesPerSecond": 410.86920235736204,
+        "meanCaptureMs": 9.640010416666666,
+        "allocatedBytesPerInventory": 131652,
+        "processAllocatedBytes": 12639064,
+        "processCpuMs": 678.957,
+        "gcDelta": [
+          3,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 233.484,
+            "MeanCaptureMs": 9.7273,
+            "AllocatedBytes": 3159920,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 230.858,
+            "MeanCaptureMs": 9.618354166666665,
+            "AllocatedBytes": 3159528,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 230.5306,
+            "MeanCaptureMs": 9.6047125,
+            "AllocatedBytes": 3159752,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 230.647,
+            "MeanCaptureMs": 9.609675,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 5,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 248.4021,
+        "throughputInventoriesPerSecond": 386.47016269186133,
+        "meanCaptureMs": 10.341233333333333,
+        "allocatedBytesPerInventory": 131651,
+        "processAllocatedBytes": 12638960,
+        "processCpuMs": 685.792,
+        "gcDelta": [
+          3,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 248.1552,
+            "MeanCaptureMs": 10.339108333333334,
+            "AllocatedBytes": 3159696,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 248.0878,
+            "MeanCaptureMs": 10.3362375,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 248.2722,
+            "MeanCaptureMs": 10.344233333333333,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 248.2987,
+            "MeanCaptureMs": 10.345354166666668,
+            "AllocatedBytes": 3159920,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 6,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 247.7945,
+        "throughputInventoriesPerSecond": 387.41779983010116,
+        "meanCaptureMs": 10.31051875,
+        "allocatedBytesPerInventory": 131663,
+        "processAllocatedBytes": 12640224,
+        "processCpuMs": 691.247,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 247.2964,
+            "MeanCaptureMs": 10.303287500000001,
+            "AllocatedBytes": 3160856,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 247.5738,
+            "MeanCaptureMs": 10.315095833333334,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 247.4058,
+            "MeanCaptureMs": 10.307883333333333,
+            "AllocatedBytes": 3159472,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 247.595,
+            "MeanCaptureMs": 10.315808333333331,
+            "AllocatedBytes": 3159920,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 7,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 251.357,
+        "throughputInventoriesPerSecond": 381.9269007825523,
+        "meanCaptureMs": 10.460471875,
+        "allocatedBytesPerInventory": 131948,
+        "processAllocatedBytes": -37880464,
+        "processCpuMs": 731.61,
+        "gcDelta": [
+          4,
+          1,
+          1
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 250.9476,
+            "MeanCaptureMs": 10.455754166666667,
+            "AllocatedBytes": 3167552,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 250.9633,
+            "MeanCaptureMs": 10.456375,
+            "AllocatedBytes": 3167184,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 251.1122,
+            "MeanCaptureMs": 10.462708333333335,
+            "AllocatedBytes": 3167408,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 251.221,
+            "MeanCaptureMs": 10.46705,
+            "AllocatedBytes": 3164864,
+            "MemoHits": 576
+          }
+        ]
+      }
+    },
+    {
+      "sample": 8,
+      "values": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 242.1175,
+        "throughputInventoriesPerSecond": 396.50169855545346,
+        "meanCaptureMs": 9.948020833333333,
+        "allocatedBytesPerInventory": 130932,
+        "processAllocatedBytes": 12569904,
+        "processCpuMs": 759.754,
+        "gcDelta": [
+          4,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 241.8641,
+            "MeanCaptureMs": 10.077362500000001,
+            "AllocatedBytes": 3142384,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 235.6345,
+            "MeanCaptureMs": 9.817824999999997,
+            "AllocatedBytes": 3142608,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 235.5619,
+            "MeanCaptureMs": 9.814808333333332,
+            "AllocatedBytes": 3142192,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 241.9793,
+            "MeanCaptureMs": 10.082087499999998,
+            "AllocatedBytes": 3142352,
+            "MemoHits": 576
+          }
+        ]
+      }
+    }
+  ],
+  "aligned": {
+    "iterationsPerWorker": 24,
+    "inventories": 96,
+    "observationsPerInventory": 2,
+    "imagesPerObservation": 12,
+    "elapsedMs": 239.0602,
+    "throughputInventoriesPerSecond": 401.5724909457952,
+    "meanCaptureMs": 9.711055208333335,
+    "allocatedBytesPerInventory": 130889,
+    "processAllocatedBytes": 12565752,
+    "processCpuMs": 702.081,
+    "gcDelta": [
+      5,
+      0,
+      0
+    ],
+    "outputRows": [
+      {
+        "Worker": 0,
+        "ElapsedMs": 238.8967,
+        "MeanCaptureMs": 9.725295833333332,
+        "AllocatedBytes": 3141264,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 1,
+        "ElapsedMs": 238.9377,
+        "MeanCaptureMs": 9.699779166666666,
+        "AllocatedBytes": 3141712,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 2,
+        "ElapsedMs": 238.7901,
+        "MeanCaptureMs": 9.722100000000001,
+        "AllocatedBytes": 3141040,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 3,
+        "ElapsedMs": 238.7901,
+        "MeanCaptureMs": 9.697045833333334,
+        "AllocatedBytes": 3141368,
+        "MemoHits": 576
+      }
+    ]
+  },
+  "trackingCold": {
+    "iterationsPerWorker": 1,
+    "inventories": 4,
+    "observationsPerInventory": 2,
+    "imagesPerObservation": 12,
+    "elapsedMs": 14.358,
+    "throughputInventoriesPerSecond": 278.59033291544785,
+    "meanCaptureMs": 13.380249999999998,
+    "allocatedBytesPerInventory": 9374576,
+    "processAllocatedBytes": 37499296,
+    "processCpuMs": 32.955,
+    "gcDelta": [
+      1,
+      1,
+      1
+    ],
+    "outputRows": [
+      {
+        "Worker": 0,
+        "ElapsedMs": 14.1906,
+        "MeanCaptureMs": 14.1901,
+        "AllocatedBytes": 11994040,
+        "MemoHits": 24
+      },
+      {
+        "Worker": 1,
+        "ElapsedMs": 14.2389,
+        "MeanCaptureMs": 14.2387,
+        "AllocatedBytes": 394072,
+        "MemoHits": 24
+      },
+      {
+        "Worker": 2,
+        "ElapsedMs": 14.2644,
+        "MeanCaptureMs": 14.2641,
+        "AllocatedBytes": 13075432,
+        "MemoHits": 24
+      },
+      {
+        "Worker": 3,
+        "ElapsedMs": 10.8288,
+        "MeanCaptureMs": 10.8281,
+        "AllocatedBytes": 12034760,
+        "MemoHits": 24
+      }
+    ]
+  },
+  "trackingColdCounts": {
+    "rents": 96,
+    "rentedBytes": 139722752,
+    "allocatingRents": 19,
+    "rentAllocatedBytes": 36962760,
+    "outstandingLoans": 0,
+    "peakLoans": 4
+  },
+  "tracked": {
+    "iterationsPerWorker": 48,
+    "inventories": 192,
+    "observationsPerInventory": 2,
+    "imagesPerObservation": 12,
+    "elapsedMs": 470.8537,
+    "throughputInventoriesPerSecond": 407.76997186174816,
+    "meanCaptureMs": 9.804640625,
+    "allocatedBytesPerInventory": 131205,
+    "processAllocatedBytes": 25191776,
+    "processCpuMs": 1372.335,
+    "gcDelta": [
+      7,
+      0,
+      0
+    ],
+    "outputRows": [
+      {
+        "Worker": 0,
+        "ElapsedMs": 470.5125,
+        "MeanCaptureMs": 9.802022916666669,
+        "AllocatedBytes": 6346848,
+        "MemoHits": 1152
+      },
+      {
+        "Worker": 1,
+        "ElapsedMs": 470.6871,
+        "MeanCaptureMs": 9.80566458333333,
+        "AllocatedBytes": 6281568,
+        "MemoHits": 1152
+      },
+      {
+        "Worker": 2,
+        "ElapsedMs": 470.5823,
+        "MeanCaptureMs": 9.803510416666667,
+        "AllocatedBytes": 6281680,
+        "MemoHits": 1152
+      },
+      {
+        "Worker": 3,
+        "ElapsedMs": 470.7672,
+        "MeanCaptureMs": 9.807364583333333,
+        "AllocatedBytes": 6281288,
+        "MemoHits": 1152
+      }
+    ]
+  },
+  "trackedCounts": {
+    "rents": 4608,
+    "rentedBytes": 6706692096,
+    "allocatingRents": 1,
+    "rentAllocatedBytes": 65560,
+    "outstandingLoans": 0,
+    "peakLoans": 4
+  },
+  "trackedAligned": {
+    "iterationsPerWorker": 24,
+    "inventories": 96,
+    "observationsPerInventory": 2,
+    "imagesPerObservation": 12,
+    "elapsedMs": 231.8611,
+    "throughputInventoriesPerSecond": 414.0409926460282,
+    "meanCaptureMs": 9.450922916666666,
+    "allocatedBytesPerInventory": 130881,
+    "processAllocatedBytes": 12565024,
+    "processCpuMs": 654.258,
+    "gcDelta": [
+      2,
+      0,
+      0
+    ],
+    "outputRows": [
+      {
+        "Worker": 0,
+        "ElapsedMs": 231.6391,
+        "MeanCaptureMs": 9.481379166666668,
+        "AllocatedBytes": 3141264,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 1,
+        "ElapsedMs": 231.7105,
+        "MeanCaptureMs": 9.424808333333331,
+        "AllocatedBytes": 3141064,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 2,
+        "ElapsedMs": 231.6466,
+        "MeanCaptureMs": 9.464704166666666,
+        "AllocatedBytes": 3141040,
+        "MemoHits": 576
+      },
+      {
+        "Worker": 3,
+        "ElapsedMs": 231.8079,
+        "MeanCaptureMs": 9.432799999999999,
+        "AllocatedBytes": 3141288,
+        "MemoHits": 576
+      }
+    ]
+  },
+  "trackedAlignedCounts": {
+    "rents": 6912,
+    "rentedBytes": 10060038144,
+    "allocatingRents": 1,
+    "rentAllocatedBytes": 65560,
+    "outstandingLoans": 0,
+    "peakLoans": 4
+  },
+  "memoCount": 12,
+  "memoRetainedChargedBytes": 12214176
+}

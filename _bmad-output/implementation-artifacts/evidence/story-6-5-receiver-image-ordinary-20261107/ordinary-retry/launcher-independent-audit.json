@@ -1,0 +1,183 @@
+{
+  "ordinaryAcceptanceOnly": true,
+  "profilerEnabled": false,
+  "runResult": "failed",
+  "matrixCompleted": false,
+  "singleAttempts": 1,
+  "singleVerifiedPositives": 1,
+  "multipleAttempts": 30,
+  "multipleVerifiedPositives": 0,
+  "multipleExternalFixtureElapsedMedianMs": 2400.28135,
+  "elapsedIncludesSubsequentEvidenceReads": true,
+  "identities": [
+    {
+      "role": "appHost",
+      "pid": 3074159,
+      "startTicks": "7364487",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "cli",
+      "pid": 3067069,
+      "startTicks": "7359350",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "eventstore-host",
+      "pid": 3076479,
+      "startTicks": "7365112",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "eventstore-wrapper",
+      "pid": 3076025,
+      "startTicks": "7365063",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "tenants-host",
+      "pid": 3076365,
+      "startTicks": "7365093",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "tenants-wrapper",
+      "pid": 3075832,
+      "startTicks": "7365037",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-host",
+      "pid": 3076584,
+      "startTicks": "7365133",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-wrapper",
+      "pid": 3076261,
+      "startTicks": "7365082",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-workers-host",
+      "pid": 3076722,
+      "startTicks": "7365157",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-workers-wrapper",
+      "pid": 3076397,
+      "startTicks": "7365104",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-host",
+      "pid": 3076789,
+      "startTicks": "7365184",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-wrapper",
+      "pid": 3076536,
+      "startTicks": "7365130",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-workers-host",
+      "pid": 3076842,
+      "startTicks": "7365210",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-workers-wrapper",
+      "pid": 3076672,
+      "startTicks": "7365152",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3075992,
+      "startTicks": "7365060",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3076533,
+      "startTicks": "7365129",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3076667,
+      "startTicks": "7365152",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3076259,
+      "startTicks": "7365082",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3076392,
+      "startTicks": "7365104",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 3075830,
+      "startTicks": "7365037",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "managed-launcher",
+      "pid": 3057659,
+      "startTicks": "7352494",
+      "recordedIdentityAbsent": true
+    }
+  ],
+  "containers": [
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "c1d8d0179ef415b2e4b4bf5ef22a6877f41395ebf7088d51705845f94d704d6e",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "af3748cbc76d0a1b4391c03981c862587229aa6062175b17f6690fadde256df6",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "bb6b06ee3946e172b2e77aea8f6e214d317adbe56ef37cde4a63780b5dc8bdea",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-8b197f8531ac43d94c27111d-redishost",
+      "containerId": "c5c8af1140b365a254f08365aa8d93d3f828bd5957502a12abf036ded89809f7",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-8b197f8531ac43d94c27111d-oidc",
+      "containerId": "b6c82b4e781cbff1aa7b116e955264a62fe837cc8d536e83a529e1d8584913cc",
+      "absenceVerified": true
+    }
+  ],
+  "namespaceContainersAbsent": true,
+  "privateRuntimeDirectoryAbsent": true,
+  "allOriginalCleanupAbsenceVerified": true,
+  "preexistingResourcesPreserved": true,
+  "ownedSidecarsAbsent": true,
+  "privateMaterialRemoved": true,
+  "nativeTestProcessCleanup": [
+    {
+      "groupId": 3085713,
+      "descendantsAbsent": true
+    }
+  ],
+  "fullLiveManifestSourceCount": 17186,
+  "fullLiveManifestHashMismatches": 0,
+  "allIndependentRecordedProcessAndContainerAbsences": true,
+  "actualBrowserArtifactsRequireIndependentXmlAndPersistencePrivacyReview": true
+}

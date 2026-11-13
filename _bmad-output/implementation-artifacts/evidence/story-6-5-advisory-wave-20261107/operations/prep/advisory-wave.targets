@@ -1,0 +1,11 @@
+<Project>
+  <Import Project="$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)" Condition="'$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)')" />
+  <Target Name="PrivateAdvisoryWaveOnly" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <ItemGroup>
+      <Compile Remove="Queries/ProjectAdvisoryQueryExecutor.cs" />
+      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/ProjectAdvisoryQueryExecutor.private.cs" />
+      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/AdvisoryWaveBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

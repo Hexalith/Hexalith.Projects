@@ -1,0 +1,364 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "aliases": {
+    "Whole": "WholePublicInvoke",
+    "ComponentFile": "IssuerAcquisition",
+    "ComponentPolicy": "HttpRequestAndProof",
+    "AclFile": "SendAndBuffer",
+    "SettingsEnumerationSortDictionary": "JsonBody"
+  },
+  "stageWallMilliseconds": {
+    "WholePublicInvoke": {
+      "n": 24,
+      "medianMs": 599.5217715,
+      "p95NearestRankMs": 624.878939,
+      "minMs": 123.884333,
+      "maxMs": 656.740837
+    },
+    "IssuerAcquisition": {
+      "n": 24,
+      "medianMs": 4.136507,
+      "p95NearestRankMs": 5.145559,
+      "minMs": 3.87856,
+      "maxMs": 5.162852
+    },
+    "HttpRequestAndProof": {
+      "n": 24,
+      "medianMs": 0.66887,
+      "p95NearestRankMs": 0.740739,
+      "minMs": 0.580217,
+      "maxMs": 0.754647
+    },
+    "SendAndBuffer": {
+      "n": 24,
+      "medianMs": 594.2657730000001,
+      "p95NearestRankMs": 619.841868,
+      "minMs": 119.150906,
+      "maxMs": 651.765891
+    },
+    "JsonBody": {
+      "n": 18,
+      "medianMs": 0.0581035,
+      "p95NearestRankMs": 0.114132,
+      "minMs": 0.032112,
+      "maxMs": 0.114132
+    }
+  },
+  "pairedLocalCaptures": [
+    {
+      "opaqueLocalOrdinal": 1,
+      "phasesMs": {
+        "WholePublicInvoke": 622.198035,
+        "IssuerAcquisition": 4.646594,
+        "HttpRequestAndProof": 0.732724,
+        "SendAndBuffer": 616.150148,
+        "JsonBody": 0.052612
+      },
+      "wholeMinusRecordedPhasesMs": 0.615957000000094,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 2,
+      "phasesMs": {
+        "WholePublicInvoke": 590.965519,
+        "IssuerAcquisition": 4.643767,
+        "HttpRequestAndProof": 0.754647,
+        "SendAndBuffer": 584.526332,
+        "JsonBody": 0.07169
+      },
+      "wholeMinusRecordedPhasesMs": 0.9690829999999551,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 3,
+      "phasesMs": {
+        "WholePublicInvoke": 611.987233,
+        "IssuerAcquisition": 3.976501,
+        "HttpRequestAndProof": 0.691614,
+        "SendAndBuffer": 607.168586,
+        "JsonBody": 0.053324
+      },
+      "wholeMinusRecordedPhasesMs": 0.09720799999990959,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 4,
+      "phasesMs": {
+        "WholePublicInvoke": 580.299429,
+        "IssuerAcquisition": 3.896842,
+        "HttpRequestAndProof": 0.580217,
+        "SendAndBuffer": 575.715563,
+        "JsonBody": 0.050458
+      },
+      "wholeMinusRecordedPhasesMs": 0.05634900000006837,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 5,
+      "phasesMs": {
+        "WholePublicInvoke": 618.266175,
+        "IssuerAcquisition": 4.225075,
+        "HttpRequestAndProof": 0.68953,
+        "SendAndBuffer": 613.240845,
+        "JsonBody": 0.057432
+      },
+      "wholeMinusRecordedPhasesMs": 0.05329299999993964,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 6,
+      "phasesMs": {
+        "WholePublicInvoke": 614.440982,
+        "IssuerAcquisition": 4.152704,
+        "HttpRequestAndProof": 0.686464,
+        "SendAndBuffer": 609.425813,
+        "JsonBody": 0.100686
+      },
+      "wholeMinusRecordedPhasesMs": 0.07531500000004598,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 7,
+      "phasesMs": {
+        "WholePublicInvoke": 147.244433,
+        "IssuerAcquisition": 4.081531,
+        "HttpRequestAndProof": 0.669411,
+        "SendAndBuffer": 142.436051
+      },
+      "wholeMinusRecordedPhasesMs": 0.0574399999999855,
+      "jsonPhasePresent": false
+    },
+    {
+      "opaqueLocalOrdinal": 8,
+      "phasesMs": {
+        "WholePublicInvoke": 147.004998,
+        "IssuerAcquisition": 4.102439,
+        "HttpRequestAndProof": 0.669631,
+        "SendAndBuffer": 142.202869
+      },
+      "wholeMinusRecordedPhasesMs": 0.030058999999994285,
+      "jsonPhasePresent": false
+    },
+    {
+      "opaqueLocalOrdinal": 9,
+      "phasesMs": {
+        "WholePublicInvoke": 606.017465,
+        "IssuerAcquisition": 4.302005,
+        "HttpRequestAndProof": 0.740739,
+        "SendAndBuffer": 600.837175,
+        "JsonBody": 0.078783
+      },
+      "wholeMinusRecordedPhasesMs": 0.05876299999999901,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 10,
+      "phasesMs": {
+        "WholePublicInvoke": 561.406924,
+        "IssuerAcquisition": 4.555997,
+        "HttpRequestAndProof": 0.582502,
+        "SendAndBuffer": 556.147761,
+        "JsonBody": 0.073072
+      },
+      "wholeMinusRecordedPhasesMs": 0.04759200000000874,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 11,
+      "phasesMs": {
+        "WholePublicInvoke": 620.374385,
+        "IssuerAcquisition": 4.108047,
+        "HttpRequestAndProof": 0.705571,
+        "SendAndBuffer": 615.430444,
+        "JsonBody": 0.064645
+      },
+      "wholeMinusRecordedPhasesMs": 0.06567800000004809,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 12,
+      "phasesMs": {
+        "WholePublicInvoke": 656.740837,
+        "IssuerAcquisition": 4.130576,
+        "HttpRequestAndProof": 0.727964,
+        "SendAndBuffer": 651.765891,
+        "JsonBody": 0.050839
+      },
+      "wholeMinusRecordedPhasesMs": 0.06556700000010096,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 13,
+      "phasesMs": {
+        "WholePublicInvoke": 604.191251,
+        "IssuerAcquisition": 5.145559,
+        "HttpRequestAndProof": 0.665553,
+        "SendAndBuffer": 598.267381,
+        "JsonBody": 0.058775
+      },
+      "wholeMinusRecordedPhasesMs": 0.053983000000016546,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 14,
+      "phasesMs": {
+        "WholePublicInvoke": 607.63877,
+        "IssuerAcquisition": 5.162852,
+        "HttpRequestAndProof": 0.668329,
+        "SendAndBuffer": 601.708818,
+        "JsonBody": 0.039787
+      },
+      "wholeMinusRecordedPhasesMs": 0.05898400000012316,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 15,
+      "phasesMs": {
+        "WholePublicInvoke": 123.886257,
+        "IssuerAcquisition": 4.031153,
+        "HttpRequestAndProof": 0.653519,
+        "SendAndBuffer": 119.150906
+      },
+      "wholeMinusRecordedPhasesMs": 0.05067899999998815,
+      "jsonPhasePresent": false
+    },
+    {
+      "opaqueLocalOrdinal": 16,
+      "phasesMs": {
+        "WholePublicInvoke": 123.884333,
+        "IssuerAcquisition": 4.037144,
+        "HttpRequestAndProof": 0.652699,
+        "SendAndBuffer": 119.167217
+      },
+      "wholeMinusRecordedPhasesMs": 0.027273000000008096,
+      "jsonPhasePresent": false
+    },
+    {
+      "opaqueLocalOrdinal": 17,
+      "phasesMs": {
+        "WholePublicInvoke": 624.878939,
+        "IssuerAcquisition": 4.254861,
+        "HttpRequestAndProof": 0.628782,
+        "SendAndBuffer": 619.841868,
+        "JsonBody": 0.093812
+      },
+      "wholeMinusRecordedPhasesMs": 0.05961600000000544,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 18,
+      "phasesMs": {
+        "WholePublicInvoke": 582.707358,
+        "IssuerAcquisition": 4.199274,
+        "HttpRequestAndProof": 0.677436,
+        "SendAndBuffer": 577.65253,
+        "JsonBody": 0.114132
+      },
+      "wholeMinusRecordedPhasesMs": 0.06398599999999988,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 19,
+      "phasesMs": {
+        "WholePublicInvoke": 617.380058,
+        "IssuerAcquisition": 4.25459,
+        "HttpRequestAndProof": 0.663599,
+        "SendAndBuffer": 612.337517,
+        "JsonBody": 0.086227
+      },
+      "wholeMinusRecordedPhasesMs": 0.03812499999992269,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 20,
+      "phasesMs": {
+        "WholePublicInvoke": 620.433401,
+        "IssuerAcquisition": 4.142438,
+        "HttpRequestAndProof": 0.673449,
+        "SendAndBuffer": 615.510787,
+        "JsonBody": 0.032112
+      },
+      "wholeMinusRecordedPhasesMs": 0.07461499999999432,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 21,
+      "phasesMs": {
+        "WholePublicInvoke": 594.852292,
+        "IssuerAcquisition": 3.87856,
+        "HttpRequestAndProof": 0.625906,
+        "SendAndBuffer": 590.264165,
+        "JsonBody": 0.049845
+      },
+      "wholeMinusRecordedPhasesMs": 0.03381600000000162,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 22,
+      "phasesMs": {
+        "WholePublicInvoke": 559.499058,
+        "IssuerAcquisition": 3.880029,
+        "HttpRequestAndProof": 0.619875,
+        "SendAndBuffer": 554.911536,
+        "JsonBody": 0.05177
+      },
+      "wholeMinusRecordedPhasesMs": 0.03584799999998722,
+      "jsonPhasePresent": true
+    },
+    {
+      "opaqueLocalOrdinal": 23,
+      "phasesMs": {
+        "WholePublicInvoke": 153.966542,
+        "IssuerAcquisition": 3.97907,
+        "HttpRequestAndProof": 0.635023,
+        "SendAndBuffer": 149.32681
+      },
+      "wholeMinusRecordedPhasesMs": 0.025639000000012402,
+      "jsonPhasePresent": false
+    },
+    {
+      "opaqueLocalOrdinal": 24,
+      "phasesMs": {
+        "WholePublicInvoke": 153.990294,
+        "IssuerAcquisition": 3.979035,
+        "HttpRequestAndProof": 0.63349,
+        "SendAndBuffer": 149.354174
+      },
+      "wholeMinusRecordedPhasesMs": 0.023595000000000255,
+      "jsonPhasePresent": false
+    }
+  ],
+  "all24WholeMinusRecordedSumMs": {
+    "n": 24,
+    "medianMs": 0.05689450000002694,
+    "p95NearestRankMs": 0.615957000000094,
+    "minMs": 0.023595000000000255,
+    "maxMs": 0.9690829999999551
+  },
+  "complete18WholeMs": {
+    "n": 18,
+    "medianMs": 609.8130014999999,
+    "p95NearestRankMs": 656.740837,
+    "minMs": 559.499058,
+    "maxMs": 656.740837
+  },
+  "complete18PairedSendShare": {
+    "n": 18,
+    "median": 0.9918350948543269,
+    "min": 0.989103954811279,
+    "max": 0.9924247957189237
+  },
+  "completeFivePhaseCaptures": 18,
+  "fourPhaseWithoutJsonCaptures": 6,
+  "allCountsAllocationZero": true,
+  "wholeStartsAfterOriginalGuardsAndWorkloadKeyReads": true,
+  "sendIncludesDefaultResponseContentReadBufferingAndRemoteInterval": true,
+  "noNetworkVersusServerAttribution": true,
+  "missingJsonIsNotAuthorizationOutcomeOrCancellationEvidence": true,
+  "noOrdinaryLatencyOrBenefitClaim": true,
+  "noOverheadSubtraction": true,
+  "noRequestRootEarlierWaveOrDownstreamJoins": true,
+  "disposedOrUnwoundNotSuccessfulResult": true,
+  "callerWaitCompletionNotChildQuiescence": true
+}

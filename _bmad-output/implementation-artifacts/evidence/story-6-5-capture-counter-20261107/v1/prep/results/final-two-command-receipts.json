@@ -1,0 +1,46 @@
+[
+  {
+    "mode": "symlink-valid",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "symlink-valid"
+    ],
+    "exitCode": 0,
+    "pid": 4136298,
+    "startTicks": "8112542",
+    "processAbsent": true,
+    "resultSha256": "c35974ee98ed7c668644939238704f7cdcc86aaae790be54af9dc5f872e3fbbd",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "bytes": 46,
+        "sha256": "fc746aa5a7091d98a80c3447a0f5e8a18686e1b686a1ffa6d25812e92df24474"
+      }
+    ],
+    "pass": true
+  },
+  {
+    "mode": "fault-unwind",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "fault-unwind"
+    ],
+    "exitCode": 0,
+    "pid": 4136311,
+    "startTicks": "8112569",
+    "processAbsent": true,
+    "resultSha256": "10e381197f2aea984d83e236c78b9dff1f45959e8d6c9f9afa3c0618061ebe6e",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "bytes": 46,
+        "sha256": "17a1559c39e4951450c09295b1f5f4bfdd574e79d1164697d8bd2a2994ed844a"
+      }
+    ],
+    "pass": true
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "label": "03-native-copy-refresh-3",
+  "argv": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-t:Rebuild",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+  "startedUtc": "2026-11-08T03:45:20.116308+00:00",
+  "buildCpuOverride": "2",
+  "pid": 540508,
+  "processGroup": 540508,
+  "startTicks": "14712415",
+  "timedOut": false,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "pidAbsent": true,
+  "finishedUtc": "2026-11-08T03:45:29.531412+00:00",
+  "logSha256": "fbcb66322563c562ffcafb0719199acc0a2b6b048f88499301e140464467e113"
+}

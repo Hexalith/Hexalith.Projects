@@ -1,0 +1,125 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "plannedProcesses": [
+    {
+      "mode": "canary-positive-control",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-current",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-suppressed",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 12
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "delayed-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "caller-cancel-during-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 12
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "delayed-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "caller-cancel-during-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 12
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "delayed-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "caller-cancel-during-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 12
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "delayed-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "caller-cancel-during-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    }
+  ],
+  "processCount": 19,
+  "behavioralCells": 60,
+  "freshCanaries": 3,
+  "privateRole": "gateway",
+  "sameIdentityAlcVariants": true
+}

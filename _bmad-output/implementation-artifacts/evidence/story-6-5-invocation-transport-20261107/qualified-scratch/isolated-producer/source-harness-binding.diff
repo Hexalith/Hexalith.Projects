@@ -1,0 +1,139 @@
+--- prototype9848/scratch_producer.py
++++ final/scratch_producer.py
+@@ -6,6 +6,36 @@
+  with Path(path).open('rb')as f:return hashlib.file_digest(f,'sha256').hexdigest()
+ def save(path,value):
+  (P/path).write_text(json.dumps(value,indent=2)+'\n')
++def verify_bound_source_harness():
++ binding=json.loads((P/'source-harness-binding.json').read_text());prepfile=Path(binding['preparationReceipt'])
++ assert binding['sourcePinsReady']is True and binding['sourceQualificationReady']is False
++ assert not prepfile.is_symlink()and sha(prepfile)==binding['preparationReceiptSha256']
++ metadata=json.loads(prepfile.read_text());source=prepfile.parent
++ assert source==Path('/tmp/story65-invocation-transport-prep-20261107')
++ assert len(metadata['filesSha256'])==binding['preparedFiles']==61
++ assert len(metadata['sourceSha256'])==binding['sourceControls']==55 and len(metadata['app147Sha256'])==binding['appControls']==147
++ assert len(metadata['currentExternalInputsSha256'])==binding['currentExternalInputs']==408 and metadata['sharedInputCount']==binding['sharedInputs']==359
++ assert metadata['coreSourceSha256']==binding['coreSha256']and metadata['originalTargetSha256']==binding['originalSha256']
++ assert metadata['helperSha256']==binding['helperSha256']and metadata['bootstrapSha256']==binding['bootstrapSha256']and metadata['apiSha256']==binding['apiSha256']
++ assert metadata['plannedFocusedBehavioralCells']==80 and metadata['plannedActualSendAsyncEntriesPerVariantAcrossFourModes']==84
++ assert metadata['plannedFirstBusinessCanaries']==3 and metadata['plannedEligibleControlledProcesses']==15 and metadata['plannedGenuineExcludedProcesses']==1
++ assert metadata['concreteHarnessPrepared']is True and metadata['scratchCSharpUncompiled']is True
++ assert metadata['defaultSdkFallbackForbidden']is True and metadata['entryAssemblySetterUsed']is False
++ assert metadata['excludedNoHelperReadyOrFieldReflection']is True and metadata['excludedDoesNotClaimNoCctorWorkerOrAllFiveRealHostsExecuted']is True
++ assert all(metadata[key]==0 for key in ['buildsExecuted','restoresExecuted','assemblyLoadsExecuted','testsExecuted','runsExecuted','hostsStarted','nativeCasesExecuted'])
++ checked={str(prepfile):sha(prepfile)}
++ for relative,digest in metadata['filesSha256'].items():
++  rel=Path(relative);assert not rel.is_absolute()and'..'not in rel.parts;file=source/rel
++  assert file.is_file()and not file.is_symlink()and sha(file)==digest;checked[str(file)]=digest
++ for key in ['sourceSha256','app147Sha256']:
++  for relative,digest in metadata[key].items():
++   rel=Path(relative);assert not rel.is_absolute()and'..'not in rel.parts;file=R/rel
++   assert file.is_file()and not file.is_symlink()and sha(file)==digest;checked[str(file)]=digest
++ for name,digest in metadata['currentExternalInputsSha256'].items():
++  file=Path(name);file=file if file.is_absolute()else R/file
++  assert file.is_file()and not file.is_symlink()and sha(file)==digest;checked[str(file)]=digest
++ assert sha(source/'plugin-driver-interface.json')==binding['apiSha256']
++ return checked
+ def main():
+  ap=argparse.ArgumentParser();ap.add_argument('--execute',action='store_true');ap.add_argument('--pins-sha256');a=ap.parse_args()
+  plan=json.loads((P/'scratch-producer-command-plan.json').read_text());interface=json.loads((P/'oracle-candidate-interface.json').read_text())
+@@ -16,11 +46,12 @@
+  assert pins['allowApplicationBuildNativeOrHosts']is False and pins['sourceQualificationReady']is False
+  for name,digest in pins['files'].items():assert sha(P/name)==digest
+  for name,digest in pins['externalFiles'].items():assert sha(name)==digest
++ prepared_before=verify_bound_source_harness()
+  spec=importlib.util.spec_from_file_location('audit_scratch',P/'audit_sdk_paths.py');audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
+  before=audit.snapshot();assert before==json.loads((P/'readonly-before.json').read_text())
+  private=P/'isolated-sdk';oracle=P/'isolated-oracle';assert not private.exists()and not oracle.exists(),'Fresh output directories required; preserve any failed attempt before a separately reviewed retry'
+  attempts=P/'producer-attempts';attempts.mkdir(mode=0o700,exist_ok=True);work=Path(tempfile.mkdtemp(prefix='attempt-',dir=attempts));save('latest-scratch-producer-attempt.json',{'attemptDirectory':str(work)})
+- receipt={'isolatedScratchProducerOnly':True,'featureAcceptance':False,'applicationBuilds':0,'nativeTestsExecuted':0,'hostsStarted':0,'assemblyLoads':0,'started':False,'completed':False,'rootModulesUnchanged':False,'attemptDirectory':str(work)}
++ receipt={'isolatedScratchProducerOnly':True,'featureAcceptance':False,'applicationBuilds':0,'nativeTestsExecuted':0,'hostsStarted':0,'assemblyLoads':0,'started':False,'completed':False,'rootModulesUnchanged':False,'attemptDirectory':str(work),'sourceHarnessInputsUnchanged':False,'sourceHarnessPreparationReceiptSha256':json.loads((P/'source-harness-binding.json').read_text())['preparationReceiptSha256'],'sourceHarnessInputCount':len(prepared_before)}
+  try:
+   oracle.mkdir(mode=0o700)
+   for source,target,digest in [(interface['oracle']['sourceDll'],interface['oracle']['isolatedDll'],interface['oracle']['dllSha256']),(interface['oracle']['sourcePdb'],interface['oracle']['isolatedPdb'],interface['oracle']['pdbSha256'])]:
+@@ -51,7 +82,9 @@
+   try:
+    after=audit.snapshot();save(work/'after.json',after);receipt['rootModulesUnchanged']=after==before
+   except Exception as failure:receipt['afterAuditFailureType']=type(failure).__name__
++  try:receipt['sourceHarnessInputsUnchanged']=verify_bound_source_harness()==prepared_before
++  except Exception as failure:receipt['sourceHarnessAfterAuditFailureType']=type(failure).__name__
+   receipt['noOrdinarySdkModuleOrApp147Source55Sdk137Server66Gateway34Domain98Writes']=receipt['rootModulesUnchanged'];save(work/'receipt.json',receipt)
+- assert receipt['completed']and receipt['rootModulesUnchanged']
++ assert receipt['completed']and receipt['rootModulesUnchanged']and receipt['sourceHarnessInputsUnchanged']
+  print(json.dumps({'isolatedScratchProducerOnly':True,'completed':True,'rootModulesUnchanged':True,'assemblyLoads':0,'hostsStarted':0}))
+ if __name__=='__main__':main()
+--- prototype9848/PLAN.md
++++ final/PLAN.md
+@@ -2,7 +2,7 @@
+ 
+ Target only Hexalith.EventStore.ServiceDefaults and its own Compile item Routing/RouteCatalogInvocationHandler.cs. Originala59c8093be4a2a112eb64b628cf243a343cb3ad836e3fff2f8dd0fe9450c4854 is a new55th control, not already in the prior54. Private26c6a0312ba2cd47b086a7f3fbaf8bf77452bdfb34e8e189f33456a10f5b6918, unchanged helper112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498 and new bootstrap40eb2532822ec0b759a69ec159926d4f9a87ad5a059ef23944f585107b3485f3 are the only three replacement/additional Compile inputs. Normalization removes9 inserted lines and reverses4 private signature/call extensions to recover the original byte-exact source. Public identity, original transport/lease ownership, callbacks, checks, cancellation and ordering remain the source owner’s review obligations; no production source was edited.
+ 
+-No producer build, restore, copy, subject assembly load, test, application/native/host operation has run. sourcePinsReady=false and every execution/qualification flag is false. The concrete source/harness manifest is pending; a source/plan review is not qualified execution. The disabled wrapper requires both sourcePinsReady and root-released isolated producer build before it can copy or compile. Live operations are deferred and no live/native execution scripts are prepared here.
++No producer build, restore, copy, subject assembly load, test, application/native/host operation has run. sourcePinsReady=true binds the frozen61-file source/harness manifest8d967b31560ce95a630751a2d2b37bc6a9070296d19306ad11785c4b01ca0d36. Every execution and qualification flag remains false; prepared source is not qualified execution. The disabled wrapper requires both sourcePinsReady and root-released isolated producer build before it can copy or compile. Live operations are deferred and no live/native execution scripts are prepared here.
+ 
+ The fresh eligibility bootstrap reads Assembly.GetEntryAssembly()?.GetName().Name on every call, accepting only literal Hexalith.EventStore before invoking the helper. It has no cached eligibility, runtime/env/config key, SetEntryAssembly call or inherited request/Activity read. For eligible calls it suppresses flow only around a noinline helper Begin and restores synchronously before business code; ineligible calls return null before helper initialization. This is reviewed source intent, awaiting actual fresh-process/harness qualification. Fixed Gateway labels apply only to that matching process. Planned spans are Whole at SendAsync entry, the exact invocation.SendAsync child and only the original owned lease.DisposeAsync child. Opaque private capture forwarding does not change public APIs. Missing child stages imply no result or ownership outcome; no previous-probe/root/request join is authorized.
+ 
+@@ -14,4 +14,6 @@
+ 
+ Strong identical before/after snapshots cover source55, current app147, complete ordinary SDK bin/obj SHA/size/inode/mtime/ctime,137 SDK DLL/PDB/ref/refint carriers across root-declared repositories,66 EventStore.Server copies,34 Gateway copies,98 mixed DomainService copies,10 Projects.Server copies and8 coherent SDK runtime DLL/PDB copies. Server’s active baseline isf5edaa, Gateway625e, SDK5bb and Domain1c8; historical unrelated copies retain their own hashes and are not claimed as one generation. Every current baseline must remain exact during isolated production; no ordinary carrier restoration is needed or authorized by file preparation. No mutable DLL/PDB hashes will be external executable-file pins: their bytes remain invariance assertions inside the frozen baseline/interface.
+ 
+-Final producer pins must bind the concrete final source/harness manifest, core/helper/newbootstrap and all directly consumed source/config/API evidence before root can release the producer. Actual compilation must then prove source/profile, actual input hashes, debug identity and all ordinary snapshots unchanged. Actual ALC/fresh-entry qualification and any later native/live plan require separate root review. No authority/token caching, observation pruning, logging/privacy/budget change, broad rebuild, dependency/Git mutation or additional probe is authorized here.
++Final producer pins bind the frozen concrete source/harness manifest, core/helper/newbootstrap/API and every prepared file plus nonbinary source/config/API evidence. Binary shared/app/framework inputs remain immutable-manifest-bound before/after invariance assertions, not mutable DLL/PDB external executable pins. The wrapper checks61 prepared files/55 source/147 app/408 external input hashes (359 shared), planned80 cells/84 actual entries/3 canaries/15 eligible plus1 excluded process and source/eligibility/ALC schema before copying or building, and checks the same inputs in finally. Source qualification remains pending. Actual compilation must then prove source/profile, actual input hashes, debug identity and all ordinary snapshots unchanged. Actual ALC/fresh-entry qualification and any later native/live plan require separate root review. No authority/token caching, observation pruning, logging/privacy/budget change, broad rebuild, dependency/Git mutation or additional probe is authorized here.
++
++The earlier prototype9848 and unexecuted07aa-bound disabled468 generation remain immutable under history/. The07aa preparation receipt/controller0ddd are preserved outside source prep under /tmp/story65-invocation-transport-prep-history-20261107/07aa. The sole harness fix f1ce now includes every408 manifest external input in each before/after child snapshot, normalizing relative inputs under the workspace; producer validation uses the same rule. This is a pre-execution guard correction, not a failed business qualification.
+--- prototype9848/preparation-status.json
++++ final/preparation-status.json
+@@ -1,10 +1,10 @@
+ {
+   "preparationOnly": true,
+-  "sourcePinsReady": false,
++  "sourcePinsReady": true,
+   "sourceQualificationReady": false,
+   "allowIsolatedScratchProducerBuild": false,
+   "allowApplicationBuildNativeOrHosts": false,
+-  "concreteSourceHarnessManifestPending": true,
++  "concreteSourceHarnessManifestPending": false,
+   "producerOnlyLiveOperationsDeferred": true,
+   "sourceControls": 55,
+   "appControls": 147,
+@@ -16,5 +16,10 @@
+   ],
+   "producerNonexecutingPlanPassed": true,
+   "noBuildCopySubjectLoadTestNativeOrHostExecuted": true,
+-  "oracleAndIsolatedOutputAbsent": true
++  "oracleAndIsolatedOutputAbsent": true,
++  "fullSourceHarnessManifestSha256": "8d967b31560ce95a630751a2d2b37bc6a9070296d19306ad11785c4b01ca0d36",
++  "sourceHarnessFiles": 61,
++  "sourceHarnessExternalInputs": 408,
++  "sourceHarnessSharedInputs": 359,
++  "sourceHarnessUncompiled": true
+ }
+--- prototype9848/source-harness-binding.json
++++ final/source-harness-binding.json
+@@ -0,0 +1,26 @@
++{
++  "preparationOnly": true,
++  "sourcePinsReady": true,
++  "sourceQualificationReady": false,
++  "preparationReceipt": "/tmp/story65-invocation-transport-prep-20261107/preparation-receipt.json",
++  "preparationReceiptSha256": "8d967b31560ce95a630751a2d2b37bc6a9070296d19306ad11785c4b01ca0d36",
++  "preparedFiles": 61,
++  "sourceControls": 55,
++  "appControls": 147,
++  "sharedInputs": 359,
++  "currentExternalInputs": 408,
++  "coreSha256": "26c6a0312ba2cd47b086a7f3fbaf8bf77452bdfb34e8e189f33456a10f5b6918",
++  "originalSha256": "a59c8093be4a2a112eb64b628cf243a343cb3ad836e3fff2f8dd0fe9450c4854",
++  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
++  "bootstrapSha256": "40eb2532822ec0b759a69ec159926d4f9a87ad5a059ef23944f585107b3485f3",
++  "apiSha256": "41cce04f1e2d6e97e840980ed03713e20d751ec5665b6349045999ceea410cf9",
++  "plannedBehavioralCells": 80,
++  "plannedActualSendAsyncEntriesPerVariant": 84,
++  "plannedFreshCanaries": 3,
++  "plannedEligibleProcesses": 15,
++  "plannedExcludedProcesses": 1,
++  "actualCompilationQualificationNativeOrHostExecuted": false,
++  "binaryInputsBoundByImmutableManifestAndCheckedBeforeAfterNotMutableExecutablePins": true,
++  "priorUnexecutedPreparationReceiptSha256": "07aa7155ccf0ca292aad9683bb367782acb34033818a0e7fcfee32e534cd6223",
++  "currentExternalRelativeKeysNormalizedUnderWorkspace": true
++}

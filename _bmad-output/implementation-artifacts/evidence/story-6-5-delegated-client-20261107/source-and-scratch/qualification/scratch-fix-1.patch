@@ -1,0 +1,10 @@
+--- a/driver/ProbeDaprFactory.cs
++++ b/driver/ProbeDaprFactory.cs
+@@ -4,6 +4,7 @@
+ using System.Text.Json;
+ using Dapr.Client;
+ using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Contracts.Queries;
+ using NSubstitute;
+ 
+ internal static class ProbeDaprFactory

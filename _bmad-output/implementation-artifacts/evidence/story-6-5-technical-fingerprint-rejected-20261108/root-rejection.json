@@ -1,0 +1,73 @@
+{
+  "decision": "REJECT current technical request/response string-key memo for production",
+  "reason": "No consistent complete-pass wall/CPU gain. All six two-/four-reader warm allocation comparisons are about13.6% higher; single-reader allocation contains an impossible negative delta and a large positive outlier, so no clean single-reader allocation estimate is claimed.",
+  "parityChecks": 386,
+  "batches": 54,
+  "observations": 2079,
+  "eligibleMarkedEndpoints": 103,
+  "constrainedEndpoints": 3,
+  "warmCandidateVsActual": [
+    {
+      "readers": 1,
+      "amortizedWallRatio": 1.0465119494529493,
+      "cpuRatio": 1.037495124295413,
+      "originalUnqualifiedPublishedAllocatedBytesRatio": 1.1365561782083966,
+      "allocatedBytesRatio": null
+    },
+    {
+      "readers": 2,
+      "amortizedWallRatio": 0.9136329959392206,
+      "allocatedBytesRatio": 1.1358798199057583,
+      "cpuRatio": 0.8830689144591752
+    },
+    {
+      "readers": 4,
+      "amortizedWallRatio": 1.1019226388322927,
+      "allocatedBytesRatio": 1.1360968074987907,
+      "cpuRatio": 1.0387962633130459
+    }
+  ],
+  "memoMaximumEntries": 256,
+  "memoMaximumChargedBytes": 2097152,
+  "runtimeGroupAbsentIncludingZombies": true,
+  "productionEdits": false,
+  "featureAcceptance": false,
+  "hostDeadlineClaimed": false,
+  "ordinaryAcceptanceUnchanged": "SINGLE1/1; MULTIPLE30/0; browser0",
+  "doNotTuneOrRerunCurrentDesign": true,
+  "pinnedEvidenceSha256": {
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/summary.json": "b0cfe71f6f0bbd3bdf701553434e7ebb955b99387ee308a8a09a59500c5c3cc3",
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/raw-batches.jsonl": "08bb965bb605e779c27c458f7894f729286b71223c5a10e2cf29799a7f19960b",
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/parity.json": "d964cc2a8b55bf3b0c7d1ec073afbc2877dcfe38d938d4b10300495dbb032d6f",
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/corpus-counts.json": "c778b4bdddb4721064d95841961b4413711fcf49cc7643ad9094af35c2508e1e",
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/runtime-facts.json": "41f0e5dac5b3f576b8097b695d327a854d89e2ca394c809953a7d51929f3f2f7",
+    "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/closed.json": "0ed14a805e4e6f1f5b76b0d59c4574c4f36ca48290e16c5a117627ca8ab371fc",
+    "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/runtime-release.json": "5221005e0d7be369d199fc383d7ca03dc18eb9643b1ffc3e6f030f07e9b4c178",
+    "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/runtime-receipt.json": "f190fe7baceaa1e912f7587023dbea3c33bfb367ae3aaf24ab36d1fe864d313d",
+    "/tmp/story65-technical-fingerprint-prep-20261108/preparation-receipt.json": "d1f1239af7879f498dc8765325ed1ffda10114286f68845340dc0e8a5976a8ad"
+  },
+  "decisionRevision": 2,
+  "priorUnqualifiedDecisionSha256": "88f152bace63ca0592e7f3eab1fee7de2168acee39e6e4d93369d162a38a25f5",
+  "allocationMeasurementLimit": {
+    "invalidCell": {
+      "variant": "candidate",
+      "state": "warm",
+      "readers": 1,
+      "round": 2,
+      "allocatedBytes": -186168048
+    },
+    "singleReaderOtherPairedRawRatios": [
+      1.1380521093299591,
+      2.943434055937409
+    ],
+    "singleReaderCleanAllocationEstimateClaimed": false,
+    "twoAndFourReaderSixRoundAllocationRatioRange": [
+      1.1356952776502787,
+      1.1363447783977207
+    ],
+    "rawSummaryRetainedWithInvalidCellInfluenceExplicit": true,
+    "causeInferred": false,
+    "rawValuesRedistributedOrCorrected": false,
+    "allRawCostsValidClaimed": false
+  }
+}

@@ -1,0 +1,613 @@
+{
+  "namespace": "Xunit.Runner.Common",
+  "name": "XmlV2ResultWriter",
+  "metadata_name": "XmlV2ResultWriter",
+  "definition_name": {
+    "namespace": "Xunit.Runner.Common",
+    "segments": [
+      "XmlV2ResultWriter"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "class",
+  "attributes": [],
+  "has_union_attribute": false,
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+    "type_token": 33554703,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": true,
+  "is_abstract": false,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "base_type": "System.Object",
+  "interfaces": [
+    "Xunit.Runner.Common.IConsoleResultWriter",
+    "Xunit.Runner.Common.IResultWriter",
+    "Xunit.Internal.ILegacyConsoleResultWriter",
+    "Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter"
+  ],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": "CreateMessageHandler",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.ValueTask\u003CXunit.Runner.Common.IResultWriterMessageHandler\u003E CreateMessageHandler(string fileName, Xunit.Sdk.IMessageSink? diagnosticMessageSink)",
+      "digest": "a0d6b81414",
+      "canonical_signature": "M:Xunit.Runner.Common.XmlV2ResultWriter.CreateMessageHandler(string,Xunit.Sdk.IMessageSink?)",
+      "metadata_token": 100665249,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665249,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "method_token": 100665249,
+        "attributes": "Public, Final, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": ".ctor",
+      "kind": "constructor",
+      "attributes": [],
+      "signature": "void .ctor()",
+      "digest": "be8590c7f1",
+      "canonical_signature": "M:Xunit.Runner.Common.XmlV2ResultWriter.#ctor()",
+      "metadata_token": 100665250,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665250,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "method_token": 100665250,
+        "attributes": "Public, HideBySig, SpecialName, RTSpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.DefaultFileExtension",
+      "kind": "property",
+      "attributes": [],
+      "is_explicit_interface_implementation": true,
+      "signature": "string Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.DefaultFileExtension { get; }",
+      "digest": "e5325345c7",
+      "canonical_signature": "P:Xunit.Runner.Common.XmlV2ResultWriter.Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.DefaultFileExtension",
+      "index_parameter_count": 0,
+      "getter_token": 100665244,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876453,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665244,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876453
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "convention": "AutoProperty",
+        "state": "Unknown",
+        "candidates": []
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "method_token": 100665244,
+          "attributes": "Private, Final, Virtual, HideBySig, NewSlot, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Xunit.Runner.Common.IConsoleResultWriter.Description",
+      "kind": "property",
+      "attributes": [],
+      "is_explicit_interface_implementation": true,
+      "signature": "string Xunit.Runner.Common.IConsoleResultWriter.Description { get; }",
+      "digest": "db0476219f",
+      "canonical_signature": "P:Xunit.Runner.Common.XmlV2ResultWriter.Xunit.Runner.Common.IConsoleResultWriter.Description",
+      "index_parameter_count": 0,
+      "getter_token": 100665245,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876454,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665245,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876454
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "convention": "AutoProperty",
+        "state": "Unknown",
+        "candidates": []
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "method_token": 100665245,
+          "attributes": "Private, Final, Virtual, HideBySig, NewSlot, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.Description",
+      "kind": "property",
+      "attributes": [],
+      "is_explicit_interface_implementation": true,
+      "signature": "string Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.Description { get; }",
+      "digest": "87437f99cc",
+      "canonical_signature": "P:Xunit.Runner.Common.XmlV2ResultWriter.Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.Description",
+      "index_parameter_count": 0,
+      "getter_token": 100665246,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876455,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665246,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876455
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "convention": "AutoProperty",
+        "state": "Unknown",
+        "candidates": []
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "method_token": 100665246,
+          "attributes": "Private, Final, Virtual, HideBySig, NewSlot, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.FileNameDescription",
+      "kind": "property",
+      "attributes": [],
+      "is_explicit_interface_implementation": true,
+      "signature": "string Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.FileNameDescription { get; }",
+      "digest": "cc392527e2",
+      "canonical_signature": "P:Xunit.Runner.Common.XmlV2ResultWriter.Xunit.Runner.Common.IMicrosoftTestingPlatformResultWriter.FileNameDescription",
+      "index_parameter_count": 0,
+      "getter_token": 100665247,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876456,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665247,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876456
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "convention": "AutoProperty",
+        "state": "Unknown",
+        "candidates": []
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "method_token": 100665247,
+          "attributes": "Private, Final, Virtual, HideBySig, NewSlot, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Xunit.Internal.ILegacyConsoleResultWriter.LegacyID",
+      "kind": "property",
+      "attributes": [],
+      "is_explicit_interface_implementation": true,
+      "signature": "string Xunit.Internal.ILegacyConsoleResultWriter.LegacyID { get; }",
+      "digest": "5b6f648074",
+      "canonical_signature": "P:Xunit.Runner.Common.XmlV2ResultWriter.Xunit.Internal.ILegacyConsoleResultWriter.LegacyID",
+      "index_parameter_count": 0,
+      "getter_token": 100665248,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876457,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665248,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876457
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "convention": "AutoProperty",
+        "state": "Unknown",
+        "candidates": []
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+          "method_token": 100665248,
+          "attributes": "Private, Final, Virtual, HideBySig, NewSlot, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    }
+  ],
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Xunit.Runner.Common.XmlV2ResultWriter",
+  "documentation": {
+    "samples": []
+  }
+}

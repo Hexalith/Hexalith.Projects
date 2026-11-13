@@ -1,0 +1,69 @@
+{
+  "filePreparationOnly": true,
+  "staticSourceWitness": true,
+  "freshInstalledRuntimeEndpointFactoryInspectionClaimed": false,
+  "sourcePathsSha256": {
+    "src/Hexalith.Projects.Server/Program.cs": "365b37e238ab181dda447cd6051acfdb093b234f902e73d49ae7dab4fb32e1bd",
+    "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs": "8261fa7a5c840b34d1e93165664ae47a7296c933b95e0d6ac8314bffad5520be",
+    "src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs": "b7616fe9e3cc87def0526b56d411dc722348eb490e1c25a723633849be518174",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Program.cs": "9e2b0a9d867255a37d6edd083a2f0593cdcbef5f558d37db1a471f22abb167bc",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs": "ddf301704d8cb5768dd94e94291968ff458b899bad90c6adcfa7f32ce5fa2261",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDomainServiceEndpoints.cs": "1effa5b126098750d7f1315d9310e5ab6d71b10c5c2154eb7fa60ba138397bfa",
+    "references/Hexalith.Tenants/src/Hexalith.Tenants/Program.cs": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/EventStoreDomainServiceExtensions.cs": "6ec88a5f602421ebf6737c5b416246779c6d040d8d5dba2cdf721b6fa3328c1d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/EventStoreDomainServiceSecurityExtensions.cs": "c8f03b045b564a3fb6c723126a8c3269566c8a0545e37585642abebf4c6822c5",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs": "3687e39c6e0fdd44c2c8b07da4bd389d60dbf3c66f19a25b1baf252f94b3fd9d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuard.cs": "5727c26eb6589389f483f51e8ee3895344d790676e0758941a436cd4381a238e",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs": "9b4bf0f605d150273381baeeb587b96b83906672689bff92e80b65fe4cb9760d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/IDomainRouteCatalogGuard.cs": "325f2d5df1aa01153927573d6e4460d9ab5764a9a42e082bd01d530251893e64",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogDecision.cs": "fd17604c89f07b15ed128c7d59656b11dfb48bed6ccf76fbdf5f9502c5332a4d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuardMetadata.cs": "c897d699384d77782c9ade29003d47d8a757e5298c946d61ff6dbd4035f598f7"
+  },
+  "hostChains": {
+    "projects": {
+      "entryMapsProjectsServerEndpoints": true,
+      "developmentCatalogBranchCallsRequireEventStoreDomainServicePolicy": true,
+      "branchRequiresAuthoritySecurityAndDevelopmentCatalogProfile": true
+    },
+    "tenants": {
+      "entryCallsUseEventStoreDomainService": true,
+      "commonQueryMapCallsRequireEventStoreDomainServicePolicy": true
+    },
+    "folders": {
+      "entryUsesFoldersServerPipeline": true,
+      "queryHasUnconditionalFirstRequirePolicyCall": true,
+      "secondRequirePolicyCallCondition": "HumanAuthorityReceiptVerifier service is not null",
+      "bothCallsPreservedNotDeduplicated": true,
+      "expectedFiltersWhenBothOriginalConditionsHold": 2
+    }
+  },
+  "commonConvention": {
+    "routeHandlerBuilderAddsActualDomainRouteCatalogFilter": true,
+    "routeHandlerBuilderAddsDomainRouteCatalogGuardMetadata": true,
+    "noTechnicalHttpReceiverInference": true
+  },
+  "typedSyntheticFixture": {
+    "path": "/tmp/story65-domain-receiver-phase-prep-20261108/companion/CaseHandle.cs",
+    "sha256": "36fc14331f0d23ef274553d98822d0495bf266f436cbe7aecda510a8d7591f8e",
+    "realTypes": [
+      "DomainRouteCatalogFilter",
+      "DomainRouteCatalogGuard",
+      "DomainRouteCatalogResult",
+      "RouteCatalogDispatchLease"
+    ],
+    "nestedScenarioConstructsDistinctActualFilters": 2,
+    "nestedScenarioCallsActualInvokeAsyncTwice": true,
+    "expectedAuthorityAcquisitionsAndLeases": 2,
+    "expectedPerCaptureMasks": 255,
+    "actualCompilationExecutionAndCounterProofPending": true
+  },
+  "nativeSelection": {
+    "path": "/tmp/story65-domain-receiver-phase-prep-20261108/native-reference-case-set.json",
+    "sha256": "c692fb41ac9e9cf01841b28c7d56e597ea504cc587d6dedce6d8fead9e9d176a",
+    "sourceDerivedCasesPerVariant": 103,
+    "actualNativeExecutionPending": true,
+    "notAddedToOrdinary1048": true
+  },
+  "qualificationRequirement": "actual per-entry admission, live-before-result phase2 and final-after-release closure checks are required; entry name and mapped DLL alone do not establish installed filter count",
+  "liveRequirement": "Root must bind exact host source-chain/profile proof and actual mapped DomainService producer; static witness and synthetic typed pipeline are not fresh installed-runtime endpoint-factory inspection"
+}

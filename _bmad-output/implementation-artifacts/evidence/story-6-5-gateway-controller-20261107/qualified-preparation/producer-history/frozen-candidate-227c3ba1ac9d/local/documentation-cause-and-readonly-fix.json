@@ -1,0 +1,16 @@
+{
+  "failedProducerPins": "3e3d28799c462e51455c7260fe3eaf30aaf363a0cbe681aa20c56465366c19fc",
+  "failedLogSha256": "f5e6dffecf4aaa0fd0fcbabb0477508b60dd1ac550160de823d308e610ea8ec3",
+  "uniqueErrors": {
+    "CS1591": 102,
+    "CS1573": 2,
+    "CS1734": 1
+  },
+  "warnings": 0,
+  "cause": "SDKBeforeCommon301\u2013312 disables/clears docs for GenerateDocumentationFile=false; late unconditional DocumentationFile reintroduced a nonempty Csc DocFileItem. Existing documentation diagnostics became errors under unchanged TreatWarningsAsErrors=true.",
+  "minimalXmlChange": "Removed only unconditional DocumentationFile; ordinary and corrected private both GenerateDocumentationFile=false/DocumentationFileempty.",
+  "noDocumentationEditsNoWarnOrTreatWarningsAsErrorsChanges": true,
+  "failedAttemptPreservation": "failed-attempt-3e3d/preservation-receipt.json",
+  "latestFailedGenerationBinding": "latest-failed-output-binding.json",
+  "noBuildReproOrLoad": true
+}

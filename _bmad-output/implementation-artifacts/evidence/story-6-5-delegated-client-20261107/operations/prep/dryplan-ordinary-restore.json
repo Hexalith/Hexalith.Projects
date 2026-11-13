@@ -1,0 +1,35 @@
+{
+  "preparationOnly": true,
+  "phase": "ordinary",
+  "sourceChecks": {
+    "ownerSource48Match": true,
+    "extraCaptureSourceMatch": true,
+    "ordinaryExecutorExtraMatch": true,
+    "ordinaryDelegatedClientExtraMatch": true,
+    "sourceCount": 51,
+    "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+    "privateClientSha256": "96b86cb2880e7d1cd5937c9c47dfa792a93029ee1f145b2c8d88b29f2fe426ae",
+    "firstEntryBootstrapSha256": "8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375"
+  },
+  "privateDirectory": {
+    "uid": 1000,
+    "device": 2096,
+    "inode": 8752986,
+    "mode": "0700",
+    "symlink": false
+  },
+  "sevenMappingValuesPreserved": true,
+  "newRuntimeEnvironmentKeys": false,
+  "strategy": "FORCE exactly nine projects in producer/six-entry/AppHost/Integration order with BuildProjectReferences=false; ordinary phase refreshes only remaining incoherent affected/known DomainService DLL/PDB/ref/refint carriers",
+  "projects": {
+    "domain-service-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+    "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+    "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+    "apphost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+    "integration": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+  }
+}

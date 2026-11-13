@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="Story65GatewayControllerSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <ItemGroup>
+      <Compile Remove="../Hexalith.EventStore/Controllers/QueriesController.cs" />
+      <Compile Include="/tmp/story65-gateway-controller-prep-20261107/QueriesController.private.cs" />
+      <Compile Include="/tmp/story65-gateway-controller-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-gateway-controller-prep-20261107/GatewayControllerBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

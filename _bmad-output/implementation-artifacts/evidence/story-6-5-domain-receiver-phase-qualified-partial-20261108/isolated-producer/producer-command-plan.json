@@ -1,0 +1,41 @@
+{
+  "filePreparationOnly": true,
+  "executed": false,
+  "command": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "-c",
+    "Debug",
+    "-t:Build",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:BuildProjectReferences=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-scratch.props"
+  ],
+  "buildProcessorCountOnly": 2,
+  "runtimeProcessorOverrideAbsent": true,
+  "sourceQualificationReady": false,
+  "allowIsolatedBuild": false,
+  "readOnlyCommands": [
+    [
+      "python3",
+      "/tmp/story65-domain-receiver-phase-producer-prep-20261108/audit_domain_paths.py",
+      "--ordinary-only"
+    ],
+    [
+      "python3",
+      "/tmp/story65-domain-receiver-phase-producer-prep-20261108/audit_domain_paths.py",
+      "--evaluate-readonly"
+    ],
+    [
+      "python3",
+      "/tmp/story65-domain-receiver-phase-producer-prep-20261108/audit_domain_paths.py",
+      "--validate-order-readonly"
+    ]
+  ]
+}

@@ -1,0 +1,2 @@
+using Hexalith.EventStore.Contracts.Routing;using Hexalith.EventStore.ServiceDefaults.Routing;
+internal delegate IReadOnlyList<RouteCatalogHttpGrant> ConcreteGrants(TechnicalHttpRouteCatalogReceiver receiver,RouteCatalogTechnicalHttpEndpoint endpoint,TechnicalHttpObservationPass pass);

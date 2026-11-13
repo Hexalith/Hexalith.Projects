@@ -1,0 +1,80 @@
+{
+  "preparationOnly": true,
+  "runsExecuted": 0,
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "bootstrapSha256": "8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375",
+  "fixedRole": "projects",
+  "selection": "workload == projects, only after original guards; workload value never enters helper",
+  "stages": [
+    {
+      "serialized": "Whole",
+      "alias": "WholePublicInvoke",
+      "number": 0
+    },
+    {
+      "serialized": "ComponentFile",
+      "alias": "IssuerAcquisition",
+      "number": 1
+    },
+    {
+      "serialized": "ComponentPolicy",
+      "alias": "HttpRequestAndProof",
+      "number": 2
+    },
+    {
+      "serialized": "AclFile",
+      "alias": "SendAndBuffer",
+      "number": 3
+    },
+    {
+      "serialized": "SettingsEnumerationSortDictionary",
+      "alias": "JsonBody",
+      "number": 4
+    }
+  ],
+  "unusedStages": [
+    5,
+    6,
+    7
+  ],
+  "rowJoin": "opaque captureOrdinal within one method invocation only; no request/trace/downstream joins",
+  "allocationMode": 0,
+  "allocatedBytes": 0,
+  "allSixCountColumns": 0,
+  "CountCalls": 0,
+  "maximumWindowSeconds": 8,
+  "queueCapacity": 4096,
+  "maximumRows": 65536,
+  "maximumBytes": 8388608,
+  "sinkDirectoryPin": {
+    "device": 2096,
+    "inode": 8752986,
+    "uid": 1000,
+    "mode": "0700"
+  },
+  "phaseCaveats": [
+    "Acquisition includes gateway configuration lookup, IssueAsync and the unchanged ValueTask bounded/unbounded await branch",
+    "HttpRequestAndProof excludes the outer DTO construction; proof failure may include message.Dispose while unwinding",
+    "SendAndBuffer includes CreateClient, default ResponseContentRead buffering, remote transit and HttpClient internal failure cleanup",
+    "JsonBody stops immediately after original ReadFromJsonAsync, before result mapping",
+    "Whole includes original inner response/request disposal, final timeout check and public CTS disposal",
+    "Whole minus phases is unattributed preparation/mapping/check/cleanup; not exact disposal",
+    "Missing JSON phase does not reveal an owner decision or result"
+  ],
+  "processPlan": {
+    "first": [
+      "unsafe-positive-control",
+      "first-business-normal-context",
+      "first-business-pre-suppressed-context"
+    ],
+    "behavioralModes": [
+      "disabled",
+      "active",
+      "capped",
+      "failing-sink"
+    ],
+    "slowCases": "fresh helper process/window per slow case, exact eligible admission required",
+    "stopOnPrivacyCanaryFailure": true,
+    "cleanup": "only fixed synthetic files after owned process exit, complete closed receipt and archive; preserve failures"
+  }
+}

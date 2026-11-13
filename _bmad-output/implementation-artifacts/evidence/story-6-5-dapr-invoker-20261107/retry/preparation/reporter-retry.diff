@@ -1,0 +1,1766 @@
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/ops_common.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/ops_common.py
+@@ -1,7 +1,7 @@
+ from pathlib import Path
+ import hashlib,json,os,re,stat
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+-PREP=Path('/tmp/story65-dapr-invoker-ops-prep-20261107/live')
++PREP=Path('/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry')
+ PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
+ SDK='Hexalith.EventStore.ServiceDefaults'
+ SDK_PRODUCER=ROOT/'references/Hexalith.EventStore/src'/SDK
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/native_qualification.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native_qualification.py
+@@ -30,7 +30,7 @@
+  suffix=name[len(typ+'.'+method):]if name.startswith(typ+'.'+method)else''
+  if selection['canonicalKind']=='exact-status-rendered-display-sha256':
+   digest=hashlib.sha256((t.get('name')or'').encode()).hexdigest()
+-  matches=[row['canonicalCase']for row in selection['exactRenderedDisplayIdentities']if row['exactRenderedDisplayNameSha256']==digest]
++  matches=[row['canonicalCase']for row in selection['exactRenderedDisplayIdentities']if row['exactParsedXmlNameSha256']==digest]
+   assert len(matches)==1 and matches[0][0]==typ and matches[0][1]==method
+   return tuple(matches[0])
+  if selection['canonicalKind']=='response-nested':
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/supervise_managed.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/supervise_managed.py
+@@ -3,7 +3,7 @@
+ from ops_common import *
+ 
+ parser=argparse.ArgumentParser();parser.add_argument('--execute',action='store_true');parser.add_argument('--pins-sha256');args=parser.parse_args()
+-EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-20261107')
++EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-retry-20261107')
+ command=[sys.executable,str(PREP/'launch_managed.py'),'--operational-pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED','--browser','--timeout','900','--evidence',str(EVIDENCE/'managed')]
+ plan={'preparationOnly':not args.execute,'command':command,'cwd':str(ROOT),'noNewRuntimeEnvironmentOrConfigurationKeys':True,'naturalCpuOverrideAbsent':True,'noRuntimeSourceHook':True,'fixedPrivateControlPath':str(PRIVATE/'window.control'),'eightSecondAdmissionOnlyAfterFailedMultiple':True,'noCutoffOrTargetSignals':True,'diagnosticOnly':True,'featureAcceptance':False}
+ def valid_multi(row):
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/run_and_restore.py
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/run_and_restore.py
+@@ -7,7 +7,7 @@
+ commands['native15']=[sys.executable,str(PREP/'native_qualification.py'),'--execute','--pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED']
+ if not args.execute:print(json.dumps({'preparationOnly':True,'commands':commands,'finally':'Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories.'},indent=2));raise SystemExit()
+ operational_pins(args.pins_sha256);sources();private_directory(require_empty=True)
+-EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-20261107');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native15Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
++EVIDENCE=Path('/tmp/story65-dapr-invoker-diagnostic-retry-20261107');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native15Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
+ try:
+  status['privateAttempted']=True;status['privateExitCode']=subprocess.run(commands['private'],cwd=ROOT).returncode
+  if status['privateExitCode']==0:
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/affected-inventory.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/affected-inventory.json
+@@ -14,438 +14,438 @@
+   "nativeProject": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+   "allGatewayBaseline": [
+     {
++      "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
++    },
++    {
++      "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
++    },
++    {
++      "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "564eead84707b7839eaa74ca6da8e3a0964affb95e7f6cfaea0d9e336fcd8962",
++      "bytes": 260040,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
++    },
++    {
++      "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "14a89ced7257c74fb934763430df2f34aadee394e0fd51e07b61cfe4574c6155",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
++    },
++    {
++      "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
++    },
++    {
++      "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
++    },
++    {
++      "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
++    },
++    {
++      "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "44ef6198073ec5f6f53c552bdd7280131a38b3c9111860ac1a625f5ecb618aab",
++      "bytes": 259216,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "71c06d3cabf17f6955e9c612d079b3e9d44289e638d14e91d8a547f37d1b9687",
++      "bytes": 986112,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "494f58d1340680ccb81d4a8205a15150c26dd7c56c57342a0d8acc23c69a7ae2",
++      "bytes": 250928,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "f99c0103f35a2cecb8bea044eeb3032b676861a189b8aac7f59f86ec1460d336",
++      "bytes": 948224,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/ref/Hexalith.EventStore.Gateway.dll",
++      "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
++      "bytes": 232960,
++      "kind": "ref",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/refint/Hexalith.EventStore.Gateway.dll",
++      "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
++      "bytes": 232960,
++      "kind": "refint",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "e21d7b51f2dfdde53b3e1ea30043468ea757c6a248fb100046aece6eebbeccc3",
++      "bytes": 259168,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "76d5e812c36e1e3718a42f1f33163a5e276551d7f106fcf853e1643191d28d78",
++      "bytes": 986112,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "97dbe12e8949429ebe4d9a23df3e1ad7755ed95ccc4839b2c200c8f5efc91358",
++      "bytes": 250860,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/Hexalith.Tenants.IntegrationTests.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "1fec47b857302e583f9c147d6cca9c1dab1548a44a0baf626faa89f8786b9dbc",
++      "bytes": 948224,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/Hexalith.Tenants.IntegrationTests.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj"
++    },
++    {
++      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj"
++    },
++    {
++      "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj"
++    },
++    {
++      "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj"
++    },
++    {
+       "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+       "sha256": "c1fb5099a673583d14dcbacb0f214da71ddfe9d6661419289a1959cd46c490de",
+-      "kind": "full",
+-      "project": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj",
+       "bytes": 864256,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/ref/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
+-      "kind": "ref",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 232960,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/refint/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
+-      "kind": "refint",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 232960,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "71c06d3cabf17f6955e9c612d079b3e9d44289e638d14e91d8a547f37d1b9687",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+-      "bytes": 986112,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "44ef6198073ec5f6f53c552bdd7280131a38b3c9111860ac1a625f5ecb618aab",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+-      "bytes": 259216,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f99c0103f35a2cecb8bea044eeb3032b676861a189b8aac7f59f86ec1460d336",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+-      "bytes": 948224,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "494f58d1340680ccb81d4a8205a15150c26dd7c56c57342a0d8acc23c69a7ae2",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+-      "bytes": 250928,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj"
++    },
++    {
++      "path": "references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "a6a74bfb0bb81030cb43508bc0e4cc1673a8d34b8b0923a79e6a17112536f0cf",
++      "bytes": 827392,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj"
++    },
++    {
++      "path": "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
++      "sha256": "a6a74bfb0bb81030cb43508bc0e4cc1673a8d34b8b0923a79e6a17112536f0cf",
++      "bytes": 827392,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj"
+     },
+     {
+       "path": "references/Hexalith.Platform/src/Hexalith.Platform.EventStoreHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+       "sha256": "a6a74bfb0bb81030cb43508bc0e4cc1673a8d34b8b0923a79e6a17112536f0cf",
+-      "kind": "full",
+-      "project": "references/Hexalith.Platform/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj",
+       "bytes": 827392,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "a6a74bfb0bb81030cb43508bc0e4cc1673a8d34b8b0923a79e6a17112536f0cf",
+-      "kind": "full",
+-      "project": "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj",
+-      "bytes": 827392,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "a6a74bfb0bb81030cb43508bc0e4cc1673a8d34b8b0923a79e6a17112536f0cf",
+-      "kind": "full",
+-      "project": "references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+-      "bytes": 827392,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "1fec47b857302e583f9c147d6cca9c1dab1548a44a0baf626faa89f8786b9dbc",
+-      "kind": "full",
+-      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/Hexalith.Tenants.IntegrationTests.csproj",
+-      "bytes": 948224,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "97dbe12e8949429ebe4d9a23df3e1ad7755ed95ccc4839b2c200c8f5efc91358",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/Hexalith.Tenants.IntegrationTests.csproj",
+-      "bytes": 250860,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "76d5e812c36e1e3718a42f1f33163a5e276551d7f106fcf853e1643191d28d78",
+-      "kind": "full",
+-      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+-      "bytes": 986112,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "e21d7b51f2dfdde53b3e1ea30043468ea757c6a248fb100046aece6eebbeccc3",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+-      "bytes": 259168,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "14a89ced7257c74fb934763430df2f34aadee394e0fd51e07b61cfe4574c6155",
+-      "kind": "full",
+-      "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
+-    },
+-    {
+-      "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "564eead84707b7839eaa74ca6da8e3a0964affb95e7f6cfaea0d9e336fcd8962",
+-      "kind": "pdb",
+-      "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+-      "bytes": 260040,
+-      "privateMarker": false
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Platform/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj"
+     }
+   ],
+   "knownGatewayCopies": [
+     {
+       "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+     },
+     {
+       "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+     },
+     {
+       "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+     },
+     {
+       "path": "src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+     },
+     {
+       "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
+     },
+     {
+       "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/ref/Hexalith.EventStore.Gateway.dll",
+       "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
++      "bytes": 232960,
+       "kind": "ref",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 232960,
+-      "privateMarker": false
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/refint/Hexalith.EventStore.Gateway.dll",
+       "sha256": "98f23df24f8e49eb1ef7086e9bbde5ce3b30d5a3b262218935aaa3d6ff627a0c",
++      "bytes": 232960,
+       "kind": "refint",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 232960,
+-      "privateMarker": false
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj"
+     },
+     {
+       "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj"
+     },
+     {
+       "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj"
+     },
+     {
+       "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-      "sha256": "80b1c55926f1fcde213b97e0431f52b7e0ff63a8a3324c0735a47699b7a7726a",
+-      "kind": "pdb",
+-      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+-      "bytes": 260060,
+-      "privateMarker": false
++      "sha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++      "bytes": 260156,
++      "kind": "pdb",
++      "privateMarker": false,
++      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj"
+     },
+     {
+       "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-      "sha256": "f629308af83ba10035a2feb5e2b0099400ddfdacad4f0caed306146bbd618488",
+-      "kind": "full",
+-      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+-      "bytes": 989184,
+-      "privateMarker": false
++      "sha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++      "bytes": 989184,
++      "kind": "full",
++      "privateMarker": false,
++      "project": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj"
+     }
+   ],
+   "knownServiceDefaultsCopies": [
+@@ -1344,5 +1344,7 @@
+     }
+   ],
+   "foldersEventStoreProject": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+-  "baselineGenerationNote": "Current ordinary Gateway f629/PDB80b1; 20 known affected carriers and 14 unrelated baseline paths. Actual affected union must be recomputed after private build/native."
++  "baselineGenerationNote": "Retry baseline after independent ordinary restoration: Gateway2a67/PDB79cf. All20 affected carrier paths match current full/PDB/ref/refint producer kinds;18 of those hashes changed and2 reference hashes stayed equal. All14 unrelated paths retained. Actual future affected union is recomputed after private/native.",
++  "ordinaryGatewayProducerSha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++  "ordinaryGatewayProducerPdbSha256": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec"
+ }
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/native-reference-case-set.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native-reference-case-set.json
+@@ -147,7 +147,8 @@
+           "sourceBodyLength": 56,
+           "sourceBodySha256": "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3",
+           "displayTruncated": true,
+-          "exactRenderedDisplayNameSha256": "5b181eded1651b157035f7b18f64cd0cd27a12fefe5da654acd135dadc4284a7"
++          "argumentFormatterDisplayNameSha256": "5b181eded1651b157035f7b18f64cd0cd27a12fefe5da654acd135dadc4284a7",
++          "exactParsedXmlNameSha256": "b60e94ea694f0ea54161762f79fff2c63c146948dd95e70d1214249ea4c5f53f"
+         },
+         {
+           "canonicalCase": [
+@@ -159,7 +160,8 @@
+           "sourceBodyLength": 8,
+           "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "bcd4f63b6c66f8528328b2dc3551ee2fb1d6e4c04304e95e2781a558987a6c23"
++          "argumentFormatterDisplayNameSha256": "bcd4f63b6c66f8528328b2dc3551ee2fb1d6e4c04304e95e2781a558987a6c23",
++          "exactParsedXmlNameSha256": "f3eba98b2f2195aaedabfcf1b91f67ecf2123553e503f8b5b9b3f135f7837f46"
+         },
+         {
+           "canonicalCase": [
+@@ -171,7 +173,8 @@
+           "sourceBodyLength": 8,
+           "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "b2c6d68212d8732720353b16c2d0c842c9176b18f27875a0d8efdf7808efe5c4"
++          "argumentFormatterDisplayNameSha256": "b2c6d68212d8732720353b16c2d0c842c9176b18f27875a0d8efdf7808efe5c4",
++          "exactParsedXmlNameSha256": "37a76724dd585ae3e6cec49a37994e9904d1d5e81dc3cbcbb9d2231983fe38a6"
+         },
+         {
+           "canonicalCase": [
+@@ -183,7 +186,8 @@
+           "sourceBodyLength": 21,
+           "sourceBodySha256": "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "3751f9f346e212af467d6fcb5d2033382f6105ab7f979ff364c8b01ffa55b0fa"
++          "argumentFormatterDisplayNameSha256": "3751f9f346e212af467d6fcb5d2033382f6105ab7f979ff364c8b01ffa55b0fa",
++          "exactParsedXmlNameSha256": "c39bdf4921c16b14dcb410631fcf5f6c48cb852d9744fea8dfa3b419c84e2201"
+         },
+         {
+           "canonicalCase": [
+@@ -195,7 +199,8 @@
+           "sourceBodyLength": 27,
+           "sourceBodySha256": "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "afeedc1d1ba915699ea4fe6f89dbe3d57aaa4f60ab231a5af38dde9e4a2c92eb"
++          "argumentFormatterDisplayNameSha256": "afeedc1d1ba915699ea4fe6f89dbe3d57aaa4f60ab231a5af38dde9e4a2c92eb",
++          "exactParsedXmlNameSha256": "7c30c03bdfb5d14997bff9dac5fe7e7e82f5a04f66937c4afafd7b202eee9412"
+         }
+       ]
+     },
+@@ -283,9 +288,14 @@
+     "maxStringLength": 50,
+     "ellipsis": "U+00B7 repeated3 after closing quote",
+     "truncateBeforeEscape": true,
+-    "nonFuzzyExactRenderedNameSha256MatchRequired": true,
+     "sourceBodyDigestIsDifferentFromRenderedDisplayDigest": true,
+     "runnerArgumentsOrConfigurationNotChanged": true,
+-    "specificEnvironmentOverrideMustRemainAbsent": true
++    "specificEnvironmentOverrideMustRemainAbsent": true,
++    "reporterEscapesAfterFormatter": true,
++    "reporterDoublesEachExistingBackslash": true,
++    "reporterEscapesEveryQuote": true,
++    "exactParsedXmlNameSha256MatchRequired": true,
++    "argumentFormatterDisplayDigestKeptDistinct": true,
++    "noBroadUnescapeOrFuzzyAcceptance": true
+   }
+ }
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/EXECUTION.md
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/EXECUTION.md
+@@ -4,7 +4,7 @@
+ 
+ After root reviews final ready pins, root alone runs:
+ 
+-    python3 /tmp/story65-dapr-invoker-ops-prep-20261107/live/run_and_restore.py --execute --pins-sha256 FINAL_REVIEWED_SHA
++    python3 /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/run_and_restore.py --execute --pins-sha256 FINAL_REVIEWED_SHA
+ 
+ The executable order is private Gateway plus nine carrier/profile rebuilds (ten primary total), native Server.Tests rebuild and three native processes (15 source-derived cases), then the full standard managed launcher. The native gate requires exact type/method/argument sets, same-start actual private Gateway mapping in every process, coherent producer/test-copy DLL and PDB before and after all processes, all groups absent, and an empty counter directory. Only selected Concrete2 starts loopback apps. Native15 is diagnostic qualification; it is not claimed as a subset or additional unique ordinary1038 tests.
+ 
+@@ -17,3 +17,5 @@
+ Every private build attempt, including partial failure, requires ordinary restoration once absence is proven. Ordinary force-rebuild refreshes the ten primary projects plus native Server.Tests and then only remaining incoherent affected carriers. The Gateway affected set is the union of before/after/new/changed/private and known current carriers, with full/PDB/ref/refint coherence to the current ordinary producer. Twenty affected/fourteen unrelated is the captured baseline, not a prediction for the next union. Unrelated copies remain exact baseline. Source53, SDK8 ordinary5bb/PDB coherence, recorded mixed Domain98, scoped ordinary RootServer10 and native147 marker absence remain independent guards. The restored Gateway generation may differ from historical f629; source and current-generation coherence are the criteria.
+ 
+ Scripts support five nonexecuting plans: private, native15, managed, whole pipeline, ordinary. No MSBuild/app operation is invoked by a dry plan. Do not rerun the external preparation generator after execution; that would replace preservation baselines. Freeze final files and pins before root execution.
++
++This generation corrects only the expected native XML evidence representation. xUnit ArgumentFormatter truncates/escapes the source argument, then XmlV2ResultWriterMessageHandler passes TestDisplayName through XmlUtility.Escape before constructing its XML name attribute. The second step escapes every quote and doubles every existing backslash; parsing the XML attribute leaves that reporter escape layer present. Expected parsed-name hashes include both steps, while source-body and formatter-display hashes remain separate provenance. The preserved first native group passed5 tests but the former formatter-only evidence guard refused every name. No broad normalization or fuzzy acceptance is added. A fresh preparation/pointer namespace and managed diagnostic-retry path preserve all original attempts and receipts.
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/xunit-formatter-primary-source.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/xunit-formatter-primary-source.json
+@@ -20,6 +20,17 @@
+       "url": "https://raw.githubusercontent.com/xunit/assert.xunit/2fe0bb3f20e0179cd58486b6ef4f6322cf2ccf47/Sdk/EnvironmentVariables.cs",
+       "sha256": "5ab23a1e7472b64bdc7d3a8a81d82d5d997ef445b66869b7d2334e7d55afe33a",
+       "bytes": 950
++    },
++    "XmlV2ResultWriterMessageHandler.cs": {
++      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Results/Builtin/XmlV2ResultWriterMessageHandler.cs",
++      "sha256": "9fc3644dc612814a0659d93677ce5cc92b68c77e0e7f3f558b6e209ade05c7ba",
++      "bytes": 15625
++    },
++    "XmlUtility.cs": {
++      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Utility/XmlUtility.cs",
++      "sha256": "765ee155a8e9f7135c9184b46ef4ac4c38fcaa4d704d9a496a9d08e86bc487a9",
++      "bytes": 1732
+     }
+-  }
++  },
++  "reporterEscapingAfterArgumentFormatting": true
+ }
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/xunit-display-identity-proof.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/xunit-display-identity-proof.json
+@@ -2,8 +2,8 @@
+   "readOnlySourceAndConfigurationAudit": true,
+   "cachedPackageNuspec": "/home/administrator/.nuget/packages/xunit.v3.common/4.0.2/xunit.v3.common.nuspec",
+   "cachedPackageNuspecSha256": "ee6d11fa24b3a9959642049776aec28dbc07748fd260e81b0484e2189aeef73c",
+-  "primarySourceReceipt": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/xunit-formatter-primary-source.json",
+-  "primarySourceReceiptSha256": "a96c22607f803a732f919ddfb4a71ed12d46ec4fb7efa75c79a14fb6a8a3773e",
++  "primarySourceReceipt": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/xunit-formatter-primary-source.json",
++  "primarySourceReceiptSha256": "ef523890163023146a7c1613159cec26c521d011585fc97a997216346ebe14cb",
+   "maxStringLengthDefault": 50,
+   "runnerConfigurationSearchFolders": [
+     "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+@@ -18,5 +18,11 @@
+   "oneSourceBodyRequiresTruncation": true,
+   "allFiveRenderedNamesUnique": true,
+   "noAssemblyLoadBuildOrNativeExecution": true,
+-  "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true
++  "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
++  "argumentFormatterThenReporterEscapeRequired": true,
++  "oldLayerOnlyCandidateRefusedGenuineNativeNames": true,
++  "exactParsedXmlNamesAllFiveMatch": true,
++  "noFuzzyNormalization": true,
++  "sourceBodyVsFormatterVsParsedXmlDigestsSeparate": true,
++  "actualXmlScope": "synthetic native test evidence; no application request data"
+ }
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/syntax-and-five-dry-plans.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/syntax-and-five-dry-plans.json
+@@ -1,53 +1,5 @@
+ {
+   "syntaxPassed": 6,
+-  "allFiveNonexecutingPlansPassed": true,
+-  "noAppBuildNativeOrHostExecuted": true,
+-  "commands": [
+-    {
+-      "command": [
+-        "python3",
+-        "/tmp/story65-dapr-invoker-ops-prep-20261107/live/build_restore.py",
+-        "--phase",
+-        "private"
+-      ],
+-      "exitCode": 0,
+-      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-1.json"
+-    },
+-    {
+-      "command": [
+-        "python3",
+-        "/tmp/story65-dapr-invoker-ops-prep-20261107/live/native_qualification.py"
+-      ],
+-      "exitCode": 0,
+-      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-2.json"
+-    },
+-    {
+-      "command": [
+-        "python3",
+-        "/tmp/story65-dapr-invoker-ops-prep-20261107/live/supervise_managed.py"
+-      ],
+-      "exitCode": 0,
+-      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-3.json"
+-    },
+-    {
+-      "command": [
+-        "python3",
+-        "/tmp/story65-dapr-invoker-ops-prep-20261107/live/run_and_restore.py"
+-      ],
+-      "exitCode": 0,
+-      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-4.json"
+-    },
+-    {
+-      "command": [
+-        "python3",
+-        "/tmp/story65-dapr-invoker-ops-prep-20261107/live/build_restore.py",
+-        "--phase",
+-        "ordinary"
+-      ],
+-      "exitCode": 0,
+-      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-5.json"
+-    }
+-  ],
+   "syntaxFiles": [
+     "build_restore.py",
+     "launch_managed.py",
+@@ -55,5 +7,53 @@
+     "ops_common.py",
+     "run_and_restore.py",
+     "supervise_managed.py"
++  ],
++  "allFiveNonexecutingPlansPassed": true,
++  "noAppBuildNativeOrHostExecuted": true,
++  "commands": [
++    {
++      "command": [
++        "python3",
++        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/build_restore.py",
++        "--phase",
++        "private"
++      ],
++      "exitCode": 0,
++      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-1.json"
++    },
++    {
++      "command": [
++        "python3",
++        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native_qualification.py"
++      ],
++      "exitCode": 0,
++      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-2.json"
++    },
++    {
++      "command": [
++        "python3",
++        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/supervise_managed.py"
++      ],
++      "exitCode": 0,
++      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-3.json"
++    },
++    {
++      "command": [
++        "python3",
++        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/run_and_restore.py"
++      ],
++      "exitCode": 0,
++      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-4.json"
++    },
++    {
++      "command": [
++        "python3",
++        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/build_restore.py",
++        "--phase",
++        "ordinary"
++      ],
++      "exitCode": 0,
++      "path": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-5.json"
++    }
+   ]
+ }
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-2.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-2.json
+@@ -51,7 +51,8 @@
+           "sourceBodyLength": 56,
+           "sourceBodySha256": "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3",
+           "displayTruncated": true,
+-          "exactRenderedDisplayNameSha256": "5b181eded1651b157035f7b18f64cd0cd27a12fefe5da654acd135dadc4284a7"
++          "argumentFormatterDisplayNameSha256": "5b181eded1651b157035f7b18f64cd0cd27a12fefe5da654acd135dadc4284a7",
++          "exactParsedXmlNameSha256": "b60e94ea694f0ea54161762f79fff2c63c146948dd95e70d1214249ea4c5f53f"
+         },
+         {
+           "canonicalCase": [
+@@ -63,7 +64,8 @@
+           "sourceBodyLength": 8,
+           "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "bcd4f63b6c66f8528328b2dc3551ee2fb1d6e4c04304e95e2781a558987a6c23"
++          "argumentFormatterDisplayNameSha256": "bcd4f63b6c66f8528328b2dc3551ee2fb1d6e4c04304e95e2781a558987a6c23",
++          "exactParsedXmlNameSha256": "f3eba98b2f2195aaedabfcf1b91f67ecf2123553e503f8b5b9b3f135f7837f46"
+         },
+         {
+           "canonicalCase": [
+@@ -75,7 +77,8 @@
+           "sourceBodyLength": 8,
+           "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "b2c6d68212d8732720353b16c2d0c842c9176b18f27875a0d8efdf7808efe5c4"
++          "argumentFormatterDisplayNameSha256": "b2c6d68212d8732720353b16c2d0c842c9176b18f27875a0d8efdf7808efe5c4",
++          "exactParsedXmlNameSha256": "37a76724dd585ae3e6cec49a37994e9904d1d5e81dc3cbcbb9d2231983fe38a6"
+         },
+         {
+           "canonicalCase": [
+@@ -87,7 +90,8 @@
+           "sourceBodyLength": 21,
+           "sourceBodySha256": "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "3751f9f346e212af467d6fcb5d2033382f6105ab7f979ff364c8b01ffa55b0fa"
++          "argumentFormatterDisplayNameSha256": "3751f9f346e212af467d6fcb5d2033382f6105ab7f979ff364c8b01ffa55b0fa",
++          "exactParsedXmlNameSha256": "c39bdf4921c16b14dcb410631fcf5f6c48cb852d9744fea8dfa3b419c84e2201"
+         },
+         {
+           "canonicalCase": [
+@@ -99,7 +103,8 @@
+           "sourceBodyLength": 27,
+           "sourceBodySha256": "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab",
+           "displayTruncated": false,
+-          "exactRenderedDisplayNameSha256": "afeedc1d1ba915699ea4fe6f89dbe3d57aaa4f60ab231a5af38dde9e4a2c92eb"
++          "argumentFormatterDisplayNameSha256": "afeedc1d1ba915699ea4fe6f89dbe3d57aaa4f60ab231a5af38dde9e4a2c92eb",
++          "exactParsedXmlNameSha256": "7c30c03bdfb5d14997bff9dac5fe7e7e82f5a04f66937c4afafd7b202eee9412"
+         }
+       ]
+     },
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-3.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-3.json
+@@ -2,14 +2,14 @@
+   "preparationOnly": true,
+   "command": [
+     "/usr/bin/python3",
+-    "/tmp/story65-dapr-invoker-ops-prep-20261107/live/launch_managed.py",
++    "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/launch_managed.py",
+     "--operational-pins-sha256",
+     "REVIEWED_PINS_REQUIRED",
+     "--browser",
+     "--timeout",
+     "900",
+     "--evidence",
+-    "/tmp/story65-dapr-invoker-diagnostic-20261107/managed"
++    "/tmp/story65-dapr-invoker-diagnostic-retry-20261107/managed"
+   ],
+   "cwd": "/home/administrator/projects/hexalith/projects",
+   "noNewRuntimeEnvironmentOrConfigurationKeys": true,
+--- /tmp/story65-dapr-invoker-ops-prep-20261107/live/dry-plan-4.json
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/dry-plan-4.json
+@@ -3,7 +3,7 @@
+   "commands": {
+     "private": [
+       "/usr/bin/python3",
+-      "/tmp/story65-dapr-invoker-ops-prep-20261107/live/build_restore.py",
++      "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/build_restore.py",
+       "--phase",
+       "private",
+       "--execute",
+@@ -12,7 +12,7 @@
+     ],
+     "ordinary": [
+       "/usr/bin/python3",
+-      "/tmp/story65-dapr-invoker-ops-prep-20261107/live/build_restore.py",
++      "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/build_restore.py",
+       "--phase",
+       "ordinary",
+       "--execute",
+@@ -21,14 +21,14 @@
+     ],
+     "managed": [
+       "/usr/bin/python3",
+-      "/tmp/story65-dapr-invoker-ops-prep-20261107/live/supervise_managed.py",
++      "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/supervise_managed.py",
+       "--execute",
+       "--pins-sha256",
+       "REVIEWED_PINS_REQUIRED"
+     ],
+     "native15": [
+       "/usr/bin/python3",
+-      "/tmp/story65-dapr-invoker-ops-prep-20261107/live/native_qualification.py",
++      "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native_qualification.py",
+       "--execute",
+       "--pins-sha256",
+       "REVIEWED_PINS_REQUIRED"
+--- /dev/null
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/primary-xunit/XmlV2ResultWriterMessageHandler.cs
+@@ -0,0 +1,426 @@
++using System.Collections.Concurrent;
++using System.Xml;
++using System.Xml.Linq;
++using Xunit.Sdk;
++
++namespace Xunit.Runner.Common;
++
++/// <summary>
++/// The message handler for <see cref="XmlV2ResultWriter"/>.
++/// </summary>
++public class XmlV2ResultWriterMessageHandler : XunitXmlResultWriterMessageHandlerBase<XmlV2ResultWriterMessageHandler.ResultMetadata>
++{
++	/// <summary>
++	/// Initializes a new instance of the <see cref="XmlV2ResultWriterMessageHandler"/> class.
++	/// </summary>
++	/// <param name="fileName">The output file name</param>
++	public XmlV2ResultWriterMessageHandler(string fileName) :
++		this(new Lazy<XmlWriter>(() => XmlWriter.Create(fileName, XmlUtility.WriterSettings), isThreadSafe: false))
++	{ }
++
++	/// <summary>
++	/// This constructor is for testing purposes only. Please call the public constructor.
++	/// </summary>
++	protected XmlV2ResultWriterMessageHandler(XmlWriter xmlWriter) :
++		this(new Lazy<XmlWriter>(() => xmlWriter))
++	{ }
++
++	XmlV2ResultWriterMessageHandler(Lazy<XmlWriter> xmlWriter) :
++		base(xmlWriter)
++	{
++		AssembliesElement.Add(
++			new XAttribute("schema-version", "3"),
++			new XAttribute("id", Guid.NewGuid().ToString("d"))
++		);
++
++		var computer = EnvironmentUtility.Computer;
++		if (computer is not null)
++			AssembliesElement.Add(new XAttribute("computer", computer));
++
++		var user = EnvironmentUtility.User;
++		if (user is not null)
++			AssembliesElement.Add(new XAttribute("user", user));
++	}
++
++	static void AddError(
++		string type,
++		string? name,
++		ResultMetadata resultMetadata,
++		IErrorMetadata errorMetadata)
++	{
++		var errorElement = new XElement(
++			"error",
++			new XAttribute("type", type),
++			CreateFailureElement(errorMetadata)
++		);
++
++		if (name is not null)
++			errorElement.Add(new XAttribute("name", name));
++
++		lock (resultMetadata.ErrorsElement.Value)
++			resultMetadata.ErrorsElement.Value.Add(errorElement);
++	}
++
++	static XElement CreateTestResultElement(
++		ResultMetadata resultMetadata,
++		ITestResultMessage testResult,
++		string resultText)
++	{
++		var testMetadata = Guard.NotNull(() => string.Format(CultureInfo.CurrentCulture, "Cannot find test metadata for ID {0}", testResult.TestUniqueID), resultMetadata.MetadataCache.TryGetTestMetadata(testResult));
++		var testStartTime = (testMetadata as ITestStarting)?.StartTime ?? testResult.FinishTime;
++		var testCaseMetadata = Guard.NotNull(() => string.Format(CultureInfo.CurrentCulture, "Cannot find test case metadata for ID {0}", testResult.TestCaseUniqueID), resultMetadata.MetadataCache.TryGetTestCaseMetadata(testResult));
++		var testMethodMetadata = resultMetadata.MetadataCache.TryGetMethodMetadata(testResult);
++		var testClassMetadata = resultMetadata.MetadataCache.TryGetClassMetadata(testResult);
++
++		var collectionElement = GetTestCollectionElement(resultMetadata, testResult.TestCollectionUniqueID);
++		var testResultElement =
++			new XElement("test",
++				new XAttribute("id", Guid.NewGuid().ToString("d")),
++				new XAttribute("name", XmlUtility.Escape(testMetadata.TestDisplayName)),
++				new XAttribute("result", resultText),
++				new XAttribute("time", testResult.ExecutionTime.ToString(CultureInfo.InvariantCulture)),
++				new XAttribute("time-rtf", testResult.ExecutionTime.ToTimespanRtf()),
++				new XAttribute("start-rtf", testStartTime.ToRtfUtc()),
++				new XAttribute("finish-rtf", testResult.FinishTime.ToRtfUtc())
++			);
++
++		var type = testClassMetadata?.TestClassName;
++		if (type is not null)
++			testResultElement.Add(new XAttribute("type", type));
++
++		var method = testMethodMetadata?.MethodName;
++		if (method is not null)
++			testResultElement.Add(new XAttribute("method", method));
++
++		var testOutput = testResult.Output;
++		if (!string.IsNullOrWhiteSpace(testOutput))
++			testResultElement.Add(new XElement("output", AnsiUtility.RemoveAnsiEscapeCodes(testOutput)));
++
++		if (testResult.Warnings is not null && testResult.Warnings.Length > 0)
++		{
++			var warningsElement = new XElement("warnings");
++
++			foreach (var warning in testResult.Warnings)
++				warningsElement.Add(new XElement("warning", warning));
++
++			testResultElement.Add(warningsElement);
++		}
++
++		var fileName = testCaseMetadata.SourceFilePath;
++		if (fileName is not null)
++			testResultElement.Add(new XAttribute("source-file", fileName));
++
++		var lineNumber = testCaseMetadata.SourceLineNumber;
++		if (lineNumber is not null)
++			testResultElement.Add(new XAttribute("source-line", lineNumber.GetValueOrDefault()));
++
++		var traits = testCaseMetadata.Traits;
++		if (traits is not null && traits.Count > 0)
++		{
++			var traitsElement = new XElement("traits");
++
++			foreach (var keyValuePair in traits)
++				foreach (var val in keyValuePair.Value)
++					traitsElement.Add(
++						new XElement("trait",
++							new XAttribute("name", XmlUtility.Escape(keyValuePair.Key)),
++							new XAttribute("value", XmlUtility.Escape(val))
++						)
++					);
++
++			testResultElement.Add(traitsElement);
++		}
++
++		lock (collectionElement)
++			collectionElement.Add(testResultElement);
++
++		resultMetadata.TestResults[testResult.TestUniqueID] = testResultElement;
++		return testResultElement;
++	}
++
++	internal override ResultMetadata CreateMetadata() =>
++		new(AssembliesElement);
++
++	internal override void FinalizeXml()
++	{
++		var start = default(string);
++		var finish = default(string);
++
++		var metadataValues = ResultMetadataValues;
++		if (metadataValues.Count > 0)
++		{
++			start = metadataValues.Select(a => a.AssemblyElement.Attribute("start-rtf")?.Value).WhereNotNull().Min();
++			finish = metadataValues.Select(a => a.AssemblyElement.Attribute("finish-rtf")?.Value).WhereNotNull().Max();
++		}
++
++		start ??= DateTimeOffset.MinValue.ToString("o", CultureInfo.InvariantCulture);
++		finish ??= DateTimeOffset.MinValue.ToString("o", CultureInfo.InvariantCulture);
++
++		var finishTimestamp = DateTime.Parse(finish, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
++
++		AssembliesElement.Add(
++			new XAttribute("start-rtf", start),
++			new XAttribute("finish-rtf", finish),
++			new XAttribute("timestamp", finishTimestamp)
++		);
++	}
++
++	static XElement GetTestCollectionElement(
++		ResultMetadata resultMetadata,
++		string testCollectionUniqueID) =>
++			resultMetadata.TestCollections.GetOrAdd(testCollectionUniqueID, _ => new XElement("collection"));
++
++	void HandleErrorMessage(MessageHandlerArgs<IErrorMessage> args)
++	{
++		var message = args.Message;
++		if (message.AssemblyUniqueID is null || !TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("fatal", null, resultMetadata, message);
++	}
++
++	void HandleTestAssemblyCleanupFailure(MessageHandlerArgs<ITestAssemblyCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("assembly-cleanup", resultMetadata.MetadataCache.TryGetAssemblyMetadata(message)?.AssemblyPath, resultMetadata, message);
++	}
++
++	void HandleTestCaseCleanupFailure(MessageHandlerArgs<ITestCaseCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("test-case-cleanup", resultMetadata.MetadataCache.TryGetTestCaseMetadata(message)?.TestCaseDisplayName, resultMetadata, message);
++	}
++
++	void HandleTestClassCleanupFailure(MessageHandlerArgs<ITestClassCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("test-class-cleanup", resultMetadata.MetadataCache.TryGetClassMetadata(message)?.TestClassName, resultMetadata, message);
++	}
++
++	void HandleTestCleanupFailure(MessageHandlerArgs<ITestCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("test-cleanup", resultMetadata.MetadataCache.TryGetTestMetadata(message)?.TestDisplayName, resultMetadata, message);
++	}
++
++	void HandleTestCollectionCleanupFailure(MessageHandlerArgs<ITestCollectionCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("test-collection-cleanup", resultMetadata.MetadataCache.TryGetCollectionMetadata(message)?.TestCollectionDisplayName, resultMetadata, message);
++	}
++
++	void HandleTestFailed(MessageHandlerArgs<ITestFailed> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		var testElement = CreateTestResultElement(resultMetadata, message, "Fail");
++		testElement.Add(CreateFailureElement(message));
++	}
++
++	void HandleTestMethodCleanupFailure(MessageHandlerArgs<ITestMethodCleanupFailure> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		AddError("test-method-cleanup", resultMetadata.MetadataCache.TryGetMethodMetadata(message)?.MethodName, resultMetadata, message);
++	}
++
++	void HandleTestNotRun(MessageHandlerArgs<ITestNotRun> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		CreateTestResultElement(resultMetadata, message, "NotRun");
++	}
++
++	void HandleTestPassed(MessageHandlerArgs<ITestPassed> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		CreateTestResultElement(resultMetadata, message, "Pass");
++	}
++
++	void HandleTestSkipped(MessageHandlerArgs<ITestSkipped> args)
++	{
++		var message = args.Message;
++		if (!TryGetResultMetadata(message.AssemblyUniqueID, out var resultMetadata))
++			return;
++
++		var testElement = CreateTestResultElement(resultMetadata, message, "Skip");
++		testElement.Add(new XElement("reason", XmlUtility.Escape(message.Reason, escapeNewlines: false)));
++	}
++
++	/// <inheritdoc/>
++	public override bool OnMessage(IMessageSinkMessage message)
++	{
++		message.DispatchWhen<IErrorMessage>(HandleErrorMessage);
++		message.DispatchWhen<ITestAssemblyCleanupFailure>(HandleTestAssemblyCleanupFailure);
++		message.DispatchWhen<ITestCaseCleanupFailure>(HandleTestCaseCleanupFailure);
++		message.DispatchWhen<ITestClassCleanupFailure>(HandleTestClassCleanupFailure);
++		message.DispatchWhen<ITestCleanupFailure>(HandleTestCleanupFailure);
++		message.DispatchWhen<ITestCollectionCleanupFailure>(HandleTestCollectionCleanupFailure);
++		message.DispatchWhen<ITestFailed>(HandleTestFailed);
++		message.DispatchWhen<ITestMethodCleanupFailure>(HandleTestMethodCleanupFailure);
++		message.DispatchWhen<ITestNotRun>(HandleTestNotRun);
++		message.DispatchWhen<ITestPassed>(HandleTestPassed);
++		message.DispatchWhen<ITestSkipped>(HandleTestSkipped);
++
++		return base.OnMessage(message);
++	}
++
++	internal override void OnTestAssemblyFinished(
++		ITestAssemblyFinished message,
++		ResultMetadata resultMetadata)
++	{
++		lock (resultMetadata.AssemblyElement)
++		{
++			resultMetadata.AssemblyElement.Add(
++				new XAttribute("errors", resultMetadata.ErrorsElement.IsValueCreated ? resultMetadata.ErrorsElement.Value.Elements().Count() : 0),
++				new XAttribute("failed", message.TestsFailed),
++				new XAttribute("finish-rtf", message.FinishTime.ToRtfUtc()),
++				new XAttribute("not-run", message.TestsNotRun),
++				new XAttribute("passed", message.TestsTotal - message.TestsFailed - message.TestsSkipped - message.TestsNotRun),
++				new XAttribute("skipped", message.TestsSkipped),
++				new XAttribute("time", message.ExecutionTime.ToString("0.000", CultureInfo.InvariantCulture)),
++				new XAttribute("time-rtf", TimeSpan.FromSeconds((double)message.ExecutionTime).ToString("c", CultureInfo.InvariantCulture)),
++				new XAttribute("total", message.TestsTotal)
++			);
++
++			foreach (var element in resultMetadata.TestCollections.Values)
++				resultMetadata.AssemblyElement.Add(element);
++		}
++	}
++
++	internal override void OnTestAssemblyStarting(
++		ITestAssemblyStarting message,
++		ResultMetadata resultMetadata)
++	{
++		lock (resultMetadata.AssemblyElement)
++		{
++			resultMetadata.AssemblyElement.Add(
++				new XAttribute("environment", message.TestEnvironment),
++				new XAttribute("id", Guid.NewGuid().ToString("d")),
++				new XAttribute("name", message.AssemblyPath ?? "<dynamic>"),
++				new XAttribute("run-date", message.StartTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
++				new XAttribute("run-time", message.StartTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture)),
++				new XAttribute("start-rtf", message.StartTime.ToRtfUtc()),
++				new XAttribute("test-framework", message.TestFrameworkDisplayName)
++			);
++
++			if (message.ConfigFilePath is not null)
++				resultMetadata.AssemblyElement.Add(new XAttribute("config-file", message.ConfigFilePath));
++			if (message.TargetFramework is not null)
++				resultMetadata.AssemblyElement.Add(new XAttribute("target-framework", message.TargetFramework));
++		}
++	}
++
++	internal override void OnTestCollectionFinished(
++		ITestCollectionFinished message,
++		ResultMetadata resultMetadata)
++	{
++		var collectionElement = GetTestCollectionElement(resultMetadata, message.TestCollectionUniqueID);
++
++		lock (collectionElement)
++			collectionElement.Add(
++				new XAttribute("failed", message.TestsFailed),
++				new XAttribute("not-run", message.TestsNotRun),
++				new XAttribute("passed", message.TestsTotal - message.TestsFailed - message.TestsSkipped - message.TestsNotRun),
++				new XAttribute("skipped", message.TestsSkipped),
++				new XAttribute("time", message.ExecutionTime.ToString("0.000", CultureInfo.InvariantCulture)),
++				new XAttribute("time-rtf", TimeSpan.FromSeconds((double)message.ExecutionTime).ToString("c", CultureInfo.InvariantCulture)),
++				new XAttribute("total", message.TestsTotal)
++			);
++	}
++
++	internal override void OnTestCollectionStarting(
++		ITestCollectionStarting message,
++		ResultMetadata resultMetadata)
++	{
++		var collectionElement = GetTestCollectionElement(resultMetadata, message.TestCollectionUniqueID);
++
++		lock (collectionElement)
++			collectionElement.Add(
++				new XAttribute("name", XmlUtility.Escape(message.TestCollectionDisplayName)),
++				new XAttribute("id", Guid.NewGuid().ToString("d"))
++			);
++	}
++
++	internal override void OnTestFinished(
++		ITestFinished message,
++		ResultMetadata resultMetadata)
++	{
++		if (!resultMetadata.TestResults.TryRemove(message.TestUniqueID, out var testResultElement) || message.Attachments.Count == 0)
++			return;
++
++		var attachmentsElement = new XElement("attachments");
++
++		foreach (var attachment in message.Attachments)
++		{
++			var attachmentElement = new XElement("attachment", new XAttribute("name", attachment.Key));
++			if (attachment.Value.AttachmentType == TestAttachmentType.String)
++				attachmentElement.Add(attachment.Value.AsString());
++			else
++			{
++				var (byteArray, mediaType) = attachment.Value.AsByteArray();
++
++				attachmentElement.Add(new XAttribute("media-type", mediaType));
++				attachmentElement.SetValue(Convert.ToBase64String(byteArray));
++			}
++
++			attachmentsElement.Add(attachmentElement);
++		}
++
++		testResultElement.Add(attachmentsElement);
++	}
++
++	/// <summary>
++	/// INTERNAL CLASS. DO NOT USE.
++	/// </summary>
++	public sealed class ResultMetadata : ResultMetadataBase
++	{
++		internal ResultMetadata(XElement assembliesElement)
++		{
++			AssemblyElement = new XElement("assembly");
++			ErrorsElement = new(CreateErrors, isThreadSafe: false);
++
++			Guard.ArgumentNotNull(assembliesElement).Add(AssemblyElement);
++		}
++
++		internal XElement AssemblyElement { get; }
++
++		internal Lazy<XElement> ErrorsElement { get; }
++
++		internal ConcurrentDictionary<string, XElement> TestCollections { get; } = [];
++
++		internal ConcurrentDictionary<string, XElement> TestResults { get; } = [];
++
++		XElement CreateErrors()
++		{
++			var result = new XElement("errors");
++			AssemblyElement.Add(result);
++
++			return result;
++		}
++	}
++}
+--- /dev/null
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/primary-xunit/XmlUtility.cs
+@@ -0,0 +1,64 @@
++using System.Text;
++using System.Xml;
++
++namespace Xunit.Runner.Common;
++
++internal static class XmlUtility
++{
++	public static readonly XmlWriterSettings HtmlWriterSettings = new()
++	{
++		Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
++		OmitXmlDeclaration = true,
++		Indent = true,
++		IndentChars = "  ",
++	};
++
++	public static readonly XmlWriterSettings WriterSettings = new()
++	{
++		Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
++		OmitXmlDeclaration = true,
++	};
++
++	public static string Escape(
++		string? value,
++		bool escapeNewlines = true)
++	{
++		if (value == null)
++			return string.Empty;
++
++		var escapedValue = new StringBuilder(value.Length + 20);
++		for (var idx = 0; idx < value.Length; ++idx)
++		{
++			var ch = value[idx];
++			if (ch < 32)
++				escapedValue.Append(ch switch
++				{
++					'\0' => "\\0",
++					'\a' => "\\a",
++					'\b' => "\\b",
++					'\f' => "\\f",
++					'\n' => escapeNewlines ? "\\n" : "\n",
++					'\r' => escapeNewlines ? "\\r" : "\r",
++					'\t' => "\\t",
++					'\v' => "\\v",
++					_ => string.Format(CultureInfo.InvariantCulture, @"\x{0:x2}", +ch),
++				});
++			else if (ch == '"')
++				escapedValue.Append("\\\"");
++			else if (ch == '\\')
++				escapedValue.Append("\\\\");
++			else if (char.IsSurrogatePair(value, idx)) // Takes care of the case when idx + 1 == value.Length
++			{
++				escapedValue.Append(ch); // Append valid surrogate chars like normal
++				escapedValue.Append(value[++idx]);
++			}
++			// Check for invalid chars and append them like \x----
++			else if (char.IsSurrogate(ch) || ch == '\uFFFE' || ch == '\uFFFF')
++				escapedValue.Append(string.Format(CultureInfo.InvariantCulture, @"\x{0:x4}", +ch));
++			else
++				escapedValue.Append(ch);
++		}
++
++		return escapedValue.ToString();
++	}
++}
+--- /dev/null
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/generation-lineage.json
+@@ -0,0 +1,14 @@
++{
++  "generation": "xml-reporter-exact-name-retry",
++  "previousExecutedPinsSha256": "d9eae03d9621474d8a8dbcb33be1ff4d8f91ef73bd411f1bee4d697ce075c94d",
++  "previousLiveDirectory": "/tmp/story65-dapr-invoker-ops-prep-20261107/live",
++  "preservationReceipt": "/tmp/story65-dapr-invoker-ops-prep-20261107/history/executed-d9eae03d9621474d/preservation-receipt.json",
++  "preservationReceiptSha256": "408ed63a7fd1c08ab03faae89229b34bdce6eed7756c51fb09cff665d47c5880",
++  "freshPointerNamespace": "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry",
++  "freshManagedEvidence": "/tmp/story65-dapr-invoker-diagnostic-retry-20261107",
++  "noOriginalSourceHelperBootstrapTestConfigOrArgumentsChanged": true,
++  "executionAuthorized": false,
++  "priorOrdinaryRestorationAudit": "/tmp/story65-dapr-invoker-ops-prep-20261107/history/executed-d9eae03d9621474d/post-close/parent-ordinary-restoration-audit.json",
++  "priorOrdinaryRestorationAuditSha256": "cf42e08ad6388f6b607dec165f232f7b158fb7127821c9441eafe5234535d13f",
++  "currentOrdinaryBaselineSha256": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c"
++}
+--- /dev/null
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native-display-mismatch-and-correction.json
+@@ -0,0 +1,29 @@
++{
++  "preparationOnly": true,
++  "executedGenerationPinsSha256": "d9eae03d9621474d8a8dbcb33be1ff4d8f91ef73bd411f1bee4d697ce075c94d",
++  "originalNativeXml": "/tmp/story65-dapr-invoker-ops-prep-20261107/history/executed-d9eae03d9621474d/execution/native-private-15-y9ff7rwp/bounded-failures.xml",
++  "originalNativeXmlSha256": "0f3d0da78cbd0ff208ab9cd3005042133efce73b4f4d8f6a586d9dbfac947fee",
++  "actualNativeCases": 5,
++  "actualNativeAllPass": true,
++  "originalIdentityGateFailed": true,
++  "genuineNative15QualificationNotClaimed": true,
++  "formatterOnlyExpectedHashesMismatchCount": 5,
++  "formatterThenReporterExactExpectedMatchCount": 5,
++  "expectedParsedXmlNameSha256": [
++    "37a76724dd585ae3e6cec49a37994e9904d1d5e81dc3cbcbb9d2231983fe38a6",
++    "7c30c03bdfb5d14997bff9dac5fe7e7e82f5a04f66937c4afafd7b202eee9412",
++    "b60e94ea694f0ea54161762f79fff2c63c146948dd95e70d1214249ea4c5f53f",
++    "c39bdf4921c16b14dcb410631fcf5f6c48cb852d9744fea8dfa3b419c84e2201",
++    "f3eba98b2f2195aaedabfcf1b91f67ecf2123553e503f8b5b9b3f135f7837f46"
++  ],
++  "actualParsedXmlNameSha256": [
++    "37a76724dd585ae3e6cec49a37994e9904d1d5e81dc3cbcbb9d2231983fe38a6",
++    "7c30c03bdfb5d14997bff9dac5fe7e7e82f5a04f66937c4afafd7b202eee9412",
++    "b60e94ea694f0ea54161762f79fff2c63c146948dd95e70d1214249ea4c5f53f",
++    "c39bdf4921c16b14dcb410631fcf5f6c48cb852d9744fea8dfa3b419c84e2201",
++    "f3eba98b2f2195aaedabfcf1b91f67ecf2123553e503f8b5b9b3f135f7837f46"
++  ],
++  "noRawNamesOrBodyValuesInThisDerivedProof": true,
++  "noNativeOrBuildExecutedForCorrection": true,
++  "noTestArgumentConfigurationSourceOrCoreChanges": true
++}
+--- /dev/null
++++ /tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/retry-baseline-proof.json
+@@ -0,0 +1,15 @@
++{
++  "readOnlyRefreshAfterParentOrdinaryAudit": true,
++  "parentRestorationAudit": "/tmp/story65-dapr-invoker-ops-prep-20261107/history/executed-d9eae03d9621474d/post-close/parent-ordinary-restoration-audit.json",
++  "parentRestorationAuditSha256": "cf42e08ad6388f6b607dec165f232f7b158fb7127821c9441eafe5234535d13f",
++  "gatewayPaths": 34,
++  "currentGatewayGeneration": "2a67bfc018b2e7b515003598e25ec1c0c18cdcab649263d79cb76b8a6ab61e8c",
++  "currentGatewayPdb": "79cf49d886ecfeeae1b32bd76627a53da5c9a502775a89fc92e730317c5145ec",
++  "affectedCurrentCoherent": 20,
++  "affectedHashesChangedFromPreservedFirstBaseline": 18,
++  "affectedReferenceHashesNaturallyUnchanged": 2,
++  "unrelatedPathsRetained": 14,
++  "nativeArtifactsRefreshed": 6,
++  "sdkDomainServerSourceUnchanged": true,
++  "noBuildAssemblyLoadOrNativeExecution": true
++}

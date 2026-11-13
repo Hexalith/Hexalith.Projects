@@ -1,0 +1,49 @@
+{
+  "preparationOnly": true,
+  "compiledOrExecuted": false,
+  "baseline": "Actual ordinary compiled DevelopmentRouteCatalogInputs.CaptureAsync, bound to captured current source/profile",
+  "private": "Copied class renamed only in scratch harness, otherwise exact reviewed private source and recorder",
+  "scratchAssemblyName": "Hexalith.EventStore.Server.Tests (existing InternalsVisibleTo, no owner test DLL overwritten)",
+  "retainedFacts": "Fixed case/mode/concurrency names, booleans/counts and closed exception type; synthetic keys/values/provider traces and observation bytes compared only in memory",
+  "allCasesRequired": [
+    "Serialized complete returned observation bytes equal",
+    "Every provider TryGet and GetChildKeys call, ordinal and key equal in memory",
+    "Same exception type and consumed-prefix trace on failure; no exception message output",
+    "No extra token cancellation checks or changed cancellation behavior",
+    "Active counter partition matches actual consumed predicate entries, including partial prefixes",
+    "No configuration/key/value/observation/exception reaches diagnostic sink"
+  ],
+  "cases": [
+    {"id":"empty-minimal", "purpose":"Only required synthetic Development host/component/ACL inputs; retain complete non-auth value reads"},
+    {"id":"null-and-empty-values", "purpose":"Null Value short circuits before key classifier; empty strings still classify and serialize if accepted"},
+    {"id":"mixed-case-prefixes-and-names", "purpose":"Both Authentication and EventStore:Authentication, OrdinalIgnoreCase matching/sort/dictionary, stable serialized order"},
+    {"id":"deep-and-array-keys", "purpose":"Nested valid names and array index children retain original complete enumeration/filter behavior"},
+    {"id":"sensitive-substrings", "purpose":"Key/Token/Secret substring exclusion including Monkey and Tokenish segments; do not narrow or normalize predicate"},
+    {"id":"unrecognized-authentication-name", "purpose":"Separate non-sensitive in-auth entries with no allowed name from non-auth discarded and sensitive excluded"},
+    {"id":"discarded-key-throws", "purpose":"Non-auth provider TryGet throws: both must throw before key filtering; pruning would be detected"},
+    {"id":"null-key-value-then-later-throw", "purpose":"No provider reads disappear due null predicate short circuit; later provider error remains ordered"},
+    {"id":"mutation-at-tryget-ordinal", "purpose":"Provider mutates later accepted setting at fixed value-read ordinal; same bytes and exact read trace"},
+    {"id":"declared-invocations-second-observation", "purpose":"Present key observed during complete enumeration and again in original tail; mutate at second read and compare behavior"},
+    {"id":"declared-invocations-absent", "purpose":"Absent key receives original tail indexer observation; no fabricated extra indexer read"},
+    {"id":"publickeys-and-token-presence", "purpose":"PublicKeys values still observed by original full enumeration, later caller-key traversal adds no Value reads; token presence expressions unchanged and never copied to recorder"},
+    {"id":"actor-owner-valid", "purpose":"Synthetic actual boundary file/config with selected owner and native endpoint, exact reads/serialized augmentation equal"},
+    {"id":"actor-owner-error", "purpose":"Synthetic malformed/changed boundary retains original file/config error order and refusal type"},
+    {"id":"component-file-error", "purpose":"Missing component path/file fails before AuthorityRole/ACL/settings as ordinary method does"},
+    {"id":"component-role-error", "purpose":"Malformed/non-dedicated component role fails before ACL/settings, no added role observations"},
+    {"id":"acl-file-error", "purpose":"Valid component then missing ACL; same provider/file observation order, no enumeration on failure"},
+    {"id":"initially-cancelled", "purpose":"Already-cancelled passed token gives same existing File.ReadAllBytesAsync behavior with no added cancellation check"},
+    {"id":"repeated-capture-fresh-state", "purpose":"Same provider changed between separate calls is freshly read and observed each time"}
+  ],
+  "recorderModesForDifferential": ["disabled-no-control-file", "active-eight-second-window", "expired-window", "queue-or-file-capped", "failing-private-output"],
+  "concurrency": [1, 2, 4],
+  "recorderOnlyCases": [
+    "Outside six fixed Role enums cannot admit or publish",
+    "Control file absent/malformed/too-long/wrong-frequency/longer-than-eight-seconds cannot admit",
+    "No request-thread File/JsonSerializer/ILogger/Activity/HttpContext/config/environment calls",
+    "Queue capacity/drop counters and fixed file/row caps under concurrent synthetic scalar records",
+    "Admitted captures finish after admission expiry; drain closes only after empty queue/active zero or explicit twenty-second bound",
+    "Hard drain records pending/active/incomplete coverage and qualifies late-drop count limit",
+    "Private sink denial/errors do not escape or change ordinary result/error/read trace",
+    "Only settings segment reports valid same-thread allocation; no await or async allocation attribution"
+  ]
+}

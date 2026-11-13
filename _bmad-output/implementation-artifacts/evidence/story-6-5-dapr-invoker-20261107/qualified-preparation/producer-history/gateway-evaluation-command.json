@@ -1,0 +1,24 @@
+{
+  "readOnlyPropertyAndItemEvaluationOnly": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-dapr-invoker-ops-prep-20261107/gateway-scratch.props",
+    "-getProperty:Story65GatewayLateGuardImported,Story65GatewayOriginalAfterSdkTargets,AfterMicrosoftNETSdkTargets,_HXWFinalTargetsImported,Configuration,Optimize,DefineConstants,DebugType,UseHexalithProjectReferences,UseNuGetDeps,EnablePrivateCatalogInvocationProof,EnablePrivateOwnerSourceReadProof,BuildProjectReferences,GenerateDocumentationFile,NoWarn,TreatWarningsAsErrors,BaseOutputPath,OutputPath,OutDir,TargetDir,TargetPath,TargetRefPath,BaseIntermediateOutputPath,IntermediateOutputPath,MSBuildProjectExtensionsPath,ProjectAssetsFile,ProjectAssetsCacheFile,DocumentationFile,GeneratedAssemblyInfoFile,GeneratedGlobalUsingsFile,GeneratedMSBuildEditorConfigFile,CompilerGeneratedFilesOutputPath,EmitCompilerGeneratedFiles,ProjectDepsFilePath,ProjectRuntimeConfigFilePath,PublishDir,SourceLink,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,CleanFile,GeneratedDocumentationFile,FileListAbsolute,AppendTargetFrameworkToOutputPath,AppendRuntimeIdentifierToOutputPath",
+    "-getItem:Compile,AdditionalFiles,Analyzer,EmbeddedResource,IntermediateAssembly,IntermediateRefAssembly,FileWrites"
+  ],
+  "startedUtc": "2026-11-07T14:57:14.039451+00:00",
+  "finishedUtc": "2026-11-07T14:57:14.347608+00:00",
+  "exitCode": 0,
+  "stdoutSha256": "09e7721ab6f8878c09d7b199ae94e08002dc1271ad6ef895029c1dc5ca002e7d",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "noBuildRestoreCleanPublishOrWriteGeneratingTargetsRequested": true,
+  "itemGroupOnlySubstitutionTargetRequested": false
+}

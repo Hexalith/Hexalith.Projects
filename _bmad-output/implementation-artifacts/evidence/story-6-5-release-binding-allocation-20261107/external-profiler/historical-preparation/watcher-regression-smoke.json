@@ -1,0 +1,82 @@
+{
+  "scratchDiagnosticRegressionOnly": true,
+  "watcherSha256": "d543de7125e3a55a544a59c363348c99ca81b3dabb153b020a558e34683af173",
+  "actualSanitizedResourceProofSha256": "87970e0718e9b7854f42a02f33c958c1c1c39f13ff640df695f04a9541a24faf",
+  "allPassed": true,
+  "cases": [
+    {
+      "case": "unique-actual-resource-schema",
+      "passed": true,
+      "onlyMockedDescribe": true
+    },
+    {
+      "case": "wrong-source-project-rejected",
+      "passed": true,
+      "fixedReason": "owned-resource-source-project-mismatch"
+    },
+    {
+      "case": "ambiguous-eventstore-rejected",
+      "passed": true,
+      "fixedReason": "ambiguous-owned-resource-graph"
+    },
+    {
+      "case": "detached-dcp-wrapper-descendant-found-without-apphost-os-ancestry",
+      "passed": true
+    },
+    {
+      "case": "absent-end-report-detached-resource-ready-then-failed-gate",
+      "passed": true,
+      "endReportAbsent": true,
+      "realSubprocesses": 0,
+      "targetAttachments": 0,
+      "phaseSequence": [
+        "waiting-new-owned-session",
+        "ready-waiting-first-multiple",
+        "failed-multiple-profile-requested",
+        "profile-finished"
+      ]
+    },
+    {
+      "case": "genuine-first-multiple-positive-skips-all-profiler-identity-and-execution",
+      "passed": true,
+      "endReportAbsent": true,
+      "realSubprocesses": 0,
+      "targetAttachments": 0,
+      "phaseSequence": [
+        "waiting-new-owned-session",
+        "skipped-positive-multiple"
+      ]
+    },
+    {
+      "case": "failed-first-multiple-before-published-ready-refuses-attachment",
+      "passed": true,
+      "endReportAbsent": true,
+      "realSubprocesses": 0,
+      "targetAttachments": 0,
+      "phaseSequence": [
+        "waiting-new-owned-session",
+        "guard-refused-no-attach"
+      ]
+    }
+  ],
+  "noRealSubprocessStartedBySmoke": true,
+  "noTargetAttached": true,
+  "noNativeOrBrowserAcceptanceCases": true,
+  "allOldWatchersAbsent": [
+    {
+      "pid": 2212154,
+      "recordedStartTicks": "6710660",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "pid": 2238966,
+      "recordedStartTicks": "6730864",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "pid": 2245892,
+      "recordedStartTicks": "6734576",
+      "recordedIdentityAbsent": true
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "stage": "restore",
+    "command": [
+      "dotnet",
+      "restore",
+      "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+      "--configfile",
+      "/tmp/story65-stream-compare-prep-20261108/harness/NuGet.Config",
+      "-p:NuGetAudit=false",
+      "-p:Story65ReviewedPreparationSha256=f6a3287fe9f8e2f9bfc06bbd9f7760d2458f2a9ff2b7ecffb8772763f4980ac3",
+      "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+    ],
+    "cwd": "/tmp/story65-stream-compare-prep-20261108/harness",
+    "started": true,
+    "pid": 4078242,
+    "processGroup": 4078242,
+    "exitCode": 0,
+    "logSha256": "4da086e849a440fbfbdd1d69527c30196f6651c52bf946c52e552c9096c92a31"
+  },
+  {
+    "stage": "build",
+    "command": [
+      "dotnet",
+      "build",
+      "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:Story65ReviewedPreparationSha256=f6a3287fe9f8e2f9bfc06bbd9f7760d2458f2a9ff2b7ecffb8772763f4980ac3",
+      "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+    ],
+    "cwd": "/tmp/story65-stream-compare-prep-20261108/harness",
+    "started": true,
+    "pid": 4078275,
+    "processGroup": 4078275,
+    "exitCode": 0,
+    "logSha256": "e9e4f6893cd4a9c567c21a248195d036016b99c30aa77281f52169c1ed72c16c"
+  }
+]

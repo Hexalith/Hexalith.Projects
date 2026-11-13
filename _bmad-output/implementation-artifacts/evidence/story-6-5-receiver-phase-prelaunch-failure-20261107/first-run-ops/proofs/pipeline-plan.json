@@ -1,0 +1,38 @@
+{
+  "preparationOnly": true,
+  "commands": {
+    "private": [
+      "/usr/bin/python3",
+      "/tmp/story65-receiver-phase-ops-prep-20261107/build_restore.py",
+      "--phase",
+      "private",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "ordinary": [
+      "/usr/bin/python3",
+      "/tmp/story65-receiver-phase-ops-prep-20261107/build_restore.py",
+      "--phase",
+      "ordinary",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "managed": [
+      "/usr/bin/python3",
+      "/tmp/story65-receiver-phase-ops-prep-20261107/supervise_managed.py",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "nativeReceiver": [
+      "/usr/bin/python3",
+      "/tmp/story65-receiver-phase-ops-prep-20261107/native_qualification.py",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ]
+  },
+  "finally": "Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories."
+}

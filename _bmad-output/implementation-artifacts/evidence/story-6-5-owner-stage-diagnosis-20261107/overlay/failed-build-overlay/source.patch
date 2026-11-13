@@ -1,0 +1,331 @@
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Hexalith.EventStore.DomainService-DelegatedOwnerQueryClient.cs
+@@ -20,6 +20,7 @@
+     /// <summary>Sends an exact owner request through the existing signed bound-owner gateway route.</summary>
+     public async Task<QueryResult> InvokeAsync(SubmitQueryRequest query, CancellationToken cancellationToken = default)
+     {
++        using var __ownerTiming1 = global::Hexalith.PrivateOwnerTiming.Story65TimingDomainService.Start("delegated.invoke");
+         ArgumentNullException.ThrowIfNull(query);
+         HttpContext? context = accessor.HttpContext;
+         VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(context);
+@@ -52,21 +53,28 @@
+     private async Task<QueryResult> InvokeOwnerAsync(SubmitQueryRequest query, BoundOwnerQueryRequest request,
+         string workload, string key, bool bounded, CancellationToken cancellationToken)
+     {
++        using var __ownerTiming2 = global::Hexalith.PrivateOwnerTiming.Story65TimingDomainService.Start("delegated.owner-operation");
+         string gateway = configuration["Authentication:QueryAuthority:GatewayWorkloadId"] ?? "eventstore";
++        using var __issuer = global::Hexalith.PrivateOwnerTiming.Story65TimingDomainService.Start("delegated.issuer");
+         ValueTask<string?> acquisition = issuer.IssueAsync(new(gateway, EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery), cancellationToken);
+         string? assertion = bounded
+             ? await acquisition.AsTask().WaitAsync(cancellationToken).ConfigureAwait(false)
+             : await acquisition.ConfigureAwait(false);
++        __issuer.Dispose();
+         if (bounded) cancellationToken.ThrowIfCancellationRequested();
+         if (assertion is null) return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
+         using HttpRequestMessage message = dapr.CreateInvokeMethodRequest(gateway, "api/v1/queries/owner-authority/workload", request);
+         message.Headers.TryAddWithoutValidation(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
+         message.Headers.TryAddWithoutValidation(BoundOwnerQueryProof.HeaderName, BoundOwnerQueryProof.Issue(request, workload, key, clock.GetUtcNow()));
++        using var __ownerTiming3 = global::Hexalith.PrivateOwnerTiming.Story65TimingDomainService.Start("delegated.send");
+         using HttpResponseMessage response = await clients.CreateClient().SendAsync(message, cancellationToken).ConfigureAwait(false);
++        __ownerTiming3.Dispose();
+         if (response.StatusCode == HttpStatusCode.NotFound)
+             return QueryResult.Failure("safe-denial");
+         if (!response.IsSuccessStatusCode) return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
++        using var __ownerTiming4 = global::Hexalith.PrivateOwnerTiming.Story65TimingDomainService.Start("delegated.body");
+         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(cancellationToken).ConfigureAwait(false);
++        __ownerTiming4.Dispose();
+         return result?.Success == true ? QueryResult.FromPayload(result.Payload, query.QueryType)
+             : QueryResult.Failure(QueryAdapterFailureReason.ResponseMismatch);
+     }
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Controllers-QueriesController.cs
+@@ -127,6 +127,7 @@
+     [RequestSizeLimit(1_048_576)]
+     public async Task<IActionResult> SubmitBoundOwnerAuthorityAsync(
+         [FromBody] BoundOwnerQueryRequest request, CancellationToken cancellationToken) {
++        using var __ownerTiming5 = global::Hexalith.PrivateOwnerTiming.Story65TimingEventStore.Start("gateway.owner-controller");
+         if (request?.Query is not { } query || query.Payload is null || query.AdditionalProperties is { Count: > 0 }
+             || query.EntityId is not null || query.ProjectionType is not null || query.ProjectionActorType is not null
+             || query.Paging is not null || query.Search is not null || query.Filters is not null || query.OrderBy is not null
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Controllers-StreamsController.cs
+@@ -105,6 +105,7 @@
+         StreamReadRequest request,
+         bool workloadOnly,
+         CancellationToken cancellationToken) {
++        using var __ownerTiming6 = global::Hexalith.PrivateOwnerTiming.Story65TimingEventStore.Start("gateway.stream-controller");
+         ArgumentNullException.ThrowIfNull(request);
+         if (workloadOnly && request.Tenant is null)
+             return ProblemWithReason(StatusCodes.Status400BadRequest, ProblemTypeUris.BadRequest,
+--- references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Queries-DaprDomainQueryInvoker.cs
+@@ -60,6 +60,7 @@
+ 
+     /// <inheritdoc/>
+     public async Task<QueryResult> InvokeAsync(QueryEnvelope query, CancellationToken cancellationToken = default) {
++        using var __ownerTiming7 = global::Hexalith.PrivateOwnerTiming.Story65TimingEventStore.Start("gateway.domain-invoker");
+         ArgumentNullException.ThrowIfNull(query);
+ 
+         var catalogLease = catalogAuthority is null ? null : await catalogAuthority.AcquireAsync(cancellationToken).ConfigureAwait(false);
+@@ -91,7 +92,9 @@
+                 query);
+             if (query.CallerAuthority is not null) httpRequest.Options.Set(QueryCallerAuthorityBinding.RequestBindings, QueryCallerAuthorityBinding.Bind(query));
+             HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+-            using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
++            using var __ownerTiming8 = global::Hexalith.PrivateOwnerTiming.Story65TimingEventStore.Start("gateway.domain-send");
++        using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
++        __ownerTiming8.Dispose();
+             if (httpResponse.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Forbidden) return QueryResult.Failure("safe-denial");
+             if (committed is not null && httpResponse.StatusCode == HttpStatusCode.ServiceUnavailable)
+                 throw new Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException("The committed query receiver refused catalog authority.");
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogAuthority.cs
+@@ -174,6 +174,7 @@
+     /// <inheritdoc/>
+     public async Task<RouteCatalogDispatchLease> AcquireAsync(CancellationToken cancellationToken = default)
+     {
++        using var __ownerTiming9 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.acquire");
+         DispatchDiagnostics? diagnostics = DispatchDiagnostics.Create(_logger, cancellationToken);
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogAdmissionWait))
+         {
+@@ -271,6 +272,7 @@
+ 
+     private async Task<RouteCatalogDispatchLease> AcquireCoreAsync(CancellationToken cancellationToken, DispatchDiagnostics? diagnostics)
+     {
++        using var __ownerTiming10 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.acquire-core");
+         RequireLocalIdentity();
+         RouteCatalogActivation? captured = null;
+         long epoch = 0;
+@@ -342,6 +344,7 @@
+                 bool exchanged;
+                 using (var stage = diagnostics?.Start(DispatchStageName.CatalogCompareExchange))
+                 {
++            using var __ownerTiming17 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.cas");
+                     exchanged = await store.CompareExchangeAsync(next, etag, cancellationToken).ConfigureAwait(false);
+                     stage?.Complete();
+                 }
+@@ -373,6 +376,7 @@
+ 
+     private async Task<(RouteCatalogActivationState State, string ETag)> ReadAdmissionStateAsync(CancellationToken cancellationToken, DispatchDiagnostics? diagnostics)
+     {
++        using var __ownerTiming13 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.state-read");
+         using var stage = diagnostics?.Start(DispatchStageName.CatalogStateRead);
+         var result = await store.ReadAsync(cancellationToken).ConfigureAwait(false);
+         stage?.Complete();
+@@ -439,6 +443,7 @@
+ 
+     private async Task ReleaseCoreAsync(string leaseId)
+     {
++        using var __ownerTiming11 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.release");
+         using var decodingBoundary = RouteCatalogDecodeScope.Suppress();
+         using var decoding = PrivateHostMemoEnabled() ? RouteCatalogDecodeScope.EnterWithMemo(_validatedBytes) : null;
+         // Only this completed local lease is removed. CAS contention cannot turn known
+@@ -457,11 +462,13 @@
+ 
+     private async Task ValidateAsync(RouteCatalogActivation activation, CancellationToken cancellationToken, DispatchDiagnostics? diagnostics = null)
+     {
++        using var __ownerTiming12 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.validate");
+         long phase = RouteCatalogDecodeScope.Current is null ? 0 : Stopwatch.GetTimestamp();
+         RequireLocalIdentity();
+         string binding;
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogActivationDigest))
+         {
++            using var __ownerTiming14 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.activation-digest");
+             binding = RouteCatalogActivationBinding.ComputeDigest(activation);
+             stage?.Complete();
+         }
+@@ -473,6 +480,7 @@
+         phase = ReportDecodePhase("profile", phase);
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogHostCapture))
+         {
++            using var __ownerTiming15 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.host-capture");
+             if (store.Coordinates is not { } coordinates || observer is null
+                 || await observer.ObserveAsync(activation, coordinates, cancellationToken).ConfigureAwait(false) != local.Identity)
+                 throw new RouteCatalogUnavailableException("Configured host identity lacks matching independent registration, topology and authentication observations.", RouteCatalogRefusalReason.Inventory);
+@@ -481,6 +489,7 @@
+         phase = ReportDecodePhase("observer", phase);
+         using (var stage = diagnostics?.Start(DispatchStageName.CatalogTrust))
+         {
++            using var __ownerTiming16 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.trust");
+             await trust.ValidateAsync(activation, binding, cancellationToken).ConfigureAwait(false);
+             stage?.Complete();
+         }
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogActivationBinding.cs
+@@ -11,6 +11,7 @@
+     /// <summary>Hashes all lifecycle inputs, including the exact predecessor and sorted required host identities.</summary>
+     public static string ComputeDigest(RouteCatalogActivation activation)
+     {
++        using var __ownerTiming18 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("catalog.binding-compute");
+         ArgumentNullException.ThrowIfNull(activation);
+         RouteCatalogEnvelope envelope = RouteCatalogCodec.Decode(activation.CanonicalCatalog, activation.RootDigest);
+         if (envelope.SchemaVersion is not (2 or 3) || string.IsNullOrWhiteSpace(activation.AttemptId)
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-ObservedRouteCatalogHost.cs
+@@ -78,12 +78,17 @@
+     /// <inheritdoc/>
+     public async Task<RouteCatalogHostIdentity> ObserveAsync(RouteCatalogActivation activation, RouteCatalogStateCoordinates coordinates, CancellationToken cancellationToken)
+     {
++        using var __ownerTiming19 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("host.observe");
+         ArgumentNullException.ThrowIfNull(activation);
+         ArgumentNullException.ThrowIfNull(coordinates);
++        using var __ownerTiming20 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("host.capture-inputs");
+         RouteCatalogHostObservation actual = await capture(cancellationToken).ConfigureAwait(false);
++        __ownerTiming20.Dispose();
+         if (actual.AuthorityCoordinates != coordinates)
+             throw new RouteCatalogUnavailableException("Observed authority coordinates disagree with the effective state store.", RouteCatalogRefusalReason.Configuration);
++        using var __identity = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("host.identity");
+         RouteCatalogHostIdentity identity = Identity(actual, out var inventory);
++        __identity.Dispose();
+         actual = inventory.Observation;
+         // The activation binding validates every candidate field. A later fresh capture with
+         // the same complete host identity has the same executable, topology, auth and policy
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpObservationPass.cs
+@@ -32,6 +32,7 @@
+ 
+     internal string Schema(Type type)
+     {
++        using var __ownerTiming21 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("technical.schema");
+         if (type == typeof(void)) return "http-no-body";
+         if (typeof(FileResult).IsAssignableFrom(type) || typeof(Stream).IsAssignableFrom(type)) return "http-binary:" + TypeIdentity(type);
+         if (!_schemas.TryGetValue(type, out string? schema)) _schemas.Add(type, schema = _options.GetJsonSchemaAsNode(type).ToJsonString());
+@@ -52,6 +53,7 @@
+ 
+     internal void Complete()
+     {
++        using var __ownerTiming22 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("technical.complete");
+         foreach (var observation in _observations)
+             if (observation.Current() != observation.Expected)
+                 throw new RouteCatalogUnavailableException("Native SDK runtime inventory changed during observation.", RouteCatalogRefusalReason.Inventory);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpActionObservation.cs
+@@ -196,6 +196,7 @@
+     /// <summary>Reads a fresh privately owned image, returning its borrowed buffer only after PE validation and hashing finish.</summary>
+     internal static string AssemblyIdentity(Assembly assembly, ArrayPool<byte> imageBuffers)
+     {
++        using var __ownerTiming23 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("technical.assembly-image");
+         if (string.IsNullOrEmpty(assembly.Location)) throw new RouteCatalogUnavailableException("The loaded technical SDK assembly has no independently readable image.");
+         byte[]? bytes = null;
+         int length = 0;
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpRouteCatalogReceiver.cs
+@@ -241,6 +241,7 @@
+     /// <summary>Recaptures every real endpoint, retaining admission only for unchanged installed action identities.</summary>
+     public RouteCatalogReceiverSurface Observe()
+     {
++        using var __ownerTiming24 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("technical.observe-all");
+         if (!_ready.Task.IsCompletedSuccessfully) throw new RouteCatalogUnavailableException("The technical receiver has not captured its actual endpoint source.");
+         List<RouteCatalogReceiverEndpoint> endpoints = []; List<RouteCatalogTechnicalHttpEndpoint> technical = [];
+         var pass = new TechnicalHttpObservationPass(_services!);
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogInvocationHandler.cs
+@@ -126,6 +126,7 @@
+     /// <inheritdoc/>
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+     {
++        using var __ownerTiming25 = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("invocation.handler");
+         ArgumentNullException.ThrowIfNull(request);
+         if (_options?.Value is { DevelopmentFixture: true, Profile: "Development" } && DevelopmentActorStateTransport.GetOwner(request) is { } owner)
+             return await SendOwnerReadAsync(request, owner, cancellationToken).ConfigureAwait(false);
+@@ -231,6 +232,7 @@
+         }
+         async Task<HttpResponseMessage> SendTransportAsync(CancellationToken token)
+         {
++            using var __transport = global::Hexalith.PrivateOwnerTiming.Story65TimingServiceDefaults.Start("invocation.transport");
+             using var stage = diagnostics?.Start(DispatchStageName.InvocationTransport);
+             HttpResponseMessage response = await invocation.SendAsync(request, token).ConfigureAwait(false);
+             stage?.Complete();
+--- references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs at 3d4ba67db99f2f0bcd64b7d353609b555870cc9b
++++ /tmp/story65-owner-stage-overlay-20261107/Streams-GatewayNativeSourceMetadataReader.cs
+@@ -20,6 +20,7 @@
+     /// <inheritdoc/>
+     public async Task<NativeSourceObservation?> ReadAsync(AggregateIdentity identity, CancellationToken cancellationToken = default)
+     {
++        using var __ownerTiming26 = global::Hexalith.PrivateOwnerTiming.Story65TimingClient.Start("native-metadata.read");
+         ArgumentNullException.ThrowIfNull(identity);
+         cancellationToken.ThrowIfCancellationRequested();
+         if (readTimeout <= TimeSpan.Zero || readTimeout > TimeSpan.FromSeconds(30)) return null;
+--- references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs at e88c940000446e13d17d86a7288649d8653a7138
++++ /tmp/story65-owner-stage-overlay-20261107/Queries-FolderOwnerReadQueryHandler.cs
+@@ -15,6 +15,7 @@
+ 
+     public async Task<QueryResult> ExecuteAsync(QueryEnvelope query, CancellationToken cancellationToken = default)
+     {
++        using var __ownerTiming27 = global::Hexalith.PrivateOwnerTiming.Story65TimingServer.Start("folders.owner-handler");
+         ArgumentNullException.ThrowIfNull(query);
+         VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(accessor.HttpContext);
+         if (caller is null || !ReferenceEquals(caller.Query, query) || query.CallerAuthority?.Origin != "delegated-owner-query")
+@@ -26,20 +27,24 @@
+                 || query.EntityId != query.AggregateId || query.Paging is not null) return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
+         }
+         catch (JsonException) { return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope); }
++        using var __ownerTiming28 = global::Hexalith.PrivateOwnerTiming.Story65TimingServer.Start("folders.first-authorization");
+         LayeredFolderAuthorizationResult result = await authorization.AuthorizeCurrentMetadataReadAsync(new(
+             query.TenantId, query.UserId, "actor_present", "read_metadata", LayeredFolderOperationPolicy.StrictRead(),
+             EventStoreClaimTransformEvidence.Allowed(query.TenantId, query.UserId, query.CallerAuthority.Permissions),
+             query.AggregateId, query.CorrelationId, null, null, null), cancellationToken).ConfigureAwait(false);
++        __ownerTiming28.Dispose();
+         if (!result.IsAllowed)
+         {
+             if (result.Decision.FreshnessClass == "stale") return Success(FolderOwnerReadOutcome.Stale);
+             if (!result.Decision.Retryable) return QueryResult.Failure("safe-denial");
+             return Success(FolderOwnerReadOutcome.Unavailable);
+         }
++        using var __ownerTiming29 = global::Hexalith.PrivateOwnerTiming.Story65TimingServer.Start("folders.final-authorization");
+         LayeredFolderAuthorizationResult final = await authorization.AuthorizeCurrentMetadataReadAsync(new(
+             query.TenantId, query.UserId, "actor_present", "read_metadata", LayeredFolderOperationPolicy.StrictRead(),
+             EventStoreClaimTransformEvidence.Allowed(query.TenantId, query.UserId, query.CallerAuthority.Permissions),
+             query.AggregateId, query.CorrelationId, null, null, null), cancellationToken).ConfigureAwait(false);
++        __ownerTiming29.Dispose();
+         if (!final.IsAllowed) return final.Decision.Retryable ? Success(FolderOwnerReadOutcome.Unavailable) : QueryResult.Failure("safe-denial");
+         if (!SameRevisions(result.AllowedContext, final.AllowedContext)) return Success(FolderOwnerReadOutcome.Unavailable);
+         FolderOwnerReadEvidence? evidence = FolderOwnerQueryBinding.IsVerified(query, accessor)
+--- references/Hexalith.Folders/src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationService.cs at e88c940000446e13d17d86a7288649d8653a7138
++++ /tmp/story65-owner-stage-overlay-20261107/Authorization-LayeredFolderAuthorizationService.cs
+@@ -21,6 +21,7 @@
+     public async Task<LayeredFolderAuthorizationResult> AuthorizeCurrentMetadataReadAsync(
+         LayeredFolderAuthorizationContext context, CancellationToken cancellationToken = default)
+     {
++        using var __ownerTiming30 = global::Hexalith.PrivateOwnerTiming.Story65TimingFolders.Start("folders.current-authority");
+         ArgumentNullException.ThrowIfNull(context);
+         using IDisposable suppression = PreauthorizedRequestContext.SuppressReuse();
+         return await AuthorizeCoreAsync(context with { OperationPolicy = LayeredFolderOperationPolicy.StrictRead() },
+@@ -71,6 +72,7 @@
+         CancellationToken cancellationToken,
+         bool requireCompleteFreshness = false)
+     {
++        using var __ownerTiming31 = global::Hexalith.PrivateOwnerTiming.Story65TimingFolders.Start("folders.authority-core");
+         ArgumentNullException.ThrowIfNull(context);
+ 
+         List<AuthorizationLayer> evaluatedLayers = [];
+@@ -155,9 +157,11 @@
+             authoritativeTenantId,
+             context.PrincipalId,
+             RequestedTenantId: authoritativeTenantId);
++        using var __ownerTiming32 = global::Hexalith.PrivateOwnerTiming.Story65TimingFolders.Start("folders.tenant-authority");
+         TenantAccessAuthorizationResult tenantAccess = context.OperationPolicy.AllowBoundedStaleTenantProjection
+             ? await tenantAccessAuthorizer.AuthorizeDiagnosticReadAsync(tenantAccessContext, cancellationToken).ConfigureAwait(false)
+             : await tenantAccessAuthorizer.AuthorizeMutationAsync(tenantAccessContext, cancellationToken).ConfigureAwait(false);
++        __ownerTiming32.Dispose();
+ 
+         if (requireCompleteFreshness && tenantAccess.FreshnessStatus == TenantProjectionFreshnessStatus.Fresh
+             && string.IsNullOrWhiteSpace(tenantAccess.ProjectionWatermark))
+@@ -224,7 +228,8 @@
+             FolderPermissionEvidenceResult folderEvidence;
+             try
+             {
+-                folderEvidence = await folderPermissionEvidenceProvider.GetEvidenceAsync(
++                using var __ownerTiming33 = global::Hexalith.PrivateOwnerTiming.Story65TimingFolders.Start("folders.folder-evidence");
++        folderEvidence = await folderPermissionEvidenceProvider.GetEvidenceAsync(
+                     new FolderPermissionEvidenceRequest(
+                         managedTenantId,
+                         context.PrincipalId,
+@@ -236,6 +241,7 @@
+                         context.OperationPolicy.PolicyClass,
+                         context.OperationPolicy.AllowBoundedStaleFolderPermission),
+                     cancellationToken).ConfigureAwait(false);
++        __ownerTiming33.Dispose();
+             }
+             catch (Exception ex) when (ex is not OperationCanceledException)
+             {

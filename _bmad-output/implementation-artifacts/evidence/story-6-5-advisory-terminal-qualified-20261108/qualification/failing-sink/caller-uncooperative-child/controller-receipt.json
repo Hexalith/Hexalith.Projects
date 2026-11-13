@@ -1,0 +1,53 @@
+{
+  "mode": "failing-sink",
+  "group": "slow",
+  "case": "caller-uncooperative-child",
+  "pid": 1653410,
+  "startTicks": "15584667",
+  "exitCode": 0,
+  "ownedGroupMembersAfter": [],
+  "errorType": "none",
+  "artifacts": {
+    "projects.closed.json": {
+      "sha256": "cdda884b331e69d1d51e803dd77e20f947f186045940ab39b2b0a4ebcae1fd9e",
+      "bytes": 505
+    },
+    "projects.jsonl": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "window.control": {
+      "sha256": "0528423ba81901bb59943abb6cb9688d1088a8ba94f8a432e3fd4dc881b10c69",
+      "bytes": 48
+    }
+  },
+  "rows": 0,
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "projects",
+    "runOrdinal": 1022,
+    "admitted": 1,
+    "disposedOrUnwound": 1,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 0,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 0,
+    "ioFailures": 2,
+    "writtenRows": 0,
+    "writtenBytes": 0,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 155846696202015,
+    "windowEndTicks": 155854696202015,
+    "frequency": 1000000000
+  },
+  "runtimeProcessorOverride": null,
+  "rawDependencyTracePersisted": false,
+  "inputPaths": 733
+}

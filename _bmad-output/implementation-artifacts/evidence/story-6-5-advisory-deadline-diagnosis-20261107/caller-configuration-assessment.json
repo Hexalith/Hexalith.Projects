@@ -1,0 +1,43 @@
+{
+  "configurationChanged": false,
+  "observedRuntimeOptions": {
+    "projects": {
+      "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+      "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+      "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+      "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+    },
+    "folders": {
+      "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+      "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+      "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+      "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "true"
+    }
+  },
+  "options": [
+    {
+      "option": "ScopedDecodeReuse / RetainValidatedCatalogBytes",
+      "assessment": "Already enabled for Projects and Folders; computational memoization preserves fresh authority checks."
+    },
+    {
+      "option": "ReuseHeldMetadataDispatch",
+      "assessment": "Already enabled for Folders. SDK eligibility requires POST api/v1/streams/read/workload. Projects owner calls target api/v1/queries/owner-authority/workload, so enabling this on Projects would not optimize them."
+    },
+    {
+      "option": "SerializeLocalLeaseRelease",
+      "assessment": "SDK documents this as retained configuration compatibility; lease completion always shares the admission gate."
+    },
+    {
+      "option": "OwnerQueries:OperationTimeout",
+      "assessment": "Existing three-second whole-owner ceiling does not accelerate successful ~0.9-second calls, and the advisory two-second deadline remains earlier."
+    }
+  ],
+  "conclusion": "No evidence supports an existing Projects-owned caller configuration change that completes the required ordered owner observations within the unchanged advisory budget.",
+  "ownerInternalPerformanceCauseEstablished": false,
+  "sources": {
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "20234d4f89de753ea44bcfe652a0d90afef388f9008a015d3c0ae369559074ad",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "a46d9a803633e78af816c86862586841e19cb405e1bc0aa7c1f016816180327c",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "bc98593764a4efd7047fabc0ab57d25eb73f767a94d9fcb05517f917e8603f20",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs": "c969d284411288c245c5833b15abb73dd93309c2671b08a03de18d694ee33a2c"
+  }
+}

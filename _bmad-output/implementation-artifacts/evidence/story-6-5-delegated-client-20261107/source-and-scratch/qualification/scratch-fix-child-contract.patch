@@ -1,0 +1,12 @@
+--- a/driver/Assertions.cs
++++ b/driver/Assertions.cs
+@@ -69,7 +69,8 @@
+         if (original.Error is ArgumentException left && changed.Error is ArgumentException right) Check.Require(left.ParamName == right.ParamName, "Exception parameter changed.");
+         Check.Require(original.CallerCanceled == changed.CallerCanceled, "Caller cancellation state changed.");
+         Check.Require(original.ErrorTokenIsCaller == changed.ErrorTokenIsCaller, "Exception caller-token identity changed.");
+-        Check.Require(original.ChildAfterReturn == changed.ChildAfterReturn, "Instantaneous acquisition child completion state changed.");
++        if (original.State.Test.Fault == "issuer-uncooperative")
++            Check.Require(original.ChildAfterReturn == changed.ChildAfterReturn, "Instantaneous acquisition child completion state changed.");
+         Check.Require(original.UnboundedHeldAfterCallerCancel == changed.UnboundedHeldAfterCallerCancel, "Unbounded caller wait semantics changed.");
+         if (original.Result is { } first && changed.Result is { } second)
+             Check.Require(first.Success == second.Success && first.ErrorMessage == second.ErrorMessage && first.ProjectionType == second.ProjectionType

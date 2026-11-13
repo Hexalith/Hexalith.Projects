@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="Story65InvocationTransportSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <ItemGroup>
+      <Compile Remove="Routing/RouteCatalogInvocationHandler.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/RouteCatalogInvocationHandler.private.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/InvocationTransportBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

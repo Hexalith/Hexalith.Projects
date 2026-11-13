@@ -1,0 +1,132 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRawSha256": "5223f39e3a48e69321cf07eca57f5ed4371a2d9a4b912c874b287284cea04019",
+  "captures": 24,
+  "rows": 186,
+  "stage7Overlaps456": true,
+  "noClientRootRequestOrPriorRunPairing": true,
+  "noMissingStageOutcomeInference": true,
+  "noExactLeaseReleaseResidual": true,
+  "millisecondsByStage": {
+    "WholeAction": {
+      "count": 24,
+      "median": 513.9195864999999,
+      "minimum": 70.037171,
+      "maximum": 568.510841
+    },
+    "Signature": {
+      "count": 24,
+      "median": 0.21451350000000002,
+      "minimum": 0.133116,
+      "maximum": 1.270255
+    },
+    "Origin": {
+      "count": 24,
+      "median": 0.22462700000000002,
+      "minimum": 0.118328,
+      "maximum": 0.314375
+    },
+    "CatalogAcquire": {
+      "count": 24,
+      "median": 30.369236,
+      "minimum": 23.95682,
+      "maximum": 42.759669
+    },
+    "Admission": {
+      "count": 24,
+      "median": 0.06597700000000001,
+      "minimum": 0.035278,
+      "maximum": 0.094542
+    },
+    "MediatorAndMarkerFinally": {
+      "count": 24,
+      "median": 473.8550975,
+      "minimum": 21.173037,
+      "maximum": 530.56535
+    },
+    "ResponseConstruction": {
+      "count": 18,
+      "median": 0.009337999999999999,
+      "minimum": 0.005932,
+      "maximum": 0.113058
+    },
+    "OverlappingLeaseScope": {
+      "count": 24,
+      "median": 480.9480935,
+      "minimum": 37.841602,
+      "maximum": 534.01406
+    }
+  },
+  "stageSetCounts": [
+    {
+      "stages": [
+        "WholeAction",
+        "Signature",
+        "Origin",
+        "CatalogAcquire",
+        "Admission",
+        "MediatorAndMarkerFinally",
+        "ResponseConstruction",
+        "OverlappingLeaseScope"
+      ],
+      "captures": 18
+    },
+    {
+      "stages": [
+        "WholeAction",
+        "Signature",
+        "Origin",
+        "CatalogAcquire",
+        "Admission",
+        "MediatorAndMarkerFinally",
+        "OverlappingLeaseScope"
+      ],
+      "captures": 6
+    }
+  ],
+  "withinSameCapturePercentOfWhole": {
+    "Signature": {
+      "count": 24,
+      "median": 0.042366437674063756,
+      "minimum": 0.025578993309199365,
+      "maximum": 0.34596914258572775
+    },
+    "Origin": {
+      "count": 24,
+      "median": 0.04435050742488063,
+      "minimum": 0.022083577224777263,
+      "maximum": 0.3187593056835491
+    },
+    "CatalogAcquire": {
+      "count": 24,
+      "median": 6.082527563611525,
+      "minimum": 4.757045676029682,
+      "maximum": 45.27859784627795
+    },
+    "Admission": {
+      "count": 24,
+      "median": 0.013361842728095595,
+      "minimum": 0.006901162311605095,
+      "maximum": 0.0993713521640888
+    },
+    "MediatorAndMarkerFinally": {
+      "count": 24,
+      "median": 92.52325566406739,
+      "minimum": 30.23114254572047,
+      "maximum": 94.54762771490286
+    },
+    "ResponseConstruction": {
+      "count": 18,
+      "median": 0.0017348018902873948,
+      "minimum": 0.001172168619851968,
+      "maximum": 0.02195691774165234
+    },
+    "OverlappingLeaseScope": {
+      "count": 24,
+      "median": 93.71433160225851,
+      "minimum": 54.03074033358658,
+      "maximum": 95.19258675468963
+    }
+  }
+}

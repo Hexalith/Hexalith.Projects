@@ -1,0 +1,1045 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "passed": true,
+  "nativeStarted": true,
+  "nativeProcessAndDescendantsAbsent": true,
+  "counterDirectoryEmpty": true,
+  "caseCount": 40,
+  "sourceDerivedExpectedCases": 40,
+  "historical40RetentionClaimed": false,
+  "ordinaryUniqueNativeCountUnchanged": 1038,
+  "processes": [
+    {
+      "selection": {
+        "alias": "controller",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+            "Signed_query_binds_caller_principal_payload_and_allowlisted_type",
+            null
+          ]
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+        "-xml",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native-private-40-5i5pwz08/controller.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T14:32:16.465897+00:00",
+      "pid": 2750851,
+      "processGroup": 2750851,
+      "startTicks": "9953875",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T14:32:17.138580+00:00",
+      "xmlSha256": "0049a88363a7cf745c99dea3f58171ae88cdd7acfe7048a87488269da4662a4f",
+      "logSha256": "5621e237e287980674cb822d06b21d6e72b15b61384605399f732ea307b95f28",
+      "caseCount": 1,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+          "Signed_query_binds_caller_principal_payload_and_allowlisted_type",
+          null
+        ]
+      ],
+      "actualRawCaseNames": [
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests.Signed_query_binds_caller_principal_payload_and_allowlisted_type"
+      ],
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "authority",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "LegacyTwoFieldRequestKeepsItsExactProofSerialization",
+            null
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "valid"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "nondelegated"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "transitive"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "actor"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "tenant"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "payload"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "permission"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "audience"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "caller"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "expired"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "workload"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "delegation"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "scopes"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+            "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+            "origin-context"
+          ]
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+        "-xml",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native-private-40-5i5pwz08/authority.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T14:32:17.148840+00:00",
+      "pid": 2750884,
+      "processGroup": 2750884,
+      "startTicks": "9953944",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T14:32:18.582301+00:00",
+      "xmlSha256": "095aaa06c61b1bec1518245cd4c436569776a7cce921ca90f2359923f17b99ec",
+      "logSha256": "13ab160f545aa7df356eb002d18aa624a2ef76367cd4d7560a410a6a888ea6cd",
+      "caseCount": 15,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "LegacyTwoFieldRequestKeepsItsExactProofSerialization",
+          null
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "valid"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "nondelegated"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "transitive"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "actor"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "tenant"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "payload"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "permission"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "audience"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "caller"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "expired"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "workload"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "delegation"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "scopes"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+          "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+          "origin-context"
+        ]
+      ],
+      "actualRawCaseNames": [
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.LegacyTwoFieldRequestKeepsItsExactProofSerialization",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"valid\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"nondelegated\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"transitive\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"actor\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"tenant\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"payload\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"permission\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"audience\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"caller\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"expired\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"workload\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"delegation\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"scopes\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests.NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission(fault: \\\"origin-context\\\")"
+      ],
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "catalog-admission",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "valid"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "confirmation"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "ui-only"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "changed-endpoint"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "signature"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "unconfigured-caller"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "actor"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "tenant"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "query"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "payload"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "missing-surface"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "human-surface"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "copied-marker"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "mutated-actor"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "mutated-tenant"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "mutated-query"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "mutated-payload"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "foreign-route"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+            "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+            "stale-authority"
+          ]
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+        "-xml",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native-private-40-5i5pwz08/catalog-admission.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T14:32:18.592804+00:00",
+      "pid": 2751318,
+      "processGroup": 2751318,
+      "startTicks": "9954088",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T14:32:21.357681+00:00",
+      "xmlSha256": "71d5cf5718a1f2e2876e9369a603379500c32b4440b8c04dfa38f68b77d749b1",
+      "logSha256": "85c8260d028bbb7d3462ea2cb1e05c8caab0938798e593c370c763a70319faac",
+      "caseCount": 19,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "valid"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "mutated-payload"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "mutated-query"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "mutated-tenant"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "mutated-actor"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "copied-marker"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "human-surface"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "missing-surface"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "foreign-route"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "payload"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "tenant"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "actor"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "unconfigured-caller"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "signature"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "changed-endpoint"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "ui-only"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "confirmation"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "query"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+          "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+          "stale-authority"
+        ]
+      ],
+      "actualRawCaseNames": [
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"valid\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-payload\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-query\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-tenant\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-actor\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"copied-marker\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"human-surface\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"missing-surface\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"foreign-route\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"payload\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"tenant\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"actor\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"unconfigured-caller\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"signature\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"changed-endpoint\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"ui-only\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"confirmation\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"query\\\")",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"stale-authority\\\")"
+      ],
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "projection-current",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+            "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+            "current"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+            "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+            "unselected-version"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+            "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+            "missing-domain-enrollment"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+            "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+            "cross-tenant"
+          ]
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+        "-xml",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native-private-40-5i5pwz08/projection-current.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T14:32:21.368483+00:00",
+      "pid": 2751522,
+      "processGroup": 2751522,
+      "startTicks": "9954366",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T14:32:22.473124+00:00",
+      "xmlSha256": "65e5672a8c421b0bdbbbe2840fa3c2292f6ee2baede654df155c853eb129a7fa",
+      "logSha256": "c900f69806dee8f15dfc0dd9c284962f79af4d0e07ab30ef7cd7e6257ba9d656",
+      "caseCount": 4,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+          "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+          "current"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+          "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+          "unselected-version"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+          "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+          "missing-domain-enrollment"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+          "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+          "cross-tenant"
+        ]
+      ],
+      "actualRawCaseNames": [
+        "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests.ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration(scenario: \\\"current\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests.ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration(scenario: \\\"unselected-version\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests.ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration(scenario: \\\"missing-domain-enrollment\\\")",
+        "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests.ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration(scenario: \\\"cross-tenant\\\")"
+      ],
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "catalog-backed-owner",
+        "flag": "-method",
+        "filter": "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests.CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests",
+            "CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+            null
+          ]
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-method",
+        "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests.CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+        "-xml",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native-private-40-5i5pwz08/catalog-backed-owner.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T14:32:22.483698+00:00",
+      "pid": 2751756,
+      "processGroup": 2751756,
+      "startTicks": "9954477",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T14:32:23.398806+00:00",
+      "xmlSha256": "28d754e518e023463b2b62790f02640f62a3b6ebdd80c5bf22b20aac0d8623ad",
+      "logSha256": "7359dc7693a1d9d8f03a127b47b343461bb93ae3ff7252f5c25bf80d15526d95",
+      "caseCount": 1,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests",
+          "CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+          null
+        ]
+      ],
+      "actualRawCaseNames": [
+        "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests.CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection"
+      ],
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    }
+  ],
+  "build": {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false",
+      "-p:EnablePrivateCatalogInvocationProof=true",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0,
+    "logSha256": "d9dff9d3ded5900bfb9f69b2c28a28c6d8437c17aa2d461ff263388d3e023940",
+    "allSevenEmittedMappingEnvironmentValues": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+      "Configuration": "Debug"
+    }
+  },
+  "privateGatewayBefore": {
+    "producerSha256": "06cb1831f8dc45bbdb81dc209276ee9d7f5a9533952bb1e47c4a525dd331d0e6",
+    "producerPdbSha256": "935b1e02bafe88ab46b7a3a8ed7b02acc9a229525921ab72960831c275118c8c",
+    "testCopySha256": "06cb1831f8dc45bbdb81dc209276ee9d7f5a9533952bb1e47c4a525dd331d0e6",
+    "testCopyPdbSha256": "935b1e02bafe88ab46b7a3a8ed7b02acc9a229525921ab72960831c275118c8c",
+    "testAssemblySha256": "36d7cc8ea77924f6037ac545f9052510aa31696aae0710766433e37d247c207c"
+  },
+  "ordinarySdkBefore": {
+    "knownEight": {
+      "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+      "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+      "allEightOrdinarySdkCopiesCoherent": true,
+      "copies": [
+        {
+          "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        }
+      ]
+    },
+    "nativeCopySha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "nativeCopyPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "nativeCopyOrdinary": true
+  },
+  "domain98Before": {
+    "all98DomainCopiesRetainRecordedOrdinaryHashes": true,
+    "count": 98,
+    "notClaimedAll98SameGeneration": true,
+    "activeOrdinaryProducerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+  },
+  "ordinaryRootServerBefore": {
+    "mode": "rebuilt-source",
+    "ordinaryServerSourceSha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d",
+    "priorBaselineProducerSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+    "priorBaselinePdbSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+    "currentProducerSha256": "e01ee32a2e7b1dfd2abd3f509f10bd80be0cc31c2b0148e49538ebd72486e5d2",
+    "currentProducerPdbSha256": "8383c45e6274e5abd9056dc72a674a4fd45d66fa9cfcc1c86c90e20cec73c870",
+    "allTenPrivateMarkersAbsent": true,
+    "rebuiltKnownOutputsCoherentWithCurrentProducer": true,
+    "untouchedRootServerTestsRetainPriorHashes": true,
+    "allTenNaturallyMatchPriorBaseline": false,
+    "allTenSameGenerationClaimed": false,
+    "copies": [
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e01ee32a2e7b1dfd2abd3f509f10bd80be0cc31c2b0148e49538ebd72486e5d2",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "8383c45e6274e5abd9056dc72a674a4fd45d66fa9cfcc1c86c90e20cec73c870",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e01ee32a2e7b1dfd2abd3f509f10bd80be0cc31c2b0148e49538ebd72486e5d2",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "8383c45e6274e5abd9056dc72a674a4fd45d66fa9cfcc1c86c90e20cec73c870",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/ref/Hexalith.Projects.Server.dll",
+        "kind": "ref",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/refint/Hexalith.Projects.Server.dll",
+        "kind": "refint",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "e01ee32a2e7b1dfd2abd3f509f10bd80be0cc31c2b0148e49538ebd72486e5d2",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "8383c45e6274e5abd9056dc72a674a4fd45d66fa9cfcc1c86c90e20cec73c870",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      }
+    ]
+  },
+  "source52Match": true,
+  "allFiveMappedPrivateGateway": true,
+  "actualCanonicalCases": [
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+      "Signed_query_binds_caller_principal_payload_and_allowlisted_type",
+      null
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "LegacyTwoFieldRequestKeepsItsExactProofSerialization",
+      null
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "valid"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "nondelegated"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "transitive"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "actor"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "tenant"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "payload"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "permission"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "audience"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "caller"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "expired"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "workload"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "delegation"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "scopes"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "NestedOriginalAuthorityRequiresExactSignedActorTenantPayloadAudienceAndPermission",
+      "origin-context"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "valid"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "mutated-payload"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "mutated-query"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "mutated-tenant"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "mutated-actor"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "copied-marker"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "human-surface"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "missing-surface"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "foreign-route"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "payload"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "tenant"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "actor"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "unconfigured-caller"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "signature"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "changed-endpoint"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "ui-only"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "confirmation"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "query"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility",
+      "stale-authority"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+      "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+      "current"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+      "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+      "unselected-version"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+      "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+      "missing-domain-enrollment"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+      "ExistingSignedOwnerRouteReturnsOnlyTheExactNativeSelectedGeneration",
+      "cross-tenant"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests",
+      "CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+      null
+    ]
+  ]
+}

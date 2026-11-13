@@ -1,0 +1,109 @@
+{
+  "ordinaryAcceptanceOnly": false,
+  "profilerEnabled": false,
+  "runResult": "failed",
+  "matrixCompleted": false,
+  "singleAttempts": 0,
+  "singleVerifiedPositives": 0,
+  "multipleAttempts": 0,
+  "multipleVerifiedPositives": 0,
+  "multipleExternalFixtureElapsedMedianMs": null,
+  "elapsedIncludesSubsequentEvidenceReads": true,
+  "identities": [
+    {
+      "role": "appHost",
+      "pid": 220548,
+      "startTicks": "8325021",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "cli",
+      "pid": 220386,
+      "startTicks": "8324979",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222359,
+      "startTicks": "8325612",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222667,
+      "startTicks": "8325684",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222772,
+      "startTicks": "8325707",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222441,
+      "startTicks": "8325634",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222554,
+      "startTicks": "8325656",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "sidecar",
+      "pid": 222274,
+      "startTicks": "8325589",
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "managed-launcher",
+      "pid": 207658,
+      "startTicks": "8316268",
+      "recordedIdentityAbsent": true
+    }
+  ],
+  "containers": [
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "1bf53736a8c56b12ea5ba61c5c0f536988f92c76a4b94337764fced9e35a3aa1",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "483aa5c0b55d0424214cd5b87283f6e5b6d924b712fdf9d1fd9c73a56ce4d165",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "d1a88f9ed368f451ab782d63eda46ad6878735f79fb459e358b107684187f51a",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-e0d5d079c232dbac131ccee9-redishost",
+      "containerId": "715e9464c0c4dd50c2fdcd866adf8a24ab0609be6c7e68f6f597f45d813a7ca4",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-e0d5d079c232dbac131ccee9-oidc",
+      "containerId": "a2e51a8060d41e1942217985de09ed37a9c6257c53074e6793296b6e812096f0",
+      "absenceVerified": true
+    }
+  ],
+  "namespaceContainersAbsent": true,
+  "privateRuntimeDirectoryAbsent": true,
+  "allOriginalCleanupAbsenceVerified": true,
+  "preexistingResourcesPreserved": true,
+  "ownedSidecarsAbsent": true,
+  "privateMaterialRemoved": true,
+  "nativeTestProcessCleanup": null,
+  "fullLiveManifestSourceCount": 17188,
+  "fullLiveManifestHashMismatches": 0,
+  "allIndependentRecordedProcessAndContainerAbsences": true,
+  "actualBrowserArtifactsRequireIndependentXmlAndPersistencePrivacyReview": true,
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "privateSdkOverlay": true
+}

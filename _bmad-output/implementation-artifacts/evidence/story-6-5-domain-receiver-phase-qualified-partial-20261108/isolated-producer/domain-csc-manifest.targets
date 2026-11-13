@@ -1,0 +1,52 @@
+<Project>
+  <!-- Last SDK import: captures resolved Csc inputs after the pinned SDK generators. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <Story65DomainLateGuardImported>true</Story65DomainLateGuardImported>
+  </PropertyGroup>
+  <Target Name="Story65ValidateDomainReceiverCompilerInputs" DependsOnTargets="Story65DomainReceiverSourceSubstitution" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/obj/project.assets.json'" Text="Domain receiver restored assets coordinate refused." />
+    <ItemGroup>
+      <_DomainWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+      <_DomainWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+      <_DomainOriginalDomainRouteCatalogFilter Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs'" />
+      <_DomainPrivateDomainRouteCatalogFilter Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogFilter.private.cs'" />
+      <_DomainOriginalDomainRouteCatalogGuard Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuard.cs'" />
+      <_DomainPrivateDomainRouteCatalogGuard Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogGuard.private.cs'" />
+      <_DomainOriginalDomainRouteCatalogResult Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs'" />
+      <_DomainPrivateDomainRouteCatalogResult Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogResult.private.cs'" />
+      <_DomainHelper Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-domain-receiver-phase-prep-20261108/CaptureCounters.cs'" />
+      <_DomainBootstrap Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-domain-receiver-phase-prep-20261108/ReceiverPhaseBootstrap.cs'" />
+    </ItemGroup>
+    <Error Condition="'$(Story65DomainReceiverPrivate)' == 'true' and ('@(_DomainOriginalDomainRouteCatalogFilter)' != '' or '@(_DomainPrivateDomainRouteCatalogFilter->Count())' != '1' or '@(_DomainOriginalDomainRouteCatalogGuard)' != '' or '@(_DomainPrivateDomainRouteCatalogGuard->Count())' != '1' or '@(_DomainOriginalDomainRouteCatalogResult)' != '' or '@(_DomainPrivateDomainRouteCatalogResult->Count())' != '1' or '@(_DomainHelper->Count())' != '1' or '@(_DomainBootstrap->Count())' != '1')" Text="Private Domain core compiler input set refused." />
+    <Error Condition="'$(Story65DomainReceiverPrivate)' != 'true' and ('@(_DomainOriginalDomainRouteCatalogFilter->Count())' != '1' or '@(_DomainPrivateDomainRouteCatalogFilter)' != '' or '@(_DomainOriginalDomainRouteCatalogGuard->Count())' != '1' or '@(_DomainPrivateDomainRouteCatalogGuard)' != '' or '@(_DomainOriginalDomainRouteCatalogResult->Count())' != '1' or '@(_DomainPrivateDomainRouteCatalogResult)' != '' or '@(_DomainHelper)' != '' or '@(_DomainBootstrap)' != '')" Text="Ordinary Domain core compiler input set refused." />
+    <Error Condition="'$(Story65DomainReceiverIsolatedRoot)' != '' and !$([System.String]::Copy('%(_DomainWritable.FullPath)').StartsWith('$(Story65DomainReceiverIsolatedRoot)', System.StringComparison.Ordinal))" Text="Isolated Domain compiler write escaped temporary output." />
+    <Error Condition="'$(Story65DomainReceiverIsolatedRoot)' == '' and !$([System.String]::Copy('%(_DomainWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/bin/Debug/', System.StringComparison.Ordinal)) and !$([System.String]::Copy('%(_DomainWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/obj/Debug/', System.StringComparison.Ordinal))" Text="Workspace Domain compiler write escaped owned Debug bin/obj." />
+  </Target>
+  <Target Name="Story65CaptureDomainReceiverBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateDomainReceiverCompilerInputs" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <ItemGroup>
+      <_DomainSourceLink Include="$(SourceLink)" Condition="'$(SourceLink)' != ''" />
+      <_DomainWin32Resource Include="$(Win32Resource)" Condition="'$(Win32Resource)' != ''" />
+      <_DomainWin32Manifest Include="$(Win32Manifest)" Condition="'$(Win32Manifest)' != ''" />
+      <_DomainWin32Icon Include="$(ApplicationIcon)" Condition="'$(ApplicationIcon)' != ''" />
+      <_DomainKeyFile Include="$(KeyOriginatorFile)" Condition="'$(KeyOriginatorFile)' != ''" />
+      <_DomainCompilerAppConfig Include="$(AppConfigForCompiler)" Condition="'$(AppConfigForCompiler)' != ''" />
+      <_DomainCodeAnalysisRules Include="$(ResolvedCodeAnalysisRuleSet)" Condition="'$(ResolvedCodeAnalysisRuleSet)' != ''" />
+      <_DomainResponseFile Include="$(CompilerResponseFile)" Condition="'$(CompilerResponseFile)' != ''" />
+      <_DomainFeatures Include="$(Features)" />
+      <_DomainWarningsAsErrors Include="$(WarningsAsErrors)" />
+      <_DomainWarningsNotAsErrors Include="$(WarningsNotAsErrors)" />
+      <_DomainConstants Include="$(DefineConstants)" />
+      <_DomainNoWarn Include="$(NoWarn)" />
+      <_DomainPathMaps Include="$(PathMap)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-domain-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)|%(Aliases)|%(EmbedInteropTypes)');@(_CoreCompileResourceInputs->'Resource|%(FullPath)|%(LogicalName)|%(WithCulture)');@(CompiledLicenseFile->'Resource|%(FullPath)');@(EmbeddedFiles->'EmbeddedFile|%(FullPath)');@(LinkResource->'LinkResource|%(FullPath)|%(LogicalName)');@(AddModules->'Module|%(FullPath)');@(EditorConfigFiles->'AnalyzerConfig|%(FullPath)');@(_DomainSourceLink->'SourceLink|%(FullPath)');@(_DomainWin32Resource->'Win32Resource|%(FullPath)');@(_DomainWin32Manifest->'Win32Manifest|%(FullPath)');@(_DomainWin32Icon->'Win32Icon|%(FullPath)');@(_DomainKeyFile->'KeyFile|%(FullPath)');@(_DomainCompilerAppConfig->'CompilerAppConfig|%(FullPath)');@(_DomainCodeAnalysisRules->'CodeAnalysisRules|%(FullPath)');@(_DomainResponseFile->'ResponseFile|%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-domain-writable-paths.txt" Lines="@(_DomainWritable->'%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-domain-precore-flags.txt" Lines="Snapshot|before-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);TargetType|$(OutputType);Platform|$(PlatformTarget);EmbedAllSources|$(EmbedAllSources);ChecksumAlgorithm|$(ChecksumAlgorithm);NoStandardLib|$(NoCompilerStandardLib);DisableSdkPath|$(DisableSdkPath);DebugType|$(DebugType);DebugSymbols|$(DebugSymbols);TargetFramework|$(TargetFramework);AssemblyName|$(AssemblyName);LangVersion|$(LangVersion);Nullable|$(Nullable);Deterministic|$(Deterministic);AllowUnsafeBlocks|$(AllowUnsafeBlocks);CheckForOverflowUnderflow|$(CheckForOverflowUnderflow);WarningLevel|$(WarningLevel);TreatWarningsAsErrors|$(TreatWarningsAsErrors);GenerateDocumentationFile|$(GenerateDocumentationFile);EmitCompilerGeneratedFiles|$(EmitCompilerGeneratedFiles);UseHexalithProjectReferences|$(UseHexalithProjectReferences);UseNuGetDeps|$(UseNuGetDeps);EnablePrivateCatalogInvocationProof|$(EnablePrivateCatalogInvocationProof);EnablePrivateOwnerSourceReadProof|$(EnablePrivateOwnerSourceReadProof);PrivateDomainCore|$(Story65DomainReceiverPrivate);@(_DomainConstants->'DefineConstant|%(Identity)');@(_DomainNoWarn->'NoWarn|%(Identity)');@(_DomainPathMaps->'PathMapEntry|%(Identity)');@(_DomainFeatures->'Feature|%(Identity)');@(_DomainWarningsAsErrors->'WarningsAsErrors|%(Identity)');@(_DomainWarningsNotAsErrors->'WarningsNotAsErrors|%(Identity)')" Overwrite="true" />
+  </Target>
+  <Target Name="Story65CaptureDomainReceiverAfterCoreCompile" AfterTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <ItemGroup>
+      <_DomainPostNoWarn Include="$(NoWarn)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-domain-postcore-flags.txt" Lines="Snapshot|after-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);DebugType|$(DebugType);PdbFile|$(PdbFile);AppConfigForCompiler|$(AppConfigForCompiler);TargetsTriggeredByCompilation|$(TargetsTriggeredByCompilation);@(_DomainPostNoWarn->'NoWarn|%(Identity)')" Overwrite="true" />
+  </Target>
+</Project>

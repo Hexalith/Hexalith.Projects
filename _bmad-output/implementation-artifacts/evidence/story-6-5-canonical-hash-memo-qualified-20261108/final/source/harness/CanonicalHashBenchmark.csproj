@@ -1,0 +1,232 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Hexalith.EventStore.Server.Tests</AssemblyName>
+    <RootNamespace>Story65.Canonical.Harness</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NuGetAudit>false</NuGetAudit>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Reference Include="ByteAether.Ulid">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/ByteAether.Ulid.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Dapr.Client">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Dapr.Client.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Dapr.Common">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Dapr.Common.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Dapr.Protos">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Dapr.Protos.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Google.Api.CommonProtos">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Google.Api.CommonProtos.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Google.Protobuf">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Google.Protobuf.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Grpc.Core.Api">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Grpc.Core.Api.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Grpc.Net.Client">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Grpc.Net.Client.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Grpc.Net.Common">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Grpc.Net.Common.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Grpc.Reflection">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Grpc.Reflection.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.Commons.UniqueIds">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.Client">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/bin/Debug/net10.0/Hexalith.EventStore.Client.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.Contracts">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.DomainService">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.Sample">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample/bin/Debug/net10.0/Hexalith.EventStore.Sample.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.ServiceDefaults">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.Cryptography">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Bcl.Cryptography.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.AmbientMetadata.Application">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.AmbientMetadata.Application.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Compliance.Abstractions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Compliance.Abstractions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.AutoActivation">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.AutoActivation.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Diagnostics.ExceptionSummarization">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Diagnostics.ExceptionSummarization.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http.Diagnostics">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Http.Diagnostics.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http.Resilience">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Http.Resilience.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Resilience">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Resilience.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.ServiceDiscovery.Abstractions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.ServiceDiscovery.Abstractions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.ServiceDiscovery">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.ServiceDiscovery.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Telemetry.Abstractions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Telemetry.Abstractions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Telemetry">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.Extensions.Telemetry.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Abstractions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Api.ProviderBuilderExtensions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Api">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Api.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Extensions.Hosting">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Extensions.Hosting.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Instrumentation.AspNetCore">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Instrumentation.Http">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Instrumentation.Http.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry.Instrumentation.Runtime">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.Instrumentation.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="OpenTelemetry">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/OpenTelemetry.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Polly.Core">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Polly.Core.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Polly.Extensions">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Polly.Extensions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Polly.RateLimiting">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Polly.RateLimiting.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Compile Include="*.cs" />
+    <Compile Include="../control/*.cs" />
+    <Compile Include="../candidate/*.cs" />
+  </ItemGroup>
+  <Target Name="RequireReviewedCurrentInputs" BeforeTargets="Restore;PrepareForBuild;CoreCompile">
+    <Error Condition="'$(Story65ReviewedPreparationSha256)' == '' Or '$(Story65QualifiedSdkSha256)' == '' Or '$(Story65QualifiedContractsSha256)' == '' Or '$(Story65NativeHandoffPath)' == '' Or '$(Story65NativeHandoffSha256)' == ''" Text="Exact Root-reviewed new Contracts/SDK hashes and actual native handoff are required." />
+    <GetFileHash Files="/tmp/story65-canonical-hash-memo-final-compiled-prep-20261108/preparation-receipt.json" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="_PreparationHash" />
+    </GetFileHash>
+    <Error Condition="'%(_PreparationHash.FileHash)' != '$(Story65ReviewedPreparationSha256)'" Text="Frozen Preparation input differs." />
+    <GetFileHash Files="/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="_SdkHash" />
+    </GetFileHash>
+    <Error Condition="'%(_SdkHash.FileHash)' != '$(Story65QualifiedSdkSha256)'" Text="Frozen Sdk input differs." />
+    <GetFileHash Files="/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="_ContractsHash" />
+    </GetFileHash>
+    <Error Condition="'%(_ContractsHash.FileHash)' != '$(Story65QualifiedContractsSha256)'" Text="Frozen Contracts input differs." />
+    <GetFileHash Files="$(Story65NativeHandoffPath)" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="_NativeHandoffHash" />
+    </GetFileHash>
+    <Error Condition="'%(_NativeHandoffHash.FileHash)' != '$(Story65NativeHandoffSha256)'" Text="Root-reviewed actual native handoff differs." />
+  </Target>
+</Project>

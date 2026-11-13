@@ -1,0 +1,807 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "independentAuditPending": false,
+  "artifacts": [
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/Benchmark.csproj",
+      "originalSha256": "172c373b2a32799084f3fa39309e3de8e0219912d7d4dffd07aac44e2faf9ab0",
+      "originalBytes": 41185,
+      "packetPath": "source/Benchmark.csproj",
+      "packetSha256": "172c373b2a32799084f3fa39309e3de8e0219912d7d4dffd07aac44e2faf9ab0",
+      "packetBytes": 41185,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/DESIGN.md",
+      "originalSha256": "dfb34d9f63eb7f9f2e86712bb5e28409c4c9529c33a53b684cafb0ce0ed4b7ee",
+      "originalBytes": 3670,
+      "packetPath": "source/DESIGN.md",
+      "packetSha256": "dfb34d9f63eb7f9f2e86712bb5e28409c4c9529c33a53b684cafb0ce0ed4b7ee",
+      "packetBytes": 3670,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/FingerprintKeyBuilder.cs",
+      "originalSha256": "796591f17aecbffae3ec8fedb896138589b1ec21a1446f99b378271ab3e950a1",
+      "originalBytes": 1624,
+      "packetPath": "source/candidate/FingerprintKeyBuilder.cs",
+      "packetSha256": "796591f17aecbffae3ec8fedb896138589b1ec21a1446f99b378271ab3e950a1",
+      "packetBytes": 1624,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/FingerprintMemoOwner.cs",
+      "originalSha256": "f14ea3589b529cec4d33d97affef0ba81aaae871bd8db9fa4700b7ab4e369732",
+      "originalBytes": 2909,
+      "packetPath": "source/candidate/FingerprintMemoOwner.cs",
+      "packetSha256": "f14ea3589b529cec4d33d97affef0ba81aaae871bd8db9fa4700b7ab4e369732",
+      "packetBytes": 2909,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/FingerprintScope.cs",
+      "originalSha256": "c60ed61551e1f4eef2d39e9a67ba0abf5821ed934df8a707aa710f2b540b0699",
+      "originalBytes": 1595,
+      "packetPath": "source/candidate/FingerprintScope.cs",
+      "packetSha256": "c60ed61551e1f4eef2d39e9a67ba0abf5821ed934df8a707aa710f2b540b0699",
+      "packetBytes": 1595,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/TechnicalHttpActionObservation.cs",
+      "originalSha256": "72bb44be0ac96c43eb09289827fef482f2698a55699da3aba5daac7c6a249f9b",
+      "originalBytes": 21650,
+      "packetPath": "source/candidate/TechnicalHttpActionObservation.cs",
+      "packetSha256": "72bb44be0ac96c43eb09289827fef482f2698a55699da3aba5daac7c6a249f9b",
+      "packetBytes": 21650,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/TechnicalHttpObservationPass.cs",
+      "originalSha256": "daddb25a1f8d4a6906da23617f3681e3b0c4e039bcf61099392382a69316e5cd",
+      "originalBytes": 5804,
+      "packetPath": "source/candidate/TechnicalHttpObservationPass.cs",
+      "packetSha256": "daddb25a1f8d4a6906da23617f3681e3b0c4e039bcf61099392382a69316e5cd",
+      "packetBytes": 5804,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate-local-block.txt",
+      "originalSha256": "0193d807706c63f9fb9125926e5e22719be459abc1253cae6ecc75f815ef360a",
+      "originalBytes": 2586,
+      "packetPath": "source/candidate-local-block.txt",
+      "packetSha256": "0193d807706c63f9fb9125926e5e22719be459abc1253cae6ecc75f815ef360a",
+      "packetBytes": 2586,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate.patch",
+      "originalSha256": "ece31a57a32cf0517ccd68564816a3fe5d713dcc8402b7917eb7974c2f689f14",
+      "originalBytes": 4247,
+      "packetPath": "source/candidate.patch",
+      "packetSha256": "ece31a57a32cf0517ccd68564816a3fe5d713dcc8402b7917eb7974c2f689f14",
+      "packetBytes": 4247,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/commands.json",
+      "originalSha256": "1424818e952bea084b779ce7ee38848565150f5daa032ed3a4cea5538b019d57",
+      "originalBytes": 4837,
+      "packetPath": "source/commands.json",
+      "packetSha256": "1424818e952bea084b779ce7ee38848565150f5daa032ed3a4cea5538b019d57",
+      "packetBytes": 4837,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/control/TechnicalHttpActionObservation.cs",
+      "originalSha256": "9608ad6794c08115c01f448bbbf81882b94fc944505a4a5a3e5d64d0256b573f",
+      "originalBytes": 19304,
+      "packetPath": "source/control/TechnicalHttpActionObservation.cs",
+      "packetSha256": "9608ad6794c08115c01f448bbbf81882b94fc944505a4a5a3e5d64d0256b573f",
+      "packetBytes": 19304,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/control/TechnicalHttpObservationPass.cs",
+      "originalSha256": "77b25181974102628c9cccf292a998fff8bdd6f58f9d9007f02c45a058f02c3f",
+      "originalBytes": 5802,
+      "packetPath": "source/control/TechnicalHttpObservationPass.cs",
+      "packetSha256": "77b25181974102628c9cccf292a998fff8bdd6f58f9d9007f02c45a058f02c3f",
+      "packetBytes": 5802,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/BatchRunner.cs",
+      "originalSha256": "424dafdc8953d20ff3c00ac0b4214075a46b1eb93f358a4053154d3d3ea025a9",
+      "originalBytes": 3869,
+      "packetPath": "source/driver/BatchRunner.cs",
+      "packetSha256": "424dafdc8953d20ff3c00ac0b4214075a46b1eb93f358a4053154d3d3ea025a9",
+      "packetBytes": 3869,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/BatchSample.cs",
+      "originalSha256": "a805adc7f92fe22b11ceb6e02efefd23268eba2b0c53a1a3fc4a26c4151fc5cc",
+      "originalBytes": 627,
+      "packetPath": "source/driver/BatchSample.cs",
+      "packetSha256": "a805adc7f92fe22b11ceb6e02efefd23268eba2b0c53a1a3fc4a26c4151fc5cc",
+      "packetBytes": 627,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/BenchmarkDriver.cs",
+      "originalSha256": "d20a148589545472f7bc90a1ba9edc0f307975a216ac3f1fe5d81c85085394dd",
+      "originalBytes": 1422,
+      "packetPath": "source/driver/BenchmarkDriver.cs",
+      "packetSha256": "d20a148589545472f7bc90a1ba9edc0f307975a216ac3f1fe5d81c85085394dd",
+      "packetBytes": 1422,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/Check.cs",
+      "originalSha256": "b32e4d03b0ef3b55cbcaecaedde46492933dc036b946b30598ea0371aafd090b",
+      "originalBytes": 393,
+      "packetPath": "source/driver/Check.cs",
+      "packetSha256": "b32e4d03b0ef3b55cbcaecaedde46492933dc036b946b30598ea0371aafd090b",
+      "packetBytes": 393,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/DriverFailure.cs",
+      "originalSha256": "9b06bff360ade0463580863a7a98b12f0d0e52382588fefdea0051f47b20e7c4",
+      "originalBytes": 449,
+      "packetPath": "source/driver/DriverFailure.cs",
+      "packetSha256": "9b06bff360ade0463580863a7a98b12f0d0e52382588fefdea0051f47b20e7c4",
+      "packetBytes": 449,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/InputPins.cs",
+      "originalSha256": "31ed3c5863eccc1459de2db4be29d3cf78e2840e916258d5abb717939690fb8a",
+      "originalBytes": 3437,
+      "packetPath": "source/driver/InputPins.cs",
+      "packetSha256": "31ed3c5863eccc1459de2db4be29d3cf78e2840e916258d5abb717939690fb8a",
+      "packetBytes": 3437,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/NuGet.Config",
+      "originalSha256": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
+      "originalBytes": 74,
+      "packetPath": "source/driver/NuGet.Config",
+      "packetSha256": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
+      "packetBytes": 74,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/ObservationSample.cs",
+      "originalSha256": "f9e0f867da5b0f9f62fa35371dabad9f3bb404f0e7a6c5b7983366078cf4a33b",
+      "originalBytes": 274,
+      "packetPath": "source/driver/ObservationSample.cs",
+      "packetSha256": "f9e0f867da5b0f9f62fa35371dabad9f3bb404f0e7a6c5b7983366078cf4a33b",
+      "packetBytes": 274,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/Program.cs",
+      "originalSha256": "8eb282c7ea5b36f3f545a233c25f68ced29f51323a3207f201938cce70422472",
+      "originalBytes": 4388,
+      "packetPath": "source/driver/Program.cs",
+      "packetSha256": "8eb282c7ea5b36f3f545a233c25f68ced29f51323a3207f201938cce70422472",
+      "packetBytes": 4388,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/RuntimeFacts.cs",
+      "originalSha256": "b5b202775c75b8ad058af912a8fbf3bac4d1ef7cd3ed4b3785a11da1c1669a78",
+      "originalBytes": 2816,
+      "packetPath": "source/driver/RuntimeFacts.cs",
+      "packetSha256": "b5b202775c75b8ad058af912a8fbf3bac4d1ef7cd3ed4b3785a11da1c1669a78",
+      "packetBytes": 2816,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/driver/Summary.cs",
+      "originalSha256": "09fd325cdac38bf84de594e66685dcf20f56327fc30ff08d05f582df78c4f96f",
+      "originalBytes": 2130,
+      "packetPath": "source/driver/Summary.cs",
+      "packetSha256": "09fd325cdac38bf84de594e66685dcf20f56327fc30ff08d05f582df78c4f96f",
+      "packetBytes": 2130,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/fixture-api.json",
+      "originalSha256": "5022a61a34aa132e7195c0729f6acd8b4b9ee9948b47002b53fa99e9747bbe13",
+      "originalBytes": 3162,
+      "packetPath": "source/fixture-api.json",
+      "packetSha256": "5022a61a34aa132e7195c0729f6acd8b4b9ee9948b47002b53fa99e9747bbe13",
+      "packetBytes": 3162,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ActualHost.cs",
+      "originalSha256": "81c4cb1c5f1a29c3765ee3bcf3c017626997bcc17c9d3a185437ed1a61654d1e",
+      "originalBytes": 1009,
+      "packetPath": "source/harness/ActualHost.cs",
+      "packetSha256": "81c4cb1c5f1a29c3765ee3bcf3c017626997bcc17c9d3a185437ed1a61654d1e",
+      "packetBytes": 1009,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ActualPass.cs",
+      "originalSha256": "61537419c6b32e4ce8abe569d0e506976923fc025ed0bc0d5cc9b06902db9065",
+      "originalBytes": 676,
+      "packetPath": "source/harness/ActualPass.cs",
+      "packetSha256": "61537419c6b32e4ce8abe569d0e506976923fc025ed0bc0d5cc9b06902db9065",
+      "packetBytes": 676,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/CandidateHost.cs",
+      "originalSha256": "39dc53c78aba83290511f09d3b3f6901bac52c3c038d0d5fb3006a38930e6b79",
+      "originalBytes": 1337,
+      "packetPath": "source/harness/CandidateHost.cs",
+      "packetSha256": "39dc53c78aba83290511f09d3b3f6901bac52c3c038d0d5fb3006a38930e6b79",
+      "packetBytes": 1337,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/CandidatePass.cs",
+      "originalSha256": "56878d66c71806519992bb1054696b2e3fa2694316e72b4e662a7cd476e9c47f",
+      "originalBytes": 706,
+      "packetPath": "source/harness/CandidatePass.cs",
+      "packetSha256": "56878d66c71806519992bb1054696b2e3fa2694316e72b4e662a7cd476e9c47f",
+      "packetBytes": 706,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ControlHost.cs",
+      "originalSha256": "6ebf0b0df9428e5dde97f6d02c0039272ac8b78e2ece063b0750115d2e11258a",
+      "originalBytes": 1013,
+      "packetPath": "source/harness/ControlHost.cs",
+      "packetSha256": "6ebf0b0df9428e5dde97f6d02c0039272ac8b78e2ece063b0750115d2e11258a",
+      "packetBytes": 1013,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ControlPass.cs",
+      "originalSha256": "8db75c285b04f186703a7259e9dbb2f4e29c9fd90d4923e969f004a5c1482f9c",
+      "originalBytes": 696,
+      "packetPath": "source/harness/ControlPass.cs",
+      "packetSha256": "8db75c285b04f186703a7259e9dbb2f4e29c9fd90d4923e969f004a5c1482f9c",
+      "packetBytes": 696,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/CorpusAssemblyCounts.cs",
+      "originalSha256": "2e86e45ea6ef75fc93bcf9f54859711d9e5aa2a7eaf8a63f2b10f78ff15ee9e4",
+      "originalBytes": 166,
+      "packetPath": "source/harness/CorpusAssemblyCounts.cs",
+      "packetSha256": "2e86e45ea6ef75fc93bcf9f54859711d9e5aa2a7eaf8a63f2b10f78ff15ee9e4",
+      "packetBytes": 166,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/DiskImageAssembly.cs",
+      "originalSha256": "e733d8dd1588294923006541b9cf1db3fa5b4b7f31ede9ba016c6d068ec2c489",
+      "originalBytes": 328,
+      "packetPath": "source/harness/DiskImageAssembly.cs",
+      "packetSha256": "e733d8dd1588294923006541b9cf1db3fa5b4b7f31ede9ba016c6d068ec2c489",
+      "packetBytes": 328,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/FixtureFailure.cs",
+      "originalSha256": "c619f44bfd340562252cdbcfc175c48e94a51e1d14d6729502abbb6e05204a0e",
+      "originalBytes": 270,
+      "packetPath": "source/harness/FixtureFailure.cs",
+      "packetSha256": "c619f44bfd340562252cdbcfc175c48e94a51e1d14d6729502abbb6e05204a0e",
+      "packetBytes": 270,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/IObservation.cs",
+      "originalSha256": "04f6940b59811c9a7300aa2b8e336c10cf80b27e91c2bd0dc1d6a93eca9f35ed",
+      "originalBytes": 125,
+      "packetPath": "source/harness/IObservation.cs",
+      "packetSha256": "04f6940b59811c9a7300aa2b8e336c10cf80b27e91c2bd0dc1d6a93eca9f35ed",
+      "packetBytes": 125,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/IProofPass.cs",
+      "originalSha256": "90bff316a030ee4f4d7a446a40e337b48eabc450a3e04f1a7143e40ff59666f1",
+      "originalBytes": 352,
+      "packetPath": "source/harness/IProofPass.cs",
+      "packetSha256": "90bff316a030ee4f4d7a446a40e337b48eabc450a3e04f1a7143e40ff59666f1",
+      "packetBytes": 352,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ITechnicalHost.cs",
+      "originalSha256": "401295871508ba378a88d1c0451c7302cfd29ba8ba3acebe7f2ad6f620ede51b",
+      "originalBytes": 309,
+      "packetPath": "source/harness/ITechnicalHost.cs",
+      "packetSha256": "401295871508ba378a88d1c0451c7302cfd29ba8ba3acebe7f2ad6f620ede51b",
+      "packetBytes": 309,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ImageFixture.cs",
+      "originalSha256": "d6713be011fb582ac530fef1c2e6dc63f2f956506fcaf516945c1d07af96120d",
+      "originalBytes": 624,
+      "packetPath": "source/harness/ImageFixture.cs",
+      "packetSha256": "d6713be011fb582ac530fef1c2e6dc63f2f956506fcaf516945c1d07af96120d",
+      "packetBytes": 624,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/MemoCounters.cs",
+      "originalSha256": "35097171694059ebebac095f2fdbc1292994b756b28e438b1e5680fc9e14dca0",
+      "originalBytes": 242,
+      "packetPath": "source/harness/MemoCounters.cs",
+      "packetSha256": "35097171694059ebebac095f2fdbc1292994b756b28e438b1e5680fc9e14dca0",
+      "packetBytes": 242,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/MutablePolicyProvider.cs",
+      "originalSha256": "52c3ee6457270d929f2ff44fe0ce6eaa1d24e7e8dedcd9da536fcd764e72e63a",
+      "originalBytes": 796,
+      "packetPath": "source/harness/MutablePolicyProvider.cs",
+      "packetSha256": "52c3ee6457270d929f2ff44fe0ce6eaa1d24e7e8dedcd9da536fcd764e72e63a",
+      "packetBytes": 796,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/MvcCorpus.cs",
+      "originalSha256": "92e23623830b76e6d75acea8f636792b8003523c1649a91ac334057476afe0e3",
+      "originalBytes": 9382,
+      "packetPath": "source/harness/MvcCorpus.cs",
+      "packetSha256": "92e23623830b76e6d75acea8f636792b8003523c1649a91ac334057476afe0e3",
+      "packetBytes": 9382,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/Observation.cs",
+      "originalSha256": "62fe84b9c650847fa78a2b2c89f288888275012bfeeb157f9af0802760ab34fc",
+      "originalBytes": 415,
+      "packetPath": "source/harness/Observation.cs",
+      "packetSha256": "62fe84b9c650847fa78a2b2c89f288888275012bfeeb157f9af0802760ab34fc",
+      "packetBytes": 415,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/Parity.cs",
+      "originalSha256": "deba62572d956b635bf6a96f23f853d836f9f613f729caa68f4e4f9117fbaca3",
+      "originalBytes": 21360,
+      "packetPath": "source/harness/Parity.cs",
+      "packetSha256": "deba62572d956b635bf6a96f23f853d836f9f613f729caa68f4e4f9117fbaca3",
+      "packetBytes": 21360,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ParityResult.cs",
+      "originalSha256": "0b67432edda771730d6f63b67fe53be11b5b21f027def05c5da844857eff53c5",
+      "originalBytes": 125,
+      "packetPath": "source/harness/ParityResult.cs",
+      "packetSha256": "0b67432edda771730d6f63b67fe53be11b5b21f027def05c5da844857eff53c5",
+      "packetBytes": 125,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/PrefixNamingPolicy.cs",
+      "originalSha256": "672ac3452243514d9e0025845f23cff6c7280116217902ae25fc1f4ff57af9e9",
+      "originalBytes": 210,
+      "packetPath": "source/harness/PrefixNamingPolicy.cs",
+      "packetSha256": "672ac3452243514d9e0025845f23cff6c7280116217902ae25fc1f4ff57af9e9",
+      "packetBytes": 210,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/ProviderOverlay.cs",
+      "originalSha256": "10dacff339cf8f0ca3d73bbf9119bcc743c7538ca4a5d7c23c8012eeb17598f7",
+      "originalBytes": 326,
+      "packetPath": "source/harness/ProviderOverlay.cs",
+      "packetSha256": "10dacff339cf8f0ca3d73bbf9119bcc743c7538ca4a5d7c23c8012eeb17598f7",
+      "packetBytes": 326,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/Require.cs",
+      "originalSha256": "5a3d25f1c3b8b9525324f24189acff83e3d966a6deb739ce2b0752bcb65c665b",
+      "originalBytes": 340,
+      "packetPath": "source/harness/Require.cs",
+      "packetSha256": "5a3d25f1c3b8b9525324f24189acff83e3d966a6deb739ce2b0752bcb65c665b",
+      "packetBytes": 340,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/SchemaTrace.cs",
+      "originalSha256": "55d6d26aab2f3e28521946973c199516a219595ac2b272c47384d048ef677493",
+      "originalBytes": 1010,
+      "packetPath": "source/harness/SchemaTrace.cs",
+      "packetSha256": "55d6d26aab2f3e28521946973c199516a219595ac2b272c47384d048ef677493",
+      "packetBytes": 1010,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/TechnicalFeatureProvider.cs",
+      "originalSha256": "83b568964388fabafd5b78e56ec3eedfeed8bc2d73817a0e115bb4f25321fecf",
+      "originalBytes": 947,
+      "packetPath": "source/harness/TechnicalFeatureProvider.cs",
+      "packetSha256": "83b568964388fabafd5b78e56ec3eedfeed8bc2d73817a0e115bb4f25321fecf",
+      "packetBytes": 947,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/TrackedJsonOptions.cs",
+      "originalSha256": "50851b916dea77abddff6a6a699ba2e2a6378ea840e2d39e29345fd8292b309c",
+      "originalBytes": 468,
+      "packetPath": "source/harness/TrackedJsonOptions.cs",
+      "packetSha256": "50851b916dea77abddff6a6a699ba2e2a6378ea840e2d39e29345fd8292b309c",
+      "packetBytes": 468,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/VariantHosts.cs",
+      "originalSha256": "e6524eb86b9d34cb8da3eb3acb7859743d1660bc9f2aa6d51387a46b4a175247",
+      "originalBytes": 724,
+      "packetPath": "source/harness/VariantHosts.cs",
+      "packetSha256": "e6524eb86b9d34cb8da3eb3acb7859743d1660bc9f2aa6d51387a46b4a175247",
+      "packetBytes": 724,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/harness/WrongConstraintResolver.cs",
+      "originalSha256": "f5f7a314db7e9f5e7038318149abbed97d9502b0af4dd0c76c54c903efb61d0d",
+      "originalBytes": 368,
+      "packetPath": "source/harness/WrongConstraintResolver.cs",
+      "packetSha256": "f5f7a314db7e9f5e7038318149abbed97d9502b0af4dd0c76c54c903efb61d0d",
+      "packetBytes": 368,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/original/TechnicalHttpActionObservation.cs",
+      "originalSha256": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+      "originalBytes": 19259,
+      "packetPath": "source/original/TechnicalHttpActionObservation.cs",
+      "packetSha256": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+      "packetBytes": 19259,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/original/TechnicalHttpObservationPass.cs",
+      "originalSha256": "17089c99b1370c8fae56f3418d92293e17d6db0cb9cfba75d0b086ff341be70d",
+      "originalBytes": 5757,
+      "packetPath": "source/original/TechnicalHttpObservationPass.cs",
+      "packetSha256": "17089c99b1370c8fae56f3418d92293e17d6db0cb9cfba75d0b086ff341be70d",
+      "packetBytes": 5757,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/source-normalization.json",
+      "originalSha256": "8958f0558fa63532835adfdf906a7f75d9a52ac4c1e71e9e9e065f0458f030a8",
+      "originalBytes": 781,
+      "packetPath": "source/source-normalization.json",
+      "packetSha256": "8958f0558fa63532835adfdf906a7f75d9a52ac4c1e71e9e9e065f0458f030a8",
+      "packetBytes": 781,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/original/TechnicalHttpRouteTemplate.cs",
+      "originalSha256": "8e93cd4eca3112b1b8cade1e594e66e98d66ff193e54dcf273f449ebe8672a0e",
+      "originalBytes": 4260,
+      "packetPath": "source/original/TechnicalHttpRouteTemplate.cs",
+      "packetSha256": "8e93cd4eca3112b1b8cade1e594e66e98d66ff193e54dcf273f449ebe8672a0e",
+      "packetBytes": 4260,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/control/TechnicalHttpRouteTemplate.cs",
+      "originalSha256": "eb05b30f5dd9aeee4c4bf69030bff6287c15cd1d4392b38ee6a4f5e3bb51bd72",
+      "originalBytes": 4305,
+      "packetPath": "source/control/TechnicalHttpRouteTemplate.cs",
+      "packetSha256": "eb05b30f5dd9aeee4c4bf69030bff6287c15cd1d4392b38ee6a4f5e3bb51bd72",
+      "packetBytes": 4305,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/candidate/TechnicalHttpRouteTemplate.cs",
+      "originalSha256": "161d4f9a5285418001721ccda9bc861a9537b17b6b45b0eb845963566e33ee80",
+      "originalBytes": 4307,
+      "packetPath": "source/candidate/TechnicalHttpRouteTemplate.cs",
+      "packetSha256": "161d4f9a5285418001721ccda9bc861a9537b17b6b45b0eb845963566e33ee80",
+      "packetBytes": 4307,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/compile-closure-fix.diff",
+      "originalSha256": "b1e3f219afd89fe185d80563becea8572ccb44f93ab1693d7ddc9e2fdb6d4c86",
+      "originalBytes": 9284,
+      "packetPath": "source/compile-closure-fix.diff",
+      "packetSha256": "b1e3f219afd89fe185d80563becea8572ccb44f93ab1693d7ddc9e2fdb6d4c86",
+      "packetBytes": 9284,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/di-constructor-fix.diff",
+      "originalSha256": "90cfa051d66e4952e89fd1e941458f922685bbc1cde8d35e0eada6b1324bd93d",
+      "originalBytes": 1763,
+      "packetPath": "source/di-constructor-fix.diff",
+      "packetSha256": "90cfa051d66e4952e89fd1e941458f922685bbc1cde8d35e0eada6b1324bd93d",
+      "packetBytes": 1763,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-prep-20261108/preparation-receipt.json",
+      "originalSha256": "d1f1239af7879f498dc8765325ed1ffda10114286f68845340dc0e8a5976a8ad",
+      "originalBytes": 71929,
+      "packetPath": "source/preparation-receipt.json",
+      "packetSha256": "d1f1239af7879f498dc8765325ed1ffda10114286f68845340dc0e8a5976a8ad",
+      "packetBytes": 71929,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/closed.json",
+      "originalSha256": "0ed14a805e4e6f1f5b76b0d59c4574c4f36ca48290e16c5a117627ca8ab371fc",
+      "originalBytes": 182,
+      "packetPath": "results/closed.json",
+      "packetSha256": "0ed14a805e4e6f1f5b76b0d59c4574c4f36ca48290e16c5a117627ca8ab371fc",
+      "packetBytes": 182,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/corpus-counts.json",
+      "originalSha256": "c778b4bdddb4721064d95841961b4413711fcf49cc7643ad9094af35c2508e1e",
+      "originalBytes": 871,
+      "packetPath": "results/corpus-counts.json",
+      "packetSha256": "c778b4bdddb4721064d95841961b4413711fcf49cc7643ad9094af35c2508e1e",
+      "packetBytes": 871,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/parity.json",
+      "originalSha256": "d964cc2a8b55bf3b0c7d1ec073afbc2877dcfe38d938d4b10300495dbb032d6f",
+      "originalBytes": 58,
+      "packetPath": "results/parity.json",
+      "packetSha256": "d964cc2a8b55bf3b0c7d1ec073afbc2877dcfe38d938d4b10300495dbb032d6f",
+      "packetBytes": 58,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/raw-batches.jsonl",
+      "originalSha256": "08bb965bb605e779c27c458f7894f729286b71223c5a10e2cf29799a7f19960b",
+      "originalBytes": 209570,
+      "packetPath": "results/raw-batches.jsonl.gz",
+      "packetSha256": "b1fe8bdfc8eaf322a3e83bc144c96ca6af9dfe85c9201df0face3e7325efd171",
+      "packetBytes": 16728,
+      "transformation": "gzip-mtime-zero"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/runtime-facts.json",
+      "originalSha256": "41f0e5dac5b3f576b8097b695d327a854d89e2ca394c809953a7d51929f3f2f7",
+      "originalBytes": 1949,
+      "packetPath": "results/runtime-facts.json",
+      "packetSha256": "41f0e5dac5b3f576b8097b695d327a854d89e2ca394c809953a7d51929f3f2f7",
+      "packetBytes": 1949,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-di-corrected-20261108/summary.json",
+      "originalSha256": "b0cfe71f6f0bbd3bdf701553434e7ebb955b99387ee308a8a09a59500c5c3cc3",
+      "originalBytes": 9789,
+      "packetPath": "results/summary.json",
+      "packetSha256": "b0cfe71f6f0bbd3bdf701553434e7ebb955b99387ee308a8a09a59500c5c3cc3",
+      "packetBytes": 9789,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-build-20261108/receipt.json",
+      "originalSha256": "45030e5cf2f86936954595f41a6a443992998c3df65a9359741859847cbcee87",
+      "originalBytes": 3546,
+      "packetPath": "execution/initial-compile-build-receipt.json",
+      "packetSha256": "45030e5cf2f86936954595f41a6a443992998c3df65a9359741859847cbcee87",
+      "packetBytes": 3546,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-build-corrected-20261108/receipt.json",
+      "originalSha256": "50a5bafaaf14dca2edc18e450b259ab2830c18bc0ad5699e06b00052503d247e",
+      "originalBytes": 3564,
+      "packetPath": "execution/closure-corrected-di-failure-build-receipt.json",
+      "packetSha256": "50a5bafaaf14dca2edc18e450b259ab2830c18bc0ad5699e06b00052503d247e",
+      "packetBytes": 3564,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-build-corrected-20261108/runtime-receipt.json",
+      "originalSha256": "a943583e6b6119217e35cb3c71b9b7038a6695150330987211ac8c4a696d2ad9",
+      "originalBytes": 669,
+      "packetPath": "execution/closure-corrected-di-failure-runtime-receipt.json",
+      "packetSha256": "a943583e6b6119217e35cb3c71b9b7038a6695150330987211ac8c4a696d2ad9",
+      "packetBytes": 669,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/receipt.json",
+      "originalSha256": "1b741840c6f3c02d58027b89a1c12ea9ca18b183cb200d7fccd2a78679ad6a53",
+      "originalBytes": 3571,
+      "packetPath": "execution/di-corrected-success-build-receipt.json",
+      "packetSha256": "1b741840c6f3c02d58027b89a1c12ea9ca18b183cb200d7fccd2a78679ad6a53",
+      "packetBytes": 3571,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/runtime-receipt.json",
+      "originalSha256": "f190fe7baceaa1e912f7587023dbea3c33bfb367ae3aaf24ab36d1fe864d313d",
+      "originalBytes": 671,
+      "packetPath": "execution/di-corrected-success-runtime-receipt.json",
+      "packetSha256": "f190fe7baceaa1e912f7587023dbea3c33bfb367ae3aaf24ab36d1fe864d313d",
+      "packetBytes": 671,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-results-20261108/failure.json",
+      "originalSha256": "ff126d9f048cc7779e09d6992031374cf8994b72121928ad19fc32150eea9ca0",
+      "originalBytes": 96,
+      "packetPath": "history/di-build-validation-failure.json",
+      "packetSha256": "ff126d9f048cc7779e09d6992031374cf8994b72121928ad19fc32150eea9ca0",
+      "packetBytes": 96,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-source-review-20261108.json",
+      "originalSha256": "31e0f54133bc506eeea065ae096d0e29329eee776f4b092e5f9a69eeb84f0cb7",
+      "originalBytes": 3695,
+      "packetPath": "review/story65-technical-fingerprint-source-review-20261108.json",
+      "packetSha256": "31e0f54133bc506eeea065ae096d0e29329eee776f4b092e5f9a69eeb84f0cb7",
+      "packetBytes": 3695,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-source-review-corrected-20261108.json",
+      "originalSha256": "a0bf46041b28b8a41b6a284b3ae8472a4da66f018d01e048669eab38bf73276b",
+      "originalBytes": 1219,
+      "packetPath": "review/story65-technical-fingerprint-source-review-corrected-20261108.json",
+      "packetSha256": "a0bf46041b28b8a41b6a284b3ae8472a4da66f018d01e048669eab38bf73276b",
+      "packetBytes": 1219,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-root-rejection-qualified-20261108.json",
+      "originalSha256": "231fec26dd5ea49aca2545c74fe504b1fbf65ac4e9b306ddc65cf6cd68a21d05",
+      "originalBytes": 3614,
+      "packetPath": "root-rejection.json",
+      "packetSha256": "231fec26dd5ea49aca2545c74fe504b1fbf65ac4e9b306ddc65cf6cd68a21d05",
+      "packetBytes": 3614,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-audit-20261108/independent-benchmark-audit.json",
+      "originalSha256": "a30e8d15a1e22ef2a10fd23f29b5fc86295b8774350ca3f06f80609b865859ae",
+      "originalBytes": 30084,
+      "packetPath": "review/independent-benchmark-audit.json",
+      "packetSha256": "a30e8d15a1e22ef2a10fd23f29b5fc86295b8774350ca3f06f80609b865859ae",
+      "packetBytes": 30084,
+      "transformation": "byte-exact"
+    },
+    {
+      "originalPath": "/tmp/story65-technical-fingerprint-audit-20261108/audit.py",
+      "originalSha256": "00ba7c11e7263cd8b18be45cba26abb06eb9fce022c0fb434d07366602c1a65e",
+      "originalBytes": 20884,
+      "packetPath": "review/audit.py",
+      "packetSha256": "00ba7c11e7263cd8b18be45cba26abb06eb9fce022c0fb434d07366602c1a65e",
+      "packetBytes": 20884,
+      "transformation": "byte-exact"
+    }
+  ],
+  "releaseHashReferencesOnly": [
+    {
+      "revision": "initial-compile",
+      "releaseFiles": [
+        {
+          "path": "/tmp/story65-technical-fingerprint-build-20261108/compile-release.json",
+          "sha256": "3c65401d9b9b3980eb2adf5abd0e3166ddf2668420af82e50779f693d63664b1",
+          "bytes": 61402
+        }
+      ]
+    },
+    {
+      "revision": "closure-corrected-di-failure",
+      "releaseFiles": [
+        {
+          "path": "/tmp/story65-technical-fingerprint-build-corrected-20261108/compile-release.json",
+          "sha256": "175f419e504022a2aff1686b17db82f7ca3846989b71cea28909569cd65ac1a9",
+          "bytes": 62070
+        },
+        {
+          "path": "/tmp/story65-technical-fingerprint-build-corrected-20261108/runtime-release.json",
+          "sha256": "d0e6f623715a5ca708d6d09beea3206f5aa301c35c2f728704cc7be619ae1b2b",
+          "bytes": 110384
+        }
+      ]
+    },
+    {
+      "revision": "di-corrected-success",
+      "releaseFiles": [
+        {
+          "path": "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/compile-release.json",
+          "sha256": "397f04bfdc82b41873dd1762c566346af4139474983e50a6a7dc4212a8b5e107",
+          "bytes": 62227
+        },
+        {
+          "path": "/tmp/story65-technical-fingerprint-build-di-corrected-20261108/runtime-release.json",
+          "sha256": "5221005e0d7be369d199fc383d7ca03dc18eb9643b1ffc3e6f030f07e9b4c178",
+          "bytes": 110505
+        }
+      ]
+    }
+  ],
+  "failedRevisions": [
+    {
+      "preparationSha256": "6afc47ed4afa474e3ea06971ef74af93bb090f038ff051bbc809ca78b7315157",
+      "restoreExitCode": 0,
+      "buildExitCode": 1,
+      "errors": 6,
+      "codes": [
+        "CS1503",
+        "CS0103"
+      ],
+      "fix": "namespace-only route helper closure and operation-identifier import",
+      "history": "/tmp/story65-technical-fingerprint-history-20261108/6afc47ed-compile1"
+    },
+    {
+      "preparationSha256": "a1c1894739f6f9727d077157ce8d5b3cd71da4e8b80a0595d70e4c9c35f8acc7",
+      "restoreExitCode": 0,
+      "buildExitCode": 0,
+      "runtimeExitCode": 1,
+      "errorType": "System.AggregateException",
+      "innerExceptionTextRetained": false,
+      "sourceBasedDiagnosis": "missing inert constructor DI dependencies at WebApplication.Build; no corpus/timing completed",
+      "fix": "original fixture constructor dependency registrations only; validation/real filters/corpus unchanged",
+      "history": "/tmp/story65-technical-fingerprint-history-20261108/a1c18947-di-failure"
+    }
+  ],
+  "notCopied": [
+    "raw build/runtime logs",
+    "bin/obj or binary files",
+    "full runtime/compile release duplicate maps",
+    "full historical source generations",
+    "descriptors/schemas/keys",
+    "runtime private configuration/URLs/authentication/request/response material"
+  ],
+  "packagingSourcePath": "/tmp/story65-technical-fingerprint-rejection-package-prep-20261108/package.py",
+  "packagingSourceSha256": "4ce8686c284b5dd3ecc7ecad0549a97d8786a09c98434c9114a9730dd2e970c0",
+  "costQualification": {
+    "allRawCostMeasurementsValid": false,
+    "invalidAllocationCell": {
+      "variant": "candidate",
+      "state": "warm",
+      "readers": 1,
+      "round": 2,
+      "allocatedBytes": -186168048
+    },
+    "singleReaderRound3PositiveAllocationOutlier": true,
+    "cleanSingleReaderAllocationEstimateClaimed": false,
+    "publishedSummaryRetainedUnchangedDespiteInvalidInfluence": true,
+    "sixTwoAndFourReaderValidPairedWarmAllocationRatios": {
+      "versusActual": [
+        1.135695,
+        1.136345
+      ],
+      "versusControl": [
+        1.134697,
+        1.136251
+      ]
+    },
+    "noCauseInferred": true,
+    "productionRejected": true
+  },
+  "outsidePacketHistoricalDrafts": {
+    "rootDecision88f152": "/tmp/story65-technical-fingerprint-rejection-package-prep-20261108/history-before-allocation-audit/root-rejection-88f152.json",
+    "audit153c430b": "/tmp/story65-technical-fingerprint-audit-history-20261108/153c430b",
+    "sourceCompileAndDiHistories": "/tmp/story65-technical-fingerprint-history-20261108"
+  }
+}

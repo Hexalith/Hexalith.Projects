@@ -1,0 +1,17 @@
+{
+  "filePreparationOnly": true,
+  "namespace": "Story65.ImageMemo.Harness",
+  "hostInterfaceUnchangedFromQualifiedInitialExperiment": true,
+  "observationInterfaceUnchangedFromQualifiedInitialExperiment": true,
+  "variants": ["production", "monitor-control", "rw-copy"],
+  "hostCreation": "Hosts.Create(name)",
+  "compiledReference": "one new owner/native-qualified production SDK, exact hash supplied only by future Root handoff",
+  "productionAdapter": "ProductionHost with fixed SDK namespace and actual ReaderWriterLockSlim gate check",
+  "controlAndRwCopyBodies": "exact unchanged namespace-copied qualified Monitor/RWL source",
+  "sharedMemoLifetime": "one host per variant/sample; distinct selected observation scope inside each reader for every complete66-image cohort",
+  "streamAndTechnicalPaths": "selected variant only, actual scope hits and occupancy required; no DomainService method invocation",
+  "sdkLoadPolicy": "new production SDK only in Default; no old same-identity SDK binary loaded for the Monitor baseline",
+  "sourcePinsReady": false,
+  "nativeProofAndRootFinalReviewPending": true,
+  "restoreBuildLoadRunAuthorized": false
+}

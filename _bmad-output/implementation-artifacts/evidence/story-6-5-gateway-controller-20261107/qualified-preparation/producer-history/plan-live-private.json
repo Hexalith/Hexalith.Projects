@@ -1,0 +1,20 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "sourceQualificationReady": false,
+  "applicationNativeAndHostsNotAuthorized": true,
+  "lane": "live-private",
+  "orderedProjects": {
+    "gateway-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+    "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+    "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+    "apphost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+    "integration": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+  },
+  "futureBuildType": "FORCE refsfalse only after actual ALC qualification and root operational review",
+  "sourceHook": "gateway-source.targets without scratch output redirect"
+}

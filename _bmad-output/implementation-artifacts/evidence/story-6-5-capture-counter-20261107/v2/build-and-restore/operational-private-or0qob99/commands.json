@@ -1,0 +1,201 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:38.727592+00:00",
+    "finishedUtc": "2026-11-07T09:58:42.664738+00:00",
+    "exitCode": 0,
+    "log": "1-service-defaults-producer-force-no-dependency-build.log",
+    "logSha256": "b0921fe41988d12b5efefc49a19937e55bb88a11048d3ded10625769767c5d8a"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:42.665094+00:00",
+    "finishedUtc": "2026-11-07T09:58:44.979680+00:00",
+    "exitCode": 0,
+    "log": "2-eventstore-force-no-dependency-build.log",
+    "logSha256": "5b6a9d95fde68c121e6f84c756a0b8248e139a1eb4c37d096add9e3d6713e6f6"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:44.980213+00:00",
+    "finishedUtc": "2026-11-07T09:58:48.349110+00:00",
+    "exitCode": 0,
+    "log": "3-tenants-force-no-dependency-build.log",
+    "logSha256": "d59d93bc7f2213ec84b1eda15268f8d50f7a4735197106b7c8a23fb490932739"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:48.349539+00:00",
+    "finishedUtc": "2026-11-07T09:58:53.839441+00:00",
+    "exitCode": 0,
+    "log": "4-projects-force-no-dependency-build.log",
+    "logSha256": "7c49bca870f559f7ed58313c535e577901a5340bb1d8661644f0b5b6010dec55"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:53.839871+00:00",
+    "finishedUtc": "2026-11-07T09:58:56.851481+00:00",
+    "exitCode": 0,
+    "log": "5-projects-workers-force-no-dependency-build.log",
+    "logSha256": "9798f729314736304a1dd8881ce430e747d30cc396b583e61b2ff2a631cf2aa5"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:58:56.852074+00:00",
+    "finishedUtc": "2026-11-07T09:59:01.550792+00:00",
+    "exitCode": 0,
+    "log": "6-folders-force-no-dependency-build.log",
+    "logSha256": "50fc779f0e4e2ed96f5b1ef19c98a42ef627ccc40433071ac623ca9ddf6855bc"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:59:01.551265+00:00",
+    "finishedUtc": "2026-11-07T09:59:04.521410+00:00",
+    "exitCode": 0,
+    "log": "7-folders-workers-force-no-dependency-build.log",
+    "logSha256": "16a00d82b96af906ab45345d863cc7c76004d7f296d79cd40976ef8753a5573b"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:59:04.521883+00:00",
+    "finishedUtc": "2026-11-07T09:59:10.989597+00:00",
+    "exitCode": 0,
+    "log": "8-apphost-force-no-dependency-build.log",
+    "logSha256": "c46567ece7ecf2371240102733b8978fc2a7755aab8daa334885c92cf6cceca8"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-nobuild-prep-20261107/capture-counter.targets",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:59:10.990102+00:00",
+    "finishedUtc": "2026-11-07T09:59:20.307649+00:00",
+    "exitCode": 0,
+    "log": "9-integration-force-no-dependency-build.log",
+    "logSha256": "3b4fd4f0df62b314100e674c1aa93d9c5ddd850410559c536f83d9894f8c5fb8"
+  }
+]

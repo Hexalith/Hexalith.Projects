@@ -1,0 +1,440 @@
+{
+  "PreparationSource": "temp-renamed-copy-versus-compiled-original",
+  "Mode": "failing-sink",
+  "Group": "fast",
+  "Cases": 44,
+  "Passed": 44,
+  "Failures": [],
+  "ErrorType": "none",
+  "AdmittedCases": 38,
+  "NotAdmittedCases": 6,
+  "Captures": 38,
+  "ConversationsAdmitted": 0,
+  "PostCapParityCases": 0,
+  "FaultCases": 21,
+  "FaultsTriggered": 21,
+  "TraceValuesPersisted": false,
+  "RawTokenValuesPersisted": false,
+  "AllocationMode": "None",
+  "TerminalCountEncodingOnly": true,
+  "Terminals": [
+    {
+      "Case": "one-candidate",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "two-candidates",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "folder-unavailable",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "clock-exception-identity",
+      "Values": [
+        11,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-1-throw",
+      "Values": [
+        1,
+        1,
+        5,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-1-dependency-cancel",
+      "Values": [
+        1,
+        1,
+        5,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-1-caller-cancel",
+      "Values": [
+        1,
+        1,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-2-throw",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-2-dependency-cancel",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-2-caller-cancel",
+      "Values": [
+        2,
+        2,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-3-throw",
+      "Values": [
+        10,
+        3,
+        6,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-3-dependency-cancel",
+      "Values": [
+        10,
+        3,
+        6,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-3-caller-cancel",
+      "Values": [
+        3,
+        3,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-4-throw",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-4-dependency-cancel",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-4-caller-cancel",
+      "Values": [
+        4,
+        4,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-5-throw",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-5-dependency-cancel",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-5-caller-cancel",
+      "Values": [
+        5,
+        5,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-6-throw",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-6-dependency-cancel",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-6-caller-cancel",
+      "Values": [
+        6,
+        6,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "wave-7-throw",
+      "Values": [
+        10,
+        7,
+        6,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-7-dependency-cancel",
+      "Values": [
+        10,
+        7,
+        6,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "wave-7-caller-cancel",
+      "Values": [
+        7,
+        7,
+        7,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "Case": "deny-initial",
+      "Values": [
+        1,
+        0,
+        3,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "invalid-payload",
+      "Values": [
+        11,
+        0,
+        4,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "invalid-envelope",
+      "Values": [
+        11,
+        0,
+        4,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "raw-33",
+      "Values": [
+        11,
+        0,
+        4,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "file-only",
+      "Values": [
+        10,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "no-signal",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "deny-folder",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "revoke-scope",
+      "Values": [
+        7,
+        0,
+        3,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "revoke-project",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "revoke-input",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "anchor-change",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "lifecycle-change",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "Case": "parallel-four",
+      "Values": [
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

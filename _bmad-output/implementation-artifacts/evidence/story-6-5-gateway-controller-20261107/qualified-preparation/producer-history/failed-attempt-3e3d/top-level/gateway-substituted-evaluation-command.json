@@ -1,0 +1,24 @@
+{
+  "readOnlyPropertyAndItemEvaluationOnly": true,
+  "noBuildRestoreCleanPublishOrTargetsRequested": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+    "-target:Story65GatewayControllerSourceSubstitution",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+    "-getProperty:Story65GatewayLateGuardImported,Story65GatewayOriginalAfterSdkTargets,AfterMicrosoftNETSdkTargets,_HXWFinalTargetsImported,Configuration,Optimize,DefineConstants,DebugType,UseHexalithProjectReferences,UseNuGetDeps,EnablePrivateCatalogInvocationProof,EnablePrivateOwnerSourceReadProof,BuildProjectReferences,BaseOutputPath,OutputPath,OutDir,TargetDir,TargetPath,TargetRefPath,BaseIntermediateOutputPath,IntermediateOutputPath,MSBuildProjectExtensionsPath,ProjectAssetsFile,ProjectAssetsCacheFile,DocumentationFile,GeneratedAssemblyInfoFile,GeneratedGlobalUsingsFile,GeneratedMSBuildEditorConfigFile,CompilerGeneratedFilesOutputPath,EmitCompilerGeneratedFiles,ProjectDepsFilePath,ProjectRuntimeConfigFilePath,PublishDir,SourceLink,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,CleanFile,GeneratedDocumentationFile,FileListAbsolute,AppendTargetFrameworkToOutputPath,AppendRuntimeIdentifierToOutputPath",
+    "-getItem:Compile,AdditionalFiles,Analyzer,EmbeddedResource,IntermediateAssembly,IntermediateRefAssembly,FileWrites"
+  ],
+  "startedUtc": "2026-11-07T13:53:18.357840+00:00",
+  "finishedUtc": "2026-11-07T13:53:18.759696+00:00",
+  "exitCode": 0,
+  "stdoutSha256": "e7c78eb2fc61f8e7502f8156323b35d44f5c7b1004ecefe1c2e73a7cc2724793",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,112 @@
+{
+  "filePreparationOnly": true,
+  "allThreeOriginalsByteExactAfterReversingDocumentedEdits": true,
+  "preserveOriginalAwaitUsingLeaseLiteral": true,
+  "stagesAllocationNoneOnly": true,
+  "countCallsAdded": 0,
+  "changes": {
+    "DomainRouteCatalogFilter": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs",
+      "originalSha256": "3687e39c6e0fdd44c2c8b07da4bd389d60dbf3c66f19a25b1baf252f94b3fd9d",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogFilter.private.cs",
+      "privateSha256": "57fee141219a95c6ae62481e6b0e76b7d32aacd6e7e4d052d9f6d8c42c551739",
+      "byteExactReverseNormalization": true,
+      "operations": [
+        {
+          "old": "using Hexalith.EventStore.ServiceDefaults.Routing;",
+          "new": "using Hexalith.EventStore.ServiceDefaults.Routing;\nusing Hexalith.PrivateCaptureCounter;"
+        },
+        {
+          "old": "        ArgumentNullException.ThrowIfNull(context);",
+          "new": "        var counters = ReceiverPhaseBootstrap.Begin();\n        bool captureTransferred = false;\n        try\n        {\n        using var filterBody = counters?.Stage(CaptureCounters.Stage.ResultTail, CaptureCounters.AllocationMode.None);\n        ArgumentNullException.ThrowIfNull(context);"
+        },
+        {
+          "old": "            decision = guard is DomainRouteCatalogGuard receiver",
+          "new": "            using var guardDecision = counters?.Stage(CaptureCounters.Stage.ComponentFile, CaptureCounters.AllocationMode.None);\n            decision = guard is DomainRouteCatalogGuard receiver"
+        },
+        {
+          "old": "await receiver.AcquireDecisionAsync(context).ConfigureAwait(false)",
+          "new": "await receiver.AcquireDecisionWithTimingAsync(context, counters).ConfigureAwait(false)"
+        },
+        {
+          "old": "                : new(await guard.AcquireAsync(context).ConfigureAwait(false));",
+          "new": "                : new(await guard.AcquireAsync(context).ConfigureAwait(false));\n            guardDecision?.Dispose();"
+        },
+        {
+          "old": "            object? result = decision.TerminalRefusal ?? await next(context).ConfigureAwait(false);",
+          "new": "            using var filterNext = counters?.Stage(CaptureCounters.Stage.SettingsEnumerationSortDictionary, CaptureCounters.AllocationMode.None);\n            object? result = decision.TerminalRefusal ?? await next(context).ConfigureAwait(false);\n            filterNext?.Dispose();"
+        },
+        {
+          "old": "            if (result is IResult response && lease is not null) return new DomainRouteCatalogResult(response, lease, guard is DomainRouteCatalogGuard);",
+          "new": "            if (result is IResult response && lease is not null)\n            {\n                var ownedResult = new DomainRouteCatalogResult(response, lease, guard is DomainRouteCatalogGuard, counters);\n                captureTransferred = true;\n                return ownedResult;\n            }"
+        },
+        {
+          "old": "            if (lease is not null) await lease.DisposeAsync().ConfigureAwait(false);\n            return result;",
+          "new": "            if (lease is not null)\n            {\n                using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);\n                await lease.DisposeAsync().ConfigureAwait(false);\n                leaseRelease?.Dispose();\n            }\n            return result;"
+        },
+        {
+          "old": "        catch\n        {\n            if (lease is not null) await lease.DisposeAsync().ConfigureAwait(false);\n            throw;\n        }",
+          "new": "        catch\n        {\n            captureTransferred = false;\n            if (lease is not null)\n            {\n                using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);\n                await lease.DisposeAsync().ConfigureAwait(false);\n                leaseRelease?.Dispose();\n            }\n            throw;\n        }\n        }\n        finally\n        {\n            if (!captureTransferred) counters?.Dispose();\n        }"
+        }
+      ]
+    },
+    "DomainRouteCatalogGuard": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuard.cs",
+      "originalSha256": "5727c26eb6589389f483f51e8ee3895344d790676e0758941a436cd4381a238e",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogGuard.private.cs",
+      "privateSha256": "47f6419ed080065635e44b317182f2955f59dde2dc3d37f8a0de21d7bbe460b5",
+      "byteExactReverseNormalization": true,
+      "operations": [
+        {
+          "old": "using Hexalith.EventStore.ServiceDefaults.Routing;",
+          "new": "using Hexalith.EventStore.ServiceDefaults.Routing;\nusing Hexalith.PrivateCaptureCounter;"
+        },
+        {
+          "old": "    private async Task<DomainRouteCatalogDecision> AcquireCoreAsync(EndpointFilterInvocationContext context, bool allowRefusal)",
+          "new": "    /// <summary>Passes a private diagnostic capture through the existing concrete filter guard.</summary>\n    internal Task<DomainRouteCatalogDecision> AcquireDecisionWithTimingAsync(EndpointFilterInvocationContext context, CaptureCounters? counters)\n        => AcquireCoreAsync(context, allowRefusal: true, counters);\n\n    private async Task<DomainRouteCatalogDecision> AcquireCoreAsync(EndpointFilterInvocationContext context, bool allowRefusal, CaptureCounters? counters = null)"
+        },
+        {
+          "old": "        RouteCatalogDispatchLease lease = await authority.AcquireAsync(context.HttpContext.RequestAborted).ConfigureAwait(false);",
+          "new": "        using var authorityAcquire = counters?.Stage(CaptureCounters.Stage.ComponentPolicy, CaptureCounters.AllocationMode.None);\n        RouteCatalogDispatchLease lease = await authority.AcquireAsync(context.HttpContext.RequestAborted).ConfigureAwait(false);\n        authorityAcquire?.Dispose();"
+        },
+        {
+          "old": "        try\n        {\n            var snapshot = lease.Snapshot;",
+          "new": "        try\n        {\n            using var validation = counters?.Stage(CaptureCounters.Stage.AclFile, CaptureCounters.AllocationMode.None);\n            var snapshot = lease.Snapshot;"
+        },
+        {
+          "old": "        catch\n        {\n            await lease.DisposeAsync().ConfigureAwait(false);\n            throw;\n        }",
+          "new": "        catch\n        {\n            using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);\n            await lease.DisposeAsync().ConfigureAwait(false);\n            leaseRelease?.Dispose();\n            throw;\n        }"
+        }
+      ]
+    },
+    "DomainRouteCatalogResult": {
+      "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs",
+      "originalSha256": "9b4bf0f605d150273381baeeb587b96b83906672689bff92e80b65fe4cb9760d",
+      "privatePath": "/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogResult.private.cs",
+      "privateSha256": "cda8b3929d2ed6076aeaf0893d0574f2eec114acab0e71b70cd84357d532b4ac",
+      "byteExactReverseNormalization": true,
+      "operations": [
+        {
+          "old": "using Hexalith.EventStore.ServiceDefaults.Routing;",
+          "new": "using Hexalith.EventStore.ServiceDefaults.Routing;\nusing Hexalith.PrivateCaptureCounter;"
+        },
+        {
+          "old": "{\n    /// <summary>Preserves ordinary extension-guard response execution",
+          "new": "{\n    private readonly CaptureCounters? _counters;\n\n    /// <summary>Transfers only the private diagnostic capture after wrapper construction.</summary>\n    internal DomainRouteCatalogResult(IResult result, RouteCatalogDispatchLease lease, bool trustedReceiver, CaptureCounters? counters)\n        : this(result, lease, trustedReceiver) => _counters = counters;\n\n    /// <summary>Preserves ordinary extension-guard response execution"
+        },
+        {
+          "old": "        ArgumentNullException.ThrowIfNull(httpContext);",
+          "new": "        CaptureCounters.Interval? releaseInterval = null;\n        try\n        {\n        ArgumentNullException.ThrowIfNull(httpContext);"
+        },
+        {
+          "old": "        using var scope = trustedReceiver ? RouteCatalogRemoteCall.EnterReceiver(lease, httpContext.RequestAborted)",
+          "new": "        try\n        {\n        using var scope = trustedReceiver ? RouteCatalogRemoteCall.EnterReceiver(lease, httpContext.RequestAborted)"
+        },
+        {
+          "old": "        await result.ExecuteAsync(httpContext).ConfigureAwait(false);",
+          "new": "        using var resultExecution = _counters?.Stage(CaptureCounters.Stage.ActorBoundary, CaptureCounters.AllocationMode.None);\n        await result.ExecuteAsync(httpContext).ConfigureAwait(false);\n        resultExecution?.Dispose();\n        }\n        finally\n        {\n            // Original remote scope has unwound; original await-using lease disposal follows.\n            releaseInterval = _counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);\n        }\n        }\n        finally\n        {\n            releaseInterval?.Dispose();\n            _counters?.Dispose();\n        }"
+        }
+      ]
+    }
+  }
+}

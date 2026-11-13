@@ -1,0 +1,280 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "sourceSha256": "90747645ef65677bfa992edf31e0c94455df1408a1024086b9b953b408bdcf1d",
+  "cases": [
+    {
+      "name": "success-unbounded",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "success-owner3-caller2",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-sync",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-sync-bounded",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-async",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-async-bounded",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "issuer-null",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "issuer-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-fault",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-fault-bounded",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-cancel",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "value-source-cancel-bounded",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "null-query",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "missing-caller",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "foreign-tenant",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "duplicate-assertion",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "missing-workload",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "whitespace-workload",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "missing-key",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "whitespace-key",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "nonprojects",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "case-sensitive-workload",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "nontrimmed-workload",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "workload-provider-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "key-provider-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "timeout-provider-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "gateway-provider-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "invalid-budget",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "factory-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "proof-clock-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "dapr-request-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "handler-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "proof-key-invalid",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "buffer-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "json-malformed",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "response-mismatch",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "response-disposal-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "request-disposal-throw",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "late-response-disposal",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "late-request-disposal",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "buffered-body-delay",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "status401",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "status403",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "status404",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "status500",
+      "slow": false,
+      "concurrency": 1
+    },
+    {
+      "name": "concurrent-two",
+      "slow": false,
+      "concurrency": 2
+    },
+    {
+      "name": "concurrent-four",
+      "slow": false,
+      "concurrency": 4
+    },
+    {
+      "name": "profile-owner3-caller2-issuer",
+      "slow": true,
+      "concurrency": 1
+    },
+    {
+      "name": "profile-owner3-caller2-transport",
+      "slow": true,
+      "concurrency": 1
+    },
+    {
+      "name": "profile-owner3-caller2-buffer",
+      "slow": true,
+      "concurrency": 1
+    },
+    {
+      "name": "bounded-uncooperative-issuer",
+      "slow": true,
+      "concurrency": 1
+    },
+    {
+      "name": "unbounded-uncooperative-issuer",
+      "slow": true,
+      "concurrency": 1
+    }
+  ],
+  "fastCount": 47,
+  "slowCount": 5,
+  "caseCount": 52,
+  "invocationComparisonsPerMode": 56,
+  "slowNames": [
+    "profile-owner3-caller2-issuer",
+    "profile-owner3-caller2-transport",
+    "profile-owner3-caller2-buffer",
+    "bounded-uncooperative-issuer",
+    "unbounded-uncooperative-issuer"
+  ],
+  "modeCount": 4,
+  "sourceDerivedNativeClassCases": 24
+}

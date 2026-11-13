@@ -1,0 +1,113 @@
+using System.Text.Json;
+
+using Hexalith.EventStore.Contracts.Routing;
+
+using Microsoft.Extensions.Configuration;
+
+namespace Hexalith.EventStore.ServiceDefaults.Routing;
+
+/// <summary>Reads the actual retained inputs selected by an explicit Development runner, excluding credential material.</summary>
+public static class InstrumentedDevelopmentRouteCatalogInputs
+{
+    /// <summary>Captures the loaded authority component and receiver ACL, exact participant inventory and authentication settings.</summary>
+    public static async Task<RouteCatalogHostObservation> CaptureAsync(IConfiguration configuration,
+        string actualAppId, IReadOnlyList<RouteContractDeclaration> declarations, IReadOnlyList<RouteCatalogEntry> targets,
+        IReadOnlyList<IdempotencyCatalogEntry> admission, IReadOnlyList<RouteCatalogProjectionCapability> capabilities,
+        IReadOnlyList<RouteCatalogAuxiliaryOperation> auxiliary, CancellationToken token = default)
+    {
+        using var __capture = global::Hexalith.PrivateCaptureCounter.CaptureCounters.Begin(actualAppId switch
+        {
+            "eventstore" => global::Hexalith.PrivateCaptureCounter.Role.Gateway,
+            "tenants" => global::Hexalith.PrivateCaptureCounter.Role.Tenants,
+            "projects" => global::Hexalith.PrivateCaptureCounter.Role.Projects,
+            "projects-workers" => global::Hexalith.PrivateCaptureCounter.Role.ProjectsWorkers,
+            "folders" => global::Hexalith.PrivateCaptureCounter.Role.Folders,
+            "folders-workers" => global::Hexalith.PrivateCaptureCounter.Role.FoldersWorkers,
+            _ => global::Hexalith.PrivateCaptureCounter.Role.Unsupported,
+        });
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(declarations);
+        var section = configuration.GetSection("EventStore:RouteCatalog:DevelopmentBootstrap");
+        string host = section["HostId"] ?? throw new InvalidOperationException("The Development host identity is required.");
+        using var __component = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ComponentFile);
+        var component = await File.ReadAllBytesAsync(section["ComponentPath"] ?? throw new InvalidOperationException("The loaded authority component is required."), token).ConfigureAwait(false);
+        __component?.Dispose();
+        using var __policy = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ComponentPolicy);
+        if (section["AuthorityRole"] is { Length: > 0 } requiredRole)
+        {
+            using var loaded = JsonDocument.Parse(component);
+            if (requiredRole != RouteCatalogAuthorityComponentPolicy.IsolatedRole
+                || !RouteCatalogAuthorityComponentPolicy.IsDedicatedComponent(loaded.RootElement, configuration["EventStore:RouteCatalog:StateStore"]))
+                throw new RouteCatalogUnavailableException("The actual loaded component lost its dedicated authority role or isolated keyspace.", RouteCatalogRefusalReason.Topology);
+        }
+        __policy?.Dispose();
+        using var __acl = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AclFile);
+        var acl = await File.ReadAllBytesAsync(section["AccessControlPath"] ?? throw new InvalidOperationException("The loaded receiver ACL is required."), token).ConfigureAwait(false);
+        __acl?.Dispose();
+        // These are observations of effective settings, never configuration layers or credential fingerprints.
+        // In particular no signing key, bearer token, private/public key bytes or secret-map values are serialized.
+        using var __settings = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.SettingsEnumerationSortDictionary, global::Hexalith.PrivateCaptureCounter.AllocationMode.SynchronousThread);
+        var settings = configuration.AsEnumerable().Where(entry =>
+        {
+            __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.Yielded);
+            if (entry.Value is null)
+            {
+                __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.NullValue);
+                return false;
+            }
+            bool accepted = NonsecretAuthenticationSetting(entry.Key, __capture);
+            if (accepted) __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.AuthenticationAccepted);
+            return accepted;
+        }).OrderBy(entry => entry.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(entry => entry.Key, entry => entry.Value, StringComparer.OrdinalIgnoreCase);
+        __settings?.Dispose();
+        using var __authentication = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AuthenticationSerialization);
+        var configuredKeys = configuration.GetSection("Authentication:BoundStreamRead:PublicKeys").GetChildren().Select(child => child.Key).Order(StringComparer.Ordinal).ToArray();
+        byte[] authentication = JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            settings, boundProofCallers = configuredKeys,
+            applicationChannelTokenConfigured = !string.IsNullOrEmpty(configuration["APP_API_TOKEN"]),
+            sidecarApiTokenConfigured = !string.IsNullOrEmpty(configuration["DAPR_API_TOKEN"]),
+        });
+        __authentication?.Dispose();
+        using var __boundary = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ActorBoundary);
+        var actorStateOwners = DevelopmentActorStateOwnerBoundary.ReadObserved(configuration);
+        if (actorStateOwners.Length > 0)
+        {
+            var document = System.Text.Json.Nodes.JsonNode.Parse(authentication)!.AsObject();
+            document["actorStateOwners"] = JsonSerializer.SerializeToNode(actorStateOwners);
+            authentication = JsonSerializer.SerializeToUtf8Bytes(document);
+        }
+        __boundary?.Dispose();
+        using var __tail = __capture?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ResultTail);
+        return new(host, actualAppId, declarations, targets,
+            section.GetSection("RequiredHostIds").Get<string[]>() ?? [], [component, acl],
+            authentication, admission, capabilities, auxiliary, Operations: declarations.Count == 0 ? [] : null)
+        {
+            SelectedAppIds = section.GetSection("SelectedAppIds").Get<string[]>(),
+            DeclaredInvocations = section["DeclaredInvocations"] is { } invocations
+                ? JsonSerializer.Deserialize<RouteCatalogDeclaredInvocation[]>(invocations) ?? [] : null,
+        };
+    }
+
+    private static bool NonsecretAuthenticationSetting(string key, global::Hexalith.PrivateCaptureCounter.CaptureCounters? __capture)
+    {
+        if (!key.StartsWith("Authentication:", StringComparison.OrdinalIgnoreCase)
+            && !key.StartsWith("EventStore:Authentication:", StringComparison.OrdinalIgnoreCase))
+        {
+            __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.NonAuthenticationDiscarded);
+            return false;
+        }
+        string[] segments = key.Split(':');
+        if (segments.Any(segment => segment.Contains("Key", StringComparison.OrdinalIgnoreCase)
+            || segment.Contains("Token", StringComparison.OrdinalIgnoreCase) || segment.Contains("Secret", StringComparison.OrdinalIgnoreCase)))
+        {
+            __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.SensitiveSegmentExcluded);
+            return false;
+        }
+        string[] names = ["Issuer", "Audience", "Algorithm", "Algorithms", "AllowedDomains", "AllowedOperations", "AllowedCallers", "MetadataOnlyCallers",
+            "ValidateIssuer", "ValidateAudience", "ValidateLifetime", "RequireHttpsMetadata", "Authority"];
+        bool accepted = segments.Any(segment => names.Contains(segment, StringComparer.OrdinalIgnoreCase));
+        if (!accepted) __capture?.Count(global::Hexalith.PrivateCaptureCounter.Count.AuthenticationOtherExcluded);
+        return accepted;
+    }
+}

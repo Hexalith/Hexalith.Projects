@@ -1,0 +1,59 @@
+{
+  "syntaxPassed": 6,
+  "syntaxFiles": [
+    "build_restore.py",
+    "launch_managed.py",
+    "native_qualification.py",
+    "ops_common.py",
+    "run_and_restore.py",
+    "supervise_managed.py"
+  ],
+  "allFiveNonexecutingPlansPassed": true,
+  "noAppBuildNativeOrHostExecuted": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/build_restore.py",
+        "--phase",
+        "private"
+      ],
+      "exitCode": 0,
+      "path": "/tmp/story65-outbound-assertion-ops-prep-20261107/live/dry-plan-1.json"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/native_qualification.py"
+      ],
+      "exitCode": 0,
+      "path": "/tmp/story65-outbound-assertion-ops-prep-20261107/live/dry-plan-2.json"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/supervise_managed.py"
+      ],
+      "exitCode": 0,
+      "path": "/tmp/story65-outbound-assertion-ops-prep-20261107/live/dry-plan-3.json"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/run_and_restore.py"
+      ],
+      "exitCode": 0,
+      "path": "/tmp/story65-outbound-assertion-ops-prep-20261107/live/dry-plan-4.json"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-outbound-assertion-ops-prep-20261107/live/build_restore.py",
+        "--phase",
+        "ordinary"
+      ],
+      "exitCode": 0,
+      "path": "/tmp/story65-outbound-assertion-ops-prep-20261107/live/dry-plan-5.json"
+    }
+  ]
+}

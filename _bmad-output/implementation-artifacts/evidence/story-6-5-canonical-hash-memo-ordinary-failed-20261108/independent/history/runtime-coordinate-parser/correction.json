@@ -1,0 +1,16 @@
+{
+  "readOnlyAuditOnly": true,
+  "priorAuditInvocations": 2,
+  "priorAuditExitCodes": [
+    1,
+    1
+  ],
+  "exceptionType": "ValueError",
+  "classification": "RUNTIME_PROJECTS uses dict(zip(literal role tuple,literal source tuple)), not a literal dictionary",
+  "additionalUnexecutedPatchGuardFailure": "Expected indentation was four spaces but this compact TEMP auditor uses one; assertion stopped the patch before editing",
+  "sourceControlsCoreCopiesAnd147ChecksPassedBeforeParserFailure": true,
+  "sourceOrRuntimeInputsChanged": false,
+  "correction": "Accept only the exact known dict(zip(two literal tuples)) AST form; no module import/eval or runtime invocation",
+  "oldAuditSha256": "ca16cb1ae770e1a052c16bd9ad84b5664a20ab81904b7a938212e894a3597cb1",
+  "newAuditSha256": "5b446b2e887dabf882197ab9c026dad48fe84703bc25cf9a4ffa26773b2bc0b5"
+}

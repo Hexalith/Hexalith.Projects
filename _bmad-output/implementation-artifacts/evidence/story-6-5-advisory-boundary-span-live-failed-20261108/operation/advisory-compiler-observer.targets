@@ -1,0 +1,46 @@
+<Project>
+  <!-- Last SDK import: resolved item/flag snapshot before CoreCompile, after prior pinned generator targets; not Csc task interception. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <Story65TerminalLateGuardImported>true</Story65TerminalLateGuardImported>
+  </PropertyGroup>
+  <Target Name="Story65ValidateAdvisoryTerminalCompilerInputs" DependsOnTargets="Story65AdvisoryTerminalSource" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/project.assets.json'" Text="Domain receiver restored assets coordinate refused." />
+    <ItemGroup>
+      <_TerminalWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+      <_TerminalWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+      <_TerminalActualOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" />
+      <_TerminalPrivateInputs Include="@(Compile)" Condition="$([System.String]::Copy('%(Compile.FullPath)').StartsWith('/tmp/story65-advisory-boundary-span-prep-20261108/', System.StringComparison.Ordinal))" />
+    </ItemGroup>
+    <Error Condition="'$(Story65TerminalPrivate)' == 'true' and ('@(_TerminalActualOriginal)' != '' or '@(_TerminalPrivateInputs->Count())' != '7')" Text="Private advisory actual source set refused." />
+    <Error Condition="'$(Story65TerminalPrivate)' != 'true' and ('@(_TerminalActualOriginal->Count())' != '1' or '@(_TerminalPrivateInputs)' != '')" Text="Ordinary advisory actual source set refused." />
+    <Error Condition="'$(Story65TerminalIsolatedRoot)' != '' and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('$(Story65TerminalIsolatedRoot)', System.StringComparison.Ordinal))" Text="Isolated Domain compiler write escaped temporary output." />
+    <Error Condition="'$(Story65TerminalIsolatedRoot)' == '' and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/', System.StringComparison.Ordinal)) and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/Debug/', System.StringComparison.Ordinal))" Text="Workspace Domain compiler write escaped owned Debug bin/obj." />
+  </Target>
+  <Target Name="Story65CaptureAdvisoryTerminalBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateAdvisoryTerminalCompilerInputs" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <ItemGroup>
+      <_TerminalSourceLink Include="$(SourceLink)" Condition="'$(SourceLink)' != ''" />
+      <_TerminalWin32Resource Include="$(Win32Resource)" Condition="'$(Win32Resource)' != ''" />
+      <_TerminalWin32Manifest Include="$(Win32Manifest)" Condition="'$(Win32Manifest)' != ''" />
+      <_TerminalWin32Icon Include="$(ApplicationIcon)" Condition="'$(ApplicationIcon)' != ''" />
+      <_TerminalKeyFile Include="$(KeyOriginatorFile)" Condition="'$(KeyOriginatorFile)' != ''" />
+      <_TerminalCompilerAppConfig Include="$(AppConfigForCompiler)" Condition="'$(AppConfigForCompiler)' != ''" />
+      <_TerminalCodeAnalysisRules Include="$(ResolvedCodeAnalysisRuleSet)" Condition="'$(ResolvedCodeAnalysisRuleSet)' != ''" />
+      <_TerminalResponseFile Include="$(CompilerResponseFile)" Condition="'$(CompilerResponseFile)' != ''" />
+      <_TerminalFeatures Include="$(Features)" />
+      <_TerminalWarningsAsErrors Include="$(WarningsAsErrors)" />
+      <_TerminalWarningsNotAsErrors Include="$(WarningsNotAsErrors)" />
+      <_TerminalConstants Include="$(DefineConstants)" />
+      <_TerminalNoWarn Include="$(NoWarn)" />
+      <_TerminalPathMaps Include="$(PathMap)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)|%(Aliases)|%(EmbedInteropTypes)');@(_CoreCompileResourceInputs->'Resource|%(FullPath)|%(LogicalName)|%(WithCulture)');@(CompiledLicenseFile->'Resource|%(FullPath)');@(EmbeddedFiles->'EmbeddedFile|%(FullPath)');@(LinkResource->'LinkResource|%(FullPath)|%(LogicalName)');@(AddModules->'Module|%(FullPath)');@(EditorConfigFiles->'AnalyzerConfig|%(FullPath)');@(_TerminalSourceLink->'SourceLink|%(FullPath)');@(_TerminalWin32Resource->'Win32Resource|%(FullPath)');@(_TerminalWin32Manifest->'Win32Manifest|%(FullPath)');@(_TerminalWin32Icon->'Win32Icon|%(FullPath)');@(_TerminalKeyFile->'KeyFile|%(FullPath)');@(_TerminalCompilerAppConfig->'CompilerAppConfig|%(FullPath)');@(_TerminalCodeAnalysisRules->'CodeAnalysisRules|%(FullPath)');@(_TerminalResponseFile->'ResponseFile|%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-writable-paths.txt" Lines="@(_TerminalWritable->'%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-precore-flags.txt" Lines="Snapshot|before-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);TargetType|$(OutputType);Platform|$(PlatformTarget);EmbedAllSources|$(EmbedAllSources);ChecksumAlgorithm|$(ChecksumAlgorithm);NoStandardLib|$(NoCompilerStandardLib);DisableSdkPath|$(DisableSdkPath);DebugType|$(DebugType);DebugSymbols|$(DebugSymbols);TargetFramework|$(TargetFramework);AssemblyName|$(AssemblyName);LangVersion|$(LangVersion);Nullable|$(Nullable);Deterministic|$(Deterministic);AllowUnsafeBlocks|$(AllowUnsafeBlocks);CheckForOverflowUnderflow|$(CheckForOverflowUnderflow);WarningLevel|$(WarningLevel);TreatWarningsAsErrors|$(TreatWarningsAsErrors);GenerateDocumentationFile|$(GenerateDocumentationFile);EmitCompilerGeneratedFiles|$(EmitCompilerGeneratedFiles);UseHexalithProjectReferences|$(UseHexalithProjectReferences);UseNuGetDeps|$(UseNuGetDeps);EnablePrivateCatalogInvocationProof|$(EnablePrivateCatalogInvocationProof);EnablePrivateOwnerSourceReadProof|$(EnablePrivateOwnerSourceReadProof);PrivateAdvisoryCore|$(Story65TerminalPrivate);@(_TerminalConstants->'DefineConstant|%(Identity)');@(_TerminalNoWarn->'NoWarn|%(Identity)');@(_TerminalPathMaps->'PathMapEntry|%(Identity)');@(_TerminalFeatures->'Feature|%(Identity)');@(_TerminalWarningsAsErrors->'WarningsAsErrors|%(Identity)');@(_TerminalWarningsNotAsErrors->'WarningsNotAsErrors|%(Identity)')" Overwrite="true" />
+  </Target>
+  <Target Name="Story65CaptureAdvisoryTerminalAfterCoreCompile" AfterTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <ItemGroup>
+      <_TerminalPostNoWarn Include="$(NoWarn)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-postcore-flags.txt" Lines="Snapshot|after-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);DebugType|$(DebugType);PdbFile|$(PdbFile);AppConfigForCompiler|$(AppConfigForCompiler);TargetsTriggeredByCompilation|$(TargetsTriggeredByCompilation);@(_TerminalPostNoWarn->'NoWarn|%(Identity)')" Overwrite="true" />
+  </Target>
+</Project>

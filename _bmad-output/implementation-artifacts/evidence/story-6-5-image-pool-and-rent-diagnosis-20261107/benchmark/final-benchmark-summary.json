@@ -1,0 +1,1272 @@
+{
+  "diagnosticOnly": true,
+  "selectedSmallestUsefulCapacity": 2,
+  "observationsPerInventory": 2,
+  "imageCount": 12,
+  "freshBytesPerInventory": 24416064,
+  "ordinarySdkSha256": "19e1fb8b062e35f6c62a11de7e2171c556d0481af6982ad4f4619eaa103516be",
+  "performanceIsNotFeatureAcceptance": true,
+  "limits": [
+    "All12images are source-derived and count-corroborated; runtime trace did not retain image names/order. FullName-sorted order used identically.",
+    "Per-inventory means include actualscopeentry/disposal, original full file reads/logical slices/PE/MVID/shared actual memo and exact-byte comparison. Primary timings use direct unwrapped ArrayPool.",
+    "Cold measurements include JIT/runtime effects and first memo/pool retention. All samples retained; no elapsed-time guarantee.",
+    "Tracking pass measures Rent-thread allocation deltas and holds no array history. trackedAlignedCounts in raw outputs is cumulative with prior tracked pass.",
+    "Array pool maximum is retained raw payload; bounded metadata/object headers are additional. Image memo64MiB charged bound remains distinct.",
+    "Original failed metadata census was corrected only in external resolver and is retained in initial-inventory-failure.txt."
+  ],
+  "rows": [
+    {
+      "phase": "first",
+      "slots": 1,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.406812499999999,
+      "medianCohortWallMs": 129.93,
+      "medianInventoriesPerSecond": 369.42969291156777,
+      "medianManagedBytesPerInventory": 130892,
+      "warmCollections": [
+        22,
+        1,
+        0
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 27.3182,
+        "throughputInventoriesPerSecond": 73.21126574957354,
+        "meanCaptureMs": 25.22185,
+        "allocatedBytesPerInventory": 23014440,
+        "processAllocatedBytes": 46045416,
+        "processCpuMs": 40.437,
+        "gcDelta": [
+          4,
+          4,
+          4
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 25.2973,
+            "MeanCaptureMs": 25.2266,
+            "AllocatedBytes": 16391712,
+            "MemoHits": 21
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 25.281,
+            "MeanCaptureMs": 25.2171,
+            "AllocatedBytes": 29637168,
+            "MemoHits": 15
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 5013438464,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 133.8474,
+        "throughputInventoriesPerSecond": 358.6173508039753,
+        "meanCaptureMs": 5.5158854166666655,
+        "allocatedBytesPerInventory": 131655,
+        "processAllocatedBytes": 6319840,
+        "processCpuMs": 240.751,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 133.7481,
+            "MeanCaptureMs": 5.524908333333333,
+            "AllocatedBytes": 3159696,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 133.7162,
+            "MeanCaptureMs": 5.506862499999998,
+            "AllocatedBytes": 3159744,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots1-workers2.json",
+      "sha256": "6f300e9fff08ef0dda0fc1dd1edd3ff6d7365f4f79892cffd71895c8176442ac"
+    },
+    {
+      "phase": "first",
+      "slots": 2,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.053183333333333,
+      "medianCohortWallMs": 121.4605,
+      "medianInventoriesPerSecond": 395.19020586939786,
+      "medianManagedBytesPerInventory": 130890,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 29.8034,
+        "throughputInventoriesPerSecond": 67.10643752055135,
+        "meanCaptureMs": 27.333,
+        "allocatedBytesPerInventory": 18136684,
+        "processAllocatedBytes": 36290624,
+        "processCpuMs": 43.137,
+        "gcDelta": [
+          5,
+          5,
+          5
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 27.399,
+            "MeanCaptureMs": 27.3365,
+            "AllocatedBytes": 22090168,
+            "MemoHits": 17
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 27.4021,
+            "MeanCaptureMs": 27.3295,
+            "AllocatedBytes": 14183200,
+            "MemoHits": 19
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 3353346048,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 127.7549,
+        "throughputInventoriesPerSecond": 375.71944402915267,
+        "meanCaptureMs": 5.255014583333333,
+        "allocatedBytesPerInventory": 130882,
+        "processAllocatedBytes": 6282856,
+        "processCpuMs": 226.04,
+        "gcDelta": [
+          1,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 127.6266,
+            "MeanCaptureMs": 5.257033333333333,
+            "AllocatedBytes": 3141040,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 127.4839,
+            "MeanCaptureMs": 5.252995833333332,
+            "AllocatedBytes": 3141312,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots2-workers2.json",
+      "sha256": "0a9c0235125e0f9aec7f0294c394729632ad0eec25d14e576a835073553101fd"
+    },
+    {
+      "phase": "first",
+      "slots": 4,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.4541354166666665,
+      "medianCohortWallMs": 131.0119,
+      "medianInventoriesPerSecond": 366.37893199014746,
+      "medianManagedBytesPerInventory": 131424,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 30.5225,
+        "throughputInventoriesPerSecond": 65.52543205831763,
+        "meanCaptureMs": 28.34375,
+        "allocatedBytesPerInventory": 18137004,
+        "processAllocatedBytes": 36291264,
+        "processCpuMs": 44.85,
+        "gcDelta": [
+          5,
+          5,
+          5
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 28.4036,
+            "MeanCaptureMs": 28.3517,
+            "AllocatedBytes": 15413176,
+            "MemoHits": 17
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 28.3874,
+            "MeanCaptureMs": 28.3358,
+            "AllocatedBytes": 20860832,
+            "MemoHits": 19
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 3353346048,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 135.9279,
+        "throughputInventoriesPerSecond": 353.1283864460497,
+        "meanCaptureMs": 5.598910416666666,
+        "allocatedBytesPerInventory": 131651,
+        "processAllocatedBytes": 6319640,
+        "processCpuMs": 264.156,
+        "gcDelta": [
+          1,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 135.8063,
+            "MeanCaptureMs": 5.595983333333332,
+            "AllocatedBytes": 3159552,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 135.8602,
+            "MeanCaptureMs": 5.601837499999999,
+            "AllocatedBytes": 3159720,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots4-workers2.json",
+      "sha256": "b4d08c95dbd03b3fbe109e11a3c0635aa71b552cba4909d7709bd7975f1b17c3"
+    },
+    {
+      "phase": "first",
+      "slots": 1,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.932845833333332,
+      "medianCohortWallMs": 267.075,
+      "medianInventoriesPerSecond": 359.44959281100813,
+      "medianManagedBytesPerInventory": 6254408,
+      "warmCollections": [
+        62,
+        58,
+        57
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 35.3131,
+        "throughputInventoriesPerSecond": 113.27241165459844,
+        "meanCaptureMs": 33.238675,
+        "allocatedBytesPerInventory": 25508942,
+        "processAllocatedBytes": 102053576,
+        "processCpuMs": 79.967,
+        "gcDelta": [
+          6,
+          6,
+          6
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 33.309,
+            "MeanCaptureMs": 33.3086,
+            "AllocatedBytes": 30215464,
+            "MemoHits": 21
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 33.3183,
+            "MeanCaptureMs": 33.3175,
+            "AllocatedBytes": 26068856,
+            "MemoHits": 18
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 33.1253,
+            "MeanCaptureMs": 33.1131,
+            "AllocatedBytes": 27488784,
+            "MemoHits": 21
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 33.2166,
+            "MeanCaptureMs": 33.2155,
+            "AllocatedBytes": 18262664,
+            "MemoHits": 24
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 9006612480,
+        "allocatingRents": 459,
+        "rentAllocatedBytes": 1291043072,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 337.6291,
+        "throughputInventoriesPerSecond": 284.3356807810701,
+        "meanCaptureMs": 12.080632291666666,
+        "allocatedBytesPerInventory": 8785524,
+        "processAllocatedBytes": 843414432,
+        "processCpuMs": 1404.368,
+        "gcDelta": [
+          7,
+          7,
+          7
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 330.9947,
+            "MeanCaptureMs": 11.618412499999998,
+            "AllocatedBytes": 224869200,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 334.5562,
+            "MeanCaptureMs": 12.628329166666669,
+            "AllocatedBytes": 193422064,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 337.4935,
+            "MeanCaptureMs": 12.019674999999998,
+            "AllocatedBytes": 192573208,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 329.285,
+            "MeanCaptureMs": 12.056112499999998,
+            "AllocatedBytes": 232545920,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots1-workers4.json",
+      "sha256": "4b7878f44dff77dc92f9ced036a84e9b1c5944936092e584881bbb4b5b2a37de"
+    },
+    {
+      "phase": "first",
+      "slots": 2,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.915392708333332,
+      "medianCohortWallMs": 238.4165,
+      "medianInventoriesPerSecond": 402.6566953210033,
+      "medianManagedBytesPerInventory": 131279,
+      "warmCollections": [
+        44,
+        0,
+        0
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 29.1495,
+        "throughputInventoriesPerSecond": 137.2236230467075,
+        "meanCaptureMs": 27.008675000000004,
+        "allocatedBytesPerInventory": 19922816,
+        "processAllocatedBytes": 79707760,
+        "processCpuMs": 61.517,
+        "gcDelta": [
+          4,
+          4,
+          4
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 26.994,
+            "MeanCaptureMs": 26.981,
+            "AllocatedBytes": 23066192,
+            "MemoHits": 20
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 27.1125,
+            "MeanCaptureMs": 27.1121,
+            "AllocatedBytes": 16345024,
+            "MemoHits": 20
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 26.9667,
+            "MeanCaptureMs": 26.9662,
+            "AllocatedBytes": 17795592,
+            "MemoHits": 20
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 26.9759,
+            "MeanCaptureMs": 26.9754,
+            "AllocatedBytes": 22484456,
+            "MemoHits": 24
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 9776889856,
+        "allocatingRents": 1,
+        "rentAllocatedBytes": 131096,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 233.1578,
+        "throughputInventoriesPerSecond": 411.7383162819344,
+        "meanCaptureMs": 9.494723958333333,
+        "allocatedBytesPerInventory": 130897,
+        "processAllocatedBytes": 12566552,
+        "processCpuMs": 643.496,
+        "gcDelta": [
+          5,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 232.7719,
+            "MeanCaptureMs": 9.461720833333333,
+            "AllocatedBytes": 3141344,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 232.9883,
+            "MeanCaptureMs": 9.4941875,
+            "AllocatedBytes": 3141544,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 232.9654,
+            "MeanCaptureMs": 9.523920833333333,
+            "AllocatedBytes": 3142032,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 233.0007,
+            "MeanCaptureMs": 9.499066666666666,
+            "AllocatedBytes": 3141264,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots2-workers4.json",
+      "sha256": "f749e3ddcd33fb7bd0ce6a6773bbfc849dd2c0e97fb457d5063c9b21adae347b"
+    },
+    {
+      "phase": "first",
+      "slots": 4,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.866933333333332,
+      "medianCohortWallMs": 238.5842,
+      "medianInventoriesPerSecond": 402.3736693377013,
+      "medianManagedBytesPerInventory": 131649,
+      "warmCollections": [
+        25,
+        2,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 35.293,
+        "throughputInventoriesPerSecond": 113.33692233587398,
+        "meanCaptureMs": 33.343875000000004,
+        "allocatedBytesPerInventory": 15089844,
+        "processAllocatedBytes": 60377256,
+        "processCpuMs": 76.651,
+        "gcDelta": [
+          6,
+          6,
+          6
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 33.4072,
+            "MeanCaptureMs": 33.3881,
+            "AllocatedBytes": 12039656,
+            "MemoHits": 24
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 33.3586,
+            "MeanCaptureMs": 33.3132,
+            "AllocatedBytes": 12286584,
+            "MemoHits": 22
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 33.3798,
+            "MeanCaptureMs": 33.3524,
+            "AllocatedBytes": 18813000,
+            "MemoHits": 18
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 33.3232,
+            "MeanCaptureMs": 33.3218,
+            "AllocatedBytes": 17220136,
+            "MemoHits": 20
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 6706692096,
+        "allocatingRents": 1,
+        "rentAllocatedBytes": 65560,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 239.0602,
+        "throughputInventoriesPerSecond": 401.5724909457952,
+        "meanCaptureMs": 9.711055208333335,
+        "allocatedBytesPerInventory": 130889,
+        "processAllocatedBytes": 12565752,
+        "processCpuMs": 702.081,
+        "gcDelta": [
+          5,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 238.8967,
+            "MeanCaptureMs": 9.725295833333332,
+            "AllocatedBytes": 3141264,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 238.9377,
+            "MeanCaptureMs": 9.699779166666666,
+            "AllocatedBytes": 3141712,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 238.7901,
+            "MeanCaptureMs": 9.722100000000001,
+            "AllocatedBytes": 3141040,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 238.7901,
+            "MeanCaptureMs": 9.697045833333334,
+            "AllocatedBytes": 3141368,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots4-workers4.json",
+      "sha256": "0db3a36f18ee129458dff72f7c9be3058cc71be20b8129fed0ff14464d1a24c7"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 1,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.347847916666667,
+      "medianCohortWallMs": 128.4526,
+      "medianInventoriesPerSecond": 373.6786954876741,
+      "medianManagedBytesPerInventory": 130893,
+      "warmCollections": [
+        22,
+        1,
+        0
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 29.8624,
+        "throughputInventoriesPerSecond": 66.97385340762966,
+        "meanCaptureMs": 27.246699999999997,
+        "allocatedBytesPerInventory": 23015304,
+        "processAllocatedBytes": 46047144,
+        "processCpuMs": 44.669,
+        "gcDelta": [
+          4,
+          4,
+          4
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 27.2894,
+            "MeanCaptureMs": 27.2534,
+            "AllocatedBytes": 24680272,
+            "MemoHits": 15
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 27.2835,
+            "MeanCaptureMs": 27.24,
+            "AllocatedBytes": 21350336,
+            "MemoHits": 21
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 5007310848,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 132.4887,
+        "throughputInventoriesPerSecond": 362.29504855885824,
+        "meanCaptureMs": 5.460437500000001,
+        "allocatedBytesPerInventory": 131656,
+        "processAllocatedBytes": 6319896,
+        "processCpuMs": 238.538,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 132.2083,
+            "MeanCaptureMs": 5.462054166666667,
+            "AllocatedBytes": 3159800,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 132.3422,
+            "MeanCaptureMs": 5.458820833333334,
+            "AllocatedBytes": 3159696,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots1-workers2.json",
+      "sha256": "c604002d98a26c8d987c0fda727c46208022965bab242acbb5a6e4c937ece55a"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 2,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.11385625,
+      "medianCohortWallMs": 122.8765,
+      "medianInventoriesPerSecond": 390.6361265172755,
+      "medianManagedBytesPerInventory": 130886,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 28.7915,
+        "throughputInventoriesPerSecond": 69.46494625149784,
+        "meanCaptureMs": 26.806150000000002,
+        "allocatedBytesPerInventory": 18137456,
+        "processAllocatedBytes": 36292168,
+        "processCpuMs": 42.737,
+        "gcDelta": [
+          5,
+          5,
+          5
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 26.8439,
+            "MeanCaptureMs": 26.8005,
+            "AllocatedBytes": 22055264,
+            "MemoHits": 15
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 26.8485,
+            "MeanCaptureMs": 26.8118,
+            "AllocatedBytes": 14219648,
+            "MemoHits": 21
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 3353346048,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 138.4024,
+        "throughputInventoriesPerSecond": 346.8147951191598,
+        "meanCaptureMs": 5.69478125,
+        "allocatedBytesPerInventory": 130882,
+        "processAllocatedBytes": 6282856,
+        "processCpuMs": 247.335,
+        "gcDelta": [
+          1,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 138.2841,
+            "MeanCaptureMs": 5.686820833333332,
+            "AllocatedBytes": 3141064,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 138.3341,
+            "MeanCaptureMs": 5.702741666666667,
+            "AllocatedBytes": 3141288,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots2-workers2.json",
+      "sha256": "de88a425eeccd7bc149674b0180ad1dbb1dde8fb415c41d9e74dd1d5003171ca"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 4,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.358310416666665,
+      "medianCohortWallMs": 128.7396,
+      "medianInventoriesPerSecond": 372.8456512215356,
+      "medianManagedBytesPerInventory": 130890,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 2,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 30.4635,
+        "throughputInventoriesPerSecond": 65.65233804388859,
+        "meanCaptureMs": 28.43,
+        "allocatedBytesPerInventory": 18137456,
+        "processAllocatedBytes": 36292168,
+        "processCpuMs": 43.885,
+        "gcDelta": [
+          5,
+          5,
+          5
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 28.4594,
+            "MeanCaptureMs": 28.4245,
+            "AllocatedBytes": 22152928,
+            "MemoHits": 15
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 28.4768,
+            "MeanCaptureMs": 28.4355,
+            "AllocatedBytes": 14121984,
+            "MemoHits": 21
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 2304,
+        "rentedBytes": 3353346048,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 2
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 48,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 133.9324,
+        "throughputInventoriesPerSecond": 358.3897548315419,
+        "meanCaptureMs": 5.5228625000000005,
+        "allocatedBytesPerInventory": 131655,
+        "processAllocatedBytes": 6319832,
+        "processCpuMs": 251.403,
+        "gcDelta": [
+          2,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 133.8317,
+            "MeanCaptureMs": 5.528375000000001,
+            "AllocatedBytes": 3159720,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 133.8642,
+            "MeanCaptureMs": 5.51735,
+            "AllocatedBytes": 3159720,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots4-workers2.json",
+      "sha256": "dda3829628b1e8edc14449a64af0b16bfcbe0f9315a1c8460a3dd5ffc1e97db4"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 1,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.6760125,
+      "medianCohortWallMs": 268.5648,
+      "medianInventoriesPerSecond": 357.4556308198245,
+      "medianManagedBytesPerInventory": 6953004,
+      "warmCollections": [
+        59,
+        55,
+        54
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 35.6102,
+        "throughputInventoriesPerSecond": 112.32736687802934,
+        "meanCaptureMs": 33.652,
+        "allocatedBytesPerInventory": 23638364,
+        "processAllocatedBytes": 94570480,
+        "processCpuMs": 69.037,
+        "gcDelta": [
+          5,
+          5,
+          5
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 33.6406,
+            "MeanCaptureMs": 33.6403,
+            "AllocatedBytes": 17871792,
+            "MemoHits": 20
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 33.6541,
+            "MeanCaptureMs": 33.6537,
+            "AllocatedBytes": 27733344,
+            "MemoHits": 19
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 33.6072,
+            "MeanCaptureMs": 33.594,
+            "AllocatedBytes": 27309992,
+            "MemoHits": 21
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 33.7203,
+            "MeanCaptureMs": 33.72,
+            "AllocatedBytes": 21638328,
+            "MemoHits": 24
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 8911912960,
+        "allocatingRents": 575,
+        "rentAllocatedBytes": 1570747880,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 297.1935,
+        "throughputInventoriesPerSecond": 323.0218695900146,
+        "meanCaptureMs": 10.738103125000002,
+        "allocatedBytesPerInventory": 9383109,
+        "processAllocatedBytes": 900783856,
+        "processCpuMs": 1364.32,
+        "gcDelta": [
+          9,
+          9,
+          9
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 295.6354,
+            "MeanCaptureMs": 10.447233333333335,
+            "AllocatedBytes": 180562968,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 295.6943,
+            "MeanCaptureMs": 9.894308333333335,
+            "AllocatedBytes": 239964688,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 297.0755,
+            "MeanCaptureMs": 11.424650000000005,
+            "AllocatedBytes": 254702424,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 297.1006,
+            "MeanCaptureMs": 11.186220833333332,
+            "AllocatedBytes": 225548392,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots1-workers4.json",
+      "sha256": "0377f92bdca28fb353a0bac3b12088efc9f93c1b121b2298891a816f70a20cfc"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 2,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.885377083333333,
+      "medianCohortWallMs": 237.5836,
+      "medianInventoriesPerSecond": 404.06829427620426,
+      "medianManagedBytesPerInventory": 131522,
+      "warmCollections": [
+        41,
+        0,
+        0
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 34.603,
+        "throughputInventoriesPerSecond": 115.59691356240788,
+        "meanCaptureMs": 32.50675,
+        "allocatedBytesPerInventory": 19957098,
+        "processAllocatedBytes": 79844904,
+        "processCpuMs": 69.929,
+        "gcDelta": [
+          4,
+          4,
+          4
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 32.5692,
+            "MeanCaptureMs": 32.4769,
+            "AllocatedBytes": 16456128,
+            "MemoHits": 21
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 32.5148,
+            "MeanCaptureMs": 32.5139,
+            "AllocatedBytes": 27831416,
+            "MemoHits": 19
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 32.5606,
+            "MeanCaptureMs": 32.5187,
+            "AllocatedBytes": 15594848,
+            "MemoHits": 22
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 32.518,
+            "MeanCaptureMs": 32.5175,
+            "AllocatedBytes": 19946000,
+            "MemoHits": 22
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 9769648128,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 218.6155,
+        "throughputInventoriesPerSecond": 439.1271433178343,
+        "meanCaptureMs": 8.740945833333333,
+        "allocatedBytesPerInventory": 130901,
+        "processAllocatedBytes": 12566888,
+        "processCpuMs": 641.096,
+        "gcDelta": [
+          5,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 216.4656,
+            "MeanCaptureMs": 8.656566666666665,
+            "AllocatedBytes": 3142032,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 218.4365,
+            "MeanCaptureMs": 8.780604166666667,
+            "AllocatedBytes": 3141488,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 218.5179,
+            "MeanCaptureMs": 8.707770833333333,
+            "AllocatedBytes": 3141512,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 218.4217,
+            "MeanCaptureMs": 8.818841666666666,
+            "AllocatedBytes": 3141488,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots2-workers4.json",
+      "sha256": "de6980b40904e069eb7d49e063c528bff81f242ecaf2b14708fd20d723d82058"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 4,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.124353124999999,
+      "medianCohortWallMs": 243.2474,
+      "medianInventoriesPerSecond": 394.65992236710446,
+      "medianManagedBytesPerInventory": 131166,
+      "warmCollections": [
+        24,
+        2,
+        1
+      ],
+      "firstCold": {
+        "iterationsPerWorker": 1,
+        "inventories": 4,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 34.0118,
+        "throughputInventoriesPerSecond": 117.60624253935399,
+        "meanCaptureMs": 32.112750000000005,
+        "allocatedBytesPerInventory": 15070456,
+        "processAllocatedBytes": 60299616,
+        "processCpuMs": 71.8,
+        "gcDelta": [
+          6,
+          6,
+          6
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 32.0972,
+            "MeanCaptureMs": 32.0547,
+            "AllocatedBytes": 22393952,
+            "MemoHits": 14
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 32.1686,
+            "MeanCaptureMs": 32.1381,
+            "AllocatedBytes": 13025144,
+            "MemoHits": 23
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 32.0793,
+            "MeanCaptureMs": 32.0638,
+            "AllocatedBytes": 8826672,
+            "MemoHits": 24
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 32.1947,
+            "MeanCaptureMs": 32.1944,
+            "AllocatedBytes": 16036056,
+            "MemoHits": 23
+          }
+        ]
+      },
+      "trackedWarmRents": {
+        "rents": 4608,
+        "rentedBytes": 6706692096,
+        "allocatingRents": 0,
+        "rentAllocatedBytes": 0,
+        "outstandingLoans": 0,
+        "peakLoans": 4
+      },
+      "aligned": {
+        "iterationsPerWorker": 24,
+        "inventories": 96,
+        "observationsPerInventory": 2,
+        "imagesPerObservation": 12,
+        "elapsedMs": 237.2364,
+        "throughputInventoriesPerSecond": 404.6596559381275,
+        "meanCaptureMs": 9.583401041666669,
+        "allocatedBytesPerInventory": 131044,
+        "processAllocatedBytes": 12580608,
+        "processCpuMs": 658.012,
+        "gcDelta": [
+          5,
+          0,
+          0
+        ],
+        "outputRows": [
+          {
+            "Worker": 0,
+            "ElapsedMs": 236.855,
+            "MeanCaptureMs": 9.691654166666668,
+            "AllocatedBytes": 3145168,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 1,
+            "ElapsedMs": 236.7754,
+            "MeanCaptureMs": 9.457262500000002,
+            "AllocatedBytes": 3145168,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 2,
+            "ElapsedMs": 236.8631,
+            "MeanCaptureMs": 9.721845833333331,
+            "AllocatedBytes": 3144936,
+            "MemoHits": 576
+          },
+          {
+            "Worker": 3,
+            "ElapsedMs": 237.0985,
+            "MeanCaptureMs": 9.462841666666668,
+            "AllocatedBytes": 3144968,
+            "MemoHits": 576
+          }
+        ]
+      },
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots4-workers4.json",
+      "sha256": "d479ef072ec4042277f1ffffee96c3c7a050890afea0dc193e86567602813849"
+    }
+  ],
+  "commands": [
+    "benchmark-command-receipt.json",
+    "confirmation-command-receipt.json",
+    "restoration-receipt.json"
+  ]
+}

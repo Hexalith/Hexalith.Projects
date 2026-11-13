@@ -1,0 +1,145 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "buildRestoreRunAuthorized": false,
+  "compileConfiguration": "Debug",
+  "buildEnvironmentOnly": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "runtimeEnvironmentRemove": [
+    "DOTNET_PROCESSOR_COUNT",
+    "CustomBeforeMicrosoftCommonTargets",
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration"
+  ],
+  "commands": [
+    {
+      "kind": "restore",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-invocation-transport-prep-20261107/FixturePlugin.csproj",
+        "--ignore-failed-sources",
+        "-p:NuGetAudit=false"
+      ]
+    },
+    {
+      "kind": "build",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-invocation-transport-prep-20261107/FixturePlugin.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-p:NuGetAudit=false",
+        "-p:BuildProjectReferences=false",
+        "-m:1"
+      ]
+    },
+    {
+      "kind": "restore",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-invocation-transport-prep-20261107/EligibleEntry.csproj",
+        "--ignore-failed-sources",
+        "-p:NuGetAudit=false"
+      ]
+    },
+    {
+      "kind": "build",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-invocation-transport-prep-20261107/EligibleEntry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-p:NuGetAudit=false",
+        "-p:BuildProjectReferences=false",
+        "-m:1"
+      ]
+    },
+    {
+      "kind": "restore",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-invocation-transport-prep-20261107/ExcludedEntry.csproj",
+        "--ignore-failed-sources",
+        "-p:NuGetAudit=false"
+      ]
+    },
+    {
+      "kind": "build",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-invocation-transport-prep-20261107/ExcludedEntry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-p:NuGetAudit=false",
+        "-p:BuildProjectReferences=false",
+        "-m:1"
+      ]
+    },
+    {
+      "kind": "facts",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "/tmp/story65-invocation-transport-prep-20261107/entry/eligible/bin/Debug/net10.0/Hexalith.EventStore.dll",
+        "facts"
+      ]
+    },
+    {
+      "kind": "facts",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "/tmp/story65-invocation-transport-prep-20261107/entry/excluded/bin/Debug/net10.0/Story65.InvocationTransport.Excluded.dll",
+        "facts"
+      ]
+    },
+    {
+      "kind": "qualification",
+      "cwd": "/tmp/story65-invocation-transport-prep-20261107",
+      "argv": [
+        "python3",
+        "/tmp/story65-invocation-transport-prep-20261107/freshcontroller.py",
+        "--execute",
+        "--pins-sha256",
+        "<final-preparation-receipt-sha256>",
+        "--results",
+        "results-initial"
+      ]
+    }
+  ],
+  "buildEnvironmentRemove": [
+    "CustomBeforeMicrosoftCommonTargets",
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration"
+  ],
+  "buildAndRuntimeEnvironmentRemovePattern": {
+    "prefix": "Hexalith",
+    "suffix": "Root"
+  }
+}

@@ -1,0 +1,71 @@
+--- RouteCatalogInvocationHandler.original.cs
++++ RouteCatalogInvocationHandler.private.cs
+@@ -2,6 +2,10 @@
+ using System.Reflection;
+ using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.EventStore.ServiceDefaults.Diagnostics;
++using InvocationBootstrap = Hexalith.PrivateCaptureCounter.InvocationTransportBootstrap;
++using InvocationCounters = Hexalith.PrivateCaptureCounter.CaptureCounters;
++using InvocationStage = Hexalith.PrivateCaptureCounter.Stage;
++using InvocationAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ namespace Hexalith.EventStore.ServiceDefaults.Routing;
+ 
+@@ -126,6 +130,7 @@
+     /// <inheritdoc/>
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+     {
++        using var invocationCounters = InvocationBootstrap.Begin();
+         ArgumentNullException.ThrowIfNull(request);
+         if (_options?.Value is { DevelopmentFixture: true, Profile: "Development" } && DevelopmentActorStateTransport.GetOwner(request) is { } owner)
+             return await SendOwnerReadAsync(request, owner, cancellationToken).ConfigureAwait(false);
+@@ -173,13 +178,13 @@
+                 await catalogAuthority.ValidateNativeReadLeaseAsync(borrowed, cancellationToken).ConfigureAwait(false);
+                 stage?.Complete();
+             }
+-            return await SendLeasedAsync(request, appId, method, rawMethod, invocation, borrowed, cancellationToken, diagnostics).ConfigureAwait(false);
++            return await SendLeasedAsync(request, appId, method, rawMethod, invocation, borrowed, cancellationToken, diagnostics, privateCounters: invocationCounters).ConfigureAwait(false);
+         }
+         // A private held metadata dispatch borrows its genuine receiver scope; it never owns or releases that lease.
+         using RouteCatalogHeldMetadataDispatch? held = _authority is RouteCatalogAuthority issuer
+             ? await issuer.GetHeldMetadataDispatchAsync(request, appId, rawMethod, cancellationToken).ConfigureAwait(false) : null;
+         if (held is not null)
+-            return await SendLeasedAsync(held.Request!, appId, method, rawMethod, invocation, held.Lease, cancellationToken, diagnostics, held).ConfigureAwait(false);
++            return await SendLeasedAsync(held.Request!, appId, method, rawMethod, invocation, held.Lease, cancellationToken, diagnostics, held, invocationCounters).ConfigureAwait(false);
+         RouteCatalogDispatchLease lease;
+         using (var stage = diagnostics?.Start(DispatchStageName.InvocationAcquire))
+         {
+@@ -188,19 +193,21 @@
+         }
+         try
+         {
+-            return await SendLeasedAsync(request, appId, method, rawMethod, invocation, lease, cancellationToken, diagnostics).ConfigureAwait(false);
++            return await SendLeasedAsync(request, appId, method, rawMethod, invocation, lease, cancellationToken, diagnostics, privateCounters: invocationCounters).ConfigureAwait(false);
+         }
+         finally
+         {
+             using var stage = diagnostics?.Start(DispatchStageName.InvocationRelease, CancellationToken.None);
++            using var ownedReleaseTiming = invocationCounters?.Stage(InvocationStage.ComponentPolicy, InvocationAllocation.None);
+             await lease.DisposeAsync().ConfigureAwait(false);
++            ownedReleaseTiming?.Dispose();
+             stage?.Complete();
+         }
+     }
+ 
+     private static async Task<HttpResponseMessage> SendLeasedAsync(HttpRequestMessage request, string appId, string method,
+         string rawMethod, HttpMessageInvoker invocation, RouteCatalogDispatchLease lease, CancellationToken cancellationToken,
+-        DispatchDiagnostics? diagnostics, RouteCatalogHeldMetadataDispatch? held = null)
++        DispatchDiagnostics? diagnostics, RouteCatalogHeldMetadataDispatch? held = null, InvocationCounters? privateCounters = null)
+     {
+         using (var stage = diagnostics?.Start(DispatchStageName.InvocationValidation))
+         {
+@@ -232,7 +239,9 @@
+         async Task<HttpResponseMessage> SendTransportAsync(CancellationToken token)
+         {
+             using var stage = diagnostics?.Start(DispatchStageName.InvocationTransport);
++            using var transportTiming = privateCounters?.Stage(InvocationStage.ComponentFile, InvocationAllocation.None);
+             HttpResponseMessage response = await invocation.SendAsync(request, token).ConfigureAwait(false);
++            transportTiming?.Dispose();
+             stage?.Complete();
+             return response;
+         }

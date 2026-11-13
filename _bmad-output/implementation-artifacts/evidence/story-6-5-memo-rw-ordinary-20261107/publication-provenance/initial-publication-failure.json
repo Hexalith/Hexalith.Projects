@@ -1,0 +1,12 @@
+{
+  "failures": [
+    "PermissionError writing copied read-only README",
+    "PermissionError attempting to recopy preserved read-only candidate README in first resume"
+  ],
+  "failedBeforeReadmeOrSpecContentsChanged": true,
+  "candidate32CopiesVerifiedBeforeResume": true,
+  "correction": "set writable permission only on owned publication README and manifest",
+  "initialScriptSha256": "8fd3bacc0a67c1b4a3641f4bc6bd04633772d4d8d96eb67af6204f05a2fe4741",
+  "firstResumeScriptSha256": "f32789985651c7100fe0aefbd175991a4250f49b7e5724453f009f38c5ac55d1",
+  "resumeCorrection": "verify already-preserved copies; do not overwrite them"
+}

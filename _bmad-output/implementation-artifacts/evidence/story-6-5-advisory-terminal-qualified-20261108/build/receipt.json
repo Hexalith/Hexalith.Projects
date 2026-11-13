@@ -1,0 +1,68 @@
+{
+  "compileOnly": true,
+  "executionReleased": false,
+  "releaseSha256": "9d7ac32be51a2f3a597138663919f1bc977b31ed630c8dbd3aa28f1de7a23c49",
+  "commands": [
+    {
+      "name": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-advisory-terminal-prep-20261108/differential/Differential.csproj",
+        "--configfile",
+        "/tmp/story65-advisory-terminal-prep-20261108/differential/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-build-servers",
+        "-flp:LogFile=/tmp/story65-advisory-terminal-build-20261108/restore.log;Verbosity=minimal"
+      ],
+      "childSpawned": true,
+      "ownedChildExited": true,
+      "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+      "unrecognizedStdoutStderrRetained": false,
+      "childPid": 1615056,
+      "childStartTicks": "15553235",
+      "childGroup": 1615047,
+      "pidfdPinsExactOwnedChild": true,
+      "exitCode": 0,
+      "wallSeconds": 0.6034847090195399,
+      "peakObservedRssBytes": 165462016,
+      "guardReason": null,
+      "supervisorErrorType": null,
+      "cpuHardLimitSeconds": 121,
+      "rssGuardBytes": 2147483648,
+      "fixedFailures": []
+    },
+    {
+      "name": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-advisory-terminal-prep-20261108/differential/Differential.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-flp:LogFile=/tmp/story65-advisory-terminal-build-20261108/build.log;Verbosity=minimal"
+      ],
+      "childSpawned": true,
+      "ownedChildExited": true,
+      "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+      "unrecognizedStdoutStderrRetained": false,
+      "childPid": 1615217,
+      "childStartTicks": "15553316",
+      "childGroup": 1615047,
+      "pidfdPinsExactOwnedChild": true,
+      "exitCode": 0,
+      "wallSeconds": 1.9075497879821341,
+      "peakObservedRssBytes": 181809152,
+      "guardReason": null,
+      "supervisorErrorType": null,
+      "cpuHardLimitSeconds": 121,
+      "rssGuardBytes": 2147483648,
+      "fixedFailures": []
+    }
+  ],
+  "passed": true
+}

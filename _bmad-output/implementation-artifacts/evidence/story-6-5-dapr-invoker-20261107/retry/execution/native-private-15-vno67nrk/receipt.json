@@ -1,0 +1,681 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "passed": true,
+  "nativeStarted": true,
+  "nativeProcessAndDescendantsAbsent": true,
+  "counterDirectoryEmpty": true,
+  "caseCount": 15,
+  "sourceDerivedExpectedCases": 15,
+  "historical15RetentionClaimed": false,
+  "ordinaryUniqueNativeCountUnchanged": 1038,
+  "processes": [
+    {
+      "selection": {
+        "alias": "bounded-failures",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+            "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+            400,
+            "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+            "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+            400,
+            "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+            "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+            200,
+            "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+            "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+            503,
+            "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68"
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+            "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+            0,
+            "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab"
+          ]
+        ],
+        "canonicalKind": "exact-status-rendered-display-sha256",
+        "loopbackWebApplication": false,
+        "exactRenderedDisplayIdentities": [
+          {
+            "canonicalCase": [
+              "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+              "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+              400,
+              "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3"
+            ],
+            "sourceBodyLength": 56,
+            "sourceBodySha256": "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3",
+            "displayTruncated": true,
+            "argumentFormatterDisplayNameSha256": "5b181eded1651b157035f7b18f64cd0cd27a12fefe5da654acd135dadc4284a7",
+            "exactParsedXmlNameSha256": "b60e94ea694f0ea54161762f79fff2c63c146948dd95e70d1214249ea4c5f53f"
+          },
+          {
+            "canonicalCase": [
+              "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+              "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+              400,
+              "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+            ],
+            "sourceBodyLength": 8,
+            "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+            "displayTruncated": false,
+            "argumentFormatterDisplayNameSha256": "bcd4f63b6c66f8528328b2dc3551ee2fb1d6e4c04304e95e2781a558987a6c23",
+            "exactParsedXmlNameSha256": "f3eba98b2f2195aaedabfcf1b91f67ecf2123553e503f8b5b9b3f135f7837f46"
+          },
+          {
+            "canonicalCase": [
+              "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+              "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+              200,
+              "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+            ],
+            "sourceBodyLength": 8,
+            "sourceBodySha256": "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021",
+            "displayTruncated": false,
+            "argumentFormatterDisplayNameSha256": "b2c6d68212d8732720353b16c2d0c842c9176b18f27875a0d8efdf7808efe5c4",
+            "exactParsedXmlNameSha256": "37a76724dd585ae3e6cec49a37994e9904d1d5e81dc3cbcbb9d2231983fe38a6"
+          },
+          {
+            "canonicalCase": [
+              "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+              "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+              503,
+              "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68"
+            ],
+            "sourceBodyLength": 21,
+            "sourceBodySha256": "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68",
+            "displayTruncated": false,
+            "argumentFormatterDisplayNameSha256": "3751f9f346e212af467d6fcb5d2033382f6105ab7f979ff364c8b01ffa55b0fa",
+            "exactParsedXmlNameSha256": "c39bdf4921c16b14dcb410631fcf5f6c48cb852d9744fea8dfa3b419c84e2201"
+          },
+          {
+            "canonicalCase": [
+              "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+              "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+              0,
+              "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab"
+            ],
+            "sourceBodyLength": 27,
+            "sourceBodySha256": "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab",
+            "displayTruncated": false,
+            "argumentFormatterDisplayNameSha256": "afeedc1d1ba915699ea4fe6f89dbe3d57aaa4f60ab231a5af38dde9e4a2c92eb",
+            "exactParsedXmlNameSha256": "7c30c03bdfb5d14997bff9dac5fe7e7e82f5a04f66937c4afafd7b202eee9412"
+          }
+        ]
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "formatterGuard": {
+        "specificMaxStringEnvironmentOverrideAbsent": true,
+        "runnerConfigurationStringLimitOverrideAbsent": true,
+        "unchangedDefaultStringLimit": 50
+      },
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+        "-xml",
+        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native-private-15-vno67nrk/bounded-failures.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T15:36:54.930202+00:00",
+      "pid": 3247506,
+      "processGroup": 3247506,
+      "startTicks": "10341736",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T15:36:55.583413+00:00",
+      "xmlSha256": "feea07e860a39c32d550e068f145328c599e23e17798b6aadd4f316c8703b782",
+      "logSha256": "3ed268313260fb9516771d8e2d0a05206066bd29de3e9ea5467a16b1e41b2f72",
+      "caseCount": 5,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+          "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+          400,
+          "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+          "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+          400,
+          "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+          "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+          200,
+          "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+          "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+          503,
+          "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68"
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+          "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+          0,
+          "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab"
+        ]
+      ],
+      "failureBodyValuesPersistedInDerivedReceipt": false,
+      "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "response-boundary",
+        "flag": "-class",
+        "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "matching",
+            false
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "matching",
+            true
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "projection-mismatch",
+            false
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "projection-mismatch",
+            true
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "receiver-503",
+            false
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "receiver-503",
+            true
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "transport-catalog",
+            false
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+            "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+            "transport-catalog",
+            true
+          ]
+        ],
+        "canonicalKind": "response-nested",
+        "loopbackWebApplication": false
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "formatterGuard": {
+        "specificMaxStringEnvironmentOverrideAbsent": true,
+        "runnerConfigurationStringLimitOverrideAbsent": true,
+        "unchangedDefaultStringLimit": 50
+      },
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+        "-xml",
+        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native-private-15-vno67nrk/response-boundary.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T15:36:55.593690+00:00",
+      "pid": 3247782,
+      "processGroup": 3247782,
+      "startTicks": "10341803",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T15:36:56.911296+00:00",
+      "xmlSha256": "af0fb26afaf836932d38f6d5339221c1899811bdc39250f38cbc8e3d20c4692e",
+      "logSha256": "fe158c9daccee8771da1812489147dd3d9122aa15536ba6a9aa85f1156e604a1",
+      "caseCount": 8,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "matching",
+          false
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "matching",
+          true
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "projection-mismatch",
+          false
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "projection-mismatch",
+          true
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "receiver-503",
+          false
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "receiver-503",
+          true
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "transport-catalog",
+          false
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+          "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+          "transport-catalog",
+          true
+        ]
+      ],
+      "failureBodyValuesPersistedInDerivedReceipt": false,
+      "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    },
+    {
+      "selection": {
+        "alias": "concrete-committed-target",
+        "flag": "-method",
+        "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests.ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+        "expectedCases": [
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+            "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+            false
+          ],
+          [
+            "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+            "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+            true
+          ]
+        ],
+        "canonicalKind": "undeclared",
+        "loopbackWebApplication": true
+      },
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "mappedPrivateGateway": true,
+      "passed": true,
+      "formatterGuard": {
+        "specificMaxStringEnvironmentOverrideAbsent": true,
+        "runnerConfigurationStringLimitOverrideAbsent": true,
+        "unchangedDefaultStringLimit": 50
+      },
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-method",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests.ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+        "-xml",
+        "/tmp/story65-dapr-invoker-ops-prep-20261107/live-xml-reporter-retry/native-private-15-vno67nrk/concrete-committed-target.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests",
+      "startedUtc": "2026-11-07T15:36:56.921617+00:00",
+      "pid": 3247831,
+      "processGroup": 3247831,
+      "startTicks": "10341935",
+      "acceptedMappedAlias": "test-copy",
+      "exitCode": 0,
+      "finishedUtc": "2026-11-07T15:36:58.113307+00:00",
+      "xmlSha256": "2a0262b752d330fc44823c9ed234f341efd09fa68ff1eb3eb9e3b9299e36ce95",
+      "logSha256": "1ce83952c88fee7cc88f88337be31fceb27cd1b62b56a7ef6d8e846eb8f51de0",
+      "caseCount": 2,
+      "actualCanonicalCases": [
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+          "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+          false
+        ],
+        [
+          "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+          "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+          true
+        ]
+      ],
+      "failureBodyValuesPersistedInDerivedReceipt": false,
+      "rawXunitXmlAndLogsMayContainSyntheticSourceLiterals": true,
+      "remainingOwnedGroupIdentities": [],
+      "ownedExitCode": 0
+    }
+  ],
+  "build": {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false",
+      "-p:EnablePrivateCatalogInvocationProof=true",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0,
+    "logSha256": "d1d632c37c483d67b3361b52d89e514c9df59c0387101b8a9514480b4451f10e",
+    "allSevenEmittedMappingEnvironmentValues": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+      "Configuration": "Debug"
+    }
+  },
+  "privateGatewayBefore": {
+    "producerSha256": "4a0117f3173da2161c3d1e869d639d4bfb9036f4967ced187817857d2130283b",
+    "producerPdbSha256": "92464548a2dbcc0bc803f67cdd451352d8009346fccc23eb4705d7c2c8c86c3f",
+    "testCopySha256": "4a0117f3173da2161c3d1e869d639d4bfb9036f4967ced187817857d2130283b",
+    "testCopyPdbSha256": "92464548a2dbcc0bc803f67cdd451352d8009346fccc23eb4705d7c2c8c86c3f",
+    "testAssemblySha256": "db6807e7ead7eab0cb28feaa4b3e8aab4acb6a4a62cb079684a29e2096d24ae9"
+  },
+  "ordinarySdkBefore": {
+    "knownEight": {
+      "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+      "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+      "allEightOrdinarySdkCopiesCoherent": true,
+      "copies": [
+        {
+          "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        },
+        {
+          "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "pdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+          "ordinaryNoPrivateMarker": true
+        }
+      ]
+    },
+    "nativeCopySha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+    "nativeCopyPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7",
+    "nativeCopyOrdinary": true
+  },
+  "domain98Before": {
+    "all98DomainCopiesRetainRecordedOrdinaryHashes": true,
+    "count": 98,
+    "notClaimedAll98SameGeneration": true,
+    "activeOrdinaryProducerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+  },
+  "ordinaryRootServerBefore": {
+    "mode": "rebuilt-source",
+    "ordinaryServerSourceSha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d",
+    "priorBaselineProducerSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+    "priorBaselinePdbSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+    "currentProducerSha256": "987140ce0c0d79f70dc18f4ead11c3aa262499f360ad841ad0d46d1cfb9a5b82",
+    "currentProducerPdbSha256": "0256b863dc75d1be22cd852567d17f4410981e0767cf1d413092353b6f16dbdd",
+    "allTenPrivateMarkersAbsent": true,
+    "rebuiltKnownOutputsCoherentWithCurrentProducer": true,
+    "untouchedRootServerTestsRetainPriorHashes": true,
+    "allTenNaturallyMatchPriorBaseline": false,
+    "allTenSameGenerationClaimed": false,
+    "copies": [
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "987140ce0c0d79f70dc18f4ead11c3aa262499f360ad841ad0d46d1cfb9a5b82",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "0256b863dc75d1be22cd852567d17f4410981e0767cf1d413092353b6f16dbdd",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "untouched-baseline-test-copy"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "987140ce0c0d79f70dc18f4ead11c3aa262499f360ad841ad0d46d1cfb9a5b82",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "0256b863dc75d1be22cd852567d17f4410981e0767cf1d413092353b6f16dbdd",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/ref/Hexalith.Projects.Server.dll",
+        "kind": "ref",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/obj/Debug/net10.0/refint/Hexalith.Projects.Server.dll",
+        "kind": "refint",
+        "sha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "baselineSha256": "06ac92e9f54ef716984059f3e0071f7b6616b44900c352fe2e87ef880f8e2548",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "kind": "full",
+        "sha256": "987140ce0c0d79f70dc18f4ead11c3aa262499f360ad841ad0d46d1cfb9a5b82",
+        "baselineSha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.pdb",
+        "kind": "pdb",
+        "sha256": "0256b863dc75d1be22cd852567d17f4410981e0767cf1d413092353b6f16dbdd",
+        "baselineSha256": "83690e9480051111f852141ca10335bc8fdf030da393e8c621501759145f98be",
+        "privateMarkerAbsent": true,
+        "coherenceScope": "current-rebuilt-source-generation"
+      }
+    ]
+  },
+  "source53Match": true,
+  "allThreeMappedPrivateGateway": true,
+  "actualCanonicalCases": [
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      400,
+      "708a1ea8600c0c18b75a5c636d47393d0f43bf1cc9a3222891510c7a455bc2d3"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      400,
+      "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      200,
+      "0c21a879c732a67910d80988df4919d794f6a070aab610ef865032a28046b021"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      503,
+      "e07479947d973f08e0f37505b25744a5dfbf63dd8bf34ae7762d9b6c8a6d7a68"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      0,
+      "f8fed9c0a3f1e1b2113e584bf7791da1b36898c39bd8034693c24fa59f5090ab"
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "matching",
+      false
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "matching",
+      true
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "projection-mismatch",
+      false
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "projection-mismatch",
+      true
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "receiver-503",
+      false
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "receiver-503",
+      true
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "transport-catalog",
+      false
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "transport-catalog",
+      true
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+      "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+      false
+    ],
+    [
+      "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests",
+      "ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+      true
+    ]
+  ]
+}

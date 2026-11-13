@@ -1,0 +1,48 @@
+{
+  "steps": [
+    {
+      "alias": "new23",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogCanonicalHashParityTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogCanonicalHashMemoTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogCanonicalHashOwnerTests",
+        "-xml",
+        "/tmp/story65-canonical-hash-native-20261108/smoke/new23.xml"
+      ],
+      "pid": 421260,
+      "exitCode": 0,
+      "wallSeconds": 0.7663521769864019,
+      "tests": 23,
+      "allPassedZeroErrorsSkips": true,
+      "xmlSha256": "977d8c273fded3373ead9e794512803c129aeb35c8808f4751fbdddb3152d9b3",
+      "logSha256": "ae61802bf63a05cdef4d7d67d7059bd5961077507aaa49fc9e26eb6215cbcf6f",
+      "nativeProcessorOverrideAbsent": true
+    },
+    {
+      "alias": "existing5",
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HostValidatedCatalogBytesMemoTests",
+        "-xml",
+        "/tmp/story65-canonical-hash-native-20261108/smoke/existing5.xml"
+      ],
+      "pid": 421283,
+      "exitCode": 0,
+      "wallSeconds": 1.1172323139908258,
+      "tests": 5,
+      "allPassedZeroErrorsSkips": true,
+      "xmlSha256": "0444a6bfa721c9b90a7206663de304ae5a08f85bbb933585e58c66a3ad9ab791",
+      "logSha256": "f44d32e99ab2ddc321dc34eac2aecb0c66e63853138240d46f76be8640d54c36",
+      "nativeProcessorOverrideAbsent": true
+    }
+  ],
+  "source65AllMatch": true,
+  "diagnosticScratch178NotNative": true
+}

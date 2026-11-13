@@ -1,0 +1,41 @@
+{
+  "filePreparationOnly": true,
+  "compileReleased": false,
+  "executionReleased": false,
+  "reuseSourceRoot": "/tmp/story65-advisory-terminal-prep-20261108",
+  "reuseAcceptedHandoffSha256": "145064ef35e86fb7581ff5eada0ba61f45b148363a4fee0e543abdfcd4b120af",
+  "businessSourceChange": "none; new adapter only",
+  "existingComparisonsRetained": {
+    "casesPerMode": 49,
+    "modes": [
+      "disabled",
+      "active",
+      "capped",
+      "failing-sink"
+    ],
+    "comparisons": 196
+  },
+  "existingFreshFlowCanariesRetained": 3,
+  "existingTerminalProtocolCasesRetained": 4,
+  "requiredFocusedAdapterCases": [
+    "all six selected starts interrupted by the original next marker: exact stage set, no duplicates, six unchanged terminal values",
+    "EnvelopeValidation and FinalScope end selected spans and do not absorb their following gaps; Index starts stage7 and stops at Discovery",
+    "Failure stops active before terminal first-failure update; later fallback Response preserves failure fields",
+    "Close and repeated Dispose stop active once and never overwrite a recorded selected span",
+    "unexpected repeat disables later spans, retains first interval, keeps original terminal semantics",
+    "invalid marker/exception enums remain ignored with the old terminal behavior",
+    "unselected Conversation/Response marker ends active but starts none",
+    "controlled held boundary, then separately held omitted gap: only the first wait belongs to its selected span",
+    "FinalCandidates entered with linked cancellation already observed: no claim a callback started",
+    "post-close marker/failure/late-child calls cannot change span or terminal state"
+  ],
+  "timingAssertions": "Bounded synthetic holds inside selected spans and separately bracketed omitted gaps; exact source-derived stage masks and RAM-vs-persisted elapsed equality in zero-drop mode. No exact scheduler duration; selected sum plus encoding <= Whole.",
+  "rawSchema": "unchanged14 fields; fixed8 stages; count slots zero outside stage4; one row/capture/stage; stage0/4 required when zero-drop; all emitted durations exactly equal closed RAM snapshots; no raw DTO/token/dependency traces",
+  "activeMode": "require original eligible admission and exact expected stage masks per actual branch plus unchanged business/terminal parity",
+  "cappedAndFailingSink": "prove actual cap/io and RAM business/terminal parity; do not require every span or pair persisted",
+  "lifecycle": "same fixed private-directory custody/control protocol, natural runtime CPU, exact PID/start/PGID/SID cleanup and source/input freezes",
+  "plannedControlledProcesses": 23,
+  "nativeCasesAdded": 0,
+  "applicationBuildOrLiveApproval": false,
+  "concreteFocusedCaseSource": "differential/BoundarySpanProtocolProof.cs"
+}

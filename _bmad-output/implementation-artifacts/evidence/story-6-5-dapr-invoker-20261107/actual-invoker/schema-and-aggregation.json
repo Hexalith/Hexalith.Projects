@@ -1,0 +1,518 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "strictDuplicateFree14FieldRows": true,
+  "allZeroCountAllocationColumns": [
+    "allocatedBytes",
+    "allocationMode",
+    "authenticationAccepted",
+    "authenticationOtherExcluded",
+    "nonAuthenticationDiscarded",
+    "nullValue",
+    "sensitiveSegmentExcluded",
+    "yielded"
+  ],
+  "captures": 25,
+  "rows": 186,
+  "closedReceiptFinalNoDropsIoCapsOrActiveWork": true,
+  "aliases": {
+    "Whole": "WholeInvoker",
+    "ComponentFile": "CatalogAcquire",
+    "ComponentPolicy": "ResolveAndRegistration",
+    "AclFile": "DaprRequestAndAuthorityBinding",
+    "SettingsEnumerationSortDictionary": "CreateClientAndSendDefaultBuffering",
+    "AuthenticationSerialization": "JsonBody",
+    "ActorBoundary": "OverlappingHttpOwnership",
+    "ResultTail": "OverlappingLeaseOwnership"
+  },
+  "millisecondsByStage": {
+    "WholeInvoker": {
+      "count": 25,
+      "medianMs": 403.543781,
+      "minMs": 0.555706,
+      "p95NearestRankMs": 2098.891775,
+      "maxMs": 2101.687244
+    },
+    "CatalogAcquire": {
+      "count": 25,
+      "medianMs": 29.40808,
+      "minMs": 0.553642,
+      "p95NearestRankMs": 35.423909,
+      "maxMs": 45.256943
+    },
+    "ResolveAndRegistration": {
+      "count": 23,
+      "medianMs": 0.016351,
+      "minMs": 0.010471,
+      "p95NearestRankMs": 0.020089,
+      "maxMs": 0.038104
+    },
+    "DaprRequestAndAuthorityBinding": {
+      "count": 23,
+      "medianMs": 0.065105,
+      "minMs": 0.04144,
+      "p95NearestRankMs": 0.07787,
+      "maxMs": 0.11195
+    },
+    "CreateClientAndSendDefaultBuffering": {
+      "count": 23,
+      "medianMs": 389.701122,
+      "minMs": 1.291963,
+      "p95NearestRankMs": 2061.696976,
+      "maxMs": 2065.719093
+    },
+    "JsonBody": {
+      "count": 21,
+      "medianMs": 0.033685,
+      "minMs": 0.02081,
+      "p95NearestRankMs": 0.043634,
+      "maxMs": 0.105083
+    },
+    "OverlappingHttpOwnership": {
+      "count": 23,
+      "medianMs": 389.809602,
+      "minMs": 1.335165,
+      "p95NearestRankMs": 2061.7771,
+      "maxMs": 2065.824116
+    },
+    "OverlappingLeaseOwnership": {
+      "count": 23,
+      "medianMs": 393.24383,
+      "minMs": 17.394024,
+      "p95NearestRankMs": 2072.275778,
+      "maxMs": 2073.697599
+    }
+  },
+  "stageSetCounts": [
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire",
+        "ResolveAndRegistration",
+        "DaprRequestAndAuthorityBinding",
+        "CreateClientAndSendDefaultBuffering",
+        "JsonBody",
+        "OverlappingHttpOwnership",
+        "OverlappingLeaseOwnership"
+      ],
+      "captures": 21
+    },
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire"
+      ],
+      "captures": 2
+    },
+    {
+      "stages": [
+        "WholeInvoker",
+        "CatalogAcquire",
+        "ResolveAndRegistration",
+        "DaprRequestAndAuthorityBinding",
+        "CreateClientAndSendDefaultBuffering",
+        "OverlappingHttpOwnership",
+        "OverlappingLeaseOwnership"
+      ],
+      "captures": 2
+    }
+  ],
+  "withinSameLocalCapturePercentOfWhole": {
+    "CatalogAcquire": {
+      "count": 25,
+      "medianPercent": 7.626021972955636,
+      "minPercent": 1.1539381967467888,
+      "p95NearestRankPercent": 99.62858058037882,
+      "maxPercent": 99.98476908749824
+    },
+    "ResolveAndRegistration": {
+      "count": 23,
+      "medianPercent": 0.003794601415394566,
+      "minPercent": 0.0006799065599801683,
+      "p95NearestRankPercent": 0.022899305296617406,
+      "maxPercent": 0.03872105373965803
+    },
+    "DaprRequestAndAuthorityBinding": {
+      "count": 23,
+      "medianPercent": 0.015657192607341337,
+      "minPercent": 0.002608027586270326,
+      "p95NearestRankPercent": 0.09062622590887455,
+      "maxPercent": 0.16628051012188635
+    },
+    "CreateClientAndSendDefaultBuffering": {
+      "count": 23,
+      "medianPercent": 91.26105454386932,
+      "minPercent": 2.825427864476527,
+      "p95NearestRankPercent": 98.29629651224576,
+      "maxPercent": 98.41951441255232
+    },
+    "JsonBody": {
+      "count": 21,
+      "medianPercent": 0.008400729782978268,
+      "minPercent": 0.0009901568399108577,
+      "p95NearestRankPercent": 0.010754406276035465,
+      "maxPercent": 0.023142231199806722
+    },
+    "OverlappingHttpOwnership": {
+      "count": 23,
+      "medianPercent": 91.29195889784157,
+      "minPercent": 2.9199074545275696,
+      "p95NearestRankPercent": 98.30027576590801,
+      "maxPercent": 98.42451814839285
+    },
+    "OverlappingLeaseOwnership": {
+      "count": 23,
+      "medianPercent": 92.3929722857037,
+      "minPercent": 38.03944856390892,
+      "p95NearestRankPercent": 98.79964387396772,
+      "maxPercent": 98.84587910045096
+    }
+  },
+  "pairedLocalCaptures": [
+    {
+      "opaqueLocalOrdinal": 1,
+      "phasesMilliseconds": {
+        "WholeInvoker": 2098.891775,
+        "CatalogAcquire": 24.764637,
+        "ResolveAndRegistration": 0.019488,
+        "DaprRequestAndAuthorityBinding": 0.065917,
+        "CreateClientAndSendDefaultBuffering": 2065.719093,
+        "JsonBody": 0.033685,
+        "OverlappingHttpOwnership": 2065.824116,
+        "OverlappingLeaseOwnership": 2073.697599
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 2,
+      "phasesMilliseconds": {
+        "WholeInvoker": 436.989243,
+        "CatalogAcquire": 29.873371,
+        "ResolveAndRegistration": 0.016582,
+        "DaprRequestAndAuthorityBinding": 0.063563,
+        "CreateClientAndSendDefaultBuffering": 402.115175,
+        "JsonBody": 0.038344,
+        "OverlappingHttpOwnership": 402.224546,
+        "OverlappingLeaseOwnership": 407.023864
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 3,
+      "phasesMilliseconds": {
+        "WholeInvoker": 378.595485,
+        "CatalogAcquire": 29.261061,
+        "ResolveAndRegistration": 0.012203,
+        "DaprRequestAndAuthorityBinding": 0.046771,
+        "CreateClientAndSendDefaultBuffering": 340.413108,
+        "JsonBody": 0.02577,
+        "OverlappingHttpOwnership": 340.588677,
+        "OverlappingLeaseOwnership": 348.701854
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 4,
+      "phasesMilliseconds": {
+        "WholeInvoker": 399.929423,
+        "CatalogAcquire": 35.423909,
+        "ResolveAndRegistration": 0.015299,
+        "DaprRequestAndAuthorityBinding": 0.050497,
+        "CreateClientAndSendDefaultBuffering": 351.540505,
+        "JsonBody": 0.025258,
+        "OverlappingHttpOwnership": 351.622983,
+        "OverlappingLeaseOwnership": 364.501907
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 5,
+      "phasesMilliseconds": {
+        "WholeInvoker": 442.776042,
+        "CatalogAcquire": 26.799518,
+        "ResolveAndRegistration": 0.016351,
+        "DaprRequestAndAuthorityBinding": 0.11195,
+        "CreateClientAndSendDefaultBuffering": 408.60291,
+        "JsonBody": 0.021,
+        "OverlappingHttpOwnership": 408.74075,
+        "OverlappingLeaseOwnership": 415.972347
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 6,
+      "phasesMilliseconds": {
+        "WholeInvoker": 369.360982,
+        "CatalogAcquire": 30.167204,
+        "ResolveAndRegistration": 0.017614,
+        "DaprRequestAndAuthorityBinding": 0.072029,
+        "CreateClientAndSendDefaultBuffering": 331.407468,
+        "JsonBody": 0.037783,
+        "OverlappingHttpOwnership": 331.522169,
+        "OverlappingLeaseOwnership": 339.19011
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 7,
+      "phasesMilliseconds": {
+        "WholeInvoker": 428.614514,
+        "CatalogAcquire": 31.289717,
+        "ResolveAndRegistration": 0.016091,
+        "DaprRequestAndAuthorityBinding": 0.067109,
+        "CreateClientAndSendDefaultBuffering": 393.680236,
+        "JsonBody": 0.042341,
+        "OverlappingHttpOwnership": 393.799737,
+        "OverlappingLeaseOwnership": 397.322491
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 8,
+      "phasesMilliseconds": {
+        "WholeInvoker": 17.694278,
+        "CatalogAcquire": 17.691583
+      },
+      "allEightStages": false
+    },
+    {
+      "opaqueLocalOrdinal": 9,
+      "phasesMilliseconds": {
+        "WholeInvoker": 0.555706,
+        "CatalogAcquire": 0.553642
+      },
+      "allEightStages": false
+    },
+    {
+      "opaqueLocalOrdinal": 10,
+      "phasesMilliseconds": {
+        "WholeInvoker": 2101.687244,
+        "CatalogAcquire": 29.40808,
+        "ResolveAndRegistration": 0.014828,
+        "DaprRequestAndAuthorityBinding": 0.054976,
+        "CreateClientAndSendDefaultBuffering": 2061.696976,
+        "JsonBody": 0.02081,
+        "OverlappingHttpOwnership": 2061.7771,
+        "OverlappingLeaseOwnership": 2072.275778
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 11,
+      "phasesMilliseconds": {
+        "WholeInvoker": 436.969966,
+        "CatalogAcquire": 30.058083,
+        "ResolveAndRegistration": 0.019247,
+        "DaprRequestAndAuthorityBinding": 0.071818,
+        "CreateClientAndSendDefaultBuffering": 402.684837,
+        "JsonBody": 0.042132,
+        "OverlappingHttpOwnership": 402.808446,
+        "OverlappingLeaseOwnership": 406.908306
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 12,
+      "phasesMilliseconds": {
+        "WholeInvoker": 382.268555,
+        "CatalogAcquire": 29.151884,
+        "ResolveAndRegistration": 0.012223,
+        "DaprRequestAndAuthorityBinding": 0.047661,
+        "CreateClientAndSendDefaultBuffering": 345.790492,
+        "JsonBody": 0.029467,
+        "OverlappingHttpOwnership": 345.873342,
+        "OverlappingLeaseOwnership": 353.113524
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 13,
+      "phasesMilliseconds": {
+        "WholeInvoker": 438.50444,
+        "CatalogAcquire": 45.256943,
+        "ResolveAndRegistration": 0.038104,
+        "DaprRequestAndAuthorityBinding": 0.059054,
+        "CreateClientAndSendDefaultBuffering": 389.701122,
+        "JsonBody": 0.042342,
+        "OverlappingHttpOwnership": 389.809602,
+        "OverlappingLeaseOwnership": 393.24383
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 14,
+      "phasesMilliseconds": {
+        "WholeInvoker": 378.431408,
+        "CatalogAcquire": 31.203091,
+        "ResolveAndRegistration": 0.017504,
+        "DaprRequestAndAuthorityBinding": 0.065105,
+        "CreateClientAndSendDefaultBuffering": 343.135755,
+        "JsonBody": 0.031791,
+        "OverlappingHttpOwnership": 343.23684,
+        "OverlappingLeaseOwnership": 347.224027
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 15,
+      "phasesMilliseconds": {
+        "WholeInvoker": 372.936503,
+        "CatalogAcquire": 32.383354,
+        "ResolveAndRegistration": 0.011151,
+        "DaprRequestAndAuthorityBinding": 0.044916,
+        "CreateClientAndSendDefaultBuffering": 333.580293,
+        "JsonBody": 0.026912,
+        "OverlappingHttpOwnership": 333.65672,
+        "OverlappingLeaseOwnership": 340.548601
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 16,
+      "phasesMilliseconds": {
+        "WholeInvoker": 422.094615,
+        "CatalogAcquire": 25.184746,
+        "ResolveAndRegistration": 0.017013,
+        "DaprRequestAndAuthorityBinding": 0.066448,
+        "CreateClientAndSendDefaultBuffering": 393.156655,
+        "JsonBody": 0.042442,
+        "OverlappingHttpOwnership": 393.274422,
+        "OverlappingLeaseOwnership": 396.907074
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 17,
+      "phasesMilliseconds": {
+        "WholeInvoker": 45.541116,
+        "CatalogAcquire": 27.997033,
+        "ResolveAndRegistration": 0.017634,
+        "DaprRequestAndAuthorityBinding": 0.075726,
+        "CreateClientAndSendDefaultBuffering": 4.554501,
+        "OverlappingHttpOwnership": 4.631469,
+        "OverlappingLeaseOwnership": 17.538992
+      },
+      "allEightStages": false
+    },
+    {
+      "opaqueLocalOrdinal": 18,
+      "phasesMilliseconds": {
+        "WholeInvoker": 45.726278,
+        "CatalogAcquire": 28.329569,
+        "ResolveAndRegistration": 0.010471,
+        "DaprRequestAndAuthorityBinding": 0.04144,
+        "CreateClientAndSendDefaultBuffering": 1.291963,
+        "OverlappingHttpOwnership": 1.335165,
+        "OverlappingLeaseOwnership": 17.394024
+      },
+      "allEightStages": false
+    },
+    {
+      "opaqueLocalOrdinal": 19,
+      "phasesMilliseconds": {
+        "WholeInvoker": 2094.111285,
+        "CatalogAcquire": 24.16475,
+        "ResolveAndRegistration": 0.014238,
+        "DaprRequestAndAuthorityBinding": 0.054615,
+        "CreateClientAndSendDefaultBuffering": 2058.433838,
+        "JsonBody": 0.024547,
+        "OverlappingHttpOwnership": 2058.517168,
+        "OverlappingLeaseOwnership": 2069.942709
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 20,
+      "phasesMilliseconds": {
+        "WholeInvoker": 403.543781,
+        "CatalogAcquire": 33.788815,
+        "ResolveAndRegistration": 0.020089,
+        "DaprRequestAndAuthorityBinding": 0.067731,
+        "CreateClientAndSendDefaultBuffering": 356.973859,
+        "JsonBody": 0.027473,
+        "OverlappingHttpOwnership": 357.073832,
+        "OverlappingLeaseOwnership": 369.750146
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 21,
+      "phasesMilliseconds": {
+        "WholeInvoker": 454.074627,
+        "CatalogAcquire": 34.071681,
+        "ResolveAndRegistration": 0.017032,
+        "DaprRequestAndAuthorityBinding": 0.07787,
+        "CreateClientAndSendDefaultBuffering": 415.929839,
+        "JsonBody": 0.105083,
+        "OverlappingHttpOwnership": 416.121459,
+        "OverlappingLeaseOwnership": 419.971354
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 22,
+      "phasesMilliseconds": {
+        "WholeInvoker": 371.633719,
+        "CatalogAcquire": 28.266994,
+        "ResolveAndRegistration": 0.015631,
+        "DaprRequestAndAuthorityBinding": 0.066598,
+        "CreateClientAndSendDefaultBuffering": 339.156851,
+        "JsonBody": 0.039967,
+        "OverlappingHttpOwnership": 339.271702,
+        "OverlappingLeaseOwnership": 343.363439
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 23,
+      "phasesMilliseconds": {
+        "WholeInvoker": 452.01383,
+        "CatalogAcquire": 28.537505,
+        "ResolveAndRegistration": 0.013035,
+        "DaprRequestAndAuthorityBinding": 0.046539,
+        "CreateClientAndSendDefaultBuffering": 419.743596,
+        "JsonBody": 0.043634,
+        "OverlappingHttpOwnership": 419.843368,
+        "OverlappingLeaseOwnership": 423.47362
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 24,
+      "phasesMilliseconds": {
+        "WholeInvoker": 381.241513,
+        "CatalogAcquire": 30.989385,
+        "ResolveAndRegistration": 0.017544,
+        "DaprRequestAndAuthorityBinding": 0.0672,
+        "CreateClientAndSendDefaultBuffering": 343.339554,
+        "JsonBody": 0.030449,
+        "OverlappingHttpOwnership": 343.441882,
+        "OverlappingLeaseOwnership": 350.248471
+      },
+      "allEightStages": true
+    },
+    {
+      "opaqueLocalOrdinal": 25,
+      "phasesMilliseconds": {
+        "WholeInvoker": 448.488671,
+        "CatalogAcquire": 31.720425,
+        "ResolveAndRegistration": 0.014869,
+        "DaprRequestAndAuthorityBinding": 0.053393,
+        "CreateClientAndSendDefaultBuffering": 413.179202,
+        "JsonBody": 0.041721,
+        "OverlappingHttpOwnership": 413.284275,
+        "OverlappingLeaseOwnership": 416.766161
+      },
+      "allEightStages": true
+    }
+  ],
+  "eligiblePopulationAllActualInvokerEntriesIncludingOuterAdvisoryAndNullGuard": true,
+  "stage6Overlaps345": true,
+  "stage7Overlaps23456": true,
+  "noExactReleaseResidualOrOverlappingSum": true,
+  "noMissingStageOutcomeOrCancellationInference": true,
+  "noControllerClientPriorRunRootRequestOrDownstreamCorrelation": true,
+  "sendIncludesDefaultResponseContentReadBuffering": true,
+  "noNetworkReceiverServerActorCpuOrOrdinaryLatencyBenefitClaim": true,
+  "noOverheadSubtraction": true
+}

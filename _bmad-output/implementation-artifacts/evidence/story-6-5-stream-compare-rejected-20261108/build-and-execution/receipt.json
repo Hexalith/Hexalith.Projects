@@ -1,0 +1,116 @@
+{
+  "compileOnly": true,
+  "restoreAndBuildPassed": true,
+  "sourceAndExternal734Unchanged": true,
+  "preparationSha256": "f6a3287fe9f8e2f9bfc06bbd9f7760d2458f2a9ff2b7ecffb8772763f4980ac3",
+  "executionReleased": false,
+  "fixtureOrBenchmarkInvoked": false,
+  "commands": [
+    {
+      "stage": "restore",
+      "command": [
+        "dotnet",
+        "restore",
+        "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+        "--configfile",
+        "/tmp/story65-stream-compare-prep-20261108/harness/NuGet.Config",
+        "-p:NuGetAudit=false",
+        "-p:Story65ReviewedPreparationSha256=f6a3287fe9f8e2f9bfc06bbd9f7760d2458f2a9ff2b7ecffb8772763f4980ac3",
+        "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+      ],
+      "cwd": "/tmp/story65-stream-compare-prep-20261108/harness",
+      "started": true,
+      "pid": 4078242,
+      "processGroup": 4078242,
+      "exitCode": 0,
+      "logSha256": "4da086e849a440fbfbdd1d69527c30196f6651c52bf946c52e552c9096c92a31"
+    },
+    {
+      "stage": "build",
+      "command": [
+        "dotnet",
+        "build",
+        "/tmp/story65-stream-compare-prep-20261108/harness/ImageMemoBenchmark.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "--disable-build-servers",
+        "-p:Story65ReviewedPreparationSha256=f6a3287fe9f8e2f9bfc06bbd9f7760d2458f2a9ff2b7ecffb8772763f4980ac3",
+        "-p:Story65QualifiedSdkSha256=6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+      ],
+      "cwd": "/tmp/story65-stream-compare-prep-20261108/harness",
+      "started": true,
+      "pid": 4078275,
+      "processGroup": 4078275,
+      "exitCode": 0,
+      "logSha256": "e9e4f6893cd4a9c567c21a248195d036016b99c30aa77281f52169c1ed72c16c"
+    }
+  ],
+  "compiledArtifacts": {
+    "Hexalith.Commons.UniqueIds.pdb": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.pdb",
+      "sha256": "9b1ec301c7ee8ac940af50c9b754ccf0e07f76d90c8fee427c6651be4e48c3ca",
+      "bytes": 15748
+    },
+    "Hexalith.EventStore.ServiceDefaults.dll": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "sha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+      "bytes": 709632
+    },
+    "Hexalith.EventStore.Contracts.xml": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Contracts.xml",
+      "sha256": "860f9c6faf3a9ff20e03cd57722e72623274186f45b907e13d67b19a4088d6ea",
+      "bytes": 1159592
+    },
+    "Hexalith.EventStore.Server.Tests.dll": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "sha256": "ba12d9eb8e19a7d96a3974c26c39b7e4b1cc5e69bccba5b5be3dc59d39a83adc",
+      "bytes": 162304
+    },
+    "Hexalith.EventStore.ServiceDefaults.pdb": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.pdb",
+      "sha256": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6",
+      "bytes": 179124
+    },
+    "Hexalith.EventStore.Contracts.pdb": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Contracts.pdb",
+      "sha256": "5be545713f73dd5cb263d3887e76476477e33fc11ce2e24267d2dc2a27138354",
+      "bytes": 245412
+    },
+    "Hexalith.Commons.UniqueIds.xml": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.xml",
+      "sha256": "de4a35af5894ccf3e66237fae90db58cf74d4fe5e8cbc07a1a6ae28c274e2ea3",
+      "bytes": 11802
+    },
+    "Hexalith.Commons.UniqueIds.dll": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.dll",
+      "sha256": "5be7b70f77d0cf922e03c837bf98ebbe0f1f3c86eae689dbb4c448924b7eb410",
+      "bytes": 9728
+    },
+    "Hexalith.EventStore.Server.Tests.deps.json": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.deps.json",
+      "sha256": "f9e75c1576fbc9a370712f1b0733fb7397eb95abd644722e97e04ff5144cecb0",
+      "bytes": 1698
+    },
+    "Hexalith.EventStore.Server.Tests": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests",
+      "sha256": "385cad762fd884a03dbc9f3d35c5fa4ea4ee08cc61ba56d8defb85fe1ddd957b",
+      "bytes": 78192
+    },
+    "Hexalith.EventStore.Server.Tests.runtimeconfig.json": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.runtimeconfig.json",
+      "sha256": "2854c873c21edc9fa7c2056f9d4744054aeb11f009d271702daa7794b74e895f",
+      "bytes": 401
+    },
+    "Hexalith.EventStore.Contracts.dll": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "sha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+      "bytes": 990208
+    },
+    "Hexalith.EventStore.Server.Tests.pdb": {
+      "path": "/tmp/story65-stream-compare-prep-20261108/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.pdb",
+      "sha256": "6b51c3d00a1ad01b138dc0d8562eb9e6583a3ce68d50e6fb57b450da67b582a0",
+      "bytes": 49364
+    }
+  }
+}

@@ -1,0 +1,20 @@
+[
+  "using ClientCounters = Hexalith.PrivateCaptureCounter.CaptureCounters;",
+  "using ClientBootstrap = Hexalith.PrivateCaptureCounter.AdvisoryWaveBootstrap;",
+  "using ClientStage = Hexalith.PrivateCaptureCounter.Stage;",
+  "using ClientAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;",
+  "        // PRIVATE DIAGNOSTIC: only the already-read validated literal selects this fixed-role recorder.",
+  "        using var delegatedTimings = workload == \"projects\" ? ClientBootstrap.Begin() : null;",
+  "        const ClientStage IssuerAcquisition = ClientStage.ComponentFile;",
+  "        const ClientStage HttpRequestAndProof = ClientStage.ComponentPolicy;",
+  "        const ClientStage SendAndBuffer = ClientStage.AclFile;",
+  "        const ClientStage JsonBody = ClientStage.SettingsEnumerationSortDictionary;",
+  "        using var acquisitionTiming = delegatedTimings?.Stage(IssuerAcquisition, ClientAllocation.None);",
+  "        acquisitionTiming?.Dispose();",
+  "        using var requestProofTiming = delegatedTimings?.Stage(HttpRequestAndProof, ClientAllocation.None);",
+  "        requestProofTiming?.Dispose();",
+  "        using var sendTiming = delegatedTimings?.Stage(SendAndBuffer, ClientAllocation.None);",
+  "        sendTiming?.Dispose();",
+  "        using var jsonTiming = delegatedTimings?.Stage(JsonBody, ClientAllocation.None);",
+  "        jsonTiming?.Dispose();"
+]

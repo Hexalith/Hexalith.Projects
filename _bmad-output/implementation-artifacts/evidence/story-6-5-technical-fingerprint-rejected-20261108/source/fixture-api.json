@@ -1,0 +1,58 @@
+{
+  "namespace": "Story65.TechnicalFingerprint.Harness",
+  "ownership": {
+    "parent_agent": "candidate/**,control/**,original/**,harness API files+typed hosts/scopes,MvcCorpus/no-start setup,Parity and fixtures,source freeze",
+    "main_agent": "driver/**,Benchmark.csproj,commands.json only after Root assignment; no overlap"
+  },
+  "host": {
+    "type": "ITechnicalHost",
+    "members": [
+      "string Name { get; }",
+      "IObservation BeginObservation()",
+      "RouteCatalogTechnicalHttpEndpoint[] Observe(MvcCorpus corpus)",
+      "MemoCounters Counters { get; }",
+      "void Dispose()"
+    ]
+  },
+  "observation": {
+    "type": "IObservation : IDisposable",
+    "members": [
+      "int ImageHits { get; }"
+    ]
+  },
+  "hosts": {
+    "type": "VariantHosts",
+    "members": [
+      "static string[] Names = [\"actual\", \"control\", \"candidate\"]",
+      "static ITechnicalHost Create(string name)"
+    ]
+  },
+  "corpus": {
+    "type": "MvcCorpus : IAsyncDisposable",
+    "members": [
+      "static MvcCorpus Create()",
+      "IServiceProvider Services { get; }",
+      "IReadOnlyList<RouteEndpoint> EligibleEndpoints { get; }",
+      "int MarkedTechnicalEndpoints { get; }",
+      "int EligibleTechnicalEndpoints { get; }",
+      "int RefusedTechnicalEndpoints { get; }",
+      "int ConstrainedEligibleEndpoints { get; }",
+      "ValueTask DisposeAsync()",
+      "IReadOnlyDictionary<string,CorpusAssemblyCounts> AssemblyCounts { get; }",
+      "IReadOnlyDictionary<string,int> RefusalLabels { get; }",
+      "bool OwnerQueryMarked { get; }",
+      "bool OwnerQueryEligible { get; }",
+      "int ServiceFilterTypesResolved { get; }"
+    ],
+    "selection": "ALL actual marked technical MVC endpoints from BOTH Gateway and Admin.Server parts registered by Gateway host are tested through original compiled Describe(required:true); every successful endpoint retained including constrained. Fixed source refusal labels only; all real ServiceFilter constructors resolved. Separate genuine bound-owner Query endpoint is source-correct unmarked/core-only witness, never promoted. No Start/Run/network."
+  },
+  "parity": {
+    "type": "Parity",
+    "member": "static Task<ParityResult> RunAsync(MvcCorpus corpus, string fixtureDirectory)"
+  },
+  "parityResult": "sealed record ParityResult(int Checks, int Passed, bool AllPassed)",
+  "memoCounters": "readonly record struct MemoCounters(int Entries,long ChargedBytes,long Hits,long Stores,long ConstraintFallbacks,long UnavailableScopeFallbacks,long UnsupportedKeyFallbacks)",
+  "timing": "Each observation must enter/dispose host.BeginObservation() INSIDE measured whole-pass work, call host.Observe(corpus) (fresh variant pass+Complete), consume descriptors in RAM. One host/images/memo shared per sample across1/2/4 independent reader scopes. Report cold/warm; owner setup/disposal placement explicit. No raw schema/key output.",
+  "bounds": "ONE candidate owner memo across request-v1/response-v1 keys; \u2264256 entries/2MiB total charged; no static shared cache.",
+  "corpusAssemblyCounts": "readonly record struct CorpusAssemblyCounts(int Marked,int Eligible,int Refused,int ConstrainedEligible)"
+}

@@ -1,0 +1,138 @@
+{
+  "Mode": "active",
+  "Group": "returns",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "custom-no-lease-nonresult",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 0,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 0,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 147,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [
+        1
+      ],
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": true,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": false
+    },
+    {
+      "Result": {
+        "Case": "custom-owned-nonresult",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 0,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 1,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 179,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [
+        2
+      ],
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": true,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": false
+    },
+    {
+      "Result": {
+        "Case": "concrete-delayed-result",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 1,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 1,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 255,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [
+        3
+      ],
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": true,
+      "HandoffCounterObservationRequired": true,
+      "HandoffChecks": 1,
+      "SyntheticDurationBracketOnly": false
+    },
+    {
+      "Result": {
+        "Case": "terminal-refusal-owned-result",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 1,
+        "NextCalls": 0,
+        "ReleaseCallbacks": 1,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 255,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [
+        4
+      ],
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": true,
+      "HandoffCounterObservationRequired": true,
+      "HandoffChecks": 1,
+      "SyntheticDurationBracketOnly": false
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

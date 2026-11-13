@@ -1,0 +1,64 @@
+{
+  "steps": [
+    {
+      "kind": "build",
+      "index": 1,
+      "command": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "exitCode": 0,
+      "wallSeconds": 4.124902475014096,
+      "logSha256": "0156ea1eb73099607816240660d017d6c9c77f2b408a97c6df0893946feb372c"
+    },
+    {
+      "kind": "build",
+      "index": 2,
+      "command": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "exitCode": 0,
+      "wallSeconds": 4.124567613995168,
+      "logSha256": "92b2fde16cac2caeeca633a2f41cc2f201b41bb69ee04f276f1724ddf2e71226"
+    },
+    {
+      "kind": "build",
+      "index": 3,
+      "command": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "exitCode": 0,
+      "wallSeconds": 67.20222554600332,
+      "logSha256": "92f0fa3c689b75baba4eb20ea0a8aeeaf8522e552d955367f86636af614d18a6"
+    }
+  ],
+  "sourceControlCount": 65,
+  "sourceAllMatch": true,
+  "nativeRuns": 0
+}

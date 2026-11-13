@@ -1,0 +1,45 @@
+{
+  "reviewPassed": true,
+  "sourceReviewOnly": true,
+  "createdUtc": "2026-11-08T03:28:27.715206+00:00",
+  "productionDiffSha256": "f9932723dbffd706d7681ea2824a80a0a49fcca1216ed3ebbb21fe105e0369f9",
+  "productionEditReceiptSha256": "87924998429d39508e485dcb287178327de503e326bf57eecfcbbd0b4d049bb1",
+  "reviewedCurrentFilesSha256": {
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "411a99da261ee3f231f40793fc0c712363b9f0ee52e1f7a0e99dc6abfdbf86e8",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "c9c1aea299a0d166ddacdb8075024a8d990f9974934de05d525f3e79d1db4dfa",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCanonicalHashMemo.cs": "64f155fea90135b00842b772c0f360d3ea3c88cc8c6ef368b088c044c654f7fc",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "5a502e8e29c54b6a7695161dcbe88334189d9f2db67fb678786de5d0bcb4a36d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashTestInputs.cs": "771a006c795a0322c85b6a2dbe8db60800c0853146d8a36fd2c977c00985280d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashChangingPreimage.cs": "68f2bb5e6de47e23a8dcb81b57d89b40c3694e0328de70fed57d2ce6cad8461b",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashParityTests.cs": "545b8d6397f8b31a270747071346a6b6b67f829585088a44c33f49ae7e3b3839",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashMemoTests.cs": "0ac11a63ae842b3031203466a6620793199bdd2bf51281a4ba8627d7d1d2c4a3",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashOwnerTests.cs": "acee4c0fa6499821acbc4451ca2e983cd3f3353d23fe8dc9dd2d04a7f7d7c5e4"
+  },
+  "all9CurrentMatchFrozenAndAfterCopies": true,
+  "all3BeforeCopiesMatchOriginalControls": true,
+  "authorityExactOriginalRestoredByOnlyNewFieldDisposeAndTwoScopeEntryReversals": true,
+  "codecExactOriginalRestoredByOnlyPrivateHashBodyReversal": true,
+  "decodeScopeExactOriginalRestoredByOnlyNewFieldAndExplicitHashScopeAccessorsRemoval": true,
+  "helperNonBraceCodeTokensEquivalentToQualifiedScratchHelper": true,
+  "helperBracesAndConditionsManuallyReviewed": true,
+  "newSourceCases": 23,
+  "classCaseCounts": {
+    "RouteCatalogCanonicalHashParityTests": 5,
+    "RouteCatalogCanonicalHashMemoTests": 6,
+    "RouteCatalogCanonicalHashOwnerTests": 12
+  },
+  "nativeExecutionsByThisReviewer": 0,
+  "unchangedOriginalHostByteMemoTestsSha256": "868f33a5ed2d61f6ec50b058b05f28bb6b78a9302ad9f3577896ce20f307b9f1",
+  "materialBlockers": [],
+  "findings": [
+    "The new hash memo belongs to exactly the same RouteCatalogAuthority and is disposed first, before the unchanged original bytes/binding/image sequence. Borrowing scopes close participation without owning either host memo.",
+    "Both option expressions/read counts and existing config/store/observer/trust/cancellation/lease/CAS statement ordering are unchanged. Only the two chosen internal scope-entry calls are replaced.",
+    "Every validator/normalizer and one fresh original serialization still executes before a hit. The same immutable complete serialized preimage supplies key and miss computation; errors and mutable caller graphs are not retained.",
+    "512keys/4MiB retained-charge remains separate from byte-memo limits and is not a CLR heap bound. No raw preimages, credentials, authority decisions or diagnostics output are added.",
+    "Native23 source cases cover complete purpose/schema/numeric/duplicate preimages, mutable reversion, error ordering, miss+hit serializer-once, bounds/oversize, scope/owner/suppression/nesting, guaranteed concurrent misses, close with8live scopes, and both authority entry paths with original option-read counts."
+  ],
+  "limits": [
+    "Native build/test execution belongs to Root and is not claimed by this source receipt.",
+    "Final compiled transfer and ordinary live acceptance remain separate. Prior scratch178 checks are not added native passes; Story6.5 MULTI acceptance remains failed and BMADstep04 completion is not claimed."
+  ]
+}

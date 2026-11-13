@@ -1,0 +1,42 @@
+{
+  "sourceOnly": true,
+  "runtimeHandlerEntryMeasured": false,
+  "runtimeProjectsSource": "/home/administrator/projects/hexalith/projects/tools/qualification/run_supported_project_reads.py",
+  "RUNTIME_PROJECTS": {
+    "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+    "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+    "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj"
+  },
+  "sourceSha256": {
+    "tools/qualification/run_supported_project_reads.py": "82306bfb7686a569c43e83213e8c79d5744a25255bcc89a48786b36892332d0e",
+    "src/Hexalith.Projects.AppHost/Program.cs": "887f9530d51b4a411eae55621320ad397abfe78d5e8a43b542753cac74c7eacc",
+    "src/Hexalith.Projects.AppHost/SupportedProjectReadFixtureProfile.cs": "20234d4f89de753ea44bcfe652a0d90afef388f9008a015d3c0ae369559074ad",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Program.cs": "14319be3e4ccf0286766b29237789090825ce38d10cef66e3e314f11d417fe1c",
+    "references/Hexalith.Tenants/src/Hexalith.Tenants/Program.cs": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+    "src/Hexalith.Projects.Server/Program.cs": "365b37e238ab181dda447cd6051acfdb093b234f902e73d49ae7dab4fb32e1bd",
+    "src/Hexalith.Projects.Workers/Program.cs": "ab9364395a487640273b030b598feb9570cfa0f3c5e8b5259b17aedb9ad285d4",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Program.cs": "9e2b0a9d867255a37d6edd083a2f0593cdcbef5f558d37db1a471f22abb167bc",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Program.cs": "f62ee5ec1392dd6652ff49db25a4236dbef6bd8a6d4deba979ff7efa944cfb21",
+    "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Program.cs": "4f2e69e1ce58b3b235bbf1fe41251a0757df29d5f2f578961e2c3fa28d954781",
+    "tests/Hexalith.Projects.ReadAuthority/Program.cs": "6e574d6e342551607bb1f8153c1617fbba1f2a6c02d83943835b46ded222e852",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Configuration/ServiceCollectionExtensions.cs": "f5d2a780a4e27dedf464036992831984fd97298ca8b60615ac398804e2a3f0fb",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/DomainServices/DomainServiceWorkloadAssertionHttpClientBuilderFilter.cs": "494647e8e0be45fd0aacfc300662195816b17fa5c82a0c21bd627b7e71338008",
+    "src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs": "b7616fe9e3cc87def0526b56d411dc722348eb490e1c25a723633849be518174",
+    "src/Hexalith.Projects.Workers/ProjectsWorkerDevelopmentCatalog.cs": "55c79e9b1b843e8f8d460ab72d4475ea6313bdb05b5985f03a157ae30bbd1e34",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs": "ddf301704d8cb5768dd94e94291968ff458b899bad90c6adcfa7f32ce5fa2261",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Workers/FoldersWorkersHostComposition.cs": "788b16779bf518abe62c8c28051117e5a886503d1f106f8fe6a6e44c99e87751"
+  },
+  "fixedRoleLimitedToSelectedRootComposition": true,
+  "eventStoreRegistersServerAt": "references/Hexalith.EventStore/src/Hexalith.EventStore/Program.cs:22",
+  "serverRegistersFilterAt": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Configuration/ServiceCollectionExtensions.cs:150",
+  "filterExcludesOnlyIssuerClient": "DomainServiceWorkloadAssertionHttpClientBuilderFilter.Configure preserves next(builder), returns only for JwtWorkloadAssertionIssuer.HttpClientName, otherwise adds handler",
+  "otherFiveUseDomainCatalogSecurityComposition": true,
+  "inactiveFoldersEventStoreAlsoRegistersServer": true,
+  "inactiveFoldersEventStoreNotInRuntimeProjects": true,
+  "ReadAuthorityNotOneOfSix": true,
+  "doesNotGeneralizeToArbitraryServerConsumers": true,
+  "sharedRouteCatalogInvocationHandlerUntouched": true
+}

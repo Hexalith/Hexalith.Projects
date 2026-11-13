@@ -1,0 +1,978 @@
+{
+  "ecosystem_dependencies": {
+    "status": "complete",
+    "issue_count": 0,
+    "ecosystems": [
+      ".NET Runtime",
+      "Microsoft.Extensions"
+    ],
+    "candidate_ecosystems": [
+      ".NET Runtime",
+      "Microsoft.Extensions",
+      "ASP.NET Core"
+    ],
+    "dependencies": [
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Runtime, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Runtime.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 1
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Collections, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Collections.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 5
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Net.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Net.Http.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 19
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Collections.Concurrent, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Collections.Concurrent.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 21
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.ComponentModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.ComponentModel.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 30
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Runtime.InteropServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Runtime.InteropServices.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 47
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "System.Threading, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "assembly_evidence": "Microsoft.NETCore.App.Ref@10.0.0/ref/net10.0/System.Threading.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 49
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Primitives, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "assembly_evidence": "Microsoft.Extensions.Primitives@10.0.0/lib/net10.0/Microsoft.Extensions.Primitives.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 17
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.DependencyInjection.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "assembly_evidence": "Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0/lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 26
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Logging.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "assembly_evidence": "Microsoft.Extensions.Logging.Abstractions@10.0.0/lib/net10.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 34
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Catalog-backed",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Options, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "assembly_evidence": "Microsoft.Extensions.Options@10.0.0/lib/net10.0/Microsoft.Extensions.Options.dll",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 38
+      }
+    ],
+    "candidates": [
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Text.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 10
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Text.RegularExpressions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 11
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Security.Claims, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 13
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Linq, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 22
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Net.Primitives, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 40
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Security.Cryptography, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 42
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.IdentityModel.Tokens.Jwt, Version=8.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "8.23.0.0",
+        "occurrence": 45
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Memory, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 53
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Collections.Immutable, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 61
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Threading.Tasks.Parallel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 63
+      },
+      {
+        "ecosystem": ".NET Runtime",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "System.Net.Http.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: System",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 64
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Configuration.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 28
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Hosting.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 29
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Telemetry.Abstractions, Version=10.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.11.0.0",
+        "occurrence": 35
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Configuration, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 50
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 54
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Options.ConfigurationExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 55
+      },
+      {
+        "ecosystem": "Microsoft.Extensions",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.Extensions.Configuration.Binder, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.Extensions",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 56
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Mvc.Core, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 4
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 6
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.OpenApi, Version=10.0.14.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.14.0",
+        "occurrence": 7
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Mvc.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 9
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Authentication.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 12
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Http.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 15
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Routing, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 23
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 36
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Authentication.JwtBearer, Version=10.0.14.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.14.0",
+        "occurrence": 46
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Http.Features, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 48
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Hosting.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 51
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Http.Results, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 52
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.DataProtection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 57
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Authentication, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 58
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Authorization.Policy, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 59
+      },
+      {
+        "ecosystem": "ASP.NET Core",
+        "recognition": "Candidate",
+        "kind": "Assembly reference",
+        "dependency": "Microsoft.AspNetCore.Http.Extensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+        "declared_by": "Hexalith.Projects.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "matching_bases": "Assembly name family: Microsoft.AspNetCore",
+        "version_or_range": "10.0.0.0",
+        "occurrence": 62
+      }
+    ]
+  },
+  "file_name": "Hexalith.Projects.Server.dll",
+  "file_type": "dll",
+  "pdb_format": "Portable",
+  "pdb_location": "Standalone",
+  "pdb_path": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.pdb",
+  "has_embedded_pdb": false,
+  "has_reproducible_flag": true,
+  "has_normalized_paths": false,
+  "has_source_link": true,
+  "is_deterministic": false,
+  "windows_pdb_detected": false,
+  "source": "File",
+  "source_link_json": "{\u0022documents\u0022:{\u0022/home/administrator/projects/hexalith/projects/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Projects/9ae0571529cb4a9f3ad9750c8b834e6284d4f76b/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.AI.Tools/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.AI.Tools/1745b6663ad32bb1288167135ed0f979366c53a0/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Builds/beb85e497957fedc66854013efd2cc4bd216ecbc/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Commons/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Commons/11555ace9efcae2928a00122dcba91243e5a8a1a/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Conversations/9a5c684de5ee4876448faa26737f6afd36cf33e7/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.EventStore/3d4ba67db99f2f0bcd64b7d353609b555870cc9b/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Folders/e88c940000446e13d17d86a7288649d8653a7138/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.FrontComposer/fbb9c3822dfa407e72739238cd472567f45f1e82/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.McpCli/6173885d0132184a658b39ac421ec16848a3bb15/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Memories/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Memories/246157a7ff8e2dcd8d356c833a77a02514490d2f/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Parties/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Parties/1308ad000c79ebc394fc395588f9af91092e8c4c/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Platform/c1997c60f31e08d945b44cb7aa2afd7800e8ff69/*\u0022,\u0022/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/*\u0022:\u0022https://raw.githubusercontent.com/Hexalith/Hexalith.Tenants/cf36618a2c27b5722a1ff811cfbbce4528c3c105/*\u0022}}",
+  "source_link_map": {
+    "status": "Usable",
+    "rejected_keys": []
+  },
+  "non_normalized_paths": [
+    "PDB Path: /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/Debug/net10.0/Hexalith.Projects.Server.pdb",
+    "SourceLink: /home/administrator/projects/hexalith/projects/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.AI.Tools/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Builds/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Commons/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Folders/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Memories/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Parties/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/*",
+    "SourceLink: /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/*"
+  ],
+  "assembly_info": {
+    "assembly_name": "Hexalith.Projects.Server",
+    "assembly_version": "1.0.0.0",
+    "file_version": "1.0.0.0",
+    "informational_version": "1.0.0\u002B9ae0571529cb4a9f3ad9750c8b834e6284d4f76b",
+    "product": "Hexalith.Projects.Server",
+    "company": "Hexalith",
+    "description": "Tenant-scoped project workspace and context-resolution module for .NET built on Hexalith.EventStore.",
+    "target_framework": ".NETCoreApp,Version=v10.0",
+    "culture": "neutral",
+    "architecture": "AnyCPU",
+    "is_any_cpu": true,
+    "prefers32_bit": false,
+    "is_executable": true,
+    "is_dll": false,
+    "is_signed": false,
+    "has_unsafe_code": false,
+    "runtime_version": "v4.0.30319",
+    "metadata_version": 0,
+    "compilation_type": "CoreCLR",
+    "is_native_aot": false,
+    "is_ready_to_run": false,
+    "has_managed_metadata": true,
+    "has_cor_header": true,
+    "has_il_code": true,
+    "type_definition_count": 380,
+    "method_definition_count": 2713,
+    "references": [
+      {
+        "name": "System.Runtime",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Hexalith.EventStore.DomainService",
+        "version": "4.1.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Hexalith.EventStore.Contracts",
+        "version": "4.1.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Mvc.Core",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Collections",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.AspNetCore",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.OpenApi",
+        "version": "10.0.14.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.OpenApi",
+        "version": "2.13.0.0",
+        "culture": "neutral",
+        "public_key_token": "3f5743946376f042"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Mvc.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Text.Json",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "cc7b13ffcd2ddd51"
+      },
+      {
+        "name": "System.Text.RegularExpressions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Authentication.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Security.Claims",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Hexalith.Projects",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Projects.Contracts",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.Extensions.Primitives",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Projects.Infrastructure",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "System.Net.Http",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Hexalith.EventStore.Client",
+        "version": "4.1.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "System.Collections.Concurrent",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "System.Linq",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Routing",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Conversations.Contracts",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "ByteAether.Ulid",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.Extensions.DependencyInjection.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Folders.Client",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.Extensions.Configuration.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.Extensions.Hosting.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.ComponentModel",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Hexalith.EventStore.ServiceDefaults",
+        "version": "4.1.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Hexalith.Conversations.Client",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Hexalith.Memories.Client.Rest",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.Extensions.Logging.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.Extensions.Telemetry.Abstractions",
+        "version": "10.11.0.0",
+        "culture": "neutral",
+        "public_key_token": "31bf3856ad364e35"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.EventStore.Gateway",
+        "version": "4.1.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "Microsoft.Extensions.Options",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Memories.Contracts",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "System.Net.Primitives",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Hexalith.Folders.Contracts",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "System.Security.Cryptography",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.IdentityModel.Tokens",
+        "version": "8.23.0.0",
+        "culture": "neutral",
+        "public_key_token": "31bf3856ad364e35"
+      },
+      {
+        "name": "Microsoft.IdentityModel.JsonWebTokens",
+        "version": "8.23.0.0",
+        "culture": "neutral",
+        "public_key_token": "31bf3856ad364e35"
+      },
+      {
+        "name": "System.IdentityModel.Tokens.Jwt",
+        "version": "8.23.0.0",
+        "culture": "neutral",
+        "public_key_token": "31bf3856ad364e35"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Authentication.JwtBearer",
+        "version": "10.0.14.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Runtime.InteropServices",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http.Features",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Threading",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.Extensions.Configuration",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Hosting.Abstractions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http.Results",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Memory",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "cc7b13ffcd2ddd51"
+      },
+      {
+        "name": "Microsoft.Extensions.Http",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.Extensions.Options.ConfigurationExtensions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.Extensions.Configuration.Binder",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.DataProtection",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Authentication",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Authorization.Policy",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "Hexalith.Projects.ServiceDefaults",
+        "version": "1.0.0.0",
+        "culture": "neutral"
+      },
+      {
+        "name": "System.Collections.Immutable",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "Microsoft.AspNetCore.Http.Extensions",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "adb9793829ddae60"
+      },
+      {
+        "name": "System.Threading.Tasks.Parallel",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "b03f5f7f11d50a3a"
+      },
+      {
+        "name": "System.Net.Http.Json",
+        "version": "10.0.0.0",
+        "culture": "neutral",
+        "public_key_token": "cc7b13ffcd2ddd51"
+      }
+    ]
+  },
+  "unsafe_method_count": 0,
+  "p_invoke_method_count": 0,
+  "async_method_count": 50,
+  "extension_method_count": 7,
+  "file_size": 677888,
+  "custom_attributes": [
+    {
+      "name": "RouteCatalogAdapterSource",
+      "target": "Assembly",
+      "value": "Hexalith.Projects.Server.ProjectsIntentAdapters"
+    },
+    {
+      "name": "RouteCatalogDeclarationSource",
+      "target": "Assembly",
+      "value": "Hexalith.Projects.Server.ProjectsRuntimeCatalogDeclarations"
+    },
+    {
+      "name": "AssemblyMetadata(RepositoryUrl)",
+      "target": "Assembly",
+      "value": "https://github.com/Hexalith/Hexalith.Projects"
+    },
+    {
+      "name": "InternalsVisibleTo",
+      "target": "Assembly",
+      "value": "Hexalith.Projects.Server.Tests"
+    },
+    {
+      "name": "InternalsVisibleTo",
+      "target": "Assembly",
+      "value": "Hexalith.Projects.Integration.Tests"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Dapr.AspNetCore"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Hexalith.EventStore.DomainService"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Hexalith.EventStore.Gateway"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Hexalith.EventStore.Server"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Hexalith.EventStore.ServiceDefaults"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Hexalith.Projects.Infrastructure"
+    },
+    {
+      "name": "ApplicationPart",
+      "target": "Assembly",
+      "value": "Microsoft.AspNetCore.OpenApi"
+    }
+  ]
+}

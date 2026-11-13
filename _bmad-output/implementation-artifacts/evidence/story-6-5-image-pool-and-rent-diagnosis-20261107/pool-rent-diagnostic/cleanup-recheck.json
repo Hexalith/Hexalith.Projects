@@ -1,0 +1,192 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRunSha256": "d53ea397d2868c487f3515ffadaf208b8423488053426aeecef331905ab0f302",
+  "originalResult": "failed",
+  "originalFailure": "KeyboardInterrupt",
+  "intentionalCutoff": true,
+  "signalTarget": "directly owned managed launcher only",
+  "recordedIdentities": [
+    {
+      "role": "apphost",
+      "pid": 2003870,
+      "recordedStartTicks": "6552571",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "aspire-cli",
+      "pid": 1992075,
+      "recordedStartTicks": "6547550",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "eventstore-host",
+      "pid": 2007435,
+      "recordedStartTicks": "6553198",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "eventstore-wrapper",
+      "pid": 2007182,
+      "recordedStartTicks": "6553147",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "tenants-host",
+      "pid": 2007294,
+      "recordedStartTicks": "6553172",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "tenants-wrapper",
+      "pid": 2007060,
+      "recordedStartTicks": "6553120",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-host",
+      "pid": 2007546,
+      "recordedStartTicks": "6553218",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-wrapper",
+      "pid": 2007216,
+      "recordedStartTicks": "6553165",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-workers-host",
+      "pid": 2007671,
+      "recordedStartTicks": "6553239",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-workers-wrapper",
+      "pid": 2007346,
+      "recordedStartTicks": "6553187",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-host",
+      "pid": 2007879,
+      "recordedStartTicks": "6553270",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-wrapper",
+      "pid": 2007499,
+      "recordedStartTicks": "6553213",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-workers-host",
+      "pid": 2007928,
+      "recordedStartTicks": "6553293",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-workers-wrapper",
+      "pid": 2007625,
+      "recordedStartTicks": "6553235",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "eventstore-sidecar",
+      "pid": 2007136,
+      "recordedStartTicks": "6553143",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-sidecar",
+      "pid": 2007497,
+      "recordedStartTicks": "6553213",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "folders-workers-sidecar",
+      "pid": 2007623,
+      "recordedStartTicks": "6553235",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-sidecar",
+      "pid": 2007214,
+      "recordedStartTicks": "6553165",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "projects-workers-sidecar",
+      "pid": 2007344,
+      "recordedStartTicks": "6553187",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    },
+    {
+      "role": "tenants-sidecar",
+      "pid": 2007057,
+      "recordedStartTicks": "6553120",
+      "currentStartTicks": null,
+      "recordedIdentityAbsent": true
+    }
+  ],
+  "containers": [
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "69e1c951b8a57e783a35624c671a52388cc0837c121a6c227946290d357c7952",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "a394d37376e12a7eb7cc2acbc0ce51e1fa90989e716d0806db091cec2f8d77f1",
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "db969e58a8f6edc692c710bffa26778db72f76e176bef5342443f4ff819bfc4e",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-7db41acf4f9f4293f575f067-redishost",
+      "containerId": "0fec9471d9257aabf2b6e47946b43c3eeb7e41a1e56fd637a829836cbf0cc9b6",
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-7db41acf4f9f4293f575f067-oidc",
+      "containerId": "1ef6a6c4ff70df9e1795054932cd09cca35ac855de07311909d43f3e84cc4334",
+      "absenceVerified": true
+    }
+  ],
+  "namespaceContainerListingSucceeded": true,
+  "namespaceContainersAbsent": true,
+  "recordedPrivateDirectory": "/tmp/supported-project-reads-private-839zexur",
+  "privateDirectoryAbsent": true,
+  "originalOwnedSidecarsAbsent": true,
+  "originalPreexistingResourcesPreserved": true,
+  "originalPrivateMaterialRemoved": true,
+  "originalTestProcessCleanup": [
+    {
+      "groupId": 2016715,
+      "descendantsAbsent": true
+    }
+  ],
+  "allRecordedOwnedAbsencesVerified": true
+}

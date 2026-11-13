@@ -1,0 +1,361 @@
+{
+  "preparationOnly": true,
+  "sourceDerivedNativeCases": 33,
+  "processSelections": [
+    {
+      "alias": "selection-1",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+      "expectedExecutions": 7,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "CanceledAcquisitionRecordsNoTransportOrOwnedRelease",
+          "sourceCaseSha256": "1867d5d35dfb171d343b26961d32d308fbac2a9b91f0c648521d5734bf3f8365",
+          "formatterDisplayNameSha256": "8c9a957ca9b3b85e57d64e64312c902d5ca184c95314600964d3877ac38161e8",
+          "parsedXmlNameSha256": "8c9a957ca9b3b85e57d64e64312c902d5ca184c95314600964d3877ac38161e8",
+          "multiplicity": 1,
+          "argumentCount": 0
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "ActualTransportAndOwnedReleaseRemainDistinctWhileCallerCancels",
+          "sourceCaseSha256": "2947ec65c3630fdf0403bdc756717621c502ec2c7774da10995cb2ba86812ad8",
+          "formatterDisplayNameSha256": "5ec2d1af062864f5f96d970c736920c4100daa4d40bd7e71a1e8f4830fbb29bb",
+          "parsedXmlNameSha256": "5ec2d1af062864f5f96d970c736920c4100daa4d40bd7e71a1e8f4830fbb29bb",
+          "multiplicity": 1,
+          "argumentCount": 0
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "OriginalFailureAndItsLeaseOwnershipArePreserved",
+          "sourceCaseSha256": "7c8a42fa2fdb3b4092a999b63cb2e9d72e243bafd0f6e548aad9f74c44b8f68d",
+          "formatterDisplayNameSha256": "bd24b11e6bf3bde36bdb17c53915144d08c758b9779e2d2cdc1684c367ff98bc",
+          "parsedXmlNameSha256": "a491fffde5dbafee24c03ac95d251ee3c826d40350ac6b5d2d0a12c3798f1ee6",
+          "multiplicity": 1,
+          "argumentCount": 1
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "OriginalFailureAndItsLeaseOwnershipArePreserved",
+          "sourceCaseSha256": "4b61b5c2c2775821db3f5bc11043c759a2e4ad974922ce6d6ba049712e3abe79",
+          "formatterDisplayNameSha256": "f444e986f9435aad9d4820155f94733a6f5bed498d54731801273a048d3a76ef",
+          "parsedXmlNameSha256": "f49ff48d39be4e1bba07365a29054b0678542bb4749f4b32bbe9148964992c0b",
+          "multiplicity": 1,
+          "argumentCount": 1
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "OriginalFailureAndItsLeaseOwnershipArePreserved",
+          "sourceCaseSha256": "23937b26b9622053f699a938dff8ba3ff1d6c55d4ea46a80168670095e7439cc",
+          "formatterDisplayNameSha256": "3adeb19397ff5ca1b49aae3188e919ae925664125631f68a56aee13673dcea97",
+          "parsedXmlNameSha256": "d10bad2dbd7f8ae5e90c38645a28a9593c1ac9cd5d93b2cd9eebd0333d6bcf39",
+          "multiplicity": 1,
+          "argumentCount": 1
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "DisabledOrThrowingDiagnosticsDoNotChangeDispatch",
+          "sourceCaseSha256": "26102e79c314bfe9346b8fcee3689dd15e9dff4f7b1c728be51260a2bd550dfc",
+          "formatterDisplayNameSha256": "6d9a4cd8df4df971f099744a41088416b8d1334e7279477cf34dcca0ffc5c091",
+          "parsedXmlNameSha256": "6d9a4cd8df4df971f099744a41088416b8d1334e7279477cf34dcca0ffc5c091",
+          "multiplicity": 1,
+          "argumentCount": 1
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.OutgoingInvocationDiagnosticsTests",
+          "method": "DisabledOrThrowingDiagnosticsDoNotChangeDispatch",
+          "sourceCaseSha256": "5e645c3da602fb91b84ddec338ab0d1f12cd2fca02e280b085e774c020beed5f",
+          "formatterDisplayNameSha256": "e12c95c8a13784bb15a13a31bd89f7eddd4d0214d1e70074ebf46d5f96329291",
+          "parsedXmlNameSha256": "e12c95c8a13784bb15a13a31bd89f7eddd4d0214d1e70074ebf46d5f96329291",
+          "multiplicity": 1,
+          "argumentCount": 1
+        }
+      ]
+    },
+    {
+      "alias": "selection-2",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.GuardedNativeHttpReadsReuseOneLeaseWithoutSkippingPerRequestValidation",
+      "expectedExecutions": 1,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests",
+          "method": "GuardedNativeHttpReadsReuseOneLeaseWithoutSkippingPerRequestValidation",
+          "sourceCaseSha256": "bc088ab728c333cd244f97ecf4442b861592fc6f685218efc7734cb3bca35334",
+          "formatterDisplayNameSha256": "9ac663b4f907aee886e98db4b678ed585037d96af313530965f5b0407f07e959",
+          "parsedXmlNameSha256": "9ac663b4f907aee886e98db4b678ed585037d96af313530965f5b0407f07e959",
+          "multiplicity": 1,
+          "argumentCount": 0
+        }
+      ]
+    },
+    {
+      "alias": "selection-3",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient",
+      "expectedExecutions": 1,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests",
+          "method": "RealDomainFilterAndResultComposeWithSdkMetadataClient",
+          "sourceCaseSha256": "e5c79d7c1d964e07343b7113a10489516fbb3fdabaac06b493ab3265e6b73702",
+          "formatterDisplayNameSha256": "3a0a617b91f90c06cb7941a8bb0a6976d315dc654a4f6436225cc9e3f3fc1e18",
+          "parsedXmlNameSha256": "3a0a617b91f90c06cb7941a8bb0a6976d315dc654a4f6436225cc9e3f3fc1e18",
+          "multiplicity": 1,
+          "argumentCount": 0
+        }
+      ]
+    },
+    {
+      "alias": "selection-4",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.NonmetadataMethodKeepsOriginalFreshSenderPathUnderMixedScopes",
+      "expectedExecutions": 1,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests",
+          "method": "NonmetadataMethodKeepsOriginalFreshSenderPathUnderMixedScopes",
+          "sourceCaseSha256": "e3b21e427d3aca83359adfa33ea0f9c72c9fd253c6d1b3ed5ff22cd15deb25ad",
+          "formatterDisplayNameSha256": "7e9d677b87bdc1efb66fc4efa484d59b621625758751c8b5551828a9673f30c4",
+          "parsedXmlNameSha256": "7e9d677b87bdc1efb66fc4efa484d59b621625758751c8b5551828a9673f30c4",
+          "multiplicity": 1,
+          "argumentCount": 0
+        }
+      ]
+    },
+    {
+      "alias": "selection-5",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.NativeDispatchDiagnosticsTests.OuterReceiverDisposesItsRemoteScopeBeforeAwaitingItsLeaseRelease",
+      "expectedExecutions": 2,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.NativeDispatchDiagnosticsTests",
+          "method": "OuterReceiverDisposesItsRemoteScopeBeforeAwaitingItsLeaseRelease",
+          "sourceCaseSha256": "794e98da00faa0feddc8e17302d39971b31642456eb919c931f7bcb36cfc73cf",
+          "formatterDisplayNameSha256": "91955eaeed2162716c35a013d91b0d4bbf3085184eecc456e8bf769de573088f",
+          "parsedXmlNameSha256": "91955eaeed2162716c35a013d91b0d4bbf3085184eecc456e8bf769de573088f",
+          "multiplicity": 1,
+          "argumentCount": 1
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.NativeDispatchDiagnosticsTests",
+          "method": "OuterReceiverDisposesItsRemoteScopeBeforeAwaitingItsLeaseRelease",
+          "sourceCaseSha256": "f8135eddcf8c5adffe1868bd9be1ba61671f2729183ba532bb62b747fa1c83b1",
+          "formatterDisplayNameSha256": "7f89533aa53a028a3d01e5c56b3fbc06fc6c7065a1d44902f6d3e1b4c4419b27",
+          "parsedXmlNameSha256": "7f89533aa53a028a3d01e5c56b3fbc06fc6c7065a1d44902f6d3e1b4c4419b27",
+          "multiplicity": 1,
+          "argumentCount": 1
+        }
+      ]
+    },
+    {
+      "alias": "selection-6",
+      "flag": "-class",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+      "expectedExecutions": 12,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "cd49cb45b28300633ba13c93920f6703deeb93d6179e13b0a34711d45b2a3bc8",
+          "formatterDisplayNameSha256": "b562990dab13241d1bc3c15be4bf8782cfd6fe3a9d21df7e2170219d505d310e",
+          "parsedXmlNameSha256": "7bc7cf18c273e47fff85503b66b22ee25c05bfb2046dd9b829c64de1709c81a6",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "3029a10fd3127a4f8491223c09a5315381e7239bcca6210d4bdf5941d225c0b4",
+          "formatterDisplayNameSha256": "0123f58531cc63ac3430464f5281d8cf467490c3b56d424c35946685bb5ccc7a",
+          "parsedXmlNameSha256": "5610ae1ef92fa5a5e3fb2bb4a9768ebeb5410db0568119a7e383b0c492c3bfd5",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "f425afacfc07d3e016cb3a0bad4cd7499a33d446b22112c215e0b808fa41cff7",
+          "formatterDisplayNameSha256": "5564788ca0862c21a5032412cb9dd516b648bce311442589f59b16c59e8ffa5d",
+          "parsedXmlNameSha256": "b786234a498170580b523ed62a60dc0cad00904cd43460e986c3227c217c0ee9",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "2bd4d2f87a2e539e251606fea66484bf185dbb7953655b1c0c771e4b294aded1",
+          "formatterDisplayNameSha256": "8d92f59e21a96a1614e7f80874970853471c3ea14004230f517332e79073a20f",
+          "parsedXmlNameSha256": "30296c15bcc5568f40883d61a0cb2ff1739bc4e0bd55816f4cd5521a5b20d25c",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "f0936beb7c9aa0e7f2867d2dbaa3473fb5173ff938990c8d5a01ca4a1f3b86f1",
+          "formatterDisplayNameSha256": "555165cab5408517c72e1d268862b876df134d1154b5bcbed9b122792baf2645",
+          "parsedXmlNameSha256": "23492a4602bee0c6a571e836e2f8066ce9fd6fcef63eea75aa8f7e2659a52bc4",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "a45ce3108cd80ba7d1edda64ec46dce46f5b0d2767b9b51a800a6bb788588b48",
+          "formatterDisplayNameSha256": "a8415833add49e839c55a2b1a344a6aea1fb874510147f86e32c43099abc8221",
+          "parsedXmlNameSha256": "c770ffb7febcd5bbd99b7a8fc20f6120b8f6da5020a12c63b25bb65986ee24cb",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "5655eb47a495b9d01f396d485d9604c37d2900ae66042bf90c818be410997d10",
+          "formatterDisplayNameSha256": "70570fb6173365d389cda2dda7bbbf7f04feea35395387ce1b31e4033746091d",
+          "parsedXmlNameSha256": "c223d58e717547d77b85a507567c3b252cb9bf11f5bbc7b8c1b2f43b1fbb5975",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "c014050c8e33f899fe71a013e708465746b3d5c4a30daafdcbb6dfc797941a9c",
+          "formatterDisplayNameSha256": "4cb67fd1c3f70effda538ac5c1d4460d84503eba903e9d6d7365c516e089374a",
+          "parsedXmlNameSha256": "e1fb37e139f1a7d9884e8a3f845419965d2aeba69954f1aa916faf416eae51a0",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "7b756b50d70f223ecba1b3439cfd84d7cef063cd82ae6c77e33b9050dbb3d468",
+          "formatterDisplayNameSha256": "42459275edcdaf69fc0789021df93d1e330df20d884471eb62a4bfe3e280516a",
+          "parsedXmlNameSha256": "706aa3aa9501e6edd867a0fd94c531a576b08273628bffbb4d2ec8d5a5dcbd8a",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "56d2ab0f96714369d07dddb68f50f04c64f58f8cfc20d82eb1d65700f31f641f",
+          "formatterDisplayNameSha256": "a8738d77ee0a3ebe4f6aa8d4ae559b366bf5490aeb799e5ee660c795b0cce6f5",
+          "parsedXmlNameSha256": "873152a68eb557c3263f5f8f5773b3d5167c137b673b156a23790711fdca4d40",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "StandardFactoryPipelineAllowsOnlyCanonicalControlMethodsBeforeActivation",
+          "sourceCaseSha256": "9bbd76d59bee6ecf5cb4b25bee971ee60c00ab5fbf6cdeff2a794d321ecbf2ac",
+          "formatterDisplayNameSha256": "e90cd4923a3fb98715276a5fcfbbb40d38e2beedbad5b3efee98cb8d01366993",
+          "parsedXmlNameSha256": "509d8845231243de1bf73cb613bfac6598d5323b855db549e44441a356699cf3",
+          "multiplicity": 1,
+          "argumentCount": 3
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogControlTransportTests",
+          "method": "CanonicalControlMethodCannotReachAnUnconfiguredRecipient",
+          "sourceCaseSha256": "5c3b397c7e7d0294f5f83aaf5aa586779600e9992042b9a26e13c75178bccc0a",
+          "formatterDisplayNameSha256": "33a38d939e8fe924c646b7166197234859af81b1194404498ec4d776f6b2a65d",
+          "parsedXmlNameSha256": "33a38d939e8fe924c646b7166197234859af81b1194404498ec4d776f6b2a65d",
+          "multiplicity": 1,
+          "argumentCount": 0
+        }
+      ]
+    },
+    {
+      "alias": "selection-7",
+      "flag": "-method",
+      "filter": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests.OrdinaryRedirectFencesLaterDaprHops",
+      "expectedExecutions": 9,
+      "expectedDisplayMultiset": [
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "8362f6d671241177a48b016db421b9a6adc70dba465e5b3b28bfa8cb3dd5f154",
+          "formatterDisplayNameSha256": "ea6f8745c9f5a7da4de75f174d30f911d2f34e4d0141c30868e4a0ba250567c5",
+          "parsedXmlNameSha256": "5de6d410983a276360c61d18cbf9fe507f21bf1221794ade346a57959cd20cdf",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "74589d262c5dcc3a5b96e1e259ec2fd82a1ba69a9e311b0a25537d1a3d83be8f",
+          "formatterDisplayNameSha256": "bfb783f770e3c51373a8de7f7b74d8e77006c92c62fc9953583babe389023c79",
+          "parsedXmlNameSha256": "b2c40472c0621bb470475ec2780879259706c9bf17d95d7996c9ffa64d540b6e",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "0f15dc251b43bdf745c471e2e5572f4b88d62b7982f05e4f0350ea0324911768",
+          "formatterDisplayNameSha256": "f015128a3a02e30e1899de1bddfbf7faaf8950736aad5db3729232b24176eac1",
+          "parsedXmlNameSha256": "442d46ffb387a11e7278278bf5a18090651c3bfd725bb1717c0be4b386d304c3",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "b39bf6510c0494bce38b3908dbb0bbac8be47d58d56bcb7e602f2e1c2d0035e2",
+          "formatterDisplayNameSha256": "620f8d64fb121a3fcde8cb2d8015a0ebc4ba2381a4f152b7877d5d76ef1bb3e6",
+          "parsedXmlNameSha256": "1b7efa8f694f99fd4dd77345b8722e976a7547ba36613a071231f3ed32879c66",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "ff16b822b6bedd21eeb8c6f6ee09e9598879b5bffabcf4c3fae4d027fa9a8370",
+          "formatterDisplayNameSha256": "9287876e5b0af25f4cd43f23bca5ea3d7618199dca216b4b9f3473bad9d2475b",
+          "parsedXmlNameSha256": "812b06c29add7dd263495096302a9aa5435155b96e73603a72c89deee20dbd85",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "fbfd1aa75bc502b58359fdc36bee9e41a1dbfe9eb86ecaba3252e6866d2a9fa2",
+          "formatterDisplayNameSha256": "bc3222dd42c6dbc21e28c150db22c854e5d6fbd5604b8a3b9920b438f7523546",
+          "parsedXmlNameSha256": "13b0d11e4492f6b1c72d737b68bd68d22f389f591bf0ea8503319c79fffe1b14",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "dc5721e77fccb6520a31a7a0bd2dc45f5462f3864ff2dbe264c541f2c0517a30",
+          "formatterDisplayNameSha256": "f3c624fad3d16c4cb835b9df5b8216760b59ee345243a0183fb8b210e2d6636e",
+          "parsedXmlNameSha256": "2bfc7efd36839b7939c3045ce3d6d4e5f8d5d1d0eba02674b9b7af9c90e2735e",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "32dadba0345a954b2488afa20d17ed1ead2228c5fd748a19d8a527faf33b3cf9",
+          "formatterDisplayNameSha256": "9d269e5311e80bb720f37519c10fd32fae74f4aad563dbea531c9438f5dd8ebc",
+          "parsedXmlNameSha256": "28c54ad9f83873bfbbd108b2af6006a4ef2416208662afbaaa12af411fb23a63",
+          "multiplicity": 1,
+          "argumentCount": 2
+        },
+        {
+          "type": "Hexalith.EventStore.Server.Tests.Routing.CatalogTransportIsolationTests",
+          "method": "OrdinaryRedirectFencesLaterDaprHops",
+          "sourceCaseSha256": "a201c08d2c944523044f84da5b38faf3e60d6f492fea59be8e5b3586fd82a328",
+          "formatterDisplayNameSha256": "83a62550c09420ca0b40f7e935ea4e22b2113817317383115ad3d470ee683f2d",
+          "parsedXmlNameSha256": "e20802cc534ec61f1be813e4df04270e149040c68e651f449a6b8b841c7e9b72",
+          "multiplicity": 1,
+          "argumentCount": 2
+        }
+      ]
+    }
+  ],
+  "notClaimedHistoricalAll33OrAdditionalOrdinaryCases": true,
+  "mandatoryPrivateSdkMapEveryProcess": true
+}

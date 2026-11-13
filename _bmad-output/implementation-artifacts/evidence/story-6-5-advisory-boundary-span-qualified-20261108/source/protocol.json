@@ -1,0 +1,67 @@
+{
+  "sourceQualificationReady": false,
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "bootstrapSha256": "8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375",
+  "role": "projects",
+  "stages": {
+    "Whole": 0,
+    "InitialScopeMarkerSpan": 1,
+    "InitialInputsMarkerSpan": 2,
+    "DiscoveryMarkerSpan": 3,
+    "TerminalEncoding": 4,
+    "FinalInputsMarkerSpan": 5,
+    "FinalCandidatesMarkerSpan": 6,
+    "IndexMarkerSpan": 7
+  },
+  "serializedTerminalStage": "SettingsEnumerationSortDictionary",
+  "fields": {
+    "yielded": {
+      "alias": "lastBoundary",
+      "minimum": 0,
+      "maximum": 11
+    },
+    "nullValue": {
+      "alias": "firstFailureBoundary",
+      "minimum": 0,
+      "maximum": 11
+    },
+    "authenticationAccepted": {
+      "alias": "terminalMarker",
+      "minimum": 0,
+      "maximum": 7
+    },
+    "nonAuthenticationDiscarded": {
+      "alias": "exceptionKind",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "sensitiveSegmentExcluded": {
+      "alias": "callerCancellationObserved",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "authenticationOtherExcluded": {
+      "alias": "linkedCancellationObserved",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "allAllocationColumnsZero": true,
+  "wholeCountColumnsZero": true,
+  "noApplicationCallbackInstrumentation": true,
+  "omissionFlagObservedAfterSerializationNotPayloadClassification": true,
+  "setupDefaultBitsUnobserved": true,
+  "noTimerCauseOrDownstreamQuiescenceInference": true,
+  "freshProcessCanaries": 3,
+  "plannedBehavioralCases": 49,
+  "plannedBehavioralComparisons": 196,
+  "plannedProtocolChecks": 14,
+  "plannedProcesses": 23,
+  "noApplicationOrNativeAcceptanceClaim": true,
+  "nonTerminalCountColumnsZero": true,
+  "maximumRowsPerCapture": 8,
+  "retainedTerminalProtocolChecks": 4,
+  "newBoundaryProtocolChecks": 10,
+  "spansAreMarkerToNextMarkerCatchOrCloseNotAwaitOnly": true,
+  "sourceBoundaryMapping": "stage-map.json"
+}

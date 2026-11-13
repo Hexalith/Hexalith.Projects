@@ -1,0 +1,46 @@
+--- 021c/collector/ReceiverCpuProbe.csproj
++++ current/collector/ReceiverCpuProbe.csproj
+@@ -11,4 +11,9 @@
+     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.21" />
+     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.14" />
+   </ItemGroup>
++  <ItemGroup>
++    <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
++      <_Parameter1>linux</_Parameter1>
++    </AssemblyAttribute>
++  </ItemGroup>
+ </Project>
+--- 021c/collector-smoke/Program.cs
++++ current/collector-smoke/Program.cs
+@@ -8,6 +8,23 @@
+ try
+ {
+     string collector = Path.GetFullPath(args.Single());
++    string prep = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
++    using JsonDocument pins = JsonDocument.Parse(File.ReadAllText(Path.Combine(prep, "collector-input-pins.json")));
++    using JsonDocument provenance = JsonDocument.Parse(File.ReadAllText(Path.Combine(prep, "collector-provenance.json")));
++    string oldBin = Path.GetDirectoryName(provenance.RootElement.GetProperty("qualifiedOldCollectorBinary").GetProperty("path").GetString()!)!;
++    var cachedClosure = pins.RootElement.GetProperty("inputsSha256").EnumerateObject()
++        .Where(row => Path.GetDirectoryName(row.Name) == oldBin && Path.GetExtension(row.Name) == ".dll")
++        .ToDictionary(row => Path.GetFileNameWithoutExtension(row.Name), row => row.Value.GetString()!, StringComparer.Ordinal);
++    var resolver = new AssemblyDependencyResolver(collector);
++    AssemblyLoadContext.Default.Resolving += (context, name) =>
++    {
++        string? path = resolver.ResolveAssemblyToPath(name);
++        if (path is null) return null;
++        if (Path.GetDirectoryName(path) != Path.GetDirectoryName(collector)
++            || !cachedClosure.TryGetValue(Path.GetFileNameWithoutExtension(path), out string? expected)
++            || Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path))) != expected) throw new InvalidOperationException();
++        return context.LoadFromAssemblyPath(path);
++    };
+     Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(collector);
+     Type program = assembly.GetType("Program", true)!, targets = assembly.GetType("ReceiverTargets", true)!;
+     const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+@@ -24,7 +41,6 @@
+         catch (Exception error) { refused = error.GetType().Name == "GuardException" && (string?)error.GetType().GetProperty("Code")!.GetValue(error) == expected; }
+         Check(refused);
+     }
+-    string prep = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
+     // The pinned map is source metadata only; no application process is launched or read.
+     using JsonDocument map = JsonDocument.Parse(File.ReadAllText(Path.Combine(prep, "collector-guard-map.json")));
+     foreach (JsonElement row in map.RootElement.GetProperty("roles").EnumerateArray())

@@ -1,0 +1,74 @@
+{
+  "started": true,
+  "passed": true,
+  "mode": "pre-capped",
+  "group": "double-fault",
+  "variant": "private",
+  "role": "folders",
+  "signalsSent": false,
+  "featureAcceptance": false,
+  "rawBusinessValuesPersisted": false,
+  "command": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-domain-receiver-phase-qualification-native-output-retry-20261108/runtime/folders/private/Hexalith.Folders.Server.dll",
+    "pre-capped",
+    "double-fault",
+    "/tmp/story65-domain-receiver-phase-qualification-native-output-retry-20261108/runtime/folders/private/runtime-binding.json",
+    "05b1a34e3998b163ee0c04fb0dff47a22d4a32503a2e53f2828f6b65e3ccfea4",
+    "/tmp/story65-domain-receiver-phase-qualification-native-output-retry-20261108/processes/22057-folders-private-pre-capped-double-fault/business.json"
+  ],
+  "pid": 3569723,
+  "startTicks": "13826544",
+  "groupId": 3569723,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "artifacts": {
+    "window.control": {
+      "sha256": "45e50666d5bdfaacf741bdb0538157aedac5fedb625aa79d7ab5987e87df3a3d",
+      "bytes": 49,
+      "contentsArchived": false
+    },
+    "folders.closed.json": {
+      "sha256": "b461f43694eeaef5f29671456e568f637ff23c20fd97300e515ca17bf00fc0f6",
+      "bytes": 531,
+      "contentsArchived": true
+    },
+    "folders.jsonl": {
+      "sha256": "1a861cce9f2bf3cc6fa2eb3ae9f3f810432e5e48ec4d3607f96c5c53152772a8",
+      "bytes": 8388558,
+      "contentsArchived": true
+    }
+  },
+  "stageCounts": {
+    "Whole": 27889
+  },
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "folders",
+    "runOrdinal": 22057,
+    "admitted": 94087,
+    "disposedOrUnwound": 94087,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 28548,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 37654,
+    "ioFailures": 0,
+    "writtenRows": 27889,
+    "writtenBytes": 8388558,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 138265799345531,
+    "windowEndTicks": 138273799345531,
+    "frequency": 1000000000
+  },
+  "businessSha256": "1d2213f922d822a0cc0a32d6cf4ec111731813862eec0a5105d130b7b57d09ce",
+  "wallSeconds": 8.551769259996945,
+  "directoryReleased": true,
+  "remainingGroup": []
+}

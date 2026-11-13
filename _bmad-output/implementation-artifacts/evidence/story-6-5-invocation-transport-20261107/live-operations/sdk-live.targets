@@ -1,0 +1,14 @@
+<Project>
+  <Target Name="Story65InvocationTransportLiveSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <ItemGroup>
+      <_Story65Original Include="@(Compile)" Condition="'%(Compile.Identity)' == 'Routing/RouteCatalogInvocationHandler.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65Original->Count())' != '1'" Text="Private SDK original Compile count refused." />
+    <ItemGroup>
+      <Compile Remove="Routing/RouteCatalogInvocationHandler.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/RouteCatalogInvocationHandler.private.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-invocation-transport-prep-20261107/InvocationTransportBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

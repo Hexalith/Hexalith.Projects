@@ -1,0 +1,28 @@
+{
+  "label": "01-projects-build-4",
+  "argv": [
+    "dotnet",
+    "build",
+    "--no-restore",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers",
+    "-p:SupportedProjectReadDistributed=true",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests",
+  "startedUtc": "2026-11-08T03:42:00.601265+00:00",
+  "buildCpuOverride": "2",
+  "pid": 514768,
+  "processGroup": 514768,
+  "startTicks": "14692463",
+  "timedOut": false,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "pidAbsent": true,
+  "finishedUtc": "2026-11-08T03:43:38.473897+00:00",
+  "logSha256": "8e4ff5bc00e89d63fd297f7a10303f97952ab61cb60411a928c8d50ad8abc492"
+}

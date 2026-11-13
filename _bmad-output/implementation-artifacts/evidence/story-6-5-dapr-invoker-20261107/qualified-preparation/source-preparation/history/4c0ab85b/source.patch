@@ -1,0 +1,65 @@
+--- DaprDomainQueryInvoker.original.cs
++++ DaprDomainQueryInvoker.private.cs
+@@ -1,6 +1,9 @@
+ using Dapr.Client;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
+ using System.Net;
++using InvokerBootstrap = Hexalith.PrivateCaptureCounter.GatewayControllerBootstrap;
++using InvokerStage = Hexalith.PrivateCaptureCounter.Stage;
++using InvokerAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ using Hexalith.EventStore.Contracts.Queries;
+ using Hexalith.EventStore.Server.DomainServices;
+@@ -60,10 +63,15 @@
+ 
+     /// <inheritdoc/>
+     public async Task<QueryResult> InvokeAsync(QueryEnvelope query, CancellationToken cancellationToken = default) {
++        using var invokerCounters = InvokerBootstrap.Begin();
+         ArgumentNullException.ThrowIfNull(query);
+ 
++        using var acquireTiming = invokerCounters?.Stage(InvokerStage.ComponentFile, InvokerAllocation.None);
+         var catalogLease = catalogAuthority is null ? null : await catalogAuthority.AcquireAsync(cancellationToken).ConfigureAwait(false);
++        acquireTiming?.Dispose();
++        using var leaseScopeTiming = invokerCounters?.Stage(InvokerStage.ResultTail, InvokerAllocation.None);
+         await using var catalogRelease = new Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogLeaseReleaser(catalogLease).ConfigureAwait(false);
++        using var resolveTiming = invokerCounters?.Stage(InvokerStage.ComponentPolicy, InvokerAllocation.None);
+         var committed = catalogLease?.Snapshot.Resolve("query", query.TenantId, query.Domain, query.QueryType);
+         if (committed is { } route)
+         {
+@@ -78,6 +86,7 @@
+             : await resolver
+             .ResolveAsync(query.TenantId, query.Domain, cancellationToken: cancellationToken)
+             .ConfigureAwait(false);
++        resolveTiming?.Dispose();
+         if (registration is null) {
+             return QueryResult.Failure($"No domain service is registered for tenant '{query.TenantId}', domain '{query.Domain}'.");
+         }
+@@ -85,21 +94,28 @@
+         try {
+             // Invoke the domain service's "query" method (not registration.MethodName, which is the command
+             // "process" method). DAPR resiliency policies own retries/circuit-breaker/timeout.
++            using var httpOwnedTiming = invokerCounters?.Stage(InvokerStage.ActorBoundary, InvokerAllocation.None);
++            using var requestTiming = invokerCounters?.Stage(InvokerStage.AclFile, InvokerAllocation.None);
+             using HttpRequestMessage httpRequest = daprClient.CreateInvokeMethodRequest(
+                 registration.AppId,
+                 committed?.Target.Method ?? QueryMethodName,
+                 query);
+             if (query.CallerAuthority is not null) httpRequest.Options.Set(QueryCallerAuthorityBinding.RequestBindings, QueryCallerAuthorityBinding.Bind(query));
++            requestTiming?.Dispose();
++            using var sendTiming = invokerCounters?.Stage(InvokerStage.SettingsEnumerationSortDictionary, InvokerAllocation.None);
+             HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+             using HttpResponseMessage httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
++            sendTiming?.Dispose();
+             if (httpResponse.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Forbidden) return QueryResult.Failure("safe-denial");
+             if (committed is not null && httpResponse.StatusCode == HttpStatusCode.ServiceUnavailable)
+                 throw new Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException("The committed query receiver refused catalog authority.");
+             if (!httpResponse.IsSuccessStatusCode && httpResponse.StatusCode != HttpStatusCode.BadRequest)
+                 return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
++            using var jsonTiming = invokerCounters?.Stage(InvokerStage.AuthenticationSerialization, InvokerAllocation.None);
+             QueryResult? result = await httpResponse.Content
+                 .ReadFromJsonAsync<QueryResult>(cancellationToken)
+                 .ConfigureAwait(false);
++            jsonTiming?.Dispose();
+             if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
+                 return QueryResult.Failure(result?.ErrorMessage is QueryAdapterFailureReason.InvalidEnvelope or QueryAdapterFailureReason.InvalidCursor
+                     ? result.ErrorMessage : QueryAdapterFailureReason.QueryExecutionFailure);

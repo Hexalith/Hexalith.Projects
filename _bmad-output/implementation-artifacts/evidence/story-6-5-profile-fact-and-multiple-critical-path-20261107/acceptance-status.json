@@ -1,0 +1,30 @@
+{
+  "packetPhase": "native-passed-ordinary-multiple-failed-private-multiple-diagnosed",
+  "nativeChecksPassed": true,
+  "nativeUniquePassingCases": 959,
+  "featureAcceptance": false,
+  "completedOrdinaryRun": "ordinary-live-profile/run.json",
+  "completedOrdinaryResult": "failed",
+  "singlePositiveVerified": true,
+  "multiplePositiveVerified": false,
+  "browserAcceptanceIncluded": false,
+  "completedLiveCleanupIncluded": true,
+  "nextOrdinaryRun": {
+    "naturalBootstrap": "failed before native cases; non-performance",
+    "naturalRetry": "failed MULTIPLE after SINGLE positive",
+    "evidence": "natural-cpu-results.json"
+  },
+  "ordinaryBinaryAudit147Scope": "Exact recorded pre-first-run native restoration audit; preserved byte-for-byte.",
+  "parentSubsequent149Audit": "Parent reports149 clean copies after ordinary build added2 output copies,8 SDK match; not substituted into the older147-copy audit and not independently captured here.",
+  "packagingActions": "Temporary file reads/copies/hash/XML checks only; no repository edits/build/host/process action; no natural-CPU runtime output read.",
+  "later149CopyAuditIncludedSeparately": "pre-natural-cpu-audit/binary-source-audit.json",
+  "boundedPrivateDiagnostic": {
+    "path": "multiple-diagnostic",
+    "result": "failed/KeyboardInterrupt intentional cutoff",
+    "actualMultipleRoots": 3,
+    "nativeBrowserCompletedCases": 0,
+    "featureAcceptance": false,
+    "exactCleanupVerified": true,
+    "currentOrdinaryRestoration": "Assigned to owner agent after diagnostic source/cleanup release; not part of this diagnostic proof."
+  }
+}

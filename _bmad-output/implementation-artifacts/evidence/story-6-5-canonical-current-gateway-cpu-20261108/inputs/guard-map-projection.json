@@ -1,0 +1,44 @@
+{
+  "filePreparationOnly": true,
+  "roles": [
+    {
+      "role": "gateway",
+      "resource": "eventstore",
+      "collectorResource": "eventstorehost",
+      "runtimeAppId": "eventstore",
+      "sourceProject": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+      "entryAssemblyName": "Hexalith.EventStore",
+      "entryDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.dll",
+      "nativeApphost": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore",
+      "gatewayDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+      "domainServiceDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sdkDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "contractsDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll"
+    }
+  ],
+  "collectorIdentityFields": [
+    "Role",
+    "Resource",
+    "Pid",
+    "StartTicks",
+    "RequiredCommandToken",
+    "ExecutableSha256",
+    "Files"
+  ],
+  "requiredCollectorInputLabels": [
+    "gateway-assembly",
+    "owner-config",
+    "source-audit"
+  ],
+  "additionalHashBoundInputLabels": [
+    "eventstore-entry-assembly",
+    "sdk-assembly",
+    "domain-service-assembly",
+    "contracts-assembly",
+    "source-000..source-064"
+  ],
+  "collectorChecksOnlyGatewayMap": true,
+  "graphResourceAndCollectorResourceAreDistinctFixedLiterals": true,
+  "oldCollectorSafeCommandAndFreshMapComparisonLimitUnchanged": "Compiled old SafeCommand is not the later receiver positional guard; collector emits post-map hash with Matches=true. Exact fresh owned source/DCP entry+hash/map and pre/post-collection guards are established by external watcher, not a stronger old collector claim.",
+  "watcherChecksAllFiveMappedModulesAndFreshProducerCopyPairs": true
+}

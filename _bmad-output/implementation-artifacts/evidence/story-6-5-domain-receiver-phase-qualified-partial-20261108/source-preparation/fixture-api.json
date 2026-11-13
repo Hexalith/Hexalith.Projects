@@ -1,0 +1,221 @@
+{
+  "filePreparationOnly": true,
+  "assemblyName": "Hexalith.EventStore.Server.LiveSidecar.Tests",
+  "apiType": "Hexalith.PrivateDomainReceiverFixture.FixtureApi",
+  "variantCarrier": "Hexalith.EventStore.DomainService.dll",
+  "ordinarySdkMustBeIdenticalInBothVariantFolders": true,
+  "methods": {
+    "Names": "string[] Names()",
+    "CreateAsync": "Task<object> CreateAsync(string caseName, Action<int>? syntheticPhaseProbe)",
+    "ExecuteAsync": "Task<object[]> ExecuteAsync(object preparedHandle, bool suppressEntry = false)",
+    "DisposeAsync": "Task DisposeAsync(object preparedHandle)"
+  },
+  "singleUsePreparedHandle": true,
+  "crossBoundaryTypes": "framework primitives, arrays, Task and opaque object handle in same Default context",
+  "resultSlots": [
+    "Case",
+    "Passed",
+    "FilterEntries",
+    "AuthorityAcquireCalls",
+    "NextCalls",
+    "ReleaseCallbacks",
+    "ErrorType",
+    "InjectedFaults",
+    "TokensMatched",
+    "LifetimeAndHandoffMatched",
+    "CallerRestored",
+    "PerCaptureExpectedStageMask",
+    "MinimumLastDisposeTicks",
+    "MaximumLastDisposeTicks",
+    "FirstDisposeHoldTicks",
+    "DoubleDisposeOrder",
+    "ReleaseBoundaryRestored",
+    "ExactContextReachedNext",
+    "FirstDependencyProbeObserved",
+    "EntrySuppressionObserved"
+  ],
+  "phaseProbeCodes": {
+    "0": "first synchronous authority or custom-guard entry before genuine await",
+    "1": "after authority/custom-guard await",
+    "2": "filter returned before owned result execution",
+    "3": "leaf result entry before its await",
+    "4": "after leaf result await",
+    "5": "release callback after genuine await",
+    "6": "all result/lease work completed"
+  },
+  "probeOnlySyntheticNoRecorderArgument": true,
+  "activeHandoffCounterCheck": "at phase2, driver may read admitted/disposed scalars only after ordinary readiness; canaries must not inspect helper until their first complete business call returns",
+  "nestedCasesHaveTwoOwnConsecutiveCaptureOrdinalsAndSameMask": true,
+  "modes": [
+    "disabled",
+    "active",
+    "pre-capped",
+    "failing-sink"
+  ],
+  "proposedFocusedSemanticPairs": 64,
+  "freshFirstBusinessCanaries": 3,
+  "sourceControls": 59,
+  "cases": [
+    {
+      "name": "custom-no-lease-nonresult",
+      "entries": 1,
+      "authorityAcquireCalls": 0,
+      "nextCalls": 1,
+      "releaseCallbacks": 0,
+      "injectedFaults": 0,
+      "maskPerCapture": 147,
+      "errorType": null
+    },
+    {
+      "name": "custom-owned-nonresult",
+      "entries": 1,
+      "authorityAcquireCalls": 0,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 0,
+      "maskPerCapture": 179,
+      "errorType": null
+    },
+    {
+      "name": "concrete-delayed-result",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 0,
+      "maskPerCapture": 255,
+      "errorType": null
+    },
+    {
+      "name": "concrete-result-fault",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 1,
+      "maskPerCapture": 255,
+      "errorType": "System.InvalidOperationException"
+    },
+    {
+      "name": "concrete-result-cancel",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 1,
+      "maskPerCapture": 255,
+      "errorType": "System.OperationCanceledException"
+    },
+    {
+      "name": "concrete-release-override",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 2,
+      "maskPerCapture": 255,
+      "errorType": "System.IO.IOException"
+    },
+    {
+      "name": "filter-next-fault",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 1,
+      "maskPerCapture": 191,
+      "errorType": "System.InvalidOperationException"
+    },
+    {
+      "name": "filter-next-cancel",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 1,
+      "maskPerCapture": 191,
+      "errorType": "System.OperationCanceledException"
+    },
+    {
+      "name": "guard-acquire-fault",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 0,
+      "releaseCallbacks": 0,
+      "injectedFaults": 1,
+      "maskPerCapture": 135,
+      "errorType": null
+    },
+    {
+      "name": "guard-validation-fault",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 0,
+      "releaseCallbacks": 1,
+      "injectedFaults": 0,
+      "maskPerCapture": 175,
+      "errorType": null
+    },
+    {
+      "name": "terminal-refusal-owned-result",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 0,
+      "releaseCallbacks": 1,
+      "injectedFaults": 0,
+      "maskPerCapture": 255,
+      "errorType": null
+    },
+    {
+      "name": "filter-double-dispose-retry-success",
+      "entries": 1,
+      "authorityAcquireCalls": 0,
+      "nextCalls": 1,
+      "releaseCallbacks": 2,
+      "injectedFaults": 1,
+      "maskPerCapture": 179,
+      "errorType": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException"
+    },
+    {
+      "name": "filter-double-dispose-second-fault",
+      "entries": 1,
+      "authorityAcquireCalls": 0,
+      "nextCalls": 1,
+      "releaseCallbacks": 2,
+      "injectedFaults": 2,
+      "maskPerCapture": 179,
+      "errorType": "System.IO.IOException"
+    },
+    {
+      "name": "nested-two-results-success",
+      "entries": 2,
+      "authorityAcquireCalls": 2,
+      "nextCalls": 2,
+      "releaseCallbacks": 2,
+      "injectedFaults": 0,
+      "maskPerCapture": 255,
+      "errorType": null
+    },
+    {
+      "name": "nested-inner-result-fault",
+      "entries": 2,
+      "authorityAcquireCalls": 2,
+      "nextCalls": 2,
+      "releaseCallbacks": 2,
+      "injectedFaults": 1,
+      "maskPerCapture": 255,
+      "errorType": "System.InvalidOperationException"
+    },
+    {
+      "name": "result-release-cancel-override",
+      "entries": 1,
+      "authorityAcquireCalls": 1,
+      "nextCalls": 1,
+      "releaseCallbacks": 1,
+      "injectedFaults": 2,
+      "maskPerCapture": 255,
+      "errorType": "System.OperationCanceledException"
+    }
+  ],
+  "plannedButNotCompiledOrExecuted": true
+}

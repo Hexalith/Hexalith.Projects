@@ -1,0 +1,135 @@
+{
+  "filePreparationOnly": true,
+  "compileReleased": false,
+  "executionReleased": false,
+  "finalSourceAndRawReferenceHandoffBound": false,
+  "fixtureApiSha256": "5022a61a34aa132e7195c0729f6acd8b4b9ee9948b47002b53fa99e9747bbe13",
+  "project": "/tmp/story65-technical-fingerprint-prep-20261108/Benchmark.csproj",
+  "cwd": "/tmp/story65-technical-fingerprint-prep-20261108",
+  "rawReferenceRule": "Exact current owner-test-bin top-level DLLs, excluding only Hexalith.EventStore.Server.Tests.dll; no project or package references. Repair final source freeze pins every actual file.",
+  "rawReferenceCount": 130,
+  "buildEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "buildEnvironmentAssignments": {
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "runtimeEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "runtimeCpuOverrideAbsent": true,
+  "restore": [
+    "dotnet",
+    "restore",
+    "/tmp/story65-technical-fingerprint-prep-20261108/Benchmark.csproj",
+    "--configfile",
+    "/tmp/story65-technical-fingerprint-prep-20261108/driver/NuGet.Config",
+    "-p:Story65ReviewedPreparationSha256=ROOT_REVIEWED_FINAL_SOURCE_SHA_REQUIRED",
+    "-p:Story65SdkPath=ACTUAL_CURRENT_SDK_PATH_REQUIRED",
+    "-p:Story65SdkSha256=ACTUAL_CURRENT_SDK_SHA_REQUIRED",
+    "-p:Story65ContractsPath=ACTUAL_CURRENT_CONTRACTS_PATH_REQUIRED",
+    "-p:Story65ContractsSha256=ACTUAL_CURRENT_CONTRACTS_SHA_REQUIRED",
+    "-p:NuGetAudit=false"
+  ],
+  "build": [
+    "dotnet",
+    "build",
+    "/tmp/story65-technical-fingerprint-prep-20261108/Benchmark.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:Story65ReviewedPreparationSha256=ROOT_REVIEWED_FINAL_SOURCE_SHA_REQUIRED",
+    "-p:Story65SdkPath=ACTUAL_CURRENT_SDK_PATH_REQUIRED",
+    "-p:Story65SdkSha256=ACTUAL_CURRENT_SDK_SHA_REQUIRED",
+    "-p:Story65ContractsPath=ACTUAL_CURRENT_CONTRACTS_PATH_REQUIRED",
+    "-p:Story65ContractsSha256=ACTUAL_CURRENT_CONTRACTS_SHA_REQUIRED",
+    "-p:NuGetAudit=false"
+  ],
+  "run": [
+    "dotnet",
+    "/tmp/story65-technical-fingerprint-prep-20261108/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "ROOT_REVIEWED_POSTBUILD_RUNTIME_MANIFEST_PATH",
+    "ROOT_REVIEWED_POSTBUILD_RUNTIME_MANIFEST_SHA",
+    "FRESH_OUTPUT_DIRECTORY_REQUIRED"
+  ],
+  "runtimeManifestRequiredFields": [
+    "executionReleased",
+    "preparationRoot",
+    "sdkPath",
+    "sdkSha256",
+    "contractsPath",
+    "contractsSha256",
+    "filesSha256",
+    "inputsSha256",
+    "compiledInputsSha256"
+  ],
+  "boundedExecution": "Reuse existing Root-owned single-child run_one; no new supervisor/framework. Suggested CPU45/46sec,wall120sec,RSS2GiB, stdout bounded. No apps/hosts/network.",
+  "wholePassProtocol": {
+    "markedEndpointSubsetTrimmed": false,
+    "beginObserveCompleteImageHitsDisposeAllInsideClock": true,
+    "warmObservationsPerReader": 32,
+    "memoColdObservationsPerReader": 1,
+    "readers": [
+      1,
+      2,
+      4
+    ],
+    "variantCyclicOrders": [
+      [
+        "actual",
+        "control",
+        "candidate"
+      ],
+      [
+        "control",
+        "candidate",
+        "actual"
+      ],
+      [
+        "candidate",
+        "actual",
+        "control"
+      ]
+    ],
+    "batches": 54,
+    "observations": 2079,
+    "ownerInitAndDisposeTimeAllocationSeparate": true,
+    "noCpuNormalizationBelow30msPerBatch": true,
+    "coldNotRuntimeOrFileCold": true,
+    "firstConcurrentReadersMayShareNewlyPublishedEntries": true,
+    "corpusSetupParityAndOutputWritesOutsideCapture": true,
+    "allEligibleConstrainedFallbacksRetained": true,
+    "noSchemasDescriptorsOrKeysPersisted": true,
+    "technicalAssemblies": [
+      "Hexalith.EventStore.Gateway",
+      "Hexalith.EventStore.Admin.Server"
+    ],
+    "cohort": "All successful original Describe(required:true) results among actual marked technical endpoints in both registered assemblies, including constrained fallbacks",
+    "genuineUnmarkedBoundOwnerQueryWitnessNotPromoted": true,
+    "coreQueryFingerprintOptimizationClaimed": false,
+    "wholeReceiverOrCoreInventoryClaimed": false
+  },
+  "productionApproval": false,
+  "hostDeadlineClaim": false,
+  "builds": 0,
+  "runs": 0
+}

@@ -1,0 +1,254 @@
+{
+  "startUtc": "2026-11-07T23:00:24.139192+00:00",
+  "endUtc": "2026-11-07T23:00:34.717072+00:00",
+  "preparationReceipt": {
+    "path": "/tmp/story65-receiver-phase-prep-20261107/preparation-receipt.json",
+    "sha256": "83bb2d0938e32482f1a459df945e7441904e84bcd64c605d9eb223e76f2fc623"
+  },
+  "commandsSnapshotSha256": "94a0768e4f112c09df1546a9529d5b79a960cffbeeaff4ee4231c02a7be521de",
+  "commandCount": 8,
+  "allEightCommandsClosedZero": true,
+  "currentInputCount": 1267,
+  "allInputHashesBeforeAfterUnchanged": true,
+  "commands": [
+    {
+      "ordinal": 1,
+      "kind": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:24.533111+00:00",
+      "endUtc": "2026-11-07T23:00:25.489149+00:00",
+      "process": {
+        "pid": 2511095,
+        "state": "R",
+        "processGroup": 2511095,
+        "startTicks": 13002796
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/01-restore.log",
+      "logSha256": "40d104602671164ab3958225da3e1c8cabd55f0251d6df6bc911d9d5a24f44ce",
+      "logBytes": 80
+    },
+    {
+      "ordinal": 2,
+      "kind": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:25.489546+00:00",
+      "endUtc": "2026-11-07T23:00:26.375239+00:00",
+      "process": {
+        "pid": 2511176,
+        "state": "R",
+        "processGroup": 2511176,
+        "startTicks": 13002892
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/02-restore.log",
+      "logSha256": "40d104602671164ab3958225da3e1c8cabd55f0251d6df6bc911d9d5a24f44ce",
+      "logBytes": 80
+    },
+    {
+      "ordinal": 3,
+      "kind": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:26.375498+00:00",
+      "endUtc": "2026-11-07T23:00:27.430989+00:00",
+      "process": {
+        "pid": 2511220,
+        "state": "R",
+        "processGroup": 2511220,
+        "startTicks": 13002980
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/03-restore.log",
+      "logSha256": "40d104602671164ab3958225da3e1c8cabd55f0251d6df6bc911d9d5a24f44ce",
+      "logBytes": 80
+    },
+    {
+      "ordinal": 4,
+      "kind": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:27.431264+00:00",
+      "endUtc": "2026-11-07T23:00:28.322773+00:00",
+      "process": {
+        "pid": 2511565,
+        "state": "R",
+        "processGroup": 2511565,
+        "startTicks": 13003086
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/04-restore.log",
+      "logSha256": "40d104602671164ab3958225da3e1c8cabd55f0251d6df6bc911d9d5a24f44ce",
+      "logBytes": 80
+    },
+    {
+      "ordinal": 5,
+      "kind": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:28.329253+00:00",
+      "endUtc": "2026-11-07T23:00:30.388752+00:00",
+      "process": {
+        "pid": 2511718,
+        "state": "R",
+        "processGroup": 2511718,
+        "startTicks": 13003176
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/05-build.log",
+      "logSha256": "94734a49b19c4898c85669760ab348e89a226f8c3c669ab2937d10212365bcfe",
+      "logBytes": 191
+    },
+    {
+      "ordinal": 6,
+      "kind": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:30.389059+00:00",
+      "endUtc": "2026-11-07T23:00:31.754947+00:00",
+      "process": {
+        "pid": 2512212,
+        "state": "R",
+        "processGroup": 2512212,
+        "startTicks": 13003381
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/06-build.log",
+      "logSha256": "a58f83769519b5a015552bc08345a10349da9ba8ae50c3d46564ea24a555794f",
+      "logBytes": 182
+    },
+    {
+      "ordinal": 7,
+      "kind": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:31.755195+00:00",
+      "endUtc": "2026-11-07T23:00:33.073125+00:00",
+      "process": {
+        "pid": 2512482,
+        "state": "R",
+        "processGroup": 2512482,
+        "startTicks": 13003518
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/07-build.log",
+      "logSha256": "e44a1bdfbbd32cfd0ba008a82ebe6b8780f057134b7897b27c7ce84c401bf8e4",
+      "logBytes": 189
+    },
+    {
+      "ordinal": 8,
+      "kind": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-nodeReuse:false",
+        "-p:UseSharedCompilation=false",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false"
+      ],
+      "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+      "startUtc": "2026-11-07T23:00:33.073356+00:00",
+      "endUtc": "2026-11-07T23:00:34.465151+00:00",
+      "process": {
+        "pid": 2512528,
+        "state": "R",
+        "processGroup": 2512528,
+        "startTicks": 13003650
+      },
+      "exitCode": 0,
+      "pidAbsent": true,
+      "remainingGroupMembers": [],
+      "log": "/tmp/story65-receiver-phase-entry-build-retry-20261107/08-build.log",
+      "logSha256": "9edbff966164d52675d7608be98ec2b8e25530db1f06ff9aefa79fe5bf397ccc",
+      "logBytes": 197
+    }
+  ],
+  "actualEntryOutputFileCount": 112,
+  "assemblyLoadsOrFixtureNativeCounterWindowExecutionInvoked": false,
+  "failure": null
+}

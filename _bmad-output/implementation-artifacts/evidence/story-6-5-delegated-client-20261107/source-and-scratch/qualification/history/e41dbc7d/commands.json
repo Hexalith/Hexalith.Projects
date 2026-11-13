@@ -1,0 +1,62 @@
+{
+  "preparedOnly": true,
+  "executed": false,
+  "cwd": "/tmp/story65-delegated-client-prep-20261107",
+  "clearMappingHookEnv": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "buildOnlyEnv": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "runtimeProcessorOverride": null,
+  "restoreArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "restore",
+    "/tmp/story65-delegated-client-prep-20261107/Differential.csproj",
+    "--configfile",
+    "/tmp/story65-delegated-client-prep-20261107/NuGet.Config",
+    "--ignore-failed-sources",
+    "--disable-build-servers"
+  ],
+  "buildArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-delegated-client-prep-20261107/Differential.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "factsArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-delegated-client-prep-20261107/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+    "facts"
+  ],
+  "controllerArgvTemplate": [
+    "python3",
+    "/tmp/story65-delegated-client-prep-20261107/freshcontroller.py",
+    "--execute",
+    "--pins-sha256",
+    "<root-approved-preparation-receipt-sha256>",
+    "--results",
+    "<fresh-qualified-output-name>"
+  ],
+  "applicationBuildsAuthorized": false,
+  "nativeGatePreparedOnly": {
+    "class": "Hexalith.EventStore.DomainService.Tests.QueryAuthorityCorrectionTests",
+    "sourceDerivedCases": 24,
+    "executed": false,
+    "opsOwner": "implement_6_5"
+  }
+}

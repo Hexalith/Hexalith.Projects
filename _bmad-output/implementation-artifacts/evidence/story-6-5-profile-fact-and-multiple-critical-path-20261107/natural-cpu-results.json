@@ -1,0 +1,210 @@
+{
+  "ordinaryRuns": [
+    {
+      "label": "natural-cpu-bootstrap",
+      "result": "failed",
+      "failure": "Command failed (1): docker start 77c82341425f947da060d62adf6506e616bb3f314c38aec7da2ba70275fc1762",
+      "preexistingResourcesPreserved": true,
+      "ownedSidecarsAbsent": null,
+      "privateMaterialRemoved": true,
+      "allRecordedCleanupAbsencesVerified": true,
+      "files": [
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-20261107/launcher-controls.log",
+          "file": "launcher-controls.log",
+          "sha256": "a83b3a4623a56bb30bc30fa42db618b3da39e2e18d32d35bf7cabc97966b6880",
+          "bytes": 30594
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-20261107/run.json",
+          "file": "run.json",
+          "sha256": "ba24e2efbefc9ff35242d472485219ccceb17474ee54c66de946fcccd0d06cc1",
+          "bytes": 14612
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-20261107/source-manifest.json",
+          "file": "source-manifest.json",
+          "sha256": "46c9b35dea1583f8f7aab7b98cf160f2271794c08e94f7f73ef2d93b23e32100",
+          "bytes": 3061872
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-20261107-command.json",
+          "file": "launcher-command.json",
+          "sha256": "1366401c51d1c26fd2aa8faf333adaad270bc22b14f7febeee1194d27b5f5ff6",
+          "bytes": 983
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-20261107-console.log",
+          "file": "launcher-console.log",
+          "sha256": "8f4e23aab30b515368a45142d6330d8eedd9c1dc20c1de9227314b01f29a1c67",
+          "bytes": 156
+        }
+      ],
+      "performanceEvidence": false,
+      "nativeCases": 0,
+      "scope": "OIDC docker-start bootstrap failure before actual app hosts/native cases; exact Docker reason not retained."
+    },
+    {
+      "label": "natural-cpu-retry",
+      "result": "failed",
+      "failure": "The native browser seed did not execute its exact passing case without errors or skips.",
+      "preexistingResourcesPreserved": true,
+      "ownedSidecarsAbsent": true,
+      "privateMaterialRemoved": true,
+      "allRecordedCleanupAbsencesVerified": true,
+      "files": [
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/bootstrap-command-status.json",
+          "file": "bootstrap-command-status.json",
+          "sha256": "8120bfeaea74d74f375ea72f694c66ee5d719ff4e18d4444af24522b56f1df51",
+          "bytes": 209
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/bootstrap-delivery.json",
+          "file": "bootstrap-delivery.json",
+          "sha256": "d0b1ee5fdec8e01ac0de0c199d1475c97d671c22696eb6731e8bedd6c8939dfc",
+          "bytes": 356
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/browser-advisory-seed-readiness.jsonl",
+          "file": "browser-advisory-seed-readiness.jsonl",
+          "sha256": "57715964e32e8d90cfd21c7748fcfbd94ced85211f5f93d48e47b5061ec9b03c",
+          "bytes": 496707
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/browser-seed.log",
+          "file": "browser-seed.log",
+          "sha256": "dd99cf219d4cde58e742a69f9430ddef1d89c21106a763f311da573107939e48",
+          "bytes": 1804
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/browser-seed.xml",
+          "file": "browser-seed.xml",
+          "sha256": "d19b99ab4d314e078a1e34c6cd80468fc183ef773b27eee1fc5391a1aee11fe8",
+          "bytes": 3175
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/build-38.log",
+          "file": "build-38.log",
+          "sha256": "4cd276ddf9047adf72242914936da31c23943ddc42f542817580156525f03635",
+          "bytes": 17070
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/folder-seed-readiness.jsonl",
+          "file": "folder-seed-readiness.jsonl",
+          "sha256": "3053ba505e73ddaef49cfc7ad136390e2e5595f617295d455acbd104587d5a16",
+          "bytes": 1584
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/launcher-controls.log",
+          "file": "launcher-controls.log",
+          "sha256": "1c3bd8cd59b5735cb759ed6f3507b5ef2e19f5a2b893e6ab3a78bc62907c133d",
+          "bytes": 30594
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/organization-seed-readiness.jsonl",
+          "file": "organization-seed-readiness.jsonl",
+          "sha256": "bfa6ca9c6ad94d548dc34ac0ba0c73b9fad3781ea22a9ad512cc96c351352b8b",
+          "bytes": 550
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/owner-metadata-probe.jsonl",
+          "file": "owner-metadata-probe.jsonl",
+          "sha256": "227a46a3e0c4dc327ed7ed0ecd623305c53bc61b7671eafbab22d58ebfaf760c",
+          "bytes": 854
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/run.json",
+          "file": "run.json",
+          "sha256": "c59515220214cc2420bdb627ea172a38881478a752dd429a056d3a166af7828f",
+          "bytes": 68579
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/seed-delivery-readiness.jsonl",
+          "file": "seed-delivery-readiness.jsonl",
+          "sha256": "14c1e9f1f7110afa05eebc53968f02ec493def4b35979ab933b00d114bdb1cfc",
+          "bytes": 25818
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/seed-progress.log",
+          "file": "seed-progress.log",
+          "sha256": "5d84c26b68475b47dd499ed7d66a8f01eefbfa28cfa309549a194c79845a04f4",
+          "bytes": 1374
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/seed-project-completion.jsonl",
+          "file": "seed-project-completion.jsonl",
+          "sha256": "54ffd9cd7210290e59ada99c89a9dbd16ac404a110de107a7dca438b46acdb2f",
+          "bytes": 2664
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/seed-project-projection-outcomes.jsonl",
+          "file": "seed-project-projection-outcomes.jsonl",
+          "sha256": "126a43049fd0d1d38da182d12e159ee485527e1a87c70c21a13cd7ec78f739ec",
+          "bytes": 2316
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/source-manifest.json",
+          "file": "source-manifest.json",
+          "sha256": "46c9b35dea1583f8f7aab7b98cf160f2271794c08e94f7f73ef2d93b23e32100",
+          "bytes": 3061872
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107/writer-protocol-cutover.json",
+          "file": "writer-protocol-cutover.json",
+          "sha256": "e05a5d58e34b811388a2c5718088dad9495ecd40406f87141959cd752fe01929",
+          "bytes": 784
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107-command.json",
+          "file": "launcher-command.json",
+          "sha256": "c70e5e53a140bdc73fa5e5e789567a3dce51a57ba60132f5d54dea9f97a384bf",
+          "bytes": 995
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107-console.log",
+          "file": "launcher-console.log",
+          "sha256": "ba2c7132c13b73e8b586974fd76ae09434c1b0738298fde320e1f862cef57891",
+          "bytes": 162
+        },
+        {
+          "sourcePath": "/tmp/story65-natural-cpu-live-retry-20261107-runtime-facts.json",
+          "file": "launcher-runtime-facts.json",
+          "sha256": "6f79eae3449eb2a49b8ed082d162669fc57cc70d37a03d8d258ad3f49ab9be02",
+          "bytes": 834
+        }
+      ],
+      "single": {
+        "attempts": 2,
+        "positives": 1,
+        "positiveObservations": [
+          {
+            "attempt": 2,
+            "result": "SingleCandidate",
+            "incomplete": false,
+            "candidateCount": 1,
+            "elapsedMilliseconds": 2304.5711
+          }
+        ]
+      },
+      "multiple": {
+        "attempts": 30,
+        "positives": 0,
+        "medianExternalFixtureElapsedMs": 2386.5694999999996,
+        "allEmptyIncomplete": true
+      },
+      "performanceEvidence": true,
+      "nativeSeed": [
+        {
+          "name": "Hexalith.Projects.Integration.Tests.SupportedProjectBrowserSeedTests.SeedRealOidcBrowserFixture",
+          "result": "Fail"
+        }
+      ],
+      "browserCases": 0
+    }
+  ],
+  "featureAcceptance": false,
+  "processorOverrideRemovedOnly": true,
+  "noSourceDeadlineExpectationOrThreadPoolGcTuningChange": true,
+  "sourceInputsParentReportedRehashedMatching": 17173
+}

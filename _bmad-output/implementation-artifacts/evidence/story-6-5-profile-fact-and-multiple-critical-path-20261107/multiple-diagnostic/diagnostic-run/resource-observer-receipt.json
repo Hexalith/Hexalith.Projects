@@ -1,0 +1,112 @@
+{
+  "result": "failed after partial metadata capture",
+  "failureType": "JSONDecodeError",
+  "failureBoundary": "Supervisor JSON was read during a non-atomic write; no source/host action or private runtime failure.",
+  "observerExitCode": 1,
+  "resourceSamplesRetained": 75,
+  "processFacts": [
+    {
+      "pid": 1635165,
+      "startTicks": "6278286",
+      "samples": 27,
+      "firstMonotonicNs": 62923784212611,
+      "lastMonotonicNs": 62926399665658,
+      "processorOverride": "absent",
+      "affinityCpuIds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "affinityCpuCount": 14,
+      "effectiveQuotaCpuCount": null,
+      "quotaUnconstrained": true,
+      "cgroupCpuCounters": {
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0
+      }
+    },
+    {
+      "pid": 1635287,
+      "startTicks": "6278305",
+      "samples": 25,
+      "firstMonotonicNs": 62923985746208,
+      "lastMonotonicNs": 62926399606974,
+      "processorOverride": "absent",
+      "affinityCpuIds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "affinityCpuCount": 14,
+      "effectiveQuotaCpuCount": null,
+      "quotaUnconstrained": true,
+      "cgroupCpuCounters": {
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0
+      }
+    },
+    {
+      "pid": 1635499,
+      "startTicks": "6278352",
+      "samples": 23,
+      "firstMonotonicNs": 62924187013103,
+      "lastMonotonicNs": 62926399528562,
+      "processorOverride": "absent",
+      "affinityCpuIds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "affinityCpuCount": 14,
+      "effectiveQuotaCpuCount": null,
+      "quotaUnconstrained": true,
+      "cgroupCpuCounters": {
+        "nr_periods": 0,
+        "nr_throttled": 0,
+        "throttled_usec": 0
+      }
+    }
+  ],
+  "fullRunCpuThreadPoolGcSource": "114 independent built-in resource samples in ServiceDefaults timing files.",
+  "partialCoverageLimit": "External affinity/quota/kernel samples end early; do not substitute full-run coverage.",
+  "sensitiveEnvironmentOutput": false,
+  "environmentWhitelist": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "noEnvironmentAffinityQuotaMutation": true
+}

@@ -1,0 +1,60 @@
+<Project>
+<Target Name="OwnerStageHexalithEventStoreDomainService" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+<ItemGroup>
+<Compile Remove="DelegatedOwnerQueryClient.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Hexalith.EventStore.DomainService-DelegatedOwnerQueryClient.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingDomainService.cs" />
+</ItemGroup>
+</Target>
+<Target Name="OwnerStageHexalithEventStore" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore'">
+<ItemGroup>
+<Compile Remove="Controllers/QueriesController.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Controllers-QueriesController.cs" />
+<Compile Remove="Controllers/StreamsController.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Controllers-StreamsController.cs" />
+<Compile Remove="Queries/DaprDomainQueryInvoker.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Queries-DaprDomainQueryInvoker.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingEventStore.cs" />
+</ItemGroup>
+</Target>
+<Target Name="OwnerStageHexalithEventStoreServiceDefaults" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+<ItemGroup>
+<Compile Remove="Routing/RouteCatalogAuthority.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogAuthority.cs" />
+<Compile Remove="Routing/RouteCatalogActivationBinding.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogActivationBinding.cs" />
+<Compile Remove="Routing/ObservedRouteCatalogHost.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-ObservedRouteCatalogHost.cs" />
+<Compile Remove="Routing/TechnicalHttpObservationPass.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpObservationPass.cs" />
+<Compile Remove="Routing/TechnicalHttpActionObservation.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpActionObservation.cs" />
+<Compile Remove="Routing/TechnicalHttpRouteCatalogReceiver.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpRouteCatalogReceiver.cs" />
+<Compile Remove="Routing/RouteCatalogInvocationHandler.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogInvocationHandler.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingServiceDefaults.cs" />
+</ItemGroup>
+</Target>
+<Target Name="OwnerStageHexalithEventStoreClient" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Client'">
+<ItemGroup>
+<Compile Remove="Streams/GatewayNativeSourceMetadataReader.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Streams-GatewayNativeSourceMetadataReader.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingClient.cs" />
+</ItemGroup>
+</Target>
+<Target Name="OwnerStageHexalithFoldersServer" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Folders.Server'">
+<ItemGroup>
+<Compile Remove="Queries/FolderOwnerReadQueryHandler.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Queries-FolderOwnerReadQueryHandler.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingServer.cs" />
+</ItemGroup>
+</Target>
+<Target Name="OwnerStageHexalithFolders" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Folders'">
+<ItemGroup>
+<Compile Remove="Authorization/LayeredFolderAuthorizationService.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Authorization-LayeredFolderAuthorizationService.cs" />
+<Compile Include="/tmp/story65-owner-stage-overlay-20261107/Story65TimingFolders.cs" />
+</ItemGroup>
+</Target>
+</Project>

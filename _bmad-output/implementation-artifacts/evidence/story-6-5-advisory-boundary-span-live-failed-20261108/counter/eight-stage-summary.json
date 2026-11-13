@@ -1,0 +1,147 @@
+{
+  "sourceIndependentAuditSha256": "ce4a09e4fb9e45ecde09a49ae2f0d95187a541a93f38fa3a8e8afc11ad1fdbea",
+  "captures": 3,
+  "rows": 24,
+  "wholeMilliseconds": [
+    1999.48643,
+    2000.167194,
+    2001.932555
+  ],
+  "terminalEncodingMilliseconds": [
+    0.220327,
+    0.000731,
+    0.001173
+  ],
+  "terminalVectorHistogram": [
+    {
+      "values": [
+        10,
+        6,
+        6,
+        1,
+        0,
+        1
+      ],
+      "captures": 3
+    }
+  ],
+  "retainedMarkerSpanSummary": {
+    "InitialScope": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 1.484051,
+      "p95RetainedMilliseconds": 1.787794,
+      "medianPairedWholeFraction": 0.0007413091896095371
+    },
+    "InitialInputs": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 560.774796,
+      "p95RetainedMilliseconds": 582.328306,
+      "medianPairedWholeFraction": 0.28036396041400125
+    },
+    "Discovery": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 559.410352,
+      "p95RetainedMilliseconds": 569.91916,
+      "medianPairedWholeFraction": 0.2796817954409465
+    },
+    "FinalInputs": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 563.624031,
+      "p95RetainedMilliseconds": 568.216449,
+      "medianPairedWholeFraction": 0.28178845883020714
+    },
+    "FinalCandidates": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 313.141743,
+      "p95RetainedMilliseconds": 316.984687,
+      "medianPairedWholeFraction": 0.15655778373895277
+    },
+    "Index": {
+      "retainedCaptures": 3,
+      "unobservedCaptures": 0,
+      "medianRetainedMilliseconds": 1.148395,
+      "p95RetainedMilliseconds": 1.180948,
+      "medianPairedWholeFraction": 0.0005741495028240124
+    }
+  },
+  "perCapturePairedSpans": [
+    {
+      "captureOrdinal": 1,
+      "wholeMilliseconds": 1999.48643,
+      "retainedBoundaryMilliseconds": {
+        "InitialScope": 1.304094,
+        "InitialInputs": 551.634285,
+        "Discovery": 558.306971,
+        "FinalInputs": 568.216449,
+        "FinalCandidates": 316.984687,
+        "Index": 1.029166
+      },
+      "pairedWholeFractions": {
+        "InitialScope": 0.000652214478894963,
+        "InitialInputs": 0.27588798639658685,
+        "Discovery": 0.2792251863394742,
+        "FinalInputs": 0.28418119796892044,
+        "FinalCandidates": 0.15853305240986307,
+        "Index": 0.0005147151711352199
+      },
+      "terminalEncodingMilliseconds": 0.220327,
+      "unattributedRemainderMilliseconds": 1.790451,
+      "unattributedRemainderFraction": 0.0008954554395250384
+    },
+    {
+      "captureOrdinal": 2,
+      "wholeMilliseconds": 2000.167194,
+      "retainedBoundaryMilliseconds": {
+        "InitialScope": 1.787794,
+        "InitialInputs": 560.774796,
+        "Discovery": 559.410352,
+        "FinalInputs": 563.624031,
+        "FinalCandidates": 313.141743,
+        "Index": 1.148395
+      },
+      "pairedWholeFractions": {
+        "InitialScope": 0.0008938222791389308,
+        "InitialInputs": 0.28036396041400125,
+        "Discovery": 0.2796817954409465,
+        "FinalInputs": 0.28178845883020714,
+        "FinalCandidates": 0.15655778373895277,
+        "Index": 0.0005741495028240124
+      },
+      "terminalEncodingMilliseconds": 0.000731,
+      "unattributedRemainderMilliseconds": 0.279352,
+      "unattributedRemainderFraction": 0.0001396643244814663
+    },
+    {
+      "captureOrdinal": 3,
+      "wholeMilliseconds": 2001.932555,
+      "retainedBoundaryMilliseconds": {
+        "InitialScope": 1.484051,
+        "InitialInputs": 582.328306,
+        "Discovery": 569.91916,
+        "FinalInputs": 552.84757,
+        "FinalCandidates": 293.96126,
+        "Index": 1.180948
+      },
+      "pairedWholeFractions": {
+        "InitialScope": 0.0007413091896095371,
+        "InitialInputs": 0.2908830792254138,
+        "Discovery": 0.28468449577713173,
+        "FinalInputs": 0.2761569407616732,
+        "FinalCandidates": 0.14683874302648522,
+        "Index": 0.0005899039890482225
+      },
+      "terminalEncodingMilliseconds": 0.001173,
+      "unattributedRemainderMilliseconds": 0.210087,
+      "unattributedRemainderFraction": 0.00010494209681304673
+    }
+  ],
+  "selectedSpansAreMarkerIntervalsNotAwaitRemoteCallbackDurations": true,
+  "stage7IsIndex": true,
+  "missingSpanIsUnobservedNotZeroOrCallbackAbsence": true,
+  "noReadinessRequestServicePriorProbeOrProfileJoins": true
+}

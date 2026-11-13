@@ -1,0 +1,19 @@
+--- candidate0270/ops_common.py
++++ qualified-final/ops_common.py
+@@ -26,6 +26,16 @@
+  assert re.fullmatch(r'[0-9a-f]{64}',expected or'')and sha(PREP/'operational-pins.json')==expected
+  pins=json.loads((PREP/'operational-pins.json').read_text())
+  assert pins.get('sourceQualificationReady')is True,'Source/harness qualification is not yet released for execution'
++ binding=json.loads((PREP/'source-qualification-binding.json').read_text())
++ for path,digest in[(binding['preparedReceipt'],binding['preparedReceiptSha256']),(binding['qualifiedReceipt'],binding['qualifiedReceiptSha256']),(binding['parentAudit'],binding['parentAuditSha256'])]:assert sha(path)==digest
++ qualification=json.loads(Path(binding['qualifiedReceipt']).read_text())
++ assert qualification['allPassed']is True and(qualification['passingCaseCells'],qualification['invocationComparisons'],qualification['passingFreshCanaries'],qualification['controlledProcesses'])==(208,224,3,27)
++ assert qualification['source51App147OriginalTestsBeforeAfterIdentical']is True and qualification['all107OracleFixtureReferencesUnchanged']is True
++ assert qualification['native24Executed']is False and qualification['applicationBuilds']==0 and qualification['hostsStarted']==0
++ parent=json.loads(Path(binding['parentAudit']).read_text())
++ assert qualification['preparationReceiptSha256']==binding['preparedReceiptSha256']==parent['prepSha256']
++ assert parent['finalScratchReceiptSha256']==binding['qualifiedReceiptSha256']and parent['all27OwnedGroupsIndependentlyAbsent']is True
++ assert parent['all51SourceAnd147AppAnd107OracleInputsUnchanged']is True and parent['originalNativeTestsDllUnchanged']is True
+  assert all(sha(PREP/name)==digest for name,digest in pins['files'].items())
+  assert all(sha(path)==digest for path,digest in pins.get('externalFiles',{}).items())
+  return pins

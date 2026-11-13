@@ -1,0 +1,31 @@
+{
+  "auditedUtc": "2026-11-07T20:16:55.357611+00:00",
+  "sourceChecks": {
+    "RouteCatalogImageDigestMemo.cs": {
+      "productionSha256": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+      "originalAndControlNamespaceOnlyExact": true,
+      "candidateNamespaceOnlyExact": false
+    },
+    "RouteCatalogImageDigestScope.cs": {
+      "productionSha256": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+      "originalAndControlNamespaceOnlyExact": true,
+      "candidateNamespaceOnlyExact": true
+    },
+    "RouteCatalogFreshStreamImageDigest.cs": {
+      "productionSha256": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+      "originalAndControlNamespaceOnlyExact": true,
+      "candidateNamespaceOnlyExact": true
+    },
+    "RouteCatalogImageBuffers.cs": {
+      "productionSha256": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+      "originalAndControlNamespaceOnlyExact": true,
+      "candidateNamespaceOnlyExact": true
+    }
+  },
+  "technicalMethodsExactSubstringOfProductionAndCopies": true,
+  "technicalCopiedClassFieldsAndMethodsSameBetweenControlAndCandidate": true,
+  "oracleSdk5bbCurrent": true,
+  "candidateMemoOnlyProposedSemanticDelta": "ReaderWriterLockSlim shared full warm comparison, complete exclusive miss recheck/copy/hash/bounds/mutation/close; no gate disposal",
+  "coreCandidateSourceReviewedByRootAndIndependentReader": true,
+  "benchHarnessStillFilePreparationOnly": true
+}

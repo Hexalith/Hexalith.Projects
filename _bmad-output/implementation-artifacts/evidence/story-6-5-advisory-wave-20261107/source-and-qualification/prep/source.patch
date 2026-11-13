@@ -1,0 +1,98 @@
+--- a/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs
++++ b/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs
+@@ -15,6 +15,11 @@
+ using Hexalith.Projects.Resolution;
+ using Hexalith.Projects.Server.Folders;
+ using Hexalith.Projects.Server.Projections.ProjectReads;
++using WaveCounters = Hexalith.PrivateCaptureCounter.CaptureCounters;
++using WaveBootstrap = Hexalith.PrivateCaptureCounter.AdvisoryWaveBootstrap;
++using WaveRole = Hexalith.PrivateCaptureCounter.Role;
++using WaveStage = Hexalith.PrivateCaptureCounter.Stage;
++using WaveAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ /// <summary>Composes bounded advisory observations without persisting inference or granting authority.</summary>
+ /// <param name="store">The committed supported read models.</param>
+@@ -54,13 +59,24 @@
+     {
+         callerToken.ThrowIfCancellationRequested();
+         if (query.QueryType != (conversation ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType)) return Denied();
++        // PRIVATE DIAGNOSTIC: closed aliases; no application values enter the recorder.
++        const WaveStage InitialScope = WaveStage.ComponentFile;
++        const WaveStage InitialFilterInputs = WaveStage.ComponentPolicy;
++        const WaveStage IndexRead = WaveStage.AclFile;
++        const WaveStage DiscoveryParallel = WaveStage.SettingsEnumerationSortDictionary;
++        const WaveStage FinalFilterInputs = WaveStage.AuthenticationSerialization;
++        const WaveStage FinalCandidateParallel = WaveStage.ActorBoundary;
++        const WaveStage FinalScope = WaveStage.ResultTail;
++        using var advisoryWaves = conversation ? null : WaveBootstrap.Begin();
+         // One linked dependency budget begins with scope authorization, before validating caller input.
+         using CancellationTokenSource deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
+         deadline.CancelAfter(TimeSpan.FromSeconds(2));
+         CancellationToken token = deadline.Token;
+         try
+         {
++            using var initialScope = advisoryWaves?.Stage(InitialScope, WaveAllocation.None);
+             if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
++            initialScope?.Dispose();
+         }
+         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
+         catch (Exception exception)
+@@ -117,16 +133,20 @@
+                 if (observed?.Incomplete != false) Omitted();
+                 if (observed?.Metadata is null) { Omitted(); return Response([]); }
+             }
++            using var initialFilterInputs = advisoryWaves?.Stage(InitialFilterInputs, WaveAllocation.None);
+             string[] acceptedInputs = await FilterInputsAsync(inputs.Where(item => item.ReferenceKind == "folder")
+                 .Select(item => item.ReferenceId).ToArray(), query, Omitted, token).WaitAsync(token).ConfigureAwait(false);
++            initialFilterInputs?.Dispose();
+             ConcurrentDictionary<string, ProjectDetailItem> candidates = new(StringComparer.Ordinal);
+             bool hasSignal = conversationId is not null
+                 ? observed?.Metadata is { } initial && (initial.ProjectId is not null || initial.SafeLabel is not null)
+                 : acceptedInputs.Length != 0;
+             if (hasSignal)
+             {
++                using var indexRead = advisoryWaves?.Stage(IndexRead, WaveAllocation.None);
+                 var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
+                     ProjectReadModelKeys.Index(query.TenantId), token).WaitAsync(token).ConfigureAwait(false);
++                indexRead?.Dispose();
+                 IEnumerable<string> ids = [];
+                 if (index.Value is { ProjectIds: not null, UnavailableProjectIds: not null } view && view.TenantId == query.TenantId && view.GlobalPosition > 0 && view.LastVerifiedAt != default
+                     && !string.IsNullOrEmpty(index.ETag))
+@@ -155,6 +175,7 @@
+                 }
+                 token.ThrowIfCancellationRequested();
+                 if (linked is not null) selected.Add(linked);
++                using var discoveryParallel = advisoryWaves?.Stage(DiscoveryParallel, WaveAllocation.None);
+                 await Parallel.ForEachAsync(selected, new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
+                 {
+                     try
+@@ -172,6 +193,7 @@
+                     catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                     catch (Exception exception) { LogFailure(query, exception); Omitted(); }
+                 }).WaitAsync(token).ConfigureAwait(false);
++                discoveryParallel?.Dispose();
+ 
+             }
+ 
+@@ -185,7 +207,10 @@
+                 if (final.Metadata != observed || final.Metadata.Incomplete) Omitted();
+                 observed = final.Metadata;
+             }
++            using var finalFilterInputs = advisoryWaves?.Stage(FinalFilterInputs, WaveAllocation.None);
+             acceptedInputs = await FilterInputsAsync(acceptedInputs, query, Omitted, token).WaitAsync(token).ConfigureAwait(false);
++            finalFilterInputs?.Dispose();
++            using var finalCandidateParallel = advisoryWaves?.Stage(FinalCandidateParallel, WaveAllocation.None);
+             await Parallel.ForEachAsync(candidates.ToArray(), new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (pair, ct) =>
+             {
+                 try
+@@ -204,7 +229,10 @@
+                 catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                 catch (Exception exception) { LogFailure(query, exception); candidates.TryRemove(pair.Key, out _); Omitted(); }
+             }).WaitAsync(token).ConfigureAwait(false);
++            finalCandidateParallel?.Dispose();
++            using var finalScope = advisoryWaves?.Stage(FinalScope, WaveAllocation.None);
+             if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
++            finalScope?.Dispose();
+             callerToken.ThrowIfCancellationRequested();
+             ProjectDetailItem[] visible = candidates.Values.OrderBy(item => item.ProjectId, StringComparer.Ordinal).ToArray();
+             if (observed?.Metadata is { } metadata)

@@ -1,0 +1,629 @@
+{
+  "diagnosticOnly": true,
+  "metadataOnlyNoApplicationAssemblyLoadOrExecution": true,
+  "cachedDotnetInspectVersion": "0.27.0",
+  "cachedToolPath": "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+  "cachedToolSha256": "3fc35de85fd5b62052f9fc6285d36950e1f7e2bea6b35c5e2d02ce8cf09d3a98",
+  "currentOwnerSha256": "caf01772460b329dde8b0d3ffcf605b2754d452b897be28592cef6c9da82d7d6",
+  "ownerAssemblyRefRows": 65,
+  "domainServiceAlreadyAnOwnerDirectReference": true,
+  "unchangedSelection": "owner + DomainService + owner.GetReferencedAssemblies; Distinct; Ordinal FullName order",
+  "currentDistinctMetadataIdentities": 66,
+  "allIdentitiesHaveExactlyOnePinnedPhysicalCandidate": true,
+  "referenceIdentityMatchesPhysicalAssemblyMetadata": true,
+  "originalExpected67WasNotThisSourceDerivedCohort": true,
+  "noRuntimeDiscoveredExtraAddedNoCurrentImageRemoved": true,
+  "all588ExternalInputsAndArchived59PreparedFilesUnchanged": true,
+  "imageBytes": 27655992,
+  "chargedBytes": 27689784,
+  "perImageEligibleCount": 66,
+  "existingLimitsUnchanged": {
+    "images": 128,
+    "imageBytes": 16777216,
+    "chargedBytes": 67108864
+  },
+  "entries": [
+    {
+      "fullName": "Dapr.AspNetCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a686d5d635c0f0e6",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Dapr.AspNetCore.dll",
+      "sha256": "40c6315dec475ef6e2665b3e2b18beeeb7cf11a241e9c15f95dd7cc20a709473",
+      "bytes": 57344,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 0
+    },
+    {
+      "fullName": "Dapr.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a686d5d635c0f0e6",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Dapr.Client.dll",
+      "sha256": "701c6ec09bd7fa54690b1aca6bfbe3b5ece2c8376699145a1fb0e7be610ea981",
+      "bytes": 200704,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 1
+    },
+    {
+      "fullName": "Hexalith.Commons.UniqueIds, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.dll",
+      "sha256": "5be7b70f77d0cf922e03c837bf98ebbe0f1f3c86eae689dbb4c448924b7eb410",
+      "bytes": 9728,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 2
+    },
+    {
+      "fullName": "Hexalith.EventStore.Client, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.Client.dll",
+      "sha256": "e1bda7e4de9a9a99a3da0c84969d09e35ef95b9e9c0ac04eef0e130b333dcf09",
+      "bytes": 1435648,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 3
+    },
+    {
+      "fullName": "Hexalith.EventStore.Contracts, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+      "sha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+      "bytes": 990208,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 4
+    },
+    {
+      "fullName": "Hexalith.EventStore.DomainService, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll",
+      "sha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178",
+      "bytes": 1390080,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": true,
+      "ordinal": 5
+    },
+    {
+      "fullName": "Hexalith.EventStore.ServiceDefaults, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+      "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+      "bytes": 709120,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 6
+    },
+    {
+      "fullName": "Hexalith.Folders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.dll",
+      "sha256": "daf523449998e6147d78acea6a428cf9003aecf1bfb25250771d5d98d0a34482",
+      "bytes": 2436096,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 7
+    },
+    {
+      "fullName": "Hexalith.Folders.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Contracts.dll",
+      "sha256": "e506ffd73badb6e93c971eb260251e7955f7d97e461bbcad71a42c1f83a24321",
+      "bytes": 47104,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 8
+    },
+    {
+      "fullName": "Hexalith.Folders.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+      "sha256": "caf01772460b329dde8b0d3ffcf605b2754d452b897be28592cef6c9da82d7d6",
+      "bytes": 1020928,
+      "source": "owner",
+      "ordinal": 9
+    },
+    {
+      "fullName": "Hexalith.Folders.ServiceDefaults, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.ServiceDefaults.dll",
+      "sha256": "0001e5b6e78ce4e59215a0aa656890dd2dfa00c7697b210c2f66ebccf71559d2",
+      "bytes": 22016,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 10
+    },
+    {
+      "fullName": "Hexalith.Memories.Client.Rest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Memories.Client.Rest.dll",
+      "sha256": "8139c849ae1f66714d44682aae457d359dce14b64c62e316bf7cf6ba364dbca4",
+      "bytes": 104448,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 11
+    },
+    {
+      "fullName": "Hexalith.Memories.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Memories.Contracts.dll",
+      "sha256": "4dcd60f846e117f649624c27677a4f4506117560f568111e248a145cec99503c",
+      "bytes": 1369088,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 12
+    },
+    {
+      "fullName": "Hexalith.Tenants.Client, Version=7.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Tenants.Client.dll",
+      "sha256": "3b98aee0f054b20601eab51a3fba889a3b79dbdc03ea8928c1eb1bde6da29777",
+      "bytes": 43008,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 13
+    },
+    {
+      "fullName": "Hexalith.Tenants.Contracts, Version=7.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Tenants.Contracts.dll",
+      "sha256": "28a0d4aa4be0ea1d38094fc409f6e01e091b041aadaf518275c295c3b02676b5",
+      "bytes": 118272,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 14
+    },
+    {
+      "fullName": "Microsoft.AspNetCore, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.dll",
+      "sha256": "a472fb1b9df2cd424fddd04755d71f87e479e0ddb2e1eb2aba0f0da24d082bd4",
+      "bytes": 105256,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 15
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Authentication, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Authentication.dll",
+      "sha256": "4c27467d82ce260b202d3b4aa7d0bbbe8a996dda24dc0f6555f00cc27c69fac3",
+      "bytes": 143656,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 16
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Authentication.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Authentication.Abstractions.dll",
+      "sha256": "b2b444852b50f6498239120644fe9919bfeeb38cdb5088462f177a0e5daf791e",
+      "bytes": 56616,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 17
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Authentication.JwtBearer, Version=10.0.14.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll",
+      "sha256": "e14533ff151d1857910892613933b2429656d21ec29af338e09301a5a261efa6",
+      "bytes": 52008,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 18
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Authorization, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Authorization.dll",
+      "sha256": "12ea95c78c98c36fad0bd7349982ca0e434817046fdecdf260f7b36b14de0f3e",
+      "bytes": 110888,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 19
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Authorization.Policy, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Authorization.Policy.dll",
+      "sha256": "d43fae1a184f615b0034ed3e6037604fb622498d886f49374ec3caf4cd452b67",
+      "bytes": 68944,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 20
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Hosting.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Hosting.Abstractions.dll",
+      "sha256": "2fd59410deaeb0179b39313ee4015839145155c330c263d7e76e2c55b5f60605",
+      "bytes": 33616,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 21
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Http.dll",
+      "sha256": "a0b29cb1f19c8f719a31dfa7c4d559d0b07a2d1e990ab34dd3bcc90a1f4b5718",
+      "bytes": 295720,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 22
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Http.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Http.Abstractions.dll",
+      "sha256": "af815c89e84531b8993c3a7c30b67965674037a575ec5877eeabdb081dceadeb",
+      "bytes": 318760,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 23
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Http.Extensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Http.Extensions.dll",
+      "sha256": "52a6b08cd289a8b6a0f91cf190dc17b1d5819da62253b4872ed1ec60f1aaca49",
+      "bytes": 740136,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 24
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Http.Features, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Http.Features.dll",
+      "sha256": "d69bf578c3b5cc4ec3fbb13c84db4d1de79cb393f91e5a56644c85add5a06ad6",
+      "bytes": 60200,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 25
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Http.Results, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Http.Results.dll",
+      "sha256": "663e3686441838547b997580caae1a267f513bdff9c32254f2e3165b53bed696",
+      "bytes": 273192,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 26
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Metadata, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Metadata.dll",
+      "sha256": "d1b2ebb174ea33ae95104b1ef3da97aa7bc40fdc07fd28580d3feb8a2f464d6b",
+      "bytes": 16168,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 27
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Mvc.Core, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Mvc.Core.dll",
+      "sha256": "a0bd7fabc23de2119a8494db0b67673fab95a06743b58bd7221d235fed56931c",
+      "bytes": 1941800,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 28
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.Routing, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.Routing.dll",
+      "sha256": "e75be50990e0d6d08ccb178204b5cdf3a6ebf97323f8be532c13ec9fecff0330",
+      "bytes": 860968,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 29
+    },
+    {
+      "fullName": "Microsoft.AspNetCore.WebUtilities, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.AspNetCore.WebUtilities.dll",
+      "sha256": "8d04c013b7b7d7d30e85a91f4d23dba9d3a8e7e7b1ddeb608353232d98686e1b",
+      "bytes": 254760,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 30
+    },
+    {
+      "fullName": "Microsoft.Extensions.Configuration, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Configuration.dll",
+      "sha256": "42266324999bfa3575d71099927c6ce19a6a7fe290885acfbbaab3a663eacb7d",
+      "bytes": 82768,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 31
+    },
+    {
+      "fullName": "Microsoft.Extensions.Configuration.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Configuration.Abstractions.dll",
+      "sha256": "cf0436bd3fee01dacd00160d92d2c495629346f10f297ea3437a3ca144829c5a",
+      "bytes": 38184,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 32
+    },
+    {
+      "fullName": "Microsoft.Extensions.Configuration.Binder, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Configuration.Binder.dll",
+      "sha256": "65e598a9c1e91fb29ecf921440f5f6f2d9c001e53536d02ab7ac9af051d25b82",
+      "bytes": 76072,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 33
+    },
+    {
+      "fullName": "Microsoft.Extensions.DependencyInjection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.DependencyInjection.dll",
+      "sha256": "12a361d88bf9c0ef4f4efe388415aa3820bb15c115002be4fd6f219fab527170",
+      "bytes": 216360,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 34
+    },
+    {
+      "fullName": "Microsoft.Extensions.DependencyInjection.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "sha256": "8bc15b2a240737a54c253711054d140db8995055d0209d98f9148e04daec27f4",
+      "bytes": 131368,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 35
+    },
+    {
+      "fullName": "Microsoft.Extensions.Diagnostics.HealthChecks, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Diagnostics.HealthChecks.dll",
+      "sha256": "fb7c8af5683e7bf0f4c7cdee44ce3bf44dc481a8142259a96baa52a413010ca3",
+      "bytes": 101712,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 36
+    },
+    {
+      "fullName": "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll",
+      "sha256": "f4b04aaa0ffda4bdd300d849802c427a97b228f9d3be1eb5b0287d770d1f858e",
+      "bytes": 30504,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 37
+    },
+    {
+      "fullName": "Microsoft.Extensions.Features, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Features.dll",
+      "sha256": "e02c64013d0ea35bfcfa3f830df126c621df5e38faac63a2c351de676b5f51e0",
+      "bytes": 35112,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 38
+    },
+    {
+      "fullName": "Microsoft.Extensions.Hosting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Hosting.dll",
+      "sha256": "35f6a25f077d71cb82ac183a656d287afc3b988880a3db3c2c0aeb9d23eb6210",
+      "bytes": 142120,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 39
+    },
+    {
+      "fullName": "Microsoft.Extensions.Hosting.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Hosting.Abstractions.dll",
+      "sha256": "d25e7f15321e91ac998e6cd7651d7b0d2bb9eb50cac690b2ac513ed0129fd751",
+      "bytes": 68392,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 40
+    },
+    {
+      "fullName": "Microsoft.Extensions.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Http.dll",
+      "sha256": "d375a80e2b8ccca66d3843c030e8eb786f142191e3765da9789ff5c4eef987b2",
+      "bytes": 190248,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 41
+    },
+    {
+      "fullName": "Microsoft.Extensions.Identity.Core, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Identity.Core.dll",
+      "sha256": "fbbeff3e709d5b7e0cdcbf5c4b89f17f00d51d9f548c770fdcb7153af8594957",
+      "bytes": 542032,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 42
+    },
+    {
+      "fullName": "Microsoft.Extensions.Logging.Abstractions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Logging.Abstractions.dll",
+      "sha256": "c014eba79da8764b050bee1f1f70db623dd5026e855b5bc7bf463b10913643b2",
+      "bytes": 142632,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 43
+    },
+    {
+      "fullName": "Microsoft.Extensions.Options, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Options.dll",
+      "sha256": "d2ffbe5032ca0192ffd87ea5fed0f025282742c2530e7e0424c7bed5f488a3b7",
+      "bytes": 127824,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 44
+    },
+    {
+      "fullName": "Microsoft.Extensions.Options.ConfigurationExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Options.ConfigurationExtensions.dll",
+      "sha256": "3bfcf85ed7371f33aa3eae236227ec3357b550fad063b1a87b1548662ab9f017",
+      "bytes": 29008,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 45
+    },
+    {
+      "fullName": "Microsoft.Extensions.Primitives, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Extensions.Primitives.dll",
+      "sha256": "28d09f3a5d34db55b3fe44564ce7a428ee57ce71647b4be77664b78031987229",
+      "bytes": 75600,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 46
+    },
+    {
+      "fullName": "Microsoft.Extensions.Telemetry.Abstractions, Version=10.11.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Microsoft.Extensions.Telemetry.Abstractions.dll",
+      "sha256": "57af8ce079eb3bcec63fd176f1034012f8199c44d38f10168438cc78364a9030",
+      "bytes": 58680,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 47
+    },
+    {
+      "fullName": "Microsoft.IdentityModel.Tokens, Version=8.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll",
+      "sha256": "84409b8c3a52313fe4f4f621fce39544f42074109e870ac2631e627c8b70210f",
+      "bytes": 416024,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 48
+    },
+    {
+      "fullName": "Microsoft.Net.Http.Headers, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.AspNetCore.App/10.0.14/Microsoft.Net.Http.Headers.dll",
+      "sha256": "8f13b1e5ed629887474cf3488b4e5a0d929a07009c637c791952c0f046b540ac",
+      "bytes": 210216,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 49
+    },
+    {
+      "fullName": "OpenTelemetry, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/OpenTelemetry.dll",
+      "sha256": "63fb9724258d4a1ac76c7ddffc2e0b18ee5125a1c8ff4b242a570a3410c97fc6",
+      "bytes": 344064,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 50
+    },
+    {
+      "fullName": "OpenTelemetry.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/OpenTelemetry.Api.dll",
+      "sha256": "bd75bbab25a4bf769727ec6c17457d4bf189a8c2c70034e5c212ae345132591d",
+      "bytes": 84992,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 51
+    },
+    {
+      "fullName": "OpenTelemetry.Extensions.Hosting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c",
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/OpenTelemetry.Extensions.Hosting.dll",
+      "sha256": "442d9c18f5cc9ffa65e3f486874f01b375866854b0ad08e40e6367139eb9b35a",
+      "bytes": 15872,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 52
+    },
+    {
+      "fullName": "System.Collections, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Collections.dll",
+      "sha256": "db3059eca80ea3e42a09d7a9ac5ab9769b1897ee671b954aca403e06f6ea1c11",
+      "bytes": 289064,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 53
+    },
+    {
+      "fullName": "System.ComponentModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.ComponentModel.dll",
+      "sha256": "5f3001f276c9c8f9e8a7f0fc85fac66ffddfe16e1ae1f496bb4e2083527f928a",
+      "bytes": 17192,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 54
+    },
+    {
+      "fullName": "System.Diagnostics.DiagnosticSource, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Diagnostics.DiagnosticSource.dll",
+      "sha256": "8ed6e3480e56950bbd3e2d38f87e2e080d5640b8501c5ca5cc5967979baaad8e",
+      "bytes": 497960,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 55
+    },
+    {
+      "fullName": "System.Linq, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Linq.dll",
+      "sha256": "4879905671860d2038ac2b52f2e81eabd917719a186cc00f7abaca6b1dd8bd0b",
+      "bytes": 696616,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 56
+    },
+    {
+      "fullName": "System.Memory, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Memory.dll",
+      "sha256": "749db3af71950e1549660bfa81c1e1a8f2858b81b6aedae7789a01b2bc740899",
+      "bytes": 152360,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 57
+    },
+    {
+      "fullName": "System.Net.Http, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Net.Http.dll",
+      "sha256": "d5e6a71649c671b1c5ef3cc0e4a459ba5bd6498725bca9a437e9d7c985f32b1a",
+      "bytes": 1726800,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 58
+    },
+    {
+      "fullName": "System.Runtime, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Runtime.dll",
+      "sha256": "839cdd56c557d7845ca950ebdca65d1f159643c400e6a0af9a6d25dd64565602",
+      "bytes": 44840,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 59
+    },
+    {
+      "fullName": "System.Runtime.InteropServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Runtime.InteropServices.dll",
+      "sha256": "7498430a42ee968f55e01139c7551a6729df6e462bef6f1dc64b4a8930d66890",
+      "bytes": 102736,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 60
+    },
+    {
+      "fullName": "System.Security.Claims, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Security.Claims.dll",
+      "sha256": "17007563d30265048dcc0743004f6d6402d0dc1aca6afd399a38979014cf2e86",
+      "bytes": 92968,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 61
+    },
+    {
+      "fullName": "System.Security.Cryptography, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Security.Cryptography.dll",
+      "sha256": "db81d873a163907c95fc75d77f7209fa48dbe9effa30f9b7662f5f495b511ef8",
+      "bytes": 2653992,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 62
+    },
+    {
+      "fullName": "System.Text.Encoding.Extensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Text.Encoding.Extensions.dll",
+      "sha256": "d35c939c5092e06c2becb94bb8fa2edaefc6c03996524951cc53ac61e3c3fef7",
+      "bytes": 15656,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 63
+    },
+    {
+      "fullName": "System.Text.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Text.Json.dll",
+      "sha256": "407fed3d662b4a6dbdc27e722ba61014f4be350059115fe9213af8570c884973",
+      "bytes": 1882960,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 64
+    },
+    {
+      "fullName": "System.Text.RegularExpressions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+      "path": "/home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Text.RegularExpressions.dll",
+      "sha256": "2cb4845d0bbfd593524d45ab254768a25d5fee68652729a3ef13586a6663de5e",
+      "bytes": 1036584,
+      "source": "owner-direct-reference",
+      "alsoExplicitDomainService": false,
+      "ordinal": 65
+    }
+  ],
+  "historicalProvenanceSha256": {
+    "/tmp/story65-domain-reference-probe-20261107/Program.cs": "7e56c8502ec6bdb253e2e88a77f33852a23ace38fc29ee99303b37ef8d103282",
+    "/tmp/story65-domain-reference-probe-20261107/receipt.json": "52ac12b1db7c39c4b6117c58b07520e5e42a006de462a7ffbe414b7a94f692e4",
+    "/tmp/story65-domain-reference-probe-20261107/results.json": "7d2b755a46c5cfce78fd0c1598a71777c7f3d16273f9182800ace741684d4246"
+  },
+  "toolQueries": 66,
+  "applicationBuilds": 0,
+  "applicationLoads": 0,
+  "benchmarkReruns": 0
+}

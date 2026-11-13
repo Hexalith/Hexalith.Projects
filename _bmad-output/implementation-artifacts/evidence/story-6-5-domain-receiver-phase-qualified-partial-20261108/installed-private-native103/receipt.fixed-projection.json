@@ -1,0 +1,182 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "passed": true,
+  "nativeStarted": true,
+  "nativeProcessAndDescendantsAbsent": true,
+  "counterDirectoryEmpty": true,
+  "caseCount": 103,
+  "sourceDerivedExpectedCases": 103,
+  "historicalAllSelectionRetentionClaimed": false,
+  "ordinaryUniqueNativeCountUnchanged": 1048,
+  "source59Match": true,
+  "nativeTestArtifactBuild": {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false",
+      "-p:EnablePrivateCatalogInvocationProof=true",
+      "-p:EnablePrivateOwnerSourceReadProof=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0,
+    "logSha256": "4934e5b038bdc0732b2995ee12be6686e57d449b9f6530b220ab9275f7293475"
+  },
+  "processes": [
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "d2b5e7fe97b9ade692e08adcbe1db080d46700f8f0429d202cb1f6bd14fbcc9c",
+      "logSha256": "c581cca8a37bc000aabe91bc9fde7f2522a4131368b2a2c87d96e9431180d87c",
+      "caseCount": 14,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.DevelopmentDomainRouteCatalogTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-1.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "efba4830f029936b49eb031839079cdeaf15d47c89650f06c38e0cbffcee98fa",
+      "logSha256": "0a3996419954e9acc870878799ffaa55c1132dd25f60cfdb060f6756a0f37f63",
+      "caseCount": 12,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.DomainSidecarCatalogLeaseTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-2.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "7dd3ec1afc1270ca9b3060dfe07d34078ded3c64246929ee458b3cfa3def09af",
+      "logSha256": "c120a212d9f93b86d2a1256912fcbd23d2eb143c0fc8d25652ffa3e96bf4fbd1",
+      "caseCount": 41,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverScopeTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-3.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "158c0cda0c02c3563037ab204d855b33e8acc3248e584c6b95ad55093f4ac93b",
+      "logSha256": "98777b35081af5c9698d13220d3283bcbaebeaa40b2bb935c5968e4953133a16",
+      "caseCount": 16,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverStateBoundaryTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-4.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "d0692ce501be2cf2e7d11fdd6bc6a43dfb6f9918acc9c6c6fd624b9b31856aef",
+      "logSha256": "181a86ee6b5dae362494489b068070bf47f0e8bccf07718e52988c673095822d",
+      "caseCount": 7,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogReceiverVersionTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-5.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "9e19c1f4e58deb18f27c23981525a823b176e56f50831fb88be7142f8b463fac",
+      "logSha256": "e0e5e4ea2d322e04202003f7f4b25585287feb3d402521540a3c707e7e687e55",
+      "caseCount": 12,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpDomainPeerTests",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-6.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    },
+    {
+      "nativeStarted": true,
+      "processAndDescendantsAbsent": true,
+      "passed": true,
+      "nativeRuntimeProcessorCountOverrideAbsent": true,
+      "nativeRuntimeCpuUnmodified": true,
+      "exitCode": 0,
+      "xmlSha256": "56318ccdaa0c3ff2589b4188a5b8d530fc1993b9305bd0fd849595da47066877",
+      "logSha256": "80151ffe7043c5e9f1adb427d6ec0cf786ef4cf4f82ea8faf3b92dab5b270d12",
+      "caseCount": 1,
+      "ownedExitCode": 0,
+      "command": [
+        "dotnet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-method",
+        "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient",
+        "-xml",
+        "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/selection-7.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests"
+    }
+  ]
+}

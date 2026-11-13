@@ -1,0 +1,16 @@
+{
+  "readOnlyAuditOnly": true,
+  "priorAttemptExitCode": 1,
+  "exceptionType": "AssertionError",
+  "classification": "Auditor assumed all finite runtime flags true rather than matching original source constants",
+  "actualOriginalFlags": {
+    "ScopedDecodeReuse": "true",
+    "SerializeLocalLeaseRelease": "false",
+    "RetainValidatedCatalogBytes": "true"
+  },
+  "allSixRuntimeRowsAgreeWithOriginalSource": true,
+  "sourceOrRuntimeInputsChanged": false,
+  "noFailureCauseInference": true,
+  "oldAuditSha256": "5b446b2e887dabf882197ab9c026dad48fe84703bc25cf9a4ffa26773b2bc0b5",
+  "newAuditSha256": "ff67de28047b50ca926559a227c54383c3f928aca27958448889c69544568ecf"
+}

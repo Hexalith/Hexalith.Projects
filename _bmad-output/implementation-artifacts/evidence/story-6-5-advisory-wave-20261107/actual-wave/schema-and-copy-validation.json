@@ -1,0 +1,44 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "strictDuplicateFreeClosedSchema": true,
+  "rows": 21,
+  "localCaptures": 3,
+  "serializedStageCounts": {
+    "Whole": 3,
+    "ComponentFile": 3,
+    "ComponentPolicy": 3,
+    "AclFile": 3,
+    "SettingsEnumerationSortDictionary": 3,
+    "AuthenticationSerialization": 3,
+    "ActorBoundary": 3
+  },
+  "aliases": {
+    "Whole": "Whole",
+    "ComponentFile": "InitialScope",
+    "ComponentPolicy": "InitialFilterInputs",
+    "AclFile": "IndexRead",
+    "SettingsEnumerationSortDictionary": "DiscoveryParallel",
+    "AuthenticationSerialization": "FinalFilterInputs",
+    "ActorBoundary": "FinalCandidateParallel",
+    "ResultTail": "FinalScope"
+  },
+  "zeroCountAndAllocationColumns": [
+    "allocationMode",
+    "allocatedBytes",
+    "yielded",
+    "nullValue",
+    "authenticationAccepted",
+    "nonAuthenticationDiscarded",
+    "sensitiveSegmentExcluded",
+    "authenticationOtherExcluded"
+  ],
+  "allCountsAndAllocationZero": true,
+  "receiptFinal": true,
+  "allDropIoAndPendingZero": true,
+  "plainCopiedSha256": {
+    "projects.jsonl": "4fea89ae047099bcfafeb879d88096e41019e2bb3bb3073143237f9498eafd48",
+    "projects.closed.json": "5ed1b1626acd9e77e9bbe3ba643ab5a10b86e4f8b98ab9323d8a21122dce2dfc"
+  },
+  "noInheritedRequestContextFields": true
+}

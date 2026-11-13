@@ -1,0 +1,832 @@
+{
+  "createdUtc": "2026-11-07T03:42:13.345151+00:00",
+  "ownerHead": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b",
+  "basis": "Exact executed argument arrays transcribed from this agent tool history; totals and benchmark observations read from native XML. Earlier receipts are not overwritten.",
+  "build": {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:UseNuGetDeps=false",
+      "--disable-build-servers"
+    ],
+    "fullShellCommand": "dotnet build tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug -m:1 -p:NuGetAudit=false -p:UseHexalithProjectReferences=true -p:UseNuGetDeps=false --disable-build-servers > /tmp/story65-profile-fact-owner-build.log 2>&1",
+    "log": {
+      "path": "/tmp/story65-profile-fact-owner-build.log",
+      "bytes": 5968,
+      "sha256": "308eba27fa8aaf0d252b437b616c3547d165f45aa27e70e97ff2f834b7f11c5f"
+    },
+    "explicitEnvironmentAssignments": {},
+    "explicitMsbuildValues": {
+      "Configuration": "Debug",
+      "NuGetAudit": "false",
+      "UseHexalithProjectReferences": "true",
+      "UseNuGetDeps": "false",
+      "MaxCpuCount": "1"
+    },
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0
+  },
+  "nativeInvocations": [
+    {
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests",
+        "-xml",
+        "/tmp/story65-owner-tests/profile-fact-focused.xml"
+      ],
+      "fullShellCommand": "dotnet tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll -class Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests -class Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests -class Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests -class Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests -xml /tmp/story65-owner-tests/profile-fact-focused.xml > /tmp/story65-owner-tests/profile-fact-focused.log 2>&1",
+      "explicitEnvironmentAssignments": {},
+      "exitCode": 0,
+      "xml": {
+        "path": "/tmp/story65-owner-tests/profile-fact-focused.xml",
+        "bytes": 37206,
+        "sha256": "a16eebb6fa36ebe04fbb976fef07215c193b1f41b53e1639fb085f2af358d40b"
+      },
+      "log": {
+        "path": "/tmp/story65-owner-tests/profile-fact-focused.log",
+        "bytes": 586,
+        "sha256": "a9b9b6a3e5b4c4cc481ba4f5e47095f4b508dcb6e61572c4f8759e5c25fec86b"
+      },
+      "totals": {
+        "total": 49,
+        "passed": 49,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "startUtc": [
+        "2026-11-07T03:40:05.8856687+00:00"
+      ],
+      "finishUtc": [
+        "2026-11-07T03:40:10.0615195+00:00"
+      ]
+    },
+    {
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests",
+        "-xml",
+        "/tmp/story65-owner-tests/profile-fact-regression.xml"
+      ],
+      "fullShellCommand": "dotnet tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll -class Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests -class Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests -class Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests -class Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests -class Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests -class Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests -class Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests -class Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests -class Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests -class Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests -class Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests -class Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests -class Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests -class Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests -class Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests -class Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests -class Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests -class Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests -class Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests -class Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests -xml /tmp/story65-owner-tests/profile-fact-regression.xml > /tmp/story65-owner-tests/profile-fact-regression.log 2>&1",
+      "explicitEnvironmentAssignments": {},
+      "exitCode": 0,
+      "xml": {
+        "path": "/tmp/story65-owner-tests/profile-fact-regression.xml",
+        "bytes": 242391,
+        "sha256": "ffdc36c5d14f7a68992eeea64605f72baaa4afe8a907a6155ca577b45ce0856d"
+      },
+      "log": {
+        "path": "/tmp/story65-owner-tests/profile-fact-regression.log",
+        "bytes": 588,
+        "sha256": "7645c5139a998febff8cd17658ee281cdd5f0d139499bb092bb667e84c28662e"
+      },
+      "totals": {
+        "total": 333,
+        "passed": 333,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "startUtc": [
+        "2026-11-07T03:40:42.7328269+00:00"
+      ],
+      "finishUtc": [
+        "2026-11-07T03:41:05.8855567+00:00"
+      ]
+    }
+  ],
+  "uniquePassingCases": 333,
+  "sourceSha256": {
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs": "6c265a315fb853015ee636dd99fdb0493849f50a1dc24be45452c28d09a740fc",
+    "src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "d93190e999c4ed3b9a4a1a621085aa6c4396f758461a9a3ef9e536acf599875a",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs": "b3472240061bb2a07fe8e68757df04592b17baf73edb7c06faf277e3139ebad7",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": "7a860a2bbe012b7c4dbb50d50dc23419e670f576506a624530c22099268f1d87",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": "5fa9ce0a5b5b299e64b4cbce4ad4dd58ef920ae1872abc5a590551042abeb147",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": "56c16b809f6bb457f1b43849b69cc5ef391288d8b01092ba87fafa146714b296",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": "b085ff4de038eac60ca4a2539df24573c8678c4e215fc7f21ce179e38c51bac8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs": "fe9038e346121082bd1e017ff58b816c7388dbaf7390c2690c91cff8141f70ee",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs": "64123712fcc3c7f6304dc99aa10ad659e6c9052113ce472a65bc6e52c1a19578",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs": "c01570410e73b7660a470bced9d0b1606815d19f3821ddeb1fd2c97e47e63374",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs": "bf7d7f1fe817a649c83bd4cf963894f160b328e0d0b3c3237aeb2d7842f90c04",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs": "dbdcb49c07f9d544ec07c3353fea93bffff02f3fb51684b29f6aa996b6c9df23",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs": "10c05e91f8b057c67f1b64e3ab7639fd169d6ac9075e1fbdbd43da17559ce0f2",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs": "ba9c972766dc8d87ae765eb115bfdc94fc3d9e3f80fcd1fa1ca9e85f3b24dbef",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs": "36bcb838fc8870726b736f3f43f20db1ef43ff3329e61d33d6714a869fa06ca5",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs": "da26e9b3f9c85a87ef0613b62c69b9712d50dcad7af0484a5dd5f7dd453fe8fd",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "b3f65c583dd9b8e9c2e2c12ab9429e62dacab4e9c867a320222db05d8bdc0cb4",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs": "3283f0204a07aee0a8dce644fc6bd142c26f000df28c8765a90ae13ea741defa",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs": "ad5addf2a5998855a9b68cc178edb5a9c2330fbb1b344f60199b2252334f354d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs": "38d4c35756651bc001f7c874d5b1985503bf0b4c1e48aab083c593388ccf984b"
+  },
+  "benchmarks": [
+    {
+      "nativeLane": "profile-fact-focused",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.MeasureRepresentativeNativeValidationDecodeCost",
+      "rawObservation": {
+        "representativeOnly": true,
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "decodesPerValidation": 2,
+        "firstScopedMs": 6.6608,
+        "measurements": [
+          {
+            "sample": 0,
+            "suppressedMs": 1.9126275,
+            "ownedWarmMs": 0.7883275000000001,
+            "suppressedAllocatedBytes": 2018230,
+            "ownedWarmAllocatedBytes": 1113080
+          },
+          {
+            "sample": 1,
+            "suppressedMs": 1.949485,
+            "ownedWarmMs": 0.6683049999999999,
+            "suppressedAllocatedBytes": 2018297,
+            "ownedWarmAllocatedBytes": 1113079
+          },
+          {
+            "sample": 2,
+            "suppressedMs": 1.4786350000000001,
+            "ownedWarmMs": 0.7035625,
+            "suppressedAllocatedBytes": 2018394,
+            "ownedWarmAllocatedBytes": 1113256
+          },
+          {
+            "sample": 3,
+            "suppressedMs": 1.4752975,
+            "ownedWarmMs": 0.767435,
+            "suppressedAllocatedBytes": 2018220,
+            "ownedWarmAllocatedBytes": 1113085
+          },
+          {
+            "sample": 4,
+            "suppressedMs": 1.4498,
+            "ownedWarmMs": 0.6682275,
+            "suppressedAllocatedBytes": 2018058,
+            "ownedWarmAllocatedBytes": 1113202
+          }
+        ]
+      },
+      "sampleMedians": {
+        "suppressedMs": 1.4786350000000001,
+        "ownedWarmMs": 0.7035625,
+        "suppressedAllocatedBytes": 2018230,
+        "ownedWarmAllocatedBytes": 1113085
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-focused",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MeasureActualProfileFactReadsIncludingScopeDisposal",
+      "rawObservation": {
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "completeOwnedCaptureShaRootEqualityAndScopeDisposal": true,
+        "captureCountPerPair": 2,
+        "hitCountPerPair": 2,
+        "firstScopedMs": 9.224,
+        "firstScopedAllocatedBytes": 6041112,
+        "measurements": [
+          {
+            "sample": 0,
+            "fullDecodePairMs": 1.8510562499999998,
+            "profileFactPairMs": 0.2359487500000001,
+            "fullDecodePairAllocatedBytes": 1113256,
+            "profileFactPairAllocatedBytes": 438736
+          },
+          {
+            "sample": 1,
+            "fullDecodePairMs": 1.8821824999999994,
+            "profileFactPairMs": 0.24864249999999996,
+            "fullDecodePairAllocatedBytes": 1113324,
+            "profileFactPairAllocatedBytes": 438828
+          },
+          {
+            "sample": 2,
+            "fullDecodePairMs": 1.9360887500000004,
+            "profileFactPairMs": 0.22030500000000006,
+            "fullDecodePairAllocatedBytes": 1113259,
+            "profileFactPairAllocatedBytes": 438736
+          },
+          {
+            "sample": 3,
+            "fullDecodePairMs": 1.2767775000000001,
+            "profileFactPairMs": 0.24439875000000005,
+            "fullDecodePairAllocatedBytes": 1113309,
+            "profileFactPairAllocatedBytes": 438755
+          },
+          {
+            "sample": 4,
+            "fullDecodePairMs": 0.8494425,
+            "profileFactPairMs": 0.23988,
+            "fullDecodePairAllocatedBytes": 1113146,
+            "profileFactPairAllocatedBytes": 438779
+          },
+          {
+            "sample": 5,
+            "fullDecodePairMs": 0.8373887499999999,
+            "profileFactPairMs": 0.22609749999999992,
+            "fullDecodePairAllocatedBytes": 1113306,
+            "profileFactPairAllocatedBytes": 438736
+          },
+          {
+            "sample": 6,
+            "fullDecodePairMs": 0.7114575000000001,
+            "profileFactPairMs": 0.21699625000000006,
+            "fullDecodePairAllocatedBytes": 1113132,
+            "profileFactPairAllocatedBytes": 438902
+          }
+        ]
+      },
+      "sampleMedians": {
+        "fullDecodePairMs": 1.2767775000000001,
+        "profileFactPairMs": 0.2359487500000001,
+        "fullDecodePairAllocatedBytes": 1113259,
+        "profileFactPairAllocatedBytes": 438755
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MeasureActualProfileFactReadsIncludingScopeDisposal",
+      "rawObservation": {
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "completeOwnedCaptureShaRootEqualityAndScopeDisposal": true,
+        "captureCountPerPair": 2,
+        "hitCountPerPair": 2,
+        "firstScopedMs": 6.9946,
+        "firstScopedAllocatedBytes": 6036544,
+        "measurements": [
+          {
+            "sample": 0,
+            "fullDecodePairMs": 1.46363,
+            "profileFactPairMs": 0.26356749999999995,
+            "fullDecodePairAllocatedBytes": 1113185,
+            "profileFactPairAllocatedBytes": 438790
+          },
+          {
+            "sample": 1,
+            "fullDecodePairMs": 1.47810875,
+            "profileFactPairMs": 0.22978125000000005,
+            "fullDecodePairAllocatedBytes": 1113244,
+            "profileFactPairAllocatedBytes": 438736
+          },
+          {
+            "sample": 2,
+            "fullDecodePairMs": 1.4737399999999996,
+            "profileFactPairMs": 0.2406262499999999,
+            "fullDecodePairAllocatedBytes": 1113330,
+            "profileFactPairAllocatedBytes": 438799
+          },
+          {
+            "sample": 3,
+            "fullDecodePairMs": 1.4920712500000004,
+            "profileFactPairMs": 0.24119749999999995,
+            "fullDecodePairAllocatedBytes": 1113227,
+            "profileFactPairAllocatedBytes": 438799
+          },
+          {
+            "sample": 4,
+            "fullDecodePairMs": 1.53150875,
+            "profileFactPairMs": 0.23012000000000005,
+            "fullDecodePairAllocatedBytes": 1113222,
+            "profileFactPairAllocatedBytes": 438744
+          },
+          {
+            "sample": 5,
+            "fullDecodePairMs": 1.2989674999999998,
+            "profileFactPairMs": 0.23809125,
+            "fullDecodePairAllocatedBytes": 1113277,
+            "profileFactPairAllocatedBytes": 438736
+          },
+          {
+            "sample": 6,
+            "fullDecodePairMs": 0.7733699999999999,
+            "profileFactPairMs": 0.2131300000000001,
+            "fullDecodePairAllocatedBytes": 1113125,
+            "profileFactPairAllocatedBytes": 438736
+          }
+        ]
+      },
+      "sampleMedians": {
+        "fullDecodePairMs": 1.4737399999999996,
+        "profileFactPairMs": 0.23809125,
+        "fullDecodePairAllocatedBytes": 1113227,
+        "profileFactPairAllocatedBytes": 438744
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests.MeasurePerObservationParsingBenefit",
+      "rawObservation": {
+        "configurationCharacters": 10003,
+        "baselineMs": 0.0294208,
+        "exactTextReuseMs": 0.0001506,
+        "baselineAllocatedBytes": 52864,
+        "exactTextReuseAllocatedBytes": 0
+      },
+      "sampleMedians": {},
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MeasureFullFreshImageObservationWithOwnedMemo",
+      "rawObservation": {
+        "imageBytes": 704000,
+        "fullFreshReadAndPeMvidEveryTime": true,
+        "measurements": [
+          {
+            "sample": 0,
+            "ordinaryMs": 0.30509,
+            "ownedMs": 0.0396,
+            "ordinaryAllocatedBytes": 6792,
+            "ownedAllocatedBytes": 6816
+          },
+          {
+            "sample": 1,
+            "ordinaryMs": 0.3077725,
+            "ownedMs": 0.0404825,
+            "ordinaryAllocatedBytes": 6792,
+            "ownedAllocatedBytes": 6816
+          },
+          {
+            "sample": 2,
+            "ordinaryMs": 0.30042,
+            "ownedMs": 0.04001875,
+            "ordinaryAllocatedBytes": 6792,
+            "ownedAllocatedBytes": 6816
+          },
+          {
+            "sample": 3,
+            "ordinaryMs": 0.31277374999999996,
+            "ownedMs": 0.04285625,
+            "ordinaryAllocatedBytes": 6792,
+            "ownedAllocatedBytes": 6816
+          },
+          {
+            "sample": 4,
+            "ordinaryMs": 0.37886000000000003,
+            "ownedMs": 0.04052375,
+            "ordinaryAllocatedBytes": 6792,
+            "ownedAllocatedBytes": 6816
+          }
+        ]
+      },
+      "sampleMedians": {
+        "ordinaryMs": 0.3077725,
+        "ownedMs": 0.0404825,
+        "ordinaryAllocatedBytes": 6792,
+        "ownedAllocatedBytes": 6816
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.MeasureRepresentativeNativeValidationDecodeCost",
+      "rawObservation": {
+        "representativeOnly": true,
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "decodesPerValidation": 2,
+        "firstScopedMs": 6.5349,
+        "measurements": [
+          {
+            "sample": 0,
+            "suppressedMs": 1.614225,
+            "ownedWarmMs": 0.749595,
+            "suppressedAllocatedBytes": 2018249,
+            "ownedWarmAllocatedBytes": 1113049
+          },
+          {
+            "sample": 1,
+            "suppressedMs": 1.6000450000000002,
+            "ownedWarmMs": 0.7524025,
+            "suppressedAllocatedBytes": 2018290,
+            "ownedWarmAllocatedBytes": 1113048
+          },
+          {
+            "sample": 2,
+            "suppressedMs": 1.583615,
+            "ownedWarmMs": 0.7572625000000001,
+            "suppressedAllocatedBytes": 2018188,
+            "ownedWarmAllocatedBytes": 1113050
+          },
+          {
+            "sample": 3,
+            "suppressedMs": 1.6146574999999999,
+            "ownedWarmMs": 0.794085,
+            "suppressedAllocatedBytes": 2018058,
+            "ownedWarmAllocatedBytes": 1113048
+          },
+          {
+            "sample": 4,
+            "suppressedMs": 1.4075775,
+            "ownedWarmMs": 0.7061425,
+            "suppressedAllocatedBytes": 2018058,
+            "ownedWarmAllocatedBytes": 1113049
+          }
+        ]
+      },
+      "sampleMedians": {
+        "suppressedMs": 1.6000450000000002,
+        "ownedWarmMs": 0.7524025,
+        "suppressedAllocatedBytes": 2018188,
+        "ownedWarmAllocatedBytes": 1113049
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.MeasureCompleteWarmReuseIncludingCaptureAndComparison",
+      "rawObservation": {
+        "technical": false,
+        "catalogBytes": 18636,
+        "measurements": [
+          {
+            "sample": 0,
+            "baselineMs": 0.06356,
+            "capturedReuseMs": 0.0034925,
+            "baselineAllocatedBytes": 77872,
+            "capturedReuseAllocatedBytes": 19568
+          },
+          {
+            "sample": 1,
+            "baselineMs": 0.05739,
+            "capturedReuseMs": 0.0021850000000000003,
+            "baselineAllocatedBytes": 77872,
+            "capturedReuseAllocatedBytes": 19568
+          },
+          {
+            "sample": 2,
+            "baselineMs": 0.057222499999999996,
+            "capturedReuseMs": 0.0021925,
+            "baselineAllocatedBytes": 77872,
+            "capturedReuseAllocatedBytes": 19568
+          },
+          {
+            "sample": 3,
+            "baselineMs": 0.0597325,
+            "capturedReuseMs": 0.00207,
+            "baselineAllocatedBytes": 77872,
+            "capturedReuseAllocatedBytes": 19568
+          },
+          {
+            "sample": 4,
+            "baselineMs": 0.059419999999999994,
+            "capturedReuseMs": 0.0022425,
+            "baselineAllocatedBytes": 77872,
+            "capturedReuseAllocatedBytes": 19568
+          }
+        ]
+      },
+      "sampleMedians": {
+        "baselineMs": 0.059419999999999994,
+        "capturedReuseMs": 0.0021925,
+        "baselineAllocatedBytes": 77872,
+        "capturedReuseAllocatedBytes": 19568
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.MeasureCompleteWarmReuseIncludingCaptureAndComparison",
+      "rawObservation": {
+        "technical": true,
+        "catalogBytes": 18639,
+        "measurements": [
+          {
+            "sample": 0,
+            "baselineMs": 0.08309,
+            "capturedReuseMs": 0.004135,
+            "baselineAllocatedBytes": 115176,
+            "capturedReuseAllocatedBytes": 22600
+          },
+          {
+            "sample": 1,
+            "baselineMs": 0.0811325,
+            "capturedReuseMs": 0.0042049999999999995,
+            "baselineAllocatedBytes": 115176,
+            "capturedReuseAllocatedBytes": 22600
+          },
+          {
+            "sample": 2,
+            "baselineMs": 0.0810375,
+            "capturedReuseMs": 0.00424,
+            "baselineAllocatedBytes": 115176,
+            "capturedReuseAllocatedBytes": 22600
+          },
+          {
+            "sample": 3,
+            "baselineMs": 0.0864275,
+            "capturedReuseMs": 0.0051925,
+            "baselineAllocatedBytes": 115176,
+            "capturedReuseAllocatedBytes": 22600
+          },
+          {
+            "sample": 4,
+            "baselineMs": 0.08161,
+            "capturedReuseMs": 0.0053725000000000005,
+            "baselineAllocatedBytes": 115176,
+            "capturedReuseAllocatedBytes": 22600
+          }
+        ]
+      },
+      "sampleMedians": {
+        "baselineMs": 0.08161,
+        "capturedReuseMs": 0.00424,
+        "baselineAllocatedBytes": 115176,
+        "capturedReuseAllocatedBytes": 22600
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "rawObservation": {
+        "assembly": "Hexalith.EventStore.DomainService",
+        "imageBytes": 1390080,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 1.0127,
+        "firstScopedAllocatedBytes": 1392296,
+        "measurements": [
+          {
+            "sample": 0,
+            "ordinaryMs": 0.6270275,
+            "ownedMs": 0.0587275,
+            "ordinaryAllocatedBytes": 1856,
+            "ownedAllocatedBytes": 1848
+          },
+          {
+            "sample": 1,
+            "ordinaryMs": 0.62648,
+            "ownedMs": 0.058750000000000004,
+            "ordinaryAllocatedBytes": 1856,
+            "ownedAllocatedBytes": 1848
+          },
+          {
+            "sample": 2,
+            "ordinaryMs": 0.625175,
+            "ownedMs": 0.0657125,
+            "ordinaryAllocatedBytes": 1856,
+            "ownedAllocatedBytes": 1848
+          },
+          {
+            "sample": 3,
+            "ordinaryMs": 0.61918,
+            "ownedMs": 0.058594999999999994,
+            "ordinaryAllocatedBytes": 1856,
+            "ownedAllocatedBytes": 1848
+          },
+          {
+            "sample": 4,
+            "ordinaryMs": 0.6179525,
+            "ownedMs": 0.072165,
+            "ordinaryAllocatedBytes": 1856,
+            "ownedAllocatedBytes": 1848
+          }
+        ]
+      },
+      "sampleMedians": {
+        "ordinaryMs": 0.625175,
+        "ownedMs": 0.058750000000000004,
+        "ordinaryAllocatedBytes": 1856,
+        "ownedAllocatedBytes": 1848
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "rawObservation": {
+        "assembly": "Hexalith.EventStore.ServiceDefaults",
+        "imageBytes": 704000,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 0.5792,
+        "firstScopedAllocatedBytes": 1754824,
+        "measurements": [
+          {
+            "sample": 0,
+            "ordinaryMs": 0.30967500000000003,
+            "ownedMs": 0.031775,
+            "ordinaryAllocatedBytes": 1864,
+            "ownedAllocatedBytes": 1856
+          },
+          {
+            "sample": 1,
+            "ordinaryMs": 0.3077325,
+            "ownedMs": 0.029885000000000002,
+            "ordinaryAllocatedBytes": 1864,
+            "ownedAllocatedBytes": 1856
+          },
+          {
+            "sample": 2,
+            "ordinaryMs": 0.30509,
+            "ownedMs": 0.030355,
+            "ordinaryAllocatedBytes": 1864,
+            "ownedAllocatedBytes": 1856
+          },
+          {
+            "sample": 3,
+            "ordinaryMs": 0.3056125,
+            "ownedMs": 0.031345,
+            "ordinaryAllocatedBytes": 1864,
+            "ownedAllocatedBytes": 1856
+          },
+          {
+            "sample": 4,
+            "ordinaryMs": 0.30566,
+            "ownedMs": 0.0295825,
+            "ordinaryAllocatedBytes": 1864,
+            "ownedAllocatedBytes": 1856
+          }
+        ]
+      },
+      "sampleMedians": {
+        "ordinaryMs": 0.30566,
+        "ownedMs": 0.030355,
+        "ordinaryAllocatedBytes": 1864,
+        "ownedAllocatedBytes": 1856
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "rawObservation": {
+        "assembly": "System.Private.CoreLib",
+        "imageBytes": 15577896,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 9.2484,
+        "firstScopedAllocatedBytes": 32357192,
+        "measurements": [
+          {
+            "sample": 0,
+            "ordinaryMs": 7.09174,
+            "ownedMs": 1.7777825,
+            "ordinaryAllocatedBytes": 1696,
+            "ownedAllocatedBytes": 1688
+          },
+          {
+            "sample": 1,
+            "ordinaryMs": 7.2405225,
+            "ownedMs": 1.6376075,
+            "ordinaryAllocatedBytes": 1696,
+            "ownedAllocatedBytes": 1688
+          },
+          {
+            "sample": 2,
+            "ordinaryMs": 6.804797499999999,
+            "ownedMs": 1.6572324999999999,
+            "ordinaryAllocatedBytes": 1696,
+            "ownedAllocatedBytes": 1688
+          },
+          {
+            "sample": 3,
+            "ordinaryMs": 6.817270000000001,
+            "ownedMs": 1.6263874999999999,
+            "ordinaryAllocatedBytes": 1696,
+            "ownedAllocatedBytes": 1688
+          },
+          {
+            "sample": 4,
+            "ordinaryMs": 6.66648,
+            "ownedMs": 1.6863975,
+            "ordinaryAllocatedBytes": 1696,
+            "ownedAllocatedBytes": 1688
+          }
+        ]
+      },
+      "sampleMedians": {
+        "ordinaryMs": 6.817270000000001,
+        "ownedMs": 1.6572324999999999,
+        "ordinaryAllocatedBytes": 1696,
+        "ownedAllocatedBytes": 1688
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    }
+  ],
+  "profileFactBounds": {
+    "documentSlots": 3,
+    "charactersPerFact": 128,
+    "canonicalByteBudgetUnchanged": 8388608,
+    "retainedBytesCounter": "Canonical bytes only; bounded scalar storage is separate."
+  },
+  "imageMemoBounds": {
+    "entries": 128,
+    "captureBytes": 16777216,
+    "retainedChargedBytes": 67108864,
+    "perEntryChargeOverhead": 512
+  },
+  "mappingEnvironment": {
+    "additionalProjectsMappingFlagsUsed": [],
+    "taskSpecificEnvironmentAssignments": {},
+    "historicalInheritedEnvironment": null,
+    "limitation": "Full inherited environment was not captured at execution time; no later observation is substituted. Owner builds use explicit source-reference MSBuild flags and existing repository resolution."
+  },
+  "earlierCommandReceipt": {
+    "path": "/tmp/story65-owner-tests/domain-stream-command-receipt.json",
+    "bytes": 34525,
+    "sha256": "8c566242ecc1e8975949f7ba377f2bf185e82c5cf16c9102e640e13e4b383877"
+  },
+  "earlierFailures": "All initial failed fixture/stale-binary XML/logs listed in the earlier receipt remain separately retained; no current Profile refinement test failed.",
+  "noActiveOwnerBuildOrTestProcesses": true,
+  "sourceFreeze": true,
+  "runtimeAcceptanceBoundary": "No live run was started. Parent must force restoration of every previously diagnostic-overlaid application output and audit its marker absence before ordinary native/runtime acceptance; this receipt does not claim those other app outputs are all restored.",
+  "mandatoryParentOrdinaryRestoration": [
+    "Hexalith.EventStore.Contracts",
+    "Hexalith.Projects.Server",
+    "Hexalith.EventStore.DomainService",
+    "Hexalith.EventStore.Gateway",
+    "Hexalith.EventStore.ServiceDefaults",
+    "Hexalith.Folders.Server",
+    "Hexalith.Projects.Integration.Tests"
+  ],
+  "externalDiagnosticProbes": [
+    {
+      "path": "/tmp/story65-stream-chunk-probe-20261107/receipt.json",
+      "sha256": "39046438e26dde23a4b0d59b16f17350f328002fdd63529605cd599eb2e24b6a"
+    },
+    {
+      "path": "/tmp/story65-profile-fact-probe-20261107/receipt.json",
+      "sha256": "bb064fa4fa5d47e5c12f89719cd899d21df0e75e522ba7f5cdf7f3bd678bced7"
+    }
+  ]
+}

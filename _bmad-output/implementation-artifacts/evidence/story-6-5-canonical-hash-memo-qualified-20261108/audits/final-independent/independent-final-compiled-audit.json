@@ -1,0 +1,1061 @@
+{
+  "passed": true,
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "createdUtc": "2026-11-08T03:52:45.350663+00:00",
+  "auditSourceSha256": "8ba8f5bc4247b900b468bb3c73eb7de80164a950509e7484d68c49b85185a8ab",
+  "bindingsSha256": {
+    "/tmp/story65-canonical-hash-memo-final-compiled-prep-20261108/preparation-receipt.json": "2c9eb795e0a7fca470673a3d5f8955abf5519e49c98c7b190ada6f7348d629f9",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/closed.json": "149dbd1eb0a95f909e70263749f44abb0c3157b39c2a34e64a766688b635ef46",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/parity.json": "375f172c200a501f0eae095bbfa35a7516093d2a38ea0524993f60e23363840c",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/runtime-facts.json": "3d07e1643e030bcd4bbd762c84701bd25307e0f94d84aae7ccec74166cf467b9",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/dataset-facts.json": "f65fd482e08b3afffd44dec12255f22cbe1e7742d3dd65801cded084b1e918ec",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/summary.json": "cf81a4ca876a43a50f166830b6c801d18e337c323c7747b83d3af2b7a44e11b9",
+    "/tmp/story65-canonical-hash-memo-final-compiled-build-20261108/runtime-release/run-receipt.json": "0a50b95ea5809452f5cc1b963473492d1a40e935eac136a21e586831d7f8fa68",
+    "/tmp/story65-canonical-hash-memo-final-compiled-build-20261108/runtime-release/root-release.json": "30e765480fedce7755737bf42097be6602bfe56acc656fc20b10679dc9abee09",
+    "/tmp/story65-canonical-hash-memo-final-compiled-build-20261108/native-handoff.json": "0b56e41f35db16a65b34e386eaca08a1904c5d7d1e9abc0333601bfeb3bb2be2",
+    "/tmp/story65-canonical-hash-native-audit-20261108/independent-native-audit.json": "857afbd14563603cf2b1f24f9785a5decf6687b0055b1c25034184eb499001c8",
+    "/tmp/story65-canonical-hash-native-20261108/final/completed-receipt.json": "8b57c413c9dea0bcef2ea160ce81365485f348cde4c0ecb9aff7c17be72982a7",
+    "/tmp/story65-canonical-hash-native-20261108/source-controls.json": "ac281118fb9a0e9356e21c48254478da670229802926c6ab313b0e2127a94ff6",
+    "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/raw-batches.jsonl": "6f31f7ace70360fa1d04674eb55cad249d6dacf2ed291a17c34a9710f143dd26"
+  },
+  "frozen1055InputsAnd63CompiledAnd44PreparedCurrentAllMatch": true,
+  "nativeHandoff1076Current": true,
+  "source65CurrentAllMatch": true,
+  "native20TestOutputsAndApp147StillUnchanged": true,
+  "parityChecks": 178,
+  "nativeCasesAddedByBenchmark": 0,
+  "batches": 216,
+  "observations": 16380,
+  "summaryGroupsRecomputed": 72,
+  "allRawSchemaOrderCardinalityNestedCountersAndSummaryAggregatesReconciled": true,
+  "runtime10_0_14Natural14ServerGcDebugNoOptimization": true,
+  "actualTypedAuthorityOwnerScopeAndHashParticipationProved": true,
+  "selectorReadCount3IsSourceAndNativeTestFactNotDynamicBenchmarkCounter": true,
+  "allProductionBatchesHashOwner64Or14EntriesWithExactWarmHits": true,
+  "ownerSetupReflectionAndDelegateBindingOutsideObservationClock": true,
+  "perObservationScopeFactoryOptionReadsAndScopeDisposalInsideClock": true,
+  "actualOwner3PriorPlus1NewMemoVersusControl1AndPrototype2": true,
+  "warmComparisons": [
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.813256890625,
+      "controlAmortizedWallMs": 1.5025655,
+      "prototypeAmortizedWallMs": 0.701760953125,
+      "productionVsControlWallRatio": 0.5412455501107938,
+      "productionVsPrototypeWallRatio": 1.1588802241040903,
+      "productionVsControlAllocationRatio": 0.48827043131029435,
+      "productionVsPrototypeAllocationRatio": 0.9999899476151076,
+      "productionVsControlP95Ratio": 0.44093779325343363,
+      "productionVsPrototypeP95Ratio": 1.1501653390962094,
+      "productionOwnerInitializeMs": 0.092627,
+      "productionOwnerDisposeMs": 0.006242,
+      "controlOwnerInitializeMs": 0.002344,
+      "prototypeOwnerInitializeMs": 0.003647,
+      "usableCpuPerObservationMs": {
+        "production": 1.3920156250000009,
+        "control": 2.074578125000002,
+        "prototype": 0.7949374999999996
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.5533049648053698,
+          "productionVsPrototypeWall": 1.1152745634247203
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.5412455501107939,
+          "productionVsPrototypeWall": 1.0538976570535767
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.8076946983783873,
+          "productionVsPrototypeWall": 2.174190655351984
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.4093324453125,
+      "controlAmortizedWallMs": 0.7697360859375,
+      "prototypeAmortizedWallMs": 0.413634375,
+      "productionVsControlWallRatio": 0.531782844523852,
+      "productionVsPrototypeWallRatio": 0.9895996804242878,
+      "productionVsControlAllocationRatio": 0.4974275961506813,
+      "productionVsPrototypeAllocationRatio": 1.0071017194925587,
+      "productionVsControlP95Ratio": 0.5461846490070048,
+      "productionVsPrototypeP95Ratio": 1.1779791935092814,
+      "productionOwnerInitializeMs": 0.093048,
+      "productionOwnerDisposeMs": 0.007064,
+      "controlOwnerInitializeMs": 0.003096,
+      "prototypeOwnerInitializeMs": 0.003056,
+      "usableCpuPerObservationMs": {
+        "production": 0.9048515624999993,
+        "control": 1.755640624999998,
+        "prototype": 1.000984374999998
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.9534118434953223,
+          "productionVsPrototypeWall": 2.0741878358906254
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.549820913484529,
+          "productionVsPrototypeWall": 0.9674518369937218
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.531782844523852,
+          "productionVsPrototypeWall": 0.9963619310315031
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.24603541796875,
+      "controlAmortizedWallMs": 0.4287267265625,
+      "prototypeAmortizedWallMs": 0.24252940234375,
+      "productionVsControlWallRatio": 0.5738746915580567,
+      "productionVsPrototypeWallRatio": 1.0144560436430332,
+      "productionVsControlAllocationRatio": 0.5035292335194796,
+      "productionVsPrototypeAllocationRatio": 0.9981505052667052,
+      "productionVsControlP95Ratio": 0.636923597221818,
+      "productionVsPrototypeP95Ratio": 1.0529237826498896,
+      "productionOwnerInitializeMs": 0.100081,
+      "productionOwnerDisposeMs": 0.006773,
+      "controlOwnerInitializeMs": 0.002896,
+      "prototypeOwnerInitializeMs": 0.003477,
+      "usableCpuPerObservationMs": {
+        "production": 1.0559843749999978,
+        "control": 1.7922734375000005,
+        "prototype": 1.0085039062499987
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.5163679401312128,
+          "productionVsPrototypeWall": 0.9878172749693175
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.613479736250649,
+          "productionVsPrototypeWall": 1.0144560436430332
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.5823987329778706,
+          "productionVsPrototypeWall": 1.0852374324534484
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.651291609375,
+      "controlAmortizedWallMs": 1.480647921875,
+      "prototypeAmortizedWallMs": 0.66065775,
+      "productionVsControlWallRatio": 0.4398693300094225,
+      "productionVsPrototypeWallRatio": 0.9858230065037455,
+      "productionVsControlAllocationRatio": 0.49997019475500776,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 0.494019837526162,
+      "productionVsPrototypeP95Ratio": 1.0531550032223365,
+      "productionOwnerInitializeMs": 0.079194,
+      "productionOwnerDisposeMs": 0.007334,
+      "controlOwnerInitializeMs": 0.002505,
+      "prototypeOwnerInitializeMs": 0.002786,
+      "usableCpuPerObservationMs": {
+        "production": 0.7610937500000006,
+        "control": 1.8684843750000084,
+        "prototype": 1.1636718750000057
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.5685744079922275,
+          "productionVsPrototypeWall": 0.9568704063260673
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.38847370928419783,
+          "productionVsPrototypeWall": 0.9858230065037457
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.5535047760141988,
+          "productionVsPrototypeWall": 1.0111316359858955
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.190506078125,
+      "controlAmortizedWallMs": 0.4371539140625,
+      "prototypeAmortizedWallMs": 0.182162234375,
+      "productionVsControlWallRatio": 0.4357871953029415,
+      "productionVsPrototypeWallRatio": 1.0458044653362306,
+      "productionVsControlAllocationRatio": 0.5000316125892136,
+      "productionVsPrototypeAllocationRatio": 0.9986259677629309,
+      "productionVsControlP95Ratio": 0.31854398382204246,
+      "productionVsPrototypeP95Ratio": 1.139359898466387,
+      "productionOwnerInitializeMs": 0.083061,
+      "productionOwnerDisposeMs": 0.006653,
+      "controlOwnerInitializeMs": 0.001714,
+      "prototypeOwnerInitializeMs": 0.002384,
+      "usableCpuPerObservationMs": {
+        "production": 0.5994921874999974,
+        "control": 1.0806328124999993,
+        "prototype": 0.4662265625000046
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.5177570217041397,
+          "productionVsPrototypeWall": 1.3198850989884274
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.4357871953029415,
+          "productionVsPrototypeWall": 1.0649608911006543
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.3955382064414118,
+          "productionVsPrototypeWall": 0.9258041920384704
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.10213776171875,
+      "controlAmortizedWallMs": 0.25069762109375,
+      "prototypeAmortizedWallMs": 0.114823765625,
+      "productionVsControlWallRatio": 0.4074141640161592,
+      "productionVsPrototypeWallRatio": 0.8895176112958976,
+      "productionVsControlAllocationRatio": 0.5121018323794272,
+      "productionVsPrototypeAllocationRatio": 1.0014488116625049,
+      "productionVsControlP95Ratio": 0.5714345766891797,
+      "productionVsPrototypeP95Ratio": 0.9287930945767323,
+      "productionOwnerInitializeMs": 0.091218,
+      "productionOwnerDisposeMs": 0.006553,
+      "controlOwnerInitializeMs": 0.001663,
+      "prototypeOwnerInitializeMs": 0.001624,
+      "usableCpuPerObservationMs": {
+        "production": 0.44281249999999517,
+        "control": 1.1018984375000045,
+        "prototype": 0.4766249999999985
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.38371343791769424,
+          "productionVsPrototypeWall": 0.8712632768661286
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.4439760137457677,
+          "productionVsPrototypeWall": 1.0487060308623435
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.4568610608919872,
+          "productionVsPrototypeWall": 0.8729699698763908
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.072178875,
+      "controlAmortizedWallMs": 0.161959109375,
+      "prototypeAmortizedWallMs": 0.07076603125,
+      "productionVsControlWallRatio": 0.4456611009935668,
+      "productionVsPrototypeWallRatio": 1.0199649990969362,
+      "productionVsControlAllocationRatio": 0.35381272571337175,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 0.5153300063259998,
+      "productionVsPrototypeP95Ratio": 1.0273335326208803,
+      "productionOwnerInitializeMs": 0.053094,
+      "productionOwnerDisposeMs": 0.002314,
+      "controlOwnerInitializeMs": 0.000652,
+      "prototypeOwnerInitializeMs": 0.000891,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.4423544688167471,
+          "productionVsPrototypeWall": 0.8633981956185717
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.5587493137911086,
+          "productionVsPrototypeWall": 1.2609739930837227
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.4300239556994662,
+          "productionVsPrototypeWall": 0.9901415962661574
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.045412,
+      "controlAmortizedWallMs": 0.0947990078125,
+      "prototypeAmortizedWallMs": 0.041978046875,
+      "productionVsControlWallRatio": 0.47903454949464214,
+      "productionVsPrototypeWallRatio": 1.081803546868806,
+      "productionVsControlAllocationRatio": 0.35448915087090893,
+      "productionVsPrototypeAllocationRatio": 0.9991577821596872,
+      "productionVsControlP95Ratio": 0.5335281825878624,
+      "productionVsPrototypeP95Ratio": 0.9846817494223449,
+      "productionOwnerInitializeMs": 0.023456,
+      "productionOwnerDisposeMs": 0.003427,
+      "controlOwnerInitializeMs": 0.000932,
+      "prototypeOwnerInitializeMs": 0.001493,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.507026832180222,
+          "productionVsPrototypeWall": 1.2335457612166234
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.38050955146406196,
+          "productionVsPrototypeWall": 0.6962472482843378
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.5100539507679499,
+          "productionVsPrototypeWall": 1.081803546868806
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "warm",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.0258504609375,
+      "controlAmortizedWallMs": 0.0515031328125,
+      "prototypeAmortizedWallMs": 0.01978474609375,
+      "productionVsControlWallRatio": 0.501920165354019,
+      "productionVsPrototypeWallRatio": 1.3065854277334477,
+      "productionVsControlAllocationRatio": 0.3601253962996262,
+      "productionVsPrototypeAllocationRatio": 1.0094304211326321,
+      "productionVsControlP95Ratio": 0.4683361013670413,
+      "productionVsPrototypeP95Ratio": 1.08428434417647,
+      "productionOwnerInitializeMs": 0.083192,
+      "productionOwnerDisposeMs": 0.003487,
+      "controlOwnerInitializeMs": 0.001072,
+      "prototypeOwnerInitializeMs": 0.001723,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": 0.2214375000000004,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.391126389307932,
+          "productionVsPrototypeWall": 1.0181699719342652
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.541934824827619,
+          "productionVsPrototypeWall": 1.0713942194794337
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.4785045553145336,
+          "productionVsPrototypeWall": 1.3705121477118016
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.075051640625,
+      "controlAmortizedWallMs": 0.171333078125,
+      "prototypeAmortizedWallMs": 0.078051328125,
+      "productionVsControlWallRatio": 0.4380452475746939,
+      "productionVsPrototypeWallRatio": 0.9615677583961676,
+      "productionVsControlAllocationRatio": 0.3672289915937094,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 0.4184862328485154,
+      "productionVsPrototypeP95Ratio": 0.8511897503434709,
+      "productionOwnerInitializeMs": 0.064475,
+      "productionOwnerDisposeMs": 0.005481,
+      "controlOwnerInitializeMs": 0.000672,
+      "prototypeOwnerInitializeMs": 0.001263,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.4514316514037383,
+          "productionVsPrototypeWall": 0.8097580523074195
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.4482993058932998,
+          "productionVsPrototypeWall": 3.179210195214087
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.3846953158852662,
+          "productionVsPrototypeWall": 0.9598572739505761
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.0413128125,
+      "controlAmortizedWallMs": 0.0863127265625,
+      "prototypeAmortizedWallMs": 0.045529296875,
+      "productionVsControlWallRatio": 0.478641031807574,
+      "productionVsPrototypeWallRatio": 0.9073896443739007,
+      "productionVsControlAllocationRatio": 0.3689590771740498,
+      "productionVsPrototypeAllocationRatio": 1.001815140541038,
+      "productionVsControlP95Ratio": 0.5957966922518841,
+      "productionVsPrototypeP95Ratio": 1.0320837635983764,
+      "productionOwnerInitializeMs": 0.069565,
+      "productionOwnerDisposeMs": 0.002946,
+      "controlOwnerInitializeMs": 0.001353,
+      "prototypeOwnerInitializeMs": 0.002114,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.478641031807574,
+          "productionVsPrototypeWall": 1.1275693962751683
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.5303571017450868,
+          "productionVsPrototypeWall": 0.964495216850414
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.27298340813683536,
+          "productionVsPrototypeWall": 0.7308711817220137
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "warm",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.02233062109375,
+      "controlAmortizedWallMs": 0.05159828125,
+      "prototypeAmortizedWallMs": 0.02603446875,
+      "productionVsControlWallRatio": 0.4327783901474431,
+      "productionVsPrototypeWallRatio": 0.857732927381128,
+      "productionVsControlAllocationRatio": 0.37107277750844236,
+      "productionVsPrototypeAllocationRatio": 0.9946659964253798,
+      "productionVsControlP95Ratio": 0.5060596012765781,
+      "productionVsPrototypeP95Ratio": 0.9797623155377592,
+      "productionOwnerInitializeMs": 0.070527,
+      "productionOwnerDisposeMs": 0.002995,
+      "controlOwnerInitializeMs": 0.001413,
+      "prototypeOwnerInitializeMs": 0.001934,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": 0.20444531249999898,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.4813171827270816,
+          "productionVsPrototypeWall": 0.9884831167334651
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.35387920541041334,
+          "productionVsPrototypeWall": 0.764346334350296
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.4327783901474431,
+          "productionVsPrototypeWall": 0.714674837419022
+        }
+      ]
+    }
+  ],
+  "coldComparisons": [
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 1,
+      "productionAmortizedWallMs": 1.63244,
+      "controlAmortizedWallMs": 1.405437,
+      "prototypeAmortizedWallMs": 1.444302,
+      "productionVsControlWallRatio": 1.161517734341703,
+      "productionVsPrototypeWallRatio": 1.1302622304753438,
+      "productionVsControlAllocationRatio": 1.0818386990703375,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 1.0244105970421433,
+      "productionVsPrototypeP95Ratio": 0.9990052358653003,
+      "productionOwnerInitializeMs": 0.02096,
+      "productionOwnerDisposeMs": 0.00539,
+      "controlOwnerInitializeMs": 0.001182,
+      "prototypeOwnerInitializeMs": 0.002424,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 1.0247480251296912,
+          "productionVsPrototypeWall": 1.0067195216411025
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.1685120001821498,
+          "productionVsPrototypeWall": 1.1370682862725385
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 1.1623818340558767,
+          "productionVsPrototypeWall": 1.1200089056106797
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.841093,
+      "controlAmortizedWallMs": 0.985281,
+      "prototypeAmortizedWallMs": 0.880786,
+      "productionVsControlWallRatio": 0.8536579919840127,
+      "productionVsPrototypeWallRatio": 0.9549345698046972,
+      "productionVsControlAllocationRatio": 0.989434366582836,
+      "productionVsPrototypeAllocationRatio": 1.029620022841215,
+      "productionVsControlP95Ratio": 0.01997816255041295,
+      "productionVsPrototypeP95Ratio": 0.6762043036453724,
+      "productionOwnerInitializeMs": 0.046138,
+      "productionOwnerDisposeMs": 0.002976,
+      "controlOwnerInitializeMs": 0.001082,
+      "prototypeOwnerInitializeMs": 0.004319,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.021085097247990885,
+          "productionVsPrototypeWall": 0.692759214271058
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.8476145383905708,
+          "productionVsPrototypeWall": 0.9481741308331422
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.9806886331399962,
+          "productionVsPrototypeWall": 1.019396077637638
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.922556,
+      "controlAmortizedWallMs": 0.65050575,
+      "prototypeAmortizedWallMs": 0.562841,
+      "productionVsControlWallRatio": 1.4182134439242082,
+      "productionVsPrototypeWallRatio": 1.6391058931385596,
+      "productionVsControlAllocationRatio": 0.8600401673145861,
+      "productionVsPrototypeAllocationRatio": 0.9740388977507207,
+      "productionVsControlP95Ratio": 0.2782463939085455,
+      "productionVsPrototypeP95Ratio": 0.8704224666085085,
+      "productionOwnerInitializeMs": 0.037071,
+      "productionOwnerDisposeMs": 0.003707,
+      "controlOwnerInitializeMs": 0.001953,
+      "prototypeOwnerInitializeMs": 0.001713,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 1.8454851189025587,
+          "productionVsPrototypeWall": 0.8674106009726302
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.24342160073958735,
+          "productionVsPrototypeWall": 1.6391058931385596
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.7889088605289039,
+          "productionVsPrototypeWall": 0.9347280159446073
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 1,
+      "productionAmortizedWallMs": 1.61136,
+      "controlAmortizedWallMs": 1.489737,
+      "prototypeAmortizedWallMs": 1.494827,
+      "productionVsControlWallRatio": 1.081640584881761,
+      "productionVsPrototypeWallRatio": 1.0779575161540433,
+      "productionVsControlAllocationRatio": 1.07996991361117,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 1.1852418782056322,
+      "productionVsPrototypeP95Ratio": 0.933625591454623,
+      "productionOwnerInitializeMs": 0.028054,
+      "productionOwnerDisposeMs": 0.002915,
+      "controlOwnerInitializeMs": 0.000782,
+      "prototypeOwnerInitializeMs": 0.001082,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 1.0902329911582982,
+          "productionVsPrototypeWall": 1.0779575161540433
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.2369982084085982,
+          "productionVsPrototypeWall": 0.9113420619907768
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.9349733522526898,
+          "productionVsPrototypeWall": 0.9830452814469821
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.757042,
+      "controlAmortizedWallMs": 0.8083775,
+      "prototypeAmortizedWallMs": 0.757488,
+      "productionVsControlWallRatio": 0.9364956347745949,
+      "productionVsPrototypeWallRatio": 0.9994112117947742,
+      "productionVsControlAllocationRatio": 1.0485117967332123,
+      "productionVsPrototypeAllocationRatio": 1.0064596827299301,
+      "productionVsControlP95Ratio": 0.6131180957735617,
+      "productionVsPrototypeP95Ratio": 1.010765614662673,
+      "productionOwnerInitializeMs": 0.016942,
+      "productionOwnerDisposeMs": 0.002114,
+      "controlOwnerInitializeMs": 0.000722,
+      "prototypeOwnerInitializeMs": 0.001032,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.5756962650114318,
+          "productionVsPrototypeWall": 0.9585877728191109
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.9928826569269926,
+          "productionVsPrototypeWall": 1.0595864224911813
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 1.0112101858079114,
+          "productionVsPrototypeWall": 1.0087403770241146
+        }
+      ]
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.39477475,
+      "controlAmortizedWallMs": 0.52528925,
+      "prototypeAmortizedWallMs": 0.3935135,
+      "productionVsControlWallRatio": 0.751537843197819,
+      "productionVsPrototypeWallRatio": 1.0032050996979773,
+      "productionVsControlAllocationRatio": 1.0181989472963675,
+      "productionVsPrototypeAllocationRatio": 1.0288667712682886,
+      "productionVsControlP95Ratio": 0.5793294610497459,
+      "productionVsPrototypeP95Ratio": 0.9982671547359008,
+      "productionOwnerInitializeMs": 0.019167,
+      "productionOwnerDisposeMs": 0.001903,
+      "controlOwnerInitializeMs": 0.001172,
+      "prototypeOwnerInitializeMs": 0.001022,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.7515378431978191,
+          "productionVsPrototypeWall": 1.0094236801446217
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.5941111257257746,
+          "productionVsPrototypeWall": 1.0244362645754213
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.9490163089197037,
+          "productionVsPrototypeWall": 0.9920935061725749
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.258999,
+      "controlAmortizedWallMs": 0.250202,
+      "prototypeAmortizedWallMs": 0.253509,
+      "productionVsControlWallRatio": 1.0351595910504312,
+      "productionVsPrototypeWallRatio": 1.021656035880383,
+      "productionVsControlAllocationRatio": 1.0902100865774655,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 0.9624903589361512,
+      "productionVsPrototypeP95Ratio": 1.4318597816796694,
+      "productionOwnerInitializeMs": 0.01583,
+      "productionOwnerDisposeMs": 0.003516,
+      "controlOwnerInitializeMs": 0.000581,
+      "prototypeOwnerInitializeMs": 0.001463,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.8304179290586118,
+          "productionVsPrototypeWall": 1.3877115100493407
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.0351595910504312,
+          "productionVsPrototypeWall": 1.0273824257425743
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 1.1788497217068645,
+          "productionVsPrototypeWall": 0.9900358567151462
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.136809,
+      "controlAmortizedWallMs": 0.153078,
+      "prototypeAmortizedWallMs": 0.1368515,
+      "productionVsControlWallRatio": 0.8937208481950378,
+      "productionVsPrototypeWallRatio": 0.9996894443977596,
+      "productionVsControlAllocationRatio": 1.001303425280388,
+      "productionVsPrototypeAllocationRatio": 0.9560926193921853,
+      "productionVsControlP95Ratio": 0.18001881558542057,
+      "productionVsPrototypeP95Ratio": 1.0067752687421472,
+      "productionOwnerInitializeMs": 0.011662,
+      "productionOwnerDisposeMs": 0.001914,
+      "controlOwnerInitializeMs": 0.000782,
+      "prototypeOwnerInitializeMs": 0.000932,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 1.1569395994199037,
+          "productionVsPrototypeWall": 1.321424973978444
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.0349656168912222,
+          "productionVsPrototypeWall": 0.9960611576265016
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.20408300574538857,
+          "productionVsPrototypeWall": 0.9863282463107821
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "state": "memo-cold",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.08169075,
+      "controlAmortizedWallMs": 0.092415,
+      "prototypeAmortizedWallMs": 0.07956325,
+      "productionVsControlWallRatio": 0.883955526700211,
+      "productionVsPrototypeWallRatio": 1.0267397322256193,
+      "productionVsControlAllocationRatio": 0.78549359343289,
+      "productionVsPrototypeAllocationRatio": 1.0648065453276256,
+      "productionVsControlP95Ratio": 0.9830823411589921,
+      "productionVsPrototypeP95Ratio": 0.9406102505622604,
+      "productionOwnerInitializeMs": 0.014979,
+      "productionOwnerDisposeMs": 0.001803,
+      "controlOwnerInitializeMs": 0.001002,
+      "prototypeOwnerInitializeMs": 0.001312,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.883955526700211,
+          "productionVsPrototypeWall": 1.0267397322256193
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.9504878343892995,
+          "productionVsPrototypeWall": 0.9751145391351449
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.8130646889121237,
+          "productionVsPrototypeWall": 1.011492489613295
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 1,
+      "productionAmortizedWallMs": 0.265803,
+      "controlAmortizedWallMs": 0.248138,
+      "prototypeAmortizedWallMs": 0.265036,
+      "productionVsControlWallRatio": 1.0711902247942677,
+      "productionVsPrototypeWallRatio": 1.002893946482742,
+      "productionVsControlAllocationRatio": 1.088343412783114,
+      "productionVsPrototypeAllocationRatio": 1.0,
+      "productionVsControlP95Ratio": 1.5113793452240465,
+      "productionVsPrototypeP95Ratio": 1.5084548987935995,
+      "productionOwnerInitializeMs": 0.01508,
+      "productionOwnerDisposeMs": 0.001924,
+      "controlOwnerInitializeMs": 0.000631,
+      "prototypeOwnerInitializeMs": 0.001042,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 1.5154327357878106,
+          "productionVsPrototypeWall": 1.5165766604826534
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 1.1407168667977032,
+          "productionVsPrototypeWall": 1.002893946482742
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 1.027847407490993,
+          "productionVsPrototypeWall": 1.1271096184015732
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 2,
+      "productionAmortizedWallMs": 0.138825,
+      "controlAmortizedWallMs": 0.155002,
+      "prototypeAmortizedWallMs": 0.1409595,
+      "productionVsControlWallRatio": 0.8956336047276809,
+      "productionVsPrototypeWallRatio": 0.9848573526438447,
+      "productionVsControlAllocationRatio": 1.0463072904298267,
+      "productionVsPrototypeAllocationRatio": 1.0181839190028452,
+      "productionVsControlP95Ratio": 0.560010271578637,
+      "productionVsPrototypeP95Ratio": 0.8991677483393142,
+      "productionOwnerInitializeMs": 0.009849,
+      "productionOwnerDisposeMs": 0.001472,
+      "controlOwnerInitializeMs": 0.001012,
+      "prototypeOwnerInitializeMs": 0.001302,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 0.9445220822458332,
+          "productionVsPrototypeWall": 0.9781426579975099
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.5759310002924771,
+          "productionVsPrototypeWall": 0.9047864228267529
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.898430342834286,
+          "productionVsPrototypeWall": 1.0025412960609912
+        }
+      ]
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "state": "memo-cold",
+      "readers": 4,
+      "productionAmortizedWallMs": 0.087002,
+      "controlAmortizedWallMs": 0.09498975,
+      "prototypeAmortizedWallMs": 0.08125425,
+      "productionVsControlWallRatio": 0.9159093481138755,
+      "productionVsPrototypeWallRatio": 1.0707378383284567,
+      "productionVsControlAllocationRatio": 0.7659230951534542,
+      "productionVsPrototypeAllocationRatio": 1.0617973490487582,
+      "productionVsControlP95Ratio": 4.061167109387133,
+      "productionVsPrototypeP95Ratio": 4.349247442070739,
+      "productionOwnerInitializeMs": 0.011933,
+      "productionOwnerDisposeMs": 0.001413,
+      "controlOwnerInitializeMs": 0.000982,
+      "prototypeOwnerInitializeMs": 0.001293,
+      "usableCpuPerObservationMs": {
+        "production": null,
+        "control": null,
+        "prototype": null
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "productionVsControlWall": 2.5310001179919586,
+          "productionVsPrototypeWall": 3.3284356144926326
+        },
+        {
+          "round": 2,
+          "productionVsControlWall": 0.8873469254109275,
+          "productionVsPrototypeWall": 1.0005692009956402
+        },
+        {
+          "round": 3,
+          "productionVsControlWall": 0.9159093481138755,
+          "productionVsPrototypeWall": 1.0908623570235187
+        }
+      ]
+    }
+  ],
+  "warmMedianWallWinsVsControl": 12,
+  "warmPerRoundWallWinsVsControl": 35,
+  "warmRoundComparisons": 36,
+  "warmVsControlWallRatioRange": [
+    0.4074141640161592,
+    0.5738746915580567
+  ],
+  "warmVsControlAllocationRatioRange": [
+    0.35381272571337175,
+    0.5121018323794272
+  ],
+  "warmVsControlP95RatioRange": [
+    0.31854398382204246,
+    0.636923597221818
+  ],
+  "warmVsPrototypeWallRatioRange": [
+    0.857732927381128,
+    1.3065854277334477
+  ],
+  "coldVsControlWallRatioRange": [
+    0.751537843197819,
+    1.4182134439242082
+  ],
+  "freshOwnedPidStartPgidSidAbsentIncludingZombieCheck": true,
+  "freshProcPermissionErrors": 0,
+  "limits": [
+    "Two datasets remain public fixture30declarations+17policies andcompiledSample7declarations+7operations, not complete installed-host inventories. No authority IO/network/fresh config-file work is benchmarked.",
+    "64warm operations per worker, one untimed warmup; cold is newly shared memo owner, not runtime/JIT/filesystem cold. Concurrent cold readers can reuse another publication.",
+    "Single process,3cyclic rounds each position once, not6permutations. Only3batches per cell; all round ratios retained. No confidence-interval or host-deadline inference.",
+    "Batch wall/observations is amortized throughput; nested median/p95 is observation latency. Process CPU normalized only when all3batches reach30ms. Allocations include task/record scaffolding and natural GC.",
+    "Real production owner construction/reflection/delegate binding and disposal are measured separately and excluded from observation; initialization owns3prior memos+1new versus copiedcontrol1/prototype2. Per-operation delegate/real options selector and fresh scope disposal remain in-clock.",
+    "Typed scope and memo proof plus actualnewContracts/SDK hashes prevent old-SDK fallback, but this scratch result is not ordinary MULTI/browser acceptance. Native1076 remains separate from178diagnostic checks.",
+    "Native source compiler and generation10/17 limits in handoff/audit are preserved; no full historical binary/source coherence claim is added."
+  ]
+}

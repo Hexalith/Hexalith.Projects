@@ -1,0 +1,9 @@
+[
+  "using AssertionBootstrap = Hexalith.PrivateCaptureCounter.GatewayControllerBootstrap;\n",
+  "using AssertionStage = Hexalith.PrivateCaptureCounter.Stage;\n",
+  "using AssertionAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;\n",
+  "        using var assertionCounters = AssertionBootstrap.Begin();\n",
+  "            using var issueTiming = assertionCounters?.Stage(AssertionStage.ComponentFile, AssertionAllocation.None);\n",
+  "            issueTiming?.Dispose();\n",
+  "        using var baseTiming = assertionCounters?.Stage(AssertionStage.ComponentPolicy, AssertionAllocation.None);\n"
+]

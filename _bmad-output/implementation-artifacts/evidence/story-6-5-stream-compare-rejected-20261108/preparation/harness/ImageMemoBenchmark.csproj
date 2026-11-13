@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Hexalith.EventStore.Server.Tests</AssemblyName>
+    <RootNamespace>Story65.ImageMemo.Harness</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <IsPackable>false</IsPackable>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Reference Include="Hexalith.EventStore.ServiceDefaults">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Hexalith.EventStore.Contracts">
+      <HintPath>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Compile Include="*.cs" />
+    <Compile Include="../control/*.cs" Link="Control/%(Filename)%(Extension)" />
+    <Compile Include="../candidate/*.cs" Link="Candidate/%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Target Name="RequireReviewedCurrentInputManifest" BeforeTargets="Restore;PrepareForBuild;CoreCompile">
+    <Error Condition="'$(Story65ReviewedPreparationSha256)' == '' Or '$(Story65QualifiedSdkSha256)' == ''" Text="Exact Root-reviewed preparation and SDK hashes required." />
+    <GetFileHash Files="$(MSBuildProjectDirectory)/../preparation-receipt.json" Algorithm="SHA256"><Output TaskParameter="Items" ItemName="_PreparationHash" /></GetFileHash>
+    <GetFileHash Files="/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll" Algorithm="SHA256"><Output TaskParameter="Items" ItemName="_SdkHash" /></GetFileHash>
+    <Error Condition="'%(_PreparationHash.FileHash)' != '$(Story65ReviewedPreparationSha256)'" Text="Preparation bytes differ." />
+    <Error Condition="'%(_SdkHash.FileHash)' != '$(Story65QualifiedSdkSha256)'" Text="Actual SDK bytes differ." />
+  </Target>
+</Project>

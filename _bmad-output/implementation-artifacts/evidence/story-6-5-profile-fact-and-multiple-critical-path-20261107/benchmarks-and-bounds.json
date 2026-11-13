@@ -1,0 +1,448 @@
+{
+  "sourceReceiptSha256": "4d9e5fcab5cab99b457098d62ae8231567b4545952db18422c67b47dcf24df50",
+  "benchmarks": [
+    {
+      "nativeLane": "profile-fact-focused",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.MeasureRepresentativeNativeValidationDecodeCost",
+      "inputFacts": {
+        "representativeOnly": true,
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "decodesPerValidation": 2,
+        "firstScopedMs": 6.6608
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "suppressedMs": {
+          "min": 1.4498,
+          "median": 1.4786350000000001,
+          "max": 1.949485
+        },
+        "ownedWarmMs": {
+          "min": 0.6682275,
+          "median": 0.7035625,
+          "max": 0.7883275000000001
+        },
+        "suppressedAllocatedBytes": {
+          "min": 2018058,
+          "median": 2018230,
+          "max": 2018394
+        },
+        "ownedWarmAllocatedBytes": {
+          "min": 1113079,
+          "median": 1113085,
+          "max": 1113256
+        }
+      },
+      "recordedSampleMedians": {
+        "suppressedMs": 1.4786350000000001,
+        "ownedWarmMs": 0.7035625,
+        "suppressedAllocatedBytes": 2018230,
+        "ownedWarmAllocatedBytes": 1113085
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-focused",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MeasureActualProfileFactReadsIncludingScopeDisposal",
+      "inputFacts": {
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "completeOwnedCaptureShaRootEqualityAndScopeDisposal": true,
+        "captureCountPerPair": 2,
+        "hitCountPerPair": 2,
+        "firstScopedMs": 9.224,
+        "firstScopedAllocatedBytes": 6041112
+      },
+      "sampleCount": 7,
+      "sampleStats": {
+        "fullDecodePairMs": {
+          "min": 0.7114575000000001,
+          "median": 1.2767775000000001,
+          "max": 1.9360887500000004
+        },
+        "profileFactPairMs": {
+          "min": 0.21699625000000006,
+          "median": 0.2359487500000001,
+          "max": 0.24864249999999996
+        },
+        "fullDecodePairAllocatedBytes": {
+          "min": 1113132,
+          "median": 1113259,
+          "max": 1113324
+        },
+        "profileFactPairAllocatedBytes": {
+          "min": 438736,
+          "median": 438755,
+          "max": 438902
+        }
+      },
+      "recordedSampleMedians": {
+        "fullDecodePairMs": 1.2767775000000001,
+        "profileFactPairMs": 0.2359487500000001,
+        "fullDecodePairAllocatedBytes": 1113259,
+        "profileFactPairAllocatedBytes": 438755
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MeasureActualProfileFactReadsIncludingScopeDisposal",
+      "inputFacts": {
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "completeOwnedCaptureShaRootEqualityAndScopeDisposal": true,
+        "captureCountPerPair": 2,
+        "hitCountPerPair": 2,
+        "firstScopedMs": 6.9946,
+        "firstScopedAllocatedBytes": 6036544
+      },
+      "sampleCount": 7,
+      "sampleStats": {
+        "fullDecodePairMs": {
+          "min": 0.7733699999999999,
+          "median": 1.4737399999999996,
+          "max": 1.53150875
+        },
+        "profileFactPairMs": {
+          "min": 0.2131300000000001,
+          "median": 0.23809125,
+          "max": 0.26356749999999995
+        },
+        "fullDecodePairAllocatedBytes": {
+          "min": 1113125,
+          "median": 1113227,
+          "max": 1113330
+        },
+        "profileFactPairAllocatedBytes": {
+          "min": 438736,
+          "median": 438744,
+          "max": 438799
+        }
+      },
+      "recordedSampleMedians": {
+        "fullDecodePairMs": 1.4737399999999996,
+        "profileFactPairMs": 0.23809125,
+        "fullDecodePairAllocatedBytes": 1113227,
+        "profileFactPairAllocatedBytes": 438744
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests.MeasurePerObservationParsingBenefit",
+      "inputFacts": {
+        "configurationCharacters": 10003,
+        "baselineMs": 0.0294208,
+        "exactTextReuseMs": 0.0001506,
+        "baselineAllocatedBytes": 52864,
+        "exactTextReuseAllocatedBytes": 0
+      },
+      "sampleCount": 0,
+      "sampleStats": {},
+      "recordedSampleMedians": {},
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MeasureFullFreshImageObservationWithOwnedMemo",
+      "inputFacts": {
+        "imageBytes": 704000,
+        "fullFreshReadAndPeMvidEveryTime": true
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "ordinaryMs": {
+          "min": 0.30042,
+          "median": 0.3077725,
+          "max": 0.37886000000000003
+        },
+        "ownedMs": {
+          "min": 0.0396,
+          "median": 0.0404825,
+          "max": 0.04285625
+        },
+        "ordinaryAllocatedBytes": {
+          "min": 6792,
+          "median": 6792,
+          "max": 6792
+        },
+        "ownedAllocatedBytes": {
+          "min": 6816,
+          "median": 6816,
+          "max": 6816
+        }
+      },
+      "recordedSampleMedians": {
+        "ordinaryMs": 0.3077725,
+        "ownedMs": 0.0404825,
+        "ordinaryAllocatedBytes": 6792,
+        "ownedAllocatedBytes": 6816
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.MeasureRepresentativeNativeValidationDecodeCost",
+      "inputFacts": {
+        "representativeOnly": true,
+        "catalogBytes": 219012,
+        "structuredSchemaProperties": 1000,
+        "decodesPerValidation": 2,
+        "firstScopedMs": 6.5349
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "suppressedMs": {
+          "min": 1.4075775,
+          "median": 1.6000450000000002,
+          "max": 1.6146574999999999
+        },
+        "ownedWarmMs": {
+          "min": 0.7061425,
+          "median": 0.7524025,
+          "max": 0.794085
+        },
+        "suppressedAllocatedBytes": {
+          "min": 2018058,
+          "median": 2018188,
+          "max": 2018290
+        },
+        "ownedWarmAllocatedBytes": {
+          "min": 1113048,
+          "median": 1113049,
+          "max": 1113050
+        }
+      },
+      "recordedSampleMedians": {
+        "suppressedMs": 1.6000450000000002,
+        "ownedWarmMs": 0.7524025,
+        "suppressedAllocatedBytes": 2018188,
+        "ownedWarmAllocatedBytes": 1113049
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.MeasureCompleteWarmReuseIncludingCaptureAndComparison",
+      "inputFacts": {
+        "technical": false,
+        "catalogBytes": 18636
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "baselineMs": {
+          "min": 0.057222499999999996,
+          "median": 0.059419999999999994,
+          "max": 0.06356
+        },
+        "capturedReuseMs": {
+          "min": 0.00207,
+          "median": 0.0021925,
+          "max": 0.0034925
+        },
+        "baselineAllocatedBytes": {
+          "min": 77872,
+          "median": 77872,
+          "max": 77872
+        },
+        "capturedReuseAllocatedBytes": {
+          "min": 19568,
+          "median": 19568,
+          "max": 19568
+        }
+      },
+      "recordedSampleMedians": {
+        "baselineMs": 0.059419999999999994,
+        "capturedReuseMs": 0.0021925,
+        "baselineAllocatedBytes": 77872,
+        "capturedReuseAllocatedBytes": 19568
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.MeasureCompleteWarmReuseIncludingCaptureAndComparison",
+      "inputFacts": {
+        "technical": true,
+        "catalogBytes": 18639
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "baselineMs": {
+          "min": 0.0810375,
+          "median": 0.08161,
+          "max": 0.0864275
+        },
+        "capturedReuseMs": {
+          "min": 0.004135,
+          "median": 0.00424,
+          "max": 0.0053725000000000005
+        },
+        "baselineAllocatedBytes": {
+          "min": 115176,
+          "median": 115176,
+          "max": 115176
+        },
+        "capturedReuseAllocatedBytes": {
+          "min": 22600,
+          "median": 22600,
+          "max": 22600
+        }
+      },
+      "recordedSampleMedians": {
+        "baselineMs": 0.08161,
+        "capturedReuseMs": 0.00424,
+        "baselineAllocatedBytes": 115176,
+        "capturedReuseAllocatedBytes": 22600
+      },
+      "firstColdAvailability": "No separate first-cold sample recorded; warmups precede measurements."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "inputFacts": {
+        "assembly": "Hexalith.EventStore.DomainService",
+        "imageBytes": 1390080,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 1.0127,
+        "firstScopedAllocatedBytes": 1392296
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "ordinaryMs": {
+          "min": 0.6179525,
+          "median": 0.625175,
+          "max": 0.6270275
+        },
+        "ownedMs": {
+          "min": 0.058594999999999994,
+          "median": 0.058750000000000004,
+          "max": 0.072165
+        },
+        "ordinaryAllocatedBytes": {
+          "min": 1856,
+          "median": 1856,
+          "max": 1856
+        },
+        "ownedAllocatedBytes": {
+          "min": 1848,
+          "median": 1848,
+          "max": 1848
+        }
+      },
+      "recordedSampleMedians": {
+        "ordinaryMs": 0.625175,
+        "ownedMs": 0.058750000000000004,
+        "ordinaryAllocatedBytes": 1856,
+        "ownedAllocatedBytes": 1848
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "inputFacts": {
+        "assembly": "Hexalith.EventStore.ServiceDefaults",
+        "imageBytes": 704000,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 0.5792,
+        "firstScopedAllocatedBytes": 1754824
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "ordinaryMs": {
+          "min": 0.30509,
+          "median": 0.30566,
+          "max": 0.30967500000000003
+        },
+        "ownedMs": {
+          "min": 0.0295825,
+          "median": 0.030355,
+          "max": 0.031775
+        },
+        "ordinaryAllocatedBytes": {
+          "min": 1864,
+          "median": 1864,
+          "max": 1864
+        },
+        "ownedAllocatedBytes": {
+          "min": 1856,
+          "median": 1856,
+          "max": 1856
+        }
+      },
+      "recordedSampleMedians": {
+        "ordinaryMs": 0.30566,
+        "ownedMs": 0.030355,
+        "ordinaryAllocatedBytes": 1864,
+        "ownedAllocatedBytes": 1856
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    },
+    {
+      "nativeLane": "profile-fact-regression",
+      "case": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+      "inputFacts": {
+        "assembly": "System.Private.CoreLib",
+        "imageBytes": 15577896,
+        "freshFullOriginalStreamToEof": true,
+        "perCallScopeIncluded": true,
+        "firstScopedMs": 9.2484,
+        "firstScopedAllocatedBytes": 32357192
+      },
+      "sampleCount": 5,
+      "sampleStats": {
+        "ordinaryMs": {
+          "min": 6.66648,
+          "median": 6.817270000000001,
+          "max": 7.2405225
+        },
+        "ownedMs": {
+          "min": 1.6263874999999999,
+          "median": 1.6572324999999999,
+          "max": 1.7777825
+        },
+        "ordinaryAllocatedBytes": {
+          "min": 1696,
+          "median": 1696,
+          "max": 1696
+        },
+        "ownedAllocatedBytes": {
+          "min": 1688,
+          "median": 1688,
+          "max": 1688
+        }
+      },
+      "recordedSampleMedians": {
+        "ordinaryMs": 6.817270000000001,
+        "ownedMs": 1.6572324999999999,
+        "ordinaryAllocatedBytes": 1696,
+        "ownedAllocatedBytes": 1688
+      },
+      "firstColdAvailability": "Recorded first scoped call including capture/retention; not a cold process or complete owner-authority round trip."
+    }
+  ],
+  "profileFactBounds": {
+    "documentSlots": 3,
+    "charactersPerFact": 128,
+    "canonicalByteBudgetUnchanged": 8388608,
+    "retainedBytesCounter": "Canonical bytes only; bounded scalar storage is separate."
+  },
+  "imageMemoBounds": {
+    "entries": 128,
+    "captureBytes": 16777216,
+    "retainedChargedBytes": 67108864,
+    "perEntryChargeOverhead": 512
+  },
+  "exclusions": [
+    "These local measurements are not complete owner query/authority/network/actor or browser timings.",
+    "First scoped samples include capture/retention when supplied; they are not cold-process or cold-host measurements. Some cases have no separately recorded first-cold sample.",
+    "Focused and regression samples are distinct invocations; sample medians and ranges are retained separately, not pooled into a claimed latency bound.",
+    "The profile-fact benchmark uses a219012-byte synthetic structured catalog with1000 schema properties; actual production workload equivalence is not asserted.",
+    "Profile scalar storage is bounded separately at3 document slots\u00d7128 characters; retained-bytes counters count canonical bytes only, not total process memory.",
+    "No live performance, p95, concurrency throughput or full-host memory ceiling is established by these cases."
+  ]
+}

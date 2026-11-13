@@ -1,0 +1,640 @@
+[
+  {
+    "label": "matrix-disabled",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "matrix",
+      "disabled"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:16.137116+00:00",
+    "finishedUtc": "2026-11-07T09:19:16.291831+00:00",
+    "wallSeconds": 0.1547038800053997,
+    "pid": 4089854,
+    "startTicks": "8075771",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "71cb0728a1b87965ec0753d53417e533f3de0a0e8cc858dee78ab45790762e95",
+    "cleanup": []
+  },
+  {
+    "label": "matrix-active",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "matrix",
+      "active"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:16.292124+00:00",
+    "finishedUtc": "2026-11-07T09:19:24.396962+00:00",
+    "wallSeconds": 8.106002184998943,
+    "pid": 4089910,
+    "startTicks": "8075786",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "d1cbf3548fea43024effe3eb03d8b09f8ee1ba1bdd6ac8cfd8ee351cfb2501df",
+    "cleanup": [
+      {
+        "name": "gateway.jsonl",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 269265,
+        "sha256": "19e5ea91f9c6373bec5bc561317a4d2630ecd49c94d0942c1c70a93a73558459",
+        "absenceVerified": true
+      },
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "5160566c96b2a9c8331003820d3d538d8d6d0279a9e32d70ca6478b263fd9049",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 513,
+        "sha256": "e1f2dd0d42c20add1e6fff99ef9baa704f93ce6e6fed89ea0057d6c1d2d8e794",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "matrix-expired",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "matrix",
+      "expired"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:24.398080+00:00",
+    "finishedUtc": "2026-11-07T09:19:24.565358+00:00",
+    "wallSeconds": 0.16728561899799388,
+    "pid": 4090713,
+    "startTicks": "8076597",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "43f8780aad19a47d8e800adcf0f2478bbb9310501cb4af57ccf9f2a78987eb22",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "f1002ab7e6478119cd5cf2c51be5074ed1a76d18787bb73941fbb0729318735c",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "matrix-capped",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "matrix",
+      "capped"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:24.565660+00:00",
+    "finishedUtc": "2026-11-07T09:19:32.672540+00:00",
+    "wallSeconds": 8.106893128002412,
+    "pid": 4090731,
+    "startTicks": "8076614",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "9d510c1d0c3f189124c2c6179d25ae603530383e37dd582185124c594dbd8551",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "f5c109992e7ac87542b63758d0bd56a2b160867b012d6da66d6f026f0cdd10fb",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 508,
+        "sha256": "06f0445405ac5d16d01e71a0e17b53064566c5aed67467b3e2f9f95e4c729218",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "matrix-failing",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "matrix",
+      "failing"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:32.673448+00:00",
+    "finishedUtc": "2026-11-07T09:19:40.781311+00:00",
+    "wallSeconds": 8.107867348007858,
+    "pid": 4091789,
+    "startTicks": "8077425",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "c82b9188f48aa5abed742bdac88b39e360792cb7737c51b247812ce29cc02f8a",
+    "cleanup": [
+      {
+        "name": "gateway.jsonl",
+        "mode": "0o644",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 25,
+        "sha256": "6e704879dd0025f15ab8064698ea451dbea43c2c7ace8331b10c6f5e969814f8",
+        "absenceVerified": true
+      },
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "96466178ed5411f855d62499788eb6ca9a1d18a78c5c8ff94771ac58feabae9a",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 508,
+        "sha256": "a7e025f020461fd9b143f0ea91277d29434b98911ca15a0adbed485986e97f81",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-fifo",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "fifo"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:40.782056+00:00",
+    "finishedUtc": "2026-11-07T09:19:41.010585+00:00",
+    "wallSeconds": 0.2285367690055864,
+    "pid": 4092843,
+    "startTicks": "8078236",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "045df37595a302c46c3c4f260e800e8064d0af193a5ab564fee3f2916e5c584e",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "1dff2c9a91daace02e5b503b4f7f46fbc35231a596e514a1ebf791b6ab171af0",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-symlink",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "symlink"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:41.010912+00:00",
+    "finishedUtc": "2026-11-07T09:19:41.259661+00:00",
+    "wallSeconds": 0.24875780699949246,
+    "pid": 4092982,
+    "startTicks": "8078258",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "7825df05a74adebe4ab383d3f8482eaf86875856b57121c77edefdc08a5297d4",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "d657b94896a6e71a82580bb3f76f19cab51399220e73ba75745a7debee00ab6d",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-future",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "future"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:41.260010+00:00",
+    "finishedUtc": "2026-11-07T09:19:41.490605+00:00",
+    "wallSeconds": 0.2306026909936918,
+    "pid": 4092999,
+    "startTicks": "8078283",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "eb47aac8c3a63063b4a82f219613006c29f5ab5aa62ffa6aa2800db7d8c8e332",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "37109b6d682b32bf9d4229c4c3134b03953d42826831e3292e95b3de3372360b",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-malformed",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "malformed"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:41.490944+00:00",
+    "finishedUtc": "2026-11-07T09:19:41.750525+00:00",
+    "wallSeconds": 0.25958875598735176,
+    "pid": 4093012,
+    "startTicks": "8078306",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "13d4943430faece91508f8bee8b1a760d6710e4f4a31685de7f5cecc8be2a478",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "1cd60b837417dba84877ebbd7d2f6820add12f6996d66f4e95db4515dce4cb93",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-long-control",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "long-control"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:41.750860+00:00",
+    "finishedUtc": "2026-11-07T09:19:41.990513+00:00",
+    "wallSeconds": 0.23966172500513494,
+    "pid": 4093036,
+    "startTicks": "8078332",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "3f749d468c99e80cc93d1452ea5f8f648ace7faad47aef697c791b16a4eb78f7",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "310df1e5bf37c1a7779520be74224b336c03e3f79e17e0f0aedacaafc355b6aa",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-wrong-frequency",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "wrong-frequency"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:41.990852+00:00",
+    "finishedUtc": "2026-11-07T09:19:42.245809+00:00",
+    "wallSeconds": 0.25496554099663626,
+    "pid": 4093050,
+    "startTicks": "8078356",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "41f127312989b6e22c850d6cc43fdecedce02e8b93ed903b4bc4b8fe72b1445f",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "f330d8342816d2ddb85f179ff6db8e5eeb403dbbd77e3e90e414aafe6197417f",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-long-window",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "long-window"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:42.246152+00:00",
+    "finishedUtc": "2026-11-07T09:19:42.494255+00:00",
+    "wallSeconds": 0.24811175001377705,
+    "pid": 4093063,
+    "startTicks": "8078382",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "94d8a43d2ddc8770dd82acd95e6d3c511e3f205215a2a68c0434f97333faa37c",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "bb7c12b48e8d34bca9cd46a1c16bbf828e564ffebf27e48814d23757014b1de2",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-wrong-mode",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "wrong-mode"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:42.494641+00:00",
+    "finishedUtc": "2026-11-07T09:19:42.735175+00:00",
+    "wallSeconds": 0.24054209199675824,
+    "pid": 4093076,
+    "startTicks": "8078407",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "4ea6473979911c38138fe5421249fea793871f0d911bc8f87b2870ec0cd6b71c",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "67551c12f700a678d090324f732990e1174fe008b1b8c28fa3c85a81ae68cf4a",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-role",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "role"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:42.735527+00:00",
+    "finishedUtc": "2026-11-07T09:19:42.818984+00:00",
+    "wallSeconds": 0.08346511999843642,
+    "pid": 4093140,
+    "startTicks": "8078431",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "7ef43b37279059ae1de435e4df981cf90db0ae1c09385d9ec485db6db9ab3c86",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "a4bed4b3a739abe6aa752a8e2434949451f02c09b5a4b3d1f83319bb804f8899",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-race",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "race"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:42.819338+00:00",
+    "finishedUtc": "2026-11-07T09:19:43.455214+00:00",
+    "wallSeconds": 0.6358865899965167,
+    "pid": 4093229,
+    "startTicks": "8078439",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "9bcfd3ad99840310ac89f51474f678bb5a70278a0440beb16cc1da296292a576",
+    "cleanup": [
+      {
+        "name": "gateway.jsonl",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 8388323,
+        "sha256": "6c964523ec7e6e13e9681315b3e83553243055aa570f2899fedfdfa428c9626c",
+        "absenceVerified": true
+      },
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "68aa57b86cff9e861a38a8d55f9be28067741d6a1665d222445967431cd5c85d",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 529,
+        "sha256": "8c1c506cc4d3cd6cd78920976e53607bebed1294cf32c1c7bc2ad0356430cbc1",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-file-cap",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "file-cap"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:43.468942+00:00",
+    "finishedUtc": "2026-11-07T09:19:51.618395+00:00",
+    "wallSeconds": 8.150157388008665,
+    "pid": 4093337,
+    "startTicks": "8078504",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "76d4679413bb6f70c8f1277a01bae8b6dcc8706b80be961c3e5fd8f972d10d34",
+    "cleanup": [
+      {
+        "name": "gateway.jsonl",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 8388395,
+        "sha256": "9338987cd619e2c39860c90704d701b867214f56c86b81b7bd1f06b1f1c5f1e9",
+        "absenceVerified": true
+      },
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "54a399c139bfd4ec3fae6cf289315db584f7336aac79a9e7292153b210e4bd16",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 527,
+        "sha256": "aaba9baf0202502dae26efa1934a32c29943ab4892ed23fd4e44ea18b8e36c22",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-fault",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "fault"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:51.628645+00:00",
+    "finishedUtc": "2026-11-07T09:19:51.725752+00:00",
+    "wallSeconds": 0.09710807900410146,
+    "pid": 4094330,
+    "startTicks": "8079320",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "2ec4275544f38bab543e13534993c719e2c5a13b0023e61d41d662c7faffc183",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "b62f8426287fd5ffcb842f85b5ef3f74f6fd53799d92da9053391b6f72587775",
+        "absenceVerified": true
+      }
+    ]
+  },
+  {
+    "label": "stress-hard-drain",
+    "command": [
+      "dotnet",
+      "/tmp/story65-capture-counter-prep-20261107/differential/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "stress",
+      "hard-drain"
+    ],
+    "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+    "startedUtc": "2026-11-07T09:19:51.726156+00:00",
+    "finishedUtc": "2026-11-07T09:20:12.146570+00:00",
+    "wallSeconds": 20.42042568800389,
+    "pid": 4094343,
+    "startTicks": "8079330",
+    "processAbsent": true,
+    "exitCode": 0,
+    "stdoutSchemaClosed": true,
+    "stderrEmpty": true,
+    "resultSha256": "2d02a6efc828aa1a33cbbfe1aa815a693c774c258db1f12a94829df7448ceee7",
+    "cleanup": [
+      {
+        "name": "window.control",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 46,
+        "sha256": "f994adf6d310f2a635ff8ac4f8237259a96645cfec81ebe3bc4a952fcd8b1b0a",
+        "absenceVerified": true
+      },
+      {
+        "name": "gateway.closed.json",
+        "mode": "0o600",
+        "symlink": false,
+        "fifo": false,
+        "bytes": 502,
+        "sha256": "8d0e70705d5519c0ea756a1e9aa711535fe6c7321f5003038a7d9b63328ed7dc",
+        "absenceVerified": true
+      }
+    ]
+  }
+]

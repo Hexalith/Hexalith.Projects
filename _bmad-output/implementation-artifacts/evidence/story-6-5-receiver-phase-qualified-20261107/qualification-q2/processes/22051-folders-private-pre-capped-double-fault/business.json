@@ -1,0 +1,38 @@
+{
+  "Mode": "pre-capped",
+  "Group": "double-fault",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "technical-double-dispose-second-fault",
+        "Passed": true,
+        "MiddlewareEntries": 1,
+        "AcquireCalls": 1,
+        "NextCalls": 0,
+        "ReleaseCallbacks": 2,
+        "ErrorType": "System.InvalidOperationException",
+        "Faults": 2,
+        "TokenMatched": true,
+        "LifetimeMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 111,
+        "MinimumLastDisposeTicks": 7542907,
+        "MaximumLastDisposeTicks": 8255952,
+        "FirstDisposeHoldTicks": 199052879,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinal": 92899,
+      "AdmittedDelta": 1,
+      "ActualStageRowsRequired": false,
+      "SyntheticDurationBracketOnly": true
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

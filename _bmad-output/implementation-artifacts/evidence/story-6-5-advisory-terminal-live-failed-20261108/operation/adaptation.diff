@@ -1,0 +1,962 @@
+--- qualified-old/ops_common.py
++++ current/ops_common.py
+@@ -1,82 +1,162 @@
+ from pathlib import Path
+ import hashlib,json,os,re,stat
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+-PREP=Path('/tmp/story65-advisory-wave-ops-prep-20261107')
++PREP=Path('/tmp/story65-advisory-terminal-live-prep-20261108')
+ PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
+-SDK='Hexalith.EventStore.ServiceDefaults'
+-SDK_PRODUCER=ROOT/'references/Hexalith.EventStore/src'/SDK
+-ASSEMBLY='Hexalith.Projects.Server'
+-PRODUCER=ROOT/'src'/ASSEMBLY
+-SOURCE_PREP=Path('/tmp/story65-advisory-wave-prep-20261107')
+-RECEIPT=Path('/tmp/story65-owner-tests/parsed-template-command-receipt.json')
+-OWNER_SHA='2a031e4d183152beb50b56428805fab3af7b08b787dbad3fc6240ca3dd6e1fb8'
+-HELPER_SHA='112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498'
+-ORIGINAL_CAPTURE_SHA='5e85827847578384a7dcca9fe448b97f21cdf4a201263c2d9ec9d0f3eda6be4d'
++SOURCE_PREP=Path('/tmp/story65-advisory-terminal-prep-20261108')
++ASSEMBLY='Hexalith.Projects.Server';PRODUCER=ROOT/'src'/ASSEMBLY
++SDK='Hexalith.EventStore.ServiceDefaults';SDK_PRODUCER=ROOT/'references/Hexalith.EventStore/src'/SDK
++SDK_SHA='873dbb74ee259d91c99ea2804e5801134c993abb4ef7806e79f242e5d23faf96'
++SDK_PDB_SHA='f4fae4fb336e03b5e0636a5781a817598b301f445a967d7b4eb309be29dd639e'
++CONTRACTS='Hexalith.EventStore.Contracts'
++CONTRACTS_SHA='f1cf82fe57d5ae0037772d3ccea77766a141cd49ec66c2079c3c8b046c8089df'
++CONTRACTS_PDB_SHA='bbe424a27b1f242f2d8865864121ea4a99ab40ecee493084df462cf0efd49a39'
+ ORIGINAL_EXECUTOR_SHA='ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d'
+-PRIVATE_EXECUTOR_SHA='b2b672c688355e504f1de87b870b1e0226f609a23fecbdb2dfbe5a162c43eede'
+-BOOTSTRAP_SHA='8f5836d1ff4dabb4c5fe819ae762dfff0748b5d792f984ae1adf45af28f45375'
+-ORDINARY_SDK_SHA='5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872'
++PRIVATE_EXECUTOR_SHA='d36afcb5709e36eb0b8039133947b1fad93df56de0147e1b624842f0e77542fe'
+ MAPPING={'CustomBeforeDirectoryBuildProps','CustomAfterMicrosoftCommonProps','CustomBeforeDirectoryBuildTargets','CustomAfterDirectoryBuildTargets','AfterMicrosoftNETSdkTargets','HEXALITH_SOURCE_MAPPING_HASH','Configuration'}
++PRIMARY=['service-defaults-producer','eventstore','tenants','projects','projects-workers','folders','folders-workers','folders-eventstore','apphost','integration']
++MARKERS=[b'Hexalith.PrivateCaptureCounter',b'CaptureCounters.cs',b'ProjectAdvisoryQueryExecutor.private.cs',b'AdvisoryTerminalCapture',b'AdvisoryWaveBootstrap.cs',b'PrivateCaptureInstrumentation',b'CaptureCounterBegin',b'CaptureCounterScope',b'PrivateSourceCaptureTiming',b'TimingHexalith',b'PrivateCaptureScope']
+ def sha(file):
+- with Path(file).open('rb')as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
++ path=Path(file);assert path.is_file()and not path.is_symlink()
++ with path.open('rb')as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+ def save(path,value):
+  path=Path(path);path.parent.mkdir(mode=0o700,parents=True,exist_ok=True);temporary=path.with_name(path.name+'.tmp');temporary.write_text(json.dumps(value,indent=2)+'\n');temporary.chmod(0o600);temporary.replace(path)
+ def operational_pins(expected):
+  assert re.fullmatch(r'[0-9a-f]{64}',expected or'')and sha(PREP/'operational-pins.json')==expected
+  pins=json.loads((PREP/'operational-pins.json').read_text())
+- assert pins.get('sourceQualificationReady')is True,'Source/harness qualification is not yet released for execution'
+- assert all(sha(PREP/name)==digest for name,digest in pins['files'].items())
+- assert all(sha(path)==digest for path,digest in pins.get('externalFiles',{}).items())
+- return pins
++ assert pins['executionReleased']is True and pins['sourceQualificationReady']is True
++ for name,digest in pins['files'].items():assert sha(PREP/name)==digest
++ for name,digest in pins['externalFiles'].items():assert sha(name)==digest
++ sources();return pins
++
+ def sources():
+- assert sha(RECEIPT)==OWNER_SHA and sha(SOURCE_PREP/'CaptureCounters.cs')==HELPER_SHA
+- owner=json.loads(RECEIPT.read_text());assert len(owner['sourceSha256'])==48
+- for relative,digest in owner['sourceSha256'].items():assert sha(ROOT/'references/Hexalith.EventStore'/relative)==digest
+- assert sha(SDK_PRODUCER/'Routing/DevelopmentRouteCatalogInputs.cs')==ORIGINAL_CAPTURE_SHA
++ binding=json.loads((PREP/'source-qualification-binding.json').read_text())
++ assert sha(binding['qualificationPath'])==binding['qualificationSha256']
++ q=json.loads(Path(binding['qualificationPath']).read_text())
++ assert q['scratchSourceQualificationPassed']is True
++ assert all(q[k]==v for k,v in binding['requiredCounts'].items())
++ assert all(q[k]is True for k in ['all733FrozenInputsCurrent','source65AndApp147Current','allGroupsAbsentIncludingZombies','privateDirectorySameAndEmpty'])
++ for path,digest in q['bindingsSha256'].items():assert sha(path)==digest # Closed receipt files, not their mutable historical workspace binary maps.
++ source=json.loads(Path(binding['currentSourceControls']).read_text())['sourceFilesSha256'];assert len(source)==65
++ for name,digest in source.items():
++  p=ROOT/name;assert p.resolve().is_relative_to(ROOT)and sha(p)==digest
++ prep=json.loads((SOURCE_PREP/'preparation-receipt.json').read_text())
++ for name,digest in prep['filesSha256'].items():assert sha(SOURCE_PREP/name)==digest
+  assert sha(PRODUCER/'Queries/ProjectAdvisoryQueryExecutor.cs')==ORIGINAL_EXECUTOR_SHA
+  assert sha(SOURCE_PREP/'ProjectAdvisoryQueryExecutor.private.cs')==PRIVATE_EXECUTOR_SHA
+- assert sha(SOURCE_PREP/'AdvisoryWaveBootstrap.cs')==BOOTSTRAP_SHA
+- return {'ownerSource48Match':True,'extraCaptureSourceMatch':True,'ordinaryExecutorExtraMatch':True,'sourceCount':50,'helperSha256':HELPER_SHA,'privateExecutorSha256':PRIVATE_EXECUTOR_SHA,'firstEntryBootstrapSha256':BOOTSTRAP_SHA}
++ return {'source65Match':True,'qualifiedHandoffSha256':binding['qualificationSha256'],'helperSha256':q['helperSha256'],'privateExecutorSha256':q['privateSourceSha256'],'adapterSha256':q['adapterSha256']}
++
+ def private_directory(require_empty=False):
+- pin=json.loads((PREP/'private-directory-proof.json').read_text());s=PRIVATE.lstat()
+- assert stat.S_ISDIR(s.st_mode)and not stat.S_ISLNK(s.st_mode)and stat.S_IMODE(s.st_mode)==0o700 and s.st_uid==pin['uid']and s.st_dev==pin['device']and s.st_ino==pin['inode']
++ s=PRIVATE.lstat();assert stat.S_ISDIR(s.st_mode)and not stat.S_ISLNK(s.st_mode)
++ assert(s.st_dev,s.st_ino,s.st_uid,stat.S_IMODE(s.st_mode))==(2096,8752986,1000,0o700)
+  if require_empty:assert not any(PRIVATE.iterdir())
+  return {'uid':s.st_uid,'device':s.st_dev,'inode':s.st_ino,'mode':'0700','symlink':False}
+ def marker(file):
+- data=Path(file).read_bytes()
+- return any(value in data or value.decode().encode('utf-16-le')in data for value in[b'Hexalith.PrivateCaptureCounter',b'CaptureCounters.cs',b'ProjectAdvisoryQueryExecutor.private.cs',b'AdvisoryWaveBootstrap.cs'])
+-def permitted_roots():
+- return [ROOT]+[ROOT/match for match in re.findall(r'^\s*path\s*=\s*(.+)$',(ROOT/'.gitmodules').read_text(),re.M)]
+-def census():
++ data=Path(file).read_bytes();return any(x in data or x.decode().encode('utf-16-le')in data for x in MARKERS)
++def permitted_roots():return[ROOT]+[ROOT/x for x in re.findall(r'^\s*path\s*=\s*(.+)$',(ROOT/'.gitmodules').read_text(),re.M)]
++def census(assembly=ASSEMBLY):
+  result=[]
+  for root in permitted_roots():
+   for current,dirs,files in os.walk(root):
+    dirs[:]=[d for d in dirs if d not in['.git','references','node_modules']]
+    for name in files:
+-    if name not in[ASSEMBLY+'.dll',ASSEMBLY+'.pdb']:continue
++    if name not in[assembly+'.dll',assembly+'.pdb']:continue
+     f=Path(current)/name
+-    if f.is_symlink():raise RuntimeError('SDK carrier symlink refused')
+-    if not any(part in['bin','obj']for part in f.relative_to(root).parts)or'Debug'not in f.parts:continue
++    if not any(x in['bin','obj']for x in f.relative_to(root).parts)or'Debug'not in f.parts:continue
++    assert not f.is_symlink()
+     kind='pdb'if f.suffix=='.pdb'else'refint'if'refint'in f.parts else'ref'if'ref'in f.parts else'full'
+     parent=f.parent
+     while parent!=root and parent.name not in['bin','obj']:parent=parent.parent
+-    projectdir=parent.parent if parent.name in['bin','obj']else None
+-    projects=list(projectdir.glob('*.csproj'))if projectdir else[]
+-    result.append({'path':str(f.relative_to(ROOT)),'sha256':sha(f),'bytes':f.stat().st_size,'kind':kind,'privateMarker':marker(f),'project':str(projects[0].relative_to(ROOT))if len(projects)==1 else None})
++    projects=list(parent.parent.glob('*.csproj'))if parent.name in['bin','obj']else[]
++    result.append({'path':str(f.relative_to(ROOT)),'sha256':sha(f),'kind':kind,'privateMarker':marker(f),'project':str(projects[0].relative_to(ROOT))if len(projects)==1 else None})
+  return result
+-def ordinary_expected(kind):
+- return PRODUCER/('obj/Debug/net10.0/'+kind+'/'+ASSEMBLY+'.dll'if kind in['ref','refint']else'bin/Debug/net10.0/'+ASSEMBLY+('.pdb'if kind=='pdb'else'.dll'))
++
++def ordinary_expected(kind):return expected_at(PRODUCER,ASSEMBLY,kind)
++def expected_at(producer,assembly,kind):return producer/('obj/Debug/net10.0/'+kind+'/'+assembly+'.dll'if kind in['ref','refint']else'bin/Debug/net10.0/'+assembly+('.pdb'if kind=='pdb'else'.dll'))
+ def ordinary_sdk_proof():
+- producer=SDK_PRODUCER/'bin/Debug/net10.0'/(SDK+'.dll');pdb=producer.with_suffix('.pdb');assert sha(producer)==ORDINARY_SDK_SHA and not marker(producer)and not marker(pdb)
+- result=[]
+- for row in json.loads((PREP/'affected-inventory.json').read_text())['knownServiceDefaultsCopies']:
+-  copy=ROOT/row['path'];symbols=copy.with_suffix('.pdb');assert sha(copy)==sha(producer)and sha(symbols)==sha(pdb)and not marker(copy)and not marker(symbols)
+-  result.append({'path':row['path'],'sha256':sha(copy),'pdbSha256':sha(symbols),'ordinaryNoPrivateMarker':True})
+- assert len(result)==8
+- return {'producerSha256':sha(producer),'producerPdbSha256':sha(pdb),'allEightOrdinarySdkCopiesCoherent':True,'copies':result}
++ inv=json.loads((PREP/'affected-inventory.json').read_text());producer=SDK_PRODUCER/'bin/Debug/net10.0'/(SDK+'.dll');pdb=producer.with_suffix('.pdb')
++ assert sha(producer)==SDK_SHA and sha(pdb)==SDK_PDB_SHA and not marker(producer)and not marker(pdb)
++ for path,digest in inv['core8Sha256'].items():assert sha(path)==digest and not marker(path)
++ copies=[]
++ for row in inv['knownServiceDefaultsCopies']:
++  copy=ROOT/row['path'];symbols=copy.with_suffix('.pdb');contracts=copy.with_name(CONTRACTS+'.dll')
++  assert sha(copy)==SDK_SHA and sha(symbols)==SDK_PDB_SHA and not marker(copy)and not marker(symbols)
++  assert sha(contracts)==CONTRACTS_SHA and sha(contracts.with_suffix('.pdb'))==CONTRACTS_PDB_SHA
++  copies.append({'path':row['path'],'sha256':sha(copy),'pdbSha256':sha(symbols),'contractsSha256':sha(contracts),'contractsPdbSha256':sha(contracts.with_suffix('.pdb'))})
++ sdkrows=census(SDK);old={r['path']:r for r in inv['sdk137']};owned=set(inv['projects'].values())
++ for row in sdkrows:
++  assert not row['privateMarker']
++  if row['path']in old and row['sha256']==old[row['path']]['sha256']:continue
++  assert row['project']in owned and row['sha256']==sha(expected_at(SDK_PRODUCER,SDK,row['kind']))
++ assert set(old)<={r['path']for r in sdkrows}and len(copies)==8
++ return {'producerSha256':SDK_SHA,'producerPdbSha256':SDK_PDB_SHA,'allEightOrdinarySdkAndContractsCopiesCoherent':True,'allSdkCensusMarkerFree':True,'sdkCensusCount':len(sdkrows),'copies':copies}
++
++def independent_dependencies():
++ inv=json.loads((PREP/'affected-inventory.json').read_text());owned=set(inv['projects'].values());result={}
++ for assembly,group in inv['independentModules'].items():
++  old={r['path']:r for r in group['rows']};rows=census(assembly);producer=ROOT/group['producer'];exact=current=0
++  for row in rows:
++   assert not row['privateMarker']
++   if row['path']in old and row['sha256']==old[row['path']]['sha256']:exact+=1
++   else:
++    assert row['project']in owned and row['sha256']==sha(expected_at(producer,assembly,row['kind']));current+=1
++  assert set(old)<={r['path']for r in rows}
++  result[assembly]={'censusCount':len(rows),'exactBaseline':exact,'currentOrdinaryProducer':current,'noHistorical10Or17GenerationWaiver':True}
++ return result
++
++def app_marker_proof(private):
++ inv=json.loads((PREP/'affected-inventory.json').read_text());checked=[]
++ for path in list(inv['app147Sha256'])+list(inv['additional2Sha256']):
++  p=ROOT/path if not Path(path).is_absolute()else Path(path)
++  is_private=marker(p)
++  assert not is_private or private and p.name==ASSEMBLY+'.dll'
++  if is_private:assert sha(p)==sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll'))
++  checked.append(str(p))
++ return {'known147':len(inv['app147Sha256']),'additionalMarkerChecked':len(inv['additional2Sha256']),'checked':len(checked),'privateProjectsOnly':private}
++
++def same_start(pid,ticks):
++ try:
++  f=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return f[0]!='Z'and f[19]==str(ticks)
++ except(FileNotFoundError,ProcessLookupError):return False
++
++def group_members(group):
++ out=[]
++ for p in Path('/proc').iterdir():
++  if not p.name.isdigit():continue
++  try:
++   f=(p/'stat').read_text().rsplit(')',1)[1].split()
++   if int(f[2])==group or int(f[3])==group:out.append({'pid':int(p.name),'startTicks':f[19]})
++  except(FileNotFoundError,ProcessLookupError):pass
++ return out
++
+ def clean_environment():
+  env=os.environ.copy()
+  for key in list(env):
+   if key in MAPPING or key=='CustomBeforeMicrosoftCommonTargets'or key=='DOTNET_PROCESSOR_COUNT':env.pop(key)
+- env.update(MSBUILDDISABLENODEREUSE='1',DOTNET_CLI_USE_MSBUILD_SERVER='0')
+- return env
++ env.update(MSBUILDDISABLENODEREUSE='1',DOTNET_CLI_USE_MSBUILD_SERVER='0');return env
++
++def verify_runtime(proof):
++ for k in ['appHost','cli']:
++  assert same_start(proof['ownerSessionIdentities'][k+'Pid'],proof['ownerSessionIdentities'][k+'StartTicks'])
++ inv=json.loads((PREP/'affected-inventory.json').read_text());seen=[]
++ for row in proof['copies']:
++  role=row['role'];project=ROOT/inv['projects'][role];entry=project.parent/'bin/Debug/net10.0'/(project.stem+'.dll')
++  assert same_start(row['pid'],row['startTicks'])and same_start(row['wrapperPid'],row['wrapperStartTicks'])
++  # Recheck fresh ancestry and the same finite executable shape as the original observer.
++  pending=row['pid'];visited=set()
++  while pending!=row['wrapperPid']:
++   assert pending>1 and pending not in visited and len(visited)<32;visited.add(pending)
++   pending=int(Path('/proc',str(pending),'stat').read_text().rsplit(')',1)[1].split()[1])
++  exe=Path('/proc',str(row['pid']),'exe').readlink();arguments=Path('/proc',str(row['pid']),'cmdline').read_bytes().split(b'\0')
++  assert exe==entry.with_suffix('')or exe==Path('/home/administrator/.dotnet/dotnet')and str(entry).encode()in arguments
++  maps={line.split(maxsplit=5)[-1]for line in Path('/proc',str(row['pid']),'maps').read_text().splitlines()if len(line.split(maxsplit=5))==6}
++  assert str(entry)in maps and sha(entry)==row['entryAssemblySha256']
++  for name,dll,pdb in [(SDK,SDK_SHA,SDK_PDB_SHA),(CONTRACTS,CONTRACTS_SHA,CONTRACTS_PDB_SHA)]:
++   f=entry.with_name(name+'.dll');assert str(f)in maps and sha(f)==dll and sha(f.with_suffix('.pdb'))==pdb and not marker(f)
++  if role=='projects':
++   assert str(ordinary_expected('full'))in maps and sha(entry)==proof['privateProducerSha256']and sha(entry.with_suffix('.pdb'))==proof['privateProducerPdbSha256']and marker(entry)
++  assert same_start(row['pid'],row['startTicks'])and same_start(row['wrapperPid'],row['wrapperStartTicks'])
++  seen.append(role)
++ assert len(seen)==6 and set(seen)=={'eventstore','tenants','projects','projects-workers','folders','folders-workers'}
++ for k in ['appHost','cli']:assert same_start(proof['ownerSessionIdentities'][k+'Pid'],proof['ownerSessionIdentities'][k+'StartTicks'])
++ return True
+--- qualified-old/build_restore.py
++++ current/build_restore.py
+@@ -1,78 +1,93 @@
+ from pathlib import Path
+ import argparse,atexit,datetime,json,subprocess,tempfile
+ from ops_common import *
+-parser=argparse.ArgumentParser();parser.add_argument('--phase',choices=['private','ordinary'],required=True);parser.add_argument('--execute',action='store_true');parser.add_argument('--pins-sha256');args=parser.parse_args()
+-inventory=json.loads((PREP/'affected-inventory.json').read_text());projects=inventory['projects']
+-plan={'preparationOnly':not args.execute,'phase':args.phase,'sourceChecks':sources(),'privateDirectory':private_directory(),'sevenMappingValuesPreserved':True,'newRuntimeEnvironmentKeys':False,'strategy':'FORCE exactly nine projects in producer/six-entry/AppHost/Integration order with BuildProjectReferences=false; ordinary phase refreshes only remaining incoherent affected/known Server DLL/PDB/ref/refint carriers','projects':projects}
+-if not args.execute:print(json.dumps(plan,indent=2));raise SystemExit()
+-operational_pins(args.pins_sha256)
+-work=Path(tempfile.mkdtemp(prefix='operational-'+args.phase+'-',dir=PREP));before=census();save(work/'before-census.json',before);env=clean_environment();env['DOTNET_PROCESSOR_COUNT']='2';env['HexalithBuildsRoot']=str(ROOT/'references/Hexalith.Builds');commands=[];completed=False
++p=argparse.ArgumentParser();p.add_argument('--phase',choices=['private','ordinary'],required=True);p.add_argument('--execute',action='store_true');p.add_argument('--pins-sha256');args=p.parse_args()
++inv=json.loads((PREP/'affected-inventory.json').read_text());projects=inv['projects']
++if not args.execute:
++ print(json.dumps({'preparationOnly':True,'phase':args.phase,'primaryOrder':PRIMARY,'ordinaryAddsNativeTests':True,'forcedOrdinaryMinimum':11,'dynamicAffectedProjectServerUnion':True}));raise SystemExit()
++operational_pins(args.pins_sha256);sources()
++work=Path(tempfile.mkdtemp(prefix='operational-'+args.phase+'-',dir=PREP))
+ if args.phase=='private':save(PREP/'latest-private-attempt.json',{'attemptDirectory':str(work),'ordinaryRestoreRequiredEvenIfPrivateBuildFails':True})
+-def attempt_end():
+- try:save(work/'after-census.json',census());save(work/'attempt-closed.json',{'phase':args.phase,'completed':completed,'ordinaryRestoreRequired':args.phase=='private','finallyOwner':'parent-or-reviewed-run-and-restore caller must invoke ordinary phase after every private attempt, including nonzero exit before managed launch'})
++before=census();save(work/'before-census.json',before)
++if args.phase=='private':
++ private_directory(require_empty=True);ordinary_sdk_proof();independent_dependencies();app_marker_proof(False)
++env=clean_environment();env.update(DOTNET_PROCESSOR_COUNT='2',HexalithBuildsRoot=str(ROOT/'references/Hexalith.Builds'));mapping=json.loads((PREP/'mapping-pins.json').read_text())
++assert sha(mapping['mappingLog'])==mapping['mappingLogSha256']and all(sha(path)==h for path,h in mapping['files'].items())
++assert set(mapping['environment'])==MAPPING and mapping['environment']['Configuration']=='Debug';env.update(mapping['environment'])
++save(work/'mapping-receipt.json',{'allSevenEmittedValuesRetained':True,'emittedEnvironment':mapping['environment'],'oneEffectiveAfterSdkPropertyExtendedOnlyForProjectsServer':True,'originalFinalMappingFirstObserverLast':True,'buildCpu2Only':True,'mappingFilesUnchanged':mapping['files']})
++commands=[];completed=False
++@atexit.register
++def end():
++ try:save(work/'after-census.json',census());save(work/'attempt-closed.json',{'completed':completed,'ordinaryRestoreRequired':args.phase=='private'})
+  except Exception:pass
+-atexit.register(attempt_end)
+-def execute(command,label):
+- started=datetime.datetime.now(datetime.timezone.utc).isoformat();log=work/(label+'.log')
++
++def compiler_proof(private):
++ root=PRODUCER/'obj/Debug/net10.0';names=['compiler-inputs','writable-paths','precore-flags','postcore-flags'];documents={}
++ for n in names:
++  f=root/('story65-advisory-'+n+'.txt');assert f.is_file();data=f.read_bytes();(work/f.name).write_bytes(data);documents[n]=data.decode('utf-8-sig')
++ observed=[]
++ for line in documents['compiler-inputs'].splitlines():
++  values=line.split('|');assert len(values)>=2;path=Path(values[1]);assert path.is_absolute()and path.is_file()
++  observed.append({'kind':values[0],'path':str(path),'sha256':sha(path),'metadata':values[2:]})
++ required=[SOURCE_PREP/n for n in ['ProjectAdvisoryQueryExecutor.private.cs','CaptureCounters.cs','AdvisoryWaveBootstrap.cs','AdvisoryTerminalCapture.cs','AdvisoryBoundary.cs','AdvisoryTermination.cs','AdvisoryExceptionKind.cs']]
++ actual=[r['path']for r in observed if r['kind']=='Compile'];original=str(PRODUCER/'Queries/ProjectAdvisoryQueryExecutor.cs')
++ if private:assert original not in actual and all(actual.count(str(f))==1 for f in required)
++ else:assert actual.count(original)==1 and all(str(f)not in actual for f in required)
++ for line in documents['writable-paths'].splitlines():
++  x=Path(line).resolve();assert x.is_relative_to(PRODUCER/'bin/Debug')or x.is_relative_to(PRODUCER/'obj/Debug')
++ save(work/'actual-advisory-compiler-inputs.json',{'observedInputs':observed,'observedCount':len(observed),'beforeCoreCompileNotTaskInterception':True,'insidePinnedSdkCscTransformsNotClaimedCaptured':True,'documentsSha256':{n:sha(work/('story65-advisory-'+n+'.txt'))for n in names},'privateSevenExactSourcesObserved':private,'ordinaryExactOriginalObserved':not private})
++ producer=ordinary_expected('full')
++ save(work/'actual-projects-producer-compiled-proof.json',{'private':private,'producerSha256':sha(producer),'producerPdbSha256':sha(ordinary_expected('pdb')),'observedInputsSha256':sha(work/'actual-advisory-compiler-inputs.json'),'sevenPrivateSourcesObserved':private,'originalOnlyObserved':not private,'noBinaryEquivalenceAssumed':True})
++
++def rebuild(relative,label):
++ assert relative in projects.values()
++ command=['dotnet','build',str(ROOT/relative),'-c','Debug','-t:Rebuild','-m:1','--no-restore','--disable-build-servers','-p:NuGetAudit=false','-p:BuildProjectReferences=false','-p:EnablePrivateCatalogInvocationProof=true','-p:EnablePrivateOwnerSourceReadProof=true','-p:CustomBeforeMicrosoftCommonTargets='+str(PREP/'advisory-terminal.targets'),'-p:Story65TerminalPrivate='+str(args.phase=='private').lower()]
++ if relative==projects['integration']:command+=['-p:SupportedProjectReadDistributed=true']
++ log=work/(label+'.log');started=datetime.datetime.now(datetime.timezone.utc).isoformat()
+  with log.open('wb')as stream:r=subprocess.run(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+- commands.append({'command':command,'cwd':str(ROOT),'startedUtc':started,'finishedUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'exitCode':r.returncode,'log':log.name,'logSha256':sha(log)})
+- save(work/'commands.json',commands)
+- if r.returncode:raise RuntimeError('Bounded explicit build failed; retained exact build log')
+-mapping=json.loads((PREP/'mapping-pins.json').read_text());assert sha(mapping['mappingLog'])==mapping['mappingLogSha256']and all(sha(path)==digest for path,digest in mapping['files'].items())
+-selected=mapping['environment'];assert set(selected)==MAPPING and selected['Configuration']=='Debug';env.update(selected)
+-save(work/'mapping-receipt.json',{'reusedExactPreparedMapping':True,'mappingLogSha256':mapping['mappingLogSha256'],'allEmittedFileHashes':mapping['files'],'emittedEnvironment':selected,'allSevenRetained':True,'noNewToolBuild':True,'buildCpu2Only':True})
+-hook=['-p:CustomBeforeMicrosoftCommonTargets='+str(PREP/'advisory-wave.targets')]if args.phase=='private'else[]
+-def rebuild(relative,label,refs=True):
+- command=['dotnet','build',str(ROOT/relative),'-c','Debug','-t:Rebuild','-m:1','--no-restore','--disable-build-servers','-p:NuGetAudit=false','-p:EnablePrivateCatalogInvocationProof=true','-p:EnablePrivateOwnerSourceReadProof=true',*hook]
+- if relative==projects['integration']:command+=['-p:SupportedProjectReadDistributed=true']
+- if not refs:command+=['-p:BuildProjectReferences=false']
+- execute(command,label)
+-for index,alias in enumerate(['service-defaults-producer','eventstore','tenants','projects','projects-workers','folders','folders-workers','apphost','integration']):
+- rebuild(projects[alias],str(index+1)+'-'+alias+'-force-no-dependency-build',False)
+-# Evaluate the same eight properties, with the same selected flags, as the standard managed launcher.
+-expected=json.loads((PREP/'expected-managed-profile.json').read_text())['compilationProfile'];actual={}
+-properties=['Configuration','Optimize','DefineConstants','DebugType','UseHexalithProjectReferences','UseNuGetDeps','EnablePrivateCatalogInvocationProof','EnablePrivateOwnerSourceReadProof']
+-for relative in projects.values():
+- command=['dotnet','msbuild',str(ROOT/relative),'-nologo','-p:Configuration=Debug','-p:SupportedProjectReadDistributed=true','-p:EnablePrivateCatalogInvocationProof=true','-p:EnablePrivateOwnerSourceReadProof=true','-getProperty:'+','.join(properties)]
+- result=subprocess.run(command,cwd=ROOT,env=env,capture_output=True,text=True);assert result.returncode==0
+- value=json.loads(result.stdout)['Properties'];actual[relative]=value;assert value==expected[relative]
+-save(work/'evaluated-eight-property-profile.json',{'commandsUseSameEightPropertiesAsManaged':True,'matchesRecordedStandardManagedProfile':True,'profile':actual})
+-metadata=[]
+-for alias,enabled,disabled in[
+- ('eventstore','CatalogInvocationServiceCollectionExtensions','Private catalog invocation requires an explicitly selected Debug proof build.'),
+- ('tenants','OwnerSourceReadServiceCollectionExtensions','Private owner source proof requires the explicitly selected Debug/source host build.')]:
+- project=ROOT/projects[alias];binary=project.parent/'bin/Debug/net10.0'/(project.stem+'.dll');data=binary.read_bytes()
+- selected=enabled.encode()in data;refusal=disabled.encode('utf-16-le')in data
+- metadata.append({'role':alias,'entryAssemblySha256':sha(binary),'enabledMetadataReferencePresent':selected,'disabledGuardLiteralAbsent':not refusal});assert selected and not refusal
+-save(work/'compiled-proof-profile.json',{'diagnosticOnly':True,'sameExistingManagedProofFlags':True,'entries':metadata})
++ commands.append({'command':command,'cwd':str(ROOT),'startedUtc':started,'finishedUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'exitCode':r.returncode,'log':log.name,'logSha256':sha(log)});save(work/'commands.json',commands)
++ assert r.returncode==0,'Explicit source-mapped build failed; exact log retained'
++ if relative==projects['projects']:compiler_proof(args.phase=='private')
++
++for index,alias in enumerate(PRIMARY):rebuild(projects[alias],str(index+1)+'-'+alias+'-force-refsfalse')
++if args.phase=='ordinary':rebuild(projects['native-tests'],'11-native-tests-force-refsfalse')
++# Same original standard-managed profile, evaluated with the same existing flags.
++expected=json.loads((PREP/'expected-managed-profile.json').read_text())['compilationProfile'];profile={}
++props=['Configuration','Optimize','DefineConstants','DebugType','UseHexalithProjectReferences','UseNuGetDeps','EnablePrivateCatalogInvocationProof','EnablePrivateOwnerSourceReadProof']
++for relative in expected:
++ command=['dotnet','msbuild',str(ROOT/relative),'-nologo','-p:Configuration=Debug','-p:SupportedProjectReadDistributed=true','-p:EnablePrivateCatalogInvocationProof=true','-p:EnablePrivateOwnerSourceReadProof=true','-getProperty:'+','.join(props)]
++ r=subprocess.run(command,cwd=ROOT,env=env,capture_output=True,text=True);assert r.returncode==0
++ profile[relative]=json.loads(r.stdout)['Properties'];assert profile[relative]==expected[relative]
++save(work/'evaluated-eight-property-profile.json',{'matchesCurrentStandardManagedProfile':True,'profile':profile,'inactiveFoldersEventstoreAndNativeBuildFlagsExplicitButNotInventedStandardProfileRows':True})
+ if args.phase=='ordinary':
+- # Only outputs carrying THIS captured private helper are owned restoration work.
+- # Keep the complete producer/ref/refint/PDB generation coherent, then refresh stale carriers.
+- private_work=Path(json.loads((PREP/'latest-private-attempt.json').read_text())['attemptDirectory']);assert private_work.parent==PREP
+- private_before=json.loads((private_work/'before-census.json').read_text());private_after=json.loads((private_work/'after-census.json').read_text())if(private_work/'after-census.json').exists()else[];initial={row['path']:row['sha256']for row in private_before}
+- affected={row['path']for row in private_after+before if row['privateMarker']or row['sha256']!=initial.get(row['path'])}
+- # Every known Server producer/test/integration/carrier must match the new ordinary Server producer,
+- # including Server.Tests even if an old ordinary copy never carried a private marker.
+- for row in inventory['knownServerCopies']:affected.add(row['path'])
+- save(work/'affected-paths-union.json',sorted(affected))
+- expected_hashes={kind:sha(ordinary_expected(kind))for kind in['full','pdb','ref','refint']};assert all(not marker(ordinary_expected(kind))for kind in expected_hashes)
+- remaining={row['path']:row for row in census()};coordinates={row['path']:row for row in private_before+private_after+before}
++ pointer=PREP/'latest-private-attempt.json';pw=None
++ if pointer.exists():pw=Path(json.loads(pointer.read_text())['attemptDirectory']);assert pw.parent==PREP
++ initial_rows=json.loads((pw/'before-census.json').read_text())if pw is not None and(pw/'before-census.json').exists()else inv['knownServerCopies']
++ initial={r['path']:r for r in initial_rows}
++ private_after=json.loads((pw/'after-census.json').read_text())if pw is not None and(pw/'after-census.json').exists()else[]
++ save(work/'restoration-baseline-source.json',{'privateBeforeCensusAvailable':pw is not None and(pw/'before-census.json').exists(),'freshInventoryFallbackUsed':pw is None or not(pw/'before-census.json').exists()})
++ after_primary=census();observed=initial_rows+private_after+before+after_primary
++ affected={r['path']for r in observed if r['path']not in initial or r['privateMarker']or r['sha256']!=initial[r['path']]['sha256']}
++ affected|={r['path']for r in inv['knownServerCopies']};coordinates={r['path']:r for r in observed}
++ expected_hashes={k:sha(ordinary_expected(k))for k in ['full','pdb','ref','refint']};remaining={r['path']:r for r in after_primary}
+  stale=[coordinates[path]for path in affected if path not in remaining or remaining[path]['privateMarker']or remaining[path]['sha256']!=expected_hashes[remaining[path]['kind']]]
+- assert all(row['project']for row in stale);todo=sorted({row['project']for row in stale})
+- for index,project in enumerate(todo):rebuild(project,'remaining-private-carrier-'+str(index),False)
+-after=census();save(work/'after-census.json',after);sources()
+-if args.phase=='private':
+- producer=PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll');assert marker(producer)and marker(producer.with_suffix('.pdb'))
+- for alias in['projects','integration']:
+-  copied=(ROOT/projects[alias]).parent/'bin/Debug/net10.0'/(ASSEMBLY+'.dll');assert copied.exists()and marker(copied)and sha(copied)==sha(producer)and sha(copied.with_suffix('.pdb'))==sha(producer.with_suffix('.pdb'))
++ for index,project in enumerate(sorted({r['project']for r in stale})):
++  assert project in projects.values();rebuild(project,'remaining-affected-carrier-'+str(index))
++ after=census()
++ # Include NEW ordinary/fallback paths, not just paths seen during the private phase.
++ for row in after:
++  if row['path']not in initial or row['privateMarker']or row['sha256']!=initial[row['path']]['sha256']:affected.add(row['path'])
++ assert affected<={r['path']for r in after}
++ for row in after:
++  assert not row['privateMarker']
++  if row['path']in affected:assert row['sha256']==expected_hashes[row['kind']]
++  else:assert row['sha256']==initial[row['path']]['sha256']
++ save(work/'affected-paths-union.json',{'paths':sorted(affected),'affected':len(affected),'unrelatedExactBaseline':len(after)-len(affected),'includesPrivateOrdinaryAndNewAfterFallbackPaths':True})
+ else:
+- assert not any(row['privateMarker']for row in after)
+- assert affected<={row['path']for row in after}
+- for row in after:
+-  if row['path']in affected:
+-   assert row['sha256']==expected_hashes[row['kind']]
+- assert all(sha(ordinary_expected(kind))==digest for kind,digest in expected_hashes.items())
+-sdk_proof=ordinary_sdk_proof();save(work/'ordinary-sdk-proof.json',sdk_proof)
+-save(work/'receipt.json',{'diagnosticOnly':True,'featureAcceptance':False,'phase':args.phase,'completed':True,'source50Match':True,'privateProducerAssembly':ASSEMBLY,'producerSha256':sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll')),'producerPdbSha256':sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.pdb')),'censusCopies':len(after),'allPrivateMarkersAbsent':not any(row['privateMarker']for row in after),'ordinarySdkEightCopiesCoherent':True,'ordinarySdkProducerSha256':sdk_proof['producerSha256'],'privateCliHookOnly':args.phase=='private','sevenMappingValuesRetained':True})
++ after=census();producer=ordinary_expected('full');assert marker(producer)and marker(ordinary_expected('pdb'))
++ for alias in ['projects','integration']:
++  f=(ROOT/projects[alias]).parent/'bin/Debug/net10.0'/(ASSEMBLY+'.dll');assert sha(f)==sha(producer)and sha(f.with_suffix('.pdb'))==sha(ordinary_expected('pdb'))
++save(work/'after-census.json',after);sources();sdk=ordinary_sdk_proof();dependencies=independent_dependencies();apps=app_marker_proof(args.phase=='private')
++save(work/'receipt.json',{'diagnosticOnly':True,'featureAcceptance':False,'phase':args.phase,'completed':True,'source65Match':True,'producerSha256':sha(ordinary_expected('full')),'producerPdbSha256':sha(ordinary_expected('pdb')),'censusCopies':len(after),'allPrivateMarkersAbsent':not any(r['privateMarker']for r in after),'ordinarySdkProof':sdk,'independentDependencies':dependencies,'applicationMarkerProof':apps,'primaryBuilds':10,'nativeOrdinaryBuilds':1 if args.phase=='ordinary'else 0})
+ completed=True
+ print(json.dumps({'phase':args.phase,'completed':True,'censusCopies':len(after)}))
+--- qualified-old/native_qualification.py
++++ current/native_qualification.py
+@@ -6,24 +6,14 @@
+ reference=json.loads((PREP/'native-reference-case-set.json').read_text());assert sha(reference['referenceXml'])==reference['referenceXmlSha256']
+ if not args.execute:
+  print(json.dumps({'preparationOnly':True,'nativeClass':reference['class'],'exactRetainedCases':139,'buildProject':str(project),'BuildProjectReferences':False,'sameSevenSourceMappingAndTwoProofFlags':True,'nativeFailureSkipsManagedAndStillRestoresOrdinary':True}));raise SystemExit()
+-operational_pins(args.pins_sha256);sources();private_directory(require_empty=True);ordinary_sdk_proof()
++operational_pins(args.pins_sha256);sources();private_directory(require_empty=True);ordinary_sdk_proof();independent_dependencies()
++assert all(sha(ROOT/path)==digest for path,digest in reference['sourceFilesSha256'].items())
+ work=Path(tempfile.mkdtemp(prefix='native-private-139-',dir=PREP));save(PREP/'latest-native-attempt.json',{'attemptDirectory':str(work)})
+-receipt={'diagnosticOnly':True,'featureAcceptance':False,'notAdditionalUniqueCasesBeyondExisting1038':True,'passed':False,'buildStarted':False,'nativeStarted':False,'nativeProcessAndDescendantsAbsent':True,'counterDirectoryEmpty':True};process=None
++receipt={'diagnosticOnly':True,'featureAcceptance':False,'notAdditionalUniqueCasesBeyondCurrent1076':True,'passed':False,'buildStarted':False,'nativeStarted':False,'nativeProcessAndDescendantsAbsent':True,'counterDirectoryEmpty':True};process=None
+ env=clean_environment();env['DOTNET_PROCESSOR_COUNT']='2';env['HexalithBuildsRoot']=str(ROOT/'references/Hexalith.Builds')
+ mapping=json.loads((PREP/'mapping-pins.json').read_text());assert sha(mapping['mappingLog'])==mapping['mappingLogSha256']and all(sha(path)==digest for path,digest in mapping['files'].items());assert set(mapping['environment'])==MAPPING;env.update(mapping['environment'])
+-def members(group):
+- found=[]
+- for entry in Path('/proc').iterdir():
+-  if not entry.name.isdigit():continue
+-  try:
+-   fields=(entry/'stat').read_text().rsplit(')',1)[1].split()
+-   if int(fields[2])==group and fields[0]!='Z':found.append({'pid':int(entry.name),'startTicks':fields[19]})
+-  except(FileNotFoundError,PermissionError,ProcessLookupError):pass
+- return found
+-def same(pid,ticks):
+- try:
+-  fields=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return fields[0]!='Z'and fields[19]==ticks
+- except FileNotFoundError:return False
++def members(group):return group_members(group)
++def same(pid,ticks):return same_start(pid,ticks)
+ try:
+  command=['dotnet','build',str(project),'-c','Debug','-t:Rebuild','-m:1','--no-restore','--disable-build-servers','-p:NuGetAudit=false','-p:BuildProjectReferences=false','-p:EnablePrivateCatalogInvocationProof=true','-p:EnablePrivateOwnerSourceReadProof=true']
+  receipt['buildStarted']=True;started=datetime.datetime.now(datetime.timezone.utc).isoformat()
+@@ -39,8 +29,8 @@
+  with(work/'native.log').open('wb')as stream:
+   process=subprocess.Popen(command,cwd=project.parent,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
+   receipt['nativeStarted']=True;receipt['nativeProcessAndDescendantsAbsent']=False
+-  identity={'pid':process.pid,'startTicks':None,'processGroup':process.pid};save(work/'native-identity.json',identity)
+-  ticks=Path('/proc',str(process.pid),'stat').read_text().rsplit(')',1)[1].split()[19];identity['startTicks']=ticks;save(work/'native-identity.json',identity)
++  identity={'pid':process.pid,'startTicks':None,'processGroup':process.pid,'processSession':process.pid};receipt['ownedNativeIdentity']=identity;save(work/'native-identity.json',identity);save(work/'receipt.json',receipt)
++  ticks=Path('/proc',str(process.pid),'stat').read_text().rsplit(')',1)[1].split()[19];identity['startTicks']=ticks;receipt['ownedNativeIdentity']=identity;save(work/'native-identity.json',identity);save(work/'receipt.json',receipt)
+   while process.poll()is None:
+    if same(process.pid,ticks):
+     try:
+@@ -61,7 +51,7 @@
+  assert all(int(assemblies[0].get(key,'0'))==0 for key in['errors','failed','skipped','not-run'])and int(assemblies[0].get('passed','0'))==139
+  sources();receipt['ordinarySdkAfter']=ordinary_sdk_proof();private_directory(require_empty=True)
+  assert sha(producer)==receipt['privateServerBefore']['producerSha256']and sha(symbols)==receipt['privateServerBefore']['producerPdbSha256']and sha(copy)==sha(producer)and sha(pdb)==sha(symbols)
+- receipt.update(passed=True,caseCount=139,exactHistoricalCaseSetRetained=True,source50Match=True,counterDirectoryEmpty=True)
++ receipt.update(passed=True,caseCount=139,exactHistoricalCaseSetRetained=True,source65Match=True,counterDirectoryEmpty=True)
+ except Exception as failure:
+  receipt['failureType']=type(failure).__name__
+  receipt['counterDirectoryEmpty']=not any(PRIVATE.iterdir())
+--- qualified-old/launch_managed.py
++++ current/launch_managed.py
+@@ -1,6 +1,7 @@
+ from pathlib import Path
+ import importlib.util,json,re,sys
+ from ops_common import *
++from oidc_failure_category import created_owned_oidc, owned_start_failure
+ 
+ # External metadata wrapper only. No application configuration, logger or source edits.
+ source=ROOT/'tools/qualification/run_supported_project_reads.py';sys.path.insert(0,str(source.parent))
+@@ -11,12 +12,27 @@
+ original_observe=module.observe_runtime_modes;original_execute=module.execute;original_test=module.run_test_process
+ entries={'diagnosticOnly':True,'featureAcceptance':False,'nativeInvocationEntries':0,'browserInvocationEntries':0}
+ save(outer/'execution-entry-counts.json',entries)
++owned_oidc=None
+ def execute(command,*args,**kwargs):
++ global owned_oidc
+  exact=['aspire','start','--apphost',str(module.APPHOST),'--isolated','--format','Json','--non-interactive']
+  if command==exact:
+   save(outer/'aspire-nobuild-substitution.json',{'diagnosticOnly':True,'featureAcceptance':False,'exactOriginalCommandMatched':True,'originalCommand':command,'actualCommand':[*command,'--no-build'],'onlyAddedArgument':'--no-build','prebuiltSourceGraphRequired':True,'noRuntimeEnvironmentChange':True})
+   return original_execute([*command,'--no-build'],*args,**kwargs)
+- return original_execute(command,*args,**kwargs)
++ try:
++  output=original_execute(command,*args,**kwargs)
++ except RuntimeError as failure:
++  # Observational metadata only. Never mask/replace/retry the original failure.
++  try:
++   closed=owned_start_failure(failure,command,kwargs.get('env'),owned_oidc)
++   if closed is not None:save(outer/'oidc-start-failure-category.json',closed)
++  except Exception:pass
++  raise
++ try:
++  created=created_owned_oidc(command,kwargs.get('env'),output)
++  if created is not None:owned_oidc=created
++ except Exception:pass
++ return output
+ def run_test_process(command,*args,**kwargs):
+  if command and command[0]=='dotnet'and len(command)>1 and Path(command[1]).name=='Hexalith.Projects.Integration.Tests.dll':entries['nativeInvocationEntries']+=1
+  elif command[:2]==['npx','playwright']:entries['browserInvocationEntries']+=1
+@@ -35,19 +51,16 @@
+  save(outer/'early-runtime-identities.json',{'diagnosticOnly':True,'featureAcceptance':False,'originalOwnedRuntimeObservationSucceeded':True,'identities':[{'role':role,'pid':value['pid'],'startTicks':value['startTicks'],'wrapperPid':value['wrapperPid'],'wrapperStartTicks':value['wrapperStartTicks']}for role,value in result.items()]})
+  sources();private_directory()
+  manifest=json.loads((evidence/'source-manifest.json').read_text());assert all(sha(ROOT/relative)==digest for relative,digest in manifest.items())
+- sdk_proof=ordinary_sdk_proof();sdk_producer=SDK_PRODUCER/'bin/Debug/net10.0'/(SDK+'.dll');sdk_pdb=sdk_producer.with_suffix('.pdb')
+- producer=PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll');producer_pdb=producer.with_suffix('.pdb');assert marker(producer)and marker(producer_pdb)
+- copies=[]
+- for role,value in result.items():
+-  project=ROOT/module.RUNTIME_PROJECTS[role];copy=project.parent/'bin/Debug/net10.0'/(SDK+'.dll');pdb=copy.with_suffix('.pdb')
+-  assert module.process_start(value['pid'])==value['startTicks']and not marker(copy)and sha(copy)==sha(sdk_producer)
+-  maps=Path('/proc',str(value['pid']),'maps').read_text();assert any(line.split(maxsplit=5)[-1]==str(copy)for line in maps.splitlines()if len(line.split(maxsplit=5))==6)
+-  assert pdb.exists()and sha(pdb)==sha(sdk_pdb)
+-  copies.append({'role':role,'pid':value['pid'],'startTicks':value['startTicks'],'wrapperPid':value['wrapperPid'],'wrapperStartTicks':value['wrapperStartTicks'],'entryAssemblySha256':value['assemblySha256'],'sdkSha256':sha(copy),'pdbSha256':sha(pdb),'ordinarySdkNoPrivateMarker':True,'sdkMappedOwnedRuntime':True})
+- projects=result['projects'];maps=Path('/proc',str(projects['pid']),'maps').read_text()
+- assert any(line.split(maxsplit=5)[-1]==str(producer)for line in maps.splitlines()if len(line.split(maxsplit=5))==6)
+- assert projects['assemblySha256']==sha(producer)and module.process_start(projects['pid'])==projects['startTicks']
+- save(outer/'runtime-private-projects-proof.json',{'diagnosticOnly':True,'featureAcceptance':False,'source50Match':True,'fullManifestCount':len(manifest),'fullManifestSha256':sha(evidence/'source-manifest.json'),'fullManifestAllMatch':True,'sourceMappingValuesUnchangedByWrapper':True,'noNewRuntimeEnvironmentKeys':True,'allSixOrdinarySdkCopiesMatch':True,'ordinarySdkProof':sdk_proof,'projectsPrivateAssemblyVerified':True,'projectsPid':projects['pid'],'projectsStartTicks':projects['startTicks'],'privateProducerSha256':sha(producer),'privateProducerPdbSha256':sha(producer_pdb),'privateProjectsAssemblyMapped':True,'copies':copies})
++ sdk=ordinary_sdk_proof();dependencies=independent_dependencies();app_marker_proof(True)
++ producer=ordinary_expected('full');pdb=ordinary_expected('pdb');assert marker(producer)and marker(pdb)
++ work=Path(json.loads((PREP/'latest-private-attempt.json').read_text())['attemptDirectory']);assert work.parent==PREP
++ compiled=json.loads((work/'actual-projects-producer-compiled-proof.json').read_text())
++ assert compiled['sevenPrivateSourcesObserved']is True and compiled['producerSha256']==sha(producer)and compiled['producerPdbSha256']==sha(pdb)
++ assert compiled['observedInputsSha256']==sha(work/'actual-advisory-compiler-inputs.json')
++ copies=[{'role':role,'pid':value['pid'],'startTicks':value['startTicks'],'wrapperPid':value['wrapperPid'],'wrapperStartTicks':value['wrapperStartTicks'],'entryAssemblySha256':value['assemblySha256']}for role,value in result.items()]
++ proof={'diagnosticOnly':True,'featureAcceptance':False,'source65Match':True,'fullManifestCount':len(manifest),'fullManifestSha256':sha(evidence/'source-manifest.json'),'fullManifestAllMatch':True,'sourceMappingValuesUnchangedByWrapper':True,'noNewRuntimeEnvironmentKeys':True,'ordinarySdkAndContractsProof':sdk,'independentOrdinaryDependencies':dependencies,'allSixOwnedRuntimeEntryAndSdkContractsMapsRequired':True,'privateProjectsEntryMapRequired':True,'privateProducerSha256':sha(producer),'privateProducerPdbSha256':sha(pdb),'actualPrivateCompilerProofSha256':sha(work/'actual-projects-producer-compiled-proof.json'),'ownerSessionIdentities':{key:owned[key]for key in ['appHostPid','appHostStartTicks','cliPid','cliStartTicks']},'copies':copies}
++ verify_runtime(proof)
++ save(outer/'runtime-private-projects-proof.json',proof)
+  return result
+ module.execute=execute;module.run_test_process=run_test_process;module.observe_runtime_modes=observe
+ sys.exit(module.main())
+--- qualified-old/supervise_managed.py
++++ current/supervise_managed.py
+@@ -1,70 +1,97 @@
+ from pathlib import Path
+ import argparse,datetime,json,math,os,secrets,subprocess,sys,time
+ from ops_common import *
++from writer_fd_proof import owned_projects_writer
++p=argparse.ArgumentParser();p.add_argument('--execute',action='store_true');p.add_argument('--pins-sha256');args=p.parse_args()
++EVIDENCE=Path('/tmp/story65-advisory-terminal-diagnostic-20261108')
++command=[sys.executable,str(PREP/'launch_managed.py'),'--operational-pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED','--browser','--timeout','900','--evidence',str(EVIDENCE/'managed')]
++def rows():
++ path=EVIDENCE/'managed/browser-advisory-seed-readiness.jsonl';out=[]
++ if path.exists():
++  for line in path.read_bytes().split(b'\n')[:-1]:
++   try:v=json.loads(line)
++   except ValueError:continue
++   if valid(v):out.append(v)
++ return out
+ 
+-parser=argparse.ArgumentParser();parser.add_argument('--execute',action='store_true');parser.add_argument('--pins-sha256');args=parser.parse_args()
+-EVIDENCE=Path('/tmp/story65-advisory-wave-diagnostic-20261107')
+-command=[sys.executable,str(PREP/'launch_managed.py'),'--operational-pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED','--browser','--timeout','900','--evidence',str(EVIDENCE/'managed')]
+-plan={'preparationOnly':not args.execute,'command':command,'cwd':str(ROOT),'noNewRuntimeEnvironmentOrConfigurationKeys':True,'naturalCpuOverrideAbsent':True,'noRuntimeSourceHook':True,'fixedPrivateControlPath':str(PRIVATE/'window.control'),'eightSecondAdmissionOnlyAfterFailedMultiple':True,'noCutoffOrTargetSignals':True,'diagnosticOnly':True,'featureAcceptance':False}
+-def valid_multi(row):
+- return isinstance(row,dict)and row.get('multiple')is True and type(row.get('attempt'))is int and 1<=row['attempt']<=30 and type(row.get('httpStatus'))is int and row['httpStatus']==200 and type(row.get('incomplete'))is bool and type(row.get('candidateCount'))is int and row['candidateCount']>=0 and type(row.get('positiveCandidatesVerified'))is bool and type(row.get('elapsedMilliseconds'))in[int,float]and math.isfinite(row['elapsedMilliseconds'])and row['elapsedMilliseconds']>=0 and row.get('result')in[None,'Empty','SingleCandidate','MultipleCandidates']
+-def positive(row):
+- return valid_multi(row)and row['result']=='MultipleCandidates'and row['incomplete']is False and row['candidateCount']>=2 and row['positiveCandidatesVerified']is True
+-def failed(row):
+- return valid_multi(row)and row['attempt']<=27 and row['result']in[None,'Empty']and row['incomplete']is True and row['candidateCount']==0 and row['positiveCandidatesVerified']is False
+-if not args.execute:print(json.dumps(plan,indent=2));raise SystemExit()
+-operational_pins(args.pins_sha256);sources();private_directory(require_empty=True)
+-native_work=Path(json.loads((PREP/'latest-native-attempt.json').read_text())['attemptDirectory']);assert native_work.parent==PREP
+-native_gate=json.loads((native_work/'receipt.json').read_text());assert native_gate['passed']is True and native_gate['caseCount']==139 and native_gate['nativeProcessAndDescendantsAbsent']is True and native_gate['counterDirectoryEmpty']is True
+-assert sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll'))==native_gate['privateServerBefore']['producerSha256']and sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.pdb'))==native_gate['privateServerBefore']['producerPdbSha256']
+-ordinary_sdk_proof();EVIDENCE.mkdir(mode=0o700);env=clean_environment()
+-assert 'CustomBeforeMicrosoftCommonTargets'not in env and not any('CAPTURE_COUNTER'in key for key in env)
+-with(EVIDENCE/'launcher-console.log').open('wb')as stream:
+- process=subprocess.Popen(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+- started=Path('/proc',str(process.pid),'stat').read_text().rsplit(')',1)[1].split()[19]
+- save(EVIDENCE/'managed-command.json',{'command':command,'cwd':str(ROOT),'launcherPid':process.pid,'launcherStartTicks':started,'diagnosticOnly':True,'featureAcceptance':False,'noCutoffOrSignals':True})
+- receipt={**plan,'preparationOnly':False,'launcherPid':process.pid,'launcherStartTicks':started,'startedUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'controlPublished':False}
+- save(EVIDENCE/'supervisor.json',receipt);print(json.dumps({'phase':'managed-started','launcherPid':process.pid,'evidence':str(EVIDENCE)}),flush=True)
++def valid(v):
++ return isinstance(v,dict)and 'result'in v and v.get('multiple')is True and type(v.get('attempt'))is int and 1<=v['attempt']<=30 and type(v.get('httpStatus'))is int and v['httpStatus']==200 and type(v.get('incomplete'))is bool and type(v.get('candidateCount'))is int and v['candidateCount']>=0 and type(v.get('positiveCandidatesVerified'))is bool and type(v.get('elapsedMilliseconds'))in[int,float]and math.isfinite(v['elapsedMilliseconds'])and v['elapsedMilliseconds']>=0 and v['result']in[None,'Empty','SingleCandidate','MultipleCandidates']and v.get('actualPublicGateway')is True and v.get('fabricatedProjectionWrite')is False and v.get('nonBootstrapCredential')is True and v.get('runtimeAuthoritySupplied')is False
++
++def positive(v):return v['result']=='MultipleCandidates'and v['incomplete']is False and v['candidateCount']>=2 and v['positiveCandidatesVerified']is True
++def failed(v):return v['result']in[None,'Empty']and v['incomplete']is True and v['candidateCount']==0 and v['positiveCandidatesVerified']is False
++
++def ready(values):return values and not any(positive(v)for v in values)and len({v['attempt']for v in values if failed(v)})>=3 and max(v['attempt']for v in values)<=24
++
++def publish(fd,data):
++ name='.advisory-terminal-control';f=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600,dir_fd=fd);identity=None
+  try:
+-  while process.poll()is None:
+-   rows=[];path=EVIDENCE/'managed/browser-advisory-seed-readiness.jsonl'
+-   if path.exists():
+-    # An unfinished final line is never interpreted as a row or positive.
+-    for line in path.read_bytes().split(b'\n')[:-1]:
+-     try:rows.append(json.loads(line))
+-     except ValueError:continue
+-   multi=[row for row in rows if valid_multi(row)]
+-   if not receipt['controlPublished']and multi:
+-    has_positive=any(positive(row)for row in multi)
+-    if has_positive:receipt['coverageSkip']='genuine-multiple-positive-observed';save(EVIDENCE/'supervisor.json',receipt)
+-    elif any(failed(row)for row in multi)and max(row['attempt']for row in multi)<=27 and not receipt.get('coverageSkip')and(EVIDENCE/'runtime-private-projects-proof.json').exists():
++  with os.fdopen(f,'wb',closefd=False)as stream:stream.write(data);stream.flush();os.fsync(f)
++  s=os.fstat(f);identity=(s.st_dev,s.st_ino);assert stat.S_ISREG(s.st_mode)and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o600 and 0<s.st_size<=128
++  receipt['plannedControlIdentity']={'device':s.st_dev,'inode':s.st_ino,'bytes':s.st_size};save(EVIDENCE/'supervisor.json',receipt)
++  os.link(name,'window.control',src_dir_fd=fd,dst_dir_fd=fd,follow_symlinks=False)
++  seen=os.stat('window.control',dir_fd=fd,follow_symlinks=False);assert(seen.st_dev,seen.st_ino)==identity
++  return {'device':s.st_dev,'inode':s.st_ino,'bytes':s.st_size}
++ finally:
++  os.close(f)
++  if identity is not None:
++   s=os.stat(name,dir_fd=fd,follow_symlinks=False)
++   if(s.st_dev,s.st_ino)==identity:os.unlink(name,dir_fd=fd)
++
++if not args.execute:
++ print(json.dumps({'preparationOnly':True,'command':command,'admission':'one8s after3genuinefailedMULTI/latest<=24/noPositive/finalfreshguards','normalManagedCleanupUnchanged':True}));raise SystemExit()
++operational_pins(args.pins_sha256);sources();private_directory(require_empty=True);ordinary_sdk_proof()
++nw=Path(json.loads((PREP/'latest-native-attempt.json').read_text())['attemptDirectory']);assert nw.parent==PREP
++native=json.loads((nw/'receipt.json').read_text());assert native['passed']is True and native['caseCount']==139 and native['nativeProcessAndDescendantsAbsent']is True and native['counterDirectoryEmpty']is True
++assert sha(ordinary_expected('full'))==native['privateServerBefore']['producerSha256']and sha(ordinary_expected('pdb'))==native['privateServerBefore']['producerPdbSha256']
++EVIDENCE.mkdir(mode=0o700);receipt={'diagnosticOnly':True,'featureAcceptance':False,'controlPublished':False,'source65Match':True,'noTopologyCutoffOrSignals':True,'physicalWriterProof':{'observed':False,'reason':'not-observed'},'command':command,'cwd':str(ROOT)}
++process=None;directory=None;proof=None
++try:
++ with(EVIDENCE/'launcher-console.log').open('wb')as stream:
++  process=subprocess.Popen(command,cwd=ROOT,env=clean_environment(),stdout=stream,stderr=subprocess.STDOUT)
++  receipt['launcherPid']=process.pid;save(EVIDENCE/'supervisor.json',receipt)
++  try:
++   receipt['launcherStartTicks']=Path('/proc',str(process.pid),'stat').read_text().rsplit(')',1)[1].split()[19]
++   save(EVIDENCE/'managed-command.json',{'command':command,'cwd':str(ROOT),'launcherPid':process.pid,'launcherStartTicks':receipt['launcherStartTicks'],'diagnosticOnly':True,'featureAcceptance':False})
++   while process.poll()is None:
++    observed=rows()
++    if not receipt['controlPublished']and not receipt.get('coverageSkip'):
++     if any(positive(v)for v in observed):receipt['coverageSkip']='genuine-multiple-positive-observed'
++     elif observed and max(v['attempt']for v in observed)>24:receipt['coverageSkip']='late-admission-headroom-refused'
++     elif ready(observed)and(EVIDENCE/'runtime-private-projects-proof.json').exists():
++      try:
++       sources();private_directory(require_empty=True);ordinary_sdk_proof();independent_dependencies();app_marker_proof(True)
++       manifest=json.loads((EVIDENCE/'managed/source-manifest.json').read_text());assert all(sha(ROOT/name)==h for name,h in manifest.items())
++       proof=json.loads((EVIDENCE/'runtime-private-projects-proof.json').read_text());verify_runtime(proof)
++       directory=os.open(PRIVATE,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC);s=os.fstat(directory)
++       assert(s.st_dev,s.st_ino,s.st_uid,stat.S_IMODE(s.st_mode))==(2096,8752986,1000,0o700)and os.listdir(directory)==[]
++       # Expensive guards precede this fresh final completed-readiness check.
++       latest=rows()
++       if process.poll()is not None or not ready(latest):
++        receipt['coverageSkip']='readiness-changed-before-window';os.close(directory);directory=None
++       else:
++        start=time.monotonic_ns();run=secrets.randbelow(2**62)+1;end=start+8_000_000_000
++        receipt.update(controlPublicationAttempted=True,runOrdinal=run,admissionStartTicks=start,admissionEndTicks=end,frequency=1000000000);save(EVIDENCE/'supervisor.json',receipt)
++        identity=publish(directory,f'{run}\n1000000000\n{start}\n{end}\n'.encode('ascii'))
++        receipt.update(controlPublished=True,runOrdinal=run,admissionStartTicks=start,admissionEndTicks=end,frequency=1000000000,failedMultipleBeforeAdmission=len({v['attempt']for v in latest if failed(v)}),controlIdentity=identity)
++      except Exception as ex:
++       receipt.update(coverageSkip='private-admission-guard-refused',diagnosticFailureType=type(ex).__name__)
++       if receipt.get('controlPublicationAttempted'):receipt['controlPublicationPartialPossible']=True
++    if receipt['controlPublished']and not receipt['physicalWriterProof']['observed']and directory is not None and not receipt.get('writerObservationClosed'):
+      try:
+-      sources();private_directory(require_empty=True)
+-      proof=json.loads((EVIDENCE/'runtime-private-projects-proof.json').read_text());assert proof['allSixOrdinarySdkCopiesMatch']and proof['projectsPrivateAssemblyVerified']
+-      assert sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll'))==proof['privateProducerSha256']and marker(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll'))
+-      assert sha(PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.pdb'))==proof['privateProducerPdbSha256']
+-      for value in proof['copies']:
+-       assert Path('/proc',str(value['pid']),'stat').read_text().rsplit(')',1)[1].split()[19]==value['startTicks']
+-       project=ROOT/json.loads((PREP/'affected-inventory.json').read_text())['projects']['eventstore'if value['role']=='eventstore'else value['role']]
+-       sdk=project.parent/'bin/Debug/net10.0'/(SDK+'.dll');assert sha(sdk)==ORDINARY_SDK_SHA and not marker(sdk)
+-      ordinary_sdk_proof()
+-      maps=Path('/proc',str(proof['projectsPid']),'maps').read_text();private_server=PRODUCER/'bin/Debug/net10.0'/(ASSEMBLY+'.dll')
+-      assert any(line.split(maxsplit=5)[-1]==str(private_server)for line in maps.splitlines()if len(line.split(maxsplit=5))==6)
+-      start=time.monotonic_ns();end=start+8_000_000_000;control=PRIVATE/'window.control';temporary=PRIVATE/'window.control.tmp'
+-      # Generated opaque ordinal has no inherited request/trace/identity linkage.
+-      run=secrets.randbelow(2**62)+1
+-      fd=os.open(temporary,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+-      with os.fdopen(fd,'w')as output:output.write(f'{run}\n1000000000\n{start}\n{end}\n')
+-      temporary.replace(control)
+-      receipt.update(controlPublished=True,admissionStartTicks=start,admissionEndTicks=end,frequency=1000000000,runOrdinal=run,failedMultipleBeforeAdmission=len(multi),identityReadyBeforeAdmission=True)
+-      save(EVIDENCE/'supervisor.json',receipt);print(json.dumps({'phase':'private-eight-second-admission','failedMultiple':len(multi)}),flush=True)
+-     except Exception as failure:
+-      receipt['coverageSkip']='private-admission-guard-refused';receipt['diagnosticFailureType']=type(failure).__name__;save(EVIDENCE/'supervisor.json',receipt)
+-    elif max(row['attempt']for row in multi)>27:receipt['coverageSkip']='fewer-than-three-attempt-windows-remain';save(EVIDENCE/'supervisor.json',receipt)
+-   time.sleep(.1)
+- except Exception as failure:
+-  receipt['coverageSkip']='private-controller-failed';receipt['diagnosticFailureType']=type(failure).__name__
+-  # Metadata controller faults never abandon or signal the managed child.
+-  process.wait()
+- receipt.update(launcherExitCode=process.wait(),finishedUtc=datetime.datetime.now(datetime.timezone.utc).isoformat(),phase='managed-complete',noTopologyCutoffOrSignals=True)
+- save(EVIDENCE/'supervisor.json',receipt);print(json.dumps({'phase':'managed-complete','launcherExitCode':receipt['launcherExitCode']}),flush=True)
++      projects=next(v for v in proof['copies']if v['role']=='projects')
++      assert all(same_start(proof['ownerSessionIdentities'][k+'Pid'],proof['ownerSessionIdentities'][k+'StartTicks'])for k in ['appHost','cli'])
++      assert same_start(projects['wrapperPid'],projects['wrapperStartTicks'])and sha(ordinary_expected('full'))==proof['privateProducerSha256']
++      maps={line.split(maxsplit=5)[-1]for line in Path('/proc',str(projects['pid']),'maps').read_text().splitlines()if len(line.split(maxsplit=5))==6};assert str(ordinary_expected('full'))in maps
++      receipt['physicalWriterProof']=owned_projects_writer(projects,directory)
++     except Exception as ex:receipt.update(writerObservationClosed=True,physicalWriterProof={'observed':False,'reason':'owned-writer-observation-unavailable','errorType':type(ex).__name__})
++    save(EVIDENCE/'supervisor.json',receipt);time.sleep(.1)
++  except Exception as ex:receipt.update(coverageSkip='private-controller-fault',diagnosticFailureType=type(ex).__name__)
++  finally:receipt['launcherExitCode']=process.wait() # Never abandon/signal/hold original managed cleanup.
++except Exception as ex:receipt.update(supervisorFailureType=type(ex).__name__)
++finally:
++ if process is not None and process.poll()is None:receipt['launcherExitCode']=process.wait()
++ if directory is not None:os.close(directory)
++ receipt.update(phase='managed-complete',finishedUtc=datetime.datetime.now(datetime.timezone.utc).isoformat(),physicalWriterProofCoversOnlyObservedPoint=True)
++ save(EVIDENCE/'supervisor.json',receipt)
++print(json.dumps({'diagnosticOnly':True,'launcherExitCode':receipt.get('launcherExitCode'),'controlPublished':receipt['controlPublished'],'physicalWriterObserved':receipt['physicalWriterProof']['observed']}))
++raise SystemExit(0 if process is not None else 1)
+--- qualified-old/run_and_restore.py
++++ current/run_and_restore.py
+@@ -7,27 +7,25 @@
+ commands['native139']=[sys.executable,str(PREP/'native_qualification.py'),'--execute','--pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED']
+ if not args.execute:print(json.dumps({'preparationOnly':True,'commands':commands,'finally':'Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories.'},indent=2));raise SystemExit()
+ operational_pins(args.pins_sha256);sources();private_directory(require_empty=True)
+-EVIDENCE=Path('/tmp/story65-advisory-wave-diagnostic-20261107');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native139Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
+-try:
+- status['privateAttempted']=True;status['privateExitCode']=subprocess.run(commands['private'],cwd=ROOT).returncode
+- if status['privateExitCode']==0:
+-  status['native139Attempted']=True;status['native139ExitCode']=subprocess.run(commands['native139'],cwd=ROOT).returncode
+-  if status['native139ExitCode']==0:
+-   work=Path(json.loads((PREP/'latest-native-attempt.json').read_text())['attemptDirectory']);assert work.parent==PREP
+-   qualified=json.loads((work/'receipt.json').read_text());assert qualified['passed']is True and qualified['nativeProcessAndDescendantsAbsent']is True and qualified['counterDirectoryEmpty']is True
+-   status['managedAttempted']=True;status['managedExitCode']=subprocess.run(commands['managed'],cwd=ROOT).returncode
+-  else:status['managedSkippedReason']='private-native-139-qualification-failed'
+-finally:
++EVIDENCE=Path('/tmp/story65-advisory-terminal-diagnostic-20261108');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native139Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
++def qualify_cleanup():
+  safe=True
+  if status['native139Attempted']:
+   pointer=PREP/'latest-native-attempt.json';safe=pointer.exists()
+   if safe:
+    work=Path(json.loads(pointer.read_text())['attemptDirectory']);safe=work.parent==PREP and(work/'receipt.json').exists()
+    if safe:
+-    native139=json.loads((work/'receipt.json').read_text());safe=native139.get('nativeProcessAndDescendantsAbsent')is True and native139.get('counterDirectoryEmpty')is True
++    native139=json.loads((work/'receipt.json').read_text());safe=native139.get('nativeProcessAndDescendantsAbsent')is True
++    if native139.get('nativeStarted')is True:
++     identity=native139.get('ownedNativeIdentity')
++     if isinstance(identity,dict)and type(identity.get('pid'))is int and type(identity.get('processGroup'))is int:safe=safe and not group_members(identity['processGroup'])
++     else:safe=False;status['nativeOwnedIdentityMissingCleanupUnproven']=True
++    status['nativeCounterDirectoryEmpty']=native139.get('counterDirectoryEmpty')is True
++    if not status['nativeCounterDirectoryEmpty']:
++     status['measurementComplete']=False;status['nativeDiagnosticMetadataIncomplete']=True;status['remainingCounterFilesPreservedWithoutDeletion']=True
+  if status['managedAttempted']:
+   audit=EVIDENCE/'independent-cleanup-source-audit.json'
+-  audit_command=[sys.executable,'/tmp/story65-receiver-acceptance-prep-20261107/audit.py','--evidence',str(EVIDENCE/'managed'),'--output',str(audit)]
++  audit_command=[sys.executable,'/tmp/story65-canonical-hash-acceptance-prep-20261108/audit.py','--evidence',str(EVIDENCE/'managed'),'--output',str(audit)]
+   observations=[];deadline=time.monotonic()+10;ordinal=0
+   while True:
+    ordinal+=1;observed=EVIDENCE/('cleanup-observation-'+str(ordinal)+'.json');command=[*audit_command[:-1],str(observed)]
+@@ -36,7 +34,7 @@
+    early_path=EVIDENCE/'early-runtime-identities.json';early=json.loads(early_path.read_text()).get('identities',[])if early_path.exists()else[]
+    def absent_now(pid,ticks):
+     try:
+-     state=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return state[0]=='Z'or state[19]!=str(ticks)
++     state=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return state[19]!=str(ticks)
+     except FileNotFoundError:return True
+    early_ready=bool(early)and len(early)==6 and all(absent_now(item['pid'],item['startTicks'])and absent_now(item['wrapperPid'],item['wrapperStartTicks'])for item in early)
+    observations.append({'ordinal':ordinal,'exitCode':checked.returncode,'path':str(observed),'recordedProcessAndContainerAbsences':snapshot.get('allIndependentRecordedProcessAndContainerAbsences')is True,'allEarlyIdentitiesAbsent':early_ready})
+@@ -52,22 +50,62 @@
+    value=json.loads(audit.read_text());run=json.loads((EVIDENCE/'managed/run.json').read_text())
+    entries=json.loads((EVIDENCE/'execution-entry-counts.json').read_text());native=value.get('nativeTestProcessCleanup')
+    never_native=entries['nativeInvocationEntries']==0 and entries['browserInvocationEntries']==0 and run.get('testAssemblySha256')is None and run.get('nativeTestCommand')is None and run.get('browserSeedCommand')is None and not any(isinstance(command,list)and len(command)>1 and command[0]=='dotnet'and Path(command[1]).name=='Hexalith.Projects.Integration.Tests.dll'for command in run.get('commands',[]))
+-   native_safe=isinstance(native,list)and all(item.get('descendantsAbsent')is True for item in native)or native is None and never_native
++   native_safe=isinstance(native,list)and all(item.get('descendantsAbsent')is True and type(item.get('groupId'))is int and not group_members(item['groupId'])for item in native)or native is None and never_native
++   strict_absent=[]
++   for item in value.get('identities',[]):
++    try:fields=Path('/proc',str(item['pid']),'stat').read_text().rsplit(')',1)[1].split();gone=fields[19]!=str(item['startTicks'])
++    except(FileNotFoundError,ProcessLookupError):gone=True
++    strict_absent.append(gone)
++   strict_all_recorded=bool(strict_absent)and all(strict_absent)
+    early_path=EVIDENCE/'early-runtime-identities.json';early=[]
+    if early_path.exists():
+     early=json.loads(early_path.read_text())['identities'];assert len(early)==6 and len({item['role']for item in early})==6
+    def absent(pid,ticks):
+     try:
+-     state=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return state[0]=='Z'or state[19]!=str(ticks)
++     state=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return state[19]!=str(ticks)
+     except FileNotFoundError:return True
+    early_absent=bool(early)and all(absent(item['pid'],item['startTicks'])and absent(item['wrapperPid'],item['wrapperStartTicks'])for item in early)
+    no_hosts_started=not early and run.get('ownedAppHostSession')is None and not any(isinstance(command,list)and command[:2]==['aspire','start']for command in run.get('commands',[]))
+    sidecars_safe=value.get('ownedSidecarsAbsent')is True or no_hosts_started and value.get('ownedSidecarsAbsent')is None
+-   safe=all(value.get(k)is True for k in['allIndependentRecordedProcessAndContainerAbsences','allOriginalCleanupAbsenceVerified','preexistingResourcesPreserved','privateMaterialRemoved','namespaceContainersAbsent','privateRuntimeDirectoryAbsent'])and sidecars_safe and value.get('fullLiveManifestHashMismatches')==0 and native_safe and(early_absent or no_hosts_started)
+-   save(EVIDENCE/'supplemental-cleanup-qualification.json',{'diagnosticOnly':True,'nativeNoneAcceptedOnlyWithProvenNoNativeExecution':native is None and never_native,'nativeExecutionEntryCounts':entries,'earlyRuntimeIdentityCount':len(early)*2,'allEarlyIdentitiesAbsent':early_absent,'noOwnedHostsStarted':no_hosts_started,'safeForOrdinaryRestoration':safe})
+-   value.update(diagnosticOnly=True,featureAcceptance=False,ordinaryAcceptanceOnly=False,privateProjectsServerOverlay=True,sdkOrdinary=True,profilerEnabled=False);save(audit,value)
++   safe=all(value.get(k)is True for k in['allIndependentRecordedProcessAndContainerAbsences','allOriginalCleanupAbsenceVerified','preexistingResourcesPreserved','privateMaterialRemoved','namespaceContainersAbsent','privateRuntimeDirectoryAbsent'])and sidecars_safe and value.get('fullLiveManifestHashMismatches')==0 and native_safe and strict_all_recorded and(early_absent or no_hosts_started)
++   save(EVIDENCE/'supplemental-cleanup-qualification.json',{'diagnosticOnly':True,'nativeNoneAcceptedOnlyWithProvenNoNativeExecution':native is None and never_native,'nativeExecutionEntryCounts':entries,'earlyRuntimeIdentityCount':len(early)*2,'allEarlyIdentitiesAbsent':early_absent,'noOwnedHostsStarted':no_hosts_started,'safeForOrdinaryRestoration':safe,'allRecordedPidStartIdentitiesAbsentIncludingZombies':strict_all_recorded,'allNativeSeedGroupsFreshlyAbsentIncludingZombies':native_safe})
++   value.update(diagnosticOnly=True,featureAcceptance=False,ordinaryAcceptanceOnly=False,privateProjectsAdvisoryTerminalOverlay=True,sdkOrdinary=True,profilerEnabled=False);save(audit,value)
++ if status['managedAttempted']and safe:
++  # Metadata is inspected only after all normal/native/early owned identities close.
++  # A missing/incomplete recorder never delays cleanup or blocks ordinary restore.
++  try:
++   supervisor=json.loads((EVIDENCE/'supervisor.json').read_text());status['underlyingManagedLauncherExitCode']=supervisor.get('launcherExitCode')
++   if supervisor.get('controlPublished')is True:
++    from validate_closed_terminal import validate
++    validation=validate(supervisor);status['measurementComplete']=True
++   else:
++    validation={'diagnosticOnly':True,'featureAcceptance':False,'complete':False,'reason':'control-publication-partial-possible'if supervisor.get('controlPublicationAttempted')else'no-admission-window-published','doesNotProveZeroWork':True};status['measurementComplete']=False
++  except Exception as failure:
++   validation={'diagnosticOnly':True,'featureAcceptance':False,'complete':False,'reason':'closed-recorder-validation-failed','failureType':type(failure).__name__};status['measurementComplete']=False
++  try:save(EVIDENCE/'closed-recorder-validation.json',validation)
++  except Exception as failure:status['metadataValidationWriteFailureType']=type(failure).__name__
++ return safe
++try:
++ status['privateAttempted']=True;status['privateExitCode']=subprocess.run(commands['private'],cwd=ROOT).returncode
++ if status['privateExitCode']==0:
++  status['native139Attempted']=True;status['native139ExitCode']=subprocess.run(commands['native139'],cwd=ROOT).returncode
++  if status['native139ExitCode']==0:
++   work=Path(json.loads((PREP/'latest-native-attempt.json').read_text())['attemptDirectory']);assert work.parent==PREP
++   qualified=json.loads((work/'receipt.json').read_text());assert qualified['passed']is True and qualified['nativeProcessAndDescendantsAbsent']is True and qualified['counterDirectoryEmpty']is True
++   status['managedAttempted']=True;status['managedExitCode']=subprocess.run(commands['managed'],cwd=ROOT).returncode
++  else:status['managedSkippedReason']='private-advisory-native139-qualification-failed'
++except Exception as failure:
++ status['pipelineFailureType']=type(failure).__name__
++finally:
++ safe=False
++ try:safe=qualify_cleanup()
++ except Exception as failure:
++  status['cleanupQualificationFailureType']=type(failure).__name__;status['cleanupQualificationUnproven']=True
+  if status['privateAttempted']and safe:
+-  status['ordinaryRestoreAttempted']=True;status['ordinaryExitCode']=subprocess.run(commands['ordinary'],cwd=ROOT).returncode
+- else:status['ordinaryRestoreDeferredReason']='owned-runtime-absence-unproven'
+- save(PREP/'latest-operational-result.json',status)
++  status['ordinaryRestoreAttempted']=True
++  try:status['ordinaryExitCode']=subprocess.run(commands['ordinary'],cwd=ROOT).returncode
++  except Exception as failure:status['ordinaryRestoreFailureType']=type(failure).__name__
++ else:status['ordinaryRestoreDeferredReason']='owned-runtime-absence-or-cleanup-qualification-unproven'
++ try:save(PREP/'latest-operational-result.json',status)
++ except Exception as failure:status['latestStatusWriteFailureType']=type(failure).__name__
+ print(json.dumps(status))
+--- qualified-old/advisory-wave.targets
++++ current/advisory-terminal.targets
+@@ -1,11 +1,21 @@
+ <Project>
+   <Import Project="$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)" Condition="'$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)')" />
+-  <Target Name="PrivateAdvisoryWaveOnly" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++    <Story65TerminalOriginalAfterSdk>$(AfterMicrosoftNETSdkTargets)</Story65TerminalOriginalAfterSdk>
++    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-advisory-terminal-live-prep-20261108/advisory-compiler-observer.targets</AfterMicrosoftNETSdkTargets>
++  </PropertyGroup>
++  <Target Name="Story65AdvisoryTerminalSource" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server' and '$(Story65TerminalPrivate)' == 'true'">
++    <ItemGroup><_TerminalOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" /></ItemGroup>
++    <Error Condition="'@(_TerminalOriginal->Count())' != '1'" Text="Exactly one ordinary advisory executor compile item is required." />
+     <ItemGroup>
+-      <Compile Remove="Queries/ProjectAdvisoryQueryExecutor.cs" />
+-      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/ProjectAdvisoryQueryExecutor.private.cs" />
+-      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/CaptureCounters.cs" />
+-      <Compile Include="/tmp/story65-advisory-wave-prep-20261107/AdvisoryWaveBootstrap.cs" />
++      <Compile Remove="@(_TerminalOriginal)" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/ProjectAdvisoryQueryExecutor.private.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/CaptureCounters.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryWaveBootstrap.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTerminalCapture.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryBoundary.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTermination.cs" />
++      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryExceptionKind.cs" />
+     </ItemGroup>
+   </Target>
+ </Project>
+--- /dev/null
++++ current/advisory-compiler-observer.targets
+@@ -0,0 +1,46 @@
++<Project>
++  <!-- Last SDK import: resolved item/flag snapshot before CoreCompile, after prior pinned generator targets; not Csc task interception. -->
++  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++    <Story65TerminalLateGuardImported>true</Story65TerminalLateGuardImported>
++  </PropertyGroup>
++  <Target Name="Story65ValidateAdvisoryTerminalCompilerInputs" DependsOnTargets="Story65AdvisoryTerminalSource" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/project.assets.json'" Text="Domain receiver restored assets coordinate refused." />
++    <ItemGroup>
++      <_TerminalWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
++      <_TerminalWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
++      <_TerminalActualOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" />
++      <_TerminalPrivateInputs Include="@(Compile)" Condition="$([System.String]::Copy('%(Compile.FullPath)').StartsWith('/tmp/story65-advisory-terminal-prep-20261108/', System.StringComparison.Ordinal))" />
++    </ItemGroup>
++    <Error Condition="'$(Story65TerminalPrivate)' == 'true' and ('@(_TerminalActualOriginal)' != '' or '@(_TerminalPrivateInputs->Count())' != '7')" Text="Private advisory actual source set refused." />
++    <Error Condition="'$(Story65TerminalPrivate)' != 'true' and ('@(_TerminalActualOriginal->Count())' != '1' or '@(_TerminalPrivateInputs)' != '')" Text="Ordinary advisory actual source set refused." />
++    <Error Condition="'$(Story65TerminalIsolatedRoot)' != '' and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('$(Story65TerminalIsolatedRoot)', System.StringComparison.Ordinal))" Text="Isolated Domain compiler write escaped temporary output." />
++    <Error Condition="'$(Story65TerminalIsolatedRoot)' == '' and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/', System.StringComparison.Ordinal)) and !$([System.String]::Copy('%(_TerminalWritable.FullPath)').StartsWith('/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/obj/Debug/', System.StringComparison.Ordinal))" Text="Workspace Domain compiler write escaped owned Debug bin/obj." />
++  </Target>
++  <Target Name="Story65CaptureAdvisoryTerminalBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateAdvisoryTerminalCompilerInputs" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++    <ItemGroup>
++      <_TerminalSourceLink Include="$(SourceLink)" Condition="'$(SourceLink)' != ''" />
++      <_TerminalWin32Resource Include="$(Win32Resource)" Condition="'$(Win32Resource)' != ''" />
++      <_TerminalWin32Manifest Include="$(Win32Manifest)" Condition="'$(Win32Manifest)' != ''" />
++      <_TerminalWin32Icon Include="$(ApplicationIcon)" Condition="'$(ApplicationIcon)' != ''" />
++      <_TerminalKeyFile Include="$(KeyOriginatorFile)" Condition="'$(KeyOriginatorFile)' != ''" />
++      <_TerminalCompilerAppConfig Include="$(AppConfigForCompiler)" Condition="'$(AppConfigForCompiler)' != ''" />
++      <_TerminalCodeAnalysisRules Include="$(ResolvedCodeAnalysisRuleSet)" Condition="'$(ResolvedCodeAnalysisRuleSet)' != ''" />
++      <_TerminalResponseFile Include="$(CompilerResponseFile)" Condition="'$(CompilerResponseFile)' != ''" />
++      <_TerminalFeatures Include="$(Features)" />
++      <_TerminalWarningsAsErrors Include="$(WarningsAsErrors)" />
++      <_TerminalWarningsNotAsErrors Include="$(WarningsNotAsErrors)" />
++      <_TerminalConstants Include="$(DefineConstants)" />
++      <_TerminalNoWarn Include="$(NoWarn)" />
++      <_TerminalPathMaps Include="$(PathMap)" />
++    </ItemGroup>
++    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)|%(Aliases)|%(EmbedInteropTypes)');@(_CoreCompileResourceInputs->'Resource|%(FullPath)|%(LogicalName)|%(WithCulture)');@(CompiledLicenseFile->'Resource|%(FullPath)');@(EmbeddedFiles->'EmbeddedFile|%(FullPath)');@(LinkResource->'LinkResource|%(FullPath)|%(LogicalName)');@(AddModules->'Module|%(FullPath)');@(EditorConfigFiles->'AnalyzerConfig|%(FullPath)');@(_TerminalSourceLink->'SourceLink|%(FullPath)');@(_TerminalWin32Resource->'Win32Resource|%(FullPath)');@(_TerminalWin32Manifest->'Win32Manifest|%(FullPath)');@(_TerminalWin32Icon->'Win32Icon|%(FullPath)');@(_TerminalKeyFile->'KeyFile|%(FullPath)');@(_TerminalCompilerAppConfig->'CompilerAppConfig|%(FullPath)');@(_TerminalCodeAnalysisRules->'CodeAnalysisRules|%(FullPath)');@(_TerminalResponseFile->'ResponseFile|%(FullPath)')" Overwrite="true" />
++    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-writable-paths.txt" Lines="@(_TerminalWritable->'%(FullPath)')" Overwrite="true" />
++    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-precore-flags.txt" Lines="Snapshot|before-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);TargetType|$(OutputType);Platform|$(PlatformTarget);EmbedAllSources|$(EmbedAllSources);ChecksumAlgorithm|$(ChecksumAlgorithm);NoStandardLib|$(NoCompilerStandardLib);DisableSdkPath|$(DisableSdkPath);DebugType|$(DebugType);DebugSymbols|$(DebugSymbols);TargetFramework|$(TargetFramework);AssemblyName|$(AssemblyName);LangVersion|$(LangVersion);Nullable|$(Nullable);Deterministic|$(Deterministic);AllowUnsafeBlocks|$(AllowUnsafeBlocks);CheckForOverflowUnderflow|$(CheckForOverflowUnderflow);WarningLevel|$(WarningLevel);TreatWarningsAsErrors|$(TreatWarningsAsErrors);GenerateDocumentationFile|$(GenerateDocumentationFile);EmitCompilerGeneratedFiles|$(EmitCompilerGeneratedFiles);UseHexalithProjectReferences|$(UseHexalithProjectReferences);UseNuGetDeps|$(UseNuGetDeps);EnablePrivateCatalogInvocationProof|$(EnablePrivateCatalogInvocationProof);EnablePrivateOwnerSourceReadProof|$(EnablePrivateOwnerSourceReadProof);PrivateAdvisoryCore|$(Story65TerminalPrivate);@(_TerminalConstants->'DefineConstant|%(Identity)');@(_TerminalNoWarn->'NoWarn|%(Identity)');@(_TerminalPathMaps->'PathMapEntry|%(Identity)');@(_TerminalFeatures->'Feature|%(Identity)');@(_TerminalWarningsAsErrors->'WarningsAsErrors|%(Identity)');@(_TerminalWarningsNotAsErrors->'WarningsNotAsErrors|%(Identity)')" Overwrite="true" />
++  </Target>
++  <Target Name="Story65CaptureAdvisoryTerminalAfterCoreCompile" AfterTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
++    <ItemGroup>
++      <_TerminalPostNoWarn Include="$(NoWarn)" />
++    </ItemGroup>
++    <WriteLinesToFile File="$(IntermediateOutputPath)story65-advisory-postcore-flags.txt" Lines="Snapshot|after-CoreCompile-not-Csc-interception;Configuration|$(Configuration);Optimize|$(Optimize);DebugType|$(DebugType);PdbFile|$(PdbFile);AppConfigForCompiler|$(AppConfigForCompiler);TargetsTriggeredByCompilation|$(TargetsTriggeredByCompilation);@(_TerminalPostNoWarn->'NoWarn|%(Identity)')" Overwrite="true" />
++  </Target>
++</Project>
+--- /dev/null
++++ current/validate_closed_terminal.py
+@@ -0,0 +1,47 @@
++"""Closed-only validation; no mutation/archive and no request or downstream joins."""
++from pathlib import Path
++import importlib.util,json,os,stat
++from ops_common import *
++
++def validate(supervisor):
++ assert supervisor['controlPublished']is True
++ fd=os.open(PRIVATE,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC)
++ try:
++  s=os.fstat(fd);assert(s.st_dev,s.st_ino,s.st_uid,stat.S_IMODE(s.st_mode))==(2096,8752986,1000,0o700)
++  assert set(os.listdir(fd))=={'window.control','projects.jsonl','projects.closed.json'}
++  raw={};identities={}
++  for name in sorted(os.listdir(fd)):
++   handle=os.open(name,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK|os.O_CLOEXEC,dir_fd=fd)
++   try:
++    st=os.fstat(handle);limit=8*1024*1024 if name.endswith('.jsonl')else 4096
++    assert stat.S_ISREG(st.st_mode)and st.st_uid==1000 and stat.S_IMODE(st.st_mode)==0o600 and st.st_size<=limit
++    parts=[];total=0
++    while True:
++     data=os.read(handle,min(65536,limit+1-total))
++     if not data:break
++     parts.append(data);total+=len(data);assert total<=limit
++    again=os.fstat(handle);assert(st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns)==(again.st_dev,again.st_ino,again.st_size,again.st_mtime_ns)
++    raw[name]=b''.join(parts);identities[name]={'device':st.st_dev,'inode':st.st_ino,'bytes':st.st_size,'sha256':__import__('hashlib').sha256(raw[name]).hexdigest()}
++   finally:os.close(handle)
++  control=identities['window.control'];assert all(control[k]==supervisor['controlIdentity'][k]for k in ['device','inode','bytes'])
++  assert all(type(supervisor[k])is int and supervisor[k]>0 for k in ['runOrdinal','frequency','admissionStartTicks','admissionEndTicks'])
++  expected=f"{supervisor['runOrdinal']}\n{supervisor['frequency']}\n{supervisor['admissionStartTicks']}\n{supervisor['admissionEndTicks']}\n".encode('ascii')
++  assert raw['window.control']==expected
++  pairs=json.loads(raw['projects.closed.json'],object_pairs_hook=lambda pairs:pairs)
++  assert isinstance(pairs,list)and len(pairs)==len(dict(pairs));closed=dict(pairs)
++  fields={'diagnosticOnly','featureAcceptance','role','runOrdinal','admitted','disposedOrUnwound','activeAtDrainEnd','queuedRowsDropped','closedRowsDropped','capRowsDropped','ioFailures','writtenRows','writtenBytes','queuedAtDrainEnd','incompleteHardDrain','countersFinal','lateDisposedOrDropCountersMayIncrease','maximumRows','maximumBytes','queueCapacity','windowStartTicks','windowEndTicks','frequency'}
++  assert set(closed)==fields and closed['role']=='projects'and closed['runOrdinal']==supervisor['runOrdinal']
++  assert all(type(v)is int and v>=0 for k,v in closed.items()if k!='role')
++  assert closed['diagnosticOnly']==1 and closed['featureAcceptance']==0
++  assert closed['maximumRows']==65536 and closed['maximumBytes']==8388608 and closed['queueCapacity']==4096
++  assert closed['frequency']==1000000000 and closed['windowEndTicks']-closed['windowStartTicks']==8*closed['frequency']
++  assert closed['writtenRows']<=closed['maximumRows']and closed['writtenBytes']<=closed['maximumBytes']
++  assert closed['admitted']==closed['disposedOrUnwound']and closed['activeAtDrainEnd']==0 and closed['countersFinal']==1
++  assert all(closed[k]==0 for k in ['queuedRowsDropped','closedRowsDropped','capRowsDropped','ioFailures','queuedAtDrainEnd','incompleteHardDrain','lateDisposedOrDropCountersMayIncrease'])
++  assert closed['windowStartTicks']==supervisor['admissionStartTicks']and closed['windowEndTicks']==supervisor['admissionEndTicks']and closed['frequency']==supervisor['frequency']
++  source=SOURCE_PREP/'run_differential.py';spec=importlib.util.spec_from_file_location('qualified_terminal_row_schema',source);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
++  count=module.validate_rows(raw['projects.jsonl'],closed,supervisor['runOrdinal'],supervisor['frequency'],'active',{})
++  physical=supervisor.get('physicalWriterProof',{});observed=physical.get('observed')is True
++  if observed:assert all(physical[k]==identities['projects.jsonl'][k]for k in ['device','inode'])
++  return {'diagnosticOnly':True,'featureAcceptance':False,'complete':True,'captures':closed['admitted'],'rows':count,'closed':closed,'artifacts':identities,'physicalWriterObservedAtOnePoint':observed,'physicalAttributionUnproven':not observed,'physicalProofNotAllRowExclusivity':True,'noTimerCauseOrSerializedResultOrDownstreamInference':True}
++ finally:os.close(fd)
+--- /dev/null
++++ current/writer_fd_proof.py
+@@ -0,0 +1,49 @@
++"""Prepared metadata-only proof. No file contents/argv/env/config/unknown link values persist."""
++from pathlib import Path
++import os,stat
++
++PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
++
++def same(pid,start):
++ try:
++  fields=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split()
++  return fields[0]!='Z' and fields[19]==str(start)
++ except(FileNotFoundError,ProcessLookupError):return False
++
++def owned_projects_writer(identity,private_directory_fd):
++ """Call ONLY after the reviewed fresh owned-source/wrapper/private-module guards.
++
++ Match only this exact Projects entry's open writable FD to the fixed file inode.
++ Missing the finite observation window means attribution unproven; it is never a
++ reason to delay original managed cleanup, infer zero admissions, or retry a run.
++ """
++ pid=identity['pid'];start=identity['startTicks']
++ assert identity['role']=='projects' and same(pid,start)
++ directory=os.fstat(private_directory_fd)
++ assert (directory.st_dev,directory.st_ino,directory.st_uid,stat.S_IMODE(directory.st_mode))==(2096,8752986,1000,0o700)
++ try:filefd=os.open('projects.jsonl',os.O_RDONLY|os.O_NONBLOCK|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=private_directory_fd)
++ except FileNotFoundError:return {'observed':False,'reason':'fixed-output-not-yet-created'}
++ try:
++  target=os.fstat(filefd)
++  assert stat.S_ISREG(target.st_mode) and target.st_uid==1000 and stat.S_IMODE(target.st_mode)==0o600 and target.st_size<=8*1024*1024
++  descriptors=list(Path('/proc',str(pid),'fd').iterdir());assert len(descriptors)<=4096
++  for descriptor in descriptors:
++   if not descriptor.name.isdigit():continue
++   try:
++    # Unknown link targets are compared in RAM then discarded, never serialized.
++    if os.readlink(descriptor)!=str(PRIVATE/'projects.jsonl'):continue
++    info=Path('/proc',str(pid),'fdinfo',descriptor.name).read_bytes();assert len(info)<=4096
++    flags=[line.split(b':',1)[1].strip() for line in info.splitlines() if line.startswith(b'flags:')]
++    assert len(flags)==1;access=int(flags[0],8)&os.O_ACCMODE
++    if access not in (os.O_WRONLY,os.O_RDWR):continue
++    seen=descriptor.stat();current=os.fstat(filefd)
++    if (seen.st_dev,seen.st_ino)!=(target.st_dev,target.st_ino):continue
++    assert (current.st_dev,current.st_ino,current.st_uid,stat.S_IMODE(current.st_mode))==(target.st_dev,target.st_ino,1000,0o600)
++    assert same(pid,start)
++    return {'observed':True,'role':'projects','pid':pid,'startTicks':str(start),'descriptor':int(descriptor.name),
++     'device':target.st_dev,'inode':target.st_ino,'mode':'0600','writable':True,'exactFixedOutputInodeMatched':True,
++     'noRawLinkTargetOrFdinfoPersisted':True,'knownOwnedSourceAndPrivateModuleGuardIsExternalPrerequisite':True}
++   except(FileNotFoundError,ProcessLookupError):continue
++  assert same(pid,start)
++  return {'observed':False,'reason':'no-owned-writable-descriptor-observed'}
++ finally:os.close(filefd)

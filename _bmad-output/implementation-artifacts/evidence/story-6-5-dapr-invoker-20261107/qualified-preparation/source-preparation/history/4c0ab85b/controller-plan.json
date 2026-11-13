@@ -1,0 +1,126 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "serialCanariesFirst": true,
+  "processCount": 19,
+  "behavioralCells": 120,
+  "freshCanaries": 3,
+  "runtimeOverride": null,
+  "protocol": "inherited exact closed READY/window/CASES_DONE/EXIT, strict numeric schemas and pinned directory ownership; each active entry admission exactly1, disabled0",
+  "plannedProcesses": [
+    {
+      "mode": "canary-positive-control",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-current",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-suppressed",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 27
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "caller-cancel-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 27
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "caller-cancel-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 27
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "caller-cancel-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 27
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "caller-cancel-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "uncooperative-acquire-cancel",
+      "expectedCatalogCases": 1
+    }
+  ]
+}

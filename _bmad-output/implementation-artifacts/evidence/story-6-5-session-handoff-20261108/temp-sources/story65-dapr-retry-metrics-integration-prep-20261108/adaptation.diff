@@ -1,0 +1,610 @@
+--- /tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/common.py
++++ /tmp/story65-dapr-retry-metrics-integration-prep-20261108/common.py
+@@ -1,131 +1,91 @@
+-"""External metadata guards. No target lifecycle, application configuration or logging changes."""
++"""Closed external guards; no launcher replacement, raw runtime identity output or target control."""
+ from pathlib import Path
+-import hashlib,json,math,os,re,stat,time,importlib.util
+-ROOT=Path('/home/administrator/projects/hexalith/projects');PREP=Path('/tmp/story65-canonical-current-gateway-cpu-prep-20261108');OPS=PREP/'watcher'
+-APPHOST=ROOT/'src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.Projects.AppHost'
++import hashlib,importlib.util,json,math,os,re,stat,subprocess,sys,time
++ROOT=Path('/home/administrator/projects/hexalith/projects')
++PREP=Path(__file__).resolve().parent
++CORE=Path('/tmp/story65-dapr-retry-metrics-prep-20261108')
++ORDINARY=Path('/tmp/story65-canonical-hash-acceptance-prep-20261108')
++LAUNCHER=ROOT/'tools/qualification/run_supported_project_reads.py'
++LIVE=Path('/tmp/story65-dapr-retry-metrics-owner-live-20261108')
++OUTPUT=Path('/tmp/story65-dapr-retry-metrics-owner-observation-20261108')
+ MAPPING={'CustomBeforeDirectoryBuildProps','CustomAfterMicrosoftCommonProps','CustomBeforeDirectoryBuildTargets','CustomAfterDirectoryBuildTargets','AfterMicrosoftNETSdkTargets','HEXALITH_SOURCE_MAPPING_HASH','Configuration'}
+-FLAGS={'EventStore__RouteCatalog__ScopedDecodeReuse':'true','EventStore__RouteCatalog__SerializeLocalLeaseRelease':'false','EventStore__RouteCatalog__RetainValidatedCatalogBytes':'true'}
+-MARKERS=['Hexalith.PrivateCaptureCounter','TimingHexalith','PrivateFocusedTiming','Story65Timing']
++COMMAND=['npm','--prefix','tests/e2e','run','test:live:managed']
++RUNTIME_PROJECTS={
++ 'eventstore':'references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj',
++ 'tenants':'references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj',
++ 'projects':'src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj',
++ 'projects-workers':'src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj',
++ 'folders':'references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj',
++ 'folders-workers':'references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj'}
+ class Guard(Exception):pass
+ 
++def require(value,check):
++ if not value:raise Guard(check)
+ def sha(path):
+  fd=os.open(path,os.O_RDONLY|os.O_NONBLOCK|os.O_NOFOLLOW|os.O_CLOEXEC)
+  with os.fdopen(fd,'rb')as stream:
+-  if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):raise Guard('input-not-regular')
++  require(stat.S_ISREG(os.fstat(stream.fileno()).st_mode),'input-not-regular')
+   return hashlib.file_digest(stream,'sha256').hexdigest()
+-def read_json(path):
+- try:return json.loads(Path(path).read_bytes())
+- except(FileNotFoundError,ValueError):return None
++def read(path):return json.loads(Path(path).read_bytes())
++def write(path,value):
++ path=Path(path);temporary=path.with_suffix(path.suffix+'.tmp')
++ with temporary.open('x')as stream:json.dump(value,stream,indent=2,allow_nan=False);stream.write('\n')
++ temporary.chmod(0o600);temporary.replace(path)
++def load(path,name):
++ spec=importlib.util.spec_from_file_location(name,path);module=importlib.util.module_from_spec(spec);sys.modules[name]=module;spec.loader.exec_module(module);return module
+ 
+-def write(path,value):
+- path=Path(path);path.parent.mkdir(mode=0o700,parents=True,exist_ok=True);temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(value,indent=2)+'\n');temp.chmod(0o600);temp.replace(path)
+ def process(pid):
+  try:
+-  fields=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split();return None if fields[0]=='Z'else{'pid':pid,'startTicks':fields[19],'parent':int(fields[1]),'group':int(fields[2])}
++  fields=Path('/proc',str(pid),'stat').read_text().rsplit(')',1)[1].split()
++  return {'state':fields[0],'parent':int(fields[1]),'group':int(fields[2]),'session':int(fields[3]),'start':fields[19]}
+  except(FileNotFoundError,ProcessLookupError):return None
+-
+ def same(pid,ticks):
+- value=process(pid);return value is not None and value['startTicks']==str(ticks)
++ row=process(pid);return row is not None and row['state']!='Z'and row['start']==str(ticks)
++def members(group):
++ result=[]
++ for path in Path('/proc').iterdir():
++  if not path.name.isdigit():continue
++  row=process(int(path.name))
++  if row is not None and(row['group']==group or row['session']==group):result.append((int(path.name),row['start']))
++ return result # Includes zombies; no signals, raw argv, environment or map output.
+ def mapped(pid,path):
+  try:return any(len(v:=line.split(None,5))==6 and v[5].strip()==str(path)for line in Path('/proc',str(pid),'maps').read_text().splitlines())
+  except(FileNotFoundError,ProcessLookupError):return False
+ 
+-def known_env(pid,expected,absent=()):
+- # Call only after exact fresh AppHost/DCP/source executable/ancestry classification. Never retain raw entries.
+- raw=Path('/proc',str(pid),'environ').read_bytes();wanted=set(expected)|set(absent);found={}
+- for value in raw.split(b'\0'):
+-  if b'='not in value:continue
+-  key,data=value.split(b'=',1)
+-  if key.decode(errors='replace')in wanted:
+-   name=key.decode();
+-   if name in found:raise Guard('duplicate-known-environment-key')
+-   found[name]=data.decode()
+- del raw
+- if any(found.get(k)!=v for k,v in expected.items())or any(k in found for k in absent):raise Guard('owned-known-environment-mismatch')
+- return True
++def verify_preparation(path,digest,*,released=False):
++ require(path is not None and type(digest)is str and re.fullmatch('[0-9a-f]{64}',digest),'root-release-required')
++ require(sha(path)==digest,'root-release-hash-required');data=read(path)
++ require(data.get('executionReleased')is released,'root-release-state')
++ for name,expected in data['inputsSha256'].items():require(sha(name)==expected,'integration-static-input-changed')
++ return data
+ 
+-def roles():
+- value=read_json(PREP/'collector-guard-map.json');result=value['roles'];assert {v['role']for v in result}=={'gateway'};return result
+-
+-def marker_free(file):
+- data=Path(file).read_bytes()
+- if any(x.encode()in data or x.encode('utf-16-le')in data for x in MARKERS):raise Guard('private-timing-marker-present')
+-def sources(evidence=None):
+- snapshot=read_json(OPS/'source-controls.json')
+- if type(snapshot)is not dict or type(snapshot.get('sourceSha256'))is not dict or len(snapshot['sourceSha256'])!=65:raise Guard('source65-schema-invalid')
+- for name,digest in snapshot['sourceSha256'].items():
+-  if type(name)is not str or type(digest)is not str or re.fullmatch('[0-9a-f]{64}',digest)is None:raise Guard('source65-schema-invalid')
+-  path=Path(name)
+-  if path.is_absolute()or'..'in path.parts or not(ROOT/path).resolve().is_relative_to(ROOT):raise Guard('source65-coordinate-invalid')
+-  if sha(ROOT/path)!=digest:raise Guard('source65-mismatch')
+- if evidence is None:return {'sourceCount':65,'source65Match':True}
+- path=Path(evidence)/'source-manifest.json';manifest=read_json(path)
+- if not isinstance(manifest,dict)or not manifest:raise Guard('live-source-manifest-unavailable')
+- for rel,digest in manifest.items():
+-  name=Path(rel)
+-  if name.is_absolute()or'..'in name.parts or not(ROOT/name).resolve().is_relative_to(ROOT):raise Guard('live-source-coordinate-invalid')
+-  if type(digest)is not str or re.fullmatch('[0-9a-f]{64}',digest)is None:raise Guard('live-source-schema-invalid')
+-  if sha(ROOT/name)!=digest:raise Guard('live-source-manifest-mismatch')
+- ordinary=ordinary_controls().generations(ordinary_binding())
+- return{'sourceCount':65,'source65Match':True,'fullManifestCount':len(manifest),'fullManifestSha256':sha(path),'fullManifestAllMatch':True,'currentProducer8AndActiveSdkContractsPairsVerified':True,'app147MarkerClean':len(ordinary['currentApp147Sha256'])==147,'additionalMarkerCheckedCount':len(ordinary['additionalHexalithAssemblyFilesSha256']),'currentOrdinaryCensusSha256':hashlib.sha256(json.dumps(ordinary,sort_keys=True).encode()).hexdigest()}
+-
+-def generation(role,pid,ticks,evidence,source_proof=None):
+- proof=dict(source_proof)if source_proof is not None else sources(evidence);files=[];base=Path(role['entryDll']).parent
+- for label,name in [('eventstore-entry-assembly',Path(role['entryDll']).name),('gateway-assembly','Hexalith.EventStore.Gateway.dll'),('sdk-assembly','Hexalith.EventStore.ServiceDefaults.dll'),('domain-service-assembly','Hexalith.EventStore.DomainService.dll'),('contracts-assembly','Hexalith.EventStore.Contracts.dll')]:
+-  copy=base/name;marker_free(copy);digest=sha(copy)
+-  if label=='sdk-assembly'and(digest!='873dbb74ee259d91c99ea2804e5801134c993abb4ef7806e79f242e5d23faf96'or sha(copy.with_suffix('.pdb'))!='f4fae4fb336e03b5e0636a5781a817598b301f445a967d7b4eb309be29dd639e'):raise Guard('ordinary-sdk-baseline-mismatch')
+-  if label=='contracts-assembly'and(digest!='f1cf82fe57d5ae0037772d3ccea77766a141cd49ec66c2079c3c8b046c8089df'or sha(copy.with_suffix('.pdb'))!='bbe424a27b1f242f2d8865864121ea4a99ab40ecee493084df462cf0efd49a39'):raise Guard('ordinary-contracts-baseline-mismatch')
+-  if label!='eventstore-entry-assembly':
+-   producer=ROOT/'references/Hexalith.EventStore/src'/name.removesuffix('.dll')/'bin/Debug/net10.0'/name
+-   marker_free(producer)
+-   if sha(producer)!=digest or sha(producer.with_suffix('.pdb'))!=sha(copy.with_suffix('.pdb')):raise Guard('producer-runtime-copy-mismatch')
+-  if not mapped(pid,copy):raise Guard('owned-required-module-not-yet-mapped')
+-  files.append({'Label':label,'Path':str(copy),'Sha256':digest})
+- if not same(pid,ticks):raise Guard('owned-target-start-changed')
+- # Other ordinary modules retain separate current producer generations; no blanket older-byte equality.
+- modules={}
+- for name in ['Hexalith.EventStore.Contracts','Hexalith.EventStore.ServiceDefaults','Hexalith.EventStore.DomainService','Hexalith.EventStore.Server','Hexalith.EventStore.Gateway']:
+-  producer=ROOT/'references/Hexalith.EventStore/src'/name/'bin/Debug/net10.0'/(name+'.dll');marker_free(producer);marker_free(producer.with_suffix('.pdb'));modules[name]={'producerSha256':sha(producer),'producerPdbSha256':sha(producer.with_suffix('.pdb'))}
+- proof.update(role=role['role'],pid=pid,startTicks=ticks,files=[{'label':v['Label'],'sha256':v['Sha256']}for v in files],currentOrdinaryModuleGenerations=modules,noHistoricalNativeByteEquivalenceClaimed=True)
+- return files,proof
+-
++def controls():return load(ORDINARY/'supervise.py','ordinary_readonly_controls')
++def ordinary_preflight():
++ c=controls();b=read(PREP/'ordinary-binding.json')
++ for key in ['finalNativeReceipt','parentNativeAudit','compiledTransferAudit']:c.evidence(b[key])
++ return {'sources':c.sources(b),'protected':c.protected(b),'generations':c.generations(b,True)}
++def ordinary_current():
++ c=controls();b=read(PREP/'ordinary-binding.json')
++ return {'sources':c.sources(b),'protected':c.protected(b),'generations':c.generations(b)}
++def full_source(evidence):
++ path=evidence/'source-manifest.json';manifest=read(path);require(isinstance(manifest,dict)and bool(manifest),'source-manifest-unavailable')
++ for name,digest in manifest.items():
++  rel=Path(name);require(not rel.is_absolute()and'..'not in rel.parts and(ROOT/rel).resolve().is_relative_to(ROOT),'source-manifest-coordinate')
++  require(type(digest)is str and re.fullmatch('[0-9a-f]{64}',digest)and sha(ROOT/rel)==digest,'live-source-manifest-changed')
++ return (sha(path),len(manifest))
+ def observations(evidence):
+- try:data=(Path(evidence)/'browser-advisory-seed-readiness.jsonl').read_bytes()
++ try:data=(evidence/'browser-advisory-seed-readiness.jsonl').read_bytes()
+  except FileNotFoundError:return []
+- rows=[]
++ require(len(data)<=4*1024*1024,'readiness-cap');rows=[]
+  for line in data.split(b'\n')[:-1]:
+   try:d=json.loads(line)
+   except ValueError:continue
+-  if isinstance(d,dict)and set(['result','multiple','attempt','httpStatus','incomplete','candidateCount','positiveCandidatesVerified','elapsedMilliseconds','actualPublicGateway','fabricatedProjectionWrite','nonBootstrapCredential','runtimeAuthoritySupplied'])<=set(d)and d.get('multiple')is True and d['actualPublicGateway']is True and d['fabricatedProjectionWrite']is False and d['nonBootstrapCredential']is True and d['runtimeAuthoritySupplied']is False and type(d.get('attempt'))is int and 1<=d['attempt']<=30 and type(d.get('httpStatus'))is int and d['httpStatus']==200 and type(d.get('incomplete'))is bool and type(d.get('candidateCount'))is int and d['candidateCount']>=0 and type(d.get('positiveCandidatesVerified'))is bool and type(d.get('elapsedMilliseconds'))in[int,float]and math.isfinite(d['elapsedMilliseconds'])and d['elapsedMilliseconds']>=0 and d.get('result')in[None,'Empty','SingleCandidate','MultipleCandidates']:rows.append(d)
++  if isinstance(d,dict)and d.get('multiple')is True and d.get('actualPublicGateway')is True and d.get('fabricatedProjectionWrite')is False and d.get('nonBootstrapCredential')is True and d.get('runtimeAuthoritySupplied')is False and type(d.get('attempt'))is int and 1<=d['attempt']<=30 and type(d.get('httpStatus'))is int and d['httpStatus']==200 and type(d.get('incomplete'))is bool and type(d.get('candidateCount'))is int and d['candidateCount']>=0 and type(d.get('positiveCandidatesVerified'))is bool and type(d.get('elapsedMilliseconds'))in[int,float]and math.isfinite(d['elapsedMilliseconds'])and d['elapsedMilliseconds']>=0 and d.get('result')in[None,'Empty','SingleCandidate','MultipleCandidates']:rows.append(d)
+  return rows
+ 
+ def decision(rows):
+- if any(d['result']=='MultipleCandidates'and not d['incomplete']and d['candidateCount']>=2 and d['positiveCandidatesVerified']for d in rows):return'positive-skip-all'
++ if any(r['result']=='MultipleCandidates'and not r['incomplete']and r['candidateCount']>=2 and r['positiveCandidatesVerified']for r in rows):return'positive-skip'
+  if not rows:return'wait'
+- if max(d['attempt']for d in rows)>24:return'insufficient-windows-skip-all'
+- failed={d['attempt']for d in rows if d['result']in[None,'Empty']and d['incomplete']and d['candidateCount']==0 and not d['positiveCandidatesVerified']and d['attempt']<=24}
+- return'failed-attach'if len(failed)>=3 else'wait'
+-
+-# Reuse the already reviewed ordinary acceptance controls as read-only functions only.
+-# This is not the managed launcher; its main/launch functions are never invoked.
+-_ORDINARY_CONTROLS=None
+-def ordinary_controls():
+- global _ORDINARY_CONTROLS
+- if _ORDINARY_CONTROLS is None:
+-  path=Path('/tmp/story65-canonical-hash-acceptance-prep-20261108/supervise.py')
+-  spec=importlib.util.spec_from_file_location('canonical_ordinary_readonly_controls',path)
+-  module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);_ORDINARY_CONTROLS=module
+- return _ORDINARY_CONTROLS
+-
+-def ordinary_binding():
+- value=read_json(OPS/'ordinary-binding.json')
+- if not isinstance(value,dict):raise Guard('ordinary-current-binding-unavailable')
+- return value
+-
+-def ordinary_preflight():
+- controls=ordinary_controls();binding=ordinary_binding()
+- return {'sources':controls.sources(binding),'protected':controls.protected(binding),'generations':controls.generations(binding,True)}
+-
+-def ordinary_after():
+- controls=ordinary_controls();binding=ordinary_binding()
+- return {'sources':controls.sources(binding),'protected':controls.protected(binding),'generations':controls.generations(binding)}
++ if max(r['attempt']for r in rows)>24:return'late-skip'
++ failed={r['attempt']for r in rows if r['result']in[None,'Empty']and r['incomplete']and r['candidateCount']==0 and not r['positiveCandidatesVerified']}
++ return'failed-window'if len(failed)>=3 else'wait'
+--- /tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/watch_live.py
++++ /tmp/story65-dapr-retry-metrics-integration-prep-20261108/watch.py
+@@ -1,74 +1,136 @@
+-"""Independent conditional observer. Exact ordinary launcher is untouched; no app lifecycle control."""
+-from pathlib import Path
+-import argparse,datetime,os,time
++"""External same-body metrics observation. All target/session/graph/config identities are RAM-only."""
+ from common import *
+-from ownership import session,describe,target,identity
+-from coordinate import run
++import argparse,datetime
++
++
++def session(args,pins,identity):
++ if not same(args.launcher_pid,args.launcher_start):return None
++ selected=[];apphost=ROOT/'src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.Projects.AppHost'
++ for path in Path('/tmp').glob('supported-project-reads-private-*/apphost-session.json'):
++  try:
++   info=path.lstat();parent=path.parent.lstat()
++   if not stat.S_ISREG(info.st_mode)or info.st_uid!=os.getuid()or stat.S_IMODE(info.st_mode)!=0o600 or info.st_size>65536 or info.st_mtime<args.not_before_epoch-2:continue
++   if not stat.S_ISDIR(parent.st_mode)or parent.st_uid!=os.getuid()or stat.S_IMODE(parent.st_mode)!=0o700:continue
++   owned=read(path)
++   if any(type(owned.get(k+'Pid'))is not int or not str(owned.get(k+'StartTicks')).isdigit()or int(owned[k+'StartTicks'])<int(args.launcher_start)or not same(owned[k+'Pid'],owned[k+'StartTicks'])for k in ['appHost','cli']):continue
++   app=owned['appHostPid'];cli=owned['cliPid'];app_exe=Path('/proc',str(app),'exe').readlink();cli_exe=Path('/proc',str(cli),'exe').readlink()
++   if not(app_exe==apphost or app_exe==Path(pins['dotnetExecutablePath'])and mapped(app,Path(str(apphost)+'.dll'))):continue
++   if cli_exe!=Path(pins['aspireExecutablePath'])or sha(cli_exe)!=pins['aspireExecutableSha256']:continue
++   # Only classified fresh source AppHost/CLI processes have known environment keys read.
++   config=Path(owned['_configuration'])
++   if config.parent!=path.parent or sha(config)!=owned['configurationSha256']:continue
++   for pid in [app,cli]:
++    raw=Path('/proc',str(pid),'environ').read_bytes().split(b'\0')
++    expected={'Projects__SupportedReads__ConfigurationFile':str(config),'NAMESPACE':owned['_isolation'],'SUPPORTED_PROJECT_READ_EVIDENCE':str(args.evidence)}
++    if any(raw.count((key+'='+value).encode())!=1 for key,value in expected.items()):break
++   else:
++    owned['_sessionPath']=path;owned['_sessionStat']=identity.stat_key(info);owned['_configStat']=identity.stat_key(config.lstat());owned['_appExe']=app_exe;owned['_appExeStat']=identity.stat_key(app_exe.stat());owned['_cliExeStat']=identity.stat_key(cli_exe.stat())
++    owned['_appExeSha256']=sha(app_exe);owned['_appDllSha256']=sha(Path(str(apphost)+'.dll'))
++    if not same(app,owned['appHostStartTicks'])or not same(cli,owned['cliStartTicks']):continue
++    selected.append(owned)
++  except(FileNotFoundError,ProcessLookupError,KeyError,ValueError):continue
++ require(len(selected)<=1,'ambiguous-owned-session');return selected[0]if selected else None
++
++
++def session_guard(args,owned,pins,identity):
++ require(same(args.launcher_pid,args.launcher_start),'ordinary-launcher-closed')
++ for key in ['appHost','cli']:require(same(owned[key+'Pid'],owned[key+'StartTicks']),'owned-session-start-changed')
++ require(identity.stat_key(owned['_sessionPath'].lstat())==owned['_sessionStat']and identity.stat_key(Path(owned['_configuration']).lstat())==owned['_configStat'],'owned-session-file-changed')
++ require(Path('/proc',str(owned['appHostPid']),'exe').readlink()==owned['_appExe']and identity.stat_key(owned['_appExe'].stat())==owned['_appExeStat'],'owned-apphost-executable-changed')
++ cli=Path(pins['aspireExecutablePath']);require(Path('/proc',str(owned['cliPid']),'exe').readlink()==cli and identity.stat_key(cli.stat())==owned['_cliExeStat'],'owned-cli-executable-changed')
++ return True
++
++
++def describe(args,owned,pins,identity):
++ session_guard(args,owned,pins,identity)
++ env=os.environ.copy();env['Projects__SupportedReads__ConfigurationFile']=owned['_configuration'];env['NAMESPACE']=owned['_isolation']
++ command=[pins['aspireExecutablePath'],'describe','--apphost',str(ROOT/'src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj'),'--format','Json','--non-interactive']
++ result=subprocess.run(command,capture_output=True,env=env,timeout=15)
++ session_guard(args,owned,pins,identity);require(result.returncode==0 and len(result.stdout)<=8*1024*1024,'owned-graph-unobservable')
++ graph=json.loads(result.stdout);require(isinstance(graph,dict)and isinstance(graph.get('resources'),list)and len(graph['resources'])<=512,'owned-graph-schema')
++ for role,project in RUNTIME_PROJECTS.items():
++  rows=[r for r in graph['resources']if r.get('displayName')==role]
++  require(len(rows)==1 and rows[0].get('properties',{}).get('project.path')==str(ROOT/project),'owned-graph-source-project')
++ return graph
++
++
++def collect(args,pins):
++ # Imports happen only after Root release validation. No monkeypatching or launcher main/execute/run calls.
++ sys.path.insert(0,str(CORE))
++ import sidecar_identity as identity
++ import collect_window as collector
++ launcher=load(LAUNCHER,'ordinary_receiver_configurations_readonly')
++ require(launcher.RUNTIME_PROJECTS==RUNTIME_PROJECTS,'original-six-source-projects-changed')
++ owned=session(args,pins,identity);require(owned is not None,'owned-session-unavailable')
++ guard=lambda:session_guard(args,owned,pins,identity)
++ graph=describe(args,owned,pins,identity)
++ modes=launcher.observe_runtime_modes(graph,owned);launcher.require_runtime_modes(modes)
++ before=ordinary_current();source_before=full_source(args.evidence)
++ require(len(before['generations']['currentApp147Sha256'])+len(before['generations']['additionalHexalithAssemblyFilesSha256'])==149,'ordinary-app149-census')
++ configuration=Path(owned['_configuration']);private=configuration.parent;registry=private/'discovery.sqlite'
++ configurations,receipts=launcher.receiver_configurations(private/'discovery.json',registry,owned['_isolation'])
++ require(set(configurations)==set(RUNTIME_PROJECTS),'original-config-six-role-set')
++ binary=None;binary_closed=False;identities={};availability=[];postchecks={'passed':False}
++ try:
++  binary=identity.open_binary(pins['daprdSha256']);rows=identity.proc_snapshot()
++  for role in sorted(RUNTIME_PROJECTS):
++   path=configurations[role];record={'kind':'owned-dapr-runtime-configuration','catalogDirectory':receipts['catalogDirectory'],'path':str(path),'sha256':receipts['identities'][str(path)]['sha256']}
++   try:
++    identities[role]=identity.classify(owned,graph,role,record,binary,guard,rows)
++    availability.append({'role':role,'category':'owned-sidecar-and-listener-classified'})
++   except identity.Refused as refusal:
++    reason=refusal.args[0]if len(refusal.args)==1 and refusal.args[0]in collector.REASONS else'collector-guard-fault'
++    availability.append({'role':role,'category':reason})
++  rows=None;graph=None
++  # Trigger is re-evaluated after ALL slow graph/file/hash/proc preflight and before any HTTP.
++  require(decision(observations(args.evidence))=='failed-window','trigger-no-longer-eligible')
++  def live():return guard()is True and all(same(v['pid'],v['startTicks'])and same(v['wrapperPid'],v['wrapperStartTicks'])for v in modes.values())
++  def refresh(role):return identity.recheck(identities[role],owned,binary,guard)
++  def postflight():
++   nonlocal binary_closed
++   passed=False
++   try:
++    guard()
++    for role in identities:refresh(role)
++    current_configs,current_receipts=launcher.receiver_configurations(private/'discovery.json',registry,owned['_isolation'])
++    require(current_configs==configurations and current_receipts==receipts,'original-config-receipt-changed')
++    require(ordinary_current()==before and full_source(args.evidence)==source_before,'post-window-source-or-generation-changed')
++    require(sha(Path(pins['aspireExecutablePath']))==pins['aspireExecutableSha256']and sha(owned['_appExe'])==owned['_appExeSha256']and sha(Path(str(ROOT/'src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.Projects.AppHost')+'.dll'))==owned['_appDllSha256'],'post-window-session-executable-changed')
++    guard();passed=True
++   finally:
++    try:binary_ok=identity.finish_binary(binary)
++    finally:binary_closed=True
++    postchecks['passed']=passed and binary_ok
++   return postchecks['passed']
++  value=collector.collect_window(identities,refresh,live,postflight)
++  # Projection only: core11 stays byte-exact. Its elapsed includes the postflight callback.
++  value['collectorElapsedIncludingPostflightMilliseconds']=value.pop('httpWindowElapsedMilliseconds')
++  return value,{'classifiedRoles':len(identities),'roleAvailability':availability,'source65Match':True,'fullSourceManifestCount':source_before[1],'app149CurrentAtPreflight':True,'graphSourceRolesVerifiedCount':6,'nativeSourceRuntimeRolesVerifiedCount':len(modes),'originalReceiverConfigurationRolesVerifiedCount':len(configurations),'postflightSourcesGenerationsConfigurationAndBinaryAccepted':postchecks['passed'],'privateGraphIdentitiesConfigsEndpointsAndLabelsPersisted':False}
++ finally:
++  if binary is not None and not binary_closed:
++   try:identity.finish_binary(binary)
++   finally:binary_closed=True
++
+ 
+ def main(args):
+- os.umask(0o077);args.output.mkdir(mode=0o700,exist_ok=False);receipt={'diagnosticOnly':True,'featureAcceptance':False,'phase':'waiting-new-owned-session','watcherPid':os.getpid(),'watcherStartTicks':process(os.getpid())['startTicks'],'watcherGroup':os.getpgrp(),'targetSignalsSent':False,'endOnlyRunJsonNotRequired':True,'anyCollectorLaunched':False,'profilerAttached':False};write(args.output/'watcher-receipt.json',receipt)
+- graph=None;owned=None;prepared=None;deadline=time.monotonic()+1000;next_graph=0;identity_paths={}
++ os.umask(0o077);pins=verify_preparation(args.release,args.release_sha256,released=True)
++ require(args.evidence==LIVE and args.output==OUTPUT,'fixed-integration-output-required');args.output.mkdir(mode=0o700,exist_ok=False)
++ receipt={'diagnosticOnly':True,'featureAcceptance':False,'phase':'waiting-for-completed-failed-multiple','targetSignalsSent':False,'coreCollectionCompleted':False,'rawPrivateRuntimeValuesPersisted':False,'profilerAttached':False};deadline=time.monotonic()+1100
+  try:
+   while time.monotonic()<deadline:
+-   choice=decision(observations(args.evidence))
+-   if choice in['positive-skip-all','insufficient-windows-skip-all']:receipt['phase']=choice;break
+-   if not same(args.launcher_pid,args.launcher_start):receipt['phase']='ordinary-launcher-exited-no-attach';break
+-   if prepared is None:
+-    selected=session(args.not_before_epoch,args.launcher_pid,args.launcher_start,args.evidence)
+-    if selected:
+-     path,owned=selected
+-     if graph is None and time.monotonic()>=next_graph:
+-      receipt['graphAttempts']=receipt.get('graphAttempts',0)+1;graph=describe(owned,args.evidence);next_graph=time.monotonic()+2
+-      if graph:receipt['closedGraphProof']=graph;receipt['ownershipPathSha256']=hashlib.sha256(str(path).encode()).hexdigest()
+-     if graph:
+-      current={}
+-      try:
+-       for role in roles():
+-        value=target(role,owned,graph)
+-        if value is None or not all(mapped(value['pid'],Path(role[k]))for k in['entryDll','gatewayDll','sdkDll','domainServiceDll','contractsDll']):break
+-        current[role['role']]=value
+-      except Guard as failure:
+-       if str(failure)=='owned-wrapper-start-changed':graph=None;continue
+-       raise
+-      if len(current)==1:
+-       source_proof=sources(args.evidence);proofs={};contracts={}
+-       for role in roles():contracts[role['role']],proofs[role['role']]=identity(role,owned,graph,current[role['role']],args.evidence,source_proof)
+-       prepared={'values':current,'contracts':contracts,'proofs':proofs};receipt.update(phase='ready-waiting-failed-multiple',identityReadyUtc=datetime.datetime.now(datetime.timezone.utc).isoformat(),targetIdentities=current,currentOrdinaryGenerationProofs=proofs,onlyFixedGatewayRole=True,fullSourceSnapshotCachedOnceUntilTrigger=True)
+-       write(args.output/'watcher-receipt.json',receipt)
+-   else:
+-    # Quiet waiting: only finite PID/start checks and completed readiness rows. No repeated file hashing.
+-    if not all(same(v['pid'],v['startTicks'])and same(v['wrapperPid'],v['wrapperStartTicks'])for v in prepared['values'].values()):raise Guard('prepared-owned-runtime-changed')
+-    if choice=='failed-attach':
+-     final_contracts={};final_values={};source_proof=sources(args.evidence)
+-     for role in roles():
+-      value=target(role,owned,graph)
+-      if value is None or value!=prepared['values'][role['role']]:raise Guard('final-owned-runtime-changed')
+-      final_contracts[role['role']],_=identity(role,owned,graph,value,args.evidence,source_proof);final_values[role['role']]=value
+-     final_choice=decision(observations(args.evidence))
+-     if final_choice!='failed-attach':receipt['phase']='final-'+final_choice;break
+-     for role,contract in final_contracts.items():
+-      file=args.output/(role+'-private-identity.json');write(file,contract);identity_paths[role]=file
+-     receipt['anyCollectorLaunched']=True;receipt['phase']='collecting-one-gateway-target';receipt['decisionBeforeFirstLaunch']='three-distinct-strict-genuine-failed-multiple-no-positive-attempt-at-most24';write(args.output/'watcher-receipt.json',receipt)
+-     def postcheck():
+-      result={};source_proof=sources(args.evidence)
+-      for role in roles():
+-       value=target(role,owned,graph)
+-       if value!=final_values[role['role']]:raise Guard('post-collection-runtime-changed')
+-       _,result[role['role']]=identity(role,owned,graph,value,args.evidence,source_proof)
+-      return result
+-     outcome=run(args.tool,identity_paths,args.output,postcheck)
+-     receipt['profilerAttached']=any((args.output/role/'attached.json').is_file()for role in identity_paths);receipt['phase']='profile-finished';receipt['profileIncomplete']=outcome['incomplete'];receipt['lateIndividualGuardRefusalIsIncomplete']=True;break
+-   report=read_json(args.evidence/'run.json')
+-   if isinstance(report,dict)and report.get('result')in['failed','passed']:receipt['phase']='ordinary-run-ended-before-attach';break
+-   write(args.output/'watcher-receipt.json',receipt);time.sleep(.2)
+-  else:receipt['phase']='watcher-timeout-no-attach'
+- except Exception as failure:receipt.update(phase='diagnostic-guard-refused',errorType=type(failure).__name__,fixedReason=str(failure)if type(failure)is Guard else'watcher-error')
+- finally:
+-  removed=[]
+-  for role,file in identity_paths.items():
+-   if file.is_file()and not file.is_symlink():removed.append({'role':role,'sha256':sha(file),'bytes':file.stat().st_size});file.unlink()
+-  receipt['privateIdentityRemoval']=removed;receipt['privateIdentityFilesAbsent']=all(not f.exists()for f in identity_paths.values());write(args.output/'watcher-receipt.json',receipt)
+- return receipt
++   if not same(args.launcher_pid,args.launcher_start):receipt['phase']='ordinary-launcher-closed';break
++   rows=observations(args.evidence);choice=decision(rows)
++   if choice in ['positive-skip','late-skip']:receipt['phase']=choice;break
++   if choice=='failed-window':
++    value,proof=collect(args,pins);write(args.output/'metrics-window.json',value);receipt.update(phase='metrics-window-closed',coreCollectionCompleted=True,guardProof=proof,wholeWindowPostflightAccepted=value['wholeWindowPostflightAccepted']);break
++   completed=read(args.evidence/'run.json')if(args.evidence/'run.json').is_file()else None
++   if isinstance(completed,dict)and completed.get('result')in ['failed','passed']:receipt['phase']='ordinary-run-ended-before-window';break
++   time.sleep(.2)
++  else:receipt['phase']='external-watcher-deadline'
++ except Exception:
++  # No raw exception messages, process/config/socket coordinates or scrape bodies cross this boundary.
++  receipt.update(phase='external-guard-refused',fixedReason='observer-guard-or-ordinary-session-unobservable')
++ finally:write(args.output/'watcher-receipt.json',receipt)
+ 
+ if __name__=='__main__':
+- p=argparse.ArgumentParser();p.add_argument('--evidence',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--tool',type=Path,required=True);p.add_argument('--not-before-utc',required=True);p.add_argument('--launcher-pid',type=int,required=True);p.add_argument('--launcher-start',required=True);a=p.parse_args();a.not_before_epoch=datetime.datetime.fromisoformat(a.not_before_utc.replace('Z','+00:00')).timestamp();main(a)
++ p=argparse.ArgumentParser();p.add_argument('--release',type=Path,required=True);p.add_argument('--release-sha256',required=True);p.add_argument('--evidence',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--not-before-utc',required=True);p.add_argument('--launcher-pid',type=int,required=True);p.add_argument('--launcher-start',required=True);a=p.parse_args();a.not_before_epoch=datetime.datetime.fromisoformat(a.not_before_utc.replace('Z','+00:00')).timestamp();main(a)
+--- /tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/own_live.py
++++ /tmp/story65-dapr-retry-metrics-integration-prep-20261108/supervise.py
+@@ -1,68 +1,61 @@
+-"""Exact ordinary npm managed launcher and independent observer; no source/launcher replacement."""
+-from pathlib import Path
+-import argparse,datetime,subprocess,sys
++"""Exact ordinary npm child plus one external observer; no launcher hooks or application control."""
+ from common import *
+-from coordinate import members
++from audit import observe_cleanup
++import argparse,datetime
+ 
+-def cleanup_audit(live,profile):
+- audit=Path('/tmp/story65-canonical-hash-acceptance-prep-20261108/audit.py');observations=[];deadline=time.monotonic()+10;latest=None
+- while True:
+-  path=Path(str(live)+'-cleanup-observation-'+str(len(observations)+1)+'.json');result=subprocess.run([sys.executable,str(audit),'--evidence',str(live),'--output',str(path)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);data=read_json(path)if result.returncode==0 else None
+-  observations.append({'path':str(path),'exitCode':result.returncode,'allRecordedAbsent':isinstance(data,dict)and data.get('allIndependentRecordedProcessAndContainerAbsences')is True})
+-  if isinstance(data,dict):latest=data
+-  if latest and latest.get('allIndependentRecordedProcessAndContainerAbsences')is True:break
+-  if time.monotonic()>=deadline:break
+-  time.sleep(.25)
+- write(Path(str(live)+'-cleanup-observation-history.json'),{'signalsSent':False,'maximumReadOnlyPollingSeconds':10,'observations':observations})
+- if latest is None:return {'cleanupAuditAvailable':False,'passed':False}
+- watcher=read_json(profile/'watcher-receipt.json')or{};attached=watcher.get('profilerAttached')is True;attempted=watcher.get('anyCollectorLaunched')is True
+- latest.update(ordinaryAcceptanceOnly=not attempted,profilerEnabled=attached,profilingAttempted=attempted,actualAttachMetadataObserved=attached,diagnosticOnly=attempted,featureAcceptance=False if attempted else None,profilingDoesNotChangeOriginalRunResult=True)
+- write(Path(str(live)+'-independent-cleanup-source-audit.json'),latest)
+- native=latest.get('nativeTestProcessCleanup');native_safe=isinstance(native,list)and all(v.get('descendantsAbsent')is True for v in native)
+- run=read_json(live/'run.json')or{}
+- if native is None:native_safe=run.get('testAssemblySha256')is None and not any(isinstance(c,list)and len(c)>1 and Path(c[1]).name=='Hexalith.Projects.Integration.Tests.dll'for c in run.get('commands',[]))
+- keys=['allIndependentRecordedProcessAndContainerAbsences','allOriginalCleanupAbsenceVerified','preexistingResourcesPreserved','ownedSidecarsAbsent','privateMaterialRemoved','namespaceContainersAbsent','privateRuntimeDirectoryAbsent']
+- passed=all(latest.get(k)is True for k in keys)and latest.get('fullLiveManifestHashMismatches')==0 and native_safe
+- return {'cleanupAuditAvailable':True,'passed':passed,'nativeGroupsAbsentOrNeverStarted':native_safe,'fullManifestMismatches':latest.get('fullLiveManifestHashMismatches'),'profileEnabled':attached,'runResult':latest.get('runResult')}
+ 
+ def main(args):
+- os.umask(0o077);live=Path('/tmp/story65-canonical-current-gateway-cpu-owner-live-20261108');profile=Path('/tmp/story65-canonical-current-gateway-cpu-owner-profile-20261108');plan={'preparationOnly':not args.execute,'ordinaryManagedCommand':['npm','--prefix','tests/e2e','run','test:live:managed'],'live':str(live),'profile':str(profile),'noPathShimImportReplacementSourceHookNoBuildOrLoggerOverride':True,'runtimeCpuOverrideAbsent':True,'oneFixedTarget':['gateway'],'noTargetSignalsOrCutoff':True}
+- if not args.execute:print(json.dumps(plan,indent=2));return
+- pins=read_json(OPS/'execution-pins.json')
+- if not args.pins_sha256 or sha(OPS/'execution-pins.json')!=args.pins_sha256 or pins['executionReleased']is not True:raise Guard('execution-not-released')
+- for path,digest in pins['inputsSha256'].items():
+-  if sha(path)!=digest:raise Guard('frozen-input-mismatch')
+- before=ordinary_preflight();sources();assert not live.exists()and not profile.exists();write(Path(str(live)+'-preflight.json'),before);env=os.environ.copy()
++ if not args.execute:
++  print(json.dumps({'executionReleased':False,'ordinaryManagedCommand':COMMAND,'evidence':str(LIVE),'observation':str(OUTPUT),'profiler':False,'overlay':False,'sourceLauncherHooks':False}));return
++ os.umask(0o077);pins=verify_preparation(args.release,args.release_sha256,released=True)
++ require(pins.get('core41GuardsQualified')is True,'core-offline-qualification-required')
++ c=controls();c.evidence(pins['coreGuardQualification'])
++ before=ordinary_preflight();require(not LIVE.exists()and not OUTPUT.exists()and not list(LIVE.parent.glob(LIVE.name+'-*')),'fresh-operational-coordinates')
++ write(Path(str(LIVE)+'-preflight.json'),{'source65Match':before['sources']['allMatch'],'app147Current':len(before['generations']['currentApp147Sha256'])==147,'additionalAssemblyCount':len(before['generations']['additionalHexalithAssemblyFilesSha256']),'coreSdkContractsProducerAndCopiesMatch':True,'protectedPreservationGuardsPassed':True})
++ env=os.environ.copy()
+  for key in MAPPING|{'DOTNET_PROCESSOR_COUNT','CustomBeforeMicrosoftCommonTargets'}:env.pop(key,None)
+- env.update(MSBUILDDISABLENODEREUSE='1',DOTNET_CLI_USE_MSBUILD_SERVER='0',E2E_SUPPORTED_READS_ONLY='1',E2E_RESOURCE_TIMEOUT_SECONDS='900',E2E_SUPPORTED_EVIDENCE=str(live))
+- started=datetime.datetime.now(datetime.timezone.utc).isoformat();log=Path(str(live)+'-console.log');command=plan['ordinaryManagedCommand'];status={**plan,'preparationOnly':False,'phase':'starting','targetSignalsSent':False};managed=None;watcher=None
++ env.update(MSBUILDDISABLENODEREUSE='1',DOTNET_CLI_USE_MSBUILD_SERVER='0',E2E_SUPPORTED_READS_ONLY='1',E2E_RESOURCE_TIMEOUT_SECONDS='900',E2E_SUPPORTED_EVIDENCE=str(LIVE))
++ started=datetime.datetime.now(datetime.timezone.utc).isoformat();managed=None;watcher=None;managed_ticks=None;watcher_ticks=None
++ status={'phase':'starting','diagnosticOnly':True,'featureAcceptance':False,'targetSignalsSent':False,'launcherMethodHooks':False,'profilerAttached':False,'rawConsoleLogsRetained':False,'noRuntimeConfigurationOrPolicyOverrides':True,'command':COMMAND}
+  try:
+-  with log.open('wb')as stream:managed=subprocess.Popen(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+-  status.update(managedPid=managed.pid,managedStartTicks=None);write(Path(str(live)+'-supervisor.json'),status);identity=process(managed.pid);status['managedStartTicks']=identity['startTicks']if identity else None
+-  write(Path(str(live)+'-command.json'),{'command':command,'cwd':str(ROOT),'launcherPid':managed.pid,'launcherStartTicks':status['managedStartTicks'],'startedAtUtc':started,'standardEnvironmentAssignments':{k:env[k]for k in['E2E_SUPPORTED_READS_ONLY','E2E_RESOURCE_TIMEOUT_SECONDS','E2E_SUPPORTED_EVIDENCE']},'cpuOverrideRemoved':True,'sourceMappingHooksClearedOnlyBeforeStandardLauncherReemitsNormally':True,'noSourceOverrideOrTopologyCutoff':True})
+-  try:
+-   if status['managedStartTicks']is None:raise Guard('managed-start-identity-unavailable')
+-   watch=[sys.executable,str(OPS/'watch_live.py'),'--evidence',str(live),'--output',str(profile),'--tool',pins['toolPath'],'--not-before-utc',started,'--launcher-pid',str(managed.pid),'--launcher-start',str(status['managedStartTicks'])]
+-   watcher=subprocess.Popen(watch,cwd=OPS,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True);status.update(watcherPid=watcher.pid,watcherStartTicks=None,watcherGroup=watcher.pid);write(Path(str(live)+'-supervisor.json'),status);wi=process(watcher.pid);status['watcherStartTicks']=wi['startTicks']if wi else None
+-  except Exception as failure:status.update(diagnosticSkippedReason='observer-spawn-or-identity-failed',diagnosticErrorType=type(failure).__name__)
+-  status['phase']='ordinary-managed-running';write(Path(str(live)+'-supervisor.json'),status);status['managedExitCode']=managed.wait()
++  # Register the directly owned Popen BEFORE any fallible process stat or receipt operation.
++  managed=subprocess.Popen(COMMAND,cwd=ROOT,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
++  status.update(managedPid=managed.pid,managedStartTicks=None);write(Path(str(LIVE)+'-supervisor.json'),status)
++  current=process(managed.pid);managed_ticks=current['start']if current else None;status['managedStartTicks']=managed_ticks
++  write(Path(str(LIVE)+'-command.json'),{'command':COMMAND,'cwd':str(ROOT),'launcherPid':managed.pid,'launcherStartTicks':managed_ticks,'startedAtUtc':started,'standardEnvironmentAssignments':{k:env[k]for k in ['E2E_SUPPORTED_READS_ONLY','E2E_RESOURCE_TIMEOUT_SECONDS','E2E_SUPPORTED_EVIDENCE']},'runtimeCpuOverrideAbsent':True,'originalLauncherReemitsAllSevenMappings':True,'noLauncherShimNoBuildOverlayLoggerPolicyDeadlineOrTopologyChange':True})
++  if managed_ticks is not None:
++   try:
++    command=[sys.executable,str(PREP/'watch.py'),'--release',str(args.release),'--release-sha256',args.release_sha256,'--evidence',str(LIVE),'--output',str(OUTPUT),'--not-before-utc',started,'--launcher-pid',str(managed.pid),'--launcher-start',managed_ticks]
++    watcher=subprocess.Popen(command,cwd=PREP,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True)
++    status.update(watcherPid=watcher.pid,watcherStartTicks=None,watcherGroup=watcher.pid);write(Path(str(LIVE)+'-supervisor.json'),status)
++    current=process(watcher.pid);watcher_ticks=current['start']if current else None;status['watcherStartTicks']=watcher_ticks
++   except Exception:status['observerStartupCategory']='observer-spawn-or-identity-refused'
++  else:status['observerStartupCategory']='managed-start-unobservable'
++  status['phase']='ordinary-managed-running';write(Path(str(LIVE)+'-supervisor.json'),status);status['managedExitCode']=managed.wait()
+  finally:
+-  # Diagnostic startup or parser failures never abandon or signal the unchanged managed topology.
++  # Observer errors NEVER stop, signal, extend or abandon the ordinary managed child's original flow.
+   if managed is not None:
+-   status['managedExitCode']=managed.wait();status['managedIdentityAbsent']=not same(managed.pid,status.get('managedStartTicks'))
++   status['managedExitCode']=managed.wait();current=process(managed.pid);status['managedIdentityAbsentIncludingZombies']=current is None or current['start']!=str(managed_ticks)
+   if watcher is not None:
+    status['watcherExitCode']=watcher.wait();until=time.monotonic()+10
+    while members(watcher.pid)and time.monotonic()<until:time.sleep(.05)
+-   status['watcherGroupRemaining']=members(watcher.pid);status['watcherGroupAbsent']=not status['watcherGroupRemaining']
+-  try:status['cleanup']=cleanup_audit(live,profile);status['source65After']=sources();after=ordinary_after();after['generations']['permittedFreshStandardBuildGenerationDifferences']=[path for path,digest in before['generations']['currentApp147Sha256'].items()if after['generations']['currentApp147Sha256'][path]!=digest];write(Path(str(live)+'-postflight-generations.json'),after)
+-  except Exception as failure:status['finalAuditErrorType']=type(failure).__name__
++   status['watcherGroupAndSessionAbsentIncludingZombies']=not members(watcher.pid)
++  latest=None;observations=[];deadline=time.monotonic()+10
++  while managed is not None:
++   try:latest=observe_cleanup(LIVE);observations.append(latest['passed'])
++   except Exception:observations.append(False)
++   if latest is not None and latest['passed']or time.monotonic()>=deadline:break
++   time.sleep(.25)
++  if latest is not None:write(Path(str(LIVE)+'-independent-cleanup-source-audit.json'),latest);status['cleanupPassed']=latest['passed']
++  else:status['cleanupPassed']=False
++  status['cleanupObservationCount']=len(observations);status['cleanupSignalsSent']=False
+   try:
+-   report=read_json(live/'run.json')or{};profile_values=report.get('compilationProfile',{})
+-   status['originalSevenMappingsObserved']=set(report.get('sourceMappingEnvironment',{}))==MAPPING
+-   status['originalDebugSourceAndTwoProofFlagsObserved']=bool(profile_values)and all(v.get('Configuration')=='Debug'and v.get('Optimize')=='false'and v.get('UseHexalithProjectReferences')=='true'and v.get('UseNuGetDeps')=='false'and v.get('EnablePrivateCatalogInvocationProof')=='true'and v.get('EnablePrivateOwnerSourceReadProof')=='true'for v in profile_values.values())
+-  except Exception as failure:status['originalProfileAuditErrorType']=type(failure).__name__
+-  status['phase']='ordinary-managed-and-observer-complete';write(Path(str(live)+'-supervisor.json'),status)
+- print(json.dumps({'phase':status['phase'],'managedExitCode':status.get('managedExitCode'),'cleanupPassed':status.get('cleanup',{}).get('passed',False)}))
++   after=ordinary_current();status.update(source65AfterMatch=after['sources']['allMatch'],protectedAfterMatch=all(after['protected'].values()),coreSdkContractsProducerAndCopiesAfterMatch=True,app149AfterCount=len(after['generations']['currentApp147Sha256'])+len(after['generations']['additionalHexalithAssemblyFilesSha256']),freshStandardBuildApp147GenerationDeltaCount=sum(h!=after['generations']['currentApp147Sha256'][p]for p,h in before['generations']['currentApp147Sha256'].items()),historical10And17GenerationLimitsErased=False)
++   run=read(LIVE/'run.json');profile=run.get('compilationProfile',{});status['originalSevenMappingsObserved']=set(run.get('sourceMappingEnvironment',{}))==MAPPING;status['originalDebugSourceAndTwoProofFlagsObserved']=bool(profile)and all(v.get('Configuration')=='Debug'and v.get('Optimize')=='false'and v.get('UseHexalithProjectReferences')=='true'and v.get('UseNuGetDeps')=='false'and v.get('EnablePrivateCatalogInvocationProof')=='true'and v.get('EnablePrivateOwnerSourceReadProof')=='true'for v in profile.values())
++   status['finalSourceGenerationProfileAuditPassed']=status['source65AfterMatch']and status['protectedAfterMatch']and status['coreSdkContractsProducerAndCopiesAfterMatch']and status['app149AfterCount']==149 and status['originalSevenMappingsObserved']and status['originalDebugSourceAndTwoProofFlagsObserved']
++  except Exception:status['finalSourceGenerationProfileAuditPassed']=False
++  status['phase']='ordinary-and-external-observer-closed';write(Path(str(LIVE)+'-supervisor.json'),status)
++ print(json.dumps({'phase':status['phase'],'managedExitCode':status.get('managedExitCode'),'cleanupPassed':status.get('cleanupPassed',False),'featureAcceptance':False}))
+ 
+ if __name__=='__main__':
+- p=argparse.ArgumentParser();p.add_argument('--execute',action='store_true');p.add_argument('--pins-sha256');main(p.parse_args())
++ p=argparse.ArgumentParser();p.add_argument('--execute',action='store_true');p.add_argument('--release',type=Path);p.add_argument('--release-sha256');main(p.parse_args())
+--- /tmp/story65-canonical-hash-acceptance-prep-20261108/audit.py
++++ /tmp/story65-dapr-retry-metrics-integration-prep-20261108/audit.py
+@@ -1,34 +1,54 @@
+-"""Read-only independent verification after managed completion. No cleanup mutation."""
+-from pathlib import Path
+-import argparse,hashlib,json,subprocess,statistics
+-ROOT=Path('/home/administrator/projects/hexalith/projects')
+-def sha(path):
+- with path.open('rb')as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+-def absent(pid,recorded):
+- try:
+-  fields=Path(f'/proc/{pid}/stat').read_text().rsplit(')',1)[1].split();return fields[0]=='Z'or fields[19]!=str(recorded)
+- except FileNotFoundError:return True
+-def main():
+- parser=argparse.ArgumentParser();parser.add_argument('--evidence',type=Path,default=Path('/tmp/story65-canonical-hash-acceptance-live-20261108'));parser.add_argument('--output',type=Path,required=True);args=parser.parse_args();run=json.loads((args.evidence/'run.json').read_text());identities=[]
+- session=run.get('ownedAppHostSession',{})
+- for role in ['appHost','cli']:
+-  if role+'Pid'in session:identities.append({'role':role,'pid':session[role+'Pid'],'startTicks':session[role+'StartTicks']})
+- for name,row in run.get('runtimeModes',{}).items():
+-  for label,pf,sf in [('host','pid','startTicks'),('wrapper','wrapperPid','wrapperStartTicks')]:identities.append({'role':name+'-'+label,'pid':row[pf],'startTicks':row[sf]})
+- for row in run.get('discovery',{}).get('ownedSidecars',[]):identities.append({'role':'sidecar','pid':row['pid'],'startTicks':row['startTicks']})
+- command=json.loads(Path(str(args.evidence)+'-command.json').read_text());identities.append({'role':'managed-launcher','pid':command['launcherPid'],'startTicks':command['launcherStartTicks']})
+- for row in identities:row['recordedIdentityAbsent']=absent(row['pid'],row['startTicks'])
++"""Accepted ordinary cleanup checks, projected to fixed scalar metadata; no cleanup mutation."""
++from common import *
++import statistics
++
++
++def observe_cleanup(evidence):
++ run=read(evidence/'run.json');identities=[]
++ owned=run.get('ownedAppHostSession',{})
++ for name in ['appHost','cli']:
++  if name+'Pid'in owned:identities.append((owned[name+'Pid'],owned[name+'StartTicks']))
++ for row in run.get('runtimeModes',{}).values():
++  identities.extend([(row['pid'],row['startTicks']),(row['wrapperPid'],row['wrapperStartTicks'])])
++ for row in run.get('discovery',{}).get('ownedSidecars',[]):identities.append((row['pid'],row['startTicks']))
++ command=read(Path(str(evidence)+'-command.json'));identities.append((command['launcherPid'],command['launcherStartTicks']))
++ # A matching zombie is still present; no successful cleanup claim merely because it cannot execute.
++ absent=[]
++ for pid,ticks in identities:
++  current=process(pid);absent.append(current is None or current['start']!=str(ticks))
+  containers=[]
+  for row in run.get('cleanup',[]):
+-  if'containerId'not in row:continue
+-  probe=subprocess.run(['docker','inspect',row['containerId']],capture_output=True,timeout=10);containers.append({'resource':row['resource'],'containerId':row['containerId'],'absenceVerified':probe.returncode!=0 and b'no such object'in probe.stderr.lower()})
+- private=next((Path(arg).parent for command in run['commands']for arg in command if isinstance(arg,str)and arg.startswith('/tmp/supported-project-reads-private-')and arg.endswith('/source-mapping')),None)
+- oidc=next((row['resource']for row in run.get('cleanup',[])if row['resource'].endswith('-oidc')),None);namespace_absent=None
++  if 'containerId'not in row:continue
++  probe=subprocess.run(['docker','inspect',row['containerId']],capture_output=True,timeout=10)
++  containers.append(probe.returncode!=0 and b'no such object'in probe.stderr.lower())
++ private=next((Path(arg).parent for cmd in run.get('commands',[])for arg in cmd if isinstance(arg,str)and arg.startswith('/tmp/supported-project-reads-private-')and arg.endswith('/source-mapping')),None)
++ oidc=next((r['resource']for r in run.get('cleanup',[])if isinstance(r.get('resource'),str)and r['resource'].endswith('-oidc')),None);namespace_absent=None
+  if oidc:
+-  namespace=oidc[:-5];probe=subprocess.run(['docker','ps','--all','--filter','label=hexalith.supported-reads='+namespace,'--format','{{.ID}}'],capture_output=True,timeout=10);namespace_absent=probe.returncode==0 and not probe.stdout.strip()
+- manifest=json.loads((args.evidence/'source-manifest.json').read_text());mismatches=sum(sha(ROOT/path)!=digest for path,digest in manifest.items());rows=[];path=args.evidence/'browser-advisory-seed-readiness.jsonl'
+- if path.exists():rows=[json.loads(line)for line in path.read_bytes().split(b'\n')[:-1]]
+- single=[row for row in rows if row.get('multiple')is False];multi=[row for row in rows if row.get('multiple')is True]
+- summary={'ordinaryAcceptanceOnly':True,'profilerEnabled':False,'runResult':run['result'],'matrixCompleted':run.get('matrixCompleted'),'singleAttempts':len(single),'singleVerifiedPositives':sum(row.get('positiveCandidatesVerified')is True for row in single),'multipleAttempts':len(multi),'multipleVerifiedPositives':sum(row.get('positiveCandidatesVerified')is True for row in multi),'multipleExternalFixtureElapsedMedianMs':statistics.median(row['elapsedMilliseconds']for row in multi)if multi else None,'elapsedIncludesSubsequentEvidenceReads':True,'identities':identities,'containers':containers,'namespaceContainersAbsent':namespace_absent,'privateRuntimeDirectoryAbsent':not private.exists()if private else None,'allOriginalCleanupAbsenceVerified':all(row.get('absenceVerified')is True for row in run.get('cleanup',[])),'preexistingResourcesPreserved':run.get('preexistingResourcesPreserved'),'ownedSidecarsAbsent':run.get('ownedSidecarsAbsent'),'privateMaterialRemoved':run.get('privateMaterialRemoved'),'nativeTestProcessCleanup':run.get('testProcessCleanup'),'fullLiveManifestSourceCount':len(manifest),'fullLiveManifestHashMismatches':mismatches,'allIndependentRecordedProcessAndContainerAbsences':all(row['recordedIdentityAbsent']for row in identities)and all(row['absenceVerified']for row in containers),'actualBrowserArtifactsRequireIndependentXmlAndPersistencePrivacyReview':True}
+- args.output.write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps({k:summary[k]for k in ['ordinaryAcceptanceOnly','profilerEnabled','runResult','matrixCompleted','singleAttempts','singleVerifiedPositives','multipleAttempts','multipleVerifiedPositives','allIndependentRecordedProcessAndContainerAbsences','fullLiveManifestSourceCount','fullLiveManifestHashMismatches']}))
+-if __name__=='__main__':main()
++  probe=subprocess.run(['docker','ps','--all','--filter','label=hexalith.supported-reads='+oidc[:-5],'--format','{{.ID}}'],capture_output=True,timeout=10)
++  namespace_absent=probe.returncode==0 and not probe.stdout.strip()
++ manifest=read(evidence/'source-manifest.json');mismatch=0
++ for rel,digest in manifest.items():
++  path=Path(rel);require(not path.is_absolute()and'..'not in path.parts and(ROOT/path).resolve().is_relative_to(ROOT),'cleanup-source-coordinate');mismatch+=sha(ROOT/path)!=digest
++ native=run.get('testProcessCleanup');native_started=any(isinstance(c,list)and len(c)>1 and Path(c[1]).name=='Hexalith.Projects.Integration.Tests.dll'for c in run.get('commands',[]))or run.get('testAssemblySha256')is not None
++ if native is None:native_safe=not native_started;native_count=0
++ else:
++  require(isinstance(native,list),'native-cleanup-schema');native_count=len(native)
++  native_safe=all(r.get('descendantsAbsent')is True and type(r.get('groupId'))is int and not members(r['groupId'])for r in native)
++ rows=observations(evidence);single_rows=[]
++ path=evidence/'browser-advisory-seed-readiness.jsonl'
++ if path.is_file():
++  for line in path.read_bytes().split(b'\n')[:-1]:
++   try:r=json.loads(line)
++   except ValueError:continue
++   if isinstance(r,dict)and r.get('multiple')is False:single_rows.append(r)
++ checks={
++  'allIndependentRecordedProcessAndContainerAbsences':bool(identities)and all(absent)and all(containers),
++  'allOriginalCleanupAbsenceVerified':all(r.get('absenceVerified')is True for r in run.get('cleanup',[])),
++  'preexistingResourcesPreserved':run.get('preexistingResourcesPreserved')is True,
++  'ownedSidecarsAbsent':run.get('ownedSidecarsAbsent')is True,
++  'privateMaterialRemoved':run.get('privateMaterialRemoved')is True,
++  'namespaceContainersAbsent':namespace_absent is True,
++  'privateRuntimeDirectoryAbsent':private is not None and not private.exists(),
++  'nativeGroupsAbsentOrNeverStarted':native_safe,
++  'fullLiveManifestUnchanged':mismatch==0}
++ return {'passed':all(checks.values()),'checks':checks,'recordedIdentityCount':len(identities),'recordedIdentitiesAbsentIncludingZombies':sum(absent),'recordedContainerCount':len(containers),'recordedContainersAbsent':sum(containers),'nativeGroupCount':native_count,'fullLiveManifestSourceCount':len(manifest),'fullLiveManifestHashMismatches':mismatch,'runResult':run.get('result')if run.get('result')in ['passed','failed']else'unknown','singleAttempts':len(single_rows),'singleVerifiedPositives':sum(r.get('positiveCandidatesVerified')is True for r in single_rows),'multipleAttempts':len(rows),'multipleVerifiedPositives':sum(r.get('positiveCandidatesVerified')is True for r in rows),'matrixCompleted':run.get('matrixCompleted')is True,'noRawProcessContainerNamespaceOrGraphIdentifiersPersisted':True,'signalsSent':False,'featureAcceptance':False}

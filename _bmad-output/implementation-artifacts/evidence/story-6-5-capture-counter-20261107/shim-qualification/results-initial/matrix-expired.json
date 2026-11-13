@@ -1,0 +1,430 @@
+{
+  "kind": "matrix",
+  "mode": "expired",
+  "cases": 57,
+  "allPairsEqual": true,
+  "counterPartitionChecked": false,
+  "counterPartitionEqual": true,
+  "expectedCounts": [
+    1890,
+    826,
+    203,
+    742,
+    112,
+    7
+  ],
+  "actualCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "settingRows": 0,
+  "admitted": 0,
+  "disposedOrUnwound": 0,
+  "queueDropped": 0,
+  "ioFailures": 0,
+  "results": [
+    {
+      "scenario": "empty-minimal",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "expired",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "expired",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "expired",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    }
+  ]
+}

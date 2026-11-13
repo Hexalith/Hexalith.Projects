@@ -1,0 +1,61 @@
+{
+  "preparationOnly": false,
+  "mode": "capped",
+  "group": "slow",
+  "case": "final-anchor-uncooperative",
+  "command": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "capped",
+    "slow",
+    "/tmp/story65-advisory-wave-prep-20261107/differential-results-qualified/capped/final-anchor-uncooperative/business-parity.json",
+    "final-anchor-uncooperative"
+  ],
+  "cwd": "/tmp/story65-advisory-wave-prep-20261107/differential",
+  "runtimeProcessorOverride": null,
+  "errorType": "none",
+  "artifacts": {
+    "projects.closed.json": {
+      "sha256": "5e2fcf707f72bf9968ed151d03f0ad0e3ffa2691ae838cecba795661a3a9a237",
+      "bytes": 531
+    },
+    "projects.jsonl": {
+      "sha256": "bc860be4de44aa22960a7b94613329e66f4eaf41e55c8588f6fa0d9a1dee217f",
+      "bytes": 8388537
+    },
+    "window.control": {
+      "sha256": "52ec0dbce8061b1e8ff1c066cef6cb1774cba5a7cd1ca33ccab4cf755da700ce",
+      "bytes": 46
+    }
+  },
+  "rows": 27873,
+  "stageCounts": {
+    "Whole": 27873
+  },
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "projects",
+    "runOrdinal": 9115,
+    "admitted": 100414,
+    "disposedOrUnwound": 100414,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 34875,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 37672,
+    "ioFailures": 0,
+    "writtenRows": 27873,
+    "writtenBytes": 8388537,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 87542039719229,
+    "windowEndTicks": 87550039719229,
+    "frequency": 1000000000
+  },
+  "rawDependencyTracePersisted": false
+}

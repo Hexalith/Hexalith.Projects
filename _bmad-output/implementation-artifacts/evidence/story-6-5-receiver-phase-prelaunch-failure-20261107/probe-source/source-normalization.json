@@ -1,0 +1,134 @@
+{
+  "filePreparationOnly": true,
+  "originalPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+  "originalSha256": "71a9dc98cedde0a3f1651f3ec06b9812416b91e0a62595914a2fb7014ccf8c94",
+  "privateSha256": "f426ca5a31a53b26d92ed218151d1d2aa1eab4dc64b6a2f0cd35da142c0eaed1",
+  "helperOriginalPath": "/tmp/story65-invocation-transport-prep-20261107/CaptureCounters.cs",
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "sameClassPrivateSignatureCallRenameAndTaskForwardingChanges": [
+    {
+      "original": "fence.RequestFingerprint(endpoint, out description) != captured",
+      "private": "fence.RequestFingerprint(endpoint, out description, counters) != captured",
+      "occurrences": 1
+    },
+    {
+      "original": "await fence.InvokeNativeAsync(context, next, endpoint, native, callback).ConfigureAwait(false); return;",
+      "private": "await fence.InvokeNativeWithTimingAsync(context, next, endpoint, native, callback, counters).ConfigureAwait(false); return;",
+      "occurrences": 1
+    },
+    {
+      "original": "    private async Task InvokeNativeAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,\n        RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback)\n",
+      "private": "    private Task InvokeNativeAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,\n        RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback)\n        => InvokeNativeWithTimingAsync(context, next, endpoint, native, callback, null);\n\n    private async Task InvokeNativeWithTimingAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,\n        RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback, CaptureCounters? counters)\n",
+      "occurrences": 1
+    },
+    {
+      "original": "    private string? RequestFingerprint(RouteEndpoint endpoint, out RouteCatalogTechnicalHttpEndpoint? description)\n",
+      "private": "    private string? RequestFingerprint(RouteEndpoint endpoint, out RouteCatalogTechnicalHttpEndpoint? description, CaptureCounters? counters = null)\n",
+      "occurrences": 1
+    }
+  ],
+  "insertedLineMultiset": [
+    {
+      "line": "using Hexalith.PrivateCaptureCounter;\n",
+      "occurrences": 1
+    },
+    {
+      "line": "            using var counters = ReceiverPhaseBootstrap.Begin();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                using var precheckPhase = counters?.Stage(Stage.ComponentFile, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                precheckPhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                using var invokeNativePhase = counters?.Stage(Stage.ResultTail, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                using var authenticationPhase = counters?.Stage(Stage.ActorBoundary, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                        using var acquirePhase = counters?.Stage(Stage.AclFile, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                        acquirePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                            using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                            releasePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                        using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                        releasePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                    using var nextPhase = counters?.Stage(Stage.SettingsEnumerationSortDictionary, AllocationMode.None);\n",
+      "occurrences": 2
+    },
+    {
+      "line": "                    nextPhase?.Dispose();\n",
+      "occurrences": 2
+    },
+    {
+      "line": "                    using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                    releasePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                using var acquirePhase = counters?.Stage(Stage.AclFile, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                acquirePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "                releasePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "            using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);\n",
+      "occurrences": 1
+    },
+    {
+      "line": "            releasePhase?.Dispose();\n",
+      "occurrences": 1
+    },
+    {
+      "line": "        using var fingerprintPhase = counters?.Stage(Stage.ComponentPolicy, AllocationMode.None);\n",
+      "occurrences": 1
+    }
+  ],
+  "insertedLineCount": 25,
+  "ownedDisposeSites": 5,
+  "leasedNextSites": 2,
+  "normalizationByteExact": true,
+  "originalStatementsExpressionsTokensCatchAndDisposalOrderPreserved": true,
+  "stage5RepeatedIntervalsAreLastWinsNotSum": true,
+  "originalUniqueFiveArgumentInvokeNativeAsyncTaskForwarderPreserved": true,
+  "builds": 0,
+  "loads": 0,
+  "runs": 0
+}

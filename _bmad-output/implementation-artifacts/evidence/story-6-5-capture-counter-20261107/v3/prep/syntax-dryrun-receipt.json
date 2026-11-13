@@ -1,0 +1,51 @@
+{
+  "operationalPinsSha256": "302626bd6b9be1d3400a0de97e6db2b8543a772b41247d8dfe78dcd728d4fbfa",
+  "allFiveSyntaxPassed": true,
+  "noExecuteSupplied": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-proof-prep-20261107/build_restore.py",
+        "--phase",
+        "private",
+        "--pins-sha256",
+        "302626bd6b9be1d3400a0de97e6db2b8543a772b41247d8dfe78dcd728d4fbfa"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-proof-prep-20261107/build_restore.py",
+        "--phase",
+        "ordinary",
+        "--pins-sha256",
+        "302626bd6b9be1d3400a0de97e6db2b8543a772b41247d8dfe78dcd728d4fbfa"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-proof-prep-20261107/supervise_managed.py",
+        "--pins-sha256",
+        "302626bd6b9be1d3400a0de97e6db2b8543a772b41247d8dfe78dcd728d4fbfa"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-capture-counter-proof-prep-20261107/run_and_restore.py",
+        "--pins-sha256",
+        "302626bd6b9be1d3400a0de97e6db2b8543a772b41247d8dfe78dcd728d4fbfa"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    }
+  ]
+}

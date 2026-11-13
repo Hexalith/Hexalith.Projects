@@ -1,0 +1,94 @@
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Hexalith.EventStore.Contracts.Routing;
+
+string repo="/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore";
+CodecProbeApi[] apis=[new(typeof(RouteCatalogCodec)),new(typeof(DocumentCodec)),new(typeof(DocumentHashSpanCodec)),new(typeof(DirectCodec))];
+var oracleAssembly=typeof(RouteCatalogCodec).Assembly;var candidateAssembly=typeof(DirectCodec).Assembly;
+var oracleDebug=oracleAssembly.GetCustomAttribute<DebuggableAttribute>()!;var candidateDebug=candidateAssembly.GetCustomAttribute<DebuggableAttribute>()!;
+string? oracleConfiguration=oracleAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration;
+string? candidateConfiguration=candidateAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration;
+if(oracleDebug.DebuggingFlags!=candidateDebug.DebuggingFlags||oracleConfiguration!=candidateConfiguration)
+    throw new InvalidOperationException("Oracle/candidate build optimization attributes differ: "+oracleConfiguration+"/"+oracleDebug.DebuggingFlags+" versus "+candidateConfiguration+"/"+candidateDebug.DebuggingFlags);
+var buildFairness=new{oracleConfiguration,candidateConfiguration,oracleDebuggingFlags=oracleDebug.DebuggingFlags.ToString(),candidateDebuggingFlags=candidateDebug.DebuggingFlags.ToString(),oracleJitOptimizerDisabled=oracleDebug.IsJITOptimizerDisabled,candidateJitOptimizerDisabled=candidateDebug.IsJITOptimizerDisabled,oracleJitTrackingEnabled=oracleDebug.IsJITTrackingEnabled,candidateJitTrackingEnabled=candidateDebug.IsJITTrackingEnabled,
+    runtimeFlags=new[]{"DOTNET_TieredCompilation","DOTNET_TC_QuickJit","DOTNET_ReadyToRun","COMPlus_TieredCompilation","DOTNET_PROCESSOR_COUNT"}.ToDictionary(k=>k,k=>System.Environment.GetEnvironmentVariable(k)??"absent")};
+
+var corpusPaths=new[]{"tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/CanonicalCatalog.json","tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/V2CanonicalCatalog.json","deploy/dapr/eventstore-routing-catalog.json"};
+var envelopes=corpusPaths.Select(p=>RouteCatalogCodec.Decode(File.ReadAllBytes(Path.Combine(repo,p)))).ToList();
+var provenance=corpusPaths.Select(p=>new{path=p,sha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(Path.Combine(repo,p))))}).ToArray();
+RouteCatalogEnvelope basis=envelopes[^1];
+using var smallRequest=JsonDocument.Parse("{\"z\":{\"minimum\":-0,\"maximum\":1e+20},\"type\":\"object\",\"properties\":{\"é😀\":{\"description\":\"<>&\\\"\\n\",\"type\":\"string\"},\"A\":{\"type\":\"number\"}}}");
+using var result=JsonDocument.Parse("{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"count\":{\"type\":\"integer\"}}}");
+var operations=basis.Declarations.Select(d=>new RouteOperationContract(d.RouteId,d.ContractVersion,d.Kind=="projection"||d.Execution!.RequiresDelegatedContext?"internal":"public","agent-eligible",smallRequest.RootElement.Clone(),result.RootElement.Clone(),"",d.Kind,d.Domain,d.MessageType??d.ProjectionType)).Select(o=>o with{Digest=RouteCatalogCodec.ComputeOperationContractDigest(o)}).ToArray();
+RouteCatalogEnvelope third=RouteCatalogCodec.Seal(basis with{SchemaVersion=3,Operations=operations,RetainedIdempotency=[],Routes=basis.Routes.Select(r=>r with{OperationContractDigest=operations.Single(o=>o.RouteId==r.RouteId).Digest}).ToArray()});
+envelopes.Add(third);
+var properties=Enumerable.Range(0,1000).ToDictionary(i=>"field"+i.ToString("D4",CultureInfo.InvariantCulture),_=>new{type="string",description="representative-owner-schema-field"});
+RouteCatalogEnvelope Large(int padding)
+{
+    using var schema=JsonDocument.Parse(JsonSerializer.Serialize(new{properties,description=new string('x',padding)}));
+    RouteOperationContract changed=third.Operations![0] with{RequestSchema=schema.RootElement.Clone()};changed=changed with{Digest=RouteCatalogCodec.ComputeOperationContractDigest(changed)};
+    return RouteCatalogCodec.Seal(third with{Operations=third.Operations.Select(o=>o.RouteId==changed.RouteId?changed:o).ToArray(),Routes=third.Routes.Select(r=>r.RouteId==changed.RouteId?r with{OperationContractDigest=changed.Digest}:r).ToArray()});
+}
+int baseLength=RouteCatalogCodec.Encode(Large(0)).Length;
+if(baseLength>219012)throw new InvalidOperationException("Representative base is larger than219012B");
+RouteCatalogEnvelope large=Large(219012-baseLength);if(RouteCatalogCodec.Encode(large).Length!=219012)throw new InvalidOperationException("Representative219012B shape failed");envelopes.Add(large);
+var parity=new List<object>();int checks=0;
+void Equal(string scenario,byte[] expected,byte[] actual){checks++;if(!expected.AsSpan().SequenceEqual(actual))throw new InvalidOperationException("Byte parity failed: "+scenario);}
+void TextEqual(string scenario,string expected,string actual){checks++;if(expected!=actual)throw new InvalidOperationException("Digest/error parity failed: "+scenario+" expected="+expected+" actual="+actual);}
+string Outcome(Func<object?> action){try{var value=action();return value is byte[] bytes?Convert.ToHexStringLower(SHA256.HashData(bytes)):value?.ToString()??"null";}catch(Exception e){return e.GetType().FullName+":"+e.Message+(e is RouteCatalogValidationException v?JsonSerializer.Serialize(v.Diagnostics):"")+(e is JsonException j?":"+j.Path+":"+j.LineNumber+":"+j.BytePositionInLine:"")+":"+e.InnerException?.GetType().FullName+":"+e.InnerException?.Message;}}
+foreach(CodecProbeApi api in apis)
+{
+    foreach(RouteCatalogEnvelope e in envelopes)
+    {
+        byte[] expected=RouteCatalogCodec.Encode(e);Equal(api.Name+" encode",expected,api.Encode(e));TextEqual("root",RouteCatalogCodec.ComputeRootDigest(e),api.Root(e));Equal("seal",RouteCatalogCodec.Encode(RouteCatalogCodec.Seal(e)),api.Encode(api.Seal(e)));
+        Equal("decode/encode",expected,api.Encode(api.Decode(expected,null)));TextEqual("expected-root failure",Outcome(()=>RouteCatalogCodec.Decode(expected,new string('0',64))),Outcome(()=>api.Decode(expected,new string('0',64))));
+        foreach(var declaration in e.Declarations)TextEqual("declaration",RouteCatalogCodec.ComputeDeclarationDigest(declaration),api.Declaration(declaration));
+        foreach(var entry in e.Idempotency){TextEqual("descriptor",RouteCatalogCodec.ComputeDescriptorDigest(entry.DescriptorSchema),api.Descriptor(entry.DescriptorSchema));TextEqual("entry",RouteCatalogCodec.ComputeIdempotencyEntryDigest(entry),api.Entry(entry));TextEqual("policy",RouteCatalogCodec.ComputeIdempotencyPolicyDigest(entry),api.Policy(entry));}
+        foreach(var operation in e.Operations??[])TextEqual("operation",RouteCatalogCodec.ComputeOperationContractDigest(operation),api.Operation(operation));
+        byte[] first=api.Encode(e),second=api.Encode(e);if(ReferenceEquals(first,second))throw new InvalidOperationException("Output alias");first[0]^=0x5a;Equal("fresh output",expected,second);Equal("postpoison output",expected,api.Encode(e));
+        var graph=api.Decode(expected,null);if(graph.Declarations.Count>0){((IList<RouteContractDeclaration>)graph.Declarations)[0]=graph.Declarations[0] with{RouteId="poisoned"};Equal("fresh decoded graph",expected,api.Encode(api.Decode(expected,null)));}
+    }
+    string v=Encoding.UTF8.GetString(RouteCatalogCodec.Encode(envelopes[0]));
+    var invalid=new Dictionary<string,byte[]>{["empty"]=[],["whitespace"]=Encoding.UTF8.GetBytes(v+"\n"),["duplicate-root"]=Encoding.UTF8.GetBytes(v.Insert(1,"\"schemaVersion\":1,")),["unknown-root"]=Encoding.UTF8.GetBytes(v.Insert(1,"\"unknown\":true,")),["malformed"]=Encoding.UTF8.GetBytes(v[..^1]),["unsupported-version"]=Encoding.UTF8.GetBytes(v.Replace("\"schemaVersion\":1","\"schemaVersion\":99")),["missing-required"]=Encoding.UTF8.GetBytes(v.Replace("\"profile\":\"Development\",","")),["float-integer"]=Encoding.UTF8.GetBytes(v.Replace("\"generation\":7","\"generation\":7.0")),["bom"]=[0xef,0xbb,0xbf,..Encoding.UTF8.GetBytes(v)],["oversize"]=new byte[RouteCatalogCodec.MaximumByteLength+1],["bad-utf8"]=[(byte)'{',(byte)'\"',0xff,(byte)'\"',(byte)':',(byte)'0',(byte)'}']};
+    foreach(var pair in invalid)TextEqual(pair.Key,Outcome(()=>RouteCatalogCodec.Decode(pair.Value)),Outcome(()=>api.Decode(pair.Value,null)));
+    TextEqual("null encode",Outcome(()=>RouteCatalogCodec.Encode(null!)),Outcome(()=>api.Encode(null!)));
+    TextEqual("bad operation enum",Outcome(()=>RouteCatalogCodec.ComputeOperationContractDigest(third.Operations![0] with{Ingress="unknown"})),Outcome(()=>api.Operation(third.Operations![0] with{Ingress="unknown"})));
+    TextEqual("missing schema",Outcome(()=>RouteCatalogCodec.ComputeOperationContractDigest(third.Operations![0] with{RequestSchema=default})),Outcome(()=>api.Operation(third.Operations![0] with{RequestSchema=default})));
+    foreach(string json in new[]{"{\"z\":1,\"a\":2,\"a\":3,\"nested\":{\"b\":0,\"a\":1}}","{\"é\":1,\"😀\":2,\"A\":3,\"\\u0061\":4,\"\\u2028\":5}","{\"n\":[-0,0,1e-7,1.0,9223372036854775807,18446744073709551615,1e+100],\"s\":\"<>&\\\"\\n\\t\\u0000\"}","[null,true,false,{\"β\":0,\"a\":1}]"})
+    {using var doc=JsonDocument.Parse(json);Equal("raw stable sort/number/escaping",apis[0].Raw(doc.RootElement),api.Raw(doc.RootElement));}
+    foreach(object? value in new object?[]{null,(DayOfWeek)123,double.NaN,default(JsonElement),new{Z="<>&",A="\uD800"}})TextEqual("raw enum/value/error",Outcome(()=>apis[0].Raw(value)),Outcome(()=>api.Raw(value)));
+    foreach(bool fail in new[]{false,true}){var before=new ConverterProbe{Fail=fail};var after=new ConverterProbe{Fail=fail};if(fail)TextEqual("converter output/error",Outcome(()=>apis[0].Raw(before)),Outcome(()=>api.Raw(after)));else Equal("converter exact output",apis[0].Raw(before),api.Raw(after));if(before.Writes!=1||after.Writes!=1)throw new InvalidOperationException("Converter call count changed");}
+    parity.Add(new{api=api.Name,completed=true});
+}
+var baselineExpected=third.Declarations.Select(RouteCatalogCodec.ComputeDeclarationDigest).Concat(third.Idempotency.Select(RouteCatalogCodec.ComputeIdempotencyPolicyDigest)).Concat(third.Idempotency.Select(i=>RouteCatalogCodec.ComputeDescriptorDigest(i.DescriptorSchema))).Concat(third.Operations!.Select(RouteCatalogCodec.ComputeOperationContractDigest)).ToArray();
+int Inventory(CodecProbeApi api)
+{
+    string[] fresh=third.Declarations.Select(d=>d with{FallbackTypes=d.FallbackTypes.ToArray(),Execution=d.Execution! with{Aliases=d.Execution!.Aliases.ToArray(),ProjectionOutputs=d.Execution.ProjectionOutputs.ToArray()}}).Select(api.Declaration)
+        .Concat(third.Idempotency.Select(i=>i with{DescriptorSchema=i.DescriptorSchema with{Fields=i.DescriptorSchema.Fields.ToArray()},ReaderDigestKeyGenerations=i.ReaderDigestKeyGenerations.ToArray(),KeyMap=i.KeyMap.ToArray()}).Select(api.Policy))
+        .Concat(third.Idempotency.Select(i=>api.Descriptor(i.DescriptorSchema)))
+        .Concat(third.Operations!.Select(o=>o with{RequestSchema=o.RequestSchema.Clone(),ResultSchema=o.ResultSchema.Clone()}).Select(api.Operation)).ToArray();
+    if(!fresh.SequenceEqual(baselineExpected))throw new InvalidOperationException("Fresh full leaf corpus mismatch");return fresh.Length;
+}
+CodecProbeApi[] activeApis=args.Length>1?apis.Where(a=>a.Name is "RouteCatalogCodec" or "DirectCodec").ToArray():apis;
+var measurements=new List<object>();
+foreach(string workload in new[]{"fresh-static-derived-leaf-inventory","complete-219KB-envelope-encode"})
+{
+    Func<CodecProbeApi,int> call=workload.StartsWith("fresh")?Inventory:api=>{byte[] bytes=api.Encode(large);if(bytes.Length!=219012)throw new InvalidOperationException("Envelope size drift");return bytes.Length;};
+    var cold=new List<object>();foreach(var api in activeApis){long before=GC.GetAllocatedBytesForCurrentThread(),start=Stopwatch.GetTimestamp();int units=call(api);cold.Add(new{api=api.Name,ms=Stopwatch.GetElapsedTime(start).TotalMilliseconds,allocated=GC.GetAllocatedBytesForCurrentThread()-before,units});}
+    for(int i=0;i<15;i++)foreach(var api in activeApis)call(api);
+    var samples=new List<object>();using var process=Process.GetCurrentProcess();
+    for(int sample=0;sample<9;sample++)for(int offset=0;offset<activeApis.Length;offset++)
+    {
+        var api=activeApis[(sample+offset)%activeApis.Length];long before=GC.GetAllocatedBytesForCurrentThread(),cpu=process.TotalProcessorTime.Ticks,start=Stopwatch.GetTimestamp();int[] gc=[GC.CollectionCount(0),GC.CollectionCount(1),GC.CollectionCount(2)];int units=0;
+        for(int repeat=0;repeat<40;repeat++)units=call(api);
+        samples.Add(new{sample,api=api.Name,meanMs=Stopwatch.GetElapsedTime(start).TotalMilliseconds/40,cpuMs=(process.TotalProcessorTime.Ticks-cpu)/10000d/40,allocatedBytes=(GC.GetAllocatedBytesForCurrentThread()-before)/40,units,gcDelta=Enumerable.Range(0,3).Select(g=>GC.CollectionCount(g)-gc[g]).ToArray()});
+    }
+    measurements.Add(new{workload,cold,samples});
+}
+File.WriteAllText(args[0],JsonSerializer.Serialize(new{diagnosticOnly=true,ownerEdits=false,hostsInstantiated=false,credentialsRead=false,buildFairness,runtime=System.Environment.Version.ToString(),processorCount=System.Environment.ProcessorCount,isServerGc=GCSettings.IsServerGC,oracleDll=typeof(RouteCatalogCodec).Assembly.Location,oracleDllSha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(typeof(RouteCatalogCodec).Assembly.Location))),provenance,parityChecks=checks,parity,corpus=envelopes.Select(e=>new{e.SchemaVersion,declarations=e.Declarations.Count,entries=e.Idempotency.Count,operations=e.Operations?.Count??0,bytes=RouteCatalogCodec.Encode(e).Length}),leafCorpusCalls=baselineExpected.Length,qualification="Static schema1/2 golden fixtures plus tracked deployed30declaration/17policy catalog; schema3 derived by adding synthetic operation shapes.219012B envelope has1000synthetic schema fields. Not the removed runtime180leaf inventory. Every workload freshly clones current leaf collections and recomputes all94public leaf digests, or validates and encodes full219KB. Exact copied candidate source uses unchanged compiled baseline Validator (including its nested baseline digests), conservatively understating complete-global-path savings. All WriteCanonical traversal source unchanged. Rotating variant order; all samples and first timed workload costs after parity (not process/JIT cold) retained; no timing guarantee.",measurements},new JsonSerializerOptions{WriteIndented=true}));
+Console.WriteLine("COMPLETE checks="+checks+" leafcalls="+baselineExpected.Length);

@@ -1,0 +1,66 @@
+{
+  "metadataOnly": true,
+  "noHostInstantiation": true,
+  "noCredentialReads": true,
+  "ownerEditsOrBuilds": false,
+  "cwd": "/tmp",
+  "probeBuildArgv": [
+    "dotnet",
+    "build",
+    "/tmp/story65-domain-reference-probe-20261107/Probe.csproj",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers"
+  ],
+  "probeRunArgv": [
+    "dotnet",
+    "/tmp/story65-domain-reference-probe-20261107/bin/Debug/net10.0/Probe.dll",
+    "/tmp/story65-domain-reference-probe-20261107/results.json",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+    "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll"
+  ],
+  "summary": [
+    {
+      "owner": "Hexalith.Folders.Server",
+      "directReferenceCount": 65,
+      "distinctOwnersSdkAndDirectReferences": 66,
+      "eligibleImages": 66,
+      "totalChargedBytes": 27683640,
+      "allAssemblyLoadReferencesStable": true,
+      "completeOrderedReferenceSequenceStable": true,
+      "observedIterations": 100,
+      "priorDiagnosticImageCount": 67,
+      "additionalImagesAtThatCount": 1,
+      "worstCaseChargedBytesForAdditionalEligibleImages": 44461368,
+      "fits64MiBAtThatCount": true,
+      "fits128EntriesAtThatCount": true,
+      "qualification": "Actual current process inventory/count was not inspected. This conservative extension uses the parent-provided earlier diagnostic count; each additional eligible image is charged at the full16MiB+512 maximum. The base inventory is explicitly included by the production implementation-construction code."
+    },
+    {
+      "owner": "Hexalith.Projects.Server",
+      "directReferenceCount": 64,
+      "distinctOwnersSdkAndDirectReferences": 65,
+      "eligibleImages": 65,
+      "totalChargedBytes": 30757720,
+      "allAssemblyLoadReferencesStable": true,
+      "completeOrderedReferenceSequenceStable": true,
+      "observedIterations": 100,
+      "priorDiagnosticImageCount": 66,
+      "additionalImagesAtThatCount": 1,
+      "worstCaseChargedBytesForAdditionalEligibleImages": 47535448,
+      "fits64MiBAtThatCount": true,
+      "fits128EntriesAtThatCount": true,
+      "qualification": "Actual current process inventory/count was not inspected. This conservative extension uses the parent-provided earlier diagnostic count; each additional eligible image is charged at the full16MiB+512 maximum. The base inventory is explicitly included by the production implementation-construction code."
+    }
+  ],
+  "artifacts": {
+    "Program.cs": "7e56c8502ec6bdb253e2e88a77f33852a23ace38fc29ee99303b37ef8d103282",
+    "Probe.csproj": "21eaca2ae8287016e834a9522edd57d2d8ab4cfb7c1a4581e823ed378758be3b",
+    "build.log": "04138ad4e74eb4d1953e469c618a5acdf28c8049574129e0f4adf3aa0e228ca2",
+    "run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results.json": "7d2b755a46c5cfce78fd0c1598a71777c7f3d16273f9182800ace741684d4246"
+  },
+  "referenceEqualityQualification": "100 iterations use Assembly.Load(reference) under the corresponding owner load context through contextual reflection and its actual AssemblyDependencyResolver. This measures stable CLR binding in the isolated probe; it does not directly observe object references inside the running application."
+}

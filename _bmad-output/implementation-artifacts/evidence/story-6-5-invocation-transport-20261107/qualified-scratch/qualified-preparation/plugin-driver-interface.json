@@ -1,0 +1,188 @@
+{
+  "preparationOnly": true,
+  "apiFrozen": true,
+  "pluginAssemblyName": "Hexalith.EventStore.Server.Tests",
+  "pluginType": "Story65.InvocationFixture.InvocationFixture",
+  "pluginMethod": "public static Task<object[]> RunAsync(object[] specification, Action<bool>? firstProbe, Func<Task>? fakeAwait, bool suppressEntry)",
+  "specification": [
+    "closedCaseName",
+    "publicTrackedCatalogPath"
+  ],
+  "factsMethod": "public static object[] Facts()",
+  "factsTypes": [
+    "IRouteCatalogAuthority",
+    "RouteCatalogHostOptions",
+    "RouteCatalogDispatchLease",
+    "CommittedRouteCatalogSnapshot",
+    "RouteCatalogInvocationHandler",
+    "RouteCatalogEnvelope(sharedContracts)",
+    "HttpResponseMessage(sharedFramework)"
+  ],
+  "resultSlots": {
+    "0": "ErrorFactsFrameworkArray",
+    "1": "StatusCodeOrMinusOne",
+    "2": "FinalRequestHeadersJsonInMemory",
+    "3": "OriginalResponseReferencePreserved",
+    "4": "CallerCancellationRequested",
+    "5": "ErrorTokenIsCaller",
+    "6": "HeldAwaitVerified",
+    "7": "NormalizedObservationRowsInMemory",
+    "8": "RemainingFenceCount",
+    "9": "ReleaseCallbackCount",
+    "10": "LeasedTransportCalls",
+    "11": "OrdinaryTransportCalls",
+    "12": "ActualBorrowedOrHeldPathVerified",
+    "13": "ExpectedActualSendAsyncEntries",
+    "14": "FaultRowsInMemory",
+    "15": "RequestContentDisposalsBeforeCaller",
+    "16": "ResponseContentDisposalsBeforeCaller",
+    "17": "SelectedHandlerReturnedBeforeOuterBuffer",
+    "18": "StoreReads",
+    "19": "StoreWrites",
+    "20": "ObserverCalls",
+    "21": "TrustCalls"
+  },
+  "observationRows": [
+    "Operation",
+    "ArgumentInMemoryOnly",
+    "PerRunTokenGroupIndex",
+    "CanBeCanceled",
+    "CanceledAtObservation"
+  ],
+  "faultRows": [
+    "ClosedSite",
+    "Count"
+  ],
+  "comparison": "ErrorFacts and framework arrays exact in memory; expected SDK exception/identity/token assertions remain plugin-local; never persist output arrays/traces/headers/bindings/messages",
+  "fixtureAssertionType": "Story65.InvocationFixture.FixtureAssertionFailure",
+  "fixtureAssertionProperties": [
+    "AssertionFile",
+    "AssertionLine"
+  ],
+  "firstProbeCallback": "synchronous first state-store dependency observation; driver uses compareexchange once",
+  "fakeAwaitCallback": "synthetic normal/presuppressed continuity only; never passed to live recorder",
+  "counterHelperType": "Hexalith.PrivateCaptureCounter.CaptureCounters",
+  "counterBootstrapType": "Hexalith.PrivateCaptureCounter.InvocationTransportBootstrap",
+  "strictStages": [
+    "Whole",
+    "ComponentFile",
+    "ComponentPolicy"
+  ],
+  "eligibleEntryAssemblyName": "Hexalith.EventStore",
+  "excludedEntryAssemblyName": "Story65.InvocationTransport.Excluded",
+  "cases": [
+    {
+      "name": "owned-success",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "borrowed-success",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "held-success",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "unsupported-basic-refusal",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "undeclared-target-refusal",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "pre-cancel-before-acquire",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "cancel-before-enrollment",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "transport-fault-retains",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "transport-cancel-retains",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "release-fault-overrides-response",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "release-fault-overrides-validation",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "borrowed-observer-refusal",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "held-scope-closed-refusal",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "ordinary-direct-nochildren",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "control-nochildren",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "outer-buffer-success",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "outer-buffer-fault",
+      "slow": false,
+      "expectedEntries": 1
+    },
+    {
+      "name": "ordinary-redirect-reentry",
+      "slow": false,
+      "expectedEntries": 2
+    },
+    {
+      "name": "held-transport",
+      "slow": true,
+      "expectedEntries": 1
+    },
+    {
+      "name": "held-release",
+      "slow": true,
+      "expectedEntries": 1
+    }
+  ],
+  "eligibleMatrixCells": 80,
+  "eligibleInvocationComparisons": 84,
+  "freshCanaries": 3,
+  "eligibleProcesses": 15,
+  "excludedProcess": "one genuine nonmatching entry, no helper readiness/field reflection; representative actual entries, live through known8swindow+boundedclosure opportunity; only observed artifactabsence/selection/parity claims",
+  "pluginOutputPath": "/tmp/story65-invocation-transport-prep-20261107/fixture/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+  "errorFacts": [
+    "ExceptionTypeFullNameOrEmpty",
+    "ExceptionMessageOrEmptyInMemory",
+    "RouteCatalogRefusalCategoryOrEmpty",
+    "ErrorReferenceEqualsInjected",
+    "InnerReferenceEqualsInjected"
+  ]
+}

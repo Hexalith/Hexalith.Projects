@@ -1,0 +1,29 @@
+{
+  "preparationOnly": true,
+  "overlayProducer": "Hexalith.EventStore.DomainService",
+  "onlyReplacedCompileItem": "DelegatedOwnerQueryClient.cs",
+  "orderedPrimaryBuilds": {
+    "domain-service-producer": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "eventstore": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+    "tenants": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "projects": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "projects-workers": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "folders": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+    "folders-workers": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+    "apphost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+    "integration": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+  },
+  "BuildProjectReferences": false,
+  "nativeGateProject": "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj",
+  "nativeClass": "Hexalith.EventStore.DomainService.Tests.QueryAuthorityCorrectionTests",
+  "canonicalNativeCases": 24,
+  "allSevenMappingValuesAndTwoExistingProofFlags": true,
+  "buildOnlyProcessorCount": 2,
+  "runtimeProcessorOverrideAbsent": true,
+  "privateLiveMappedAssemblyRequiredInOwnedProjectsHost": true,
+  "allSixRuntimeSourceProfileChecksUnchanged": true,
+  "ordinarySDK8IndependentOfPrivateDomainService": true,
+  "restorationRequiredAfterAnyPartialPrivateBuild": true,
+  "restorationUnionIncludesPrePrivatePostPrivateCurrentNewAndMarkerChangedCarriers": true,
+  "unrelatedPreexistingGenerationsMustRemainUnchanged": true
+}

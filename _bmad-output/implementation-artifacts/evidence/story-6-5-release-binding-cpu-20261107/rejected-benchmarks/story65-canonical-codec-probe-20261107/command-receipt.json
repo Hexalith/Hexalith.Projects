@@ -1,0 +1,275 @@
+{
+  "createdUtc": "2026-11-07T06:19:31.108718+00:00",
+  "diagnosticOnly": true,
+  "productionSourceChanges": false,
+  "ownerBuildsPerformed": false,
+  "baselineSource": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs",
+  "baselineSourceSha256": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+  "baselineDll": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll",
+  "baselineDllSha256": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+  "owner41SourceHashesVerifiedUnchanged": true,
+  "sdkVersionOwnerAndExternal": "10.0.403",
+  "runtime": "10.0.14",
+  "buildFairness": {
+    "oracleConfiguration": "Debug",
+    "candidateConfiguration": "Debug",
+    "oracleDebuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "candidateDebuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "oracleJitOptimizerDisabled": true,
+    "candidateJitOptimizerDisabled": true,
+    "oracleJitTrackingEnabled": true,
+    "candidateJitTrackingEnabled": true,
+    "runtimeFlags": {
+      "DOTNET_TieredCompilation": "absent",
+      "DOTNET_TC_QuickJit": "absent",
+      "DOTNET_ReadyToRun": "absent",
+      "COMPlus_TieredCompilation": "absent",
+      "DOTNET_PROCESSOR_COUNT": "absent"
+    }
+  },
+  "commands": [
+    {
+      "label": "preliminary harness syntax failure",
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-canonical-codec-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Release",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 1,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/build.log",
+      "logSha256": "e5eccbee518fff4066ff67c348ea73f82d15fc2f3ad57a0bff18f1b5918a1cf9"
+    },
+    {
+      "label": "preliminary mismatched-optimization build",
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-canonical-codec-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Release",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 0,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/build-corrected.log",
+      "logSha256": "12ed4e258788630fbd5102556946f68b633d765aa1d31cff3617ccb7ca48466f"
+    },
+    {
+      "label": "preliminary build only; no confirmation execution",
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-canonical-codec-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Release",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 0,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/build-confirmation.log",
+      "logSha256": "c6ca77abf90afaa7a841b014921c5f39501adbf05a37aa57478139f33309d0de"
+    },
+    {
+      "label": "fair build",
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-canonical-codec-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Debug",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-p:Optimize=false",
+        "-p:DebugType=portable",
+        "-p:DebugSymbols=true",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 0,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/build-debug-fair.log",
+      "logSha256": "58a6f493185181641777398891ee55bbdc101e37eead5ca4336f3794a93ee88e"
+    },
+    {
+      "label": "preliminary only; Debug oracle/Release candidate mismatch",
+      "argv": [
+        "env",
+        "-u",
+        "DOTNET_PROCESSOR_COUNT",
+        "dotnet",
+        "/tmp/story65-canonical-codec-probe-20261107/bin/Release/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "/tmp/story65-canonical-codec-probe-20261107/results.json"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 0,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/run.log",
+      "logSha256": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5",
+      "output": "/tmp/story65-canonical-codec-probe-20261107/results.json",
+      "outputSha256": "286cab9e4f99e398f79c4bb3d4655e5b1c94cb3aa5a74c731b77f0b765723b60"
+    },
+    {
+      "label": "fair primary result",
+      "argv": [
+        "env",
+        "-u",
+        "DOTNET_PROCESSOR_COUNT",
+        "dotnet",
+        "/tmp/story65-canonical-codec-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "/tmp/story65-canonical-codec-probe-20261107/debug-fair-results.json",
+        "confirm"
+      ],
+      "cwd": "/tmp/story65-canonical-codec-probe-20261107",
+      "exitCode": 0,
+      "log": "/tmp/story65-canonical-codec-probe-20261107/run-debug-fair.log",
+      "logSha256": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5",
+      "output": "/tmp/story65-canonical-codec-probe-20261107/debug-fair-results.json",
+      "outputSha256": "c007fda47d711238f8d361a36f913b998e26a1dbadfa93cad99e2a9cf89e708f"
+    }
+  ],
+  "primaryQualifiedResult": "debug-fair-results.json",
+  "preliminaryDisqualifiedTimings": "results.json: Debug compiled oracle against optimized Release variants; no CPU/allocation qualification from this run.",
+  "releaseConfirmationExecuted": false,
+  "parityChecksFair": 1560,
+  "corpus": [
+    {
+      "SchemaVersion": 1,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 4963
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 5,
+      "entries": 2,
+      "operations": 0,
+      "bytes": 6333
+    },
+    {
+      "SchemaVersion": 2,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 0,
+      "bytes": 45317
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 64931
+    },
+    {
+      "SchemaVersion": 3,
+      "declarations": 30,
+      "entries": 17,
+      "operations": 30,
+      "bytes": 219012
+    }
+  ],
+  "corpusProvenance": [
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/CanonicalCatalog.json",
+      "sha256": "d30010c9b1017f29c5ae9da9a39289d8865bfce91bd153b6000beaad0248f4c0"
+    },
+    {
+      "path": "tests/Hexalith.EventStore.Contracts.Tests/Routing/Fixtures/V2CanonicalCatalog.json",
+      "sha256": "c8b28c28e017154f6ecf6f69a60e89448a9df7d4a4161809f4aeda8c398ec049"
+    },
+    {
+      "path": "deploy/dapr/eventstore-routing-catalog.json",
+      "sha256": "2579a2d99016508de5ee3102233a4ccf4cad3d951fa84b26c6766fcbf76cc43a"
+    }
+  ],
+  "leafCalls": 94,
+  "writeCanonicalSourceIdenticalAllVariants": true,
+  "summary": [
+    {
+      "workload": "fresh-static-derived-leaf-inventory",
+      "RouteCatalogCodec": {
+        "medianWallMs": 2.0919125000000003,
+        "medianProcessCpuMs": 2.2481750000000003,
+        "medianAllocatedBytes": 1645248,
+        "gcDeltaSum": [
+          115,
+          0,
+          0
+        ]
+      },
+      "DirectCodec": {
+        "medianWallMs": 2.0450749999999998,
+        "medianProcessCpuMs": 2.26295,
+        "medianAllocatedBytes": 1380033,
+        "gcDeltaSum": [
+          98,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "workload": "complete-219KB-envelope-encode",
+      "RouteCatalogCodec": {
+        "medianWallMs": 6.214225,
+        "medianProcessCpuMs": 9.629375,
+        "medianAllocatedBytes": 8673533,
+        "gcDeltaSum": [
+          98,
+          39,
+          39
+        ]
+      },
+      "DirectCodec": {
+        "medianWallMs": 6.300615,
+        "medianProcessCpuMs": 8.849325,
+        "medianAllocatedBytes": 8013049,
+        "gcDeltaSum": [
+          83,
+          34,
+          30
+        ]
+      }
+    }
+  ],
+  "qualification": [
+    "Fresh94leaf representative static/derived corpus is not the removed180leaf actual runtime inventory.",
+    "Compiled baseline Validator still performs its nested calls through baseline codec in external candidates; complete global savings may differ.",
+    "All9 samples and rotating mode order retained. Single synchronous process, ServerGC14CPUs; process CPU includes GC/JIT/background runtime work.",
+    "cold fields are first timed workload calls AFTER parity and corpus construction, not process/JIT cold.",
+    "Public bytes/digests and full exception type/message/diagnostics/inner/JSONposition, enum/error, stable duplicate sort, Unicode/numeric escaping, fresh output/model ownership and one converter Write call parity checked against compiled baseline.",
+    "Fair data proves allocation reduction; does not establish meaningful fresh-leaf CPU or elapsed-time improvement. No production edit recommended solely as a latency fix."
+  ],
+  "sourceSha256": {
+    "CodecProbeApi.cs": "7a164e41a4dab6d914092471246bd8b35a2061949769bc6a5d63663308c6801b",
+    "DocumentHashSpanCodec.cs": "21338c0c5cbc681b7841d5bec99b829fc01efe050c3a54490254e855334cb66a",
+    "DocumentCodec.cs": "7832a9d23bf100ddffcb24a9da03c3313bbbec26919b677880eb949e2b6fa671",
+    "ConverterProbe.cs": "1154e4b847c3e8bfc44492a16015d2302ea35d7d069c157971c045e3e04047fa",
+    "CountingProbeConverter.cs": "4cc001900240e1d836028156ec53521a8bb5652f070705adc10c72b830cd9abe",
+    "Program.cs": "9fc8c2a3a5bf66e9c5d45932988596db446ca87cf4bc7af88ddc00b3206644fd",
+    "DirectCodec.cs": "b255e222a96ec16704248f6ff2c3b3061892376a6a161a20b39fa13281e5f928"
+  },
+  "otherArtifactHashes": {
+    "Probe.csproj": "532d5b9784ad34338ec646650296c6b9d8244a137703e30c757f39ecba94b467",
+    "build-debug-fair.log": "58a6f493185181641777398891ee55bbdc101e37eead5ca4336f3794a93ee88e",
+    "source-oracle.json": "48231f91da40048cb563aba12ff8aaef3c5b3009b8f996641145d0ba4a7d5c37",
+    "results.json": "286cab9e4f99e398f79c4bb3d4655e5b1c94cb3aa5a74c731b77f0b765723b60",
+    "run.log": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5",
+    "debug-fair-results.json": "c007fda47d711238f8d361a36f913b998e26a1dbadfa93cad99e2a9cf89e708f",
+    "build-corrected.log": "12ed4e258788630fbd5102556946f68b633d765aa1d31cff3617ccb7ca48466f",
+    "Program.release-preliminary.cs.txt": "cab3458625930eecde2b576a4672871e138dadc95a951b126a93e018c790fdfa",
+    "build.log": "e5eccbee518fff4066ff67c348ea73f82d15fc2f3ad57a0bff18f1b5918a1cf9",
+    "build-confirmation.log": "c6ca77abf90afaa7a841b014921c5f39501adbf05a37aa57478139f33309d0de",
+    "run-debug-fair.log": "823a3480a508ca8ab771b397b282de15beef381c4c831311df31aed6cbb5d6d5",
+    "Program.primary.cs.txt": "71a6c41d405dc976b8bb9771cf16b6febec9d620a7a72e03daca2146afaefb0d"
+  },
+  "activeExternalBuildOrBenchmarkProcesses": []
+}

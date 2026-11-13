@@ -1,0 +1,21 @@
+{
+  "filePreparationOnly": true,
+  "apiFrozen": true,
+  "namespace": "Story65.ImageMemo.Harness",
+  "hostInterfaceFile": "harness/IMemoHost.cs",
+  "observationInterfaceFile": "harness/IObservation.cs",
+  "factoryFile": "harness/Hosts.cs",
+  "variants": [
+    "oracle",
+    "control",
+    "candidate"
+  ],
+  "hostCreation": "Hosts.Create(name)",
+  "sharedMemoLifetime": "One IMemoHost shared across reader Tasks; each Task calls BeginObservation inside itself for each complete cohort; never flow a single parent scope to workers.",
+  "streamPath": "ComputeDomain(assembly) executes exact selected variant File.OpenRead+FreshStream.Compute wrapper; ComputeStream for bounded behavioral inputs; no DomainService oldSDK accidental binding.",
+  "technicalPath": "ComputeTechnical uses actual compiledSDK or byteexact copiedPE/MVID method with matching selected scope/memo.",
+  "typeProof": "MemoType/ScopeType/FreshType/TechnicalType must match closed variant namespaces/assemblies; IObservation.ScopeType must equal host.ScopeType.",
+  "intendedFriendAssemblyName": "Hexalith.EventStore.Server.Tests",
+  "driverOwnedByMainPendingRootDelegation": true,
+  "noPublicOrProductionApi": true
+}

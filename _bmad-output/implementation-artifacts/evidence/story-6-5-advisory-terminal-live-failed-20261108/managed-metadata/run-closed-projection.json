@@ -1,0 +1,222 @@
+{
+  "originalSha256": "319867db021894bd63e97814692f33efadd1abd1663173c2d0466a0920025434",
+  "originalBytes": 68657,
+  "projection": {
+    "qualification": "local-distributed-proof",
+    "acceptedEquivalence": false,
+    "productionReadiness": false,
+    "result": "failed",
+    "matrixCompleted": false,
+    "qualificationGroup": "main",
+    "sourceDiffSha256": "b04bb853b59a8e00def81ca11228f32b560eb1cbf3a95a4eacefcea1ae244095",
+    "sourceManifestSha256": "2943aaa63df106f60f0b720feadeb44f9bfb29babe85693cf29c0ddfd1c48b6b",
+    "sourceMappingHash": "b71d2291f64fbae36d5a3444101bb105b04980cf0bdac522085639d488cf8acc",
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/supported-project-reads-private-dlwby4eo/source-mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/supported-project-reads-private-dlwby4eo/source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/supported-project-reads-private-dlwby4eo/source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/supported-project-reads-private-dlwby4eo/source-mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/supported-project-reads-private-dlwby4eo/source-mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "b71d2291f64fbae36d5a3444101bb105b04980cf0bdac522085639d488cf8acc",
+      "Configuration": "Debug"
+    },
+    "compilationProfile": {
+      "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;SUPPORTED_PROJECT_READ_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;SUPPORTED_PROJECT_READ_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;PRIVATE_CATALOG_INVOCATION_PROOF;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;PRIVATE_OWNER_SOURCE_READ_PROOF;HEXALITH_DEVELOPMENT_CATALOG_COHORT;HEXALITH_DEVELOPMENT_CATALOG_SOURCE_REFERENCE;HEXALITH_DEVELOPMENT_CATALOG_SOURCE;HEXALITH_TECHNICAL_HTTP_CATALOG_BINDING;HEXALITH_CHECKPOINTED_TENANT_PROJECTION;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;FOLDERS_OWNER_METADATA_SOURCE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      },
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj": {
+        "Configuration": "Debug",
+        "Optimize": "false",
+        "DefineConstants": "TRACE;SUPPORTED_PROJECT_READ_DISTRIBUTED;DEBUG",
+        "DebugType": "portable",
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true"
+      }
+    },
+    "runtimeModes": {
+      "eventstore": {
+        "wrapperPid": 1946540,
+        "wrapperStartTicks": "15823801",
+        "pid": 1946830,
+        "startTicks": "15823858",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+        },
+        "assemblySha256": "b35113e3d017a4f0907e140e234b24c13fa750fee806bf7c8cf3fcf4ff73123f"
+      },
+      "tenants": {
+        "wrapperPid": 1946381,
+        "wrapperStartTicks": "15823774",
+        "pid": 1946706,
+        "startTicks": "15823833",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+        },
+        "assemblySha256": "814698b88b6463c55a335bb5bcfd3a2bca3da8248ab5c87840842122815b96a6"
+      },
+      "projects": {
+        "wrapperPid": 1946600,
+        "wrapperStartTicks": "15823820",
+        "pid": 1946950,
+        "startTicks": "15823879",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+        },
+        "assemblySha256": "c026e2c016cb79eba7222a407b21af573f3f50a93514a4ef904f8c1c120b4870"
+      },
+      "projects-workers": {
+        "wrapperPid": 1946735,
+        "wrapperStartTicks": "15823842",
+        "pid": 1947069,
+        "startTicks": "15823900",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+        },
+        "assemblySha256": "e2603b7626749eecb1ae4b4599f00807b8668726d1dc0ef0a828d6ef7144b289"
+      },
+      "folders": {
+        "wrapperPid": 1946863,
+        "wrapperStartTicks": "15823867",
+        "pid": 1947140,
+        "startTicks": "15823927",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "true"
+        },
+        "assemblySha256": "688ecca08757060c4a03f9e94c7dc746ac2dea5d6529adcb36520dc4f00215bd"
+      },
+      "folders-workers": {
+        "wrapperPid": 1946998,
+        "wrapperStartTicks": "15823889",
+        "pid": 1947192,
+        "startTicks": "15823949",
+        "environment": "Development",
+        "options": {
+          "EventStore__RouteCatalog__ScopedDecodeReuse": "true",
+          "EventStore__RouteCatalog__SerializeLocalLeaseRelease": "false",
+          "EventStore__RouteCatalog__RetainValidatedCatalogBytes": "true",
+          "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"
+        },
+        "assemblySha256": "aabbf220d2c35979bdd5c63c3db0d98ad89df07ec889f543d0f9f7cd73a38b17"
+      }
+    },
+    "testProcessCleanup": [
+      {
+        "groupId": 1956963,
+        "descendantsAbsent": true
+      }
+    ],
+    "ownedSidecarsAbsent": true,
+    "preexistingResourcesPreserved": true,
+    "privateMaterialRemoved": true
+  },
+  "rawFailureCommandsPrivateConfigurationAndRuntimeLogsExcluded": true
+}

@@ -1,0 +1,40 @@
+{
+  "Mode": "disabled",
+  "Group": "double-fault",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "filter-double-dispose-second-fault",
+        "Passed": true,
+        "FilterEntries": 1,
+        "AuthorityAcquireCalls": 0,
+        "NextCalls": 1,
+        "ReleaseCallbacks": 2,
+        "ErrorType": "System.IO.IOException",
+        "Faults": 2,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 179,
+        "MinimumLastDisposeTicks": 7519770,
+        "MaximumLastDisposeTicks": 9177707,
+        "FirstDisposeHoldTicks": 199398451,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [],
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": true
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

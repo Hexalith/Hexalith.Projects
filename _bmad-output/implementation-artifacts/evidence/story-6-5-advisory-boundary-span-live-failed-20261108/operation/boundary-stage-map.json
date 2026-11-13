@@ -1,0 +1,74 @@
+{
+  "filePreparationOnly": true,
+  "helperUnchanged": true,
+  "maximumRowsPerAdmittedCapture": 8,
+  "allAllocationModes": "None",
+  "unchangedRows": {
+    "0": "Whole",
+    "4": "terminal enum/boolean encoding; encoding time only"
+  },
+  "spans": [
+    {
+      "stageId": 1,
+      "stage": "ComponentFile",
+      "startBoundaryId": 1,
+      "startBoundary": "InitialScope",
+      "normalNextBoundary": "EnvelopeValidation"
+    },
+    {
+      "stageId": 2,
+      "stage": "ComponentPolicy",
+      "startBoundaryId": 2,
+      "startBoundary": "InitialInputs",
+      "normalNextBoundary": "Index or FinalInputs"
+    },
+    {
+      "stageId": 3,
+      "stage": "AclFile",
+      "startBoundaryId": 4,
+      "startBoundary": "Discovery",
+      "normalNextBoundary": "FinalInputs"
+    },
+    {
+      "stageId": 5,
+      "stage": "AuthenticationSerialization",
+      "startBoundaryId": 5,
+      "startBoundary": "FinalInputs",
+      "normalNextBoundary": "FinalCandidates"
+    },
+    {
+      "stageId": 6,
+      "stage": "ActorBoundary",
+      "startBoundaryId": 6,
+      "startBoundary": "FinalCandidates",
+      "normalNextBoundary": "FinalScope"
+    },
+    {
+      "stageId": 7,
+      "stage": "ResultTail",
+      "startBoundaryId": 3,
+      "startBoundary": "Index",
+      "normalNextBoundary": "Discovery"
+    }
+  ],
+  "everyValidMarkerStopsPrior": true,
+  "firstCatchAndCloseStopPrior": true,
+  "omittedBoundaryIds": [
+    0,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "repeatedSelectedBoundary": "retain first interval; disable all later spans; preserve terminal state",
+  "countsOnlyExistingStage4": true,
+  "doesNotMeasure": [
+    "await-only duration",
+    "lambda entry",
+    "candidate activity/counts",
+    "remote cause",
+    "deadline cause",
+    "exact omitted-gap work"
+  ]
+}

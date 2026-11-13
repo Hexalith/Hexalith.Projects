@@ -1,0 +1,11 @@
+--- story65-outbound-assertion-parent-archive-20261107-before-receipt-schema-fix.py
++++ story65-outbound-assertion-parent-archive-20261107.py
+@@ -29,7 +29,7 @@
+ for x in audit['nativeTestProcessCleanup']:assert x['descendantsAbsent'] and not members(x['groupId'])
+ supervisor=json.loads((BASE/'supervisor.json').read_text());assert supervisor['phase']=='managed-complete' and supervisor['launcherExitCode']==1 and supervisor['controlPublished'] and absent(supervisor['launcherPid'],supervisor['launcherStartTicks'])
+ manifest=json.loads((BASE/'managed/source-manifest.json').read_text());assert len(manifest)==17326 and all(sha(ROOT/p)==s for p,s in manifest.items())
+-modulepath=Path('/tmp/story65-outbound-assertion-prep-20261107/freshcontroller.py');expected=json.loads((Path('/tmp/story65-outbound-assertion-prep-20261107')/'preparation-receipt.json').read_text());assert sha(modulepath)==expected['files']['freshcontroller.py']
++modulepath=Path('/tmp/story65-outbound-assertion-prep-20261107/freshcontroller.py');expected=json.loads((Path('/tmp/story65-outbound-assertion-prep-20261107')/'preparation-receipt.json').read_text());assert sha(modulepath)==expected['filesSha256']['freshcontroller.py']
+ spec=importlib.util.spec_from_file_location('outbound_assertion_archive',modulepath);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+ out=BASE/'counter-archive';out.mkdir(mode=0o700)
+ fd=os.open(m.PRIVATE,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)

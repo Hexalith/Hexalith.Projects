@@ -1,0 +1,215 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "phase": "profile-finished",
+  "watcherPid": 956335,
+  "watcherStartTicks": "11796413",
+  "watcherGroup": 956335,
+  "targetSignalsSent": false,
+  "endOnlyRunJsonNotRequired": true,
+  "anyCollectorLaunched": true,
+  "profilerAttached": true,
+  "graphAttempts": 3,
+  "closedGraphProof": {
+    "graphSha256": "c7a8900adf766cce1c3f6c1177cf4d9bd96f70967a7a638bed6acf07ff29d820",
+    "appHostPid": 973958,
+    "appHostStartTicks": "11808976",
+    "configurationSha256": "85d592d178a4157795373df0e9b3088dad123606903fe6f2d77904a6aa0c525c",
+    "roles": {
+      "projects": {
+        "wrapperPid": 976067,
+        "wrapperStartTicks": "11809575",
+        "sourceProjectMatches": true
+      },
+      "tenants": {
+        "wrapperPid": 975886,
+        "wrapperStartTicks": "11809530",
+        "sourceProjectMatches": true
+      },
+      "folders": {
+        "wrapperPid": 976335,
+        "wrapperStartTicks": "11809620",
+        "sourceProjectMatches": true
+      }
+    }
+  },
+  "ownershipPathSha256": "8ccf4953f9c598d2c910261140d375036f2e96165f143192f673448028b7a730",
+  "identityReadyUtc": "2026-11-07T19:41:36.221237+00:00",
+  "targetIdentities": {
+    "projects": {
+      "pid": 976397,
+      "startTicks": "11809627",
+      "executablePath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server",
+      "wrapperPid": 976067,
+      "wrapperStartTicks": "11809575"
+    },
+    "tenants": {
+      "pid": 976149,
+      "startTicks": "11809583",
+      "executablePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants",
+      "wrapperPid": 975886,
+      "wrapperStartTicks": "11809530"
+    },
+    "folders": {
+      "pid": 976589,
+      "startTicks": "11809670",
+      "executablePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server",
+      "wrapperPid": 976335,
+      "wrapperStartTicks": "11809620"
+    }
+  },
+  "currentOrdinaryGenerationProofs": {
+    "projects": {
+      "sourceCount": 55,
+      "source55Match": true,
+      "fullManifestCount": 17340,
+      "fullManifestSha256": "273a35ec1e98cb35c874e369d9c4fa5dd747b1f47bbeda6ba0632182a602d709",
+      "fullManifestAllMatch": true,
+      "role": "projects",
+      "pid": 976397,
+      "startTicks": "11809627",
+      "files": [
+        {
+          "label": "target-entry-assembly",
+          "sha256": "39bb2ca3dfb51e1f62eb6eae79c0ded11eff6a4556dfa112ec58f131bcf30c73"
+        },
+        {
+          "label": "sdk-assembly",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872"
+        },
+        {
+          "label": "domain-service-assembly",
+          "sha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+        }
+      ],
+      "currentOrdinaryModuleGenerations": {
+        "Hexalith.EventStore.ServiceDefaults": {
+          "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7"
+        },
+        "Hexalith.EventStore.DomainService": {
+          "producerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178",
+          "producerPdbSha256": "1256a7d7c3318fdd65984b42349093b6b3337f75bfa98ff1e7691dfe20271a24"
+        },
+        "Hexalith.EventStore.Server": {
+          "producerSha256": "71654811df5d3d03670e736cd8169e0abd645d50cec04fbc33dd3932a3373298",
+          "producerPdbSha256": "3f5b3677ae8e7c7feab4a8c5d766d672e4f14aa9c1137d81f8cb96e130d44fe0"
+        },
+        "Hexalith.EventStore.Gateway": {
+          "producerSha256": "6490484bd7e1b190d72ee56cd1a9f4a448df34f9016fa520333191ac5974ce5b",
+          "producerPdbSha256": "8867e20a7309fcce6c1e5bae06e4743c7bf53403d766a6ebc378697c9100585c"
+        }
+      },
+      "noHistoricalNativeByteEquivalenceClaimed": true
+    },
+    "tenants": {
+      "sourceCount": 55,
+      "source55Match": true,
+      "fullManifestCount": 17340,
+      "fullManifestSha256": "273a35ec1e98cb35c874e369d9c4fa5dd747b1f47bbeda6ba0632182a602d709",
+      "fullManifestAllMatch": true,
+      "role": "tenants",
+      "pid": 976149,
+      "startTicks": "11809583",
+      "files": [
+        {
+          "label": "target-entry-assembly",
+          "sha256": "900d47498feb2a060f0ce6906d7ad376d316723671ad7c8f0ef92c3af9ac3728"
+        },
+        {
+          "label": "sdk-assembly",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872"
+        },
+        {
+          "label": "domain-service-assembly",
+          "sha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+        }
+      ],
+      "currentOrdinaryModuleGenerations": {
+        "Hexalith.EventStore.ServiceDefaults": {
+          "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7"
+        },
+        "Hexalith.EventStore.DomainService": {
+          "producerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178",
+          "producerPdbSha256": "1256a7d7c3318fdd65984b42349093b6b3337f75bfa98ff1e7691dfe20271a24"
+        },
+        "Hexalith.EventStore.Server": {
+          "producerSha256": "71654811df5d3d03670e736cd8169e0abd645d50cec04fbc33dd3932a3373298",
+          "producerPdbSha256": "3f5b3677ae8e7c7feab4a8c5d766d672e4f14aa9c1137d81f8cb96e130d44fe0"
+        },
+        "Hexalith.EventStore.Gateway": {
+          "producerSha256": "6490484bd7e1b190d72ee56cd1a9f4a448df34f9016fa520333191ac5974ce5b",
+          "producerPdbSha256": "8867e20a7309fcce6c1e5bae06e4743c7bf53403d766a6ebc378697c9100585c"
+        }
+      },
+      "noHistoricalNativeByteEquivalenceClaimed": true
+    },
+    "folders": {
+      "sourceCount": 55,
+      "source55Match": true,
+      "fullManifestCount": 17340,
+      "fullManifestSha256": "273a35ec1e98cb35c874e369d9c4fa5dd747b1f47bbeda6ba0632182a602d709",
+      "fullManifestAllMatch": true,
+      "role": "folders",
+      "pid": 976589,
+      "startTicks": "11809670",
+      "files": [
+        {
+          "label": "target-entry-assembly",
+          "sha256": "caf01772460b329dde8b0d3ffcf605b2754d452b897be28592cef6c9da82d7d6"
+        },
+        {
+          "label": "sdk-assembly",
+          "sha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872"
+        },
+        {
+          "label": "domain-service-assembly",
+          "sha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178"
+        }
+      ],
+      "currentOrdinaryModuleGenerations": {
+        "Hexalith.EventStore.ServiceDefaults": {
+          "producerSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+          "producerPdbSha256": "80a7174c81e2dc92d8abc4eea2bc371b672066d85c444f66e437dbe13e168af7"
+        },
+        "Hexalith.EventStore.DomainService": {
+          "producerSha256": "1c8dfbeec54a63ad59921f22aaf2826f89f2b2dcb2f2db54d4c4a403f1fd0178",
+          "producerPdbSha256": "1256a7d7c3318fdd65984b42349093b6b3337f75bfa98ff1e7691dfe20271a24"
+        },
+        "Hexalith.EventStore.Server": {
+          "producerSha256": "71654811df5d3d03670e736cd8169e0abd645d50cec04fbc33dd3932a3373298",
+          "producerPdbSha256": "3f5b3677ae8e7c7feab4a8c5d766d672e4f14aa9c1137d81f8cb96e130d44fe0"
+        },
+        "Hexalith.EventStore.Gateway": {
+          "producerSha256": "6490484bd7e1b190d72ee56cd1a9f4a448df34f9016fa520333191ac5974ce5b",
+          "producerPdbSha256": "8867e20a7309fcce6c1e5bae06e4743c7bf53403d766a6ebc378697c9100585c"
+        }
+      },
+      "noHistoricalNativeByteEquivalenceClaimed": true
+    }
+  },
+  "onlyThreeFixedRoles": true,
+  "fullSourceSnapshotCachedOnceUntilTrigger": true,
+  "decisionBeforeFirstLaunch": "strict-genuine-failed-multiple-no-positive-three-windows",
+  "profileIncomplete": false,
+  "laterIndividualGuardRefusalsArePartialNotSkipAll": true,
+  "privateIdentityRemoval": [
+    {
+      "role": "projects",
+      "sha256": "0e912029635855435cb3925ae22f8df757a0057e2629ddb1da3ee949b83887d0",
+      "bytes": 18095
+    },
+    {
+      "role": "tenants",
+      "sha256": "e4d5154b2f6ff52aa8de6f1d1d7d05b20b02df06edfe09828884d1682a941347",
+      "bytes": 18169
+    },
+    {
+      "role": "folders",
+      "sha256": "724aaa4d81a3efe94a37cef34bc79d9d0775361d3e9c742a041cbd806e75c102",
+      "bytes": 18225
+    }
+  ],
+  "privateIdentityFilesAbsent": true
+}

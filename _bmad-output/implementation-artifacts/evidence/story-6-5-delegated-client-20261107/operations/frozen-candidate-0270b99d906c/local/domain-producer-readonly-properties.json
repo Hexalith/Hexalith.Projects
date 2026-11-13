@@ -1,0 +1,41 @@
+{
+  "preparationOnly": true,
+  "readOnlyPropertyEvaluationOnly": true,
+  "noBuildRestoreOrTargetsRun": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-getProperty:Configuration,Optimize,DefineConstants,DebugType,UseHexalithProjectReferences,UseNuGetDeps,EnablePrivateCatalogInvocationProof,EnablePrivateOwnerSourceReadProof"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "allSevenMappingValues": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "sameTwoExistingProofFlags": true,
+  "startedUtc": "2026-11-07T11:53:51.240460+00:00",
+  "finishedUtc": "2026-11-07T11:53:51.572676+00:00",
+  "exitCode": 0,
+  "matchesExpectedAllEightProperties": true,
+  "properties": {
+    "Configuration": "Debug",
+    "Optimize": "false",
+    "DefineConstants": "TRACE;DEBUG",
+    "DebugType": "portable",
+    "UseHexalithProjectReferences": "true",
+    "UseNuGetDeps": "false",
+    "EnablePrivateCatalogInvocationProof": "true",
+    "EnablePrivateOwnerSourceReadProof": "true"
+  },
+  "stdoutSha256": "c374b9290a6c76aecb88a86f33f04cda5872888417001b16092575fae41a2dce"
+}

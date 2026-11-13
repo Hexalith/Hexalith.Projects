@@ -1,0 +1,49 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "parentAuditSha256": "156a00e3838a04abdfb72eeee2ddafbc3ef948dd5ba00899ebd8a36466f38368",
+  "validated": {
+    "diagnosticOnly": true,
+    "featureAcceptance": false,
+    "complete": false,
+    "availableRolesComplete": true,
+    "missingRoles": [
+      "tenants"
+    ],
+    "roles": [
+      {
+        "role": "projects",
+        "captures": 3,
+        "rows": 24,
+        "rowSha256": "a725a4ff27610234a4429f5026a03723a7809ee3dc69ba3eb01527ad6250e8d6",
+        "closedReceiptSha256": "a5ed5a5ca9d2675025941a280d79d797be680e89a39296c3f977ca8ae1f18832",
+        "strictClosedSchemaFinalZeroDrops": true
+      },
+      {
+        "role": "folders",
+        "captures": 36,
+        "rows": 288,
+        "rowSha256": "eb2f3f19442f9e4e7f19d81dda8680fb10404954725c7c122142ff95bc6a9785",
+        "closedReceiptSha256": "c9088395aea781d4f173c880a7fcd25064e757c51753400c5d35d4bc97e278f4",
+        "strictClosedSchemaFinalZeroDrops": true
+      }
+    ],
+    "afterAllOwnedProcessClosureOnly": true,
+    "noControlReadCopyOrDeletion": true,
+    "stage5LastIntervalOnly": true,
+    "stage7IsFilterInvokeAndOverlapsGuardNextAndRelease": true,
+    "wholeMayIncludeTransferredResultAndHandoffGap": true,
+    "foldersTwoNestedCaptureLifetimesMayOverlap": true,
+    "noOutcomeOrCancellationInferenceFromMissingStages": true
+  },
+  "filesSha256": {
+    "projects.jsonl": "a725a4ff27610234a4429f5026a03723a7809ee3dc69ba3eb01527ad6250e8d6",
+    "projects.closed.json": "a5ed5a5ca9d2675025941a280d79d797be680e89a39296c3f977ca8ae1f18832",
+    "window.control": "c52c9504d84f0f8554f06b25586f6c079a0ba4e389468f5b92e2f401eeff8698",
+    "folders.jsonl": "eb2f3f19442f9e4e7f19d81dda8680fb10404954725c7c122142ff95bc6a9785",
+    "folders.closed.json": "c9088395aea781d4f173c880a7fcd25064e757c51753400c5d35d4bc97e278f4"
+  },
+  "controlContentsArchived": false,
+  "onlyFiveValidatedOwnedFilesRemoved": true,
+  "fixedPrivateDirectoryEmpty": true
+}

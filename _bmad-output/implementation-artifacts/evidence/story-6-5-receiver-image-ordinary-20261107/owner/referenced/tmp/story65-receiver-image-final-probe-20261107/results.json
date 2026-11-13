@@ -1,0 +1,986 @@
+{
+  "diagnosticOnly": true,
+  "hostsStarted": false,
+  "authorityMethodsInvoked": false,
+  "storeAndTrustCalls": 0,
+  "sharedActualAuthorityMemo": true,
+  "finalCompiledReceiverAttachmentAndBothActualBorrowHelpers": true,
+  "privateMemoCount": 4,
+  "privateMemoChargedBytes": 5037392,
+  "parityChecks": 10,
+  "parityRows": [
+    {
+      "path": "dapr/config",
+      "Allows": true,
+      "ownedHits": 12
+    },
+    {
+      "path": "actors/{actorTypeName}/{actorId}",
+      "Allows": true,
+      "ownedHits": 20
+    },
+    {
+      "path": "actors/{actorTypeName}/{actorId}/method/{methodName}",
+      "Allows": true,
+      "ownedHits": 20
+    },
+    {
+      "path": "actors/{actorTypeName}/{actorId}/method/remind/{reminderName}",
+      "Allows": true,
+      "ownedHits": 20
+    },
+    {
+      "path": "actors/{actorTypeName}/{actorId}/method/timer/{timerName}",
+      "Allows": true,
+      "ownedHits": 20
+    },
+    {
+      "path": "/healthz",
+      "Allows": true,
+      "ownedHits": 12
+    }
+  ],
+  "methodName": "ProcessTrustedEffectAsync",
+  "actor": "AggregateActor",
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "serverGc": true,
+  "sdk": {
+    "FullName": "Hexalith.EventStore.ServiceDefaults, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+    "sha256": "0a54307d9188fe06c95124c1f57d54f5b47522e01625b12ef498590a568d7462",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "server": {
+    "FullName": "Hexalith.EventStore.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+    "sha256": "1b0ac638477ba72e4777b15a55e6dd8e2598330e7231462a9edac605d374320e",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "probe": {
+    "FullName": "Hexalith.EventStore.Server.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-final-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "sha256": "e9bc88ed072406bab36da32db1320892f5186709a39ebbcd13a7af7eb7c8ec47",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "cold": {
+    "elapsedMs": 44.4227,
+    "allocatedBytes": 15145064,
+    "ImageHits": 16,
+    "Count": 4,
+    "RetainedBytes": 5037392
+  },
+  "fullFreshImageObservationsPerMethodRequest": 20,
+  "regionsPerMethodRequest": 2,
+  "rows": [
+    {
+      "sample": 0,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 304.0856,
+        "meanRequestMs": 12.629695833333335,
+        "allocatedBytesPerRequest": 907389,
+        "processAllocatedBytes": 43555232,
+        "processCpuMs": 643.194,
+        "gcDelta": [
+          10,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          302.2213,
+          304.0041
+        ]
+      }
+    },
+    {
+      "sample": 0,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 132.0501,
+        "meanRequestMs": 5.49535625,
+        "allocatedBytesPerRequest": 903987,
+        "processAllocatedBytes": 43391776,
+        "processCpuMs": 241.434,
+        "gcDelta": [
+          9,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          131.8844,
+          131.8927
+        ]
+      }
+    },
+    {
+      "sample": 1,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 169.3236,
+        "meanRequestMs": 7.033270833333333,
+        "allocatedBytesPerRequest": 904559,
+        "processAllocatedBytes": 43419552,
+        "processCpuMs": 252.921,
+        "gcDelta": [
+          10,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          168.388,
+          169.209
+        ]
+      }
+    },
+    {
+      "sample": 1,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 310.4159,
+        "meanRequestMs": 12.763216666666665,
+        "allocatedBytesPerRequest": 908332,
+        "processAllocatedBytes": 43600384,
+        "processCpuMs": 648.904,
+        "gcDelta": [
+          12,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          310.2163,
+          302.4181
+        ]
+      }
+    },
+    {
+      "sample": 2,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 319.9918,
+        "meanRequestMs": 13.289870833333334,
+        "allocatedBytesPerRequest": 908001,
+        "processAllocatedBytes": 43584464,
+        "processCpuMs": 743.052,
+        "gcDelta": [
+          11,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          317.997,
+          319.9168
+        ]
+      }
+    },
+    {
+      "sample": 2,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 114.871,
+        "meanRequestMs": 4.768695833333333,
+        "allocatedBytesPerRequest": 903817,
+        "processAllocatedBytes": 43384704,
+        "processCpuMs": 190.973,
+        "gcDelta": [
+          8,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          114.7542,
+          114.1432
+        ]
+      }
+    },
+    {
+      "sample": 3,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 113.4286,
+        "meanRequestMs": 4.720245833333333,
+        "allocatedBytesPerRequest": 903534,
+        "processAllocatedBytes": 43370416,
+        "processCpuMs": 208.419,
+        "gcDelta": [
+          7,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          113.2807,
+          113.2911
+        ]
+      }
+    },
+    {
+      "sample": 3,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 299.3119,
+        "meanRequestMs": 12.42011875,
+        "allocatedBytesPerRequest": 907657,
+        "processAllocatedBytes": 43569192,
+        "processCpuMs": 648.419,
+        "gcDelta": [
+          12,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          296.974,
+          299.1917
+        ]
+      }
+    },
+    {
+      "sample": 4,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 284.0529,
+        "meanRequestMs": 11.784331250000001,
+        "allocatedBytesPerRequest": 907645,
+        "processAllocatedBytes": 43567384,
+        "processCpuMs": 583.267,
+        "gcDelta": [
+          13,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          283.9537,
+          281.6942
+        ]
+      }
+    },
+    {
+      "sample": 4,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 113.8994,
+        "meanRequestMs": 4.7423375000000005,
+        "allocatedBytesPerRequest": 903693,
+        "processAllocatedBytes": 43377680,
+        "processCpuMs": 195.27,
+        "gcDelta": [
+          8,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          113.7703,
+          113.8619
+        ]
+      }
+    },
+    {
+      "sample": 5,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 111.2535,
+        "meanRequestMs": 4.62894375,
+        "allocatedBytesPerRequest": 903830,
+        "processAllocatedBytes": 43384248,
+        "processCpuMs": 183.52,
+        "gcDelta": [
+          8,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          111.095,
+          111.0943
+        ]
+      }
+    },
+    {
+      "sample": 5,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 277.378,
+        "meanRequestMs": 11.511987499999998,
+        "allocatedBytesPerRequest": 907600,
+        "processAllocatedBytes": 43565200,
+        "processCpuMs": 544.187,
+        "gcDelta": [
+          12,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          277.2876,
+          275.2878
+        ]
+      }
+    },
+    {
+      "sample": 6,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 282.7111,
+        "meanRequestMs": 11.719979166666667,
+        "allocatedBytesPerRequest": 907463,
+        "processAllocatedBytes": 43560064,
+        "processCpuMs": 565.405,
+        "gcDelta": [
+          11,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          282.5387,
+          280.0203
+        ]
+      }
+    },
+    {
+      "sample": 6,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 111.7891,
+        "meanRequestMs": 4.63275625,
+        "allocatedBytesPerRequest": 903818,
+        "processAllocatedBytes": 43383672,
+        "processCpuMs": 181.852,
+        "gcDelta": [
+          9,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          110.6521,
+          111.7202
+        ]
+      }
+    },
+    {
+      "sample": 7,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 108.2445,
+        "meanRequestMs": 4.477741666666667,
+        "allocatedBytesPerRequest": 903597,
+        "processAllocatedBytes": 43374032,
+        "processCpuMs": 178.843,
+        "gcDelta": [
+          10,
+          1,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          107.9977,
+          106.9339
+        ]
+      }
+    },
+    {
+      "sample": 7,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 277.0073,
+        "meanRequestMs": 11.490081250000001,
+        "allocatedBytesPerRequest": 907456,
+        "processAllocatedBytes": 43558320,
+        "processCpuMs": 554.206,
+        "gcDelta": [
+          11,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          276.8811,
+          274.6428
+        ]
+      }
+    },
+    {
+      "sample": 8,
+      "result": {
+        "workers": 2,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 290.1187,
+        "meanRequestMs": 12.028789583333335,
+        "allocatedBytesPerRequest": 907426,
+        "processAllocatedBytes": 43556848,
+        "processCpuMs": 568.016,
+        "gcDelta": [
+          11,
+          0,
+          0
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          289.9938,
+          287.3881
+        ]
+      }
+    },
+    {
+      "sample": 8,
+      "result": {
+        "workers": 2,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 48,
+        "elapsedMs": 114.8714,
+        "meanRequestMs": 4.769210416666667,
+        "allocatedBytesPerRequest": 903895,
+        "processAllocatedBytes": 43387352,
+        "processCpuMs": 191.53,
+        "gcDelta": [
+          11,
+          0,
+          0
+        ],
+        "imageHits": 960,
+        "workerElapsedMs": [
+          114.7677,
+          114.1544
+        ]
+      }
+    },
+    {
+      "sample": 0,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 316.1503,
+        "meanRequestMs": 12.8216625,
+        "allocatedBytesPerRequest": 2657914,
+        "processAllocatedBytes": 255165032,
+        "processCpuMs": 1228.324,
+        "gcDelta": [
+          16,
+          3,
+          3
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          304.661,
+          315.9342,
+          303.7681,
+          306.5163
+        ]
+      }
+    },
+    {
+      "sample": 0,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 246.9203,
+        "meanRequestMs": 10.130705208333332,
+        "allocatedBytesPerRequest": 903941,
+        "processAllocatedBytes": 86778816,
+        "processCpuMs": 630.833,
+        "gcDelta": [
+          16,
+          1,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          246.6246,
+          246.646,
+          246.7262,
+          232.5509
+        ]
+      }
+    },
+    {
+      "sample": 1,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 250.354,
+        "meanRequestMs": 10.418189583333334,
+        "allocatedBytesPerRequest": 905514,
+        "processAllocatedBytes": 86931168,
+        "processCpuMs": 667.591,
+        "gcDelta": [
+          18,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          250.0884,
+          250.0531,
+          249.9694,
+          250.0353
+        ]
+      }
+    },
+    {
+      "sample": 1,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 309.7715,
+        "meanRequestMs": 12.822151041666666,
+        "allocatedBytesPerRequest": 3271121,
+        "processAllocatedBytes": 314032856,
+        "processCpuMs": 1212.978,
+        "gcDelta": [
+          17,
+          3,
+          3
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          309.5731,
+          308.3513,
+          307.6326,
+          305.3695
+        ]
+      }
+    },
+    {
+      "sample": 2,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 307.4495,
+        "meanRequestMs": 12.694430208333332,
+        "allocatedBytesPerRequest": 3354557,
+        "processAllocatedBytes": 322044336,
+        "processCpuMs": 1218.905,
+        "gcDelta": [
+          17,
+          4,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          306.9831,
+          307.2505,
+          298.8092,
+          305.6225
+        ]
+      }
+    },
+    {
+      "sample": 2,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 242.4369,
+        "meanRequestMs": 10.094297916666667,
+        "allocatedBytesPerRequest": 903672,
+        "processAllocatedBytes": 86752992,
+        "processCpuMs": 635.816,
+        "gcDelta": [
+          14,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          242.2417,
+          242.3131,
+          242.2511,
+          242.2467
+        ]
+      }
+    },
+    {
+      "sample": 3,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 239.5456,
+        "meanRequestMs": 9.953440625,
+        "allocatedBytesPerRequest": 903721,
+        "processAllocatedBytes": 86757656,
+        "processCpuMs": 626.531,
+        "gcDelta": [
+          14,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          239.3412,
+          239.3049,
+          237.5363,
+          239.3479
+        ]
+      }
+    },
+    {
+      "sample": 3,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 328.4635,
+        "meanRequestMs": 13.092494791666667,
+        "allocatedBytesPerRequest": 3619650,
+        "processAllocatedBytes": 347493328,
+        "processCpuMs": 1218.223,
+        "gcDelta": [
+          17,
+          5,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          308.7261,
+          328.2948,
+          304.903,
+          314.9556
+        ]
+      }
+    },
+    {
+      "sample": 4,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 338.3943,
+        "meanRequestMs": 13.705028124999998,
+        "allocatedBytesPerRequest": 3896999,
+        "processAllocatedBytes": 374118760,
+        "processCpuMs": 1248.165,
+        "gcDelta": [
+          19,
+          4,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          328.325,
+          323.3,
+          325.8109,
+          338.2468
+        ]
+      }
+    },
+    {
+      "sample": 4,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 252.9796,
+        "meanRequestMs": 10.311901041666667,
+        "allocatedBytesPerRequest": 903677,
+        "processAllocatedBytes": 86753408,
+        "processCpuMs": 643.632,
+        "gcDelta": [
+          17,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          250.6119,
+          238.0583,
+          248.4862,
+          252.7861
+        ]
+      }
+    },
+    {
+      "sample": 5,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 254.485,
+        "meanRequestMs": 10.526860416666667,
+        "allocatedBytesPerRequest": 903573,
+        "processAllocatedBytes": 86743400,
+        "processCpuMs": 677.803,
+        "gcDelta": [
+          15,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          253.001,
+          254.3213,
+          250.1902,
+          253.0661
+        ]
+      }
+    },
+    {
+      "sample": 5,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 312.7659,
+        "meanRequestMs": 12.832721874999999,
+        "allocatedBytesPerRequest": 3369566,
+        "processAllocatedBytes": 323485088,
+        "processCpuMs": 1218.105,
+        "gcDelta": [
+          16,
+          4,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          312.5622,
+          308.8661,
+          298.5025,
+          312.0105
+        ]
+      }
+    },
+    {
+      "sample": 6,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 310.8496,
+        "meanRequestMs": 12.811665625000002,
+        "allocatedBytesPerRequest": 3184878,
+        "processAllocatedBytes": 305753504,
+        "processCpuMs": 1228.042,
+        "gcDelta": [
+          16,
+          3,
+          3
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          309.1248,
+          310.6839,
+          306.4665,
+          303.6447
+        ]
+      }
+    },
+    {
+      "sample": 6,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 249.9007,
+        "meanRequestMs": 10.298709375,
+        "allocatedBytesPerRequest": 903657,
+        "processAllocatedBytes": 86751512,
+        "processCpuMs": 640.861,
+        "gcDelta": [
+          16,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          245.5758,
+          247.7327,
+          249.7793,
+          245.5883
+        ]
+      }
+    },
+    {
+      "sample": 7,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 245.2846,
+        "meanRequestMs": 10.117063541666667,
+        "allocatedBytesPerRequest": 903488,
+        "processAllocatedBytes": 86735272,
+        "processCpuMs": 654.999,
+        "gcDelta": [
+          15,
+          1,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          241.0576,
+          241.0482,
+          245.1751,
+          243.9572
+        ]
+      }
+    },
+    {
+      "sample": 7,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 316.2146,
+        "meanRequestMs": 13.10220625,
+        "allocatedBytesPerRequest": 3625681,
+        "processAllocatedBytes": 348072256,
+        "processCpuMs": 1236.99,
+        "gcDelta": [
+          19,
+          4,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          311.6547,
+          315.8634,
+          316.0958,
+          314.1979
+        ]
+      }
+    },
+    {
+      "sample": 8,
+      "result": {
+        "workers": 4,
+        "enabled": false,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 320.9911,
+        "meanRequestMs": 12.889378124999999,
+        "allocatedBytesPerRequest": 3791365,
+        "processAllocatedBytes": 363977952,
+        "processCpuMs": 1234.69,
+        "gcDelta": [
+          18,
+          4,
+          4
+        ],
+        "imageHits": 0,
+        "workerElapsedMs": [
+          302.5326,
+          309.8391,
+          320.8769,
+          304.1317
+        ]
+      }
+    },
+    {
+      "sample": 8,
+      "result": {
+        "workers": 4,
+        "enabled": true,
+        "iterationsPerWorker": 24,
+        "requests": 96,
+        "elapsedMs": 249.9697,
+        "meanRequestMs": 10.38298125,
+        "allocatedBytesPerRequest": 903824,
+        "processAllocatedBytes": 86767560,
+        "processCpuMs": 656.417,
+        "gcDelta": [
+          16,
+          0,
+          0
+        ],
+        "imageHits": 1920,
+        "workerElapsedMs": [
+          248.5019,
+          249.8468,
+          249.8391,
+          248.5784
+        ]
+      }
+    }
+  ]
+}

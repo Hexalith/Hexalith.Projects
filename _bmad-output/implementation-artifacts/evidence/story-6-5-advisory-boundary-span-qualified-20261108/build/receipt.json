@@ -1,0 +1,68 @@
+{
+  "compileOnly": true,
+  "executionReleased": false,
+  "releaseSha256": "8f423fbd8c7ad378171cab2a1c76fadfb5ec3ba4d973ccdc76962da0b293783c",
+  "commands": [
+    {
+      "name": "restore",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-advisory-boundary-span-prep-20261108/differential/Differential.csproj",
+        "--configfile",
+        "/tmp/story65-advisory-boundary-span-prep-20261108/differential/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-build-servers",
+        "-flp:LogFile=/tmp/story65-advisory-boundary-span-build-20261108/restore.log;Verbosity=minimal"
+      ],
+      "childSpawned": true,
+      "ownedChildExited": true,
+      "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+      "unrecognizedStdoutStderrRetained": false,
+      "childPid": 2179189,
+      "childStartTicks": "16007281",
+      "childGroup": 2179188,
+      "pidfdPinsExactOwnedChild": true,
+      "exitCode": 0,
+      "wallSeconds": 0.6035764169937465,
+      "peakObservedRssBytes": 165912576,
+      "guardReason": null,
+      "supervisorErrorType": null,
+      "cpuHardLimitSeconds": 121,
+      "rssGuardBytes": 2147483648,
+      "fixedFailures": []
+    },
+    {
+      "name": "build",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-advisory-boundary-span-prep-20261108/differential/Differential.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-flp:LogFile=/tmp/story65-advisory-boundary-span-build-20261108/build.log;Verbosity=minimal"
+      ],
+      "childSpawned": true,
+      "ownedChildExited": true,
+      "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+      "unrecognizedStdoutStderrRetained": false,
+      "childPid": 2179217,
+      "childStartTicks": "16007363",
+      "childGroup": 2179188,
+      "pidfdPinsExactOwnedChild": true,
+      "exitCode": 0,
+      "wallSeconds": 1.9075148000265472,
+      "peakObservedRssBytes": 181141504,
+      "guardReason": null,
+      "supervisorErrorType": null,
+      "cpuHardLimitSeconds": 121,
+      "rssGuardBytes": 2147483648,
+      "fixedFailures": []
+    }
+  ],
+  "passed": true
+}

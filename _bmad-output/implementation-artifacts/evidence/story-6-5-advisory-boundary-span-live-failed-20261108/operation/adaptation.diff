@@ -1,0 +1,467 @@
+--- reviewed-terminal/advisory-compiler-observer.targets
++++ boundary-span/advisory-compiler-observer.targets
+@@ -9,7 +9,7 @@
+       <_TerminalWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+       <_TerminalWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+       <_TerminalActualOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" />
+-      <_TerminalPrivateInputs Include="@(Compile)" Condition="$([System.String]::Copy('%(Compile.FullPath)').StartsWith('/tmp/story65-advisory-terminal-prep-20261108/', System.StringComparison.Ordinal))" />
++      <_TerminalPrivateInputs Include="@(Compile)" Condition="$([System.String]::Copy('%(Compile.FullPath)').StartsWith('/tmp/story65-advisory-boundary-span-prep-20261108/', System.StringComparison.Ordinal))" />
+     </ItemGroup>
+     <Error Condition="'$(Story65TerminalPrivate)' == 'true' and ('@(_TerminalActualOriginal)' != '' or '@(_TerminalPrivateInputs->Count())' != '7')" Text="Private advisory actual source set refused." />
+     <Error Condition="'$(Story65TerminalPrivate)' != 'true' and ('@(_TerminalActualOriginal->Count())' != '1' or '@(_TerminalPrivateInputs)' != '')" Text="Ordinary advisory actual source set refused." />
+--- reviewed-terminal/advisory-terminal.targets
++++ boundary-span/advisory-terminal.targets
+@@ -2,20 +2,20 @@
+   <Import Project="$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)" Condition="'$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)')" />
+   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+     <Story65TerminalOriginalAfterSdk>$(AfterMicrosoftNETSdkTargets)</Story65TerminalOriginalAfterSdk>
+-    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-advisory-terminal-live-prep-20261108/advisory-compiler-observer.targets</AfterMicrosoftNETSdkTargets>
++    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-advisory-boundary-span-live-prep-20261108/advisory-compiler-observer.targets</AfterMicrosoftNETSdkTargets>
+   </PropertyGroup>
+   <Target Name="Story65AdvisoryTerminalSource" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server' and '$(Story65TerminalPrivate)' == 'true'">
+     <ItemGroup><_TerminalOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" /></ItemGroup>
+     <Error Condition="'@(_TerminalOriginal->Count())' != '1'" Text="Exactly one ordinary advisory executor compile item is required." />
+     <ItemGroup>
+       <Compile Remove="@(_TerminalOriginal)" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/ProjectAdvisoryQueryExecutor.private.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/CaptureCounters.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryWaveBootstrap.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTerminalCapture.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryBoundary.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTermination.cs" />
+-      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryExceptionKind.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/ProjectAdvisoryQueryExecutor.private.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/CaptureCounters.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/AdvisoryWaveBootstrap.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/AdvisoryTerminalCapture.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/AdvisoryBoundary.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/AdvisoryTermination.cs" />
++      <Compile Include="/tmp/story65-advisory-boundary-span-prep-20261108/AdvisoryExceptionKind.cs" />
+     </ItemGroup>
+   </Target>
+ </Project>
+--- reviewed-terminal/affected-inventory.json
++++ boundary-span/affected-inventory.json
+@@ -1784,28 +1784,28 @@
+       "rows": [
+         {
+           "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+-          "sha256": "40ea15cab636e3f95b7e3dadc2d76c8edd4dd05ee4a2a3831bc9dba2c4321f35",
++          "sha256": "f79cfa989ebbf50ae2656101875ab3ba9852e020596db55cc78396c7b1a285f1",
+           "kind": "full",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.pdb",
+-          "sha256": "230d05e18e1bc7aac8fffb8eeb9e5f9468df75ce3b7db27a273d4ac253733a97",
++          "sha256": "b1ec98b8d4235349be38121720c02684ba25a702e6f17431367741e984aa9151",
+           "kind": "pdb",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+-          "sha256": "40ea15cab636e3f95b7e3dadc2d76c8edd4dd05ee4a2a3831bc9dba2c4321f35",
++          "sha256": "f79cfa989ebbf50ae2656101875ab3ba9852e020596db55cc78396c7b1a285f1",
+           "kind": "full",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.pdb",
+-          "sha256": "230d05e18e1bc7aac8fffb8eeb9e5f9468df75ce3b7db27a273d4ac253733a97",
++          "sha256": "b1ec98b8d4235349be38121720c02684ba25a702e6f17431367741e984aa9151",
+           "kind": "pdb",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+@@ -2251,28 +2251,28 @@
+       "rows": [
+         {
+           "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-          "sha256": "9914975748bf2bb8d095f387e432ea1b870f887866146c252b541d48a6b38e91",
++          "sha256": "e3f46988170af9c1ed02ecb2e83b91a2f4d6fc6efeb560b954636ae09959bbf5",
+           "kind": "pdb",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-          "sha256": "7aa66a6fca85c214710474d3973e712c38a76d4d82fc5e7b95f8053e14568387",
++          "sha256": "114e49fdac043629fc0c58f66f780a50e5257c816807da7de329ba60a7c77ab5",
+           "kind": "full",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.pdb",
+-          "sha256": "9914975748bf2bb8d095f387e432ea1b870f887866146c252b541d48a6b38e91",
++          "sha256": "e3f46988170af9c1ed02ecb2e83b91a2f4d6fc6efeb560b954636ae09959bbf5",
+           "kind": "pdb",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+         },
+         {
+           "path": "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll",
+-          "sha256": "7aa66a6fca85c214710474d3973e712c38a76d4d82fc5e7b95f8053e14568387",
++          "sha256": "114e49fdac043629fc0c58f66f780a50e5257c816807da7de329ba60a7c77ab5",
+           "kind": "full",
+           "privateMarker": false,
+           "project": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+@@ -2580,7 +2580,7 @@
+     "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.Memories.Contracts.dll": "4dcd60f846e117f649624c27677a4f4506117560f568111e248a145cec99503c",
+     "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.Tenants.Client.dll": "c45a200b20dd550647329d1026b7aaec912458ce42760b668658fc5eeeeedbbc",
+     "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.Tenants.Contracts.dll": "0c90e4733290cd98b9da467ba4659813bc277e9dbb8bb8c9cbb6cfeb902b9e8d",
+-    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Builds.Tooling.dll": "cf5a90a16a513f5302eb28909d9993f3ebcb0be71f4b04f1631b691894e1309e",
++    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Builds.Tooling.dll": "3c3d57765d1d6ac2af6e64092b8bd845aad367a6196214a69e01104b296fb26d",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Commons.Http.dll": "de8c8f57b49a5164e42a91e683b5bcef70bdb55a0c58f090530ffa9c629084d5",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Commons.Serialization.dll": "aa29daf70c6085295f2d1e4e5a25ab5d61527791b565006541697a4729655d9b",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.dll": "5be7b70f77d0cf922e03c837bf98ebbe0f1f3c86eae689dbb4c448924b7eb410",
+@@ -2591,8 +2591,8 @@
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Client.dll": "d37a8bc306f610f097fc6eb2bc74187a084951be80ac0062b42b65b10861ed28",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll": "f1cf82fe57d5ae0037772d3ccea77766a141cd49ec66c2079c3c8b046c8089df",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll": "c620527d977c8d1120603d1217e79faa2c909674fc36d8e1ee959ab1ee607ab5",
+-    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll": "7aa66a6fca85c214710474d3973e712c38a76d4d82fc5e7b95f8053e14568387",
+-    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.dll": "40ea15cab636e3f95b7e3dadc2d76c8edd4dd05ee4a2a3831bc9dba2c4321f35",
++    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll": "114e49fdac043629fc0c58f66f780a50e5257c816807da7de329ba60a7c77ab5",
++    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.dll": "f79cfa989ebbf50ae2656101875ab3ba9852e020596db55cc78396c7b1a285f1",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll": "873dbb74ee259d91c99ea2804e5801134c993abb4ef7806e79f242e5d23faf96",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.EventStore.Testing.dll": "423751d76c7b272b3a54276ea2dd76913dc9f9d8f9a506a24701380684e47a48",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Folders.Client.dll": "78b108bdd3942b1f5cebef7039d0d4b82db8fa383fd7c987da893ceee2662a56",
+@@ -2605,12 +2605,12 @@
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.McpCli.Abstractions.dll": "c6c832db4f12d6859458968802faaae20b4a2025b525caaa2f098d8a9042fbc5",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Memories.Client.Rest.dll": "8139c849ae1f66714d44682aae457d359dce14b64c62e316bf7cf6ba364dbca4",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Memories.Contracts.dll": "4dcd60f846e117f649624c27677a4f4506117560f568111e248a145cec99503c",
+-    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.AppHost.dll": "d74f3b4334d1645f61e85d9fc5e5882e7e7d7c113e93af2e0745308c6f9efe60",
++    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.AppHost.dll": "8e8904e37344781925d8919ba97e85f4b231f59d6309db0a46d35672402983b5",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Aspire.dll": "343bfc009a7e74cf84fbe768911b726fbf0a569556712a9d27dd949399961e53",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.dll": "0a2a011803fa48825547b1a6767dee91ed57c6d0ff8a0b6e17a52e8ff472eacd",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.E2E.Fixtures.dll": "b250c72037b750742f868e156f873255fb8082836964b0b1fd33975caabdb385",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Infrastructure.dll": "7890c44cb53020d649140d4f63f1d948c23752ee50e9f02a7ba8c858d02c2502",
+-    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll": "7c37a142bf6f5c9772fa90b6525e8441dc1b96a99de295dad8c82dfd52956879",
++    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll": "bf2830905dc48deebcf7fed03f9270ef64b8dd3a66f4d7e84c668402966a1b52",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll": "c3d0c0e9a0805c59bfe48552545869823f254bd4e04ed2ac55d173ef156d3ae2",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.ServiceDefaults.dll": "d1658309994d8c927ff4afcf0c2256b0b4ec5aac75c217a44b7e9c5fbc8d8af8",
+     "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Testing.dll": "ebebbe64b1eacdabb19385d437b24997e2e5f98bcea3721f50c64edbcd787412",
+--- /dev/null
++++ boundary-span/boundary-stage-map.json
+@@ -0,0 +1,74 @@
++{
++  "filePreparationOnly": true,
++  "helperUnchanged": true,
++  "maximumRowsPerAdmittedCapture": 8,
++  "allAllocationModes": "None",
++  "unchangedRows": {
++    "0": "Whole",
++    "4": "terminal enum/boolean encoding; encoding time only"
++  },
++  "spans": [
++    {
++      "stageId": 1,
++      "stage": "ComponentFile",
++      "startBoundaryId": 1,
++      "startBoundary": "InitialScope",
++      "normalNextBoundary": "EnvelopeValidation"
++    },
++    {
++      "stageId": 2,
++      "stage": "ComponentPolicy",
++      "startBoundaryId": 2,
++      "startBoundary": "InitialInputs",
++      "normalNextBoundary": "Index or FinalInputs"
++    },
++    {
++      "stageId": 3,
++      "stage": "AclFile",
++      "startBoundaryId": 4,
++      "startBoundary": "Discovery",
++      "normalNextBoundary": "FinalInputs"
++    },
++    {
++      "stageId": 5,
++      "stage": "AuthenticationSerialization",
++      "startBoundaryId": 5,
++      "startBoundary": "FinalInputs",
++      "normalNextBoundary": "FinalCandidates"
++    },
++    {
++      "stageId": 6,
++      "stage": "ActorBoundary",
++      "startBoundaryId": 6,
++      "startBoundary": "FinalCandidates",
++      "normalNextBoundary": "FinalScope"
++    },
++    {
++      "stageId": 7,
++      "stage": "ResultTail",
++      "startBoundaryId": 3,
++      "startBoundary": "Index",
++      "normalNextBoundary": "Discovery"
++    }
++  ],
++  "everyValidMarkerStopsPrior": true,
++  "firstCatchAndCloseStopPrior": true,
++  "omittedBoundaryIds": [
++    0,
++    7,
++    8,
++    9,
++    10,
++    11
++  ],
++  "repeatedSelectedBoundary": "retain first interval; disable all later spans; preserve terminal state",
++  "countsOnlyExistingStage4": true,
++  "doesNotMeasure": [
++    "await-only duration",
++    "lambda entry",
++    "candidate activity/counts",
++    "remote cause",
++    "deadline cause",
++    "exact omitted-gap work"
++  ]
++}
+--- reviewed-terminal/commands.json
++++ boundary-span/commands.json
+@@ -6,7 +6,7 @@
+   "fivePlans": {
+     "private": [
+       "/usr/bin/python3",
+-      "/tmp/story65-advisory-terminal-live-prep-20261108/build_restore.py",
++      "/tmp/story65-advisory-boundary-span-live-prep-20261108/build_restore.py",
+       "--phase",
+       "private",
+       "--execute",
+@@ -15,21 +15,21 @@
+     ],
+     "native139": [
+       "/usr/bin/python3",
+-      "/tmp/story65-advisory-terminal-live-prep-20261108/native_qualification.py",
++      "/tmp/story65-advisory-boundary-span-live-prep-20261108/native_qualification.py",
+       "--execute",
+       "--pins-sha256",
+       "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+     ],
+     "managed": [
+       "/usr/bin/python3",
+-      "/tmp/story65-advisory-terminal-live-prep-20261108/supervise_managed.py",
++      "/tmp/story65-advisory-boundary-span-live-prep-20261108/supervise_managed.py",
+       "--execute",
+       "--pins-sha256",
+       "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+     ],
+     "ordinary": [
+       "/usr/bin/python3",
+-      "/tmp/story65-advisory-terminal-live-prep-20261108/build_restore.py",
++      "/tmp/story65-advisory-boundary-span-live-prep-20261108/build_restore.py",
+       "--phase",
+       "ordinary",
+       "--execute",
+@@ -38,7 +38,7 @@
+     ],
+     "pipeline": [
+       "/usr/bin/python3",
+-      "/tmp/story65-advisory-terminal-live-prep-20261108/run_and_restore.py",
++      "/tmp/story65-advisory-boundary-span-live-prep-20261108/run_and_restore.py",
+       "--execute",
+       "--pins-sha256",
+       "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+--- reviewed-terminal/operational-plan.json
++++ boundary-span/operational-plan.json
+@@ -2,11 +2,10 @@
+   "filePreparationOnly": true,
+   "executionReleased": false,
+   "sourceQualificationReady": true,
+-  "actualQualificationReceipt": "/tmp/story65-advisory-terminal-build-20261108/qualified-handoff.json",
+-  "qualificationInProgressNeverClaimedPassed": false,
+-  "oldReviewedSource": "/tmp/story65-advisory-wave-ops-prep-20261107",
+-  "sourcePreparation": "/tmp/story65-advisory-terminal-prep-20261108",
+-  "sourcePreparationSha256": "138fdb2bf6ec823c4144ab8ce89ad2001478708eedbc238385854ea616824d5e",
++  "actualQualificationReceipt": "/tmp/story65-advisory-boundary-span-build-20261108/qualified-handoff.json",
++  "oldReviewedSource": "/tmp/story65-advisory-terminal-live-prep-20261108",
++  "sourcePreparation": "/tmp/story65-advisory-boundary-span-prep-20261108",
++  "sourcePreparationSha256": "b7662b6597a06c630d8937bd092fc527fb33fa809acfbd00ad5f0a249f202ad2",
+   "onlyPrivateProducer": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+   "onlyReplacedCompile": "Queries/ProjectAdvisoryQueryExecutor.cs",
+   "compileAdditions": [
+@@ -114,6 +113,15 @@
+   "physicalWriterProof": "optional metadata-only live ownedProjects writableFD==fixedprojects.jsonl dev/inode; absent observation means physical attribution unproven, not helper/role absence",
+   "closureAndRestore": "original managed normal cleanup; all owned process/group absence gates restoration; recorder metadata incompleteness alone does not block restoration; preserve files until Root guarded archive; mandatory forcedordinary after any private attempt",
+   "noCurrentEvidenceClaim": true,
+-  "actualQualificationReceiptSha256": "145064ef35e86fb7581ff5eada0ba61f45b148363a4fee0e543abdfcd4b120af",
+-  "reviewedDisabledPreparationSha256": "c1aee3d2c763336e5d0966556c3f0334a116b60a0d13514beb16969e7c353031"
++  "actualQualificationReceiptSha256": "2b0a08f800d415dd9a280b0b68feeaedecc5084b7eba740af4a84b96643c4ba9",
++  "reviewedDisabledPreparationSha256": "37dbcd22e1f4acc261abb78c34ffceb8add4904240ca8b28c8a3c7b452b31d93",
++  "adapterCandidateSha256": "591a2363582336bebd27e1e50515aea58e937147c56f98a19a2bb91b8d2799a0",
++  "plannedBusinessComparisons": 196,
++  "plannedFlowCanaries": 3,
++  "plannedProtocolCases": 14,
++  "plannedProcesses": 23,
++  "multiStageRows": true,
++  "expectedFrozenInputs": 766,
++  "actualNewQualificationPassed": true,
++  "qualificationWasNotClaimedBeforeAcceptedHandoff": true
+ }
+--- reviewed-terminal/ops_common.py
++++ boundary-span/ops_common.py
+@@ -1,9 +1,9 @@
+ from pathlib import Path
+ import hashlib,json,os,re,stat
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+-PREP=Path('/tmp/story65-advisory-terminal-live-prep-20261108')
++PREP=Path('/tmp/story65-advisory-boundary-span-live-prep-20261108')
+ PRIVATE=Path('/tmp/story65-capture-counter-private-20261107')
+-SOURCE_PREP=Path('/tmp/story65-advisory-terminal-prep-20261108')
++SOURCE_PREP=Path('/tmp/story65-advisory-boundary-span-prep-20261108')
+ ASSEMBLY='Hexalith.Projects.Server';PRODUCER=ROOT/'src'/ASSEMBLY
+ SDK='Hexalith.EventStore.ServiceDefaults';SDK_PRODUCER=ROOT/'references/Hexalith.EventStore/src'/SDK
+ SDK_SHA='873dbb74ee259d91c99ea2804e5801134c993abb4ef7806e79f242e5d23faf96'
+@@ -31,11 +31,13 @@
+ 
+ def sources():
+  binding=json.loads((PREP/'source-qualification-binding.json').read_text())
++ assert binding['sourceQualificationReady']is True and isinstance(binding.get('qualificationPath'),str)and re.fullmatch(r'[0-9a-f]{64}',binding.get('qualificationSha256')or''),'Actual new qualification handoff is required'
+  assert sha(binding['qualificationPath'])==binding['qualificationSha256']
+  q=json.loads(Path(binding['qualificationPath']).read_text())
+  assert q['scratchSourceQualificationPassed']is True
+  assert all(q[k]==v for k,v in binding['requiredCounts'].items())
+- assert all(q[k]is True for k in ['all733FrozenInputsCurrent','source65AndApp147Current','allGroupsAbsentIncludingZombies','privateDirectorySameAndEmpty'])
++ assert all(q[k]is True for k in ['allFrozenInputsCurrent','source65AndApp147Current','allGroupsAbsentIncludingZombies','privateDirectorySameAndEmpty'])
++ assert type(q['scalarRows'])is int and q['scalarRows']>0
+  for path,digest in q['bindingsSha256'].items():assert sha(path)==digest # Closed receipt files, not their mutable historical workspace binary maps.
+  source=json.loads(Path(binding['currentSourceControls']).read_text())['sourceFilesSha256'];assert len(source)==65
+  for name,digest in source.items():
+--- reviewed-terminal/pin_live.py
++++ boundary-span/pin_live.py
+@@ -2,26 +2,31 @@
+ import ast,difflib,hashlib,json,sys,xml.etree.ElementTree as ET
+ sys.dont_write_bytecode=True
+ from ops_common import ROOT,PREP,SOURCE_PREP,sha,sources
+-old=Path('/tmp/story65-advisory-wave-ops-prep-20261107')
+-files=['ops_common.py','build_restore.py','native_qualification.py','launch_managed.py','supervise_managed.py','run_and_restore.py']
++old=Path('/tmp/story65-advisory-terminal-live-prep-20261108')
+ diff=[]
+-for name in files:
+- diff+=list(difflib.unified_diff((old/name).read_text().splitlines(keepends=True),(PREP/name).read_text().splitlines(keepends=True),fromfile='qualified-old/'+name,tofile='current/'+name))
+-diff+=list(difflib.unified_diff((old/'advisory-wave.targets').read_text().splitlines(keepends=True),(PREP/'advisory-terminal.targets').read_text().splitlines(keepends=True),fromfile='qualified-old/advisory-wave.targets',tofile='current/advisory-terminal.targets'))
+-for name in ['advisory-compiler-observer.targets','validate_closed_terminal.py','writer_fd_proof.py']:
+- diff+=list(difflib.unified_diff([],(PREP/name).read_text().splitlines(keepends=True),fromfile='/dev/null',tofile='current/'+name))
++for current in sorted(PREP.iterdir()):
++ if not current.is_file()or current.name in ['operational-pins.json','adaptation.diff']:continue
++ previous=old/current.name
++ before=previous.read_text().splitlines(keepends=True)if previous.is_file()else[]
++ diff+=list(difflib.unified_diff(before,current.read_text().splitlines(keepends=True),fromfile='reviewed-terminal/'+current.name if previous.is_file()else'/dev/null',tofile='boundary-span/'+current.name))
+ (PREP/'adaptation.diff').write_text(''.join(diff))
+ for p in PREP.glob('*.py'):ast.parse(p.read_text())
+ for p in PREP.glob('*.targets'):ET.parse(p)
+-source=sources();binding=json.loads((PREP/'source-qualification-binding.json').read_text());q=json.loads(Path(binding['qualificationPath']).read_text())
++binding=json.loads((PREP/'source-qualification-binding.json').read_text());qualified=binding['sourceQualificationReady']is True
++if qualified:source=sources();q=json.loads(Path(binding['qualificationPath']).read_text())
++else:
++ assert binding['qualificationPath']is None and binding['qualificationSha256']is None
++ q=None
+ inv=json.loads((PREP/'affected-inventory.json').read_text());external={}
+ def add(p,h=None):
+  p=Path(p);assert p.suffix.lower()not in ['.dll','.pdb'],'Mutable binary pins are scoped inside baseline/namedguards only'
+  actual=sha(p)
+  if h is not None:assert actual==h
+  external[str(p)]=actual
+-add(binding['qualificationPath'],binding['qualificationSha256'])
+-for p,h in q['bindingsSha256'].items():add(p,h)
++if qualified:
++ add(binding['qualificationPath'],binding['qualificationSha256'])
++ for p,h in q['bindingsSha256'].items():add(p,h)
++add(SOURCE_PREP/'preparation-receipt.json')
+ prep=json.loads((SOURCE_PREP/'preparation-receipt.json').read_text())
+ for p,h in prep['filesSha256'].items():add(SOURCE_PREP/p,h)
+ controls=json.loads(Path(binding['currentSourceControls']).read_text())['sourceFilesSha256']
+@@ -44,7 +49,7 @@
+ for mapping in [inv['core8Sha256'],inv['app147Sha256'],inv['additional2Sha256']]:
+  for p,h in mapping.items():assert sha(ROOT/p if not Path(p).is_absolute()else p)==h
+ local={str(p.relative_to(PREP)):sha(p)for p in sorted(PREP.iterdir())if p.is_file()and p.name!='operational-pins.json'}
+-pins={'executionReleased':False,'sourceQualificationReady':True,'qualificationSha256':binding['qualificationSha256'],'source65':True,'ordinaryNative1076Retained':True,'actualPrivateNative139NotAdditionalCases':True,'files':local,'externalFiles':external,'mutableBinaryExternalPins':False,'baselineInventoryFrozenDoNotRegenerateAfterPrivateBuild':True,'tenPrivatePrimaryBuilds':True,'mandatoryOrdinaryElevenMinimumPlusDynamicUnion':True,'noNewRuntimeEnvironmentConfigLoggerPrivacyOrDeadlineChanges':True,'onlyExistingAspireNoBuildSubstitution':True,'physicalWriterProofOnlyOneObservedPoint':True,'noFeatureAcceptanceClaim':True,'pythonAstAndTwoXmlParseOnly':True,'noApplicationBuildHostWindowOrSinkAccessDuringPreparation':True}
++pins={'executionReleased':False,'sourceQualificationReady':qualified,'qualificationSha256':binding['qualificationSha256'],'source65':True,'ordinaryNative1076Retained':True,'actualPrivateNative139NotAdditionalCases':True,'files':local,'externalFiles':external,'mutableBinaryExternalPins':False,'baselineInventoryFrozenDoNotRegenerateAfterPrivateBuild':True,'tenPrivatePrimaryBuilds':True,'mandatoryOrdinaryElevenMinimumPlusDynamicUnion':True,'noNewRuntimeEnvironmentConfigLoggerPrivacyOrDeadlineChanges':True,'onlyExistingAspireNoBuildSubstitution':True,'physicalWriterProofOnlyOneObservedPoint':True,'noFeatureAcceptanceClaim':True,'pythonAstAndTwoXmlParseOnly':True,'plannedBusinessComparisons':196,'plannedFlowCanaries':3,'plannedProtocolCases':14,'actualNewQualificationPassed':qualified,'noApplicationBuildHostWindowOrSinkAccessDuringPreparation':True}
+ (PREP/'operational-pins.json').write_text(json.dumps(pins,indent=2)+'\n')
+ assert all(sha(PREP/p)==h for p,h in local.items())and all(sha(p)==h for p,h in external.items())
+ print(json.dumps({'pinsSha256':sha(PREP/'operational-pins.json'),'local':len(local),'external':len(external),'diffSha256':sha(PREP/'adaptation.diff'),'allCurrent':True,'executionReleased':False}))
+--- reviewed-terminal/private-directory-proof.json
++++ boundary-span/private-directory-proof.json
+@@ -1,12 +1,11 @@
+ {
+-  "preparationOnly": true,
+-  "privateDirectoryPathSha256": "47ac89a11b21f5cd8de6b51306304183a30c915f4708b63522e38a10cae6d309",
+-  "uid": 1000,
+-  "gid": 1000,
++  "observedUtc": "2026-11-08T07:32:13.701190+00:00",
+   "device": 2096,
+   "inode": 8752986,
++  "uid": 1000,
+   "mode": "0700",
+-  "directoryIsSymlink": false,
++  "samePinnedIdentity": true,
+   "empty": true,
+-  "notManagedRuntimeOrAuthorityInput": true
++  "metadataOnlyAfterAcceptedScratchClosure": true,
++  "noFileContentsReadOrDirectoryMutation": true
+ }
+--- reviewed-terminal/run_and_restore.py
++++ boundary-span/run_and_restore.py
+@@ -7,7 +7,7 @@
+ commands['native139']=[sys.executable,str(PREP/'native_qualification.py'),'--execute','--pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED']
+ if not args.execute:print(json.dumps({'preparationOnly':True,'commands':commands,'finally':'Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories.'},indent=2));raise SystemExit()
+ operational_pins(args.pins_sha256);sources();private_directory(require_empty=True)
+-EVIDENCE=Path('/tmp/story65-advisory-terminal-diagnostic-20261108');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native139Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
++EVIDENCE=Path('/tmp/story65-advisory-boundary-span-diagnostic-20261108');status={'diagnosticOnly':True,'featureAcceptance':False,'privateAttempted':False,'native139Attempted':False,'managedAttempted':False,'ordinaryRestoreAttempted':False}
+ def qualify_cleanup():
+  safe=True
+  if status['native139Attempted']:
+--- reviewed-terminal/source-qualification-binding.json
++++ boundary-span/source-qualification-binding.json
+@@ -1,17 +1,21 @@
+ {
+-  "qualificationPath": "/tmp/story65-advisory-terminal-build-20261108/qualified-handoff.json",
+-  "qualificationSha256": "145064ef35e86fb7581ff5eada0ba61f45b148363a4fee0e543abdfcd4b120af",
++  "qualificationPath": "/tmp/story65-advisory-boundary-span-build-20261108/qualified-handoff.json",
++  "qualificationSha256": "2b0a08f800d415dd9a280b0b68feeaedecc5084b7eba740af4a84b96643c4ba9",
+   "sourceQualificationReady": true,
+   "requiredCounts": {
+     "businessComparisons": 196,
+     "freshFlowCanaries": 3,
+-    "stateProtocolCases": 4,
++    "stateProtocolCases": 14,
+     "controlledProcesses": 23,
+-    "scalarRows": 167315
++    "frozenInputCount": 766,
++    "scalarRows": 167522
+   },
+-  "sourcePreparation": "/tmp/story65-advisory-terminal-prep-20261108",
++  "sourcePreparation": "/tmp/story65-advisory-boundary-span-prep-20261108",
+   "currentSourceControls": "/tmp/story65-canonical-hash-native-20261108/source-controls.json",
+   "currentSourceControlsSha256": "ac281118fb9a0e9356e21c48254478da670229802926c6ab313b0e2127a94ff6",
+-  "sourceSpecSha256": "6a27f18e29022e1d88a54ed72a44de3fadd6e1c246f03c8685cc8236bd705522",
+-  "qualifiedInputsAreHistoricalBeforeOwnPrivateBuild": "closed733-input proof not recursively compared against current own overwritten Projects.Server or app147 outputs"
++  "sourceSpecSha256": "8a1440ccc9d916856e1230d84590a65ab14c5429387500a48715aa96d8d9f93d",
++  "qualifiedInputsAreHistoricalBeforeOwnPrivateBuild": "Accepted actual closed scratch qualification; its receipt and immutable bindings remain pinned without recursively treating own overwritten ordinary binaries as immutable current inputs.",
++  "expectedFrozenInputCount": 766,
++  "qualificationResultsNotYetAvailable": false,
++  "adapterCandidateSha256": "591a2363582336bebd27e1e50515aea58e937147c56f98a19a2bb91b8d2799a0"
+ }
+--- reviewed-terminal/supervise_managed.py
++++ boundary-span/supervise_managed.py
+@@ -3,7 +3,7 @@
+ from ops_common import *
+ from writer_fd_proof import owned_projects_writer
+ p=argparse.ArgumentParser();p.add_argument('--execute',action='store_true');p.add_argument('--pins-sha256');args=p.parse_args()
+-EVIDENCE=Path('/tmp/story65-advisory-terminal-diagnostic-20261108')
++EVIDENCE=Path('/tmp/story65-advisory-boundary-span-diagnostic-20261108')
+ command=[sys.executable,str(PREP/'launch_managed.py'),'--operational-pins-sha256',args.pins_sha256 or'REVIEWED_PINS_REQUIRED','--browser','--timeout','900','--evidence',str(EVIDENCE/'managed')]
+ def rows():
+  path=EVIDENCE/'managed/browser-advisory-seed-readiness.jsonl';out=[]
+--- reviewed-terminal/validate_closed_terminal.py
++++ boundary-span/validate_closed_terminal.py
+@@ -43,5 +43,5 @@
+   count=module.validate_rows(raw['projects.jsonl'],closed,supervisor['runOrdinal'],supervisor['frequency'],'active',{})
+   physical=supervisor.get('physicalWriterProof',{});observed=physical.get('observed')is True
+   if observed:assert all(physical[k]==identities['projects.jsonl'][k]for k in ['device','inode'])
+-  return {'diagnosticOnly':True,'featureAcceptance':False,'complete':True,'captures':closed['admitted'],'rows':count,'closed':closed,'artifacts':identities,'physicalWriterObservedAtOnePoint':observed,'physicalAttributionUnproven':not observed,'physicalProofNotAllRowExclusivity':True,'noTimerCauseOrSerializedResultOrDownstreamInference':True}
++  return {'diagnosticOnly':True,'featureAcceptance':False,'complete':True,'captures':closed['admitted'],'rows':count,'closed':closed,'artifacts':identities,'physicalWriterObservedAtOnePoint':observed,'physicalAttributionUnproven':not observed,'physicalProofNotAllRowExclusivity':True,'noTimerCauseOrSerializedResultOrDownstreamInference':True,'maximumRowsPerCapture':8,'boundarySpanStageAliases':{'ComponentFile':'InitialScope','ComponentPolicy':'InitialInputs','AclFile':'Discovery','SettingsEnumerationSortDictionary':'TerminalEncoding','AuthenticationSerialization':'FinalInputs','ActorBoundary':'FinalCandidates','ResultTail':'Index'},'selectedMarkerIntervalsNotCallbacksOrExhaustivePartition':True}
+  finally:os.close(fd)

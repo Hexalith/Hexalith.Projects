@@ -1,0 +1,79 @@
+{
+  "failedAttemptPins": "c0901b0d49ca8493b12598cd3bed60872e57fa7e0dd8799c013cc7e9b6ed2f4c",
+  "failedLogSha256": "a9c07990f019bb9d75fbae27d84c666990397ff3e6bfc322a50dd6027950ac8a",
+  "error": "CS2021",
+  "ordinaryRootModulesUnchanged": true,
+  "sdkManagedTargets": "/home/administrator/.dotnet/sdk/10.0.403/Roslyn/Microsoft.Managed.Core.targets",
+  "sdkManagedTargetsSha256": "c25bf275c966978f5a468eecbe2a09b7192f530389e52d1ea167c4f31469e09e",
+  "sdkRuleLines": [
+    337,
+    338,
+    339,
+    342,
+    344,
+    349,
+    350
+  ],
+  "csharpTargets": "/home/administrator/.dotnet/sdk/10.0.403/Roslyn/Microsoft.CSharp.Core.targets",
+  "csharpTargetsSha256": "33a63870665f8eb019f43da5effa450f6c8000089a879bc5373061e870bd3780",
+  "cscGeneratedFilesOutputParameterLine": 127,
+  "cause": "Late hook reintroduced a nonempty generated/ output after SDK clears it for Emit=false; Csc still received the option while SDK conditional MakeDir did not run. That observed path was absent and ended in a separator.",
+  "parserMissingVersusTrailingRejectionNotSeparatelyReproduced": true,
+  "minimalFix": "Remove only the unconditional CompilerGeneratedFilesOutputPath override; do not create a directory or enable generation.",
+  "readonlyOrdinaryAndCorrectedPrivateProperties": {
+    "ordinary": {
+      "EmitCompilerGeneratedFiles": "false",
+      "CompilerGeneratedFilesOutputPath": ""
+    },
+    "corrected-private": {
+      "EmitCompilerGeneratedFiles": "false",
+      "CompilerGeneratedFilesOutputPath": ""
+    }
+  },
+  "readOnlyCommands": [
+    {
+      "alias": "ordinary",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-getProperty:EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": ""
+      }
+    },
+    {
+      "alias": "corrected-private",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+        "-getProperty:EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": ""
+      }
+    }
+  ],
+  "allSource52App147Gateway34Domain98AndOrdinaryGatewayBinObjUnchanged": true,
+  "noCompilerReproBuildLoadNativeOrHost": true,
+  "failedAttemptPreservation": "failed-attempt-c090/preservation-receipt.json"
+}

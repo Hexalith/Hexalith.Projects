@@ -1,0 +1,67 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-prep-20261107/capture-counter.targets"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:40:27.200191+00:00",
+    "finishedUtc": "2026-11-07T09:40:36.795611+00:00",
+    "exitCode": 0,
+    "log": "service-defaults-force-producer.log",
+    "logSha256": "ff37a1c2a1392f75c75e2f7db2cba6fdf5ff370bf51bd95daf28e6214b8253d2"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-prep-20261107/capture-counter.targets"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:40:36.795930+00:00",
+    "finishedUtc": "2026-11-07T09:44:06.454778+00:00",
+    "exitCode": 0,
+    "log": "apphost-force-source-graph.log",
+    "logSha256": "b727ad3de829319713d61be091bb6067dd1aa55bcc24ba7b6552d2f33d132441"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-capture-counter-prep-20261107/capture-counter.targets",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T09:44:06.455230+00:00",
+    "finishedUtc": "2026-11-07T09:44:14.688493+00:00",
+    "exitCode": 0,
+    "log": "integration-force-copy-carrier.log",
+    "logSha256": "1ce13629e1fff27fa934764594de88bf741fa575bd0f6a41f780323c7fd334ae"
+  }
+]

@@ -1,0 +1,171 @@
+--- original/TechnicalHttpRouteCatalogReceiver.cs
++++ private/TechnicalHttpRouteCatalogReceiver.cs
+@@ -2,6 +2,7 @@
+ using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
+ using Hexalith.EventStore.ServiceDefaults.Diagnostics;
++using Hexalith.PrivateCaptureCounter;
+ 
+ using Microsoft.AspNetCore.Authentication;
+ using Microsoft.AspNetCore.Authentication.JwtBearer;
+@@ -104,6 +105,7 @@
+         });
+         app.Use(async (context, next) =>
+         {
++            using var counters = ReceiverPhaseBootstrap.Begin();
+             bool channel = context.Request.Headers.ContainsKey(DaprAppChannelToken.HeaderName);
+             var selectedAction = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor>();
+             bool markedSdkAction = selectedAction?.ControllerTypeInfo.Assembly.GetName().Name is "Hexalith.EventStore.Gateway" or "Hexalith.EventStore.Admin.Server"
+@@ -114,6 +116,7 @@
+             RouteCatalogNativeActorTransport? native = null; RouteCatalogDaprCallbackTransport? callback = null;
+             if (context.GetEndpoint() is RouteEndpoint nativeEndpoint)
+             {
++                using var precheckPhase = counters?.Stage(Stage.ComponentFile, AllocationMode.None);
+                 bool discovery;
+                 using (var imageBoundary = RouteCatalogImageDigestScope.Suppress())
+                 using (var images = fence.BeginPrivateImagePrecheck())
+@@ -127,13 +130,14 @@
+                     { context.Response.StatusCode = StatusCodes.Status403Forbidden; return; }
+                     discovery = native?.Kind is "config" or "health" || callback?.Kind == "subscribe";
+                 }
++                precheckPhase?.Dispose();
+                 // These real sidecar handshake/discovery protocols must work before catalog activation.
+                 if (discovery)
+                 { await next(context).ConfigureAwait(false); return; }
+             }
+             RouteCatalogTechnicalHttpEndpoint? description = null;
+             if (!fence._ready.Task.IsCompletedSuccessfully || context.GetEndpoint() is not RouteEndpoint endpoint
+-                || !fence._captured.TryGetValue(endpoint, out string? captured) || fence.RequestFingerprint(endpoint, out description) != captured
++                || !fence._captured.TryGetValue(endpoint, out string? captured) || fence.RequestFingerprint(endpoint, out description, counters) != captured
+                 || endpoint.Metadata.GetMetadata<IHttpMethodMetadata>() is { } methods && !methods.HttpMethods.Contains(context.Request.Method, StringComparer.Ordinal)
+                 || captured.StartsWith("probe:", StringComparison.Ordinal) && !HttpMethods.IsGet(context.Request.Method))
+             {
+@@ -145,10 +149,12 @@
+             }
+             if (native is not null || callback is not null)
+             {
+-                await fence.InvokeNativeAsync(context, next, endpoint, native, callback).ConfigureAwait(false); return;
++                using var invokeNativePhase = counters?.Stage(Stage.ResultTail, AllocationMode.None);
++                await fence.InvokeNativeWithTimingAsync(context, next, endpoint, native, callback, counters).ConfigureAwait(false); return;
+             }
+             if (captured.StartsWith("technical:", StringComparison.Ordinal))
+             {
++                using var authenticationPhase = counters?.Stage(Stage.ActorBoundary, AllocationMode.None);
+                 bool workload = description?.CredentialKind == "workload";
+                 string scheme = workload ? "DaprInternal" : JwtBearerDefaults.AuthenticationScheme;
+                 AuthenticateResult human = await context.AuthenticateAsync(scheme).ConfigureAwait(false);
+@@ -167,7 +173,9 @@
+                 {
+                     using (var stage = diagnostics?.Start(DispatchStageName.ReceiverAcquire))
+                     {
++                        using var acquirePhase = counters?.Stage(Stage.AclFile, AllocationMode.None);
+                         lease = await context.RequestServices.GetRequiredService<IRouteCatalogAuthority>().AcquireAsync(context.RequestAborted).ConfigureAwait(false);
++                        acquirePhase?.Dispose();
+                         stage?.Complete();
+                     }
+                     var snapshot = lease.Snapshot;
+@@ -180,7 +188,9 @@
+                     {
+                         using (var stage = diagnostics?.Start(DispatchStageName.ReceiverRelease, CancellationToken.None))
+                         {
++                            using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);
+                             await lease.DisposeAsync().ConfigureAwait(false);
++                            releasePhase?.Dispose();
+                             stage?.Complete();
+                         }
+                         lease = null;
+@@ -200,7 +210,9 @@
+                     if (lease is not null)
+                     {
+                         using var stage = diagnostics?.Start(DispatchStageName.ReceiverRelease, CancellationToken.None);
++                        using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);
+                         await lease.DisposeAsync().ConfigureAwait(false);
++                        releasePhase?.Dispose();
+                         stage?.Complete();
+                     }
+                     context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable; return;
+@@ -211,14 +223,18 @@
+                     RouteCatalogRemoteExecution.Current = new RouteCatalogBackgroundBoundary(RouteCatalogRemoteExecution.Current!,
+                         context.RequestServices.GetRequiredService<IRouteCatalogAuthority>(), lease);
+                     using var stage = diagnostics?.Start(DispatchStageName.ReceiverNext);
++                    using var nextPhase = counters?.Stage(Stage.SettingsEnumerationSortDictionary, AllocationMode.None);
+                     await next(context).ConfigureAwait(false);
++                    nextPhase?.Dispose();
+                     stage?.Complete();
+                     return;
+                 }
+                 finally
+                 {
+                     using var stage = diagnostics?.Start(DispatchStageName.ReceiverRelease, CancellationToken.None);
++                    using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);
+                     await lease!.DisposeAsync().ConfigureAwait(false);
++                    releasePhase?.Dispose();
+                     stage?.Complete();
+                 }
+             }
+@@ -313,8 +329,12 @@
+             .Distinct().OrderBy(grant => grant.Method, StringComparer.Ordinal).ThenBy(grant => grant.Verbs, StringComparer.Ordinal).ToArray();
+     }
+ 
+-    private async Task InvokeNativeAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,
++    private Task InvokeNativeAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,
+         RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback)
++        => InvokeNativeWithTimingAsync(context, next, endpoint, native, callback, null);
++
++    private async Task InvokeNativeWithTimingAsync(HttpContext context, RequestDelegate next, RouteEndpoint endpoint,
++        RouteCatalogNativeActorTransport? native, RouteCatalogDaprCallbackTransport? callback, CaptureCounters? counters)
+     {
+         DispatchDiagnostics? diagnostics = DispatchDiagnostics.Create<TechnicalHttpRouteCatalogReceiver>(context.RequestServices, context.RequestAborted);
+         RouteCatalogDispatchLease? lease = null;
+@@ -322,7 +342,9 @@
+         {
+             using (var stage = diagnostics?.Start(DispatchStageName.NativeAcquire))
+             {
++                using var acquirePhase = counters?.Stage(Stage.AclFile, AllocationMode.None);
+                 lease = await context.RequestServices.GetRequiredService<IRouteCatalogAuthority>().AcquireAsync(context.RequestAborted).ConfigureAwait(false);
++                acquirePhase?.Dispose();
+                 stage?.Complete();
+             }
+             var snapshot = lease.Snapshot;
+@@ -338,7 +360,9 @@
+             if (lease is not null)
+             {
+                 using var stage = diagnostics?.Start(DispatchStageName.NativeRelease, CancellationToken.None);
++                using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);
+                 await lease.DisposeAsync().ConfigureAwait(false);
++                releasePhase?.Dispose();
+                 stage?.Complete();
+             }
+             context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable; return;
+@@ -350,7 +374,9 @@
+             {
+                 using (var stage = diagnostics?.Start(DispatchStageName.NativeCallback))
+                 {
++                    using var nextPhase = counters?.Stage(Stage.SettingsEnumerationSortDictionary, AllocationMode.None);
+                     await next(context).ConfigureAwait(false);
++                    nextPhase?.Dispose();
+                     stage?.Complete();
+                 }
+                 if (native is not null && context.Response.Headers.ContainsKey("X-Daprerrorresponseheader")) lease.Retain();
+@@ -360,7 +386,9 @@
+         finally
+         {
+             using var stage = diagnostics?.Start(DispatchStageName.NativeRelease, CancellationToken.None);
++            using var releasePhase = counters?.Stage(Stage.AuthenticationSerialization, AllocationMode.None);
+             await lease.DisposeAsync().ConfigureAwait(false);
++            releasePhase?.Dispose();
+             stage?.Complete();
+         }
+     }
+@@ -377,8 +405,9 @@
+ 
+     private bool IsActualMvcEndpoint(RouteEndpoint endpoint) => _mvcSources.SelectMany(source => source.Endpoints).Any(actual => ReferenceEquals(actual, endpoint));
+ 
+-    private string? RequestFingerprint(RouteEndpoint endpoint, out RouteCatalogTechnicalHttpEndpoint? description)
+-    {
++    private string? RequestFingerprint(RouteEndpoint endpoint, out RouteCatalogTechnicalHttpEndpoint? description, CaptureCounters? counters = null)
++    {
++        using var fingerprintPhase = counters?.Stage(Stage.ComponentPolicy, AllocationMode.None);
+         using var imageBoundary = RouteCatalogImageDigestScope.Suppress();
+         using var images = BeginPrivateImagePrecheck();
+         var pass = new TechnicalHttpObservationPass(_services!);

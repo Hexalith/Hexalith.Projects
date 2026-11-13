@@ -1,0 +1,57 @@
+{
+  "metadataOnlyNoApplicationAssemblyLoad": true,
+  "readerSha256": "3fc35de85fd5b62052f9fc6285d36950e1f7e2bea6b35c5e2d02ce8cf09d3a98",
+  "onlyThreeReceiverEntriesMatch": true,
+  "gatewayAndTwoWorkersExcluded": true,
+  "excludedRuntimeHelperStatesNotInspected": true,
+  "entries": [
+    {
+      "role": "eventstore",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore.dll",
+      "entryDllSha256": "f2c9cdad880eb821162da6548ac9afb24e6f3e21755a6e6b9b6664ded55290a9",
+      "metadataAssemblySimpleName": "Hexalith.EventStore",
+      "eligibleUnderFreshLiteralNameGate": false,
+      "selectedFixedCounterRole": null
+    },
+    {
+      "role": "tenants",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net10.0/Hexalith.Tenants.dll",
+      "entryDllSha256": "53ca2ca8c7f4d0df7998810f4c71168c028f9cf812f8feb2b309d3b160c47cc2",
+      "metadataAssemblySimpleName": "Hexalith.Tenants",
+      "eligibleUnderFreshLiteralNameGate": true,
+      "selectedFixedCounterRole": "tenants"
+    },
+    {
+      "role": "projects",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+      "entryDllSha256": "eca7f1f57641d3dbd5e3a88813f94b12ea7df289c8d07d728997bccc45009b4e",
+      "metadataAssemblySimpleName": "Hexalith.Projects.Server",
+      "eligibleUnderFreshLiteralNameGate": true,
+      "selectedFixedCounterRole": "projects"
+    },
+    {
+      "role": "projects-workers",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/bin/Debug/net10.0/Hexalith.Projects.Workers.dll",
+      "entryDllSha256": "5b4fbe8152657c0ac4b9a61bd1ed53e377f1f83887a2fdc7ca5de18dd23f2cb2",
+      "metadataAssemblySimpleName": "Hexalith.Projects.Workers",
+      "eligibleUnderFreshLiteralNameGate": false,
+      "selectedFixedCounterRole": null
+    },
+    {
+      "role": "folders",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+      "entryDllSha256": "f2c65b28d707eaad3f6975fbd4cb3d8f91678d5d98d960372d18083173de266b",
+      "metadataAssemblySimpleName": "Hexalith.Folders.Server",
+      "eligibleUnderFreshLiteralNameGate": true,
+      "selectedFixedCounterRole": "folders"
+    },
+    {
+      "role": "folders-workers",
+      "entryDllPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/bin/Debug/net10.0/Hexalith.Folders.Workers.dll",
+      "entryDllSha256": "f209147470089ca378332d694ecfb871a3e9605c5162d593e8cf756ee1d3efa9",
+      "metadataAssemblySimpleName": "Hexalith.Folders.Workers",
+      "eligibleUnderFreshLiteralNameGate": false,
+      "selectedFixedCounterRole": null
+    }
+  ]
+}

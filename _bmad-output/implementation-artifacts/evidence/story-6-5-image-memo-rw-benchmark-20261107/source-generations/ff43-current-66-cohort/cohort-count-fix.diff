@@ -1,0 +1,243 @@
+--- before/DESIGN.md
++++ after/DESIGN.md
+@@ -20,7 +20,7 @@
+ retention/+512 bytes per entry, with no snapshot arrays carried across the unlocked gap.
+ 
+ The bounded workload uses a source-derived Folders.Server owner+DomainService+owner-direct-reference
+-cohort of67 real readable images in ordinal assembly-name order. This set is not proven
++cohort of66 real readable images in ordinal assembly-name order. This set is not proven
+ equal to the complete runtime ExecutableOwners union, which can also include discovered
+ aggregate, processor, projection and handler assemblies; no runtime completeness is claimed.
+ Each observation creates/disposes its own selected scope while2 or4 readers share ONE
+@@ -28,7 +28,7 @@
+ observations and concurrent wall/process CPU/managed allocations/GC are measured in
+ matched unoptimized Debug on natural14CPU. Baseline/control agreement is required before
+ claiming any candidate gain. Variant order alternates and all raw samples are retained.
+-This is a source-derived67-image computation observation, not complete real host configuration/catalog
++This is a source-derived66-image computation observation, not complete real host configuration/catalog
+ capture or distributed deadline acceptance; those original observations are not removed.
+ A separate exact Technical identity cohort preserves full PE/MVID/read behavior.
+ 
+--- before/benchmark-plan.json
++++ after/benchmark-plan.json
+@@ -27,6 +27,6 @@
+     "explicit standalone compile/run authorization",
+     "matched oracle/control/candidate results before any production proposal"
+   ],
+-  "sourceDerivedOwnerDirectReferenceImageCohort": 67,
++  "sourceDerivedOwnerDirectReferenceImageCohort": 66,
+   "fullRuntimeExecutableOwnersCohortEqualityClaimed": false
+ }
+--- before/harness/BenchmarkSummary.cs
++++ after/harness/BenchmarkSummary.cs
+@@ -10,10 +10,10 @@
+             DiagnosticOnly = true,
+             FeatureAcceptance = false,
+             ProductionCandidateBenefitClaimed = false,
+-            Domain67IsNotWholeHostCaptureOrDeadlineBenchmark = true,
++            Domain66IsNotWholeHostCaptureOrDeadlineBenchmark = true,
+             SourceDerivedOwnerDomainDirectReferenceCohortOnly = true,
+             CompleteDomainExecutableOwnersDiscoveryUnionNotClaimed = true,
+-            Technical67IsSeparatePeMvidStressNotClaimedActualHostCallPopulation = true,
++            Technical66IsSeparatePeMvidStressNotClaimedActualHostCallPopulation = true,
+             NoFileReadAuthorityOrConfigurationObservationRemoved = true,
+             MemoColdMeansNewMemoNotColdFilesystemJitPoolOrProcess = true,
+             OriginalReaderCountAndByteBoundsUnchanged = true,
+--- before/harness/DRIVER.md
++++ after/harness/DRIVER.md
+@@ -10,10 +10,10 @@
+ The two copied variants have their own exact selected scope/fresh/technical path.
+ 
+ ImageInventory reproduces the existing owner+DomainService+owner direct-reference
+-cohort and original Ordinal FullName order, requiring the expected actual67 count.
++cohort and original Ordinal FullName order, requiring the expected actual66 count.
+ This is the source-derived owner/Domain/direct-reference cohort, not a proof of the
+ complete Domain ExecutableOwners union: discovery projection/aggregate/processor/
+-query-handler owners are not constructed or asserted to be a subset of these67.
++query-handler owners are not constructed or asserted to be a subset of these66.
+ The resolver loads that ordinary owner's dependency graph for Assembly keys and
+ loaded MVID metadata. It never invokes DevelopmentDomainRouteCatalog or any other
+ DomainService method. The oracle computation uses the pinned compiled SDK5bb via
+@@ -22,9 +22,9 @@
+ SDK code is in Default; this is metadata/read input, not a cross-context scope call.
+ Actual locations/bytes/full hashes/MVIDs/order are saved by the future run.
+ 
+-The entire67 stays in the workload even if an original image/budget bound prevents
++The entire66 stays in the workload even if an original image/budget bound prevents
+ full retention. Per-image eligibility, total charge, actual occupancy and actual
+-scope hit counts are reported. Exact67 retention/hit assertions are conditional
++scope hit counts are reported. Exact66 retention/hit assertions are conditional
+ on the complete cohort fitting the original16MiB/64MiB/128-entry bounds. Otherwise
+ non-hit outputs are kept as unclassified fresh computations: no assumption that
+ every non-hit is a cache miss rather than an ineligible/rejected fallback.
+@@ -38,14 +38,14 @@
+ each path/reader count. Each sample starts a fresh shared memo, then records memo-
+ cold, warmup and warm batches. This means cold memo, not a cold process, JIT, pool
+ or filesystem. A fresh selected observation scope lives inside every worker and
+-is disposed after all67 images; no scope is created in the parent and flowed to
++is disposed after all66 images; no scope is created in the parent and flowed to
+ readers. One memo is shared by1/2/4 dedicated reader threads. The barrier aligns
+ only batch start; there are no per-image barriers. Every original fresh file read,
+ EOF behavior, pool selection, exact equality and SHA remains in the selected path.
+ 
+-Domain67 is a full fresh-stream computation cohort. Technical67 separately stresses
++Domain66 is a full fresh-stream computation cohort. Technical66 separately stresses
+ the exact original PE/MVID/read method across those images; it does not claim that
+-a real host makes67 technical identity calls. Neither is whole host configuration,
++a real host makes66 technical identity calls. Neither is whole host configuration,
+ catalog capture or distributed deadline acceptance. The original observations and
+ authority checks are not removed.
+ 
+--- before/harness/ImageInventory.cs
++++ after/harness/ImageInventory.cs
+@@ -33,7 +33,7 @@
+         Assembly[] images = new[] { owner, domain }
+             .Concat(owner.GetReferencedAssemblies().Select(Assembly.Load)).Distinct()
+             .OrderBy(assembly => assembly.FullName, StringComparer.Ordinal).ToArray();
+-        Require.That(images.Length == 67, "inventory-count");
++        Require.That(images.Length == 66, "inventory-count");
+         Require.That(images.Distinct(ReferenceEqualityComparer.Instance).Count() == images.Length, "inventory-reference-keys");
+         InventoryImage[] files = images.Select((assembly, ordinal) => Describe(assembly, ordinal)).ToArray();
+         Require.That(files.All(image => image.Bytes > 0), "inventory-positive-image-lengths");
+--- before/harness/Parity.cs
++++ after/harness/Parity.cs
+@@ -7,7 +7,7 @@
+     private const int MiB = 1024 * 1024;
+     internal static async Task<ParityReport> RunAsync(Assembly[] inventory, string scratchDirectory)
+     {
+-        if (inventory.Length != 67 || Directory.Exists(scratchDirectory)) throw new ParityFailure("fresh-67-image-input-required");
++        if (inventory.Length != 66 || Directory.Exists(scratchDirectory)) throw new ParityFailure("fresh-66-image-input-required");
+         Directory.CreateDirectory(scratchDirectory);
+         int checks = 0, passed = 0;
+         void Check(bool condition, string closed)
+--- before/harness/Program.cs
++++ after/harness/Program.cs
+@@ -62,7 +62,7 @@
+                 parity.Checks,
+                 parity.Passed,
+                 parity.AllPassed,
+-                All67ExecutableInputsByteAndLoadedIdentityUnchanged = true,
++                All66ExecutableInputsByteAndLoadedIdentityUnchanged = true,
+                 ActualSdkOracleAndCopiedControlAgreement = true,
+                 FreshScopePerObservationOneSharedMemoPerVariantSample = true,
+                 RuntimeMode = "natural14-unoptimized-Debug-ownerServerGC",
+--- before/harness/commands.json
++++ after/harness/commands.json
+@@ -6,42 +6,88 @@
+   "optimize": false,
+   "assemblyNameForActualSdkFriendAccess": "Hexalith.EventStore.Server.Tests",
+   "noProjectReferencesOrApplicationBuilds": true,
+-  "buildEnvironmentSet": { "DOTNET_PROCESSOR_COUNT": "2" },
++  "buildEnvironmentSet": {
++    "DOTNET_PROCESSOR_COUNT": "2"
++  },
+   "buildEnvironmentRemove": [
+-    "CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps",
+-    "CustomBeforeDirectoryBuildTargets", "CustomAfterDirectoryBuildTargets",
+-    "AfterMicrosoftNETSdkTargets", "HEXALITH_SOURCE_MAPPING_HASH", "Configuration",
++    "CustomBeforeDirectoryBuildProps",
++    "CustomAfterMicrosoftCommonProps",
++    "CustomBeforeDirectoryBuildTargets",
++    "CustomAfterDirectoryBuildTargets",
++    "AfterMicrosoftNETSdkTargets",
++    "HEXALITH_SOURCE_MAPPING_HASH",
++    "Configuration",
+     "CustomBeforeMicrosoftCommonTargets"
+   ],
+   "runtimeEnvironmentRemove": [
+-    "CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps",
+-    "CustomBeforeDirectoryBuildTargets", "CustomAfterDirectoryBuildTargets",
+-    "AfterMicrosoftNETSdkTargets", "HEXALITH_SOURCE_MAPPING_HASH", "Configuration",
+-    "CustomBeforeMicrosoftCommonTargets", "DOTNET_PROCESSOR_COUNT"
++    "CustomBeforeDirectoryBuildProps",
++    "CustomAfterMicrosoftCommonProps",
++    "CustomBeforeDirectoryBuildTargets",
++    "CustomAfterDirectoryBuildTargets",
++    "AfterMicrosoftNETSdkTargets",
++    "HEXALITH_SOURCE_MAPPING_HASH",
++    "Configuration",
++    "CustomBeforeMicrosoftCommonTargets",
++    "DOTNET_PROCESSOR_COUNT"
+   ],
+   "plannedCommands": [
+-    ["dotnet", "restore", "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj", "--configfile", "/tmp/story65-image-memo-rw-prep-20261107/harness/NuGet.Config", "-p:NuGetAudit=false"],
+-    ["dotnet", "build", "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj", "--configuration", "Debug", "--no-restore", "-m:1", "-nodeReuse:false", "-p:UseSharedCompilation=false", "-p:NuGetAudit=false"],
+-    ["dotnet", "/tmp/story65-image-memo-rw-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll", "all", "/tmp/story65-image-memo-rw-results-20261107"]
++    [
++      "dotnet",
++      "restore",
++      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
++      "--configfile",
++      "/tmp/story65-image-memo-rw-prep-20261107/harness/NuGet.Config",
++      "-p:NuGetAudit=false"
++    ],
++    [
++      "dotnet",
++      "build",
++      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
++      "--configuration",
++      "Debug",
++      "--no-restore",
++      "-m:1",
++      "-nodeReuse:false",
++      "-p:UseSharedCompilation=false",
++      "-p:NuGetAudit=false"
++    ],
++    [
++      "dotnet",
++      "/tmp/story65-image-memo-rw-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
++      "all",
++      "/tmp/story65-image-memo-rw-results-retry-20261107"
++    ]
+   ],
+   "runtimeExpected": "10.0.14",
+   "sdkExpected": "10.0.403",
+   "runtimeProcessorCount": 14,
+   "runtimeServerGcMustMatchActualFoldersRuntimeconfig": true,
+   "forcedCollections": 0,
+-  "variants": ["oracle", "control", "candidate"],
+-  "paths": ["domain", "technical"],
+-  "readers": [1, 2, 4],
++  "variants": [
++    "oracle",
++    "control",
++    "candidate"
++  ],
++  "paths": [
++    "domain",
++    "technical"
++  ],
++  "readers": [
++    1,
++    2,
++    4
++  ],
+   "balancedVariantPermutationRounds": 6,
+   "memoColdIterationsPerReader": 1,
+   "warmupIterationsPerReader": 3,
+   "warmIterationsPerReader": 12,
+   "plannedRawBatchRecords": 324,
+   "plannedMeasuredObservations": 4032,
+-  "imagesPerObservation": 67,
+-  "plannedSelectedImageCalls": 270144,
++  "imagesPerObservation": 66,
++  "plannedSelectedImageCalls": 266112,
+   "standaloneRunWallBoundSecondsForFutureRootSupervisor": 300,
+   "timeoutMaySignalOnlyOwnedStandaloneBenchmarkNotAnyAppTarget": true,
+-  "allCommandsStillUnexecuted": true,
+-  "appHostsBuildsNativeTestsProfilesSourceEditsAuthorized": false
++  "appHostsBuildsNativeTestsProfilesSourceEditsAuthorized": false,
++  "currentGenerationAllCommandsStillUnexecuted": true,
++  "priorInventoryCountFailurePreserved": "/tmp/story65-image-memo-rw-execution-20261107/attempt-1"
+ }
+--- before/harness/freeze_preparation.py
++++ after/harness/freeze_preparation.py
+@@ -47,7 +47,7 @@
+         'frameworkInputFiles': len(pins['frameworkInputsSha256']),
+         'allCurrentInputsRehashedBeforeFreeze': True,
+         'wholeRootAndReaderFinalManifestReviewStillRequired': True,
+-        'cohort': '67 source-derived Folders owner, DomainService and owner direct-reference images in original Ordinal FullName order',
++        'cohort': '66 source-derived Folders owner, DomainService and owner direct-reference images in original Ordinal FullName order',
+         'completeDiscoveredExecutableOwnersUnionClaimed': False,
+         'domainAndTechnicalPathsKeepOriginalReadsAndBounds': True,
+         'oracleControlCandidateCompleteIdentityAgreementRequiredBeforeTiming': True,

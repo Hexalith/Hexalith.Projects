@@ -1,0 +1,155 @@
+--- qualified-old/Program.cs
++++ collector/Program.cs
+@@ -53,16 +53,27 @@
+         return value;
+     }
+     private sealed record InputFile(string Label, string Path, string Sha256);
+-    private sealed record Identity(string Role, string Resource, int Pid, long StartTicks, string RequiredCommandToken, string ExecutableSha256, InputFile[] Files);
++    private sealed record Identity(string Role, string Resource, string SourceProject, int Pid, long StartTicks, string RequiredCommandToken, string ExecutableSha256, InputFile[] Files);
+     private sealed record Row(string Label, bool Matches, string Sha256);
+-    private static bool SafeCommand(string[] args, string marker)
++    private static bool SafeCommand(string[] args, string marker, ReceiverTarget target, string actualExecutable)
+     {
+         // Reject unknown options or values, including every key/token/password/connection-string argument.
+         string[] sensitive = ["token", "password", "passwd", "secret", "credential", "api-key", "apikey", "authorization", "connectionstring", "access-key"];
+         if (args.Length is < 1 or > 32 || args.Any(a => sensitive.Any(word => a.Contains(word, StringComparison.OrdinalIgnoreCase)))) return false;
+-        if (!args.Contains(marker, StringComparer.Ordinal)) return false;
+-        string executable = Path.GetFileNameWithoutExtension(args[0]);
+-        if (executable != "dotnet" && !args[0].Equals(marker, StringComparison.Ordinal)) return false;
++        if (args.Count(argument => argument == marker) != 1) return false;
++        bool native = marker == target.NativeApphost;
++        int markerIndex;
++        if (native)
++        {
++            if (args[0] != marker || actualExecutable != marker) return false;
++            markerIndex = 0;
++        }
++        else
++        {
++            if (marker != target.EntryDll || args[0] != actualExecutable || Path.GetFileName(actualExecutable) != "dotnet") return false;
++            markerIndex = args.Length > 1 && args[1] == "exec" ? 2 : 1;
++            if (args.Length <= markerIndex || args[markerIndex] != marker) return false;
++        }
+         bool PathValue(string value) => Path.IsPathFullyQualified(value) && !value.Any(char.IsControl);
+         bool UrlValue(string value) => value.Split(';').All(part => Uri.TryCreate(part, UriKind.Absolute, out var uri)
+             && (uri.Scheme == "http" || uri.Scheme == "https") && uri.UserInfo.Length == 0 && uri.Query.Length == 0 && uri.Fragment.Length == 0
+@@ -70,7 +81,7 @@
+         for (int i = 1; i < args.Length; i++)
+         {
+             string arg = args[i];
+-            if (arg == marker || (i == 1 && arg == "exec" && executable == "dotnet")) continue;
++            if (i == markerIndex || (!native && i == 1 && arg == "exec")) continue;
+             int equal = arg.IndexOf('=');
+             string option = equal < 0 ? arg : arg[..equal];
+             if (equal < 0 && i + 1 >= args.Length) return false;
+@@ -80,7 +91,7 @@
+                 "--urls" => UrlValue(value),
+                 "--contentRoot" or "--content-root" or "--runtimeconfig" or "--depsfile" => PathValue(value),
+                 "--environment" => value is "Development" or "Production" or "Staging",
+-                "--applicationName" => value is "Hexalith.EventStore" or "Hexalith.EventStore.Gateway",
++                "--applicationName" => value == target.EntryAssemblyName,
+                 "--dapr-http-port" or "--dapr-grpc-port" or "--dapr-port" => int.TryParse(value, out int port) && port is > 0 and < 65536,
+                 _ => false
+             };
+@@ -90,14 +101,17 @@
+     }
+     private static Row[] Verify(Identity identity)
+     {
+-        if (identity.Role != "gateway" || identity.Resource != "eventstorehost" || identity.Pid <= 1 || identity.Pid == Environment.ProcessId || identity.RequiredCommandToken.Length == 0)
+-            throw new GuardException("identity-contract-invalid");
++        ReceiverTarget target = ReceiverTargets.Match(identity.Role, identity.Resource, identity.SourceProject, identity.RequiredCommandToken)
++            ?? throw new GuardException("identity-contract-invalid");
++        if (identity.Pid <= 1 || identity.Pid == Environment.ProcessId) throw new GuardException("identity-contract-invalid");
+         if (StartTicks(identity.Pid) != identity.StartTicks) throw new GuardException("target-identity-changed");
+         // Exact owned PID only; discard command bytes immediately without logging any argument.
++        string actualExecutable = new FileInfo($"/proc/{identity.Pid}/exe").LinkTarget
++            ?? throw new GuardException("owned-executable-path-unavailable");
+         var command = File.ReadAllBytes($"/proc/{identity.Pid}/cmdline");
+-        bool safe = SafeCommand(Encoding.UTF8.GetString(command).Split('\0', StringSplitOptions.RemoveEmptyEntries), identity.RequiredCommandToken);
++        bool safe = SafeCommand(Encoding.UTF8.GetString(command).Split('\0', StringSplitOptions.RemoveEmptyEntries), identity.RequiredCommandToken, target, actualExecutable);
+         Array.Clear(command);
+-        if (!safe) throw new GuardException("unsafe-or-unexpected-owned-gateway-arguments-skip-attach");
++        if (!safe) throw new GuardException("unsafe-or-unexpected-owned-receiver-arguments-skip-attach");
+         string actualExeHash = Hash($"/proc/{identity.Pid}/exe");
+         var rows = new List<Row> { new("runtime-executable", actualExeHash.Equals(identity.ExecutableSha256, StringComparison.OrdinalIgnoreCase), actualExeHash) };
+         foreach (var file in identity.Files)
+@@ -107,35 +121,52 @@
+             string actual = Hash(file.Path);
+             rows.Add(new(file.Label, actual.Equals(file.Sha256, StringComparison.OrdinalIgnoreCase), actual));
+         }
+-        foreach (string required in new[] { "gateway-assembly", "owner-config", "source-audit" })
++        foreach (string required in new[] { "target-entry-assembly", "domain-service-assembly", "sdk-assembly", "owner-config", "source-audit" })
+             if (!rows.Any(r => r.Label == required)) throw new GuardException("required-identity-input-missing");
+         if (rows.Any(r => !r.Matches)) throw new GuardException("input-hash-mismatch");
+-        InputFile gateway = identity.Files.Single(f => f.Label == "gateway-assembly");
+-        string mappedPath = Path.GetFullPath(gateway.Path);
+-        // Exact owned resource PID only. Never print complete maps, addresses or unrelated module paths.
+-        // Resource identity comes from the managed receipt, not the executable's spelling.
+-        int mapped = 0;
+-        try
+-        {
+-            foreach (string line in File.ReadLines($"/proc/{identity.Pid}/maps"))
+-            {
+-                string[] fields = line.Split(' ', 6, StringSplitOptions.RemoveEmptyEntries);
+-                if (fields.Length == 6 && fields[5] == mappedPath) mapped++;
+-            }
+-        }
+-        catch { throw new GuardException("owned-gateway-map-proof-unavailable-skip-attach"); }
+-        if (mapped == 0) throw new GuardException("owned-gateway-assembly-not-mapped-skip-attach");
+-        rows.Add(new("mapped-gateway-assembly", true, Hash(mappedPath)));
++        foreach (string label in new[] { "target-entry-assembly", "domain-service-assembly", "sdk-assembly" })
++        {
++            InputFile file = identity.Files.Single(input => input.Label == label);
++            string mappedPath = Path.GetFullPath(file.Path);
++            if (!Path.IsPathFullyQualified(file.Path) || !ReceiverTargets.MatchesAssembly(target, label, mappedPath))
++                throw new GuardException("required-target-assembly-path-mismatch");
++            // Exact owned resource PID only. Never print complete maps, addresses or unrelated module paths.
++            // Resource ownership comes from the managed receipt, not the executable's spelling.
++            int mapped;
++            try { mapped = CountMapped(File.ReadLines($"/proc/{identity.Pid}/maps"), mappedPath); }
++            catch { throw new GuardException("owned-receiver-map-proof-unavailable-skip-attach"); }
++            RequireMapped(mapped);
++            rows.Add(RequireHashMatch("mapped-" + label, Hash(mappedPath), file.Sha256));
++        }
+         if (StartTicks(identity.Pid) != identity.StartTicks) throw new GuardException("target-identity-changed");
+         return rows.ToArray();
+     }
++    private static void RequireMapped(int mapped)
++    {
++        if (mapped == 0) throw new GuardException("owned-receiver-assembly-not-mapped-skip-attach");
++    }
++    private static Row RequireHashMatch(string label, string actual, string expected)
++    {
++        if (!actual.Equals(expected, StringComparison.OrdinalIgnoreCase)) throw new GuardException("input-hash-mismatch");
++        return new(label, true, actual);
++    }
++    private static int CountMapped(IEnumerable<string> lines, string mappedPath)
++    {
++        int mapped = 0;
++        foreach (string line in lines)
++        {
++            string[] fields = line.Split(' ', 6, StringSplitOptions.RemoveEmptyEntries);
++            if (fields.Length == 6 && fields[5] == mappedPath) mapped++;
++        }
++        return mapped;
++    }
+     public static async Task<int> Main(string[] args)
+     {
+         try
+         {
+             if (args.Length == 3 && args[0] == "collect") return await Collect(args[1], args[2]);
+             if (args.Length == 2 && args[0] == "analyze") return Analyze(args[1]);
+-            Console.Error.WriteLine("Usage: AllocationProbe collect IDENTITY_JSON NEW_OUTPUT_DIRECTORY | analyze OWNED_OUTPUT_DIRECTORY");
++            Console.Error.WriteLine("Usage: ReceiverCpuProbe collect IDENTITY_JSON NEW_OUTPUT_DIRECTORY | analyze OWNED_OUTPUT_DIRECTORY");
+             return 64;
+         }
+         catch (Exception error)
+@@ -198,7 +229,7 @@
+             }
+             if (cap.Task.IsCompleted) reason = "file-threshold";
+             else if (drain.IsCompleted) reason = "target-stream-ended";
+-            // Stop only the returned session. Never signal the Gateway or stop another diagnostic session.
++            // Stop only the returned session. Never signal the target or stop another diagnostic session.
+             Task stop = Task.Run(session.Stop);
+             if (await Task.WhenAny(stop, Task.Delay(TimeSpan.FromSeconds(30))) != stop) reason = "stop-timeout";
+             else { await stop; stopCompleted = true; }

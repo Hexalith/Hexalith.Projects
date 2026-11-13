@@ -1,0 +1,14 @@
+<Project>
+  <Target Name="Story65ReceiverPhaseSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.ServiceDefaults'">
+    <ItemGroup>
+      <_Story65SdkOriginalReceiver Include="@(Compile)" Condition="'%(Compile.Identity)' == 'Routing/TechnicalHttpRouteCatalogReceiver.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65SdkOriginalReceiver->Count())' != '1'" Text="Private receiver qualification refused unexpected original Compile count." />
+    <ItemGroup>
+      <Compile Remove="Routing/TechnicalHttpRouteCatalogReceiver.cs" />
+      <Compile Include="/tmp/story65-receiver-phase-prep-20261107/TechnicalHttpRouteCatalogReceiver.private.cs" />
+      <Compile Include="/tmp/story65-receiver-phase-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-receiver-phase-prep-20261107/ReceiverPhaseBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

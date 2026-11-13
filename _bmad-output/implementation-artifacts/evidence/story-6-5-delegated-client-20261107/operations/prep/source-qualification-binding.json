@@ -1,0 +1,28 @@
+{
+  "actualScratchQualificationOnly": true,
+  "featureAcceptance": false,
+  "preparedReceipt": "/tmp/story65-delegated-client-prep-20261107/preparation-receipt.json",
+  "preparedReceiptSha256": "b63548acaf07a804c8b610be4d7d1067b7b904b98acd1946c2e4bc464b04e406",
+  "qualifiedReceipt": "/tmp/story65-delegated-client-qualification-20261107/final-scratch-qualification.json",
+  "qualifiedReceiptSha256": "bd180e87b5eff362d9eb199766a42a1e162888b8ba8f8efc1e3a14628243e21e",
+  "parentAudit": "/tmp/story65-delegated-client-qualification-20261107/parent-scratch-audit.json",
+  "parentAuditSha256": "3371022efaa9592f1f6f70730bb896d9aec9f4ae312667ea92eaca3dc7be2209",
+  "passingCaseCells": 208,
+  "invocationComparisons": 224,
+  "freshCanaries": 3,
+  "controlledProcesses": 27,
+  "strictSyntheticRows": 166855,
+  "ordinaryUniqueNativeQualificationRemains": 1038,
+  "historicalNative24Pending": true,
+  "qualifiedFixtureAdjustment": "Instantaneous ChildAfterReturn equality applies only to explicit issuer-uncooperative cells. Every source Completion and GetResult remains joined exactly once for all cells; all other comparisons remain. Source-based scheduler-tail explanation was not proved with a two-oracle control.",
+  "sourceBasedRaceExplanationNotTwoOracleControl": true,
+  "initialFailuresRetained": {
+    "missingNamespaceBuild": "history/f4a30ab9/",
+    "aggregateCooperativeChildSnapshotFailure": "history/64a839df/",
+    "splitConfirmedChildSnapshotFailure": "history/e41dbc7d/"
+  },
+  "knownWarning": "ASP0019 on transparent IDictionary.Add delegation retained to preserve Add semantics",
+  "applicationBuildsAlreadyExecuted": 0,
+  "native24AlreadyExecuted": false,
+  "hostsAlreadyStarted": 0
+}

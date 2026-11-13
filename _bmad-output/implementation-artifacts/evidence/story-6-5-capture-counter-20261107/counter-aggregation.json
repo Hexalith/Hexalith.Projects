@@ -1,0 +1,388 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "quantile": "nearest-rank P95",
+  "observedRoles": [
+    "folders",
+    "gateway",
+    "projects"
+  ],
+  "noPublishedDataRoles": [
+    "tenants",
+    "projects-workers",
+    "folders-workers"
+  ],
+  "noPublishedDataDoesNotProveZeroCallsOrZeroCost": true,
+  "roles": {
+    "folders": {
+      "admitted": 108,
+      "disposedOrUnwound": 108,
+      "rows": 864,
+      "allClosedCountersFinal": true,
+      "allDropsIoActivePendingZero": true,
+      "completeEightStageCaptures": 108,
+      "partialCaptures": [],
+      "settingsAllocationSameThreadValid": true,
+      "settingsAllocatedBytes": {
+        "n": 108,
+        "median": 389360.0,
+        "p95NearestRank": 389360,
+        "maximum": 389360
+      },
+      "countPartitions": {
+        "yielded": {
+          "n": 108,
+          "median": 254.0,
+          "p95NearestRank": 254,
+          "maximum": 254
+        },
+        "nullValue": {
+          "n": 108,
+          "median": 36.0,
+          "p95NearestRank": 36,
+          "maximum": 36
+        },
+        "authenticationAccepted": {
+          "n": 108,
+          "median": 10.0,
+          "p95NearestRank": 10,
+          "maximum": 10
+        },
+        "nonAuthenticationDiscarded": {
+          "n": 108,
+          "median": 197.0,
+          "p95NearestRank": 197,
+          "maximum": 197
+        },
+        "sensitiveSegmentExcluded": {
+          "n": 108,
+          "median": 5.0,
+          "p95NearestRank": 5,
+          "maximum": 5
+        },
+        "authenticationOtherExcluded": {
+          "n": 108,
+          "median": 6.0,
+          "p95NearestRank": 6,
+          "maximum": 6
+        }
+      },
+      "settingsShareOfWholeSameCapturePercent": {
+        "n": 108,
+        "median": 77.64106959075542,
+        "p95NearestRank": 84.2856392094432,
+        "maximum": 88.01506493184174
+      },
+      "stagesWallMilliseconds": {
+        "Whole": {
+          "n": 108,
+          "median": 0.7518994999999999,
+          "p95NearestRank": 0.947489,
+          "maximum": 1.714068
+        },
+        "ComponentFile": {
+          "n": 108,
+          "median": 0.072085,
+          "p95NearestRank": 0.115176,
+          "maximum": 0.233446
+        },
+        "ComponentPolicy": {
+          "n": 108,
+          "median": 0.013947000000000001,
+          "p95NearestRank": 0.025559,
+          "maximum": 0.030429
+        },
+        "AclFile": {
+          "n": 108,
+          "median": 0.036031999999999995,
+          "p95NearestRank": 0.067181,
+          "maximum": 0.077801
+        },
+        "SettingsEnumerationSortDictionary": {
+          "n": 108,
+          "median": 0.587146,
+          "p95NearestRank": 0.731043,
+          "maximum": 0.992971
+        },
+        "AuthenticationSerialization": {
+          "n": 108,
+          "median": 0.012534,
+          "p95NearestRank": 0.02023,
+          "maximum": 0.034818
+        },
+        "ActorBoundary": {
+          "n": 108,
+          "median": 0.0067729999999999995,
+          "p95NearestRank": 0.009208,
+          "maximum": 0.0107
+        },
+        "ResultTail": {
+          "n": 108,
+          "median": 0.029171500000000003,
+          "p95NearestRank": 0.049115,
+          "maximum": 0.084363
+        }
+      }
+    },
+    "gateway": {
+      "admitted": 288,
+      "disposedOrUnwound": 288,
+      "rows": 2280,
+      "allClosedCountersFinal": true,
+      "allDropsIoActivePendingZero": true,
+      "completeEightStageCaptures": 284,
+      "partialCaptures": [
+        {
+          "captureOrdinal": 92,
+          "observedStages": [
+            "Whole",
+            "ComponentFile"
+          ],
+          "reason": "not observed by closed metadata"
+        },
+        {
+          "captureOrdinal": 190,
+          "observedStages": [
+            "Whole",
+            "ComponentFile"
+          ],
+          "reason": "not observed by closed metadata"
+        },
+        {
+          "captureOrdinal": 191,
+          "observedStages": [
+            "Whole",
+            "ComponentFile"
+          ],
+          "reason": "not observed by closed metadata"
+        },
+        {
+          "captureOrdinal": 288,
+          "observedStages": [
+            "Whole",
+            "ComponentFile"
+          ],
+          "reason": "not observed by closed metadata"
+        }
+      ],
+      "settingsAllocationSameThreadValid": true,
+      "settingsAllocatedBytes": {
+        "n": 284,
+        "median": 641160.0,
+        "p95NearestRank": 641160,
+        "maximum": 644472
+      },
+      "countPartitions": {
+        "yielded": {
+          "n": 284,
+          "median": 367.0,
+          "p95NearestRank": 367,
+          "maximum": 367
+        },
+        "nullValue": {
+          "n": 284,
+          "median": 69.0,
+          "p95NearestRank": 69,
+          "maximum": 69
+        },
+        "authenticationAccepted": {
+          "n": 284,
+          "median": 17.0,
+          "p95NearestRank": 17,
+          "maximum": 17
+        },
+        "nonAuthenticationDiscarded": {
+          "n": 284,
+          "median": 259.0,
+          "p95NearestRank": 259,
+          "maximum": 259
+        },
+        "sensitiveSegmentExcluded": {
+          "n": 284,
+          "median": 7.0,
+          "p95NearestRank": 7,
+          "maximum": 7
+        },
+        "authenticationOtherExcluded": {
+          "n": 284,
+          "median": 15.0,
+          "p95NearestRank": 15,
+          "maximum": 15
+        }
+      },
+      "settingsShareOfWholeSameCapturePercent": {
+        "n": 284,
+        "median": 86.3240538900952,
+        "p95NearestRank": 91.0531077611623,
+        "maximum": 96.55787918494013
+      },
+      "stagesWallMilliseconds": {
+        "Whole": {
+          "n": 288,
+          "median": 1.3366609999999999,
+          "p95NearestRank": 1.639582,
+          "maximum": 6.556625
+        },
+        "ComponentFile": {
+          "n": 288,
+          "median": 0.0709775,
+          "p95NearestRank": 0.116811,
+          "maximum": 0.579532
+        },
+        "ComponentPolicy": {
+          "n": 284,
+          "median": 0.013296,
+          "p95NearestRank": 0.025529,
+          "maximum": 0.040448
+        },
+        "AclFile": {
+          "n": 284,
+          "median": 0.03483,
+          "p95NearestRank": 0.04673,
+          "maximum": 0.089343
+        },
+        "SettingsEnumerationSortDictionary": {
+          "n": 284,
+          "median": 1.1476955,
+          "p95NearestRank": 1.333049,
+          "maximum": 6.326249
+        },
+        "AuthenticationSerialization": {
+          "n": 284,
+          "median": 0.015971,
+          "p95NearestRank": 0.021642,
+          "maximum": 0.047472
+        },
+        "ActorBoundary": {
+          "n": 284,
+          "median": 0.0089625,
+          "p95NearestRank": 0.011272,
+          "maximum": 0.045504
+        },
+        "ResultTail": {
+          "n": 284,
+          "median": 0.039727,
+          "p95NearestRank": 0.054756,
+          "maximum": 2.229739
+        }
+      }
+    },
+    "projects": {
+      "admitted": 27,
+      "disposedOrUnwound": 27,
+      "rows": 216,
+      "allClosedCountersFinal": true,
+      "allDropsIoActivePendingZero": true,
+      "completeEightStageCaptures": 27,
+      "partialCaptures": [],
+      "settingsAllocationSameThreadValid": true,
+      "settingsAllocatedBytes": {
+        "n": 27,
+        "median": 378448,
+        "p95NearestRank": 378448,
+        "maximum": 378448
+      },
+      "countPartitions": {
+        "yielded": {
+          "n": 27,
+          "median": 255,
+          "p95NearestRank": 255,
+          "maximum": 255
+        },
+        "nullValue": {
+          "n": 27,
+          "median": 36,
+          "p95NearestRank": 36,
+          "maximum": 36
+        },
+        "authenticationAccepted": {
+          "n": 27,
+          "median": 10,
+          "p95NearestRank": 10,
+          "maximum": 10
+        },
+        "nonAuthenticationDiscarded": {
+          "n": 27,
+          "median": 198,
+          "p95NearestRank": 198,
+          "maximum": 198
+        },
+        "sensitiveSegmentExcluded": {
+          "n": 27,
+          "median": 5,
+          "p95NearestRank": 5,
+          "maximum": 5
+        },
+        "authenticationOtherExcluded": {
+          "n": 27,
+          "median": 6,
+          "p95NearestRank": 6,
+          "maximum": 6
+        }
+      },
+      "settingsShareOfWholeSameCapturePercent": {
+        "n": 27,
+        "median": 80.04176433764228,
+        "p95NearestRank": 81.64726898717046,
+        "maximum": 83.22522766512068
+      },
+      "stagesWallMilliseconds": {
+        "Whole": {
+          "n": 27,
+          "median": 0.756334,
+          "p95NearestRank": 0.908908,
+          "maximum": 1.736537
+        },
+        "ComponentFile": {
+          "n": 27,
+          "median": 0.060487,
+          "p95NearestRank": 0.099403,
+          "maximum": 0.322694
+        },
+        "ComponentPolicy": {
+          "n": 27,
+          "median": 0.012734,
+          "p95NearestRank": 0.021252,
+          "maximum": 0.023155
+        },
+        "AclFile": {
+          "n": 27,
+          "median": 0.035679,
+          "p95NearestRank": 0.040589,
+          "maximum": 0.041401
+        },
+        "SettingsEnumerationSortDictionary": {
+          "n": 27,
+          "median": 0.591695,
+          "p95NearestRank": 0.682521,
+          "maximum": 0.737517
+        },
+        "AuthenticationSerialization": {
+          "n": 27,
+          "median": 0.0105,
+          "p95NearestRank": 0.018176,
+          "maximum": 0.018235
+        },
+        "ActorBoundary": {
+          "n": 27,
+          "median": 0.006693,
+          "p95NearestRank": 0.008566,
+          "maximum": 0.008606
+        },
+        "ResultTail": {
+          "n": 27,
+          "median": 0.02577,
+          "p95NearestRank": 0.058283,
+          "maximum": 0.090555
+        }
+      }
+    }
+  },
+  "limits": [
+    "No inherited trace or request/root linkage; no per-request call counts or critical-path attribution.",
+    "Elapsed values are instrumented wall time, not exact CPU or ordinary latency.",
+    "Settings allocations are one synchronous same-thread segment including instrumentation overhead; async/whole allocation is not measured.",
+    "Disposed/unwound means scope disposal, not successful execution; partial-capture reasons were not recorded.",
+    "No instrumentation overhead subtraction or claimed ordinary latency gain."
+  ]
+}

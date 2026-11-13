@@ -1,0 +1,52 @@
+{
+  "filePreparationOnly": true,
+  "commandsArePlansNotRelease": true,
+  "operativeReleaseGate": "operational-pins.json executionReleased must become true only underRootauthorization",
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "fivePlans": {
+    "private": [
+      "/usr/bin/python3",
+      "/tmp/story65-advisory-boundary-span-live-prep-20261108/build_restore.py",
+      "--phase",
+      "private",
+      "--execute",
+      "--pins-sha256",
+      "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+    ],
+    "native139": [
+      "/usr/bin/python3",
+      "/tmp/story65-advisory-boundary-span-live-prep-20261108/native_qualification.py",
+      "--execute",
+      "--pins-sha256",
+      "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+    ],
+    "managed": [
+      "/usr/bin/python3",
+      "/tmp/story65-advisory-boundary-span-live-prep-20261108/supervise_managed.py",
+      "--execute",
+      "--pins-sha256",
+      "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+    ],
+    "ordinary": [
+      "/usr/bin/python3",
+      "/tmp/story65-advisory-boundary-span-live-prep-20261108/build_restore.py",
+      "--phase",
+      "ordinary",
+      "--execute",
+      "--pins-sha256",
+      "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+    ],
+    "pipeline": [
+      "/usr/bin/python3",
+      "/tmp/story65-advisory-boundary-span-live-prep-20261108/run_and_restore.py",
+      "--execute",
+      "--pins-sha256",
+      "ROOT_RELEASED_OPERATIONAL_PINS_SHA256"
+    ]
+  },
+  "pipelineIsTheOnlyEndToEndCommand": "pipeline",
+  "ordinaryForcedMinimumBuilds": 11,
+  "noRuntimeProcessorOverride": true,
+  "noLoggerPrivacyDeadlineOrBusinessChanges": true,
+  "baselineCaptureIsPreparationOnlyDoNotRerunAfterPrivateBuild": true
+}

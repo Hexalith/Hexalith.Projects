@@ -1,0 +1,32 @@
+{
+  "phase": "production-edits-only-awaiting-parent-source-review",
+  "specSha256": "c210e0dccc839cbfc3a1ad4f421f760d58d1f7288b7f1e8d5b839fa3446c447a",
+  "changedFilesSha256": {
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": "e8f00b1bb3c29dd5a29ad3dae73f56e2a2183b06516114d592af518d0bc1255e",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ImageDigestMemoConcurrencyTests.cs": "271031b1ce1d3a452b21c994f62673b80ddf90262fa16fe79d54731ae981f895"
+  },
+  "actualDiffSha256": "152196f10f08cfdc9a88f5e010b172bf7f7c25dd8be3199f175a67864595e928",
+  "memoExactlyQualifiedCandidateAfterNamespaceNormalization": true,
+  "priorSourceControls": 55,
+  "priorControlsUnchanged": 54,
+  "priorControlsChangedOnlyAuthorizedMemo": [
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs"
+  ],
+  "plannedNativeCases": 10,
+  "sourceBuilds": 0,
+  "testExecutions": 0,
+  "hostsStarted": 0,
+  "guidanceRead": [
+    "AGENTS.md",
+    "workspace declared Hexalith.AI.Tools/hexalith-llm-instructions.md",
+    ".editorconfig",
+    ".gitattributes",
+    "Directory.Build.props",
+    "Directory.Build.targets",
+    "tests/Directory.Build.props",
+    "src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+    "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+    "docs/concepts/architecture-overview.md"
+  ],
+  "noScopeIoCallersOptionsPublicApiBoundsChanges": true
+}

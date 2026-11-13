@@ -1,0 +1,44 @@
+{
+  "preparationOnly": false,
+  "ordinaryManagedCommand": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "live": "/tmp/story65-receiver-cpu-owner-live-20261107",
+  "profile": "/tmp/story65-receiver-cpu-owner-profile-20261107",
+  "noPathShimImportReplacementSourceHookNoBuildOrLoggerOverride": true,
+  "runtimeCpuOverrideAbsent": true,
+  "threeFixedTargets": [
+    "projects",
+    "tenants",
+    "folders"
+  ],
+  "noTargetSignalsOrCutoff": true,
+  "phase": "ordinary-managed-and-observer-complete",
+  "targetSignalsSent": false,
+  "managedPid": 956334,
+  "managedStartTicks": "11796413",
+  "watcherPid": 956335,
+  "watcherStartTicks": "11796413",
+  "watcherGroup": 956335,
+  "managedExitCode": 1,
+  "managedIdentityAbsent": true,
+  "watcherExitCode": 0,
+  "watcherGroupRemaining": [],
+  "watcherGroupAbsent": true,
+  "cleanup": {
+    "cleanupAuditAvailable": true,
+    "passed": true,
+    "nativeGroupsAbsentOrNeverStarted": true,
+    "fullManifestMismatches": 0,
+    "profileEnabled": true,
+    "runResult": "failed"
+  },
+  "source55After": {
+    "sourceCount": 55,
+    "source55Match": true
+  }
+}

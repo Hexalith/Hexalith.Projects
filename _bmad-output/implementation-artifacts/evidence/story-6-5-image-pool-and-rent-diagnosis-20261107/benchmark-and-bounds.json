@@ -1,0 +1,231 @@
+{
+  "source": "benchmark/final-benchmark-summary.json",
+  "sourceSha256": "1df977874272d2c7709e9db06b32fd3b5826948d4c2603119e1f7aa5602e0649",
+  "selectedSharedSlots": 2,
+  "observationsPerInventory": 2,
+  "imagesPerObservation": 12,
+  "freshBytesPerCompleteInventory": 24416064,
+  "measuredRows": [
+    {
+      "phase": "first",
+      "slots": 1,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.406812499999999,
+      "medianCohortWallMs": 129.93,
+      "medianInventoriesPerSecond": 369.42969291156777,
+      "medianManagedBytesPerInventory": 130892,
+      "warmCollections": [
+        22,
+        1,
+        0
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots1-workers2.json",
+      "sha256": "6f300e9fff08ef0dda0fc1dd1edd3ff6d7365f4f79892cffd71895c8176442ac"
+    },
+    {
+      "phase": "first",
+      "slots": 2,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.053183333333333,
+      "medianCohortWallMs": 121.4605,
+      "medianInventoriesPerSecond": 395.19020586939786,
+      "medianManagedBytesPerInventory": 130890,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots2-workers2.json",
+      "sha256": "0a9c0235125e0f9aec7f0294c394729632ad0eec25d14e576a835073553101fd"
+    },
+    {
+      "phase": "first",
+      "slots": 4,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.4541354166666665,
+      "medianCohortWallMs": 131.0119,
+      "medianInventoriesPerSecond": 366.37893199014746,
+      "medianManagedBytesPerInventory": 131424,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots4-workers2.json",
+      "sha256": "b4d08c95dbd03b3fbe109e11a3c0635aa71b552cba4909d7709bd7975f1b17c3"
+    },
+    {
+      "phase": "first",
+      "slots": 1,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.932845833333332,
+      "medianCohortWallMs": 267.075,
+      "medianInventoriesPerSecond": 359.44959281100813,
+      "medianManagedBytesPerInventory": 6254408,
+      "warmCollections": [
+        62,
+        58,
+        57
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots1-workers4.json",
+      "sha256": "4b7878f44dff77dc92f9ced036a84e9b1c5944936092e584881bbb4b5b2a37de"
+    },
+    {
+      "phase": "first",
+      "slots": 2,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.915392708333332,
+      "medianCohortWallMs": 238.4165,
+      "medianInventoriesPerSecond": 402.6566953210033,
+      "medianManagedBytesPerInventory": 131279,
+      "warmCollections": [
+        44,
+        0,
+        0
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots2-workers4.json",
+      "sha256": "f749e3ddcd33fb7bd0ce6a6773bbfc849dd2c0e97fb457d5063c9b21adae347b"
+    },
+    {
+      "phase": "first",
+      "slots": 4,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.866933333333332,
+      "medianCohortWallMs": 238.5842,
+      "medianInventoriesPerSecond": 402.3736693377013,
+      "medianManagedBytesPerInventory": 131649,
+      "warmCollections": [
+        25,
+        2,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/results-slots4-workers4.json",
+      "sha256": "0db3a36f18ee129458dff72f7c9be3058cc71be20b8129fed0ff14464d1a24c7"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 1,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.347847916666667,
+      "medianCohortWallMs": 128.4526,
+      "medianInventoriesPerSecond": 373.6786954876741,
+      "medianManagedBytesPerInventory": 130893,
+      "warmCollections": [
+        22,
+        1,
+        0
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots1-workers2.json",
+      "sha256": "c604002d98a26c8d987c0fda727c46208022965bab242acbb5a6e4c937ece55a"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 2,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.11385625,
+      "medianCohortWallMs": 122.8765,
+      "medianInventoriesPerSecond": 390.6361265172755,
+      "medianManagedBytesPerInventory": 130886,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots2-workers2.json",
+      "sha256": "de88a425eeccd7bc149674b0180ad1dbb1dde8fb415c41d9e74dd1d5003171ca"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 4,
+      "workers": 2,
+      "medianCompleteInventoryMs": 5.358310416666665,
+      "medianCohortWallMs": 128.7396,
+      "medianInventoriesPerSecond": 372.8456512215356,
+      "medianManagedBytesPerInventory": 130890,
+      "warmCollections": [
+        12,
+        1,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots4-workers2.json",
+      "sha256": "dda3829628b1e8edc14449a64af0b16bfcbe0f9315a1c8460a3dd5ffc1e97db4"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 1,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.6760125,
+      "medianCohortWallMs": 268.5648,
+      "medianInventoriesPerSecond": 357.4556308198245,
+      "medianManagedBytesPerInventory": 6953004,
+      "warmCollections": [
+        59,
+        55,
+        54
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots1-workers4.json",
+      "sha256": "0377f92bdca28fb353a0bac3b12088efc9f93c1b121b2298891a816f70a20cfc"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 2,
+      "workers": 4,
+      "medianCompleteInventoryMs": 9.885377083333333,
+      "medianCohortWallMs": 237.5836,
+      "medianInventoriesPerSecond": 404.06829427620426,
+      "medianManagedBytesPerInventory": 131522,
+      "warmCollections": [
+        41,
+        0,
+        0
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots2-workers4.json",
+      "sha256": "de6980b40904e069eb7d49e063c528bff81f242ecaf2b14708fd20d723d82058"
+    },
+    {
+      "phase": "reverse-order confirmation",
+      "slots": 4,
+      "workers": 4,
+      "medianCompleteInventoryMs": 10.124353124999999,
+      "medianCohortWallMs": 243.2474,
+      "medianInventoriesPerSecond": 394.65992236710446,
+      "medianManagedBytesPerInventory": 131166,
+      "warmCollections": [
+        24,
+        2,
+        1
+      ],
+      "file": "/tmp/story65-pool-capacity-probe-20261107/confirm-results-slots4-workers4.json",
+      "sha256": "d479ef072ec4042277f1ffffee96c3c7a050890afea0dc193e86567602813849"
+    }
+  ],
+  "selectedBounds": {
+    "selectedSharedPool": "Two arrays per bucket through16MiB; below64MiB raw array payload. Metadata/object overhead additional bounded storage.",
+    "ordinaryPools": "Both unchanged one-array pools below32MiB payload each; allthree pools below128MiB raw payload.",
+    "imageMemo": {
+      "entries": 128,
+      "captureBytes": 16777216,
+      "retainedChargedBytes": 67108864,
+      "perEntryChargeOverhead": 512
+    },
+    "scope": "Existing open current image scope only; disabled/foreign/lifecycle/closed scope selects supplied ordinary pool."
+  },
+  "summaryLimits": [
+    "All12images are source-derived and count-corroborated; runtime trace did not retain image names/order. FullName-sorted order used identically.",
+    "Per-inventory means include actualscopeentry/disposal, original full file reads/logical slices/PE/MVID/shared actual memo and exact-byte comparison. Primary timings use direct unwrapped ArrayPool.",
+    "Cold measurements include JIT/runtime effects and first memo/pool retention. All samples retained; no elapsed-time guarantee.",
+    "Tracking pass measures Rent-thread allocation deltas and holds no array history. trackedAlignedCounts in raw outputs is cumulative with prior tracked pass.",
+    "Array pool maximum is retained raw payload; bounded metadata/object headers are additional. Image memo64MiB charged bound remains distinct.",
+    "Original failed metadata census was corrected only in external resolver and is retained in initial-inventory-failure.txt."
+  ],
+  "exclusions": [
+    "This external source-derived12-image FullName-sorted inventory is count-corroborated; actual managed trace did not retain image names/order.",
+    "Per-inventory measurements include two fresh observations, original file reads, logical slices, PE/MVID, owned scope entry/disposal, actual memo and exact-byte equality. They are not whole catalog/owner/actor/network/browser latency.",
+    "Primary timing uses unwrapped ArrayPool; rent-tracking/aligned phases are separate and their overhead is not substituted into primary results.",
+    "All cold/warm/confirmation outputs are retained; no latency guarantee or full-host memory bound is claimed.",
+    "Measured benchmark allocation attribution is not retroactive attribution of the earlier instrumented managed6.16GiB process delta.",
+    "Selected pool raw payload is below64MiB plus bounded metadata/object overhead; both ordinary pools stay below32MiB each, allthree below128MiB raw payload. The independent image memo64MiB charged bound is distinct.",
+    "Initial external inventory-census failure is retained without conversion to performance success.",
+    "Live/browser acceptance remains pending and is not established by native or benchmark passes."
+  ]
+}

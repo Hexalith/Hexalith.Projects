@@ -1,0 +1,147 @@
+{
+  "readOnlyOnly": true,
+  "noBuildCompilerReproLoadNativeOrHost": true,
+  "ordinaryAndCorrectedPrivate": [
+    {
+      "alias": "ordinary",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-getProperty:GenerateDocumentationFile,DocumentationFile,NoWarn,TreatWarningsAsErrors,WarningsAsErrors,EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath,GenerateAssemblyInfo,GeneratedAssemblyInfoFile,GenerateGlobalUsings,GeneratedGlobalUsingsFile,GenerateMSBuildEditorConfigFile,GeneratedMSBuildEditorConfigFile,GenerateDependencyFile,ProjectDepsFilePath,GenerateRuntimeConfigurationFiles,ProjectRuntimeConfigFilePath,PublishDir,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,ProjectAssetsCacheFile",
+        "-getItem:Using"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "GenerateDocumentationFile": "false",
+        "DocumentationFile": "",
+        "NoWarn": ";IDE0028",
+        "TreatWarningsAsErrors": "true",
+        "WarningsAsErrors": ";NU1605;SYSLIB0011",
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": "",
+        "GenerateAssemblyInfo": "true",
+        "GeneratedAssemblyInfoFile": "obj\\Debug/net10.0/Hexalith.EventStore.Gateway.AssemblyInfo.cs",
+        "GenerateGlobalUsings": "",
+        "GeneratedGlobalUsingsFile": "obj\\Debug/net10.0/Hexalith.EventStore.Gateway.GlobalUsings.g.cs",
+        "GenerateMSBuildEditorConfigFile": "",
+        "GeneratedMSBuildEditorConfigFile": "",
+        "GenerateDependencyFile": "true",
+        "ProjectDepsFilePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.deps.json",
+        "GenerateRuntimeConfigurationFiles": "",
+        "ProjectRuntimeConfigFilePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.runtimeconfig.json",
+        "PublishDir": "bin\\Debug/net10.0/publish/",
+        "CoreCompileInputsCacheFile": "",
+        "ResolveAssemblyReferencesStateFile": "",
+        "ProjectAssetsCacheFile": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.assets.cache"
+      },
+      "usingItemCount": 16
+    },
+    {
+      "alias": "corrected-private",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+        "-getProperty:GenerateDocumentationFile,DocumentationFile,NoWarn,TreatWarningsAsErrors,WarningsAsErrors,EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath,GenerateAssemblyInfo,GeneratedAssemblyInfoFile,GenerateGlobalUsings,GeneratedGlobalUsingsFile,GenerateMSBuildEditorConfigFile,GeneratedMSBuildEditorConfigFile,GenerateDependencyFile,ProjectDepsFilePath,GenerateRuntimeConfigurationFiles,ProjectRuntimeConfigFilePath,PublishDir,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,ProjectAssetsCacheFile",
+        "-getItem:Using"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "GenerateDocumentationFile": "false",
+        "DocumentationFile": "",
+        "NoWarn": ";IDE0028",
+        "TreatWarningsAsErrors": "true",
+        "WarningsAsErrors": ";NU1605;SYSLIB0011",
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": "",
+        "GenerateAssemblyInfo": "true",
+        "GeneratedAssemblyInfoFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.AssemblyInfo.cs",
+        "GenerateGlobalUsings": "",
+        "GeneratedGlobalUsingsFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.GlobalUsings.g.cs",
+        "GenerateMSBuildEditorConfigFile": "",
+        "GeneratedMSBuildEditorConfigFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.GeneratedMSBuildEditorConfig.editorconfig",
+        "GenerateDependencyFile": "true",
+        "ProjectDepsFilePath": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.deps.json",
+        "GenerateRuntimeConfigurationFiles": "",
+        "ProjectRuntimeConfigFilePath": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.runtimeconfig.json",
+        "PublishDir": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/publish/",
+        "CoreCompileInputsCacheFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.csproj.CoreCompileInputs.cache",
+        "ResolveAssemblyReferencesStateFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.csproj.AssemblyReference.cache",
+        "ProjectAssetsCacheFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.assets.cache"
+      },
+      "usingItemCount": 16
+    }
+  ],
+  "allBehaviorFlagsAndWarningPolicyIdentical": [
+    "GenerateDocumentationFile",
+    "NoWarn",
+    "TreatWarningsAsErrors",
+    "WarningsAsErrors",
+    "EmitCompilerGeneratedFiles",
+    "GenerateAssemblyInfo",
+    "GenerateGlobalUsings",
+    "GenerateMSBuildEditorConfigFile",
+    "GenerateDependencyFile",
+    "GenerateRuntimeConfigurationFiles"
+  ],
+  "unconditionalCscOptionalOutputOverridesRemoved": [
+    "DocumentationFile",
+    "CompilerGeneratedFilesOutputPath"
+  ],
+  "sdkPrimaryFilesSha256": {
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.BeforeCommon.targets": "7889dcdd9b667f93a1fa70a99c37117a4a032995687a7faea1f89efacf63442a",
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.GenerateAssemblyInfo.targets": "aed5db2d53cb2517edb7cae09dfd543b177ae733d5331536bd044d772bad18e8",
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.GenerateGlobalUsings.targets": "ecde6efe033ff19f05aeaedef96a1e34ee7595c48c68b4bf9299fedb413049bb",
+    "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets": "7958c0c5010ec8d9092c079ccafac6eb7289db34829b6e2a33ba6eaefaaaa770",
+    "/home/administrator/.dotnet/sdk/10.0.403/Roslyn/Microsoft.Managed.Core.targets": "c25bf275c966978f5a468eecbe2a09b7192f530389e52d1ea167c4f31469e09e",
+    "/home/administrator/.dotnet/sdk/10.0.403/Roslyn/Microsoft.CSharp.Core.targets": "33a63870665f8eb019f43da5effa450f6c8000089a879bc5373061e870bd3780"
+  },
+  "remainingOverridesReviewed": [
+    {
+      "property": "GeneratedAssemblyInfoFile",
+      "guard": "GenerateAssemblyInfo true, same ordinary/defaulttrue; NET.GenerateAssemblyInfo.targets57\u201360"
+    },
+    {
+      "property": "GeneratedGlobalUsingsFile",
+      "guard": "GenerateGlobalUsings target only runs when Using items nonempty; same itemcount/selection; NET.GenerateGlobalUsings.targets36\u201339"
+    },
+    {
+      "property": "GeneratedMSBuildEditorConfigFile",
+      "guard": "GenerateMSBuildEditorConfigFileShouldRun/ShouldRun boolean guard; RoslynManagedCore167\u2013176"
+    },
+    {
+      "property": "ProjectDepsFilePath",
+      "guard": "GenerateDependencyFile true; NET.Sdk.targets280"
+    },
+    {
+      "property": "ProjectRuntimeConfigFilePath",
+      "guard": "GenerateRuntimeConfigurationFiles true required, unchanged inactive flag here; NET.Sdk.targets355\u2013356"
+    },
+    {
+      "property": "PublishDir",
+      "guard": "No Publish target requested; Build only"
+    },
+    {
+      "property": "ProjectAssetsCacheFile/CoreCompileInputsCacheFile/ResolveAssemblyReferencesStateFile",
+      "guard": "Relocated active standardcache destinations only; not compiler feature switches"
+    }
+  ],
+  "correctedPurePathGuardPassed": true,
+  "source52App147Gateway34Domain98FullGatewayBinObjUnchanged": true,
+  "latestFailed13FilePartialLeftUntouched": true,
+  "noWarningSuppressionOrDocumentationChanges": true
+}

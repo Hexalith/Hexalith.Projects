@@ -1,0 +1,26 @@
+{
+  "allThreeRevisionsUnexecuted": true,
+  "notFailedMeasurementsOrAuditRuns": true,
+  "onlyExecutedBoundaryAuditSha256": "52c39e5717f45fab3971ce58816115e3e33403c3c5ae754d7a0e203fba01f302",
+  "onlyExecutedBoundaryAuditReportSha256": "5463d181d60f69547b3faf218da6e910a02e77b3b53f861d2e981fbd14f001ab",
+  "revisions": [
+    {
+      "revision": "3f5d27db",
+      "originalDirectory": "/tmp/story65-advisory-boundary-span-history-20261108/3f5d27db",
+      "receiptSha256": "3f5d27db1b8ce471a662cddd32adab1721dfc29c9f01c80ff71a18f5b1d33a52",
+      "correction": "Selected stage7 changed from FinalScope to Index; FinalScope remains a stop marker and starts none."
+    },
+    {
+      "revision": "e4320689",
+      "originalDirectory": "/tmp/story65-advisory-boundary-span-history-20261108/e4320689",
+      "receiptSha256": "e4320689124cb2b353a1057ffc25c310f0a3cd91c1e6a155eed1027c6f720f5d",
+      "correction": "Planned protocolCases metadata corrected4 to14 (retained4 plus new10); no C# or runtime change."
+    },
+    {
+      "revision": "ebe3fb76",
+      "originalDirectory": "/tmp/story65-advisory-boundary-span-audit-history-20261108/ebe3fb76",
+      "auditSha256": "ebe3fb76a1531239f5678267da0939d9b22817b449d0d87cd088cd18a7e55d43",
+      "correction": "Unexecuted audit assumed two nonexistent Root receipt fields; corrected to direct disabled-copy hash and compiled receipt binding before the single52c PASS. Final audit also checks facts PGID/SID without inventing startTicks."
+    }
+  ]
+}

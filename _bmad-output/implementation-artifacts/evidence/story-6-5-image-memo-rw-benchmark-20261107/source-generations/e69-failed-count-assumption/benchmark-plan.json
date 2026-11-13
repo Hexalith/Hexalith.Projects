@@ -1,0 +1,32 @@
+{
+  "filePreparationOnly": true,
+  "productionEdits": 0,
+  "builds": 0,
+  "loads": 0,
+  "runs": 0,
+  "candidate": "shared read protection for warm exactbyte comparison; original complete write recheck for misses; close via write without disposinggate",
+  "oracle": "actual unchanged ordinary SDK5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+  "copiedControlRequired": true,
+  "concurrentReaders": [
+    2,
+    4
+  ],
+  "sharedMemoPerVariant": 1,
+  "distinctScopePerObservation": true,
+  "configuration": "Debug",
+  "optimize": false,
+  "runtimeProcessorOverride": null,
+  "expectedRuntimeProcessors": 14,
+  "coldWarmConcurrencyWallCpuAllocationGcRequired": true,
+  "scopeFileEofPoolPeMvidBodiesUnchanged": true,
+  "prodCodeMapChanged": false,
+  "fullHostCaptureOrDeadlineGainClaimed": false,
+  "pending": [
+    "root+reader candidate/sourceplan review",
+    "concrete harness+sourceinputfreeze",
+    "explicit standalone compile/run authorization",
+    "matched oracle/control/candidate results before any production proposal"
+  ],
+  "sourceDerivedOwnerDirectReferenceImageCohort": 67,
+  "fullRuntimeExecutableOwnersCohortEqualityClaimed": false
+}

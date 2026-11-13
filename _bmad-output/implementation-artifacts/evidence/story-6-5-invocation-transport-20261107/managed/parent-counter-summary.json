@@ -1,0 +1,67 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "originalRawSha256": "145c3161584582aa44b8bd571d9a997d540a20b928f0e2de41f78181c86b944a",
+  "captures": 1542,
+  "rows": 1584,
+  "wholeExcludesEligibilityAndAdmission": true,
+  "transportExcludesOuterHttpClientResponseContentReadBuffering": true,
+  "populationIsEveryEntryIntoSelectedSharedPrimaryIncludingOrdinaryControlStateAndPotentialIssuer": true,
+  "fixedGatewayRoleOnlyFreshEventStoreEntryNameInSelectedSixRuntimeComposition": true,
+  "noClientControllerInvokerRootOrPriorRunPairing": true,
+  "noMissingStageOutcomeInference": true,
+  "residualIsUnattributed": true,
+  "ownedDisposeStageDoesNotProveReleaseCallbackOrFenceRemoval": true,
+  "possibleRecursiveWholeCapturesOverlap": true,
+  "noNetworkReceiverOrCpuAttribution": true,
+  "millisecondsByStage": {
+    "WholePrimaryHandler": {
+      "count": 1542,
+      "median": 1.0978125,
+      "minimum": 0.514703,
+      "maximum": 2062.854211
+    },
+    "ExactLeasedTransportAwait": {
+      "count": 21,
+      "median": 339.232471,
+      "minimum": 286.231892,
+      "maximum": 2022.787672
+    },
+    "OwnedLeaseDisposeAwait": {
+      "count": 21,
+      "median": 10.577497,
+      "minimum": 3.925388,
+      "maximum": 22.482136
+    }
+  },
+  "stageSetCounts": [
+    {
+      "stages": [
+        "WholePrimaryHandler"
+      ],
+      "captures": 1521
+    },
+    {
+      "stages": [
+        "WholePrimaryHandler",
+        "ExactLeasedTransportAwait",
+        "OwnedLeaseDisposeAwait"
+      ],
+      "captures": 21
+    }
+  ],
+  "withinSameCapturePercentOfWhole": {
+    "ExactLeasedTransportAwait": {
+      "count": 21,
+      "median": 90.86212832493538,
+      "minimum": 86.22162324523055,
+      "maximum": 98.34964159074444
+    },
+    "OwnedLeaseDisposeAwait": {
+      "count": 21,
+      "median": 1.3876036890113095,
+      "minimum": 0.48433029583870446,
+      "maximum": 6.50477543020741
+    }
+  }
+}

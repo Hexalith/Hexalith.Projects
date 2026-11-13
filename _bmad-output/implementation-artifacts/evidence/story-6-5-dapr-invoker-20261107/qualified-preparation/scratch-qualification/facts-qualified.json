@@ -1,0 +1,37 @@
+{
+  "qualified": true,
+  "runtimeFacts": {
+    "runtimeVersion": "10.0.14",
+    "processorCount": 14,
+    "processorOverride": null,
+    "oracle": {
+      "assembly": "Hexalith.EventStore.Gateway",
+      "configuration": "Debug",
+      "jitOptimizerDisabled": true,
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations"
+    },
+    "candidate": {
+      "assembly": "Hexalith.EventStore.Gateway",
+      "configuration": "Debug",
+      "jitOptimizerDisabled": true,
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations"
+    },
+    "scratch": {
+      "assembly": "Hexalith.EventStore.Server.Tests",
+      "configuration": "Debug",
+      "jitOptimizerDisabled": true,
+      "debuggingFlags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations"
+    },
+    "samePublicIdentity": true,
+    "differentGatewayInstances": true
+  },
+  "compilationProperties": {
+    "Configuration": "Debug",
+    "Optimize": "false",
+    "DefineConstants": "TRACE;DEBUG;DEBUG",
+    "DebugType": "portable",
+    "TargetFramework": "net10.0"
+  },
+  "sameIdentityDistinctTypesSharedDependenciesNoDefaultGatewayAssertionsPassed": true,
+  "runtimeNaturalProcessorCount": 14
+}

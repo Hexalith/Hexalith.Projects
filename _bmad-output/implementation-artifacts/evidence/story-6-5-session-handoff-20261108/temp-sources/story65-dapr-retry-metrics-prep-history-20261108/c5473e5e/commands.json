@@ -1,0 +1,30 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "offlineGuardsReleased": false,
+  "offlineGuardPlan": {
+    "cwd": "/tmp/story65-dapr-retry-metrics-prep-20261108",
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "guard_cases"
+    ],
+    "scope": "31 pure mocked guard source cases; no real socket, sidecar, AppHost, process spawn or source change"
+  },
+  "futureOrdinaryCommand": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "futureOrdinarySupervisorSource": "/tmp/story65-canonical-hash-acceptance-prep-20261108/supervise.py",
+  "futureReadOnlyCleanupAuditSource": "/tmp/story65-canonical-hash-acceptance-prep-20261108/audit.py",
+  "futureExternalSessionSource": "/tmp/story65-canonical-current-gateway-cpu-prep-20261108/watcher/ownership.py",
+  "runtimeObserverEntryPoint": null,
+  "ordinaryOrCollectorLaunchReleased": false,
+  "integrationMustBeReviewedSeparately": "reuse original ordinary supervisor and external guarded graph observer; no launcher replacement, wrappers, hooks or environment changes are implemented/released by this core preparation"
+}

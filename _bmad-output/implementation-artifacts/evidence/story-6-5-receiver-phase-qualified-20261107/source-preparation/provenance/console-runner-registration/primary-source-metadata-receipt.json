@@ -1,0 +1,144 @@
+{
+  "observedUtc": "2026-11-07T22:52:38.568637+00:00",
+  "metadataOnly": true,
+  "targetAssemblyLoadsBuildsTestsHostsWindows": 0,
+  "originalPreparationSha256": "2989126d708ac18a25e41aa96079a60833bfb46af112fa363ee682e8ac937951",
+  "allOriginal63PreparedFilesMatchedBeforeChange": true,
+  "readerTool": "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+  "readerToolSha256": "3fc35de85fd5b62052f9fc6285d36950e1f7e2bea6b35c5e2d02ce8cf09d3a98",
+  "rawCompileReference": "/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll",
+  "rawCompileReferenceSha256": "4070293988b67cb44ac29647abb68188b528e1b29ab846f0223cdaff9c12a789",
+  "repositoryCommit": "0c7aa4991fa340689155d52043ce88f52f2f7421",
+  "packageNuspecCopy": "provenance/console-runner-registration/xunit.v3.runner.inproc.console.nuspec",
+  "packageNuspecSha256": "14abfc8e141053a28ba56cdcf482278087cb1bcf90ec47e1fbff24e0a0c4fe16",
+  "primarySources": [
+    {
+      "repositoryPath": "src/xunit.v3.runner.inproc.console/ConsoleRunner.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.inproc.console/ConsoleRunner.cs",
+      "file": "provenance/console-runner-registration/ConsoleRunner.cs",
+      "sha256": "c033b850da7b7631878a178e02c0f1c02c8f900e0a68cb3fe1dddaaf6257f8db"
+    },
+    {
+      "repositoryPath": "src/xunit.v3.runner.common/Parsers/CommandLineParserBase.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Parsers/CommandLineParserBase.cs",
+      "file": "provenance/console-runner-registration/CommandLineParserBase.cs",
+      "sha256": "471ff61163c4bb12bfab08d0ff61b90fa6794087ea028ee957bf633862505cee"
+    },
+    {
+      "repositoryPath": "src/xunit.v3.runner.common/Configuration/RegisteredRunnerConfig_reflection.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Configuration/RegisteredRunnerConfig_reflection.cs",
+      "file": "provenance/console-runner-registration/RegisteredRunnerConfig_reflection.cs",
+      "sha256": "4b6f38ad304b459d5cfd1e2d21ff505626865146b5c56f3de50ec6c542060b9a"
+    },
+    {
+      "repositoryPath": "src/xunit.v3.runner.common/Results/RegisterConsoleResultWriterAttribute.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Results/RegisterConsoleResultWriterAttribute.cs",
+      "file": "provenance/console-runner-registration/RegisterConsoleResultWriterAttribute.cs",
+      "sha256": "930ddd667693b243f90812f97c8fa726faf831387722be1e778bdf66ff850630"
+    },
+    {
+      "repositoryPath": "src/xunit.v3.runner.common/Results/RegisterConsoleResultWriterAttribute_reflection.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Results/RegisterConsoleResultWriterAttribute_reflection.cs",
+      "file": "provenance/console-runner-registration/RegisterConsoleResultWriterAttribute_reflection.cs",
+      "sha256": "b0fd4ac91e2aa52d104588b3a85d5b5e64775238a80d5ab8bfb29f7ccb97ab38"
+    },
+    {
+      "repositoryPath": "src/xunit.v3.runner.common/Results/Builtin/XmlV2ResultWriter.cs",
+      "url": "https://raw.githubusercontent.com/xunit/xunit/0c7aa4991fa340689155d52043ce88f52f2f7421/src/xunit.v3.runner.common/Results/Builtin/XmlV2ResultWriter.cs",
+      "file": "provenance/console-runner-registration/XmlV2ResultWriter.cs",
+      "sha256": "7b30bb5665da7567c3b53a246015888bad088c52f57bed8b03b27921c297d216"
+    }
+  ],
+  "apiMetadataCommands": [
+    {
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "member",
+        "Xunit.Runner.Common.RegisterConsoleResultWriterAttribute",
+        "--library",
+        "/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll",
+        "-m",
+        ".ctor",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/attribute-api.json",
+      "outputSha256": "724ec89b4f719932a2ee15ab1617d339711141e104c972187bc5770fe9e08dae",
+      "targetSha256": "4070293988b67cb44ac29647abb68188b528e1b29ab846f0223cdaff9c12a789"
+    },
+    {
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "type",
+        "Xunit.Runner.Common.XmlV2ResultWriter",
+        "--library",
+        "/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/xml-writer-api.json",
+      "outputSha256": "775229f1af83f065d91faa2992864b6eeb70ec46400f12351d63bccb5e01efbe",
+      "targetSha256": "4070293988b67cb44ac29647abb68188b528e1b29ab846f0223cdaff9c12a789"
+    }
+  ],
+  "entryMetadataCommands": [
+    {
+      "role": "projects",
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "library",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/projects/bin/Debug/net10.0/Hexalith.Projects.Server.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/projects-entry-before-metadata.json",
+      "outputSha256": "841f7cbfb781b2e0b4870be2d3cf8d5efaff6303f4893262fe7a5568c0dde9db",
+      "targetSha256": "0cabfb0c2603fcaafc6fc2953ce095df3882c27dd28e33c4a0bd79b61a498ef6"
+    },
+    {
+      "role": "tenants",
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "library",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/bin/Debug/net10.0/Hexalith.Tenants.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/tenants-entry-before-metadata.json",
+      "outputSha256": "d903c4b764d513fadf175fec3017013da1c27c35a193bee12c43c4b474a34dd6",
+      "targetSha256": "ed350b895e4570f003bc999ce18134813da5ce4e046eb103449b2a7dd76e9767"
+    },
+    {
+      "role": "folders",
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "library",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/folders/bin/Debug/net10.0/Hexalith.Folders.Server.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/folders-entry-before-metadata.json",
+      "outputSha256": "d52299a68b5259dcab520457f5bf555117b6d07dc7917fb3716199228ae5aa12",
+      "targetSha256": "1901ae59309243b5e5c9972cb4f3149bb3cba441087c8b21bfe9a87d200810f2"
+    },
+    {
+      "role": "excluded",
+      "argv": [
+        "/home/administrator/.nuget/packages/dotnet-inspect.linux-x64/0.27.0/tools/any/linux-x64/dotnet-inspect",
+        "library",
+        "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/bin/Debug/net10.0/Story65.ReceiverPhase.Excluded.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stderrEmpty": true,
+      "output": "provenance/console-runner-registration/excluded-entry-before-metadata.json",
+      "outputSha256": "2b9573bb240d9b3fa071977578877c5bfffbec9b2bf7cee2c82beb6b3f268d47",
+      "targetSha256": "40a68850a5a829f43e9706f79c99dcae4bba1aba33725309f30a4ca6826c1f07"
+    }
+  ]
+}

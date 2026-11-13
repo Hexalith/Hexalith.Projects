@@ -1,0 +1,192 @@
+[
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:36.412569+00:00",
+    "finishedUtc": "2026-11-07T10:02:40.332210+00:00",
+    "exitCode": 0,
+    "log": "1-service-defaults-producer-force-no-dependency-build.log",
+    "logSha256": "14cca2e87708fcc34b6929c7ba0942a2fe69a4a2baad783a1ce2d1bba68acb66"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:40.332572+00:00",
+    "finishedUtc": "2026-11-07T10:02:42.595701+00:00",
+    "exitCode": 0,
+    "log": "2-eventstore-force-no-dependency-build.log",
+    "logSha256": "82073e12f950c47adb55a7c3ea845ab618ef6ada937b648f1e76c477fa184071"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:42.596098+00:00",
+    "finishedUtc": "2026-11-07T10:02:45.951170+00:00",
+    "exitCode": 0,
+    "log": "3-tenants-force-no-dependency-build.log",
+    "logSha256": "0f150b230c0a3ac880e88357ab00a9f09d09ab91aa6890395be0c40b1f311b8a"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:45.951632+00:00",
+    "finishedUtc": "2026-11-07T10:02:51.474285+00:00",
+    "exitCode": 0,
+    "log": "4-projects-force-no-dependency-build.log",
+    "logSha256": "f06ed7fefaef1054faa35ac09f9281969fe240251534f54c12393f6d82357940"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:51.474735+00:00",
+    "finishedUtc": "2026-11-07T10:02:54.592687+00:00",
+    "exitCode": 0,
+    "log": "5-projects-workers-force-no-dependency-build.log",
+    "logSha256": "023f34ac225ef597fe76da793b578b40582e4a52c7b38bb28d8d2be8d2f76c33"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:54.593118+00:00",
+    "finishedUtc": "2026-11-07T10:02:59.380421+00:00",
+    "exitCode": 0,
+    "log": "6-folders-force-no-dependency-build.log",
+    "logSha256": "6a56c1e4cf8e1ff928f335226425b5549f4689fa1bcd626370270667e73cb211"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:02:59.380838+00:00",
+    "finishedUtc": "2026-11-07T10:03:02.313806+00:00",
+    "exitCode": 0,
+    "log": "7-folders-workers-force-no-dependency-build.log",
+    "logSha256": "c408245f678c0caef81150d0285b1b268a12e67d8bf5f4c4b1af7db7514c2f95"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:03:02.314257+00:00",
+    "finishedUtc": "2026-11-07T10:03:08.494889+00:00",
+    "exitCode": 0,
+    "log": "8-apphost-force-no-dependency-build.log",
+    "logSha256": "bcb359b12072b9eba00609ae84a69c945a4bb3f4a10e8ad80ccdaaebbce0fc53"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-t:Rebuild",
+      "-m:1",
+      "--no-restore",
+      "--disable-build-servers",
+      "-p:NuGetAudit=false",
+      "-p:SupportedProjectReadDistributed=true",
+      "-p:BuildProjectReferences=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "startedUtc": "2026-11-07T10:03:08.495341+00:00",
+    "finishedUtc": "2026-11-07T10:03:16.671101+00:00",
+    "exitCode": 0,
+    "log": "9-integration-force-no-dependency-build.log",
+    "logSha256": "c1a9562bee772cdc7f0b4b8ffc2d29985a5b703014afc4b40b52480f3afe73fc"
+  }
+]

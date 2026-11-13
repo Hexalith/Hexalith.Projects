@@ -1,0 +1,1508 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "actualActivation": true,
+  "trustProofRemovedBeforeDeserialization": true,
+  "activationCopyPersisted": false,
+  "actualFreezeInvoked": true,
+  "actualTryCaptureInvoked": true,
+  "captureEligible": true,
+  "actualCaptureChargedBytes": 339100,
+  "capturedTrustProofIsEmpty": true,
+  "accountingMatchesActualCapture": true,
+  "originalAccounting": {
+    "canonicalCatalogBytes": 219012,
+    "conservativeChargedBytes": 339100,
+    "inputByteBudget": 4194304,
+    "withinConservativeByteBudget": true,
+    "textChargedBytes": {
+      "activation": 326,
+      "hosts": 4060,
+      "auxiliary": 19370,
+      "auxiliary.native": 3148,
+      "auxiliary.callback": 1086,
+      "auxiliary.sidecar": 412,
+      "capabilities": 516,
+      "capabilities.types": 182,
+      "receivers": 152,
+      "endpoints": 55848,
+      "endpoints.methods": 1096,
+      "endpoints.policies": 1982,
+      "invocations": 806,
+      "invocations.methods": 224
+    },
+    "collectionChargedBytes": {
+      "RequiredHosts": 800,
+      "AuxiliaryOperations": 10912,
+      "ProjectionCapabilities": 288,
+      "TechnicalHttpReceivers": 160,
+      "ProjectionCapabilities[].ProjectionTypes": 448,
+      "TechnicalHttpReceivers[].Endpoints": 4512,
+      "TechnicalHttpReceivers[].Invocations": 928,
+      "TechnicalHttpReceivers[].Endpoints[].Methods": 5600,
+      "TechnicalHttpReceivers[].Endpoints[].Policies": 5600,
+      "TechnicalHttpReceivers[].Invocations[].HttpMethods": 1120
+    },
+    "collections": [
+      {
+        "path": "RequiredHosts",
+        "count": 6,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogHostIdentity]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 800
+      },
+      {
+        "path": "AuxiliaryOperations",
+        "count": 85,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogAuxiliaryOperation]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 10912
+      },
+      {
+        "path": "ProjectionCapabilities",
+        "count": 2,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogProjectionCapability]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 288
+      },
+      {
+        "path": "TechnicalHttpReceivers",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "ProjectionCapabilities[].ProjectionTypes",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "ProjectionCapabilities[].ProjectionTypes",
+        "count": 2,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 288
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints",
+        "count": 35,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 4512
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations",
+        "count": 7,
+        "type": "System.Collections.Generic.List\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogDeclaredInvocation]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 928
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.Generic.List\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      }
+    ]
+  },
+  "frozenAccounting": {
+    "canonicalCatalogBytes": 219012,
+    "conservativeChargedBytes": 339100,
+    "inputByteBudget": 4194304,
+    "withinConservativeByteBudget": true,
+    "textChargedBytes": {
+      "activation": 326,
+      "hosts": 4060,
+      "auxiliary": 19370,
+      "auxiliary.native": 3148,
+      "auxiliary.callback": 1086,
+      "auxiliary.sidecar": 412,
+      "capabilities": 516,
+      "capabilities.types": 182,
+      "receivers": 152,
+      "endpoints": 55848,
+      "endpoints.methods": 1096,
+      "endpoints.policies": 1982,
+      "invocations": 806,
+      "invocations.methods": 224
+    },
+    "collectionChargedBytes": {
+      "RequiredHosts": 800,
+      "AuxiliaryOperations": 10912,
+      "ProjectionCapabilities": 288,
+      "TechnicalHttpReceivers": 160,
+      "ProjectionCapabilities[].ProjectionTypes": 448,
+      "TechnicalHttpReceivers[].Endpoints": 4512,
+      "TechnicalHttpReceivers[].Invocations": 928,
+      "TechnicalHttpReceivers[].Endpoints[].Methods": 5600,
+      "TechnicalHttpReceivers[].Endpoints[].Policies": 5600,
+      "TechnicalHttpReceivers[].Invocations[].HttpMethods": 1120
+    },
+    "collections": [
+      {
+        "path": "RequiredHosts",
+        "count": 6,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogHostIdentity]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 800
+      },
+      {
+        "path": "AuxiliaryOperations",
+        "count": 85,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogAuxiliaryOperation]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 10912
+      },
+      {
+        "path": "ProjectionCapabilities",
+        "count": 2,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogProjectionCapability]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 288
+      },
+      {
+        "path": "TechnicalHttpReceivers",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "ProjectionCapabilities[].ProjectionTypes",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "ProjectionCapabilities[].ProjectionTypes",
+        "count": 2,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 288
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints",
+        "count": 35,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 4512
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations",
+        "count": 7,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[Hexalith.EventStore.Contracts.Routing.RouteCatalogDeclaredInvocation]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 928
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Methods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Endpoints[].Policies",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      },
+      {
+        "path": "TechnicalHttpReceivers[].Invocations[].HttpMethods",
+        "count": 1,
+        "type": "System.Collections.ObjectModel.ReadOnlyCollection\u00601[System.String]",
+        "supportedShape": true,
+        "withinItemBudget": true,
+        "chargedBytes": 160
+      }
+    ]
+  },
+  "bindingDigestsEqual": true,
+  "bindingMemoCount": 1,
+  "bindingMemoRetainedBytes": 339100,
+  "bindingScopeCacheHits": 50,
+  "costs": {
+    "freeze": {
+      "iterations": 20,
+      "minimumMilliseconds": 0.0479,
+      "medianMilliseconds": 0.0505,
+      "maximumMilliseconds": 0.2015,
+      "totalMilliseconds": 1.1903000000000001
+    },
+    "capture": {
+      "iterations": 30,
+      "minimumMilliseconds": 0.0583,
+      "medianMilliseconds": 0.0678,
+      "maximumMilliseconds": 0.6423,
+      "totalMilliseconds": 3.2326
+    },
+    "coreWithWarmedDecodeMemo": {
+      "iterations": 30,
+      "minimumMilliseconds": 2.37,
+      "medianMilliseconds": 2.8936,
+      "maximumMilliseconds": 4.5647,
+      "totalMilliseconds": 94.58579999999999
+    },
+    "bindingWithWarmedMemo": {
+      "iterations": 30,
+      "minimumMilliseconds": 0.0381,
+      "medianMilliseconds": 0.0869,
+      "maximumMilliseconds": 1.7939,
+      "totalMilliseconds": 5.075200000000001
+    },
+    "freezeAndMemo": {
+      "iterations": 20,
+      "minimumMilliseconds": 0.0626,
+      "medianMilliseconds": 0.1281,
+      "maximumMilliseconds": 0.2337,
+      "totalMilliseconds": 2.8024999999999993
+    },
+    "freezeAndCore": {
+      "iterations": 20,
+      "minimumMilliseconds": 2.4422,
+      "medianMilliseconds": 2.8407,
+      "maximumMilliseconds": 5.7717,
+      "totalMilliseconds": 60.6996
+    }
+  },
+  "assemblies": [
+    {
+      "name": "Hexalith.EventStore.Contracts",
+      "sha256": "0719afc1f8d13c2260f1575cd5ba41697052ac94dee5c0ae02b67a52bd6f280a"
+    },
+    {
+      "name": "Hexalith.EventStore.ServiceDefaults",
+      "sha256": "80028d48e8e8c64cfb61b09a10246503112cc2ef2cc22be671a25986b9482538"
+    }
+  ],
+  "limits": [
+    "External diagnostic process; no live authority result or trusted resource permission is established.",
+    "Reflection/observer overhead and host load are included; no performance acceptance is claimed.",
+    "Full accounting mirrors current source without early budget exits; only actual TryCapture establishes SDK eligibility."
+  ]
+}

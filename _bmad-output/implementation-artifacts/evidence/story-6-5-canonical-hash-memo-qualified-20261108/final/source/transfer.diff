@@ -1,0 +1,214 @@
+--- qualified/BatchRunner.cs
++++ final-transfer/BatchRunner.cs
+@@ -5,7 +5,9 @@
+ {
+     internal static async Task<BatchSample> Run(Dataset dataset, string workload, string state, string variant, int readers, int round)
+     {
++        long initialize = Stopwatch.GetTimestamp();
+         IVariant owner = Variants.Create(variant);
++        initialize = Stopwatch.GetTimestamp() - initialize;
+         bool ownerClosed = false;
+         try
+         {
+@@ -45,7 +47,7 @@
+         owner.Dispose(); ownerClosed = true;
+         teardown = Stopwatch.GetTimestamp() - teardown;
+         return new(dataset.Name, workload, state, variant, readers, round, readers * iterations, wall, cpu,
+-            allocationDelta, dg0, dg1, dg2, workers.SelectMany(samples => samples).ToArray(), teardown, counters);
++            allocationDelta, dg0, dg1, dg2, workers.SelectMany(samples => samples).ToArray(), initialize, teardown, counters);
+         }
+         finally { if (!ownerClosed) owner.Dispose(); }
+     }
+--- qualified/BatchSample.cs
++++ final-transfer/BatchSample.cs
+@@ -2,4 +2,4 @@
+ /// <summary>One shared-owner batch; batch wall divided by observations is amortized throughput cost.</summary>
+ internal sealed record BatchSample(string Dataset, string Workload, string State, string Variant, int Readers, int Round,
+     int Observations, long WallTicks, double CpuMilliseconds, long AllocatedBytes, int Gen0, int Gen1, int Gen2,
+-    CaptureSample[] Captures, long OwnerDisposeTicks, object Counters);
++    CaptureSample[] Captures, long OwnerInitializeTicks, long OwnerDisposeTicks, object Counters);
+--- qualified/BenchmarkHostEnvironment.cs
++++ final-transfer/BenchmarkHostEnvironment.cs
+@@ -0,0 +1,13 @@
++using Microsoft.Extensions.FileProviders;
++using Microsoft.Extensions.Hosting;
++
++namespace Story65.Canonical.Harness;
++
++/// <summary>Supplies only the already-qualified private development selector, without creating a host.</summary>
++internal sealed class BenchmarkHostEnvironment : IHostEnvironment
++{
++    public string EnvironmentName { get; set; } = Environments.Development;
++    public string ApplicationName { get; set; } = "Story65.Canonical.Harness";
++    public string ContentRootPath { get; set; } = "/tmp/story65-canonical-hash-memo-final-compiled-prep-20261108";
++    public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
++}
+--- qualified/CanonicalHashBenchmark.csproj
++++ final-transfer/CanonicalHashBenchmark.csproj
+@@ -211,8 +211,8 @@
+     <Compile Include="../candidate/*.cs" />
+   </ItemGroup>
+   <Target Name="RequireReviewedCurrentInputs" BeforeTargets="Restore;PrepareForBuild;CoreCompile">
+-    <Error Condition="'$(Story65ReviewedPreparationSha256)' == '' Or '$(Story65QualifiedSdkSha256)' == '' Or '$(Story65QualifiedContractsSha256)' == ''" Text="Exact Root-reviewed current hashes required." />
+-    <GetFileHash Files="/tmp/story65-canonical-hash-memo-prep-20261108/preparation-receipt.json" Algorithm="SHA256">
++    <Error Condition="'$(Story65ReviewedPreparationSha256)' == '' Or '$(Story65QualifiedSdkSha256)' == '' Or '$(Story65QualifiedContractsSha256)' == '' Or '$(Story65NativeHandoffPath)' == '' Or '$(Story65NativeHandoffSha256)' == ''" Text="Exact Root-reviewed new Contracts/SDK hashes and actual native handoff are required." />
++    <GetFileHash Files="/tmp/story65-canonical-hash-memo-final-compiled-prep-20261108/preparation-receipt.json" Algorithm="SHA256">
+       <Output TaskParameter="Items" ItemName="_PreparationHash" />
+     </GetFileHash>
+     <Error Condition="'%(_PreparationHash.FileHash)' != '$(Story65ReviewedPreparationSha256)'" Text="Frozen Preparation input differs." />
+@@ -224,5 +224,9 @@
+       <Output TaskParameter="Items" ItemName="_ContractsHash" />
+     </GetFileHash>
+     <Error Condition="'%(_ContractsHash.FileHash)' != '$(Story65QualifiedContractsSha256)'" Text="Frozen Contracts input differs." />
++    <GetFileHash Files="$(Story65NativeHandoffPath)" Algorithm="SHA256">
++      <Output TaskParameter="Items" ItemName="_NativeHandoffHash" />
++    </GetFileHash>
++    <Error Condition="'%(_NativeHandoffHash.FileHash)' != '$(Story65NativeHandoffSha256)'" Text="Root-reviewed actual native handoff differs." />
+   </Target>
+ </Project>
+--- qualified/InputPins.cs
++++ final-transfer/InputPins.cs
+@@ -3,12 +3,21 @@
+ /// <summary>Rehashes exact Root-reviewed current inputs, with no historical SDK fallback.</summary>
+ internal static class InputPins
+ {
++    internal static string SdkSha256 { get; private set; } = string.Empty;
++    internal static string ContractsSha256 { get; private set; } = string.Empty;
++    internal static string NativeHandoffSha256 { get; private set; } = string.Empty;
+     internal static void Verify(string path,string expected)
+     {
+         Check.That(expected.Length==64 && Datasets.Sha(path)==expected,"runtime-manifest-hash");
+         using var doc=JsonDocument.Parse(File.ReadAllBytes(path));
+         var root=doc.RootElement;
+         Check.That(root.GetProperty("executionReleased").GetBoolean(),"separate-runtime-release");
++        Check.That(root.GetProperty("nativeHandoffReady").GetBoolean(),"actual-native-handoff-required");
++        SdkSha256 = root.GetProperty("sdkSha256").GetString()!;
++        ContractsSha256 = root.GetProperty("contractsSha256").GetString()!;
++        NativeHandoffSha256 = root.GetProperty("nativeHandoffSha256").GetString()!;
++        Check.That(SdkSha256.Length == 64 && ContractsSha256.Length == 64 && NativeHandoffSha256.Length == 64,"exact-fresh-owner-hashes-required");
++        Check.That(Datasets.Sha(root.GetProperty("nativeHandoffPath").GetString()!) == NativeHandoffSha256,"actual-native-handoff-hash");
+         foreach(var item in root.GetProperty("inputsSha256").EnumerateObject())
+         {
+             Check.That(Path.IsPathFullyQualified(item.Name) && string.IsNullOrEmpty(new FileInfo(item.Name).LinkTarget),"absolute-regular-input-coordinate");
+--- qualified/ProductionVariant.cs
++++ final-transfer/ProductionVariant.cs
+@@ -1,16 +1,56 @@
++using System.Reflection;
++
+ using Hexalith.EventStore.Contracts.Routing;
+ using Hexalith.EventStore.ServiceDefaults.Routing;
++
++using Microsoft.Extensions.Options;
++
+ using Inventory = Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory;
+ using Host = Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost;
++
+ namespace Story65.Canonical.Harness;
+-/// <summary>Production complete inventory and identity path, with the same original byte-memo scope ownership.</summary>
++
++/// <summary>Uses only newly compiled real code and the actual authority-selected private owner scope.</summary>
+ internal sealed class ProductionVariant : IVariant
+ {
+-    private readonly RouteCatalogValidatedBytesMemo _bytes = new();
++    private readonly RouteCatalogAuthority _authority;
++    private readonly RouteCatalogValidatedBytesMemo _bytes;
++    private readonly RouteCatalogCanonicalHashMemo _hashes;
++    private readonly Func<RouteCatalogDecodeScope?> _enter;
++
++    internal ProductionVariant()
++    {
++        var options = Options.Create(new RouteCatalogHostOptions
++        {
++            ScopedDecodeReuse = true,
++            RetainValidatedCatalogBytes = true,
++            DevelopmentFixture = true,
++            RequireTechnicalHttpBinding = true,
++            Profile = "Development",
++        });
++        // This scratch owner uses only BeginPrivateDecodeScope and Dispose. Their exact source
++        // reads options/environment and owned memos only; Acquire/Validate/Release are never called.
++        _authority = new RouteCatalogAuthority(null!, null!, options, environment: new BenchmarkHostEnvironment());
++        _enter = typeof(RouteCatalogAuthority).GetMethod("BeginPrivateDecodeScope", BindingFlags.Instance | BindingFlags.NonPublic)!
++            .CreateDelegate<Func<RouteCatalogDecodeScope?>>(_authority);
++        _bytes = (RouteCatalogValidatedBytesMemo)typeof(RouteCatalogAuthority)
++            .GetField("_validatedBytes", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(_authority)!;
++        _hashes = (RouteCatalogCanonicalHashMemo)typeof(RouteCatalogAuthority)
++            .GetField("_canonicalHashes", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(_authority)!;
++        using RouteCatalogDecodeScope? selected = _enter();
++        Check.That(selected?.HasCanonicalHashMemo == true && selected.HasHostMemo, "actual-authority-selected-open-owner");
++    }
++
+     public string Name => "production";
+-    public IDisposable Enter() => Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.EnterWithMemo(_bytes);
++
++    public IDisposable Enter()
++    {
++        return _enter() ?? throw new ClosedFailure("actual-authority-scope-required");
++    }
++
+     public object Capture(RouteCatalogHostObservation observation, string workload)
+         => workload == "identity" ? Host.Identity(observation) : new Inventory(observation).Observation;
++
+     public string[] Digests(RouteCatalogHostObservation observation)
+     {
+         var inventory = new Inventory(observation);
+@@ -18,6 +58,20 @@
+         return [.. owned.AdmissionPolicies!.Select(inventory.Admission), .. owned.Declarations.Select(inventory.Declaration),
+             .. (owned.Operations ?? []).Select(inventory.Operation)];
+     }
+-    public object Counters() => new { ByteMemoEntries = _bytes.Count, ByteMemoRetained = _bytes.RetainedBytes };
+-    public void Dispose() { _bytes.Dispose(); }
++
++    internal void VerifyParticipation()
++    {
++        Check.That(_hashes.Count > 0 && _hashes.Hits > 0, "actual-compiled-hash-owner-participated");
++    }
++
++    public object Counters() => new
++    {
++        HashEntries = _hashes.Count, _hashes.RetainedCharge, _hashes.Hits, _hashes.Misses,
++        ByteMemoEntries = _bytes.Count, ByteMemoRetained = _bytes.RetainedBytes,
++        ActualAuthorityOwner = true, ActualSelectorOptionObservationsPerEntry = 3,
++        OriginalOwnerMemos = 3, AdditionalCanonicalHashMemo = 1,
++        ScopeDelegateBoundOutsideCapture = true, NoPerCaptureReflection = true,
++    };
++
++    public void Dispose() => _authority.Dispose();
+ }
+--- qualified/RuntimeFacts.cs
++++ final-transfer/RuntimeFacts.cs
+@@ -11,10 +11,23 @@
+     {
+         Check.That(Environment.Version == new Version(10,0,14) && Environment.ProcessorCount == 14, "runtime-and-natural-fourteen");
+         Check.That(Environment.GetEnvironmentVariable("DOTNET_PROCESSOR_COUNT") is null && GCSettings.IsServerGC, "natural-cpu-server-gc");
++        Check.That(Datasets.Sha(typeof(RouteCatalogCodec).Assembly.Location) == InputPins.ContractsSha256,"actual-new-contracts-owner-hash");
++        Check.That(Datasets.Sha(typeof(ObservedRouteCatalogHost).Assembly.Location) == InputPins.SdkSha256,"actual-new-sdk-owner-hash");
++        Dataset dataset = Datasets.Load().Single(value => value.Name == "compiled-sample-owner");
++        using (var owner = new ProductionVariant())
++        {
++            for (int index = 0; index < 2; index++)
++            {
++                using IDisposable scope = owner.Enter();
++                GC.KeepAlive(owner.Capture(dataset.Fresh(), "identity"));
++            }
++            owner.VerifyParticipation();
++        }
+         return new { Runtime=Environment.Version.ToString(),Environment.ProcessorCount,GCSettings.IsServerGC,
+             Stopwatch.Frequency,Harness=AssemblyFacts(Assembly.GetExecutingAssembly()),
+             ActualContracts=AssemblyFacts(typeof(RouteCatalogCodec).Assembly),ActualSdk=AssemblyFacts(typeof(ObservedRouteCatalogHost).Assembly),
+-            ForcedGcCalls=0,NewRuntimeEnvironmentValues=0 };
++            ForcedGcCalls=0,NewRuntimeEnvironmentValues=0,ActualAuthorityOwnerSelectionProved=true,InputPins.NativeHandoffSha256,
++            OwnerInitializationAndDisposalOutsideCapture=true,ProductionOriginalMemos=3,ProductionNewHashMemos=1,ControlByteMemos=1,CopiedPrototypeMemos=2 };
+     }
+     private static object AssemblyFacts(Assembly assembly)
+     {
+--- qualified/Summary.cs
++++ final-transfer/Summary.cs
+@@ -10,6 +10,7 @@
+             MedianAmortizedWallMilliseconds = Median(group.Select(sample=>Ms(sample.WallTicks)/sample.Observations)),
+             MedianCpuMillisecondsPerObservation=group.All(sample=>sample.CpuMilliseconds>=30)?Median(group.Select(sample=>sample.CpuMilliseconds/sample.Observations)):(double?)null,
+             CpuBatchesBelow30Milliseconds=group.Count(sample=>sample.CpuMilliseconds<30),
++            MedianOwnerInitializeMilliseconds=Median(group.Select(sample=>Ms(sample.OwnerInitializeTicks))),
+             MedianOwnerDisposeMilliseconds=Median(group.Select(sample=>Ms(sample.OwnerDisposeTicks))),
+             MedianAllocatedBytesPerObservation=Median(group.Select(sample=>(double)sample.AllocatedBytes/sample.Observations)),
+             ObservationMedianMilliseconds=Median(group.SelectMany(sample=>sample.Captures).Select(sample=>Ms(sample.ElapsedTicks))),

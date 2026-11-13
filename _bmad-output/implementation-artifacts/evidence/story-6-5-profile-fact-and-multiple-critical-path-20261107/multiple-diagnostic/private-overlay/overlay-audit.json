@@ -1,0 +1,57 @@
+{
+  "diagnosticOnly": true,
+  "ordinaryCurrentInputCount": 25,
+  "owningAssemblies": 7,
+  "allCurrentAndPrivateHashesVerified": true,
+  "multipleOnlyGate": "Open inside multiple=true fixture loop only, after genuine SINGLE readiness.",
+  "processorOverride": "Explicitly unset DOTNET_PROCESSOR_COUNT; no ThreadPool/GC/environment tuning.",
+  "operationsAndObservationsPreserved": true,
+  "memoLock": "Actual original locks retained; wait and exact comparison measured separately.",
+  "selfTiming": "Same-helper direct-child interval unions, clipped to parent lifetime, so overlapping children are not summed. Different assemblies remain separate parent spaces.",
+  "resources": "ServiceDefaults helper throttles numeric process CPU/ThreadPool/GC/processor facts to10Hz per process.",
+  "affectedProjects": [
+    {
+      "project": "Hexalith.Projects.Server",
+      "projectPath": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.DomainService",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+      "overlaidSourceFiles": 2,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.Gateway",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+      "overlaidSourceFiles": 3,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.ServiceDefaults",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "overlaidSourceFiles": 15,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.Folders.Server",
+      "projectPath": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.Projects.Integration.Tests",
+      "projectPath": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.Contracts",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+      "overlaidSourceFiles": 2,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    }
+  ],
+  "ordinaryRestore": "FORCE every listed assembly and verify consuming copies; no ordinary restoration by diagnostic."
+}

@@ -1,0 +1,48 @@
+{
+  "metadataOnlyPrivateDiagnostic": true,
+  "ordinaryCurrentInputCount": 19,
+  "owningAssemblies": 6,
+  "allCurrentAndPrivateHashesVerified": true,
+  "sourceOrderAndRuntimeOperationsPreserved": true,
+  "noServerContractsClientOverlay": true,
+  "memoCounters": "Exclusive image TryCompute outcomes: calls = hits + computed misses + rejects. Numeric byte counts only; enabled/absent authority/scope participation recorded. Counter and tiny phase costs aggregate under coarse parent; no per-image record I/O.",
+  "ordinaryRestore": "Parent must FORCE Rebuild each listed assembly after diagnostic; incremental original input timestamps are insufficient proof.",
+  "affectedProjects": [
+    {
+      "project": "Hexalith.Projects.Server",
+      "projectPath": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.DomainService",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+      "overlaidSourceFiles": 2,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.Gateway",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+      "overlaidSourceFiles": 3,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.EventStore.ServiceDefaults",
+      "projectPath": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj",
+      "overlaidSourceFiles": 11,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.Folders.Server",
+      "projectPath": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    },
+    {
+      "project": "Hexalith.Projects.Integration.Tests",
+      "projectPath": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "overlaidSourceFiles": 1,
+      "forceRebuildRequiredForOrdinaryRestore": true
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "operationalPinsSha256": "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419",
+  "noExecuteSupplied": true,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-advisory-wave-ops-prep-20261107/build_restore.py",
+        "--phase",
+        "private",
+        "--pins-sha256",
+        "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-advisory-wave-ops-prep-20261107/build_restore.py",
+        "--phase",
+        "ordinary",
+        "--pins-sha256",
+        "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-advisory-wave-ops-prep-20261107/native_qualification.py",
+        "--pins-sha256",
+        "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-advisory-wave-ops-prep-20261107/supervise_managed.py",
+        "--pins-sha256",
+        "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/story65-advisory-wave-ops-prep-20261107/run_and_restore.py",
+        "--pins-sha256",
+        "b0395281c7a4ca7a98657e4f92e9dae60c87fa372898ca2324b8e95bedeb4419"
+      ],
+      "exitCode": 0,
+      "preparationOnly": true
+    }
+  ]
+}

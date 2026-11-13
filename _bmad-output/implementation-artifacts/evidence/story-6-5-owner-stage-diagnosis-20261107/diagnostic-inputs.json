@@ -1,0 +1,158 @@
+{
+  "diagnosticOnly": true,
+  "ordinaryRepositorySourceManifest": "managed/source-manifest.json",
+  "privateOverlayInputsOutsideOrdinaryManifest": true,
+  "capturedRevisions": {
+    ".": "9ae0571529cb4a9f3ad9750c8b834e6284d4f76b",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Memories": "246157a7ff8e2dcd8d356c833a77a02514490d2f",
+    "references/Hexalith.Platform": "c1997c60f31e08d945b44cb7aa2afd7800e8ff69",
+    "references/Hexalith.Folders": "e88c940000446e13d17d86a7288649d8653a7138",
+    "references/Hexalith.EventStore": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b",
+    "references/Hexalith.Tenants": "cf36618a2c27b5722a1ff811cfbbce4528c3c105",
+    "references/Hexalith.Parties": "1308ad000c79ebc394fc395588f9af91092e8c4c",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Conversations": "9a5c684de5ee4876448faa26737f6afd36cf33e7",
+    "references/Hexalith.Builds": "beb85e497957fedc66854013efd2cc4bd216ecbc",
+    "references/Hexalith.McpCli": "6173885d0132184a658b39ac421ec16848a3bb15",
+    "references/Hexalith.FrontComposer": "fbb9c3822dfa407e72739238cd472567f45f1e82"
+  },
+  "recordedSourceReplacements": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs": {
+      "originalSha256": "c969d284411288c245c5833b15abb73dd93309c2671b08a03de18d694ee33a2c",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Hexalith.EventStore.DomainService-DelegatedOwnerQueryClient.cs",
+      "privateSha256": "c3bec16adc3a756c239b243285af95b28cf7a912720a6901c7b83a7762fc4b34",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": {
+      "originalSha256": "0a7bf260e145136d409a575ab2bc300e179c3350a749039f1589a90e2aaa7597",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Controllers-QueriesController.cs",
+      "privateSha256": "b789ab76a29221eeccee1e37834fcd7ac639418ff31dd56509de5fb11ce88e9d",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs": {
+      "originalSha256": "422175d0a28048a59bd901ef6a127ebea0e024924e20e9a116b7a343ec788ebe",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Controllers-StreamsController.cs",
+      "privateSha256": "1d00bfd7f7f308745ef29510f996103987265b90913cda02bc59ae79285dda7a",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs": {
+      "originalSha256": "ccf438bca1e26d239ca844f6d6f5e14e23f20e995da97805208adbc60437557e",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Queries-DaprDomainQueryInvoker.cs",
+      "privateSha256": "8bb01301f0dc7fc473ec39bd1e22f20d7d639576a8f3fec791c6658b2b885952",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": {
+      "originalSha256": "bc98593764a4efd7047fabc0ab57d25eb73f767a94d9fcb05517f917e8603f20",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogAuthority.cs",
+      "privateSha256": "99ff0566083997c3afea3a7f596966c229c1405ac66a0a6a6c14e6563be9954e",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": {
+      "originalSha256": "7608b3ca8e113bfa17c7e3d0f3864536b42ed3f0d5d408dcba49b02471901118",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogActivationBinding.cs",
+      "privateSha256": "06c6b1f6fbefa3828db1fcf1e9ab8ac4a28767d1e8ceca918ca826909f11c598",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs": {
+      "originalSha256": "1df7952b7a0816c6dfed1bdbaa2bde7db4dacf4650009c44986675d1e5d8588f",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-ObservedRouteCatalogHost.cs",
+      "privateSha256": "cead9ee65ca4dbee890477f1008867fa8e004abce5ab4ffeb2ab1558408db2b5",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": {
+      "originalSha256": "b345aba090687ed5572cf2dc157c7b1e99627523c4a9b5ce026c3382f6981903",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpObservationPass.cs",
+      "privateSha256": "5f7e951f3c6b2a0af760eefc5ededb0903d14c0fcd914451dc0d7971f647889a",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": {
+      "originalSha256": "7f9bf1dc7263d27698507c4bfa5e474b40882b175b5e3d7b6f1a5f968ebc80d0",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpActionObservation.cs",
+      "privateSha256": "da64c4deb2bf9bcb5b902f569e0170c41581f987f42271ec34a9ddc25f4f34c8",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": {
+      "originalSha256": "fd41ba021479ab775b5a05c0d7fa403e53607f111d04bdc690c78a3e23aed964",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-TechnicalHttpRouteCatalogReceiver.cs",
+      "privateSha256": "9e8c402f7cc0c426f95b6d1b18dc86667c86d2c8692530e3567c433c2aff2b92",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs": {
+      "originalSha256": "a59c8093be4a2a112eb64b628cf243a343cb3ad836e3fff2f8dd0fe9450c4854",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Routing-RouteCatalogInvocationHandler.cs",
+      "privateSha256": "58dc42a70a7c290363140c960c5002157c5d8600a708bd9320c7f061062c4b75",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": {
+      "originalSha256": "2581eb65670bece7c0aac71b082434d97773113c9ac3507f5e7c5c9975670d1b",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Streams-GatewayNativeSourceMetadataReader.cs",
+      "privateSha256": "fd9b0a074a8023a23774cb196267bb6fdf9f8b1832ca4c4f802ef9d880918bb0",
+      "revision": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b"
+    },
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs": {
+      "originalSha256": "05cc007d052f80199041a60bfb61af9513674128142df8f14ce5d70ebcdf5ee9",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Queries-FolderOwnerReadQueryHandler.cs",
+      "privateSha256": "89c9c75c19b96510b6583f597136ced2bf5c15add43a44dfd8f93effe6bbec14",
+      "revision": "e88c940000446e13d17d86a7288649d8653a7138"
+    },
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationService.cs": {
+      "originalSha256": "8b3aeb8b0c6411ca3f95a4e0bea2b91b503691930890f5dacf1033192b20f049",
+      "privatePath": "/tmp/story65-owner-stage-overlay-20261107/Authorization-LayeredFolderAuthorizationService.cs",
+      "privateSha256": "9c264ec5bd70746b0b2b373da1f0d65a624dc2accd57579d183256c579c1661d",
+      "revision": "e88c940000446e13d17d86a7288649d8653a7138"
+    }
+  },
+  "retainedOverlaySha256": {
+    "Queries-DaprDomainQueryInvoker.cs": "8bb01301f0dc7fc473ec39bd1e22f20d7d639576a8f3fec791c6658b2b885952",
+    "Authorization-LayeredFolderAuthorizationService.cs": "9c264ec5bd70746b0b2b373da1f0d65a624dc2accd57579d183256c579c1661d",
+    "Story65TimingServer.cs": "29f2e560338271087b059a14b29f0619ab9de7db7d242776b4714180beef814c",
+    "Story65TimingEventStore.cs": "9a214741e9f674ba6d9208aa707a91af686408424931d6ba07e442f84784f736",
+    "Routing-TechnicalHttpRouteCatalogReceiver.cs": "9e8c402f7cc0c426f95b6d1b18dc86667c86d2c8692530e3567c433c2aff2b92",
+    "Streams-GatewayNativeSourceMetadataReader.cs": "fd9b0a074a8023a23774cb196267bb6fdf9f8b1832ca4c4f802ef9d880918bb0",
+    "source-inputs.json": "d039f2cdcdd562124f24766ab15f62afcecc3b6222627e4d1bb103f7408fdf73",
+    "Story65TimingFolders.cs": "abaddad8cbab3244e53797524418aa4bb22a3e4c62e2d4b445a7bad0d28a9d8f",
+    "owner-timing.targets.txt": "f4b15246003dda701ba2f6c46f091de03e7a46bf77d40314110799076fed4e01",
+    "Story65TimingServiceDefaults.cs": "2b9873cf7fe99c88315ef810983c415b8348d9d3270f6d2ebc14a1380d0c23d9",
+    "Routing-TechnicalHttpActionObservation.cs": "da64c4deb2bf9bcb5b902f569e0170c41581f987f42271ec34a9ddc25f4f34c8",
+    "Story65TimingClient.cs": "39115f2d65e47325f2ba55afc2e07d90c3fcf21f68eefbd6c7589225b2634dc4",
+    "Controllers-StreamsController.cs": "1d00bfd7f7f308745ef29510f996103987265b90913cda02bc59ae79285dda7a",
+    "Queries-FolderOwnerReadQueryHandler.cs": "89c9c75c19b96510b6583f597136ced2bf5c15add43a44dfd8f93effe6bbec14",
+    "gateway-item-preflight.json": "c3e23343c46b08522a8c58f95937f5b57ef506f915e6c19208ddffff3d092e69",
+    "Controllers-QueriesController.cs": "b789ab76a29221eeccee1e37834fcd7ac639418ff31dd56509de5fb11ce88e9d",
+    "Routing-TechnicalHttpObservationPass.cs": "5f7e951f3c6b2a0af760eefc5ededb0903d14c0fcd914451dc0d7971f647889a",
+    "source.patch": "08b8be761bdb903f009be8d14289d6dcc014c7b46d3cbe530ffef5bdb6757a45",
+    "Story65TimingDomainService.cs": "ca9d52c36566862fc0a0961f87bda3b60b654747850581355e8e6afb67791d8f",
+    "Hexalith.EventStore.DomainService-DelegatedOwnerQueryClient.cs": "c3bec16adc3a756c239b243285af95b28cf7a912720a6901c7b83a7762fc4b34",
+    "Routing-RouteCatalogActivationBinding.cs": "06c6b1f6fbefa3828db1fcf1e9ab8ac4a28767d1e8ceca918ca826909f11c598",
+    "Routing-ObservedRouteCatalogHost.cs": "cead9ee65ca4dbee890477f1008867fa8e004abce5ab4ffeb2ab1558408db2b5",
+    "Routing-RouteCatalogInvocationHandler.cs": "58dc42a70a7c290363140c960c5002157c5d8600a708bd9320c7f061062c4b75",
+    "Routing-RouteCatalogAuthority.cs": "99ff0566083997c3afea3a7f596966c229c1405ac66a0a6a6c14e6563be9954e",
+    "failed-build-overlay/Queries-DaprDomainQueryInvoker.cs": "8bb01301f0dc7fc473ec39bd1e22f20d7d639576a8f3fec791c6658b2b885952",
+    "failed-build-overlay/Authorization-LayeredFolderAuthorizationService.cs": "9c264ec5bd70746b0b2b373da1f0d65a624dc2accd57579d183256c579c1661d",
+    "failed-build-overlay/Story65TimingServer.cs": "29f2e560338271087b059a14b29f0619ab9de7db7d242776b4714180beef814c",
+    "failed-build-overlay/Story65TimingEventStore.cs": "9a214741e9f674ba6d9208aa707a91af686408424931d6ba07e442f84784f736",
+    "failed-build-overlay/Routing-TechnicalHttpRouteCatalogReceiver.cs": "9e8c402f7cc0c426f95b6d1b18dc86667c86d2c8692530e3567c433c2aff2b92",
+    "failed-build-overlay/Streams-GatewayNativeSourceMetadataReader.cs": "fd9b0a074a8023a23774cb196267bb6fdf9f8b1832ca4c4f802ef9d880918bb0",
+    "failed-build-overlay/source-inputs.json": "d039f2cdcdd562124f24766ab15f62afcecc3b6222627e4d1bb103f7408fdf73",
+    "failed-build-overlay/Story65TimingFolders.cs": "abaddad8cbab3244e53797524418aa4bb22a3e4c62e2d4b445a7bad0d28a9d8f",
+    "failed-build-overlay/owner-timing.targets.txt": "02030dfa42247aa28995e8b5c78e2461ed20114f8d2d97fbbdd0c2045c0e1ccc",
+    "failed-build-overlay/Story65TimingServiceDefaults.cs": "2b9873cf7fe99c88315ef810983c415b8348d9d3270f6d2ebc14a1380d0c23d9",
+    "failed-build-overlay/Routing-TechnicalHttpActionObservation.cs": "da64c4deb2bf9bcb5b902f569e0170c41581f987f42271ec34a9ddc25f4f34c8",
+    "failed-build-overlay/Story65TimingClient.cs": "39115f2d65e47325f2ba55afc2e07d90c3fcf21f68eefbd6c7589225b2634dc4",
+    "failed-build-overlay/Controllers-StreamsController.cs": "1d00bfd7f7f308745ef29510f996103987265b90913cda02bc59ae79285dda7a",
+    "failed-build-overlay/Queries-FolderOwnerReadQueryHandler.cs": "89c9c75c19b96510b6583f597136ced2bf5c15add43a44dfd8f93effe6bbec14",
+    "failed-build-overlay/Controllers-QueriesController.cs": "b789ab76a29221eeccee1e37834fcd7ac639418ff31dd56509de5fb11ce88e9d",
+    "failed-build-overlay/Routing-TechnicalHttpObservationPass.cs": "5f7e951f3c6b2a0af760eefc5ededb0903d14c0fcd914451dc0d7971f647889a",
+    "failed-build-overlay/source.patch": "08b8be761bdb903f009be8d14289d6dcc014c7b46d3cbe530ffef5bdb6757a45",
+    "failed-build-overlay/Story65TimingDomainService.cs": "ca9d52c36566862fc0a0961f87bda3b60b654747850581355e8e6afb67791d8f",
+    "failed-build-overlay/Hexalith.EventStore.DomainService-DelegatedOwnerQueryClient.cs": "c3bec16adc3a756c239b243285af95b28cf7a912720a6901c7b83a7762fc4b34",
+    "failed-build-overlay/Routing-RouteCatalogActivationBinding.cs": "06c6b1f6fbefa3828db1fcf1e9ab8ac4a28767d1e8ceca918ca826909f11c598",
+    "failed-build-overlay/Routing-ObservedRouteCatalogHost.cs": "cead9ee65ca4dbee890477f1008867fa8e004abce5ab4ffeb2ab1558408db2b5",
+    "failed-build-overlay/Routing-RouteCatalogInvocationHandler.cs": "58dc42a70a7c290363140c960c5002157c5d8600a708bd9320c7f061062c4b75",
+    "failed-build-overlay/Routing-RouteCatalogAuthority.cs": "99ff0566083997c3afea3a7f596966c229c1405ac66a0a6a6c14e6563be9954e"
+  },
+  "gatewaySourceOwnershipCorrection": "Controllers and DaprDomainQueryInvoker live physically under Hexalith.EventStore but compile in Hexalith.EventStore.Gateway via linked Compile items. Corrected target preflight retained.",
+  "runtimeEntryPointHashesRetainedVerbatimIn": "managed/run.json::runtimeModes",
+  "noPostRunMovingSourceOrBinarySnapshotUsed": true
+}

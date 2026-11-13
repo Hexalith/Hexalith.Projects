@@ -1,0 +1,24 @@
+<Project>
+  <!-- Qualification only: these are project-local properties, never CLI-global output paths. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Server'">
+    <Story65ServerOriginalAfterSdkTargets>$(AfterMicrosoftNETSdkTargets)</Story65ServerOriginalAfterSdkTargets>
+    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-outbound-assertion-ops-prep-20261107/server-late-guard.targets</AfterMicrosoftNETSdkTargets>
+    <OutputPath>/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-server/bin/Debug/net10.0/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <IntermediateOutputPath>/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-server/obj/Debug/net10.0/</IntermediateOutputPath>
+    <!-- Keep the already-restored NuGet extensions/imports in the ordinary project, read-only. -->
+    <ProjectAssetsFile>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/obj/project.assets.json</ProjectAssetsFile>
+    <CoreCompileInputsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.csproj.CoreCompileInputs.cache</CoreCompileInputsCacheFile>
+    <ResolveAssemblyReferencesStateFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.csproj.AssemblyReference.cache</ResolveAssemblyReferencesStateFile>
+    <ProjectAssetsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.assets.cache</ProjectAssetsCacheFile>
+    <GeneratedAssemblyInfoFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <GeneratedGlobalUsingsFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.GlobalUsings.g.cs</GeneratedGlobalUsingsFile>
+    <GeneratedMSBuildEditorConfigFile>$(IntermediateOutputPath)Hexalith.EventStore.Server.GeneratedMSBuildEditorConfig.editorconfig</GeneratedMSBuildEditorConfigFile>
+    <ProjectDepsFilePath>$(OutputPath)Hexalith.EventStore.Server.deps.json</ProjectDepsFilePath>
+    <ProjectRuntimeConfigFilePath>$(OutputPath)Hexalith.EventStore.Server.runtimeconfig.json</ProjectRuntimeConfigFilePath>
+    <PublishDir>/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-server/publish/</PublishDir>
+  </PropertyGroup>
+  <Import Project="/tmp/story65-outbound-assertion-ops-prep-20261107/server-source.targets" />
+</Project>

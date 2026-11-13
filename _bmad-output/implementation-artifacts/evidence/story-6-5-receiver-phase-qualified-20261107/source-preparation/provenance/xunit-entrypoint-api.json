@@ -1,0 +1,108 @@
+{
+  "namespace": "Xunit.Runner.InProc.SystemConsole",
+  "name": "ConsoleRunner",
+  "metadata_name": "ConsoleRunner",
+  "definition_name": {
+    "namespace": "Xunit.Runner.InProc.SystemConsole",
+    "segments": [
+      "ConsoleRunner"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "class",
+  "attributes": [],
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "31e0b9d6-fcc7-4c6b-92ca-29202d22dbf7",
+    "type_token": 33554441,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "31e0b9d6-fcc7-4c6b-92ca-29202d22dbf7",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": false,
+  "is_abstract": false,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "base_type": "System.Object",
+  "interfaces": [
+    "System.IDisposable"
+  ],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": "EntryPoint",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003Cint\u003E EntryPoint(System.IO.TextReader? consoleReader = null, System.IO.TextWriter? consoleWriter = null)",
+      "digest": "61647bcce0",
+      "canonical_signature": "M:Xunit.Runner.InProc.SystemConsole.ConsoleRunner.EntryPoint(System.IO.TextReader?,System.IO.TextWriter?)",
+      "metadata_token": 100663321,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "31e0b9d6-fcc7-4c6b-92ca-29202d22dbf7",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100663321,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "31e0b9d6-fcc7-4c6b-92ca-29202d22dbf7",
+        "method_token": 100663321,
+        "attributes": "Public, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "The entry point to begin running tests.",
+        "returns": "The return value intended to be returned by the Main method.",
+        "samples": []
+      }
+    }
+  ],
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Xunit.Runner.InProc.SystemConsole.ConsoleRunner",
+  "documentation": {
+    "summary": "This class is the entry point for the in-process console-based runner used for xUnit.net v3 test projects.",
+    "samples": []
+  }
+}

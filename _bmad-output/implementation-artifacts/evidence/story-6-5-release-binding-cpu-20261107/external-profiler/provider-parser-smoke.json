@@ -1,0 +1,25 @@
+{
+  "noTargetAttached": true,
+  "noFixtureStarted": true,
+  "primaryManifestAndParserContractSmoke": {
+    "runtimeEventId0Keywords0Informational": true,
+    "parserSampleEnumError0External1Managed2": true,
+    "runtimeManagedIsCooperativeApproximation": true,
+    "runtimeSkipsExistingSuspensions": true,
+    "runtimeNominalBaseSleep1ms": true,
+    "toolSampleProvider0Informational": true,
+    "toolGc1InformationalNoAllocTicks": true,
+    "toolStackwalkAndRundown": true,
+    "toolNoGcAllocationTickHandler": true,
+    "toolPrivacyExactIdentifierWhitelist": true,
+    "toolCompactSamplesGroupReference": true
+  },
+  "allPassed": true,
+  "interpretation": "Managed/cooperative and External/preemptive are sampled thread classifications; External is not automatically blocked or native CPU; samples do not give exact CPU time. GC reason intervals are separate wall suspension observations.",
+  "sourceFiles": {
+    "src_native_eventpipe_ep-sample-profiler.c": "3294e5ec0fd8560678c160fb2485b6e36e6d3b4681cdaa5e380ea00873f200db",
+    "src_coreclr_vm_eventing_eventpipe_ep-rt-coreclr.cpp": "95fa35e9d1d46bc72ba1b137f55613e1c13a437d8cdeab671cd7ef48da78f82a",
+    "src_TraceEvent_EventPipe_SampleProfilerTraceEventParser.cs": "fa53a21150cb46a4c750751252fba4c680a2b6bf4ccd39aa83f73d8d916ea9ac",
+    "Program.cs": "8f2f0281bac33220051c1a5e14145ba8ede400e435a91d0e79e9385ee8471772"
+  }
+}

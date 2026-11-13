@@ -1,0 +1,688 @@
+--- before/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs
++++ after/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs
+@@ -296,7 +296,31 @@
+     /// <summary>Returns lowercase SHA-256 of the exact canonical envelope bytes, outside the envelope.</summary>
+     public static string ComputeRootDigest(RouteCatalogEnvelope envelope) => Convert.ToHexStringLower(SHA256.HashData(Encode(envelope)));
+ 
+-    private static string Hash<T>(T value) => Convert.ToHexStringLower(SHA256.HashData(CanonicalBytes(value)));
++    private static string Hash<T>(T value)
++    {
++        RouteCatalogDecodeScope? scope = RouteCatalogDecodeScope.Current;
++        if (scope?.HasCanonicalHashMemo != true)
++        {
++            return Convert.ToHexStringLower(SHA256.HashData(CanonicalBytes(value)));
++        }
++
++        // Preserve the original serializer and its original position after validation/normalization.
++        // This privately owned immutable snapshot supplies BOTH the key and miss computation.
++        JsonElement captured = JsonSerializer.SerializeToElement(value, Options);
++        string ownedKey = captured.GetRawText();
++        if (scope.TryGetCanonicalHash(ownedKey, out string prior))
++        {
++            return prior;
++        }
++        using var stream = new MemoryStream();
++        using (var writer = new Utf8JsonWriter(stream))
++        {
++            WriteCanonical(writer, captured);
++        }
++        string digest = Convert.ToHexStringLower(SHA256.HashData(stream.ToArray()));
++        scope.RememberCanonicalHash(ownedKey, digest);
++        return digest;
++    }
+ 
+     private static byte[] CanonicalBytes<T>(T value)
+     {
+--- before/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs
++++ after/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs
+@@ -9,6 +9,7 @@
+     private readonly object _gate = new();
+     private readonly RouteCatalogValidatedBytesMemo _memo;
+     private readonly bool _ownsMemo;
++    private RouteCatalogCanonicalHashMemo? _canonicalHashes;
+     private readonly RouteCatalogDecodeScope? _prior;
+     private int _captureCount;
+     private int _cacheHits;
+@@ -57,6 +58,47 @@
+     {
+         ArgumentNullException.ThrowIfNull(memo);
+         return new(memo);
++    }
++
++    /// <summary>Enters a closing scope borrowing two separate explicitly owned computational memos.</summary>
++    /// <param name="bytes">The exact host owner of validated canonical document bytes.</param>
++    /// <param name="hashes">The same host owner of pure serialized-preimage computations.</param>
++    /// <returns>An independent closing scope that owns neither host memo.</returns>
++    internal static RouteCatalogDecodeScope EnterWithCanonicalHashMemo(RouteCatalogValidatedBytesMemo bytes, RouteCatalogCanonicalHashMemo hashes)
++    {
++        ArgumentNullException.ThrowIfNull(bytes);
++        ArgumentNullException.ThrowIfNull(hashes);
++        return new(bytes) { _canonicalHashes = hashes };
++    }
++
++    /// <summary>Checks this scope and its separate owner before the optional Hash snapshot path.</summary>
++    internal bool HasCanonicalHashMemo { get { lock (_gate) return !_closed && _canonicalHashes is { IsClosed: false }; } }
++
++    /// <summary>Returns only an exact complete serialized-preimage match from this open scope's owner.</summary>
++    /// <param name="ownedKey">The complete current immutable serialization, never a supplied digest.</param>
++    /// <param name="digest">The previously computed pure canonical digest on a full ordinal match.</param>
++    /// <returns>Whether the scope and owner remain open and the complete key matched.</returns>
++    internal bool TryGetCanonicalHash(string ownedKey, out string digest)
++    {
++        lock (_gate)
++        {
++            digest = string.Empty;
++            return !_closed && _canonicalHashes is not null && _canonicalHashes.TryGet(ownedKey, out digest);
++        }
++    }
++
++    /// <summary>Publishes successful pure computation only while both scope and owner remain open.</summary>
++    /// <param name="ownedKey">The complete privately owned serialization used for this computation.</param>
++    /// <param name="digest">The digest computed from that same captured serialization.</param>
++    internal void RememberCanonicalHash(string ownedKey, string digest)
++    {
++        lock (_gate)
++        {
++            if (!_closed)
++            {
++                _canonicalHashes?.Remember(ownedKey, digest);
++            }
++        }
+     }
+ 
+     /// <summary>Snapshots current bytes before comparing the complete owned input with prior validated canonical bytes.</summary>
+--- before/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCanonicalHashMemo.cs
++++ after/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCanonicalHashMemo.cs
+@@ -0,0 +1,93 @@
++namespace Hexalith.EventStore.Contracts.Routing;
++
++/// <summary>Owns bounded complete serialized-preimage strings and their pure canonical SHA results.</summary>
++/// <remarks>Retains no graphs, authority, configuration, admission or lease results.</remarks>
++internal sealed class RouteCatalogCanonicalHashMemo : IDisposable
++{
++    /// <summary>The maximum independently retained serialized preimages.</summary>
++    internal const int MaximumEntries = 512;
++
++    /// <summary>The maximum retained charge for UTF-16 payloads and fixed entry allowances.</summary>
++    internal const int MaximumRetainedCharge = 4 * 1024 * 1024;
++
++    private const int EntryOverheadCharge = 128;
++    private readonly object _gate = new();
++    private readonly Dictionary<string, string> _digests = new(StringComparer.Ordinal);
++    private int _retainedCharge;
++    private bool _closed;
++
++    /// <summary>Gets whether the actual owner permanently released this memo.</summary>
++    internal bool IsClosed { get { lock (_gate) return _closed; } }
++
++    /// <summary>Gets the independently bounded retained preimage count.</summary>
++    internal int Count { get { lock (_gate) return _digests.Count; } }
++
++    /// <summary>Gets retained UTF-16 payloads plus fixed allowances, not measured CLR heap usage.</summary>
++    internal int RetainedCharge { get { lock (_gate) return _retainedCharge; } }
++
++    /// <summary>Gets successful complete ordinal matches while the owner remained open.</summary>
++    internal int Hits { get; private set; }
++
++    /// <summary>Gets complete preimages absent from the still-open owner.</summary>
++    internal int Misses { get; private set; }
++
++    /// <summary>Matches the entire current serialized preimage, without trusting a caller digest.</summary>
++    /// <param name="ownedKey">A privately owned complete serialization.</param>
++    /// <param name="digest">The pure canonical digest returned only on a full ordinal match.</param>
++    /// <returns>Whether the still-open owner retained exactly this preimage.</returns>
++    internal bool TryGet(string ownedKey, out string digest)
++    {
++        lock (_gate)
++        {
++            digest = string.Empty;
++            if (_closed)
++            {
++                return false;
++            }
++            if (_digests.TryGetValue(ownedKey, out string? found))
++            {
++                Hits++;
++                digest = found;
++                return true;
++            }
++            Misses++;
++            return false;
++        }
++    }
++
++    /// <summary>Retains a successful computation from the same owned preimage within separate bounds.</summary>
++    /// <param name="ownedKey">The complete immutable serialization used for the computation.</param>
++    /// <param name="digest">The canonical digest of that same serialization.</param>
++    internal void Remember(string ownedKey, string digest)
++    {
++        lock (_gate)
++        {
++            if (_closed || _digests.Count >= MaximumEntries || _digests.ContainsKey(ownedKey))
++            {
++                return;
++            }
++            // Charge UTF-16 payloads, digest and a conservative fixed per-entry allowance.
++            // This is a retained-charge policy, not a claim to measure CLR heap object overhead.
++            long charge = EntryOverheadCharge + 2L * (ownedKey.Length + digest.Length);
++            if (charge > MaximumRetainedCharge - _retainedCharge)
++            {
++                return;
++            }
++            _digests.Add(ownedKey, digest);
++            _retainedCharge += (int)charge;
++        }
++    }
++
++    /// <inheritdoc/>
++    public void Dispose()
++    {
++        lock (_gate)
++        {
++            _closed = true;
++            _digests.Clear();
++            _retainedCharge = 0;
++            Hits = 0;
++            Misses = 0;
++        }
++    }
++}
+--- before/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs
++++ after/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs
+@@ -31,12 +31,14 @@
+     private readonly SemaphoreSlim _localAdmission = new(1, 1);
+     private const int MaximumUpdateAttempts = 96;
+     private readonly RouteCatalogValidatedBytesMemo _validatedBytes = new();
++    private readonly RouteCatalogCanonicalHashMemo _canonicalHashes = new();
+     private readonly RouteCatalogBindingMemo _bindingComputations = new();
+     private readonly RouteCatalogImageDigestMemo _imageDigests = new();
+ 
+     /// <summary>Releases only private computational byte storage, without removing or reconciling any durable dispatch fence.</summary>
+     public void Dispose()
+     {
++        _canonicalHashes.Dispose();
+         _validatedBytes.Dispose();
+         _bindingComputations.Dispose();
+         _imageDigests.Dispose();
+@@ -301,7 +303,7 @@
+         && options.Value.RetainValidatedCatalogBytes;
+ 
+     private RouteCatalogDecodeScope? BeginPrivateDecodeScope() => !PrivateScopedDecodeEnabled() ? null
+-        : PrivateHostMemoEnabled() ? RouteCatalogDecodeScope.EnterWithMemo(_validatedBytes) : RouteCatalogDecodeScope.Enter();
++        : PrivateHostMemoEnabled() ? RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(_validatedBytes, _canonicalHashes) : RouteCatalogDecodeScope.Enter();
+ 
+     private RouteCatalogBindingScope? BeginPrivateBindingScope() => !PrivateScopedDecodeEnabled() ? null
+         : RouteCatalogBindingScope.Enter(PrivateHostMemoEnabled() && !_bindingComputations.IsClosed ? _bindingComputations : null);
+@@ -511,7 +513,7 @@
+         using var decodingBoundary = RouteCatalogDecodeScope.Suppress();
+         using var bindingBoundary = RouteCatalogBindingScope.Suppress();
+         using var imageBoundary = RouteCatalogImageDigestScope.Suppress();
+-        using var decoding = PrivateHostMemoEnabled() ? RouteCatalogDecodeScope.EnterWithMemo(_validatedBytes) : null;
++        using var decoding = PrivateHostMemoEnabled() ? RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(_validatedBytes, _canonicalHashes) : null;
+         using var bindingComputation = PrivateHostMemoEnabled() && !_bindingComputations.IsClosed
+             ? RouteCatalogBindingScope.Enter(_bindingComputations) : null;
+         // Only this completed local lease is removed. CAS contention cannot turn known
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashTestInputs.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashTestInputs.cs
+@@ -0,0 +1,38 @@
++using System.Reflection;
++using System.Runtime.ExceptionServices;
++
++using Hexalith.EventStore.Contracts.Routing;
++
++namespace Hexalith.EventStore.Server.Tests.Routing;
++
++/// <summary>Supplies existing compiled-owner inputs and the unchanged uncached path for memo parity controls.</summary>
++internal static class CanonicalHashTestInputs
++{
++    /// <summary>Returns a real schema-three operation from the existing owner fixture.</summary>
++    internal static RouteOperationContract Operation() => new RouteCatalogTestFixture(compiledSchemaThree: true).Envelope.Operations![0];
++
++    /// <summary>Returns the existing fixture's validated descriptor schema.</summary>
++    internal static IdempotencyDescriptorSchema Descriptor() => new RouteCatalogTestFixture().Envelope.Idempotency[0].DescriptorSchema;
++
++    /// <summary>Computes through the original path without inheriting a private owner.</summary>
++    internal static string Uncached(Func<string> compute)
++    {
++        using var suppression = RouteCatalogDecodeScope.Suppress();
++        return compute();
++    }
++
++    /// <summary>Exercises private preimages only in tests, without changing the production API.</summary>
++    internal static string Hash(object value)
++    {
++        try
++        {
++            return (string)typeof(RouteCatalogCodec).GetMethod("Hash", BindingFlags.NonPublic | BindingFlags.Static)!
++                .MakeGenericMethod(typeof(object)).Invoke(null, [value])!;
++        }
++        catch (TargetInvocationException failure) when (failure.InnerException is not null)
++        {
++            ExceptionDispatchInfo.Capture(failure.InnerException).Throw();
++            throw;
++        }
++    }
++}
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashChangingPreimage.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/CanonicalHashChangingPreimage.cs
+@@ -0,0 +1,13 @@
++namespace Hexalith.EventStore.Server.Tests.Routing;
++
++/// <summary>Detects a second serialization of a mutable input during one pure hash computation.</summary>
++internal sealed class CanonicalHashChangingPreimage
++{
++    private int _reads;
++
++    /// <summary>Gets a different value on every serialization observation.</summary>
++    public int Value => ++_reads;
++
++    /// <summary>Gets the number of actual serializer observations.</summary>
++    internal int Reads => _reads;
++}
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashParityTests.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashParityTests.cs
+@@ -0,0 +1,130 @@
++using System.Text.Json;
++
++using Hexalith.EventStore.Contracts.Routing;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Routing;
++
++/// <summary>Checks that reuse follows original validation and exactly one complete immutable serialization.</summary>
++public sealed class RouteCatalogCanonicalHashParityTests
++{
++    /// <summary>Purpose, version, nested ordering, duplicate fields and numeric lexicals retain their original digests.</summary>
++    [Fact]
++    public void CompleteSerializedPreimagesKeepEveryCanonicalDigest()
++    {
++        RouteOperationContract operation = CanonicalHashTestInputs.Operation();
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        string[] schemas = ["{\"z\":1,\"a\":{\"b\":2,\"a\":3}}", "{\"a\":{\"a\":3,\"b\":2},\"z\":1}",
++            "{\"same\":1,\"same\":2}", "{\"same\":2,\"same\":1}", "{\"n\":1}", "{\"n\":1.0}", "{\"n\":1e0}"];
++        foreach (string raw in schemas)
++        {
++            using var document = JsonDocument.Parse(raw);
++            RouteOperationContract changed = operation with { RequestSchema = document.RootElement };
++            string expected = CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeOperationContractDigest(changed));
++            RouteCatalogCodec.ComputeOperationContractDigest(changed).ShouldBe(expected);
++            RouteCatalogCodec.ComputeOperationContractDigest(changed).ShouldBe(expected);
++        }
++        object[] purposes = [new { purpose = "a", schemaVersion = 1, payload = "same" },
++            new { purpose = "b", schemaVersion = 1, payload = "same" }, new { purpose = "a", schemaVersion = 2, payload = "same" }];
++        string[] distinct = purposes.Select(value =>
++        {
++            string expected = CanonicalHashTestInputs.Uncached(() => CanonicalHashTestInputs.Hash(value));
++            string actual = CanonicalHashTestInputs.Hash(value);
++            actual.ShouldBe(expected);
++            return actual;
++        }).ToArray();
++        distinct.Distinct(StringComparer.Ordinal).Count().ShouldBe(3);
++        hashes.Hits.ShouldBeGreaterThan(0);
++        bytes.Count.ShouldBe(0);
++        scope.CacheHits.ShouldBe(0);
++    }
++
++    /// <summary>Every changed operation scalar or schema is freshly serialized, including a return to prior exact input.</summary>
++    [Fact]
++    public void OperationChangesAndReversionsCannotReuseAnotherPreimage()
++    {
++        RouteOperationContract operation = CanonicalHashTestInputs.Operation();
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        using var request = JsonDocument.Parse("{\"type\":\"object\",\"description\":\"changed-request\"}");
++        using var result = JsonDocument.Parse("{\"type\":\"object\",\"description\":\"changed-result\"}");
++        RouteOperationContract[] changes = [operation, operation with { RouteId = "changed-route" }, operation with { ContractVersion = "v2" },
++            operation with { Kind = operation.Kind == "query" ? "command" : "query" }, operation with { Domain = "other" },
++            operation with { MessageType = "OtherMessage" }, operation with { Ingress = operation.Ingress == "public" ? "internal" : "public" },
++            operation with { Eligibility = "confirmation-required" }, operation with { RequestSchema = request.RootElement },
++            operation with { ResultSchema = result.RootElement }, operation];
++        foreach (RouteOperationContract changed in changes)
++        {
++            string expected = CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeOperationContractDigest(changed));
++            RouteCatalogCodec.ComputeOperationContractDigest(changed).ShouldBe(expected);
++        }
++        hashes.Hits.ShouldBeGreaterThan(0);
++    }
++
++    /// <summary>Mutable descriptor lists are still read, validated and normalized on every computation.</summary>
++    [Fact]
++    public void MutableDescriptorMetadataKeepsFreshValidationAndReversion()
++    {
++        IdempotencyDescriptorSchema original = CanonicalHashTestInputs.Descriptor();
++        var fields = original.Fields.ToList();
++        var descriptor = original with { Fields = fields };
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        string first = CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeDescriptorDigest(descriptor));
++        RouteCatalogCodec.ComputeDescriptorDigest(descriptor).ShouldBe(first);
++        fields[0] = fields[0] with { Name = "changed-field" };
++        string changed = CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeDescriptorDigest(descriptor));
++        changed.ShouldNotBe(first);
++        RouteCatalogCodec.ComputeDescriptorDigest(descriptor).ShouldBe(changed);
++        fields[0] = original.Fields[0];
++        RouteCatalogCodec.ComputeDescriptorDigest(descriptor).ShouldBe(first);
++        fields[0] = fields[0] with { Type = "invalid" };
++        var expected = Should.Throw<RouteCatalogValidationException>(() => CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeDescriptorDigest(descriptor)));
++        Should.Throw<RouteCatalogValidationException>(() => RouteCatalogCodec.ComputeDescriptorDigest(descriptor)).Diagnostics.ShouldBe(expected.Diagnostics);
++    }
++
++    /// <summary>Scalar validation still precedes schema access, and disposed schemas never become cached truth.</summary>
++    [Fact]
++    public void InvalidScalarsAndDisposedSchemasKeepOriginalErrorOrder()
++    {
++        RouteOperationContract operation = CanonicalHashTestInputs.Operation();
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        RouteCatalogCodec.ComputeOperationContractDigest(operation);
++        int retained = hashes.Count;
++        using var document = JsonDocument.Parse("{}");
++        var disposed = operation with { RequestSchema = document.RootElement };
++        document.Dispose();
++        Should.Throw<ObjectDisposedException>(() => RouteCatalogCodec.ComputeOperationContractDigest(disposed));
++        var invalid = disposed with { RouteId = "" };
++        var expected = Should.Throw<RouteCatalogValidationException>(() => CanonicalHashTestInputs.Uncached(() => RouteCatalogCodec.ComputeOperationContractDigest(invalid)));
++        Should.Throw<RouteCatalogValidationException>(() => RouteCatalogCodec.ComputeOperationContractDigest(invalid)).Diagnostics.ShouldBe(expected.Diagnostics);
++        hashes.Count.ShouldBe(retained);
++    }
++
++    /// <summary>A miss computes from its single serializer snapshot rather than observing mutable getters twice.</summary>
++    [Fact]
++    public void MissAndHitObserveTheOriginalSerializerExactlyOnce()
++    {
++        var uncached = new CanonicalHashChangingPreimage();
++        string expected = CanonicalHashTestInputs.Uncached(() => CanonicalHashTestInputs.Hash(uncached));
++        uncached.Reads.ShouldBe(1);
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        var miss = new CanonicalHashChangingPreimage();
++        CanonicalHashTestInputs.Hash(miss).ShouldBe(expected);
++        miss.Reads.ShouldBe(1);
++        var hit = new CanonicalHashChangingPreimage();
++        CanonicalHashTestInputs.Hash(hit).ShouldBe(expected);
++        hit.Reads.ShouldBe(1);
++        hashes.Count.ShouldBe(1);
++        hashes.Hits.ShouldBe(1);
++    }
++}
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashMemoTests.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashMemoTests.cs
+@@ -0,0 +1,160 @@
++using Hexalith.EventStore.Contracts.Routing;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Routing;
++
++/// <summary>Checks separately bounded exact-key computations through independent closing scopes.</summary>
++public sealed class RouteCatalogCanonicalHashMemoTests
++{
++    /// <summary>Full ordinal keys, entry limits and charged bytes remain independent of the existing byte memo.</summary>
++    [Fact]
++    public void CompleteKeysAndIndependentBoundsCannotAliasOrOvercharge()
++    {
++        using var memo = new RouteCatalogCanonicalHashMemo();
++        string digest = new('0', 64);
++        memo.Remember("Key", digest);
++        memo.TryGet("key", out _).ShouldBeFalse();
++        memo.TryGet("Key", out string found).ShouldBeTrue();
++        found.ShouldBe(digest);
++        for (int index = 1; index <= 512; index++) memo.Remember("key-" + index, digest);
++        memo.Count.ShouldBe(512);
++        memo.RetainedCharge.ShouldBeLessThanOrEqualTo(RouteCatalogCanonicalHashMemo.MaximumRetainedCharge);
++        using var charged = new RouteCatalogCanonicalHashMemo();
++        for (int index = 0; index < 512; index++) charged.Remember(new string('x', 8192) + index, digest);
++        charged.Count.ShouldBeLessThan(512);
++        charged.RetainedCharge.ShouldBeLessThanOrEqualTo(RouteCatalogCanonicalHashMemo.MaximumRetainedCharge);
++    }
++
++    /// <summary>Inputs too large for reuse still take the original successful computation without retention.</summary>
++    [Fact]
++    public void OversizedPreimageFallsBackWithoutChangingItsDigest()
++    {
++        var value = new { purpose = "oversize", value = new string('x', 2 * 1024 * 1024) };
++        string expected = CanonicalHashTestInputs.Uncached(() => CanonicalHashTestInputs.Hash(value));
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        CanonicalHashTestInputs.Hash(value).ShouldBe(expected);
++        hashes.Count.ShouldBe(0);
++        hashes.RetainedCharge.ShouldBe(0);
++        bytes.Count.ShouldBe(0);
++    }
++
++    /// <summary>Nested, suppressed and legacy scopes cannot implicitly borrow another owner's pure computations.</summary>
++    [Fact]
++    public void ScopeAndOwnerSelectionRemainExplicit()
++    {
++        using var boundary = RouteCatalogDecodeScope.Suppress();
++        var value = new { purpose = "scope", schemaVersion = 1 };
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var outer = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        CanonicalHashTestInputs.Hash(value);
++        hashes.Count.ShouldBe(1);
++        using (RouteCatalogDecodeScope.Enter()) CanonicalHashTestInputs.Hash(value);
++        using (RouteCatalogDecodeScope.EnterWithMemo(bytes)) CanonicalHashTestInputs.Hash(value);
++        using (RouteCatalogDecodeScope.Suppress()) CanonicalHashTestInputs.Hash(value);
++        hashes.Hits.ShouldBe(0);
++        using var foreignBytes = new RouteCatalogValidatedBytesMemo();
++        using var foreign = new RouteCatalogCanonicalHashMemo();
++        using (RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(foreignBytes, foreign)) CanonicalHashTestInputs.Hash(value);
++        foreign.Count.ShouldBe(1);
++        hashes.Hits.ShouldBe(0);
++        RouteCatalogDecodeScope.Current.ShouldBeSameAs(outer);
++        CanonicalHashTestInputs.Hash(value);
++        hashes.Hits.ShouldBe(1);
++        outer.Dispose();
++        hashes.Count.ShouldBe(1);
++        CanonicalHashTestInputs.Hash(value);
++        hashes.Hits.ShouldBe(1);
++        hashes.Dispose();
++        hashes.Count.ShouldBe(0);
++        hashes.RetainedCharge.ShouldBe(0);
++        using var after = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        after.HasCanonicalHashMemo.ShouldBeFalse();
++        CanonicalHashTestInputs.Hash(value);
++        hashes.Count.ShouldBe(0);
++    }
++
++    /// <summary>An escaped asynchronous scope reference cannot publish after its owning observation closes.</summary>
++    [Fact]
++    public async Task EscapedClosedScopeCannotUseOrPopulateOpenOwner()
++    {
++        using var boundary = RouteCatalogDecodeScope.Suppress();
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        var value = new { purpose = "escaped", schemaVersion = 1 };
++        string expected = CanonicalHashTestInputs.Hash(value);
++        var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++        var go = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        Task escaped = Task.Run(async () =>
++        {
++            await go.Task;
++            RouteCatalogDecodeScope.Current.ShouldBeSameAs(scope);
++            scope.HasCanonicalHashMemo.ShouldBeFalse();
++            CanonicalHashTestInputs.Hash(value).ShouldBe(expected);
++        });
++        scope.Dispose();
++        go.SetResult();
++        await escaped;
++        hashes.Count.ShouldBe(0);
++        hashes.Hits.ShouldBe(0);
++    }
++
++    /// <summary>Concurrent guaranteed misses publish the complete same key only once with one retained charge.</summary>
++    [Fact]
++    public async Task ConcurrentMissesPublishOnceWithinIndependentBounds()
++    {
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        using var rendezvous = new Barrier(8);
++        const string key = "synthetic-complete-serialized-preimage";
++        string digest = new('0', 64);
++        Task[] tasks = Enumerable.Range(0, 8).Select(worker => Task.Run(() =>
++        {
++            hashes.TryGet(key, out _).ShouldBeFalse();
++            rendezvous.SignalAndWait();
++            hashes.Remember(key, digest);
++        })).ToArray();
++        await Task.WhenAll(tasks);
++        hashes.Count.ShouldBe(1);
++        hashes.Misses.ShouldBe(8);
++        hashes.RetainedCharge.ShouldBe(128 + 2 * (key.Length + digest.Length));
++    }
++
++    /// <summary>Closing an owner with eight actual live hashing scopes permanently prevents later reuse or publication.</summary>
++    [Fact]
++    public async Task OwnerDisposalWhileScopesRemainLiveKeepsOriginalFallback()
++    {
++        using var bytes = new RouteCatalogValidatedBytesMemo();
++        using var hashes = new RouteCatalogCanonicalHashMemo();
++        var value = new { purpose = "concurrent", schemaVersion = 1 };
++        string expected = CanonicalHashTestInputs.Uncached(() => CanonicalHashTestInputs.Hash(value));
++        var allComputed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var afterClose = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        int completed = 0;
++        Task[] tasks = Enumerable.Range(0, 8).Select(worker => Task.Run(async () =>
++        {
++            using var scope = RouteCatalogDecodeScope.EnterWithCanonicalHashMemo(bytes, hashes);
++            CanonicalHashTestInputs.Hash(value).ShouldBe(expected);
++            if (Interlocked.Increment(ref completed) == 8) allComputed.SetResult();
++            await afterClose.Task;
++            scope.HasCanonicalHashMemo.ShouldBeFalse();
++            CanonicalHashTestInputs.Hash(value).ShouldBe(expected);
++        })).ToArray();
++        try
++        {
++            await allComputed.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
++            hashes.Count.ShouldBe(1);
++            hashes.Dispose();
++        }
++        finally
++        {
++            afterClose.TrySetResult();
++            await Task.WhenAll(tasks);
++        }
++        hashes.IsClosed.ShouldBeTrue();
++        hashes.Count.ShouldBe(0);
++        hashes.RetainedCharge.ShouldBe(0);
++    }
++}
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashOwnerTests.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogCanonicalHashOwnerTests.cs
+@@ -0,0 +1,108 @@
++using System.Reflection;
++
++using Hexalith.EventStore.Contracts.Routing;
++using Hexalith.EventStore.ServiceDefaults.Routing;
++
++using Microsoft.Extensions.Hosting;
++using Microsoft.Extensions.Options;
++
++using NSubstitute;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Routing;
++
++/// <summary>Checks both existing host scope-entry sites without changing option observation order.</summary>
++public sealed class RouteCatalogCanonicalHashOwnerTests
++{
++#if DEBUG
++    private static bool PrivateBuild => true;
++#else
++    private static bool PrivateBuild => false;
++#endif
++
++    /// <summary>Only the original complete host selection lends a live pure memo, with the original option reads.</summary>
++    [Theory]
++    [InlineData("enabled")]
++    [InlineData("disabled")]
++    [InlineData("retention-disabled")]
++    [InlineData("disposed")]
++    [InlineData("environment")]
++    [InlineData("missing-environment")]
++    [InlineData("fixture")]
++    [InlineData("technical")]
++    [InlineData("profile")]
++    public void OriginalHostSelectionAndOptionReadsChooseTheMemo(string changed)
++    {
++        using var boundary = RouteCatalogDecodeScope.Suppress();
++        var local = new RouteCatalogHostOptions
++        {
++            ScopedDecodeReuse = changed != "disabled", RetainValidatedCatalogBytes = changed != "retention-disabled",
++            DevelopmentFixture = changed != "fixture", RequireTechnicalHttpBinding = changed != "technical",
++            Profile = changed == "profile" ? "Production" : "Development",
++        };
++        int reads = 0;
++        var options = Substitute.For<IOptions<RouteCatalogHostOptions>>();
++        options.Value.Returns(call => { reads++; return local; });
++        var environment = Substitute.For<IHostEnvironment>();
++        environment.EnvironmentName.Returns(changed == "environment" ? Environments.Production : Environments.Development);
++        using var authority = new RouteCatalogAuthority(Substitute.For<IRouteCatalogStateStore>(), Substitute.For<IRouteCatalogTrustValidator>(), options,
++            environment: changed == "missing-environment" ? null : environment);
++        if (changed == "disposed") authority.Dispose();
++        using var scope = (RouteCatalogDecodeScope?)typeof(RouteCatalogAuthority)
++            .GetMethod("BeginPrivateDecodeScope", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(authority, null);
++        bool host = PrivateBuild && changed == "enabled";
++        (scope?.HasCanonicalHashMemo == true).ShouldBe(host);
++        bool scoped = PrivateBuild && changed is "enabled" or "retention-disabled" or "disposed";
++        (scope is not null).ShouldBe(scoped);
++        int expected = !PrivateBuild || changed is "environment" or "missing-environment" ? 0
++            : changed is "enabled" or "retention-disabled" ? 3 : changed == "disposed" ? 2 : 1;
++        reads.ShouldBe(expected);
++        var owner = (RouteCatalogCanonicalHashMemo)typeof(RouteCatalogAuthority)
++            .GetField("_canonicalHashes", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(authority)!;
++        CanonicalHashTestInputs.Hash(new { purpose = "owner-selection", schemaVersion = 1 });
++        owner.Count.ShouldBe(host ? 1 : 0);
++        authority.Dispose();
++        owner.IsClosed.ShouldBeTrue();
++        owner.Count.ShouldBe(0);
++        scope?.HasCanonicalHashMemo.ShouldBeFalse();
++    }
++
++    /// <summary>Release uses its original direct host-selected scope and original option-read count, then closes the scope.</summary>
++    [Theory]
++    [InlineData("enabled")]
++    [InlineData("retention-disabled")]
++    [InlineData("disposed")]
++    public async Task ReleaseEntryBorrowsOnlyItsStillOpenHostOwner(string changed)
++    {
++        using var boundary = RouteCatalogDecodeScope.Suppress();
++        var local = new RouteCatalogHostOptions
++        {
++            ScopedDecodeReuse = true, RetainValidatedCatalogBytes = changed != "retention-disabled",
++            DevelopmentFixture = true, RequireTechnicalHttpBinding = true, Profile = "Development",
++        };
++        int reads = 0;
++        var options = Substitute.For<IOptions<RouteCatalogHostOptions>>();
++        options.Value.Returns(call => { reads++; return local; });
++        var environment = Substitute.For<IHostEnvironment>();
++        environment.EnvironmentName.Returns(Environments.Development);
++        var store = Substitute.For<IRouteCatalogStateStore>();
++        RouteCatalogDecodeScope? observed = null;
++        bool selected = false;
++        store.ReadAsync(Arg.Any<CancellationToken>()).Returns(call =>
++        {
++            observed = RouteCatalogDecodeScope.Current;
++            selected = observed?.HasCanonicalHashMemo == true;
++            CanonicalHashTestInputs.Hash(new { purpose = "release-entry", schemaVersion = 1 });
++            return Task.FromResult((RouteCatalogActivationState.Empty, "synthetic-etag"));
++        });
++        using var authority = new RouteCatalogAuthority(store, Substitute.For<IRouteCatalogTrustValidator>(), options, environment: environment);
++        if (changed == "disposed") authority.Dispose();
++        await (Task)typeof(RouteCatalogAuthority).GetMethod("ReleaseCoreAsync", BindingFlags.Instance | BindingFlags.NonPublic)!
++            .Invoke(authority, ["synthetic-lease"])!;
++        selected.ShouldBe(PrivateBuild && changed == "enabled");
++        reads.ShouldBe(!PrivateBuild ? 0 : changed == "disposed" ? 2 : 4);
++        RouteCatalogDecodeScope.Current.ShouldBeNull();
++        if (observed is not null) observed.HasCanonicalHashMemo.ShouldBeFalse();
++    }
++}

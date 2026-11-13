@@ -1,0 +1,65 @@
+{
+  "preparationOnly": true,
+  "sourceQualificationReady": true,
+  "native24AndHostsHaveNotExecuted": true,
+  "sourceQualificationIsActualScratchOnly": true,
+  "syntaxAllSixScriptsPass": true,
+  "fiveNonexecutingPlans": [
+    {
+      "label": "private-build",
+      "command": [
+        "python3",
+        "/tmp/story65-delegated-client-ops-prep-20261107/build_restore.py",
+        "--phase",
+        "private"
+      ],
+      "exitCode": 0,
+      "outputSha256": "e337aa4a0b24bedfed6f77f1fa5cce5f57eeeda38fcf63a5780fd6e5847a4ac8",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "ordinary-restore",
+      "command": [
+        "python3",
+        "/tmp/story65-delegated-client-ops-prep-20261107/build_restore.py",
+        "--phase",
+        "ordinary"
+      ],
+      "exitCode": 0,
+      "outputSha256": "b715c1ef106e5fac5c81a00390c7f7a793c70a2e913755464dd591afdb409d6f",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "native24",
+      "command": [
+        "python3",
+        "/tmp/story65-delegated-client-ops-prep-20261107/native_qualification.py"
+      ],
+      "exitCode": 0,
+      "outputSha256": "596166cfdae6e7f27b752b24e9d0bb92e7843bc5a4fbb8be9a844898271421bf",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "managed",
+      "command": [
+        "python3",
+        "/tmp/story65-delegated-client-ops-prep-20261107/supervise_managed.py"
+      ],
+      "exitCode": 0,
+      "outputSha256": "8a47cfecb9b86d8487b083387e8de98aa17d1a4330345ed095b5d6410fba55b7",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "pipeline",
+      "command": [
+        "python3",
+        "/tmp/story65-delegated-client-ops-prep-20261107/run_and_restore.py"
+      ],
+      "exitCode": 0,
+      "outputSha256": "84cc43af2aae9cd591a1ff64ff375613bcecf5c3326fef319e72ed1f58999569",
+      "applicationBuildNativeOrHostExecuted": false
+    }
+  ],
+  "operationalPinsSha256": "2b11c80446d5a495ad491610582cc66a209ab7af2dbb89cb6261c5df939cbc7d",
+  "changedOperationalScriptDiffSha256": "f83aec3679b33a94be1d3b2caad472d0c98f61d0b6ec020400eceb986560b1c3"
+}

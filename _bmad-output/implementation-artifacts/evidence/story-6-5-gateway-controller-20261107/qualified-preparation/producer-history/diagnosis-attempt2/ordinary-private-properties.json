@@ -1,0 +1,85 @@
+{
+  "readOnlyOnly": true,
+  "commands": [
+    {
+      "alias": "ordinary",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-getProperty:GenerateDocumentationFile,DocumentationFile,NoWarn,TreatWarningsAsErrors,WarningsAsErrors,EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath,GenerateAssemblyInfo,GeneratedAssemblyInfoFile,GenerateGlobalUsings,GeneratedGlobalUsingsFile,GenerateMSBuildEditorConfigFile,GeneratedMSBuildEditorConfigFile,GenerateDependencyFile,ProjectDepsFilePath,GenerateRuntimeConfigurationFiles,ProjectRuntimeConfigFilePath,PublishDir,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,ProjectAssetsCacheFile"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "GenerateDocumentationFile": "false",
+        "DocumentationFile": "",
+        "NoWarn": ";IDE0028",
+        "TreatWarningsAsErrors": "true",
+        "WarningsAsErrors": ";NU1605;SYSLIB0011",
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": "",
+        "GenerateAssemblyInfo": "true",
+        "GeneratedAssemblyInfoFile": "obj\\Debug/net10.0/Hexalith.EventStore.Gateway.AssemblyInfo.cs",
+        "GenerateGlobalUsings": "",
+        "GeneratedGlobalUsingsFile": "obj\\Debug/net10.0/Hexalith.EventStore.Gateway.GlobalUsings.g.cs",
+        "GenerateMSBuildEditorConfigFile": "",
+        "GeneratedMSBuildEditorConfigFile": "",
+        "GenerateDependencyFile": "true",
+        "ProjectDepsFilePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.deps.json",
+        "GenerateRuntimeConfigurationFiles": "",
+        "ProjectRuntimeConfigFilePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.runtimeconfig.json",
+        "PublishDir": "bin\\Debug/net10.0/publish/",
+        "CoreCompileInputsCacheFile": "",
+        "ResolveAssemblyReferencesStateFile": "",
+        "ProjectAssetsCacheFile": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.assets.cache"
+      }
+    },
+    {
+      "alias": "attempt2-private",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+        "-nologo",
+        "-p:Configuration=Debug",
+        "-p:BuildProjectReferences=false",
+        "-p:NuGetAudit=false",
+        "-p:EnablePrivateCatalogInvocationProof=true",
+        "-p:EnablePrivateOwnerSourceReadProof=true",
+        "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-gateway-controller-ops-prep-20261107/gateway-scratch.props",
+        "-getProperty:GenerateDocumentationFile,DocumentationFile,NoWarn,TreatWarningsAsErrors,WarningsAsErrors,EmitCompilerGeneratedFiles,CompilerGeneratedFilesOutputPath,GenerateAssemblyInfo,GeneratedAssemblyInfoFile,GenerateGlobalUsings,GeneratedGlobalUsingsFile,GenerateMSBuildEditorConfigFile,GeneratedMSBuildEditorConfigFile,GenerateDependencyFile,ProjectDepsFilePath,GenerateRuntimeConfigurationFiles,ProjectRuntimeConfigFilePath,PublishDir,CoreCompileInputsCacheFile,ResolveAssemblyReferencesStateFile,ProjectAssetsCacheFile"
+      ],
+      "exitCode": 0,
+      "properties": {
+        "GenerateDocumentationFile": "false",
+        "DocumentationFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.xml",
+        "NoWarn": ";IDE0028",
+        "TreatWarningsAsErrors": "true",
+        "WarningsAsErrors": ";NU1605;SYSLIB0011",
+        "EmitCompilerGeneratedFiles": "false",
+        "CompilerGeneratedFilesOutputPath": "",
+        "GenerateAssemblyInfo": "true",
+        "GeneratedAssemblyInfoFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.AssemblyInfo.cs",
+        "GenerateGlobalUsings": "",
+        "GeneratedGlobalUsingsFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.GlobalUsings.g.cs",
+        "GenerateMSBuildEditorConfigFile": "",
+        "GeneratedMSBuildEditorConfigFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.GeneratedMSBuildEditorConfig.editorconfig",
+        "GenerateDependencyFile": "true",
+        "ProjectDepsFilePath": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.deps.json",
+        "GenerateRuntimeConfigurationFiles": "",
+        "ProjectRuntimeConfigFilePath": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.runtimeconfig.json",
+        "PublishDir": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/publish/",
+        "CoreCompileInputsCacheFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.csproj.CoreCompileInputs.cache",
+        "ResolveAssemblyReferencesStateFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.csproj.AssemblyReference.cache",
+        "ProjectAssetsCacheFile": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.assets.cache"
+      }
+    }
+  ],
+  "noCompilerOrBuildInvoked": true
+}

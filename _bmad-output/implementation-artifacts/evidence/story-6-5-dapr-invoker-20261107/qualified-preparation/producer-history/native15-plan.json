@@ -1,0 +1,37 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "expectedCases": 15,
+  "canonicalSetSourceDerivedActualXmlPending": true,
+  "threeSeparateProcesses": [
+    {
+      "filter": "-class",
+      "value": "Hexalith.EventStore.Server.Tests.Queries.DaprDomainQueryInvokerFailureTests",
+      "cases": 5,
+      "method": "UnexpectedRemoteFailuresUseOnlyBoundedSentinel",
+      "fixtureSha256": "d0cae76d7d1d15dbec359048a5640224af8778f98c74a2d3240d2151d02b2568"
+    },
+    {
+      "filter": "-class",
+      "value": "Hexalith.EventStore.Server.Tests.Routing.CatalogQueryResponseBoundaryTests",
+      "cases": 8,
+      "method": "ConcreteQueryDecodePreservesCommittedProjectionAndCatalogRefusalThroughGateway",
+      "fixtureSha256": "0489949b31e0ab44856e39fa5ed95585ab3a28e968ea76088f7aea6238456bd6"
+    },
+    {
+      "filter": "-method",
+      "value": "Hexalith.EventStore.Server.Tests.Routing.CatalogConcreteQueryInvokerTests.ConcreteHttpInvokerUsesCommittedTargetDespiteConflictingResolver",
+      "cases": 2,
+      "fixtureSha256": "90b0326ce2409d39211dcc306f19327c9b3622943a88d06d59fe9c3437d8d2de"
+    }
+  ],
+  "excludeConcreteActorCases": true,
+  "notClaimedSubsetOfOrdinary1038OrExtraUniqueQualification": true,
+  "actualPrivateGatewayDllPdbAndSameStartMappedCopyMandatory": true,
+  "postSpawnImmediatelyMarksNativeAbsenceFalse": true,
+  "finallyWaitOwnProcessAndProcessGroupAbsence": true,
+  "allNativeProcessGroupsGoneBeforeManagedOrRestore": true,
+  "fullHistoricalNative15XmlNotClaimed": true,
+  "responseBoundary8UsesInMemoryMockHttpMessageHandler": true,
+  "onlySelectedConcrete2StartsLoopbackWebApplication": true
+}

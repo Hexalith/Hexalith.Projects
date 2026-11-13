@@ -1,0 +1,127 @@
+{
+  "decision": "implement-narrow-candidate-subject-to-native-and-final-compiled-transfer",
+  "productionPerformanceBenefitNotYetEstablished": true,
+  "featureAcceptance": false,
+  "parityChecks": 178,
+  "rawBatches": 216,
+  "timedObservations": 16380,
+  "warmComparisons": [
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "readers": 1,
+      "candidateVsActualWallRatio": 0.45584075474579033,
+      "candidateVsCopiedControlWallRatio": 0.4104425053430598,
+      "candidateVsActualAllocatedRatio": 0.35381272571337175,
+      "candidateVsActualP95Ratio": 0.5322453513899542
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "readers": 2,
+      "candidateVsActualWallRatio": 0.4002597594352116,
+      "candidateVsCopiedControlWallRatio": 0.42343591877773074,
+      "candidateVsActualAllocatedRatio": 0.35509016793030124,
+      "candidateVsActualP95Ratio": 0.5031466286122013
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "inventory",
+      "readers": 4,
+      "candidateVsActualWallRatio": 0.44541403564616383,
+      "candidateVsCopiedControlWallRatio": 0.448074874444792,
+      "candidateVsActualAllocatedRatio": 0.3585167119470403,
+      "candidateVsActualP95Ratio": 0.42363891323400527
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "readers": 1,
+      "candidateVsActualWallRatio": 0.4219391023725935,
+      "candidateVsCopiedControlWallRatio": 0.4564687453026033,
+      "candidateVsActualAllocatedRatio": 0.3672289915937094,
+      "candidateVsActualP95Ratio": 0.4783400669055679
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "readers": 2,
+      "candidateVsActualWallRatio": 0.4329076055732824,
+      "candidateVsCopiedControlWallRatio": 0.41642582408094897,
+      "candidateVsActualAllocatedRatio": 0.36829715175091493,
+      "candidateVsActualP95Ratio": 0.4377898853273585
+    },
+    {
+      "dataset": "compiled-sample-owner",
+      "workload": "identity",
+      "readers": 4,
+      "candidateVsActualWallRatio": 0.5126016539719622,
+      "candidateVsCopiedControlWallRatio": 0.34463040989458826,
+      "candidateVsActualAllocatedRatio": 0.3741831857387388,
+      "candidateVsActualP95Ratio": 0.45875079940311236
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "readers": 1,
+      "candidateVsActualWallRatio": 0.5619848633464987,
+      "candidateVsCopiedControlWallRatio": 0.5089017789982954,
+      "candidateVsActualAllocatedRatio": 0.48828000421177764,
+      "candidateVsActualP95Ratio": 0.5477501020520381
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "readers": 2,
+      "candidateVsActualWallRatio": 0.5283960068788426,
+      "candidateVsCopiedControlWallRatio": 0.5286825890086067,
+      "candidateVsActualAllocatedRatio": 0.4918034364666023,
+      "candidateVsActualP95Ratio": 0.5181876528274912
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "inventory",
+      "readers": 4,
+      "candidateVsActualWallRatio": 0.5702818898601969,
+      "candidateVsCopiedControlWallRatio": 0.5967213659336434,
+      "candidateVsActualAllocatedRatio": 0.5031335016248689,
+      "candidateVsActualP95Ratio": 0.6086162844619376
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "readers": 1,
+      "candidateVsActualWallRatio": 0.350630945657799,
+      "candidateVsCopiedControlWallRatio": 0.4073974080591641,
+      "candidateVsActualAllocatedRatio": 0.4952331931743841,
+      "candidateVsActualP95Ratio": 0.34151454841546575
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "readers": 2,
+      "candidateVsActualWallRatio": 0.5264688746160744,
+      "candidateVsCopiedControlWallRatio": 0.5184112313240327,
+      "candidateVsActualAllocatedRatio": 0.5010594222234873,
+      "candidateVsActualP95Ratio": 0.5664833695974785
+    },
+    {
+      "dataset": "public-catalog-fixture",
+      "workload": "identity",
+      "readers": 4,
+      "candidateVsActualWallRatio": 0.47414402751427837,
+      "candidateVsCopiedControlWallRatio": 0.5040512269589159,
+      "candidateVsActualAllocatedRatio": 0.5107834656192759,
+      "candidateVsActualP95Ratio": 0.5887743894578864
+    }
+  ],
+  "coldLimits": "Three small batches per cell; mixed cold wall observations and roughly8\u20139% higher single-reader cold allocations. Shared-owner cold readers may reuse publications. No filesystem/JIT/runtime cold claim.",
+  "cpuLimits": "Raw process CPU retained; summary CPU omitted unless every grouped batch reaches30ms. Short sample-owner batches are below usable CPU granularity.",
+  "measurementLimits": "Two unchanged public/compiled contract datasets, not complete installed host populations. Single process, three cyclic orders, natural14 ServerGC Debug-noopt. Batch wall is throughput cost; observation latency separate. Fresh scope disposal timed; owner disposal separate. No authority IO/remote/wholehost/deadline benefit inferred.",
+  "rootAll977And63InputsPostrunObservation": "All matched in Root immediately-after-run tool check before production edit delegation.",
+  "runtimeManifestSha256": "3bdb543d2131c0803544104eee76ab1ff76f36f93b3953387e1f2551f42fc6dc",
+  "ownedChildAndGroupAbsent": true,
+  "groupMembers": [],
+  "procPermissionErrors": [],
+  "ordinarySdkSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+}

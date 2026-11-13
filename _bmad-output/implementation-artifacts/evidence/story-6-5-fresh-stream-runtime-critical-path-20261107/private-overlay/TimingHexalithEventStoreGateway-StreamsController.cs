@@ -1,0 +1,834 @@
+using Dapr;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+
+using Hexalith.EventStore.Authorization;
+using Hexalith.EventStore.Contracts.Identity;
+using Hexalith.EventStore.Contracts.Problems;
+using Hexalith.EventStore.Contracts.Security;
+using Hexalith.EventStore.Contracts.Streams;
+using Hexalith.EventStore.Client.Gateway;
+using Hexalith.EventStore.ErrorHandling;
+using Hexalith.EventStore.Server.Actors;
+using Hexalith.EventStore.Server.Diagnostics;
+using Hexalith.EventStore.Server.Events;
+using Hexalith.EventStore.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+
+using GatewayTenantValidator = Hexalith.EventStore.Authorization.ITenantValidator;
+using ServerEventEnvelope = Hexalith.EventStore.Server.Events.EventEnvelope;
+
+namespace Hexalith.EventStore.Controllers;
+
+/// <summary>
+/// Public downstream stream read/replay endpoints.
+/// </summary>
+[ApiController]
+[Route("api/v1/streams")]
+[Consumes("application/json")]
+[Produces("application/json")]
+[Tags("Streams")]
+[method: Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+public sealed partial class StreamsController(
+    IActorProxyFactory actorProxyFactory,
+    GatewayTenantValidator tenantValidator,
+    IRbacValidator rbacValidator,
+    ILogger<StreamsController> logger,
+    IEventPayloadProtectionService? payloadProtectionService = null,
+    IConfiguration? configuration = null,
+    IOptions<RouteCatalogHostOptions>? routeCatalogHost = null,
+    IHostEnvironment? hostEnvironment = null) : ControllerBase {
+
+    /// <summary>Preserves the original packaged controller constructor signature for existing compiled consumers.</summary>
+    /// <param name="actorProxyFactory">The actual native actor proxy factory.</param>
+    /// <param name="tenantValidator">The public-read tenant validator.</param>
+    /// <param name="rbacValidator">The public-read RBAC validator.</param>
+    /// <param name="logger">The actual host logger.</param>
+    /// <param name="payloadProtectionService">The actual payload-protection service.</param>
+    /// <param name="configuration">The actual host configuration.</param>
+    public StreamsController(IActorProxyFactory actorProxyFactory, GatewayTenantValidator tenantValidator,
+        IRbacValidator rbacValidator, ILogger<StreamsController> logger,
+        IEventPayloadProtectionService? payloadProtectionService, IConfiguration? configuration)
+        : this(actorProxyFactory, tenantValidator, rbacValidator, logger, payloadProtectionService, configuration, null, null) { }
+
+    // Bound is exclusive; depth==0..MaxExceptionFrames-1 are examined (== MaxExceptionFrames frames).
+    private const int _maxExceptionFrames = 8;
+
+    // P6-7P (pass-7): _maxPageSize is load-bearing for the FromSequence overflow guard at
+    // line ~295 which evaluates `int.MaxValue - request.PageSize - 1L`. If _maxPageSize were
+    // bumped to near-int.MaxValue, the expression would overflow to a negative long and the
+    // guard would reject all valid FromSequence values. Keep _maxPageSize ≤ 100_000.
+    //
+    // Documented as a static invariant (compile-time const) rather than a runtime check because
+    // the compiler constant-folds any pattern test against the const and emits CS8519.
+    private const int _maxPageSize = 1_000;
+
+    private const string _streamReadMessageCategory = "replay";
+    private const string _streamReadMessageType = "StreamRead";
+    private const string _platformScopeHeader = "X-Hexalith-Scope";
+    private const string _tenantsPlatformScope = "platform:tenants";
+    private const string _tenantsReadPermission = "tenants:read";
+    private readonly IEventPayloadProtectionService _payloadProtectionService = payloadProtectionService ?? new NoOpEventPayloadProtectionService();
+
+    /// <summary>
+    /// Reads a public EventStore stream page for downstream replay/rebuild use.
+    /// </summary>
+    [HttpPost("read")]
+    [Authorize(Policy = Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions.HumanPolicy)]
+    [RequestSizeLimit(1_048_576)]
+    [ProducesResponseType(typeof(StreamReadPage), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest, "application/problem+json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound, "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError, "application/problem+json")]
+    public Task<IActionResult> ReadStreamAsync(
+        [FromBody] StreamReadRequest request,
+        CancellationToken cancellationToken = default)
+        => ReadStreamCoreAsync(request, workloadOnly: false, cancellationToken);
+
+    /// <summary>Reads a stream under an authenticated, tenant-bound workload grant.</summary>
+    [HttpPost("read/workload")]
+    [Authorize(Policy = DaprInternalAuthenticationOptions.GatewayStreamReadPolicy)]
+    [RequestSizeLimit(1_048_576)]
+    public Task<IActionResult> ReadWorkloadStreamAsync(
+        [FromBody] StreamReadRequest request,
+        CancellationToken cancellationToken = default)
+        => ReadStreamCoreAsync(request, workloadOnly: true, cancellationToken);
+
+    private async Task<IActionResult> ReadStreamCoreAsync(
+        StreamReadRequest request,
+        bool workloadOnly,
+        CancellationToken cancellationToken) {
+        using var __focus13 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.native-stream");
+        ArgumentNullException.ThrowIfNull(request);
+        if (workloadOnly && request.Tenant is null)
+            return ProblemWithReason(StatusCodes.Status400BadRequest, ProblemTypeUris.BadRequest,
+                "Bad Request", "Tenant and domain are required.", StreamReplayReasonCodes.MissingRequiredField);
+
+        StreamReadRequest proofRequest = request;
+        if (workloadOnly)
+        {
+            if (LegacyTenantStorageMap.IsPlatformSourceRead(request.Tenant, request.Domain))
+            {
+                if (!Request.Headers.TryGetValue("X-Hexalith-Scope", out var scopeHeader)
+                    || scopeHeader.Count != 1 || !string.Equals(scopeHeader[0], request.Tenant, StringComparison.Ordinal)
+                    || Request.Headers.ContainsKey("X-Hexalith-Tenant"))
+                    return Forbid();
+                request = request with { Tenant = TenantCanonicalizer.ReservedStorageTenant };
+            }
+            else if (request.Tenant.StartsWith("platform:", StringComparison.Ordinal)
+                || Request.Headers.TryGetValue("X-Hexalith-Scope", out var ordinaryScopeHeader)
+                    && (ordinaryScopeHeader.Count != 1 || !string.Equals(ordinaryScopeHeader[0], request.Tenant, StringComparison.Ordinal))
+                || Request.Headers.TryGetValue("X-Hexalith-Tenant", out var tenantHeader)
+                    && (tenantHeader.Count != 1 || !string.Equals(tenantHeader[0], request.Tenant, StringComparison.Ordinal)))
+                return Forbid();
+        }
+
+        bool platformRead = false;
+        if (!workloadOnly && Request.Headers.ContainsKey(_platformScopeHeader))
+        {
+            // The retained Tenants history is read through its explicit platform scope and exact read
+            // permission, as command replay and status do; the reserved storage tenant is never a request scope.
+            if (!IsAuthorizedTenantsPlatformRead(request))
+                return Forbid();
+            request = request with { Tenant = TenantCanonicalizer.ReservedStorageTenant };
+            platformRead = true;
+        }
+        else if (!workloadOnly)
+        {
+            if (!TenantCanonicalizer.TryCanonicalize(request.Tenant, out string canonicalTenant))
+                return ProblemWithReason(StatusCodes.Status400BadRequest, ProblemTypeUris.BadRequest,
+                    "Bad Request", "Tenant scope is invalid or reserved.", StreamReplayReasonCodes.InvalidAggregateIdentity);
+            if (Request.Headers.ContainsKey("X-Hexalith-Tenant")
+                || !TenantCanonicalizer.TryCanonicalizeGrants(User.FindAll("eventstore:tenant").Select(claim => claim.Value), out _))
+            {
+                return Forbid();
+            }
+            request = request with { Tenant = canonicalTenant };
+        }
+
+        IActionResult? validationFailure = ValidateRequest(request);
+        if (validationFailure is not null) {
+            return validationFailure;
+        }
+
+        if (workloadOnly) {
+            string? caller = User.FindFirst(EventStoreWorkloadAuthenticationDefaults.WorkloadClaimType)?.Value;
+            bool jwtBound = string.Equals(User.FindFirst(EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType)?.Value,
+                    proofRequest.Tenant, StringComparison.Ordinal)
+                && string.Equals(User.FindFirst(EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType)?.Value,
+                    request.Domain, StringComparison.Ordinal);
+            bool hasProof = Request.Headers.TryGetValue(BoundStreamReadProof.HeaderName, out var proofHeader);
+            string? allowedDomains = caller is null ? null : configuration?[$"Authentication:BoundStreamRead:AllowedDomains:{caller}"];
+            bool domainAllowed = allowedDomains?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .Contains(request.Domain, StringComparer.Ordinal) == true;
+            bool proofBound = hasProof && proofHeader.Count == 1 && caller is not null && domainAllowed
+                && BoundStreamReadProof.Verify(proofHeader[0], proofRequest, caller,
+                    configuration?[$"Authentication:BoundStreamRead:PublicKeys:{caller}"], DateTimeOffset.UtcNow);
+            // Explicit source-only enrollment is receiver authority. It cannot be waived by
+            // a resource-bound JWT or a caller-supplied request flag. Generic stream readers
+            // retain their existing grant; enrolled metadata callers never enter a range read.
+            string? metadataOnly = caller is null ? null
+                : configuration?[$"Authentication:BoundStreamRead:MetadataOnlyCallers:{caller}"];
+            if (metadataOnly is not null && (!string.Equals(metadataOnly, "true", StringComparison.OrdinalIgnoreCase)
+                || !proofBound || request.FromSequence != 0 || request.ToSequence != 0 || request.PageSize != 1
+                || !request.RequireNativeProof || request.Checkpoint is not null || request.ContinuationToken is not null
+                || request.ProjectionName is not null))
+                return Forbid();
+            if (string.IsNullOrWhiteSpace(caller) || hasProof && !proofBound || !jwtBound && !proofBound) {
+                return Forbid();
+            }
+        }
+        else if (!platformRead) {
+            TenantValidationResult tenantResult = await tenantValidator
+                .ValidateAsync(User, request.Tenant, cancellationToken, request.AggregateId)
+                .ConfigureAwait(false) ?? throw new InvalidOperationException("ITenantValidator.ValidateAsync returned null. Server bug.");
+            if (!tenantResult.IsAuthorized) {
+                return ProblemWithReason(StatusCodes.Status403Forbidden, ProblemTypeUris.Forbidden,
+                    "Forbidden", "Tenant is not authorized for stream replay.", StreamReplayReasonCodes.UnauthorizedTenant);
+            }
+
+            RbacValidationResult rbacResult = await rbacValidator
+                .ValidateAsync(User, request.Tenant, request.Domain, _streamReadMessageType,
+                    _streamReadMessageCategory, cancellationToken, request.AggregateId)
+                .ConfigureAwait(false) ?? throw new InvalidOperationException("IRbacValidator.ValidateAsync returned null. Server bug.");
+            if (!rbacResult.IsAuthorized) {
+                return ProblemWithReason(StatusCodes.Status403Forbidden, ProblemTypeUris.Forbidden,
+                    "Forbidden", "Replay scope is not authorized.", StreamReplayReasonCodes.ForbiddenReplayScope);
+            }
+        }
+
+        bool protectedNativeRead = workloadOnly || Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacy.IsProtectedRequest(HttpContext);
+        try {
+            var identity = new AggregateIdentity(request.Tenant, request.Domain, request.AggregateId!);
+            IAggregateActor actor = actorProxyFactory.CreateActorProxy<IAggregateActor>(
+                new ActorId(identity.ActorId),
+                "AggregateActor");
+
+            SourceProofInspection? native = null;
+            SourceNativeReadBatch? nativeBatch = null;
+            SourceProofInspectionPair? metadataPair = null;
+            AggregateStreamMetadata streamMetadata;
+            if (request.RequireNativeProof)
+            {
+                if (!workloadOnly) return Forbid();
+                // Keep the prior single inspection for oversized requests. The explicitly selected
+                // private Development lane uses its additive atomic metadata pair; every other valid
+                // native read executes the same ordered inspections in one serialized actor turn.
+                if (request.PageSize > 255)
+                    native = await NativeSourceReadDiagnostics.Observe(actor.InspectSourceProofAsync(), identity, recheck: false,
+                        configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+                else if (request.FromSequence == 0 && request.ToSequence == 0
+                    && AtomicNativeMetadataInspectionPolicy.IsEnabled(configuration, routeCatalogHost, hostEnvironment))
+                {
+                    try
+                    {
+                        using var __focus14 = global::Hexalith.PrivateFocusedTiming.TimingHexalithEventStoreGateway.Start("gateway.actor-pair-await");
+        metadataPair = await NativeSourceReadDiagnostics.ObservePair(actor.InspectSourceMetadataPairAsync(), identity,
+                            configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+        __focus14?.Dispose();
+                    }
+                    catch (NotSupportedException) { return StatusCode(StatusCodes.Status503ServiceUnavailable); }
+                    native = metadataPair?.Initial;
+                }
+                else
+                {
+                    nativeBatch = await actor.ReadNativeSourceBatchAsync(request.FromSequence, request.ToSequence,
+                        request.PageSize + 1, 2_097_152, request.FromSequence == 0 && request.ToSequence == 0)
+                        .WaitAsync(cancellationToken).ConfigureAwait(false);
+                    native = nativeBatch is null
+                        ? await NativeSourceReadDiagnostics.Observe(actor.InspectSourceProofAsync(), identity, recheck: false,
+                            configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false)
+                        : nativeBatch.Before;
+                }
+                if (native is not { Status: SourceProofInspectionStatus.Available, Erased: false, Proof: { Erased: false } proof }
+                    || !SourceProofCodec.IsValid(proof, identity, native.CurrentSequence, proof.RetainedFloor))
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable);
+                streamMetadata = new(native.Exists, native.CurrentSequence);
+            }
+            else streamMetadata = await actor.GetStreamMetadataAsync().ConfigureAwait(false);
+            if (!streamMetadata.Exists) {
+                return ProblemWithReason(
+                    StatusCodes.Status404NotFound,
+                    ProblemTypeUris.NotFound,
+                    "Not Found",
+                    "Event stream does not exist.",
+                    StreamReplayReasonCodes.MissingStream);
+            }
+
+            long currentSequence = streamMetadata.CurrentSequence;
+            if (native is not null && request.PageSize > 255) return BadRequest();
+            if (native is not null && request.FromSequence == 0 && request.ToSequence == 0)
+            {
+                // Metadata inspection must never enter the event-range or payload/readability path.
+                // Compare the whole observation, including incarnation, prefix, retention and erasure.
+                SourceProofInspection? final = metadataPair is not null ? metadataPair.Final
+                    : nativeBatch is not null ? nativeBatch.After
+                    : await NativeSourceReadDiagnostics.Observe(actor.InspectSourceProofAsync(), identity, recheck: true,
+                        configuration, routeCatalogHost, hostEnvironment, logger, cancellationToken, protectedRead: protectedNativeRead).WaitAsync(cancellationToken).ConfigureAwait(false);
+                if (final != native)
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable);
+                cancellationToken.ThrowIfCancellationRequested();
+                return Ok(new StreamReadPage(identity.TenantId, identity.Domain, identity.AggregateId, [],
+                    new StreamReadMetadata(0, 0, null, currentSequence, 0, false, null)
+                    { NativeProof = SourceProofCodec.ToNative(native.Proof!) }));
+            }
+
+            ServerEventEnvelope[] pageEvents;
+            try {
+                if (native is not null)
+                {
+                    SourceEventRange? range = nativeBatch is null
+                        ? await actor.ReadNativeEventsBoundedRangeAsync(request.FromSequence,
+                            Math.Max(request.FromSequence, Math.Min(request.ToSequence ?? currentSequence, currentSequence)),
+                            request.PageSize + 1, 2_097_152).WaitAsync(cancellationToken).ConfigureAwait(false)
+                        : nativeBatch.Range;
+                    if (range is null || range.ReasonCode is not null) return StatusCode(StatusCodes.Status503ServiceUnavailable);
+                    pageEvents = range.Events;
+                }
+                else pageEvents = await actor
+                    .ReadEventsRangeAsync(request.FromSequence, request.ToSequence, request.PageSize + 1)
+                    .ConfigureAwait(false);
+            }
+            catch (ActorMethodInvocationException ex) when (
+                ex.InnerException is InvalidOperationException invalidOp
+                && invalidOp.Message.Contains("Current sequence", StringComparison.OrdinalIgnoreCase)) {
+                // P21-7P (pass-7 MEDIUM): the stream was deleted between GetStreamMetadataAsync
+                // (which returned Exists=true) and ReadEventsRangeAsync (which throws when actor
+                // state is no longer accessible). Remap to 404 MissingStream instead of falling to
+                // the 500 catchall, mirroring the Exists=false branch above.
+                Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.MissingStream);
+                return ProblemWithReason(
+                    StatusCodes.Status404NotFound,
+                    ProblemTypeUris.NotFound,
+                    "Not Found",
+                    "Event stream does not exist.",
+                    StreamReplayReasonCodes.MissingStream);
+            }
+            catch (InvalidOperationException ex) when (
+                ex.Message.Contains("Current sequence", StringComparison.OrdinalIgnoreCase)) {
+                Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.MissingStream);
+                return ProblemWithReason(
+                    StatusCodes.Status404NotFound,
+                    ProblemTypeUris.NotFound,
+                    "Not Found",
+                    "Event stream does not exist.",
+                    StreamReplayReasonCodes.MissingStream);
+            }
+
+            if (pageEvents.Any(item => item.TenantId != identity.TenantId
+                || item.Domain != identity.Domain || item.AggregateId != identity.AggregateId))
+            {
+                return ProblemWithReason(StatusCodes.Status503ServiceUnavailable,
+                    ProblemTypeUris.ServiceUnavailable, "Unavailable", "Stream evidence is unavailable.",
+                    StreamReplayReasonCodes.CorruptEvent);
+            }
+
+            IReadOnlyList<ServerEventEnvelope> readEvents = [.. pageEvents.OrderBy(e => e.SequenceNumber)];
+            IReadOnlyList<ServerEventEnvelope> orderedEvents = [.. readEvents.Take(request.PageSize)];
+
+            // Story 22.7b: fail closed when any envelope in the page is provider-opaque. EventStore
+            // must not return opaque protected bytes through the public replay surface — the
+            // ProblemDetails carries only safe metadata (no payload, no key alias, no provider
+            // exception text).
+            // Story 22.7c: route the readability check through the canonical
+            // ProtectedDataReadabilityDecisionFactory so the publisher, actor, snapshot manager,
+            // and replay surface all use the same decision shape.
+            var readableEvents = new List<ServerEventEnvelope>(orderedEvents.Count);
+            foreach (ServerEventEnvelope envelope in orderedEvents) {
+                ReplayReadabilityResult readable = await TryMakeReplayEventReadableAsync(identity, envelope, cancellationToken)
+                    .ConfigureAwait(false);
+                if (readable.UnreadableReason is not null) {
+                    var decision = ProtectedDataReadabilityDecision.FromUnreadable(
+                        readable.UnreadableReason.Value,
+                        ProtectedDataDecisionStage.Replay,
+                        request.Tenant,
+                        request.Domain,
+                        request.AggregateId,
+                        envelope.SequenceNumber,
+                        readable.MetadataVersion,
+                        GetRequestCorrelationId());
+                    Log.UnreadableProtectedPayloadAtReplay(
+                        logger,
+                        request.Tenant,
+                        request.Domain,
+                        request.AggregateId ?? string.Empty,
+                        envelope.SequenceNumber,
+                        decision.ReasonCode);
+                    return CreateUnreadableProtectedDataProblem(decision);
+                }
+
+                readableEvents.Add(readable.Envelope!);
+            }
+
+            long latestSequence = orderedEvents.Count == 0
+                ? currentSequence
+                : Math.Max(currentSequence, orderedEvents[^1].SequenceNumber);
+            long? lastReturned = orderedEvents.Count == 0
+                ? null
+                : orderedEvents[^1].SequenceNumber;
+            bool truncated = pageEvents.Length > request.PageSize
+                || native is not null && (lastReturned ?? request.FromSequence)
+                    < Math.Min(request.ToSequence ?? currentSequence, currentSequence);
+
+            // P-D3: Continuation tokens are not yet implemented (token request-binding deferred).
+            // The validator at ValidateRequest line ~211 unconditionally rejects non-null tokens.
+            // Emitting a random token would break paging, so we always return null and require
+            // callers to paginate by setting FromSequence = lastSequenceReturned (exclusive).
+            if (native is not null && await actor.InspectSourceProofAsync().WaitAsync(cancellationToken).ConfigureAwait(false) != native)
+                return StatusCode(StatusCodes.Status503ServiceUnavailable);
+
+            return Ok(new StreamReadPage(
+                identity.TenantId,
+                identity.Domain,
+                identity.AggregateId,
+                [.. readableEvents.Select((item, index) => ToStreamReadEvent(item, native is not null) with
+                { NativeEventDigest = native is null ? null : SourceProofCodec.ComputeEventHash(orderedEvents[index]) })],
+                new StreamReadMetadata(
+                    request.FromSequence,
+                    request.ToSequence,
+                    lastReturned,
+                    latestSequence,
+                    orderedEvents.Count,
+                    truncated,
+                    NextContinuationToken: null)
+                { NativeProof = native?.Proof is { } nativeProof ? SourceProofCodec.ToNative(nativeProof) : null }));
+        }
+        catch (OperationCanceledException) {
+            throw;
+        }
+        catch (ArgumentOutOfRangeException) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Stream sequence boundary is out of range.",
+                StreamReplayReasonCodes.InvalidRange);
+        }
+        catch (ArgumentException) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Stream identity is invalid.",
+                StreamReplayReasonCodes.InvalidAggregateIdentity);
+        }
+        catch (ActorMethodInvocationException ex) when (TryGetException<MissingEventException>(ex, out MissingEventException? missing)) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.MissingEvent);
+            return ProblemWithReason(
+                StatusCodes.Status404NotFound,
+                ProblemTypeUris.NotFound,
+                "Not Found",
+                $"Event stream is missing event sequence {missing!.SequenceNumber}.",
+                StreamReplayReasonCodes.MissingEvent);
+        }
+        catch (ActorMethodInvocationException ex) when (TryGetException<EventDeserializationException>(ex, out _)) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.CorruptEvent);
+            return ProblemWithReason(
+                StatusCodes.Status500InternalServerError,
+                ProblemTypeUris.InternalServerError,
+                "Internal Server Error",
+                "Event stream contains unreadable event data.",
+                StreamReplayReasonCodes.CorruptEvent);
+        }
+        catch (MissingEventException ex) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.MissingEvent);
+            return ProblemWithReason(
+                StatusCodes.Status404NotFound,
+                ProblemTypeUris.NotFound,
+                "Not Found",
+                $"Event stream is missing event sequence {ex.SequenceNumber}.",
+                StreamReplayReasonCodes.MissingEvent);
+        }
+        catch (EventDeserializationException ex) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.CorruptEvent);
+            return ProblemWithReason(
+                StatusCodes.Status500InternalServerError,
+                ProblemTypeUris.InternalServerError,
+                "Internal Server Error",
+                "Event stream contains unreadable event data.",
+                StreamReplayReasonCodes.CorruptEvent);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("LogicalDigestMismatch:", StringComparison.Ordinal)) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.CorruptEvent);
+            return ProblemWithReason(
+                StatusCodes.Status503ServiceUnavailable,
+                ProblemTypeUris.ServiceUnavailable,
+                "Unavailable",
+                "Stream evidence is unavailable.",
+                StreamReplayReasonCodes.CorruptEvent);
+        }
+        catch (Exception ex) when (IsServiceUnavailable(ex)) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.ServiceUnavailable);
+            ObjectResult result = ProblemWithReason(
+                StatusCodes.Status503ServiceUnavailable,
+                ProblemTypeUris.ServiceUnavailable,
+                "Service Unavailable",
+                "Stream replay service is unavailable.",
+                StreamReplayReasonCodes.ServiceUnavailable);
+            Response.Headers.RetryAfter = "5";
+            return result;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException) {
+            Log.StreamReadFailed(logger, ex, request.Tenant, request.Domain, request.AggregateId ?? string.Empty, StreamReplayReasonCodes.InternalError);
+            return ProblemWithReason(
+                StatusCodes.Status500InternalServerError,
+                ProblemTypeUris.InternalServerError,
+                "Internal Server Error",
+                "Stream replay failed.",
+                StreamReplayReasonCodes.InternalError);
+        }
+    }
+
+    private static bool IsCanonicalTenantOrDomain(string value) {
+        // P21-6P: tenant/domain identifiers MUST be lowercase. State-store keys
+        // (projection-rebuild-checkpoints:{tenant}:{domain}:...) are case-sensitive,
+        // so accepting mixed case would let "Tenant-A" and "tenant-a" address
+        // different rows and break cross-case tenant isolation. Operators must
+        // canonicalize externally and submit lowercase identifiers.
+        if (value.Length > 64 || value.Any(c => c is < (char)0x20 or >= (char)0x7F)) {
+            return false;
+        }
+
+        if (!IsLowerAsciiAlphanumeric(value[0]) || !IsLowerAsciiAlphanumeric(value[^1])) {
+            return false;
+        }
+
+        return value.All(c => IsLowerAsciiAlphanumeric(c) || c == '-');
+    }
+
+    private static bool IsLowerAsciiAlphanumeric(char c)
+        => c is >= 'a' and <= 'z' || char.IsAsciiDigit(c);
+
+    private static bool IsServiceUnavailable(Exception exception)
+        => IsServiceUnavailable(exception, depth: 0);
+
+    private static bool IsServiceUnavailable(Exception exception, int depth) {
+        if (depth >= _maxExceptionFrames) {
+            return false;
+        }
+
+        if (exception is ActorMethodInvocationException actorException) {
+            // DEC5: when the inner exception is null, treat as transport-level actor unreachability
+            // (canonical 503 case from Dapr SDK builds that surface "actor not callable" without
+            // an inner exception). Operator can retry with backoff.
+            if (actorException.InnerException is null) {
+                return true;
+            }
+
+            return IsServiceUnavailable(actorException.InnerException, depth + 1);
+        }
+
+        // P2-6P: TaskCanceledException is a subclass of OperationCanceledException. The outer
+        // dispatcher already rethrows bare OperationCanceledException; classifying TaskCanceledException
+        // as transient here produced false-positive 503s on client-disconnect cancellation.
+        // OperationCanceledException-derived frames are excluded so cancellation propagates.
+        if (exception is OperationCanceledException) {
+            return false;
+        }
+
+        // P13-7P (pass-7): narrow from `IOException` (too broad — includes FileNotFoundException,
+        // UnauthorizedAccessException, PathTooLongException, DirectoryNotFoundException etc. which
+        // are application bugs not transport failures) to network-bound transport types. IOException
+        // remains transient only when wrapped inside a transport exception (depth > 0 below).
+        if (exception is DaprException or HttpRequestException or System.Net.Sockets.SocketException) {
+            return true;
+        }
+
+        // DEC4: TimeoutException is transient ONLY when wrapped (e.g., HTTP/2 socket timeout
+        // surfacing through Dapr SDK). Bare TimeoutException at the top level is treated as
+        // a programmer/data error so it surfaces as 500 InternalError.
+        if (exception is TimeoutException && depth > 0) {
+            return true;
+        }
+
+        // P13-7P (pass-7): IOException at depth > 0 (wrapped under a transport exception)
+        // remains transient, but at depth 0 it surfaces as application failure.
+        if (exception is IOException && depth > 0) {
+            return true;
+        }
+
+        // C4-8P (= P20-7P, pass-7 MEDIUM): walk ALL AggregateException.InnerExceptions, not just
+        // the first one. A Task.WhenAll-style AggregateException with a transport at index >= 1
+        // was misclassified as 500 InternalError because only InnerException (= InnerExceptions[0])
+        // was being walked. Non-AggregateException intermediate frames are NOT walked (per M13-5P
+        // pass-5: walking arbitrary InnerException causes application bugs like
+        // `InvalidOperationException(inner: HttpRequestException)` to misclassify as 503). The
+        // P1-8P pass-8 alignment objective is achieved by narrowing the checkpoint store to match
+        // this safer policy, not by broadening the controller.
+        if (exception is AggregateException aggregateException) {
+            foreach (Exception inner in aggregateException.InnerExceptions) {
+                if (IsServiceUnavailable(inner, depth + 1)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    private bool IsAuthorizedTenantsPlatformRead(StreamReadRequest request)
+        => User.Identity?.IsAuthenticated == true
+            && Request.Headers.TryGetValue(_platformScopeHeader, out var scope)
+            && scope.Count == 1
+            && string.Equals(scope[0], request.Tenant, StringComparison.Ordinal)
+            && string.Equals(request.Tenant, _tenantsPlatformScope, StringComparison.Ordinal)
+            && LegacyTenantStorageMap.IsPlatformSourceRead(request.Tenant, request.Domain)
+            && !Request.Headers.ContainsKey("X-Hexalith-Tenant")
+            && User.FindAll("eventstore:permission").Count(claim =>
+                string.Equals(claim.Value, _tenantsReadPermission, StringComparison.Ordinal)) == 1
+            && TenantCanonicalizer.TryCanonicalizeGrants(
+                User.FindAll("eventstore:tenant").Select(claim => claim.Value), out _);
+
+    private static bool IsValidAggregateId(string value) {
+        if (value.Length > 256 || value.Any(c => c is < (char)0x20 or >= (char)0x7F)) {
+            return false;
+        }
+
+        if (!char.IsAsciiLetterOrDigit(value[0]) || !char.IsAsciiLetterOrDigit(value[^1])) {
+            return false;
+        }
+
+        return value.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or '-');
+    }
+
+    private static StreamReadEvent ToStreamReadEvent(ServerEventEnvelope envelope, bool preserveNativeUserId = false)
+                            => new(
+            envelope.SequenceNumber,
+            envelope.EventTypeName,
+            envelope.Payload,
+            envelope.SerializationFormat,
+            envelope.MetadataVersion,
+            envelope.MessageId,
+            envelope.CorrelationId,
+            envelope.CausationId,
+            envelope.Timestamp,
+            preserveNativeUserId ? envelope.UserId : string.IsNullOrWhiteSpace(envelope.UserId) ? null : envelope.UserId,
+            EventStorePayloadProtectionMetadataCarrier.Read(envelope.Extensions))
+                            { GlobalPosition = envelope.GlobalPosition, PayloadVersion = envelope.PayloadVersion };
+
+    private static bool TryGetException<TException>(Exception exception, out TException? result)
+        where TException : Exception {
+        Exception? current = exception;
+        while (current is not null) {
+            if (current is TException matched) {
+                result = matched;
+                return true;
+            }
+
+            current = current.InnerException;
+        }
+
+        result = null;
+        return false;
+    }
+
+    // Story 22.7b/22.7c: stable ProblemDetails surface for unreadable protected data. Carries only
+    // safe envelope metadata (tenant, domain, aggregate, sequence, metadata version) plus the
+    // canonical decision shape from Story 22.7c. NEVER includes payload bytes, snapshot state,
+    // key alias, provider exception text, or stack trace.
+    private ObjectResult CreateUnreadableProtectedDataProblem(ProtectedDataReadabilityDecision decision) {
+        ArgumentNullException.ThrowIfNull(decision);
+        UnreadableProtectedDataReason reason = decision.UnreadableReason!.Value;
+        int statusCode = UnreadableProtectedDataProblem.GetStatusCode(reason);
+        ObjectResult result = Problem(
+            statusCode: statusCode,
+            type: UnreadableProtectedDataProblem.TypeUri,
+            title: UnreadableProtectedDataProblem.DefaultTitle,
+            detail: UnreadableProtectedDataProblem.GetSafeOperatorGuidance(reason));
+        if (result.Value is ProblemDetails problem) {
+            foreach (KeyValuePair<string, object?> extension in ProtectedDataDiagnosticRedactor.BuildUnreadableProblemExtensions(decision)) {
+                problem.Extensions[extension.Key] = extension.Value;
+            }
+        }
+
+        if (statusCode == StatusCodes.Status503ServiceUnavailable) {
+            Response.Headers.RetryAfter = "5";
+        }
+
+        return result;
+    }
+
+    private string? GetRequestCorrelationId()
+        => HttpContext?.Items.TryGetValue("CorrelationId", out object? value) == true
+            ? value?.ToString()
+            : null;
+
+    private ObjectResult ProblemWithReason(
+        int statusCode,
+        string type,
+        string title,
+        string detail,
+        string reasonCode) {
+        ObjectResult result = Problem(
+            statusCode: statusCode,
+            type: type,
+            title: title,
+            detail: detail);
+        if (result.Value is ProblemDetails problem) {
+            problem.Extensions["reasonCode"] = reasonCode;
+        }
+
+        return result;
+    }
+
+    private async Task<ReplayReadabilityResult> TryMakeReplayEventReadableAsync(
+                        AggregateIdentity identity,
+        ServerEventEnvelope envelope,
+        CancellationToken cancellationToken) {
+        EventStorePayloadProtectionMetadata storedMetadata = EventStorePayloadProtectionMetadataCarrier
+            .Read(envelope.Extensions);
+
+        if (storedMetadata.State == PayloadProtectionState.ProviderOpaque) {
+            return ReplayReadabilityResult.Unreadable(
+                UnreadableProtectedDataReasonMapper.FromProviderOpaqueMetadata(storedMetadata),
+                storedMetadata.MetadataVersion);
+        }
+
+        if (storedMetadata.State == PayloadProtectionState.Unprotected) {
+            EventLogicalDigest.RequireMatching(envelope, envelope.SerializationFormat, envelope.Payload);
+            return ReplayReadabilityResult.Readable(envelope, storedMetadata.MetadataVersion);
+        }
+
+        PayloadUnprotectionOutcome outcome;
+        try {
+            outcome = await _payloadProtectionService
+                .TryUnprotectEventPayloadAsync(
+                    identity,
+                    envelope.EventTypeName,
+                    envelope.Payload,
+                    envelope.SerializationFormat,
+                    storedMetadata,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) {
+            throw;
+        }
+        catch {
+            return ReplayReadabilityResult.Unreadable(UnreadableProtectedDataReason.ProviderUnavailable, storedMetadata.MetadataVersion);
+        }
+
+        if (outcome.IsUnreadable) {
+            return ReplayReadabilityResult.Unreadable(outcome.UnreadableReason!.Value, outcome.Metadata.MetadataVersion);
+        }
+
+        EventLogicalDigest.RequireMatching(envelope, outcome.SerializationFormat!, outcome.PayloadBytes!);
+        return ReplayReadabilityResult.Readable(envelope with {
+            Payload = outcome.PayloadBytes!,
+            SerializationFormat = outcome.SerializationFormat!,
+            Extensions = EventStorePayloadProtectionMetadataCarrier.Write(envelope.Extensions, outcome.Metadata),
+        }, outcome.Metadata.MetadataVersion);
+    }
+
+    private sealed record ReplayReadabilityResult(
+        ServerEventEnvelope? Envelope,
+        UnreadableProtectedDataReason? UnreadableReason,
+        int MetadataVersion) {
+        public static ReplayReadabilityResult Readable(ServerEventEnvelope envelope, int metadataVersion)
+            => new(envelope, null, metadataVersion);
+
+        public static ReplayReadabilityResult Unreadable(UnreadableProtectedDataReason reason, int metadataVersion)
+            => new(null, reason, metadataVersion);
+    }
+
+    private IActionResult? ValidateRequest(StreamReadRequest request) {
+        if (string.IsNullOrWhiteSpace(request.Tenant)
+            || string.IsNullOrWhiteSpace(request.Domain)) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Tenant and domain are required.",
+                StreamReplayReasonCodes.MissingRequiredField);
+        }
+
+        if (string.IsNullOrWhiteSpace(request.AggregateId)) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Aggregate identifier is required for the current stream read route.",
+                StreamReplayReasonCodes.MissingRequiredField);
+        }
+
+        if (!IsCanonicalTenantOrDomain(request.Tenant) || !IsCanonicalTenantOrDomain(request.Domain) || !IsValidAggregateId(request.AggregateId)) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Stream identity is invalid.",
+                StreamReplayReasonCodes.InvalidAggregateIdentity);
+        }
+
+        // P6-6P: PageSize validated FIRST because the FromSequence overflow guard reads PageSize.
+        // A negative PageSize would otherwise inflate `int.MaxValue - PageSize - 1L` and relax the guard.
+        if (request.PageSize is <= 0 or > _maxPageSize) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                $"'pageSize' must be between 1 and {_maxPageSize}.",
+                StreamReplayReasonCodes.InvalidRange);
+        }
+
+        if (request.FromSequence < 0
+            || request.FromSequence > int.MaxValue
+            || (request.ToSequence.HasValue && (request.ToSequence.Value < request.FromSequence || request.ToSequence.Value > int.MaxValue))) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "'fromSequence' must be >= 0 and 'toSequence' must not be less than 'fromSequence' or greater than the supported sequence boundary.",
+                StreamReplayReasonCodes.InvalidRange);
+        }
+
+        if (request.ContinuationToken is not null) {
+            return ProblemWithReason(
+                StatusCodes.Status400BadRequest,
+                ProblemTypeUris.BadRequest,
+                "Bad Request",
+                "Continuation token validation is fail-closed until token request binding is enabled.",
+                StreamReplayReasonCodes.InvalidContinuation);
+        }
+
+        return null;
+    }
+
+    private static partial class Log {
+
+        [LoggerMessage(
+            EventId = 1180,
+            Level = LogLevel.Warning,
+            Message = "Public stream read failed: TenantId={TenantId}, Domain={Domain}, AggregateId={AggregateId}, ReasonCode={ReasonCode}, Stage=StreamReadFailed")]
+        public static partial void StreamReadFailed(
+            ILogger logger,
+            Exception exception,
+            string tenantId,
+            string domain,
+            string aggregateId,
+            string reasonCode);
+
+        // Story 22.7b: unreadable protected event encountered at replay surface. Carries safe
+        // envelope metadata only — no event bytes, no key alias, no provider exception text.
+        [LoggerMessage(
+            EventId = 1181,
+            Level = LogLevel.Warning,
+            Message = "Unreadable protected event at replay: TenantId={TenantId}, Domain={Domain}, AggregateId={AggregateId}, SequenceNumber={SequenceNumber}, ReasonCode={ReasonCode}, Stage=ReplayUnreadable")]
+        public static partial void UnreadableProtectedPayloadAtReplay(
+            ILogger logger,
+            string tenantId,
+            string domain,
+            string aggregateId,
+            long sequenceNumber,
+            string reasonCode);
+    }
+}

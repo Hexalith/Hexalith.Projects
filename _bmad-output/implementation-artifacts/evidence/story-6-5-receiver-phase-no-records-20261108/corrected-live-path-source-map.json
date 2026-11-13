@@ -1,0 +1,205 @@
+{
+  "filePreparationOnly": true,
+  "currentInstalledBoundary": "DomainRouteCatalogFilter -> concrete DomainRouteCatalogGuard -> deferred DomainRouteCatalogResult",
+  "oldTechnicalPhaseProbeDidNotMeasureThisBoundary": true,
+  "sourceFacts": [
+    {
+      "path": "src/Hexalith.Projects.AppHost/SupportedProjectReadDevelopmentInfrastructure.cs",
+      "sha256": "4a6961fcfda7f54cf2c1f2d855c0078782c9fa0bba5951170fbf4d5d956d41dd",
+      "lines": [
+        70,
+        81,
+        82,
+        83,
+        84
+      ],
+      "fact": "Only Gateway receiver opts into TechnicalHttp; three domain owners are ordinary receivers."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/DevelopmentRouteCatalogAspireExtensions.cs",
+      "sha256": "ce53b2a8c5a83346e65e34547e81aa91c9b0d4095f8dbc4ef48027aaa6786fca",
+      "lines": [
+        198,
+        202,
+        204,
+        207
+      ],
+      "fact": "ReceiverProfile is set only for TechnicalHttp; BindingVersion2 for all peers does not select the Technical composite."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Program.cs",
+      "sha256": "365b37e238ab181dda447cd6051acfdb093b234f902e73d49ae7dab4fb32e1bd",
+      "lines": [
+        16,
+        37
+      ],
+      "fact": "Maps Projects development catalog through its own supported-read composition."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs",
+      "sha256": "b7616fe9e3cc87def0526b56d411dc722348eb490e1c25a723633849be518174",
+      "lines": [
+        30,
+        42
+      ],
+      "fact": "Enables domain catalog and installs UseEventStoreDevelopmentDomainCatalog."
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Program.cs",
+      "sha256": "9e2b0a9d867255a37d6edd083a2f0593cdcbef5f558d37db1a471f22abb167bc",
+      "lines": [
+        4,
+        7
+      ],
+      "fact": "Uses actual Folders host composition."
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs",
+      "sha256": "ddf301704d8cb5768dd94e94291968ff458b899bad90c6adcfa7f32ce5fa2261",
+      "lines": [
+        69,
+        141
+      ],
+      "fact": "Registers verifier and installs UseEventStoreDevelopmentDomainCatalog."
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/Program.cs",
+      "sha256": "17e9c836a269c5bf8102e5736f6536945b89a2b123549104e966d3cae9817449",
+      "lines": [
+        44,
+        201
+      ],
+      "fact": "Canonical Add/UseEventStoreDomainService host."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs",
+      "sha256": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+      "lines": [
+        25,
+        30,
+        52,
+        54,
+        72
+      ],
+      "fact": "Bespoke domain hosts install the finite nontechnical receiver and capture its actual surface."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/EventStoreDomainServiceExtensions.cs",
+      "sha256": "6ec88a5f602421ebf6737c5b416246779c6d040d8d5dba2cdf721b6fa3328c1d",
+      "lines": [
+        307,
+        312,
+        432,
+        443
+      ],
+      "fact": "Canonical domain host installs same nontechnical finite receiver; query attaches domain policy/filter."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/FiniteRouteCatalogReceiver.cs",
+      "sha256": "5f3f2f4a61540fa1749beac128d1b57f20c33411ed30dc6169ddd199f77de4f5",
+      "lines": [
+        53,
+        55,
+        61,
+        63,
+        67,
+        103,
+        277
+      ],
+      "fact": "Domain auxiliary+sidecar overload hardcodes technical=false and bypasses TechnicalHttp delegation."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/EventStoreDomainServiceSecurityExtensions.cs",
+      "sha256": "c8f03b045b564a3fb6c723126a8c3269566c8a0545e37585642abebf4c6822c5",
+      "lines": [
+        56,
+        57,
+        58,
+        156,
+        162
+      ],
+      "fact": "Registers concrete scoped guard/filter and appends actual filter on each policy attachment."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+      "sha256": "8261fa7a5c840b34d1e93165664ae47a7296c933b95e0d6ac8314bffad5520be",
+      "lines": [
+        282,
+        286,
+        307,
+        311
+      ],
+      "fact": "Current Projects query executes dispatcher behind actual domain filter."
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDomainServiceEndpoints.cs",
+      "sha256": "1effa5b126098750d7f1315d9310e5ab6d71b10c5c2154eb7fa60ba138397bfa",
+      "lines": [
+        105,
+        109,
+        111,
+        113
+      ],
+      "fact": "Current Folders query has two source-level filter attachments; preserve both fresh acquisitions."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogFilter.cs",
+      "sha256": "3687e39c6e0fdd44c2c8b07da4bd389d60dbf3c66f19a25b1baf252f94b3fd9d",
+      "lines": [
+        18,
+        19,
+        22,
+        26,
+        30,
+        33,
+        35,
+        36,
+        41
+      ],
+      "fact": "Concrete guard decision first; receiver scope around next; IResult transfers same lease, other returns/errors dispose here."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogGuard.cs",
+      "sha256": "5727c26eb6589389f483f51e8ee3895344d790676e0758941a436cd4381a238e",
+      "lines": [
+        25,
+        28,
+        31,
+        35,
+        38,
+        41,
+        59,
+        127,
+        131
+      ],
+      "fact": "Actual fresh authority acquire, exact original snapshot/headers/options/route/typed checks, disposal on validation failure."
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainRouteCatalogResult.cs",
+      "sha256": "9b4bf0f605d150273381baeeb587b96b83906672689bff92e80b65fe4cb9760d",
+      "lines": [
+        14,
+        17,
+        18,
+        20
+      ],
+      "fact": "Same lease held through actual response execution and released after scope disposal via original awaitusing."
+    }
+  ],
+  "fixedRoleGate": {
+    "eligibleEntryNames": [
+      "Hexalith.Projects.Server",
+      "Hexalith.Tenants",
+      "Hexalith.Folders.Server"
+    ],
+    "GatewayExcluded": "Hexalith.EventStore",
+    "noSetEntryAssemblyOrConfigurationSelectorChanges": true
+  },
+  "measurementConstraints": [
+    "Whole ownership transfers with IResult through response execution and release.",
+    "Repeated Folders filter attachments remain separate captures with every original fresh acquire/release intact.",
+    "No ambient context/correlation/request/config/route/outcome reaches recorder.",
+    "No current timing, expiry cause or prior-probe join is inferred from these source facts."
+  ],
+  "privateCarrierPlan": "DomainService DLL/PDB differs; SDK ordinary6947 remains identical in both variants; no SDK fallback."
+}

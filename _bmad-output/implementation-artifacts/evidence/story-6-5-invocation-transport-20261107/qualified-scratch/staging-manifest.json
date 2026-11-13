@@ -1,0 +1,2487 @@
+{
+  "temporaryCandidateOnly": true,
+  "featureAcceptance": false,
+  "createdUtc": "2026-11-07T18:19:55.391625+00:00",
+  "qualifiedPreparationSha256": "8d967b31560ce95a630751a2d2b37bc6a9070296d19306ad11785c4b01ca0d36",
+  "finalScratchQualificationSha256": "4676214b7425a92c9d0ed5b801b4afd0e0ea8c2973c952bc8c3c9477562bb2e5",
+  "copiedFiles": {
+    "qualified-preparation/CaptureCounters.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/CaptureCounters.cs",
+      "sha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+      "bytes": 15217
+    },
+    "qualified-preparation/DESIGN.md": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/DESIGN.md",
+      "sha256": "4283de0d006e2f98151423d2e9a73f6af467b0fc456b04516824dbbf1f80fa16",
+      "bytes": 7948
+    },
+    "qualified-preparation/EligibleEntry.csproj": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/EligibleEntry.csproj",
+      "sha256": "8b491d06f4cc66b0f6ab79e7653d7ff504d70bdd93541a68e2e75c7ef2e16729",
+      "bytes": 13591
+    },
+    "qualified-preparation/ExcludedEntry.csproj": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/ExcludedEntry.csproj",
+      "sha256": "cd023c3d21b3d71b79dcd27f16eadd433c54fe20be2a4285af7868a1906b2b17",
+      "bytes": 13608
+    },
+    "qualified-preparation/FixturePlugin.csproj": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/FixturePlugin.csproj",
+      "sha256": "2334d0833ff7e880cc3e280b8216c954876f58adebe2dc7d7d1da19655a2ef0a",
+      "bytes": 14666
+    },
+    "qualified-preparation/InvocationTransportBootstrap.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/InvocationTransportBootstrap.cs",
+      "sha256": "40eb2532822ec0b759a69ec159926d4f9a87ad5a059ef23944f585107b3485f3",
+      "bytes": 973
+    },
+    "qualified-preparation/RouteCatalogInvocationHandler.original.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/RouteCatalogInvocationHandler.original.cs",
+      "sha256": "a59c8093be4a2a112eb64b628cf243a343cb3ad836e3fff2f8dd0fe9450c4854",
+      "bytes": 27515
+    },
+    "qualified-preparation/RouteCatalogInvocationHandler.private.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/RouteCatalogInvocationHandler.private.cs",
+      "sha256": "26c6a0312ba2cd47b086a7f3fbaf8bf77452bdfb34e8e189f33456a10f5b6918",
+      "bytes": 28358
+    },
+    "qualified-preparation/commands.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/commands.json",
+      "sha256": "36bb55cfa44c8d02bad916a2737a873d9f529c33816133da4c9db9a6ea8df6fc",
+      "bytes": 4226
+    },
+    "qualified-preparation/controller-plan.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/controller-plan.json",
+      "sha256": "27b98dede079f45022a5d3e0d3259d2ffc72ebacb9c29d3c3e7271475e461734",
+      "bytes": 2695
+    },
+    "qualified-preparation/driver/CaseCatalog.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/CaseCatalog.cs",
+      "sha256": "569913f8bcaf2798c1cf7ea8475329d43f60c825f360429ee8fab4993ce91d07",
+      "bytes": 1441
+    },
+    "qualified-preparation/driver/Check.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/Check.cs",
+      "sha256": "0620246b5fe8a5c9e1ba9437a2ddef50c27d7b8c4ccd165bc7aa9a97a6c8d6eb",
+      "bytes": 359
+    },
+    "qualified-preparation/driver/CounterControl.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/CounterControl.cs",
+      "sha256": "0d04e0980da4a5ce1fb29d8b7370fdc70790e20d096fbb1132a210ee320be21f",
+      "bytes": 3172
+    },
+    "qualified-preparation/driver/DifferentialDriver.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/DifferentialDriver.cs",
+      "sha256": "c6ec37734455bd89971eae8aad2bcb2c1bb7c6dc1efe02222142b292f5cbc5f4",
+      "bytes": 3458
+    },
+    "qualified-preparation/driver/DriverCase.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/DriverCase.cs",
+      "sha256": "9bbfcff65c390bad625d814e5f711ff53a77d9f300ffa1d5f488b3445fe7a237",
+      "bytes": 184
+    },
+    "qualified-preparation/driver/ExcludedDriver.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/ExcludedDriver.cs",
+      "sha256": "5a099271f24c7e433fb181bd246af8eaabf5644f0380eb9362bb1b64f10e3e71",
+      "bytes": 2660
+    },
+    "qualified-preparation/driver/FlowCanaryState.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/FlowCanaryState.cs",
+      "sha256": "85ab0a52badc60035584a719e5a9fc1bb672dee2d0d975742ce19797ded0559d",
+      "bytes": 1348
+    },
+    "qualified-preparation/driver/FreshFlowCanary.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/FreshFlowCanary.cs",
+      "sha256": "e0835ee46eb18c633bc45159684a93fdbbe814c3bb59efd166947e7c2afb67fd",
+      "bytes": 3753
+    },
+    "qualified-preparation/driver/IsolatedSdkContext.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/IsolatedSdkContext.cs",
+      "sha256": "cef55224a43d362628692648321ed6a8a72e9d21ed4e1f52949e293a5e942a17",
+      "bytes": 543
+    },
+    "qualified-preparation/driver/Paths.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/Paths.cs",
+      "sha256": "77dfffb9aec0aec6012621c2ef4a6d2cebff282d1a05748215b15d752542fe18",
+      "bytes": 667
+    },
+    "qualified-preparation/driver/Program.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/Program.cs",
+      "sha256": "5d1bd356a8387fd1fcc14f2275989e5b13612068b066a0ec0fa2863beccf96f5",
+      "bytes": 2813
+    },
+    "qualified-preparation/driver/ProofAssertionFailure.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/ProofAssertionFailure.cs",
+      "sha256": "ddd0340ba78f647c4be141537066fbc0128b42a0b32837f005c647f6353c84d3",
+      "bytes": 245
+    },
+    "qualified-preparation/driver/ResultComparison.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/ResultComparison.cs",
+      "sha256": "9249540607c6a53dd8bfa066db5b4b3e500685f36a9cb2026ab22b77d6bad505",
+      "bytes": 1577
+    },
+    "qualified-preparation/driver/SafeFailure.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/SafeFailure.cs",
+      "sha256": "b837d7d02191b2a7f96103212e16f4bac3b15aaa427c477ae7985ca5c2766838",
+      "bytes": 1032
+    },
+    "qualified-preparation/driver/SdkVariant.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/SdkVariant.cs",
+      "sha256": "60dc099ce552d31797eb9095c4b8e11a18bf6661cd65c96866f336f69fdc6c23",
+      "bytes": 3344
+    },
+    "qualified-preparation/driver/SharedDependencies.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/driver/SharedDependencies.cs",
+      "sha256": "cc9e2582cf35861506ca05c35a5f3c8c4591c7af665779acd46a269aad06955c",
+      "bytes": 2016
+    },
+    "qualified-preparation/entry-selection-provenance-pins.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/entry-selection-provenance-pins.json",
+      "sha256": "ee44b32511520265db1dd5438a1cb6b382f0674ed86d484c9da9ebd4fcb44418",
+      "bytes": 5810
+    },
+    "qualified-preparation/fixture/CancelAfterAcquireAuthority.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/CancelAfterAcquireAuthority.cs",
+      "sha256": "1948769d196ec4b423e7840f33c2f863554ea814a6317a6d58a796d285d6693e",
+      "bytes": 1374
+    },
+    "qualified-preparation/fixture/CaseState.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/CaseState.cs",
+      "sha256": "b3b10182e0c9278bf719f6fff81302e05ee29405b7f28c7614b4ff590dc6b9c5",
+      "bytes": 2579
+    },
+    "qualified-preparation/fixture/FixtureAssertionFailure.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureAssertionFailure.cs",
+      "sha256": "455878b42350635bfd7138314d05f60485da9ab58a20caf7fc11e09bc4215f07",
+      "bytes": 234
+    },
+    "qualified-preparation/fixture/FixtureAssertions.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureAssertions.cs",
+      "sha256": "5cceef66c88bdd0a9968e21cdcc31d753821a30ec5e9de82d92f7496dad022d1",
+      "bytes": 9065
+    },
+    "qualified-preparation/fixture/FixtureBoundary.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureBoundary.cs",
+      "sha256": "70e2d1f9f7123d740c5b588f84889f1d5db8a7327077ff770b0184e644ad3509",
+      "bytes": 350
+    },
+    "qualified-preparation/fixture/FixtureCatalog.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureCatalog.cs",
+      "sha256": "029c12d0525046c4e09b80049234efc121bd830d0e942797442cfe0c99c8a5ef",
+      "bytes": 2306
+    },
+    "qualified-preparation/fixture/FixtureEnvironment.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureEnvironment.cs",
+      "sha256": "deda35cc1fabacf75a5b292fb7f78b6f8a307a426da978960aeaa536f4ae4f23",
+      "bytes": 475
+    },
+    "qualified-preparation/fixture/FixtureObserver.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureObserver.cs",
+      "sha256": "ee118ede7ca295e60defdd12a9eadafaf2d5f595246ab752f00b74dd513b615e",
+      "bytes": 754
+    },
+    "qualified-preparation/fixture/FixtureStore.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureStore.cs",
+      "sha256": "1e4ff099569a6ac2c9f05a91e7d071a8d45dc22728a20a25776c6bbeef1fefdd",
+      "bytes": 2480
+    },
+    "qualified-preparation/fixture/FixtureTrust.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/FixtureTrust.cs",
+      "sha256": "d0c731d356c447f605f6170a0f5b788e49e64722e82d81e9955e112db248506c",
+      "bytes": 547
+    },
+    "qualified-preparation/fixture/InvocationFixture.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/InvocationFixture.cs",
+      "sha256": "b135ea808ec5f54e005c211f97538c226ea9cdff5a00e9e0fd6197192810e01e",
+      "bytes": 12004
+    },
+    "qualified-preparation/fixture/ProbeContent.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/ProbeContent.cs",
+      "sha256": "cea90f5bf4fea1376b78b23b4f0c6bf9ec0adfbbf46a48479302600409fb4e3a",
+      "bytes": 1104
+    },
+    "qualified-preparation/fixture/ProbeRequestContent.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/ProbeRequestContent.cs",
+      "sha256": "6da9293cddebf6fb104cc03d19d3725ba59df614744a509864d56379c122ace9",
+      "bytes": 933
+    },
+    "qualified-preparation/fixture/ProbeTransport.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/ProbeTransport.cs",
+      "sha256": "0136c84329b8f0abeca43232eb5a2ad7c975d0265d162c16be2a19225fbbfe60",
+      "bytes": 1325
+    },
+    "qualified-preparation/fixture/RedirectMemoryStream.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/RedirectMemoryStream.cs",
+      "sha256": "58dbd90285771a5f374896fc5d0fc417f9290280a0ab645aebaa30c2718b9db4",
+      "bytes": 1817
+    },
+    "qualified-preparation/fixture/ReturnBoundaryHandler.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/ReturnBoundaryHandler.cs",
+      "sha256": "f68d4004a939c21a567751a02c7a3363ef2e794081f922abf450dec407148c08",
+      "bytes": 616
+    },
+    "qualified-preparation/fixture/Verify.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture/Verify.cs",
+      "sha256": "93312259b00861a2174aeb42d6e5fa621ee14bd7a4f54a99e30d3c989026fdca",
+      "bytes": 352
+    },
+    "qualified-preparation/fixture-source-api-pins.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/fixture-source-api-pins.json",
+      "sha256": "d58d0b3ffe658971506d3d4a33d8c013de7e5e83729b08cbd63b78045a37e225",
+      "bytes": 3545
+    },
+    "qualified-preparation/freshcontroller.py": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/freshcontroller.py",
+      "sha256": "f1ce4000a3ee097942cf4b54a8023eb873d88d39384643c651a7e943c3b2ea4f",
+      "bytes": 22972
+    },
+    "qualified-preparation/history/pre-reference-prune/FixturePlugin.csproj": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/history/pre-reference-prune/FixturePlugin.csproj",
+      "sha256": "c1855ab6c1a16df819221014a0a601f7cd95711521a1bc0b2a4b1c3523e7fc25",
+      "bytes": 38371
+    },
+    "qualified-preparation/history/pre-reference-prune/plugin-reference-pins.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/history/pre-reference-prune/plugin-reference-pins.json",
+      "sha256": "32181547a2b1d0dc90da605b04b70028e00bf86dab8dd778277c35c5984d9321",
+      "bytes": 30956
+    },
+    "qualified-preparation/normalization.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/normalization.json",
+      "sha256": "46c6dc7f738d5d1235bf12981efd998ff697c3a91dba758d4441f923d138c805",
+      "bytes": 2243
+    },
+    "qualified-preparation/plugin-driver-interface.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/plugin-driver-interface.json",
+      "sha256": "41cce04f1e2d6e97e840980ed03713e20d751ec5665b6349045999ceea410cf9",
+      "bytes": 5450
+    },
+    "qualified-preparation/plugin-reference-pins.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/plugin-reference-pins.json",
+      "sha256": "98c688ac3fbc462ef2f780adf9776c15de62bfa1c4b549da39d8c0c55804f621",
+      "bytes": 11846
+    },
+    "qualified-preparation/project-plan.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/project-plan.json",
+      "sha256": "a51b4db1da47f5659dd8ffbf1246ce33df95bea2a01f0d8c8fef29a39605aec8",
+      "bytes": 1244
+    },
+    "qualified-preparation/protocol.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/protocol.json",
+      "sha256": "e373f6a526e7587785f920c9535c0e955925e9265dd50a48f55917772c248670",
+      "bytes": 2372
+    },
+    "qualified-preparation/reference-pruning-proof.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/reference-pruning-proof.json",
+      "sha256": "000ed7a358d1766e693ec77240668f460788c260501aba4cde3120bd4775d0b2",
+      "bytes": 4936
+    },
+    "qualified-preparation/runtime-role-source-proof.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/runtime-role-source-proof.json",
+      "sha256": "305abb72dbdbbff884aa55eeeac9dfb8fe5e2d56e833bd001caefa3b74d4545b",
+      "bytes": 4108
+    },
+    "qualified-preparation/shared-input-pins.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/shared-input-pins.json",
+      "sha256": "8ad6ef72c47d7a7e22ec9dc58e183cc12e8644c56284b677f1d75ce9c0c972c6",
+      "bytes": 66890
+    },
+    "qualified-preparation/source-app-baseline.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/source-app-baseline.json",
+      "sha256": "eb9c2b9be67532a19f5d24f2700aea31a3af07eaeed353fd4eed221a3e548a14",
+      "bytes": 35624
+    },
+    "qualified-preparation/source-proof.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/source-proof.json",
+      "sha256": "637e7855c8f8db704dbc358705907ba79843a2818f7d692f09798f57c3325520",
+      "bytes": 1053
+    },
+    "qualified-preparation/source.patch": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/source.patch",
+      "sha256": "5d54741d4c592a939db5a8de39d919213b4551440367202f762456b2b6c35d9e",
+      "bytes": 4558
+    },
+    "qualified-preparation/story65-invocation-entry-selection-proof-20261107.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/story65-invocation-entry-selection-proof-20261107.json",
+      "sha256": "691ae18c0b8c08598d7477cce6b2d46aa9386c51011e807c9ee190862a12670c",
+      "bytes": 11161
+    },
+    "qualified-preparation/variant-paths.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/variant-paths.json",
+      "sha256": "77f1fbd8b42dc583f311add13e98016f33a4e934a3f79cac5e352f3e7192505b",
+      "bytes": 1040
+    },
+    "qualified-preparation/preparation-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/preparation-receipt.json",
+      "sha256": "8d967b31560ce95a630751a2d2b37bc6a9070296d19306ad11785c4b01ca0d36",
+      "bytes": 121575
+    },
+    "scratch-qualification/audit_results.py": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/audit_results.py",
+      "sha256": "0a160b596b6798f70fc1491c59631770ea7bc2fc3199586a72ac78742d4073e7",
+      "bytes": 4420
+    },
+    "scratch-qualification/build-attempt-1/01-restore.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/01-restore.json",
+      "sha256": "8967cf6a27b8c9e00bcd1da96fb9cdf93a2eceadd2521c7581e8935a305a39c2",
+      "bytes": 1444
+    },
+    "scratch-qualification/build-attempt-1/01-restore.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/01-restore.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/01-restore.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/01-restore.stdout.log",
+      "sha256": "95eb8ab4ec17e9516677cfdd45576695da6b69a69470e054d211c0c95992deff",
+      "bytes": 129
+    },
+    "scratch-qualification/build-attempt-1/02-build.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/02-build.json",
+      "sha256": "c86cdaa8e58eeacac656e50d0d70bde461a68dc1a65f338fe63a7bfab0a1b2e5",
+      "bytes": 1503
+    },
+    "scratch-qualification/build-attempt-1/02-build.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/02-build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/02-build.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/02-build.stdout.log",
+      "sha256": "38e3290980dd8aac9dcba03d8301befa89108c378f14a0a81716ab877b1abf12",
+      "bytes": 206
+    },
+    "scratch-qualification/build-attempt-1/03-restore.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/03-restore.json",
+      "sha256": "80960830c10ebe31bf9809945cd9aba7455c7bf9d3c6bfb04fea42ab9935e8b4",
+      "bytes": 1444
+    },
+    "scratch-qualification/build-attempt-1/03-restore.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/03-restore.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/03-restore.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/03-restore.stdout.log",
+      "sha256": "bdbcbf43a02908c08e1b61663212f492d9cf9458bdee8728bc4cf042719041c5",
+      "bytes": 129
+    },
+    "scratch-qualification/build-attempt-1/04-build.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/04-build.json",
+      "sha256": "446a75c13c4980b9841c61606fe532dc0858bf7ae8e56954321049e3d88f3c0e",
+      "bytes": 1503
+    },
+    "scratch-qualification/build-attempt-1/04-build.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/04-build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/04-build.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/04-build.stdout.log",
+      "sha256": "58ceec2320c11cbe0e5a8d4312ab5f78cb49b07705b786c4411ab039811e09ed",
+      "bytes": 200
+    },
+    "scratch-qualification/build-attempt-1/05-restore.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/05-restore.json",
+      "sha256": "ee88e798cead5c66181907f7e43911c8e9b3e617266e03c5da4bac2f21b78eca",
+      "bytes": 1444
+    },
+    "scratch-qualification/build-attempt-1/05-restore.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/05-restore.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/05-restore.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/05-restore.stdout.log",
+      "sha256": "402a28543d2e0c0c4ebfdb7d3c81d5a4038b28ae8f8dfd3dc61d2462a4dd3e29",
+      "bytes": 129
+    },
+    "scratch-qualification/build-attempt-1/06-build.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/06-build.json",
+      "sha256": "c5409bbcaeda75ff16339f6e75400dacce954fd81662ee5bcf37dea5e07ecc1e",
+      "bytes": 1503
+    },
+    "scratch-qualification/build-attempt-1/06-build.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/06-build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/build-attempt-1/06-build.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/06-build.stdout.log",
+      "sha256": "a79c68424b2f1f7f54e0669bc409c6b978058da924c9e666e13fb1acd443f882",
+      "bytes": 217
+    },
+    "scratch-qualification/build-attempt-1/build-commands.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/build-commands.json",
+      "sha256": "083d162b642b77e58dc56bb19ab2e3312c649bf34a7e45d14aae41baac140d7f",
+      "bytes": 9390
+    },
+    "scratch-qualification/build-attempt-1/inputs-after.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/inputs-after.json",
+      "sha256": "0a91d1caea4b8892e5179287b365d5cb147da01399bf6bb0664bbae00ec8e5dc",
+      "bytes": 126757
+    },
+    "scratch-qualification/build-attempt-1/inputs-before.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/inputs-before.json",
+      "sha256": "0a91d1caea4b8892e5179287b365d5cb147da01399bf6bb0664bbae00ec8e5dc",
+      "bytes": 126757
+    },
+    "scratch-qualification/build-attempt-1/status.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/build-attempt-1/status.json",
+      "sha256": "6bdb5b43dd4443ebc87592a64d2c3f8437150b4740349a9f87e4ff5c1f7e9a8c",
+      "bytes": 126
+    },
+    "scratch-qualification/facts-attempt-1/01-facts.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/01-facts.json",
+      "sha256": "de34fb7936201ebd66e80728220c35a067d8bbee64affb8d5c1d15e3ff3831b2",
+      "bytes": 1386
+    },
+    "scratch-qualification/facts-attempt-1/01-facts.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/01-facts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/facts-attempt-1/01-facts.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/01-facts.stdout.log",
+      "sha256": "ed9c68e49f0c690c072906e17acc3d9591987aa5be1facf622361b6f5dc044a8",
+      "bytes": 1369
+    },
+    "scratch-qualification/facts-attempt-1/02-facts.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/02-facts.json",
+      "sha256": "3157c5c72ac164a78f7679e543fee835793126b23141d89f91953771a495cf2e",
+      "bytes": 1403
+    },
+    "scratch-qualification/facts-attempt-1/02-facts.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/02-facts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/facts-attempt-1/02-facts.stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/02-facts.stdout.log",
+      "sha256": "8d06d17ae9de02494aa906ed80356976443152787388346bd1d8602338907a1d",
+      "bytes": 1403
+    },
+    "scratch-qualification/facts-attempt-1/facts-qualified.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/facts-qualified.json",
+      "sha256": "44735ced513dc877551ec18342fd979f0834506d2a276dfccd3d8dc1b6b83195",
+      "bytes": 3337
+    },
+    "scratch-qualification/facts-attempt-1/inputs-after.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/inputs-after.json",
+      "sha256": "0a91d1caea4b8892e5179287b365d5cb147da01399bf6bb0664bbae00ec8e5dc",
+      "bytes": 126757
+    },
+    "scratch-qualification/facts-attempt-1/inputs-before.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/inputs-before.json",
+      "sha256": "0a91d1caea4b8892e5179287b365d5cb147da01399bf6bb0664bbae00ec8e5dc",
+      "bytes": 126757
+    },
+    "scratch-qualification/facts-attempt-1/scratch-binaries-before.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/scratch-binaries-before.json",
+      "sha256": "16922629b777b391a298e46ee1868d45a385796f48982834c51c10ecc42bc33c",
+      "bytes": 30379
+    },
+    "scratch-qualification/facts-attempt-1/status.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/facts-attempt-1/status.json",
+      "sha256": "75b7154a6c9dfe11d0175586244862eebbca9ea2783c0759580215192c24db2b",
+      "bytes": 116
+    },
+    "scratch-qualification/final-scratch-qualification.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/final-scratch-qualification.json",
+      "sha256": "4676214b7425a92c9d0ed5b801b4afd0e0ea8c2973c952bc8c3c9477562bb2e5",
+      "bytes": 154665
+    },
+    "scratch-qualification/matrix-attempt-1/command.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/matrix-attempt-1/command.json",
+      "sha256": "3804eb7b67cd1c594bece29c681345524ff9a872a6c2ee93c2c822b998dd4906",
+      "bytes": 1141
+    },
+    "scratch-qualification/matrix-attempt-1/stderr.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/matrix-attempt-1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scratch-qualification/matrix-attempt-1/stdout.log": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/matrix-attempt-1/stdout.log",
+      "sha256": "4059a8d6bb0b38a8a0feb3151a1d2d2b1b88187da7b5ef5a5170b9a76dd041b7",
+      "bytes": 80
+    },
+    "scratch-qualification/owner-scratch-audit.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/owner-scratch-audit.json",
+      "sha256": "8444d47d198be067d670fd177f4f59fd6983bb497482c92962ee7c6581b80f81",
+      "bytes": 17057
+    },
+    "scratch-qualification/parent-scratch-audit.json": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/parent-scratch-audit.json",
+      "sha256": "abec8b289c89795d98840e38f21a67eaf91c38e9c5d00acd0bc80a2d1867e89d",
+      "bytes": 1053
+    },
+    "scratch-qualification/run_builds.py": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/run_builds.py",
+      "sha256": "84c60b8c4148d99ba000f6170bbe40482f24a8c555078cadfd4d3f36e6d24fbd",
+      "bytes": 3863
+    },
+    "scratch-qualification/run_facts.py": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/run_facts.py",
+      "sha256": "039a610f4c9c62ed7a3b46250dfd34cdde4d7f2333851ebedc47f8e7f8b5a30d",
+      "bytes": 4151
+    },
+    "scratch-qualification/run_matrix.py": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/run_matrix.py",
+      "sha256": "7a0c6cb25bd6b1c4cb719e569f47b19fc009a535508ffb37d4d199e1cabdafae",
+      "bytes": 2027
+    },
+    "scratch-qualification/stage_evidence.py": {
+      "source": "/tmp/story65-invocation-transport-qualification-20261107/stage_evidence.py",
+      "sha256": "e7029e99b7fd3ca6b16aa75fbf091f07365d78aba905551615aa7206deff405e",
+      "bytes": 7436
+    },
+    "scratch-results/active/fast/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/fast/business-parity.json",
+      "sha256": "fd510af343f667a9c2caf279153cbeae44d1b2d11f7428ad8aa7cb3b10dd8e1b",
+      "bytes": 4049
+    },
+    "scratch-results/active/fast/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/fast/controller-receipt.json",
+      "sha256": "e3209413ad3fb668090245f92284e179f7458c4161c5aff608b80bbedfa804ec",
+      "bytes": 264592
+    },
+    "scratch-results/active/fast/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/fast/gateway.closed.json",
+      "sha256": "41911e63db6a7cded4b42893dd300803ff253d4511628ef03b69ee3fbf0b9f0d",
+      "bytes": 512
+    },
+    "scratch-results/active/held-release/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-release/business-parity.json",
+      "sha256": "e9c6e913f8c46bb509b5feb21b3bfb22947087c8ef5af7bbe49d6da28550eb36",
+      "bytes": 606
+    },
+    "scratch-results/active/held-release/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-release/controller-receipt.json",
+      "sha256": "982066939125eab454c97a58e09ecf342c9b55d1e169d9eade6e6a4236d88f9f",
+      "bytes": 264617
+    },
+    "scratch-results/active/held-release/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-release/gateway.closed.json",
+      "sha256": "40d05d0e9d3346dbe45f119a8da336c081dee6cb1adbb621ec693f9b6910ad41",
+      "bytes": 507
+    },
+    "scratch-results/active/held-transport/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-transport/business-parity.json",
+      "sha256": "334f6804a8c4a51e33a8898293ff1e08e45ac4ce9597f6a813bf1e5deaac1b40",
+      "bytes": 608
+    },
+    "scratch-results/active/held-transport/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-transport/controller-receipt.json",
+      "sha256": "f95ea1a699b6477f2f652dcf2e790c2046b355e4efd293843015ca32d03a628c",
+      "bytes": 264623
+    },
+    "scratch-results/active/held-transport/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-transport/gateway.closed.json",
+      "sha256": "c6dbbf6e75164f3000ff705a642375ba14b3512b1d83ddb0684d8a331a605b5f",
+      "bytes": 507
+    },
+    "scratch-results/canary-current/canary/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-current/canary/business-parity.json",
+      "sha256": "b881aa1797d50cc6854a5c9a4df8d83fb6f346f9eccb9fca4a9619a44a655d5f",
+      "bytes": 444
+    },
+    "scratch-results/canary-current/canary/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-current/canary/controller-receipt.json",
+      "sha256": "a26b396ba1158d608c759109bcd08e374086b875d9d7f328afe027e2b3a4db07",
+      "bytes": 264609
+    },
+    "scratch-results/canary-current/canary/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-current/canary/gateway.closed.json",
+      "sha256": "b13864b1fb96bdaa700b9416b50b66927a4e14a4924c0cf5cca85c4b96006950",
+      "bytes": 507
+    },
+    "scratch-results/canary-positive-control/canary/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-positive-control/canary/business-parity.json",
+      "sha256": "b466ff46c2a226a12694a67872e5aebbf43e6ee0a6268bfdc9df592f8453f41a",
+      "bytes": 442
+    },
+    "scratch-results/canary-positive-control/canary/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-positive-control/canary/controller-receipt.json",
+      "sha256": "c1fa7873440318593f28ae9b31e4e44c551bd7cdb8d4592dc248ff6254964fb7",
+      "bytes": 263402
+    },
+    "scratch-results/canary-suppressed/canary/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-suppressed/canary/business-parity.json",
+      "sha256": "7ba16ca579b2b1b04a8af9425705958b52a4bd622e12d2a542c2f9b954fcc341",
+      "bytes": 443
+    },
+    "scratch-results/canary-suppressed/canary/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-suppressed/canary/controller-receipt.json",
+      "sha256": "c2d25b81dcbd6962281a8f0b34ecfb8ccdeb05acc630c30878b98221e4321ac8",
+      "bytes": 264618
+    },
+    "scratch-results/canary-suppressed/canary/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-suppressed/canary/gateway.closed.json",
+      "sha256": "198ae57c5cdbe2af80f6b280daf3798637965a9c2c0edaf2fe4e2b3043f410ce",
+      "bytes": 507
+    },
+    "scratch-results/capped/fast/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/fast/business-parity.json",
+      "sha256": "24958c10cbf2f6add088bf76bb38c5efcdd7deb3466306969d1d727708e13acc",
+      "bytes": 4112
+    },
+    "scratch-results/capped/fast/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/fast/controller-receipt.json",
+      "sha256": "52c2b59a736ceaeb83da424fa104a80b344c6b78bfb5f8ebdcfcaab0846a0be6",
+      "bytes": 264568
+    },
+    "scratch-results/capped/fast/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/fast/gateway.closed.json",
+      "sha256": "3e3c348d7af27ac8a6c817fb5a833370ebabbe1b810f820bd88e3fab6f484e10",
+      "bytes": 531
+    },
+    "scratch-results/capped/held-release/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-release/business-parity.json",
+      "sha256": "608ee848bc9460cd96e01c5789b2434e856e68462a431c334a6cc865c28ba08d",
+      "bytes": 610
+    },
+    "scratch-results/capped/held-release/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-release/controller-receipt.json",
+      "sha256": "42a64f5d3099018e89db5e08c977f3eec6a4b2c0f05cde458f81ffe01769e42c",
+      "bytes": 264603
+    },
+    "scratch-results/capped/held-release/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-release/gateway.closed.json",
+      "sha256": "ba9ff30c496566f2514939c5e287775ccb738b078771dc33dfda18d7c907ee4c",
+      "bytes": 531
+    },
+    "scratch-results/capped/held-transport/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-transport/business-parity.json",
+      "sha256": "4c9d388a55dbf15c199025ee4782244f6f416ad9a152b4d2b35cf1564b9ca53b",
+      "bytes": 612
+    },
+    "scratch-results/capped/held-transport/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-transport/controller-receipt.json",
+      "sha256": "ea33fed90044d4fff57521d1f634a092712c0318a836cbf89698e54e590e8263",
+      "bytes": 264609
+    },
+    "scratch-results/capped/held-transport/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-transport/gateway.closed.json",
+      "sha256": "d712bc4a9996dca7706c9d97a4d62fd7369732e6c37c9710e3a7f18603c6049f",
+      "bytes": 531
+    },
+    "scratch-results/controller-summary.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/controller-summary.json",
+      "sha256": "54d47ac89e1d87e546f84d907119b348b5738e6c65220b7a3a588446d1852e64",
+      "bytes": 4361
+    },
+    "scratch-results/disabled/fast/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/fast/business-parity.json",
+      "sha256": "6e17d9dac2d0d08ee346a63266b3196487db03a229d6010ca0439187213c3c2a",
+      "bytes": 4041
+    },
+    "scratch-results/disabled/fast/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/fast/controller-receipt.json",
+      "sha256": "1d2a53d445e4b8381eab6c5bc7195b22c01f84271b8e4e8735d44967d14d21a0",
+      "bytes": 263354
+    },
+    "scratch-results/disabled/held-release/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/held-release/business-parity.json",
+      "sha256": "225ff0936cb6b444dfbf70a9c32986a0654e2a031b494026cb50bc75ba5c9fad",
+      "bytes": 608
+    },
+    "scratch-results/disabled/held-release/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/held-release/controller-receipt.json",
+      "sha256": "5de9fb9d5b208d3d0272fadcef4d4bb2be7102205e054a726d234dea2e9449ba",
+      "bytes": 263389
+    },
+    "scratch-results/disabled/held-transport/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/held-transport/business-parity.json",
+      "sha256": "29256a3e7a1608e38c25ebf4dee4c8ee2b023747e72a73e02eb8eca4bfbca8c1",
+      "bytes": 610
+    },
+    "scratch-results/disabled/held-transport/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/disabled/held-transport/controller-receipt.json",
+      "sha256": "2e0ef25f98968bc97d740a93ece76304e3df9cae3a305382802e41812d6c15b8",
+      "bytes": 263395
+    },
+    "scratch-results/excluded/excluded/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/excluded/excluded/business-parity.json",
+      "sha256": "3bd1af14a30d6bd2141c96c0e009049ff5426af3cc32deff50184aee7e165677",
+      "bytes": 475
+    },
+    "scratch-results/excluded/excluded/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/excluded/excluded/controller-receipt.json",
+      "sha256": "de89e323eebdc2671fae47324e9a50557f97be84ea03a41ef2ff329cb4531fd3",
+      "bytes": 263701
+    },
+    "scratch-results/failing-sink/fast/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/fast/business-parity.json",
+      "sha256": "fb68fdcf710114f6ea16ac8b9ab4939b93ccbb2ab77842bb9a9cc21caa7b79de",
+      "bytes": 4055
+    },
+    "scratch-results/failing-sink/fast/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/fast/controller-receipt.json",
+      "sha256": "f83b01cb2e20a66f6373372b65224b24399d7d66b740d82e4a62810a8bb552a7",
+      "bytes": 264531
+    },
+    "scratch-results/failing-sink/fast/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/fast/gateway.closed.json",
+      "sha256": "b45763575f1b40283596e4f42dde40bdb604691a0d32633694f2667ad84d7faf",
+      "bytes": 508
+    },
+    "scratch-results/failing-sink/held-release/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-release/business-parity.json",
+      "sha256": "5ac900e9c4cfc7b5ecd18fc33baa7bb59b2ff7226613b9023211e0b331d4f3cc",
+      "bytes": 612
+    },
+    "scratch-results/failing-sink/held-release/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-release/controller-receipt.json",
+      "sha256": "46fd84eebf7677e44c238aff91d73bbf5a24df95312e82aef332c2123f9dff27",
+      "bytes": 264563
+    },
+    "scratch-results/failing-sink/held-release/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-release/gateway.closed.json",
+      "sha256": "f88097a6df23da7bd310a90b26a3200ae7ea1fbd536355a15bd8bbbbc0818594",
+      "bytes": 505
+    },
+    "scratch-results/failing-sink/held-transport/business-parity.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-transport/business-parity.json",
+      "sha256": "9a7bbaa6733b6a40a125f6d0e17e1af7bc410717c1e6ccbc7f3fdd10dfb6a376",
+      "bytes": 614
+    },
+    "scratch-results/failing-sink/held-transport/controller-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-transport/controller-receipt.json",
+      "sha256": "4a3af4cbcc6c32185368bab4177568923b21c5c35cdbf5678d8ae178ca7ffa8d",
+      "bytes": 264569
+    },
+    "scratch-results/failing-sink/held-transport/gateway.closed.json": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-transport/gateway.closed.json",
+      "sha256": "f3c0bbc60df2d59bb12a8266b4a0f58e07a38f5ee3de59d654761d48157921a8",
+      "bytes": 505
+    },
+    "isolated-producer/PLAN.md": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/PLAN.md",
+      "sha256": "d7f4d87c0b8eef68c46cb677679adc0a5b38a4a447a5b1ae5ecb53e551858c9f",
+      "bytes": 6832
+    },
+    "isolated-producer/audit_sdk_paths.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/audit_sdk_paths.py",
+      "sha256": "72ef51eb5350f8e2f344ee388c316a98d9c0c93ef2a9bff99506c41adec0eb7c",
+      "bytes": 12709
+    },
+    "isolated-producer/gateway-control-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/gateway-control-command.json",
+      "sha256": "31d10ea5975cf0670596f17056fffa9de0579b349c04b867f5077a9c6368310e",
+      "bytes": 2091
+    },
+    "isolated-producer/gateway-control.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/gateway-control.log",
+      "sha256": "baefb3ea376777213e7a99226a3dbf7ed09988721f9d3a512aed6f3e49a01fc4",
+      "bytes": 179271
+    },
+    "isolated-producer/gateway-control.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/gateway-control.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/PLAN.md": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/PLAN.md",
+      "sha256": "7755eeec567a40f7770e4d67ab4647d14c9a97d7877ccf0a3d80b242b34b931c",
+      "bytes": 6302
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/audit_sdk_paths.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/audit_sdk_paths.py",
+      "sha256": "72ef51eb5350f8e2f344ee388c316a98d9c0c93ef2a9bff99506c41adec0eb7c",
+      "bytes": 12709
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/gateway-control-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/gateway-control-command.json",
+      "sha256": "31d10ea5975cf0670596f17056fffa9de0579b349c04b867f5077a9c6368310e",
+      "bytes": 2091
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/gateway-control.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/gateway-control.log",
+      "sha256": "baefb3ea376777213e7a99226a3dbf7ed09988721f9d3a512aed6f3e49a01fc4",
+      "bytes": 179271
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/gateway-control.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/gateway-control.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/mapping-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/mapping-pins.json",
+      "sha256": "cae1c3b4f0f8b8e9c80eca632194a1dc1d85891953f80dc916dfcedf4a73d174",
+      "bytes": 3178
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/oracle-candidate-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/oracle-candidate-interface.json",
+      "sha256": "ffae938dbdc052ece5ae295ab8b8e8e85c88cb7a7802b895d4006b0a1fe50899",
+      "bytes": 1861
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/ordinary-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/ordinary-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/ordinary-feature-profile.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/ordinary-feature-profile.json",
+      "sha256": "e35dcdd9be5c32a05aafc063a7f96dc7574e326fdcdd4fefb2f161f11476dbae",
+      "bytes": 984
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/ordinary-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/ordinary-sdk-command.json",
+      "sha256": "35a4319bc62a051428609c996e1384367a9cc3273203f4f8f26d4a69f705936b",
+      "bytes": 1992
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/ordinary-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/ordinary-sdk.log",
+      "sha256": "061623b9e5586956fc192c8a878bf3f6dffcbc4eaa16862b0f63b76e15316a32",
+      "bytes": 155250
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/ordinary-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/ordinary-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/preparation-status.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/preparation-status.json",
+      "sha256": "b035426b23949951cdfc0dcb99bc7f205a2aeb70c023f918ac81798237d473df",
+      "bytes": 867
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/private-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/private-sdk-command.json",
+      "sha256": "c939209617d746a775cbc1d36948ccb411d434802f5f87b55431e6ecadfa4abb",
+      "bytes": 2107
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/private-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/private-sdk.log",
+      "sha256": "e0f305a43c89f74ff8ef37ec47afce00c75e066c5d8fe5c2afc8d7b082c19de6",
+      "bytes": 155974
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/private-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/private-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/producer-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/producer-pins.json",
+      "sha256": "468ca3c8575bb3d14d5cc40b244510a16c093dd46fc94b7e592e7d17f72220d1",
+      "bytes": 38153
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/readonly-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/readonly-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/readonly-before.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/readonly-before.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.json",
+      "sha256": "a24686b442d6a85f4ff7c65d26679a8934835958e1e7b1601be9361d2252df21",
+      "bytes": 1471
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.log",
+      "sha256": "74beb4ebe75449445d3f63c9fb3c3bb389eb44f8f7a12fce6628da8ff7dab3d1",
+      "bytes": 1248
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/readonly-guard-validation.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/scratch-producer-command-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/scratch-producer-command-plan.json",
+      "sha256": "80a189d505b10d9ee42fffc1f7311026c775aff250fbe702fd77a35b3cf0769d",
+      "bytes": 2112
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/scratch-producer-dry-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/scratch-producer-dry-plan.json",
+      "sha256": "fa133978a5a38434cb1591e2ca611ebee6ab95a63ca6f09ce2df65dded07055b",
+      "bytes": 1667
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/scratch-writable-path-audit.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/scratch-writable-path-audit.json",
+      "sha256": "ca3bde224bb10fd6a1342bdea48b9b7a276d53f8b1221c3dd1bd0ff2048b7978",
+      "bytes": 5347
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/scratch_producer.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/scratch_producer.py",
+      "sha256": "68360ba271ce0af90cfb828348d93b8845e26a7b6cb13306b13405dcc5701f28",
+      "bytes": 9838
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/sdk-late-guard.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/sdk-late-guard.targets",
+      "sha256": "4303f756f65b56c575b2f70905439987968953e28eed7c5919bb4d987eea508a",
+      "bytes": 3402
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/sdk-scratch.props": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/sdk-scratch.props",
+      "sha256": "d7804bb0a561fa03c6d062af83625ee8d8a04f21d17f9f83cf9a54ba9bf3eb67",
+      "bytes": 2579
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/sdk-source.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/sdk-source.targets",
+      "sha256": "c4ce80b9254cbb184c5474960589290e01f8223862a8fc6d3e1f62be512034d8",
+      "bytes": 622
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/source-harness-binding.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/source-harness-binding.json",
+      "sha256": "e89c294fc73af2af70501d94de995bd9ef34a28f299d0ad26ab62a854dcfafb4",
+      "bytes": 1179
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/source-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/source-interface.json",
+      "sha256": "637e7855c8f8db704dbc358705907ba79843a2818f7d692f09798f57c3325520",
+      "bytes": 1053
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/source-mapping-chain-proof.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/source-mapping-chain-proof.json",
+      "sha256": "dc1d33875a3d6f950e74cbcde7764442136603b936c296c3e564429e7dc8041d",
+      "bytes": 6513
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/substituted-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/substituted-sdk-command.json",
+      "sha256": "5df64139199155674d62f7b9d83749189908ce875e989a6bbb991b6abe7bbff8",
+      "bytes": 2166
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/substituted-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/substituted-sdk.log",
+      "sha256": "375924c47f20ac898170dcd9cd8456f12b6e173203f5a620151bfe1a9715e08f",
+      "bytes": 157798
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/substituted-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/substituted-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/disabled-07aa-binding-468ca3c8/validate_readonly.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-07aa-binding-468ca3c8/validate_readonly.py",
+      "sha256": "dffe9cc39f14e8e4e98297edce314f6afb45a0f4e287493126a51322904179b7",
+      "bytes": 5521
+    },
+    "isolated-producer/history/disabled-final-62e617ef/producer-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/disabled-final-62e617ef/producer-pins.json",
+      "sha256": "62e617ef5fa012b7eda1a6a350828a3ad70957ebf571efefbd61e8f6d80bbaf5",
+      "bytes": 38299
+    },
+    "isolated-producer/history/prototype-984864b3/PLAN.md": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/PLAN.md",
+      "sha256": "2d36836c76157a7823c58dcbf4214ecbaf2824e03a943b348b75a67b7ad2e1bf",
+      "bytes": 5801
+    },
+    "isolated-producer/history/prototype-984864b3/archive-manifest.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/archive-manifest.json",
+      "sha256": "69d5834d1b57de10fe42c87fb806e3566c006c8c7f5d0857bd5f2d8315929898",
+      "bytes": 3640
+    },
+    "isolated-producer/history/prototype-984864b3/audit_sdk_paths.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/audit_sdk_paths.py",
+      "sha256": "72ef51eb5350f8e2f344ee388c316a98d9c0c93ef2a9bff99506c41adec0eb7c",
+      "bytes": 12709
+    },
+    "isolated-producer/history/prototype-984864b3/gateway-control-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/gateway-control-command.json",
+      "sha256": "31d10ea5975cf0670596f17056fffa9de0579b349c04b867f5077a9c6368310e",
+      "bytes": 2091
+    },
+    "isolated-producer/history/prototype-984864b3/gateway-control.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/gateway-control.log",
+      "sha256": "baefb3ea376777213e7a99226a3dbf7ed09988721f9d3a512aed6f3e49a01fc4",
+      "bytes": 179271
+    },
+    "isolated-producer/history/prototype-984864b3/gateway-control.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/gateway-control.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/prototype-984864b3/mapping-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/mapping-pins.json",
+      "sha256": "cae1c3b4f0f8b8e9c80eca632194a1dc1d85891953f80dc916dfcedf4a73d174",
+      "bytes": 3178
+    },
+    "isolated-producer/history/prototype-984864b3/oracle-candidate-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/oracle-candidate-interface.json",
+      "sha256": "ffae938dbdc052ece5ae295ab8b8e8e85c88cb7a7802b895d4006b0a1fe50899",
+      "bytes": 1861
+    },
+    "isolated-producer/history/prototype-984864b3/ordinary-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/ordinary-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/prototype-984864b3/ordinary-feature-profile.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/ordinary-feature-profile.json",
+      "sha256": "e35dcdd9be5c32a05aafc063a7f96dc7574e326fdcdd4fefb2f161f11476dbae",
+      "bytes": 984
+    },
+    "isolated-producer/history/prototype-984864b3/ordinary-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/ordinary-sdk-command.json",
+      "sha256": "35a4319bc62a051428609c996e1384367a9cc3273203f4f8f26d4a69f705936b",
+      "bytes": 1992
+    },
+    "isolated-producer/history/prototype-984864b3/ordinary-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/ordinary-sdk.log",
+      "sha256": "061623b9e5586956fc192c8a878bf3f6dffcbc4eaa16862b0f63b76e15316a32",
+      "bytes": 155250
+    },
+    "isolated-producer/history/prototype-984864b3/ordinary-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/ordinary-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/prototype-984864b3/preparation-status.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/preparation-status.json",
+      "sha256": "13d9fb5b020736ba8e345f05b631be839bae1defddeb9daa10fb42531bfca6b4",
+      "bytes": 625
+    },
+    "isolated-producer/history/prototype-984864b3/private-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/private-sdk-command.json",
+      "sha256": "c939209617d746a775cbc1d36948ccb411d434802f5f87b55431e6ecadfa4abb",
+      "bytes": 2107
+    },
+    "isolated-producer/history/prototype-984864b3/private-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/private-sdk.log",
+      "sha256": "e0f305a43c89f74ff8ef37ec47afce00c75e066c5d8fe5c2afc8d7b082c19de6",
+      "bytes": 155974
+    },
+    "isolated-producer/history/prototype-984864b3/private-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/private-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/prototype-984864b3/producer-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/producer-pins.json",
+      "sha256": "984864b37ba888007e210c05a296cdebe1655889b77e5f33b3dde027c4907aa7",
+      "bytes": 7599
+    },
+    "isolated-producer/history/prototype-984864b3/readonly-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/readonly-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/prototype-984864b3/readonly-before.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/readonly-before.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/history/prototype-984864b3/readonly-guard-validation.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/readonly-guard-validation.json",
+      "sha256": "a24686b442d6a85f4ff7c65d26679a8934835958e1e7b1601be9361d2252df21",
+      "bytes": 1471
+    },
+    "isolated-producer/history/prototype-984864b3/readonly-guard-validation.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/readonly-guard-validation.log",
+      "sha256": "74beb4ebe75449445d3f63c9fb3c3bb389eb44f8f7a12fce6628da8ff7dab3d1",
+      "bytes": 1248
+    },
+    "isolated-producer/history/prototype-984864b3/readonly-guard-validation.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/readonly-guard-validation.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/prototype-984864b3/scratch-producer-command-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/scratch-producer-command-plan.json",
+      "sha256": "80a189d505b10d9ee42fffc1f7311026c775aff250fbe702fd77a35b3cf0769d",
+      "bytes": 2112
+    },
+    "isolated-producer/history/prototype-984864b3/scratch-producer-dry-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/scratch-producer-dry-plan.json",
+      "sha256": "fa133978a5a38434cb1591e2ca611ebee6ab95a63ca6f09ce2df65dded07055b",
+      "bytes": 1667
+    },
+    "isolated-producer/history/prototype-984864b3/scratch-writable-path-audit.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/scratch-writable-path-audit.json",
+      "sha256": "ca3bde224bb10fd6a1342bdea48b9b7a276d53f8b1221c3dd1bd0ff2048b7978",
+      "bytes": 5347
+    },
+    "isolated-producer/history/prototype-984864b3/scratch_producer.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/scratch_producer.py",
+      "sha256": "62ba4d9955a8400f32ce444374a62b032e60808a266fc4d5ea5aa37acac4d735",
+      "bytes": 6586
+    },
+    "isolated-producer/history/prototype-984864b3/sdk-late-guard.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/sdk-late-guard.targets",
+      "sha256": "4303f756f65b56c575b2f70905439987968953e28eed7c5919bb4d987eea508a",
+      "bytes": 3402
+    },
+    "isolated-producer/history/prototype-984864b3/sdk-scratch.props": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/sdk-scratch.props",
+      "sha256": "d7804bb0a561fa03c6d062af83625ee8d8a04f21d17f9f83cf9a54ba9bf3eb67",
+      "bytes": 2579
+    },
+    "isolated-producer/history/prototype-984864b3/sdk-source.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/sdk-source.targets",
+      "sha256": "c4ce80b9254cbb184c5474960589290e01f8223862a8fc6d3e1f62be512034d8",
+      "bytes": 622
+    },
+    "isolated-producer/history/prototype-984864b3/source-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/source-interface.json",
+      "sha256": "637e7855c8f8db704dbc358705907ba79843a2818f7d692f09798f57c3325520",
+      "bytes": 1053
+    },
+    "isolated-producer/history/prototype-984864b3/source-mapping-chain-proof.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/source-mapping-chain-proof.json",
+      "sha256": "dc1d33875a3d6f950e74cbcde7764442136603b936c296c3e564429e7dc8041d",
+      "bytes": 6513
+    },
+    "isolated-producer/history/prototype-984864b3/substituted-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/substituted-sdk-command.json",
+      "sha256": "5df64139199155674d62f7b9d83749189908ce875e989a6bbb991b6abe7bbff8",
+      "bytes": 2166
+    },
+    "isolated-producer/history/prototype-984864b3/substituted-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/substituted-sdk.log",
+      "sha256": "375924c47f20ac898170dcd9cd8456f12b6e173203f5a620151bfe1a9715e08f",
+      "bytes": 157798
+    },
+    "isolated-producer/history/prototype-984864b3/substituted-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/substituted-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/history/prototype-984864b3/validate_readonly.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/history/prototype-984864b3/validate_readonly.py",
+      "sha256": "dffe9cc39f14e8e4e98297edce314f6afb45a0f4e287493126a51322904179b7",
+      "bytes": 5521
+    },
+    "isolated-producer/latest-scratch-producer-attempt.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/latest-scratch-producer-attempt.json",
+      "sha256": "1c0f8006a856ffd86ee6b1416a2fbc13eee6908a69dbd6749745221244b1ea96",
+      "bytes": 115
+    },
+    "isolated-producer/mapping-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/mapping-pins.json",
+      "sha256": "cae1c3b4f0f8b8e9c80eca632194a1dc1d85891953f80dc916dfcedf4a73d174",
+      "bytes": 3178
+    },
+    "isolated-producer/oracle-candidate-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/oracle-candidate-interface.json",
+      "sha256": "ffae938dbdc052ece5ae295ab8b8e8e85c88cb7a7802b895d4006b0a1fe50899",
+      "bytes": 1861
+    },
+    "isolated-producer/ordinary-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/ordinary-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/ordinary-feature-profile.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/ordinary-feature-profile.json",
+      "sha256": "e35dcdd9be5c32a05aafc063a7f96dc7574e326fdcdd4fefb2f161f11476dbae",
+      "bytes": 984
+    },
+    "isolated-producer/ordinary-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/ordinary-sdk-command.json",
+      "sha256": "35a4319bc62a051428609c996e1384367a9cc3273203f4f8f26d4a69f705936b",
+      "bytes": 1992
+    },
+    "isolated-producer/ordinary-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/ordinary-sdk.log",
+      "sha256": "061623b9e5586956fc192c8a878bf3f6dffcbc4eaa16862b0f63b76e15316a32",
+      "bytes": 155250
+    },
+    "isolated-producer/ordinary-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/ordinary-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/preparation-status.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/preparation-status.json",
+      "sha256": "2a6da7caa8d5dd7360efbd4dde9a559f69052f4f7f34a24c62a64d9b307287f4",
+      "bytes": 867
+    },
+    "isolated-producer/private-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/private-sdk-command.json",
+      "sha256": "c939209617d746a775cbc1d36948ccb411d434802f5f87b55431e6ecadfa4abb",
+      "bytes": 2107
+    },
+    "isolated-producer/private-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/private-sdk.log",
+      "sha256": "e0f305a43c89f74ff8ef37ec47afce00c75e066c5d8fe5c2afc8d7b082c19de6",
+      "bytes": 155974
+    },
+    "isolated-producer/private-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/private-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/producer-attempts/attempt-_ktcrvhx/actual-compiler-inputs.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-attempts/attempt-_ktcrvhx/actual-compiler-inputs.json",
+      "sha256": "196bf3d9a84cdc45ba19cab90dc2787eae533803db5636cabf3f9d441ba61541",
+      "bytes": 135732
+    },
+    "isolated-producer/producer-attempts/attempt-_ktcrvhx/after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-attempts/attempt-_ktcrvhx/after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/producer-attempts/attempt-_ktcrvhx/build.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-attempts/attempt-_ktcrvhx/build.log",
+      "sha256": "e897c31ff765edb5fa48db6d80f2306afcd77b4aa51709dc7618d190f56b5837",
+      "bytes": 240
+    },
+    "isolated-producer/producer-attempts/attempt-_ktcrvhx/parent-producer-audit.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-attempts/attempt-_ktcrvhx/parent-producer-audit.json",
+      "sha256": "088a7e45f6464afe3db3638afe30d521033d905c225e4b493b08b8f7952ffb24",
+      "bytes": 662
+    },
+    "isolated-producer/producer-attempts/attempt-_ktcrvhx/receipt.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-attempts/attempt-_ktcrvhx/receipt.json",
+      "sha256": "516fcd90fc5ea263eab9335c7d737f26d48bdb0dac1f36e97842bf4c8c6272b0",
+      "bytes": 2121
+    },
+    "isolated-producer/producer-pins.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/producer-pins.json",
+      "sha256": "308f4d6a1474ea03ca0ccbac011b873bbba056f6b0c6049f12e7bbe2ea42674c",
+      "bytes": 38298
+    },
+    "isolated-producer/readonly-after.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/readonly-after.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/readonly-before.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/readonly-before.json",
+      "sha256": "5c62fa6d857ca14bbc3bfd723e84eec788139eed7d1196fdb147591a1c127239",
+      "bytes": 209986
+    },
+    "isolated-producer/readonly-guard-validation.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/readonly-guard-validation.json",
+      "sha256": "a24686b442d6a85f4ff7c65d26679a8934835958e1e7b1601be9361d2252df21",
+      "bytes": 1471
+    },
+    "isolated-producer/readonly-guard-validation.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/readonly-guard-validation.log",
+      "sha256": "74beb4ebe75449445d3f63c9fb3c3bb389eb44f8f7a12fce6628da8ff7dab3d1",
+      "bytes": 1248
+    },
+    "isolated-producer/readonly-guard-validation.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/readonly-guard-validation.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/scratch-producer-command-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/scratch-producer-command-plan.json",
+      "sha256": "80a189d505b10d9ee42fffc1f7311026c775aff250fbe702fd77a35b3cf0769d",
+      "bytes": 2112
+    },
+    "isolated-producer/scratch-producer-dry-plan.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/scratch-producer-dry-plan.json",
+      "sha256": "fa133978a5a38434cb1591e2ca611ebee6ab95a63ca6f09ce2df65dded07055b",
+      "bytes": 1667
+    },
+    "isolated-producer/scratch-writable-path-audit.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/scratch-writable-path-audit.json",
+      "sha256": "ca3bde224bb10fd6a1342bdea48b9b7a276d53f8b1221c3dd1bd0ff2048b7978",
+      "bytes": 5347
+    },
+    "isolated-producer/scratch_producer.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/scratch_producer.py",
+      "sha256": "7d0b0a559107c2a3747231f74c399d7ddf2beabd8f7c919d8cdedfd14eacf2e9",
+      "bytes": 9861
+    },
+    "isolated-producer/sdk-late-guard.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/sdk-late-guard.targets",
+      "sha256": "4303f756f65b56c575b2f70905439987968953e28eed7c5919bb4d987eea508a",
+      "bytes": 3402
+    },
+    "isolated-producer/sdk-scratch.props": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/sdk-scratch.props",
+      "sha256": "d7804bb0a561fa03c6d062af83625ee8d8a04f21d17f9f83cf9a54ba9bf3eb67",
+      "bytes": 2579
+    },
+    "isolated-producer/sdk-source.targets": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/sdk-source.targets",
+      "sha256": "c4ce80b9254cbb184c5474960589290e01f8223862a8fc6d3e1f62be512034d8",
+      "bytes": 622
+    },
+    "isolated-producer/source-harness-binding.diff": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/source-harness-binding.diff",
+      "sha256": "597185e6e6e737504b9c96ae2854757ff82f733f8f110a535e26f32e524ce09c",
+      "bytes": 14459
+    },
+    "isolated-producer/source-harness-binding.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/source-harness-binding.json",
+      "sha256": "fc28d39925abf01c1c747b75143c780a21a4ac81e1bbd4257ecbfdd0566d4aa5",
+      "bytes": 1355
+    },
+    "isolated-producer/source-interface.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/source-interface.json",
+      "sha256": "637e7855c8f8db704dbc358705907ba79843a2818f7d692f09798f57c3325520",
+      "bytes": 1053
+    },
+    "isolated-producer/source-mapping-chain-proof.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/source-mapping-chain-proof.json",
+      "sha256": "dc1d33875a3d6f950e74cbcde7764442136603b936c296c3e564429e7dc8041d",
+      "bytes": 6513
+    },
+    "isolated-producer/substituted-sdk-command.json": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/substituted-sdk-command.json",
+      "sha256": "5df64139199155674d62f7b9d83749189908ce875e989a6bbb991b6abe7bbff8",
+      "bytes": 2166
+    },
+    "isolated-producer/substituted-sdk.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/substituted-sdk.log",
+      "sha256": "375924c47f20ac898170dcd9cd8456f12b6e173203f5a620151bfe1a9715e08f",
+      "bytes": 157798
+    },
+    "isolated-producer/substituted-sdk.stderr.log": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/substituted-sdk.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "isolated-producer/validate_readonly.py": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/validate_readonly.py",
+      "sha256": "dffe9cc39f14e8e4e98297edce314f6afb45a0f4e287493126a51322904179b7",
+      "bytes": 5521
+    },
+    "unexecuted-preparation-07aa/controller-current-external-union.diff": {
+      "source": "/tmp/story65-invocation-transport-prep-history-20261107/07aa/controller-current-external-union.diff",
+      "sha256": "624e3da46c862ed23a2606d4ad64882fdba91e7b3fccfebc466bc0225becd378",
+      "bytes": 993
+    },
+    "unexecuted-preparation-07aa/freshcontroller.py": {
+      "source": "/tmp/story65-invocation-transport-prep-history-20261107/07aa/freshcontroller.py",
+      "sha256": "0ddd4064f5ad3ce5dfe163d55868114f6a841c894429e88279568b74acb91ec1",
+      "bytes": 22731
+    },
+    "unexecuted-preparation-07aa/preparation-receipt.json": {
+      "source": "/tmp/story65-invocation-transport-prep-history-20261107/07aa/preparation-receipt.json",
+      "sha256": "07aa7155ccf0ca292aad9683bb367782acb34033818a0e7fcfee32e534cd6223",
+      "bytes": 120757
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs",
+      "sha256": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+      "bytes": 18538
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs",
+      "sha256": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+      "bytes": 5165
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs",
+      "sha256": "6c265a315fb853015ee636dd99fdb0493849f50a1dc24be45452c28d09a740fc",
+      "bytes": 3266
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs",
+      "sha256": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+      "bytes": 12004
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs",
+      "sha256": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+      "bytes": 1289
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs",
+      "sha256": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+      "bytes": 9254
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs",
+      "sha256": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+      "bytes": 1487
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs",
+      "sha256": "d392bac66f6954b4d84f7e924e65b280929482fca9a7579e7fcc8e51a55d28f6",
+      "bytes": 40912
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs",
+      "sha256": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+      "bytes": 10402
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs",
+      "sha256": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+      "bytes": 2307
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs",
+      "sha256": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+      "bytes": 2482
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs",
+      "sha256": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+      "bytes": 4193
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs",
+      "sha256": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+      "bytes": 3803
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs",
+      "sha256": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+      "bytes": 891
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs",
+      "sha256": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+      "bytes": 2909
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs",
+      "sha256": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+      "bytes": 2838
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs",
+      "sha256": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+      "bytes": 1662
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs",
+      "sha256": "167749aa7b980712d36b4b234929ec561814cff4993f9edbea357f082a1cf62b",
+      "bytes": 5242
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs",
+      "sha256": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+      "bytes": 19259
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs",
+      "sha256": "17089c99b1370c8fae56f3418d92293e17d6db0cb9cfba75d0b086ff341be70d",
+      "bytes": 5757
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpParsedTemplate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpParsedTemplate.cs",
+      "sha256": "94aa362810493d87945bf4137824d0f5dae996545f2dba2847317d0ca5889415",
+      "bytes": 4600
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+      "sha256": "71a9dc98cedde0a3f1651f3ec06b9812416b91e0a62595914a2fb7014ccf8c94",
+      "bytes": 35348
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteTemplate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteTemplate.cs",
+      "sha256": "8e93cd4eca3112b1b8cade1e594e66e98d66ff193e54dcf273f449ebe8672a0e",
+      "bytes": 4260
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs",
+      "sha256": "b085ff4de038eac60ca4a2539df24573c8678c4e215fc7f21ce179e38c51bac8",
+      "bytes": 6627
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs",
+      "sha256": "fe9038e346121082bd1e017ff58b816c7388dbaf7390c2690c91cff8141f70ee",
+      "bytes": 341
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs",
+      "sha256": "64123712fcc3c7f6304dc99aa10ad659e6c9052113ce472a65bc6e52c1a19578",
+      "bytes": 2848
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs",
+      "sha256": "c01570410e73b7660a470bced9d0b1606815d19f3821ddeb1fd2c97e47e63374",
+      "bytes": 9233
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs",
+      "sha256": "81dd6632eb070b86d97b91d3c7b419d1f0d3b2f07ac7bc4bb00cf91c86a363e1",
+      "bytes": 14827
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs",
+      "sha256": "dbdcb49c07f9d544ec07c3353fea93bffff02f3fb51684b29f6aa996b6c9df23",
+      "bytes": 11207
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs",
+      "sha256": "10c05e91f8b057c67f1b64e3ab7639fd169d6ac9075e1fbdbd43da17559ce0f2",
+      "bytes": 18027
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImageActorOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImageActorOptions.cs",
+      "sha256": "345bd514002aacf24601235f5fadf3ebd166d48214bc48954540cc78690c4bcc",
+      "bytes": 890
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckFixture.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckFixture.cs",
+      "sha256": "987326e6b051812f17121d3e9bdcde3890d0611edcd2cfd47be104361a30daec",
+      "bytes": 7662
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReceiverImagePrecheckTests.cs",
+      "sha256": "8682918102b23d2053ab5676d5d2c10c282025b797b30fcd7934885fb3a97422",
+      "bytes": 14776
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs",
+      "sha256": "ba9c972766dc8d87ae765eb115bfdc94fc3d9e3f80fcd1fa1ca9e85f3b24dbef",
+      "bytes": 1390
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingCollection.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingCollection.cs",
+      "sha256": "90650a5bd96d7d8faf53ad5a2f2312cde8fdd272c787bb890cfcf6760b6a9a89",
+      "bytes": 282
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpFixture.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpFixture.cs",
+      "sha256": "f0d3e1ea600121427861441327ccc6b217c617787396d407921d5614f77f278b",
+      "bytes": 3013
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpHandler.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpHandler.cs",
+      "sha256": "942fec05cea5c6e24cedf7e086e6d473671928bf0673107d960e1a627314ebd6",
+      "bytes": 4834
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingReuseTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingReuseTests.cs",
+      "sha256": "f8ef709f55b09b87e1eeb6f50758aecba75c02276e97304ab38ec74a74b772f8",
+      "bytes": 12567
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs",
+      "sha256": "36bcb838fc8870726b736f3f43f20db1ef43ff3329e61d33d6714a869fa06ca5",
+      "bytes": 22535
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDiskImageAssembly.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDiskImageAssembly.cs",
+      "sha256": "3487e8aa0120f8f651cc2be358e886aea6230c7fc230d0caf5624dceed0f9f15",
+      "bytes": 541
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolCollection.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolCollection.cs",
+      "sha256": "87eb190e55c0935f63cd005451ca8cd080a28291ba10cf2efe16c4ee0687bbf9",
+      "bytes": 320
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolTests.cs",
+      "sha256": "b6dd8697c596ab1d4d6e8e73efbe27367c76a8389c956fef322ba57ab478475f",
+      "bytes": 9097
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs",
+      "sha256": "da26e9b3f9c85a87ef0613b62c69b9712d50dcad7af0484a5dd5f7dd453fe8fd",
+      "bytes": 15382
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs",
+      "sha256": "11893e7b57d2edeef88b1e2f7504dfa7d1470bc321982194df089c5d75c2689f",
+      "bytes": 13444
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs",
+      "sha256": "3283f0204a07aee0a8dce644fc6bd142c26f000df28c8765a90ae13ea741defa",
+      "bytes": 18031
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs",
+      "sha256": "ad5addf2a5998855a9b68cc178edb5a9c2330fbb1b344f60199b2252334f354d",
+      "bytes": 14484
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs",
+      "sha256": "38d4c35756651bc001f7c874d5b1985503bf0b4c1e48aab083c593388ccf984b",
+      "bytes": 7401
+    },
+    "source-controls-55/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpParsedTemplateTests.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpParsedTemplateTests.cs",
+      "sha256": "127fa2e817d0a4a3e8ad45a8f2137bd0d4f7df050871dc6d5ceeae56398cf313",
+      "bytes": 14130
+    },
+    "source-controls-55/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs",
+      "sha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d",
+      "bytes": 21331
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogInputs.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogInputs.cs",
+      "sha256": "5e85827847578384a7dcca9fe448b97f21cdf4a201263c2d9ec9d0f3eda6be4d",
+      "bytes": 5218
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs",
+      "sha256": "c969d284411288c245c5833b15abb73dd93309c2671b08a03de18d694ee33a2c",
+      "bytes": 5778
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs",
+      "sha256": "0a7bf260e145136d409a575ab2bc300e179c3350a749039f1589a90e2aaa7597",
+      "bytes": 45611
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs",
+      "sha256": "ccf438bca1e26d239ca844f6d6f5e14e23f20e995da97805208adbc60437557e",
+      "bytes": 7635
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/DomainServices/DomainServiceWorkloadAssertionHandler.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/DomainServices/DomainServiceWorkloadAssertionHandler.cs",
+      "sha256": "b4a891e180b29265e6309c113a0c8fa424296a9fdd89859c348b8d0a09f4dd71",
+      "bytes": 5983
+    },
+    "source-controls-55/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationHandler.cs",
+      "sha256": "a59c8093be4a2a112eb64b628cf243a343cb3ad836e3fff2f8dd0fe9450c4854",
+      "bytes": 27515
+    },
+    "producer-compile-sources/000-CommandSourceAuthorityBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/CommandSourceAuthorityBinding.cs",
+      "sha256": "0548c7b37a03dca3a0f43fa582ca25d657d3368c11d35819645198432d1fd5bf",
+      "bytes": 4246
+    },
+    "producer-compile-sources/001-ConfigureJwtBearerAuthenticationOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/ConfigureJwtBearerAuthenticationOptions.cs",
+      "sha256": "388db3e34b7e7c6600dc9051a0f3f3439ae60fcfe81dcb9f99703d1935d1aeb6",
+      "bytes": 864
+    },
+    "producer-compile-sources/002-ConfigureWorkloadJwtBearerOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/ConfigureWorkloadJwtBearerOptions.cs",
+      "sha256": "7bb0693d6f4eb9c01783c7281a7762e970a45b03cd06ad8d3cb1d4a133ae27e2",
+      "bytes": 3984
+    },
+    "producer-compile-sources/003-DaprAppChannelToken.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/DaprAppChannelToken.cs",
+      "sha256": "745ba2e58137bdc8e29b57d83aad9969aac28c25abbc82c855d51c3aff0c886a",
+      "bytes": 4608
+    },
+    "producer-compile-sources/004-DaprAppChannelTokenStatus.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/DaprAppChannelTokenStatus.cs",
+      "sha256": "ec8863008cfe6f12af681bbf025e9621e74831945661f56aec7f2f54a57e0b6f",
+      "bytes": 1039
+    },
+    "producer-compile-sources/005-DaprSidecarChannelAuthenticationHandler.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/DaprSidecarChannelAuthenticationHandler.cs",
+      "sha256": "26463b91fd4b391a6c08333b4a6481d239f47314f287398a78b332744cede07f",
+      "bytes": 3610
+    },
+    "producer-compile-sources/006-DaprSidecarChannelAuthenticationOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/DaprSidecarChannelAuthenticationOptions.cs",
+      "sha256": "53bdfd361a2f70a469761b373e0d27a259f3b8ae4a1b74cba688247d105ff3a4",
+      "bytes": 575
+    },
+    "producer-compile-sources/007-EventStoreHttpEndpointInventory.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpEndpointInventory.cs",
+      "sha256": "53f69df88b3b8eca3813d51727b610c619b8efbe9efea1499d5c4557e8c74074",
+      "bytes": 6816
+    },
+    "producer-compile-sources/008-EventStoreHttpEndpointSource.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpEndpointSource.cs",
+      "sha256": "60c56b01f1c7f5a140ce40db2ee9e49338215b084a69c824737b4cc022110ff5",
+      "bytes": 377
+    },
+    "producer-compile-sources/009-EventStoreHttpHostSecurityExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityExtensions.cs",
+      "sha256": "2111e0716d518af240dc0de13218f1bcdc5e4726b1be2531bed3046bee2a29ca",
+      "bytes": 8308
+    },
+    "producer-compile-sources/010-EventStoreHttpHostSecurityStartupValidator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHttpHostSecurityStartupValidator.cs",
+      "sha256": "d103b5a7533ba9657bdf3ded40648fc99de74901c7aaa3fbc188b32395981a91",
+      "bytes": 1938
+    },
+    "producer-compile-sources/011-EventStoreHumanCredentialRequirement.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreHumanCredentialRequirement.cs",
+      "sha256": "731af331c4710dd89328bc3ab4494fc37825447e9b64417485035344541bee0c",
+      "bytes": 981
+    },
+    "producer-compile-sources/012-EventStoreUnclassifiedEndpointRequirement.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreUnclassifiedEndpointRequirement.cs",
+      "sha256": "1c09f8c44354755dfdaeeb87eedf45100b297e8aca4f371b6b81a3fb09ba658d",
+      "bytes": 317
+    },
+    "producer-compile-sources/013-EventStoreWorkloadAuthenticationDefaults.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreWorkloadAuthenticationDefaults.cs",
+      "sha256": "d5f678108f436a7027d44d8ecb5d23ae204353b23324f5217c674c325031c272",
+      "bytes": 5420
+    },
+    "producer-compile-sources/014-EventStoreWorkloadAuthenticationExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreWorkloadAuthenticationExtensions.cs",
+      "sha256": "3ec0bdd770539634d72f76207c2a796428bfd2ad61a506a48c7e0862433000eb",
+      "bytes": 13545
+    },
+    "producer-compile-sources/015-EventStoreWorkloadOperations.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/EventStoreWorkloadOperations.cs",
+      "sha256": "f0985f576e21aa9bfd5da2ab04ba3b0b36fed6a222f37169c1bc2fc6a87dcb5c",
+      "bytes": 2485
+    },
+    "producer-compile-sources/016-HumanAuthorityReceiptClaims.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/HumanAuthorityReceiptClaims.cs",
+      "sha256": "0edd48e6269e343ebe77f331c2eae8d794e9cb68ead8e696b9ed8de2a64913e0",
+      "bytes": 1090
+    },
+    "producer-compile-sources/017-HumanAuthorityReceiptCodec.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/HumanAuthorityReceiptCodec.cs",
+      "sha256": "364714c36ccd0a0db1fbe4a35f9205ecf691e24aa9cc54ba5ecc150cae1888d5",
+      "bytes": 6462
+    },
+    "producer-compile-sources/018-IWorkloadAssertionIssuer.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/IWorkloadAssertionIssuer.cs",
+      "sha256": "2abcabd786159e0a2f15c0bc594f2a4e72b85c24c3619f0700f8e791c83998e1",
+      "bytes": 1399
+    },
+    "producer-compile-sources/019-JwtBearerAuthenticationContract.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtBearerAuthenticationContract.cs",
+      "sha256": "a04cf325e2ea8c69e355506eb6702cffe301f7fb8f181c4a8a025feefd6a2ba4",
+      "bytes": 12117
+    },
+    "producer-compile-sources/020-JwtBearerAuthenticationOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtBearerAuthenticationOptions.cs",
+      "sha256": "37df1d79fad5785caa286cdc30f88599c82eb5100e1a02b210282cfe1e33c112",
+      "bytes": 1491
+    },
+    "producer-compile-sources/021-JwtWorkloadAssertionIssuer.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.cs",
+      "sha256": "29bfc88009277d233715da62bf8952e05868e380ef24ddc26642151b55042d26",
+      "bytes": 20985
+    },
+    "producer-compile-sources/022-JwtWorkloadAssertionIssuer.ResourceBindings.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.ResourceBindings.cs",
+      "sha256": "640ff82b45256e5797bc24fce7002b71a38186b4505016596c4d06e239df3970",
+      "bytes": 5234
+    },
+    "producer-compile-sources/023-QueryCallerAuthorityBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs",
+      "sha256": "8423c2eb21eb640ec5bbc96167ee54bf5ac0b063c3bf174551148bd14524e8e1",
+      "bytes": 3731
+    },
+    "producer-compile-sources/024-RouteCatalogSurfacePolicy.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/RouteCatalogSurfacePolicy.cs",
+      "sha256": "ff1b5cb2566e365cce6be0a4b80b4d3340e9f4bd06c1e86a7e148b53d79766e7",
+      "bytes": 1991
+    },
+    "producer-compile-sources/025-SourcePublicationWorkloadBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/SourcePublicationWorkloadBinding.cs",
+      "sha256": "44880996f20b0e9f8d804d281e717fc0fec72ebf9b982a4bf3a0c9411a556190",
+      "bytes": 2528
+    },
+    "producer-compile-sources/026-ValidateJwtBearerAuthenticationOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/ValidateJwtBearerAuthenticationOptions.cs",
+      "sha256": "ce5741ecb74a734b20cfc840c46fe866014ad82753c55ae212e1d117d9c6eb7a",
+      "bytes": 762
+    },
+    "producer-compile-sources/027-ValidateWorkloadAssertionIssuerOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/ValidateWorkloadAssertionIssuerOptions.cs",
+      "sha256": "0c594a99b7b38e017df1ecb3057553ad25c9fa1ea08b10542b3f0ba5b1625af5",
+      "bytes": 2723
+    },
+    "producer-compile-sources/028-WorkloadAssertionEvaluation.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAssertionEvaluation.cs",
+      "sha256": "5733dde1b17714a1f2555c9282df25d5cf82b7a7a35f5805597382ad9d7779db",
+      "bytes": 2914
+    },
+    "producer-compile-sources/029-WorkloadAssertionEvaluator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAssertionEvaluator.cs",
+      "sha256": "0922ed82e97f853e2e826162af899a09829eb03c04852d3d2d3d61a8e0cbad19",
+      "bytes": 8396
+    },
+    "producer-compile-sources/030-WorkloadAssertionIssuerOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAssertionIssuerOptions.cs",
+      "sha256": "f1a014638a20e2ef9c3bfbd7480b7165ea233a8d0b12fd68ac341e33ce824b21",
+      "bytes": 4956
+    },
+    "producer-compile-sources/031-WorkloadAssertionRequest.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAssertionRequest.cs",
+      "sha256": "649beafc5a2d3cf141e0dd2f623444eff74327ccc1c3ff067211d0056317f35d",
+      "bytes": 905
+    },
+    "producer-compile-sources/032-WorkloadAssertionValidator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAssertionValidator.cs",
+      "sha256": "166e3ffd588722573ae066a35ec9cf33f165bfdb7711cc89c9a223cb7fde2740",
+      "bytes": 7631
+    },
+    "producer-compile-sources/033-WorkloadAuthenticationException.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthenticationException.cs",
+      "sha256": "181b556f248a1d249ce5a4c10303b91ef3bb033c42d1c51f24d07bb58800a2ea",
+      "bytes": 1432
+    },
+    "producer-compile-sources/034-WorkloadAuthenticationOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthenticationOptions.cs",
+      "sha256": "6657d76484574922e569428848356063e0d2bee3ac3e8dd813e5fe1f45b03055",
+      "bytes": 2841
+    },
+    "producer-compile-sources/035-WorkloadAuthenticationReasons.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthenticationReasons.cs",
+      "sha256": "26dc722f5cff03b14dc175590632ec5e48d63f10fca954b7b933b143f60f8a34",
+      "bytes": 5027
+    },
+    "producer-compile-sources/036-WorkloadAuthenticationTelemetry.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthenticationTelemetry.cs",
+      "sha256": "557aebcfb7e2a61183773f51527966595b03dc1c5695ca83f17b3718d44fe069",
+      "bytes": 3454
+    },
+    "producer-compile-sources/037-WorkloadAuthorityBindingConfiguration.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityBindingConfiguration.cs",
+      "sha256": "1f03efa918a3d863e8b59f96bc93656760c4c6e245a5c17425ef93b56629d981",
+      "bytes": 3316
+    },
+    "producer-compile-sources/038-WorkloadAuthorityEndpointMetadata.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityEndpointMetadata.cs",
+      "sha256": "20d75d2f1e45d8d4b3e2f94a5038890b1e5e3f03f1281220fb177dc90468b7f4",
+      "bytes": 1065
+    },
+    "producer-compile-sources/039-WorkloadAuthorityGrant.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityGrant.cs",
+      "sha256": "8735be14e080e6907139e0261e889a0099fe3debaf9bceb77f363bbd216aaede",
+      "bytes": 2728
+    },
+    "producer-compile-sources/040-WorkloadAuthorityOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityOptions.cs",
+      "sha256": "7009692568f9dff80fe10dfc88fc21c1e6a3c1687c5c32757735d4866aa72d54",
+      "bytes": 1717
+    },
+    "producer-compile-sources/041-WorkloadAuthorizationDetails.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorizationDetails.cs",
+      "sha256": "66690b01b199711d87c9f1bdc7fea50f7a2bc26296c9013984d448277572b0ca",
+      "bytes": 7200
+    },
+    "producer-compile-sources/042-WorkloadBindingAuthority.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs",
+      "sha256": "2da5508d393dd63210f4dc4f386f37e54b6a1c2068c5f60ef96869c6f1741f37",
+      "bytes": 13033
+    },
+    "producer-compile-sources/043-WorkloadBindingAuthorityExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthorityExtensions.cs",
+      "sha256": "4282f2d5a10d4a8d77730c71b2b8167fbac166d654a765b31c877c19911a5199",
+      "bytes": 6163
+    },
+    "producer-compile-sources/044-WorkloadJwtBearerEvents.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadJwtBearerEvents.cs",
+      "sha256": "77060edcf40fa71b5cdd3b024b63bf1d3a4f82b02ffcd35ee3639a40adb114f8",
+      "bytes": 6512
+    },
+    "producer-compile-sources/045-WorkloadSchemeRegistration.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadSchemeRegistration.cs",
+      "sha256": "106732df137e5931a87032cd39b514c2a6770a3aa93137fbd33ee129f534fa7b",
+      "bytes": 329
+    },
+    "producer-compile-sources/046-WorkloadSecurityClock.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadSecurityClock.cs",
+      "sha256": "53dd50ed3dba9a461a6acced9989dacead05d622a7bfa52a9f6c9612c1991f25",
+      "bytes": 1551
+    },
+    "producer-compile-sources/047-BoundedInvocationResilienceExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/BoundedInvocationResilienceExtensions.cs",
+      "sha256": "a46bc0555a82d89fda821a471d3c42fb2175c964acb893227ef206b34f92e6f5",
+      "bytes": 2144
+    },
+    "producer-compile-sources/048-BoundedTelemetryShutdownService.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/BoundedTelemetryShutdownService.cs",
+      "sha256": "a9175339c5e51f4d486fb6b7183849a29610ad5a467afe108756a51034effa0e",
+      "bytes": 5579
+    },
+    "producer-compile-sources/049-DispatchDiagnostics.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Diagnostics/DispatchDiagnostics.cs",
+      "sha256": "a666a7755958deb6661aef51ea228385b0462b3cbcdaa8458c0c9c235495419c",
+      "bytes": 3695
+    },
+    "producer-compile-sources/050-DispatchStageName.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Diagnostics/DispatchStageName.cs",
+      "sha256": "7c45d854109de51915676c21203aa1ff55214f92dc5002830f77defe4918b8bb",
+      "bytes": 4009
+    },
+    "producer-compile-sources/051-DispatchStageScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Diagnostics/DispatchStageScope.cs",
+      "sha256": "1ede5ffd27969e83410c137d0028f7d95bdbc1de73393597c734118e6d64541d",
+      "bytes": 1444
+    },
+    "producer-compile-sources/052-EventStoreServiceDefaultsOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/EventStoreServiceDefaultsOptions.cs",
+      "sha256": "18115077c2b6f30804929deb14aecda36d1edc7822600612b3fde5ea296afaad",
+      "bytes": 574
+    },
+    "producer-compile-sources/053-Extensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Extensions.cs",
+      "sha256": "0175a7b4e47813cfa3e0b6f0c80b1b67d162c2faeff6f1caaecd26d9c1916bd2",
+      "bytes": 12175
+    },
+    "producer-compile-sources/054-ReadBoundaryDiagnostics.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadBoundaryDiagnostics.cs",
+      "sha256": "351d59945755b410432477445696c4a3fc3cf5a9a636a78b5f11b51fe12a34c5",
+      "bytes": 2084
+    },
+    "producer-compile-sources/055-ReadDiagnosticsPrivacy.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacy.cs",
+      "sha256": "3f5468845435f3be21dd9e04b6a3f817ffa795d1446180adab18bf2d4fe918b6",
+      "bytes": 2977
+    },
+    "producer-compile-sources/056-ReadDiagnosticsPrivacyExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyExtensions.cs",
+      "sha256": "1f6b22afbdd42619d8f96362265923fc093639e8963233d39ee0f335067d5c33",
+      "bytes": 1816
+    },
+    "producer-compile-sources/057-ReadDiagnosticsPrivacyScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyScope.cs",
+      "sha256": "863df368e4954a4483e3507921721a591c5ed484b455f54465cf58e9c124b7e8",
+      "bytes": 1095
+    },
+    "producer-compile-sources/058-ReadDiagnosticsPrivacyStartupFilter.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadDiagnosticsPrivacyStartupFilter.cs",
+      "sha256": "585fa7a368b960f9b90798a97a068f4831ad121e6d99c189e5666104b7db71e4",
+      "bytes": 1988
+    },
+    "producer-compile-sources/059-ReadQueryDenialTiming.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/ReadQueryDenialTiming.cs",
+      "sha256": "a1bb38d5d0fb4e5da97897c6df058f3cb2ce3d2f6c61eb388bb3f20e89f37044",
+      "bytes": 2132
+    },
+    "producer-compile-sources/060-RequestLogPrivacyOptionsFactory.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/RequestLogPrivacyOptionsFactory.cs",
+      "sha256": "de05e0d9c10c294280bde3ec550cd0624f546eb279775b5b8d29700a1cdee95d",
+      "bytes": 1330
+    },
+    "producer-compile-sources/061-CommittedRouteCatalogSnapshot.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/CommittedRouteCatalogSnapshot.cs",
+      "sha256": "7cdb1946eb367437a8b707e6c2aebf736f5e8f232875857ffb05de7d42f4f9ab",
+      "bytes": 8348
+    },
+    "producer-compile-sources/062-CompiledRouteCatalogDeclarations.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/CompiledRouteCatalogDeclarations.cs",
+      "sha256": "de184d4f3386dffa9964948fb9c72de93d36046e34dbe18b912c7733b6b6b7cb",
+      "bytes": 4809
+    },
+    "producer-compile-sources/063-DaprRouteCatalogStateStore.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DaprRouteCatalogStateStore.cs",
+      "sha256": "11adbdfdb15b2be2f3ab24f7ee88e18fbd92f15a80c60a81351c406ac071627d",
+      "bytes": 5797
+    },
+    "producer-compile-sources/064-DevelopmentActorStateOwner.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentActorStateOwner.cs",
+      "sha256": "caca31c567cd3149b5440daa8a8a797dc465e214d41557a3365732723985d923",
+      "bytes": 607
+    },
+    "producer-compile-sources/065-DevelopmentActorStateOwnerBoundary.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentActorStateOwnerBoundary.cs",
+      "sha256": "c122ab9fa0006d8b57fc87b30177b78704547565d596f245cf3d6e9fa1383cc3",
+      "bytes": 5277
+    },
+    "producer-compile-sources/066-DevelopmentActorStateOwnerObservation.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentActorStateOwnerObservation.cs",
+      "sha256": "01690b90b27a01ea2ca854db05081d6649a019f714bd0443cab6f11bff603621",
+      "bytes": 302
+    },
+    "producer-compile-sources/067-DevelopmentAdminRouteCatalog.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentAdminRouteCatalog.cs",
+      "sha256": "b210144a3c19f675a3b8cf3ad4233efe1f5c5e7b98f5064f67a7251ff2a7c1ab",
+      "bytes": 3521
+    },
+    "producer-compile-sources/068-DevelopmentAuxiliaryClientCatalog.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentAuxiliaryClientCatalog.cs",
+      "sha256": "2236e5afaa769f16e90e94d2fa73b0415b533749eb19923c1f6e083e144d8319",
+      "bytes": 5337
+    },
+    "producer-compile-sources/069-DevelopmentAuxiliaryClientCatalogHostingStartup.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentAuxiliaryClientCatalogHostingStartup.cs",
+      "sha256": "806255185242c0278f57443693737439be1ad4a55e8618a4f3004896d123c94a",
+      "bytes": 1666
+    },
+    "producer-compile-sources/070-DevelopmentAuxiliaryClientCatalogRegistration.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentAuxiliaryClientCatalogRegistration.cs",
+      "sha256": "a2fde0b0a620d19e2b2255006e018cd07d6268d2f0c4abf17d89fb0eceeb270d",
+      "bytes": 248
+    },
+    "producer-compile-sources/071-DevelopmentRouteCatalogBootstrap.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogBootstrap.cs",
+      "sha256": "eaa66893263a5fb953f8e83175091aebeb31065742d7a46b5335b400ce442b15",
+      "bytes": 21255
+    },
+    "producer-compile-sources/072-DevelopmentRouteCatalogBootstrapWorker.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogBootstrapWorker.cs",
+      "sha256": "90b2c0dac975ce1d4166b2126ed73b38a600ddf981d0280c15590e2e70557c1b",
+      "bytes": 1767
+    },
+    "producer-compile-sources/073-DevelopmentRouteCatalogCallerExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogCallerExtensions.cs",
+      "sha256": "ed779e2e59242e2d161986cffd16ee28f76291f20f6fe3afede849174d8e5cc9",
+      "bytes": 5450
+    },
+    "producer-compile-sources/074-DevelopmentRouteCatalogInputs.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogInputs.cs",
+      "sha256": "5e85827847578384a7dcca9fe448b97f21cdf4a201263c2d9ec9d0f3eda6be4d",
+      "bytes": 5218
+    },
+    "producer-compile-sources/075-DevelopmentRouteCatalogTrustValidator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs",
+      "sha256": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+      "bytes": 1289
+    },
+    "producer-compile-sources/076-DevelopmentTechnicalHttpTransport.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentTechnicalHttpTransport.cs",
+      "sha256": "79b39533140b1d14d42bab4923d34e51318a316161f46f19b3c6aed43be966ed",
+      "bytes": 13766
+    },
+    "producer-compile-sources/077-FiniteRouteCatalogEndpointDataSource.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/FiniteRouteCatalogEndpointDataSource.cs",
+      "sha256": "5ba56a63752731f61962fc9cfc0a615bd3bbb6fe5fb9c7cdb19f028261860915",
+      "bytes": 2079
+    },
+    "producer-compile-sources/078-FiniteRouteCatalogReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/FiniteRouteCatalogReceiver.cs",
+      "sha256": "5f3f2f4a61540fa1749beac128d1b57f20c33411ed30dc6169ddd199f77de4f5",
+      "bytes": 29890
+    },
+    "producer-compile-sources/079-GeneratedRestRouteCatalogExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/GeneratedRestRouteCatalogExtensions.cs",
+      "sha256": "6eeca8c43c5a9d97bc3aa4fadc7afcd2d05438641643a4eb1b848fa5412e8ad9",
+      "bytes": 2247
+    },
+    "producer-compile-sources/080-GeneratedRestRouteCatalogReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/GeneratedRestRouteCatalogReceiver.cs",
+      "sha256": "da332df8f7f4e91775310a7d20d74c4899a5e2e3a139b28be38c8f3558e2d3ba",
+      "bytes": 15063
+    },
+    "producer-compile-sources/081-GeneratedRouteCatalogFilter.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/GeneratedRouteCatalogFilter.cs",
+      "sha256": "8447ecd84b5be8fa09dd4f509e895786f82a66b49f1aaca2dfa571ee2e7f1d61",
+      "bytes": 8409
+    },
+    "producer-compile-sources/082-IDevelopmentDaprCallbackReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IDevelopmentDaprCallbackReceiver.cs",
+      "sha256": "ee883789e2f9a4d0151dbebe4654e1c9b41c5e671fd8aba48ad0f6dd8e13105b",
+      "bytes": 747
+    },
+    "producer-compile-sources/083-IDevelopmentNativeActorReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IDevelopmentNativeActorReceiver.cs",
+      "sha256": "8ba0b8f233c41556ee8ac826d6b47faf625ebfcddda7bb4ba69e0ad875727bfd",
+      "bytes": 940
+    },
+    "producer-compile-sources/084-IDevelopmentSdkHttpWitness.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IDevelopmentSdkHttpWitness.cs",
+      "sha256": "aadf443b11297a91d5371634011b8f8f225c7b82481ba29436e1c4caa26ded69",
+      "bytes": 542
+    },
+    "producer-compile-sources/085-IRouteCatalogAuthority.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IRouteCatalogAuthority.cs",
+      "sha256": "0ad04a4b22bc814adf6fb0dc026eaf28f51a4b813236c313419d1d7b4fdf0ac0",
+      "bytes": 1701
+    },
+    "producer-compile-sources/086-IRouteCatalogHostObserver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IRouteCatalogHostObserver.cs",
+      "sha256": "e044eebae0dfc82c85a85a9792642d4f1783cdffefdec0376c0f52f285c58cba",
+      "bytes": 593
+    },
+    "producer-compile-sources/087-IRouteCatalogQuiescenceVerifier.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IRouteCatalogQuiescenceVerifier.cs",
+      "sha256": "6e4e078f8d292a60115eb86c6fea762522c8efb4e3f9ef8c9833876f370d808e",
+      "bytes": 610
+    },
+    "producer-compile-sources/088-IRouteCatalogStateStore.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IRouteCatalogStateStore.cs",
+      "sha256": "4b61ebdae77ee90d610241d7284b12283b9d781da2ba0ac9f809c84c24de91b7",
+      "bytes": 822
+    },
+    "producer-compile-sources/089-IRouteCatalogTrustValidator.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/IRouteCatalogTrustValidator.cs",
+      "sha256": "fa68c197d9d01b2ae5f0f821a59adf99c68d7c985ed925f449de2f305db1d01e",
+      "bytes": 508
+    },
+    "producer-compile-sources/090-ObservedRouteCatalogHost.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogHost.cs",
+      "sha256": "1df7952b7a0816c6dfed1bdbaa2bde7db4dacf4650009c44986675d1e5d8588f",
+      "bytes": 15841
+    },
+    "producer-compile-sources/091-ObservedRouteCatalogInventory.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/ObservedRouteCatalogInventory.cs",
+      "sha256": "55bd36e7b1ec015af68fd98907270d957119422bd6916dd8ef2ef681a49caa56",
+      "bytes": 4622
+    },
+    "producer-compile-sources/092-RouteCatalogActivationBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs",
+      "sha256": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+      "bytes": 9254
+    },
+    "producer-compile-sources/093-RouteCatalogActivationState.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationState.cs",
+      "sha256": "b4d9bc89922eef885d6a5d96dcb0153ce960654781e50f5cff3c62aae6fd9676",
+      "bytes": 1602
+    },
+    "producer-compile-sources/094-RouteCatalogAdmissionGate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs",
+      "sha256": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+      "bytes": 1487
+    },
+    "producer-compile-sources/095-RouteCatalogAttemptBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAttemptBinding.cs",
+      "sha256": "d4ab809d15fbe80baea5e3d93be2599db72fd2bd64900f36864be454b0be207b",
+      "bytes": 396
+    },
+    "producer-compile-sources/096-RouteCatalogAuthority.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs",
+      "sha256": "d392bac66f6954b4d84f7e924e65b280929482fca9a7579e7fcc8e51a55d28f6",
+      "bytes": 40912
+    },
+    "producer-compile-sources/097-RouteCatalogBackgroundBoundary.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBackgroundBoundary.cs",
+      "sha256": "7aa33d0fa6fe42e7de2a0a5f9f084bbbe294760caef7b1caf64a298e657ed0cb",
+      "bytes": 1844
+    },
+    "producer-compile-sources/098-RouteCatalogBackgroundWork.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBackgroundWork.cs",
+      "sha256": "53b184551f1c9804bb8ea814562d2ade548d949971ca400922d03559cc4971ce",
+      "bytes": 1671
+    },
+    "producer-compile-sources/099-RouteCatalogBindingInput.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs",
+      "sha256": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+      "bytes": 10402
+    },
+    "producer-compile-sources/100-RouteCatalogBindingMemo.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs",
+      "sha256": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+      "bytes": 2307
+    },
+    "producer-compile-sources/101-RouteCatalogBindingScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs",
+      "sha256": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+      "bytes": 2482
+    },
+    "producer-compile-sources/102-RouteCatalogControlEndpointMetadata.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogControlEndpointMetadata.cs",
+      "sha256": "ee890d789161394a768674d3955a539fadd2034c83131f1531b6225e7ec70417",
+      "bytes": 370
+    },
+    "producer-compile-sources/103-RouteCatalogDispatchFence.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogDispatchFence.cs",
+      "sha256": "8aee94cce3dbb89c6c0ce7ee243dde44501567c1cd9df075b8c154308ead94ef",
+      "bytes": 662
+    },
+    "producer-compile-sources/104-RouteCatalogDispatchLease.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogDispatchLease.cs",
+      "sha256": "d589240819be1768d553dcf97697f40bcd9798b1dec5af04e261691b68215894",
+      "bytes": 5695
+    },
+    "producer-compile-sources/105-RouteCatalogEndpointExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogEndpointExtensions.cs",
+      "sha256": "dc094f60740686a0aa4c8813f91954340be408878e36445c9d82399a342fda9a",
+      "bytes": 5084
+    },
+    "producer-compile-sources/106-RouteCatalogFreshStreamImageDigest.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs",
+      "sha256": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+      "bytes": 4193
+    },
+    "producer-compile-sources/107-RouteCatalogHeldMetadataDispatch.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHeldMetadataDispatch.cs",
+      "sha256": "1ddc4e2f2781fd5942d90647cc6c39efd163ce466ba9f5879600ee760db88a7b",
+      "bytes": 4517
+    },
+    "producer-compile-sources/108-RouteCatalogHostObservation.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostObservation.cs",
+      "sha256": "2f9c520c32157326f99d8e7264dea41bca3321c28d0ba351c415260b9195f3f0",
+      "bytes": 3245
+    },
+    "producer-compile-sources/109-RouteCatalogHostOptions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs",
+      "sha256": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+      "bytes": 3803
+    },
+    "producer-compile-sources/110-RouteCatalogImageBuffers.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs",
+      "sha256": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+      "bytes": 891
+    },
+    "producer-compile-sources/111-RouteCatalogImageDigestMemo.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs",
+      "sha256": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+      "bytes": 2909
+    },
+    "producer-compile-sources/112-RouteCatalogImageDigestScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs",
+      "sha256": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+      "bytes": 2838
+    },
+    "producer-compile-sources/113-RouteCatalogInvocationScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationScope.cs",
+      "sha256": "6f651cde12b51d5d60d41ffdc6c88eb4105b0fc5c811d79f8c8669bc34a73702",
+      "bytes": 2362
+    },
+    "producer-compile-sources/114-RouteCatalogInvocationTransport.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogInvocationTransport.cs",
+      "sha256": "9e85027551f38fe08df41c5ab8d8a7e4e5e783d3b454a4291ba5ffd5051c9003",
+      "bytes": 2505
+    },
+    "producer-compile-sources/115-RouteCatalogLeaseReleaser.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLeaseReleaser.cs",
+      "sha256": "807196bd452d4cee062a46f18fdf09d1fa413419e7b3860195b0a11dfb249524",
+      "bytes": 1221
+    },
+    "producer-compile-sources/116-RouteCatalogLocalAdmissionTurn.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs",
+      "sha256": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+      "bytes": 1662
+    },
+    "producer-compile-sources/117-RouteCatalogMetadataRequest.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogMetadataRequest.cs",
+      "sha256": "75d653c4b5669b93b6e6a0bc291a81ea08dec1215c1308882befeced57a3e775",
+      "bytes": 6717
+    },
+    "producer-compile-sources/118-RouteCatalogNativeReadSession.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogNativeReadSession.cs",
+      "sha256": "f4749291aa177ab50a3c6b6a0b9a19daea2853659f000eaf4cfcafa2374e41df",
+      "bytes": 1441
+    },
+    "producer-compile-sources/119-RouteCatalogPeerBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogPeerBinding.cs",
+      "sha256": "06e92d2b1dc710d2db972e34b1b6ea0e3ccf831ba1cd8ce0400e2d369064dcce",
+      "bytes": 1719
+    },
+    "producer-compile-sources/120-RouteCatalogProjectionPolicy.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogProjectionPolicy.cs",
+      "sha256": "0ef6e1d35d376e6672c86438d4a3aefb11548d9116e4563175dbc0041cefda9e",
+      "bytes": 2481
+    },
+    "producer-compile-sources/121-RouteCatalogReadinessCheck.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogReadinessCheck.cs",
+      "sha256": "356ef0197770fe8f17a1147fde40f532e599ce403911cee3ec81bf3dbc266a67",
+      "bytes": 1307
+    },
+    "producer-compile-sources/122-RouteCatalogRefusalDiagnostics.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRefusalDiagnostics.cs",
+      "sha256": "a4862c0eaebab9ccb667a78bff390e2f526bf87721b8b1219638663b55bcb53d",
+      "bytes": 1808
+    },
+    "producer-compile-sources/123-RouteCatalogRefusalReason.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRefusalReason.cs",
+      "sha256": "b695085fdcb10ad81e81be658cb44b59f4619b842af5152626c1b2e646d0af48",
+      "bytes": 921
+    },
+    "producer-compile-sources/124-RouteCatalogRegistration.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRegistration.cs",
+      "sha256": "e24536970e9266284df9d62e8c93b42f9c1ff914bdd9624414a8bd71cbe67501",
+      "bytes": 199
+    },
+    "producer-compile-sources/125-RouteCatalogRemoteBoundary.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteBoundary.cs",
+      "sha256": "a3e0b457383b5418df445bbf3c2d75806a5f1432d2599af4135652e2b27b890e",
+      "bytes": 678
+    },
+    "producer-compile-sources/126-RouteCatalogRemoteCall.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteCall.cs",
+      "sha256": "4905c4975bda8dfd689888d91f6aa1a50a2b30abc9c656212a2bb18bd05fba4f",
+      "bytes": 5200
+    },
+    "producer-compile-sources/127-RouteCatalogRemoteScope.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogRemoteScope.cs",
+      "sha256": "4dbb291e18b119822486a983670dd9ef9845cb499f8e8d6dfd7f99f07618cfea",
+      "bytes": 3012
+    },
+    "producer-compile-sources/128-RouteCatalogReplicaPolicy.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogReplicaPolicy.cs",
+      "sha256": "050feffaae8db70c2bf242e74bb1c6259e559f8ff7cfa99f1c9f28655ae64548",
+      "bytes": 986
+    },
+    "producer-compile-sources/129-RouteCatalogServiceCollectionExtensions.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs",
+      "sha256": "167749aa7b980712d36b4b234929ec561814cff4993f9edbea357f082a1cf62b",
+      "bytes": 5242
+    },
+    "producer-compile-sources/130-RouteCatalogStateCoordinates.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogStateCoordinates.cs",
+      "sha256": "313e65722b501ba78fa780e85f18f2d36f33d9eb4f9b1513e5e9a5949830403f",
+      "bytes": 1603
+    },
+    "producer-compile-sources/131-RouteCatalogStateHttpClientFilter.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogStateHttpClientFilter.cs",
+      "sha256": "1b65f3676d1e9db2c97df91f9def1431c894ae9a59d86e86c617526c9a14373a",
+      "bytes": 1537
+    },
+    "producer-compile-sources/132-RouteCatalogUnavailableException.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogUnavailableException.cs",
+      "sha256": "3d383b67f407216fef1988f51c227fa427ec3b716fe087f154f0422a0a14aa2e",
+      "bytes": 662
+    },
+    "producer-compile-sources/133-TechnicalHttpActionObservation.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs",
+      "sha256": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+      "bytes": 19259
+    },
+    "producer-compile-sources/134-TechnicalHttpCatalogBinding.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpCatalogBinding.cs",
+      "sha256": "fcbf23e29186a35e835b6f3266508831eefe338ce19d5c6fe7ed89ed83482954",
+      "bytes": 7919
+    },
+    "producer-compile-sources/135-TechnicalHttpObservationPass.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs",
+      "sha256": "17089c99b1370c8fae56f3418d92293e17d6db0cb9cfba75d0b086ff341be70d",
+      "bytes": 5757
+    },
+    "producer-compile-sources/136-TechnicalHttpParsedTemplate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpParsedTemplate.cs",
+      "sha256": "94aa362810493d87945bf4137824d0f5dae996545f2dba2847317d0ca5889415",
+      "bytes": 4600
+    },
+    "producer-compile-sources/137-TechnicalHttpRouteCatalogReceiver.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+      "sha256": "71a9dc98cedde0a3f1651f3ec06b9812416b91e0a62595914a2fb7014ccf8c94",
+      "bytes": 35348
+    },
+    "producer-compile-sources/138-TechnicalHttpRouteTemplate.cs": {
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteTemplate.cs",
+      "sha256": "8e93cd4eca3112b1b8cade1e594e66e98d66ff193e54dcf273f449ebe8672a0e",
+      "bytes": 4260
+    },
+    "producer-compile-sources/139-Hexalith.EventStore.ServiceDefaults.GlobalUsings.g.cs": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/obj/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.GlobalUsings.g.cs",
+      "sha256": "8f86a2cbf00ff3eee0bda2bc0eb5e1fc19c8544d5dc650c53d0132325956b592",
+      "bytes": 231
+    },
+    "producer-compile-sources/140-.NETCoreApp,Version=v10.0.AssemblyAttributes.cs": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs",
+      "sha256": "f79c1ad9a9fc76110b3655f5bfb5ff4e3168e9addceff05b937c0796f0ec34eb",
+      "bytes": 196
+    },
+    "producer-compile-sources/141-Hexalith.EventStore.ServiceDefaults.AssemblyInfo.cs": {
+      "source": "/tmp/story65-invocation-transport-ops-prep-20261107/isolated-sdk/obj/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.AssemblyInfo.cs",
+      "sha256": "ca4501191374ffb179c2543861fd64b2b93ba00cb3b7a1b8390068ee783a074b",
+      "bytes": 1977
+    },
+    "producer-compile-sources/142-RouteCatalogInvocationHandler.private.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/RouteCatalogInvocationHandler.private.cs",
+      "sha256": "26c6a0312ba2cd47b086a7f3fbaf8bf77452bdfb34e8e189f33456a10f5b6918",
+      "bytes": 28358
+    },
+    "producer-compile-sources/143-CaptureCounters.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/CaptureCounters.cs",
+      "sha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+      "bytes": 15217
+    },
+    "producer-compile-sources/144-InvocationTransportBootstrap.cs": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/InvocationTransportBootstrap.cs",
+      "sha256": "40eb2532822ec0b759a69ec159926d4f9a87ad5a059ef23944f585107b3485f3",
+      "bytes": 973
+    },
+    "independent-audit/story65-invocation-transport-parent-scratch-audit-20261107.py": {
+      "source": "/tmp/story65-invocation-transport-parent-scratch-audit-20261107.py",
+      "sha256": "177f78a057f38baa13e082a9f0f380e26320d4cb8c657ee59b56b161a520a3ef",
+      "bytes": 5628
+    },
+    "README.md": {
+      "source": "generated staging scope/limits",
+      "sha256": "62e71c2987be6d7ed061e8463741a32f444bd60a1d41fc942cc259907105d094",
+      "bytes": 1960
+    }
+  },
+  "compressedSyntheticRows": {
+    "scratch-results/active/fast/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/fast/gateway.jsonl",
+      "originalSha256": "d3c0494fec78a7d1326d00a8593dd3ab4564f5a7c1d4142f826577e1107e1532",
+      "originalBytes": 11616,
+      "rows": 38,
+      "gzipSha256": "bb5901c20e11ee88ce005d88daa79541c7c6b5eca9779b55df1edb8f938bc64c",
+      "gzipBytes": 589,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/active/held-release/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-release/gateway.jsonl",
+      "originalSha256": "08f6ecb6b400a0cd5a2c6e7f7d4197dadf848604b47e20714e497e6ebeb837f0",
+      "originalBytes": 928,
+      "rows": 3,
+      "gzipSha256": "b031b94246b61b0c5d86beddaf4eb0f21cfc575b074041532c7189628939495f",
+      "gzipBytes": 250,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/active/held-transport/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/active/held-transport/gateway.jsonl",
+      "originalSha256": "d268098f390788634201ffc09b6d311249f6b17091d6ffeab14495bf66940dca",
+      "originalBytes": 928,
+      "rows": 3,
+      "gzipSha256": "e9a66ecc7130f6ba86f667c978f2bf651e6bb6f8004cfe322323a921965bf8b9",
+      "gzipBytes": 251,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/canary-current/canary/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-current/canary/gateway.jsonl",
+      "originalSha256": "2de62091eeb2b0958ff55bad93c58ea23947ac94f4adc1675e9d51f763ce6111",
+      "originalBytes": 921,
+      "rows": 3,
+      "gzipSha256": "cd8f59d2698cc39b8617e05a43f507f612d7d02497ab702ec13db1fb85b9a804",
+      "gzipBytes": 244,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/canary-suppressed/canary/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/canary-suppressed/canary/gateway.jsonl",
+      "originalSha256": "d4ac18ef96869b50be52104ae72763a5d709bb628beda976469849eca37470a1",
+      "originalBytes": 922,
+      "rows": 3,
+      "gzipSha256": "91e2e8a061f4251a2ca6f7797f7f0f4d6349638245a6e3069996e46fd35ed836",
+      "gzipBytes": 247,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/capped/fast/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/fast/gateway.jsonl",
+      "originalSha256": "a9cbe818da2102cd5ac6a455264bee37031270d1cfc54563be36262d0c42058a",
+      "originalBytes": 8388426,
+      "rows": 27875,
+      "gzipSha256": "dee9a9e8bf1b8ffde11a5dc439b35aae9fb370a57eaf6919e81c02e3dd2de51f",
+      "gzipBytes": 116362,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/capped/held-release/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-release/gateway.jsonl",
+      "originalSha256": "47748ea24c0b7251368b9279049d04dcec4234cb5793521a4f886ce41e4ba328",
+      "originalBytes": 8388597,
+      "rows": 27863,
+      "gzipSha256": "56be1fd3bbc0d87c6a1648c0d77320d7007c00d14dedfae87d0bcdc02b0de73b",
+      "gzipBytes": 118506,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/capped/held-transport/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/capped/held-transport/gateway.jsonl",
+      "originalSha256": "92f32539cccd6ec2c301dc287ec461ba696a46162a0ea9940a554c2847f77957",
+      "originalBytes": 8388469,
+      "rows": 27874,
+      "gzipSha256": "cc689bccf54c4bdd2a41c87cad003396c03dc4bd43ea62b4362d3f2ef066d0ef",
+      "gzipBytes": 115680,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/failing-sink/fast/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/fast/gateway.jsonl",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "originalBytes": 0,
+      "rows": 0,
+      "gzipSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "gzipBytes": 20,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/failing-sink/held-release/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-release/gateway.jsonl",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "originalBytes": 0,
+      "rows": 0,
+      "gzipSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "gzipBytes": 20,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    },
+    "scratch-results/failing-sink/held-transport/gateway.jsonl.gz": {
+      "source": "/tmp/story65-invocation-transport-prep-20261107/results-initial/failing-sink/held-transport/gateway.jsonl",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "originalBytes": 0,
+      "rows": 0,
+      "gzipSha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "gzipBytes": 20,
+      "strictThreeStageSchemaValidated": true,
+      "allCountAllocationZero": true
+    }
+  },
+  "strictRowTotal": 83662,
+  "native33Executed": false,
+  "applicationBuilds": 0,
+  "hostsStarted": 0,
+  "pending": [
+    "native33",
+    "application/live diagnostic",
+    "ordinary restoration",
+    "MULTIPLE and browser acceptance"
+  ],
+  "noBinariesRawControlOrRuntimePayloadValues": true
+}

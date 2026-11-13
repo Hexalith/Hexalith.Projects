@@ -1,0 +1,55 @@
+{
+  "provider": "Microsoft-Windows-DotNETRuntime",
+  "keywords": "0x1",
+  "level": 5,
+  "requestStackwalk": true,
+  "requestRundown": true,
+  "runtimeManifestGCAllocationTick": {
+    "eventId": 10,
+    "versions": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "keywordName": "GCKeyword",
+    "keywordMask": "0x1",
+    "level": "win:Verbose"
+  },
+  "privacyCaveat": {
+    "eventId": 187,
+    "symbol": "RuntimeInformationStart",
+    "templateFieldsInclude": [
+      "CommandLine",
+      "RuntimeDllPath"
+    ],
+    "rawMustRemainPrivateAndBeDeleted": true
+  },
+  "primarySources": [
+    {
+      "file": "runtime-manifest.xml",
+      "revision": "60629d14374c56f1cb51819049ad1fa529307f8d",
+      "url": "https://github.com/dotnet/runtime/blob/60629d14374c56f1cb51819049ad1fa529307f8d/src/coreclr/vm/ClrEtwAll.man",
+      "sha256": "b98aa39eec01fe3340dca3da245bda7fc546ac4926eb6b0d1d6eeb8e8bc3168e"
+    },
+    {
+      "file": "client-session.cs",
+      "revision": "8c08c89a0643d31db91e119b1adb463be3e0ffe5",
+      "url": "https://github.com/dotnet/diagnostics/blob/8c08c89a0643d31db91e119b1adb463be3e0ffe5/src/Microsoft.Diagnostics.NETCore.Client/DiagnosticsClient/EventPipeSessionConfiguration.cs",
+      "sha256": "4e697a80a7fe8f803187753889671cf8348e1dcfd7162cc6587e859b003beede"
+    },
+    {
+      "file": "trace-log.cs",
+      "revision": "4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee",
+      "url": "https://github.com/microsoft/perfview/blob/4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee/src/TraceEvent/TraceLog.cs",
+      "sha256": "fa3c00a35d80001cfe845d2f45f8df8c80eba205f7bb45108dae2a6f5abf18d3"
+    },
+    {
+      "file": "runtime-parser.cs",
+      "revision": "4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee",
+      "url": "https://github.com/microsoft/perfview/blob/4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee/src/TraceEvent/Parsers/ClrTraceEventParser.cs",
+      "sha256": "d2519b27aff759d5e8ff9168ec1eef6faef720ec00ec18c5a14563d39b4a7fe2"
+    }
+  ]
+}

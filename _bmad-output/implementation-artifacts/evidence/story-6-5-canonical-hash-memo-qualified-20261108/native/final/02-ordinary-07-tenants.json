@@ -1,0 +1,30 @@
+{
+  "label": "02-ordinary-07-tenants",
+  "argv": [
+    "dotnet",
+    "build",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+    "-c",
+    "Debug",
+    "-t:Rebuild",
+    "-m:1",
+    "--no-restore",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:BuildProjectReferences=false"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "startedUtc": "2026-11-08T03:44:11.959373+00:00",
+  "buildCpuOverride": "2",
+  "pid": 531164,
+  "processGroup": 531164,
+  "startTicks": "14705599",
+  "timedOut": false,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "pidAbsent": true,
+  "finishedUtc": "2026-11-08T03:44:15.372403+00:00",
+  "logSha256": "29e7621078afdc249a339c75261c45eae5da09c0dafdb3a87178cfdbb54061fe"
+}

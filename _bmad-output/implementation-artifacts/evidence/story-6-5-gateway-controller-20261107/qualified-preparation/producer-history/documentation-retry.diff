@@ -1,0 +1,99 @@
+--- 3e3d-failed/gateway-scratch.props
++++ documentation-retry-prep/gateway-scratch.props
+@@ -13,7 +13,6 @@
+     <CoreCompileInputsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.csproj.CoreCompileInputs.cache</CoreCompileInputsCacheFile>
+     <ResolveAssemblyReferencesStateFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.csproj.AssemblyReference.cache</ResolveAssemblyReferencesStateFile>
+     <ProjectAssetsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.assets.cache</ProjectAssetsCacheFile>
+-    <DocumentationFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.xml</DocumentationFile>
+     <GeneratedAssemblyInfoFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+     <GeneratedGlobalUsingsFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.GlobalUsings.g.cs</GeneratedGlobalUsingsFile>
+     <GeneratedMSBuildEditorConfigFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.GeneratedMSBuildEditorConfig.editorconfig</GeneratedMSBuildEditorConfigFile>
+--- 3e3d-failed/audit_scratch_paths.py
++++ documentation-retry-prep/audit_scratch_paths.py
+@@ -2,7 +2,7 @@
+ from pathlib import Path
+ import argparse,datetime,hashlib,json,os,re,subprocess
+ P=Path('/tmp/story65-gateway-controller-ops-prep-20261107');R=Path('/home/administrator/projects/hexalith/projects');S=Path('/tmp/story65-gateway-controller-prep-20261107');G=R/'references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway';PRIVATE=P/'isolated-gateway';OLD=R/'_bmad-output/implementation-artifacts/evidence/story-6-5-delegated-client-20261107'
+-PROPERTIES=['Story65GatewayLateGuardImported','Story65GatewayOriginalAfterSdkTargets','AfterMicrosoftNETSdkTargets','_HXWFinalTargetsImported','Configuration','Optimize','DefineConstants','DebugType','UseHexalithProjectReferences','UseNuGetDeps','EnablePrivateCatalogInvocationProof','EnablePrivateOwnerSourceReadProof','BuildProjectReferences','BaseOutputPath','OutputPath','OutDir','TargetDir','TargetPath','TargetRefPath','BaseIntermediateOutputPath','IntermediateOutputPath','MSBuildProjectExtensionsPath','ProjectAssetsFile','ProjectAssetsCacheFile','DocumentationFile','GeneratedAssemblyInfoFile','GeneratedGlobalUsingsFile','GeneratedMSBuildEditorConfigFile','CompilerGeneratedFilesOutputPath','EmitCompilerGeneratedFiles','ProjectDepsFilePath','ProjectRuntimeConfigFilePath','PublishDir','SourceLink','CoreCompileInputsCacheFile','ResolveAssemblyReferencesStateFile','CleanFile','GeneratedDocumentationFile','FileListAbsolute','AppendTargetFrameworkToOutputPath','AppendRuntimeIdentifierToOutputPath']
++PROPERTIES=['Story65GatewayLateGuardImported','Story65GatewayOriginalAfterSdkTargets','AfterMicrosoftNETSdkTargets','_HXWFinalTargetsImported','Configuration','Optimize','DefineConstants','DebugType','UseHexalithProjectReferences','UseNuGetDeps','EnablePrivateCatalogInvocationProof','EnablePrivateOwnerSourceReadProof','BuildProjectReferences','GenerateDocumentationFile','NoWarn','TreatWarningsAsErrors','BaseOutputPath','OutputPath','OutDir','TargetDir','TargetPath','TargetRefPath','BaseIntermediateOutputPath','IntermediateOutputPath','MSBuildProjectExtensionsPath','ProjectAssetsFile','ProjectAssetsCacheFile','DocumentationFile','GeneratedAssemblyInfoFile','GeneratedGlobalUsingsFile','GeneratedMSBuildEditorConfigFile','CompilerGeneratedFilesOutputPath','EmitCompilerGeneratedFiles','ProjectDepsFilePath','ProjectRuntimeConfigFilePath','PublishDir','SourceLink','CoreCompileInputsCacheFile','ResolveAssemblyReferencesStateFile','CleanFile','GeneratedDocumentationFile','FileListAbsolute','AppendTargetFrameworkToOutputPath','AppendRuntimeIdentifierToOutputPath']
+ WRITABLE=['OutputPath','OutDir','TargetDir','TargetPath','TargetRefPath','IntermediateOutputPath','ProjectAssetsCacheFile','DocumentationFile','GeneratedAssemblyInfoFile','GeneratedGlobalUsingsFile','GeneratedMSBuildEditorConfigFile','CompilerGeneratedFilesOutputPath','ProjectDepsFilePath','ProjectRuntimeConfigFilePath','PublishDir','SourceLink','CoreCompileInputsCacheFile','ResolveAssemblyReferencesStateFile','GeneratedDocumentationFile','FileListAbsolute']
+ def sha(f):
+  with Path(f).open('rb')as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+@@ -44,7 +44,7 @@
+  if not args.evaluate_readonly:print(json.dumps({'preparationOnly':True,'noEvaluationOrBuildExecuted':True,'plannedProject':str(G/'Hexalith.EventStore.Gateway.csproj'),'onlyReadOnlyEvaluationFlag':'--evaluate-readonly'}));return
+  partial_before=None
+  if PRIVATE.exists():
+-  proof=json.loads((P/'failed-attempt-c090/preservation-receipt.json').read_text());partial_before={str(f.relative_to(PRIVATE)):sha(f)for f in PRIVATE.rglob('*')if f.is_file()};assert partial_before==proof['partialGatewayFileSha256']
++  proof=json.loads((P/'latest-failed-output-binding.json').read_text());partial_before={str(f.relative_to(PRIVATE)):sha(f)for f in PRIVATE.rglob('*')if f.is_file()};assert partial_before==proof['partialGatewayFileSha256']
+   assert all(not f.is_symlink()for f in PRIVATE.rglob('*'))
+  before=snapshot();save('scratch-readonly-before.json',before)
+  mapping=json.loads((P/'mapping-pins.json').read_text());assert sha(mapping['mappingLog'])==mapping['mappingLogSha256']and all(sha(n)==h for n,h in mapping['files'].items())
+@@ -74,8 +74,8 @@
+  after=snapshot();assert after==before
+  if partial_before is not None:assert {str(f.relative_to(PRIVATE)):sha(f)for f in PRIVATE.rglob('*')if f.is_file()}==partial_before
+  else:assert not PRIVATE.exists()
+- assert props['EmitCompilerGeneratedFiles']=='false'and props['CompilerGeneratedFilesOutputPath']==''
++ assert props['EmitCompilerGeneratedFiles']=='false'and props['CompilerGeneratedFilesOutputPath']==''and props['GenerateDocumentationFile']=='false'and props['DocumentationFile']==''
+  save('scratch-readonly-after.json',after)
+- save('scratch-writable-path-audit.json',{'preparationOnly':True,'readOnlyEvaluationPassed':True,'noBuildRestoreOrCleanExecuted':True,'allSevenEmittedMappingEnvironmentValuesRetained':mapping['environment'],'gatewayOnlyEffectiveAfterSdkImport':props['AfterMicrosoftNETSdkTargets'],'originalAfterSdkImportRetainedFirst':True,'lateGuardImportedLast':True,'twoProofFlagsTrue':True,'buildOnlyProcessorCount2':True,'runtimeOverrideWillBeAbsent':True,'isolatedScratchRoot':str(PRIVATE),'allEvaluatedWritablePathsWithinIsolatedRoot':checks,'assetsAndExtensionsOriginalReadOnly':True,'nonGatewayControlOutputNotRedirected':True,'originalLinkedControllerCompileExactlyOnceBeforeDeferredSubstitution':True,'sourceSubstitutionOccursOnlyBeforeCoreCompile':True,'itemGroupOnlySubstitutionWasExecutedWithoutCoreCompile':True,'postSubstitutionCompileItems':len(sub),'allOtherCompileInputsBytePathsRetained':True,'allSource52App147GatewayModuleBinObjGatewayAndDomainCensusesUnchanged':True,'gatewayRows':len(before['gatewayCensus']),'domainRows':len(before['domainCensus']),'compilerItemsBeforeDeferredSubstitution':len(full),'evaluationDoesNotProveLaterGeneratedInputsOrFutureBuildWrites':True,'basePathsUnmodifiedReadOnlyAnchors':{'BaseOutputPath':props['BaseOutputPath'],'BaseIntermediateOutputPath':props['BaseIntermediateOutputPath']},'futureBuildRequiresRootReviewOfAllPathsAndTargets':True,'emitCompilerGeneratedFiles':props['EmitCompilerGeneratedFiles'],'compilerGeneratedFilesOutputPath':props['CompilerGeneratedFilesOutputPath'],'knownFailedPartialTreeUnchangedByEvaluation':partial_before is not None})
++ save('scratch-writable-path-audit.json',{'preparationOnly':True,'readOnlyEvaluationPassed':True,'noBuildRestoreOrCleanExecuted':True,'allSevenEmittedMappingEnvironmentValuesRetained':mapping['environment'],'gatewayOnlyEffectiveAfterSdkImport':props['AfterMicrosoftNETSdkTargets'],'originalAfterSdkImportRetainedFirst':True,'lateGuardImportedLast':True,'twoProofFlagsTrue':True,'buildOnlyProcessorCount2':True,'runtimeOverrideWillBeAbsent':True,'isolatedScratchRoot':str(PRIVATE),'allEvaluatedWritablePathsWithinIsolatedRoot':checks,'assetsAndExtensionsOriginalReadOnly':True,'nonGatewayControlOutputNotRedirected':True,'originalLinkedControllerCompileExactlyOnceBeforeDeferredSubstitution':True,'sourceSubstitutionOccursOnlyBeforeCoreCompile':True,'itemGroupOnlySubstitutionWasExecutedWithoutCoreCompile':True,'postSubstitutionCompileItems':len(sub),'allOtherCompileInputsBytePathsRetained':True,'allSource52App147GatewayModuleBinObjGatewayAndDomainCensusesUnchanged':True,'gatewayRows':len(before['gatewayCensus']),'domainRows':len(before['domainCensus']),'compilerItemsBeforeDeferredSubstitution':len(full),'evaluationDoesNotProveLaterGeneratedInputsOrFutureBuildWrites':True,'basePathsUnmodifiedReadOnlyAnchors':{'BaseOutputPath':props['BaseOutputPath'],'BaseIntermediateOutputPath':props['BaseIntermediateOutputPath']},'futureBuildRequiresRootReviewOfAllPathsAndTargets':True,'emitCompilerGeneratedFiles':props['EmitCompilerGeneratedFiles'],'compilerGeneratedFilesOutputPath':props['CompilerGeneratedFilesOutputPath'],'knownFailedPartialTreeUnchangedByEvaluation':partial_before is not None,'generateDocumentationFile':props['GenerateDocumentationFile'],'documentationFile':props['DocumentationFile'],'NoWarn':props['NoWarn'],'TreatWarningsAsErrors':props['TreatWarningsAsErrors']})
+  print(json.dumps({'readOnlyEvaluationPassed':True,'gatewayCensusRows':len(before['gatewayCensus']),'domainCensusRows':len(before['domainCensus']),'compilerItems':len(full),'writablePropertiesChecked':len(checks),'noAppBuildOrHostExecuted':True}))
+ if __name__=='__main__':main()
+--- 3e3d-failed/scratch_producer.py
++++ documentation-retry-prep/scratch_producer.py
+@@ -20,15 +20,16 @@
+  try:
+   # Only byte copies of the pinned ordinary baseline; no assembly loading or ordinary rebuild.
+   if private.exists():
+-   preservation=json.loads((P/'failed-attempt-c090/preservation-receipt.json').read_text())
+-   assert sha(P/'scratch-producer-receipt.json')==preservation['producerReceiptSha256']and sha(P/'scratch-producer-build.log')==preservation['buildLogSha256']
+-   failed=json.loads((P/'scratch-producer-receipt.json').read_text());assert failed['completed']is False and failed['exitCode']==1 and failed['rootModulesUnchanged']is True
++   preservation=json.loads((P/'latest-failed-output-binding.json').read_text())
++   assert sha(preservation['preservationReceipt'])==preservation['preservationReceiptSha256']
++   assert sha(preservation['receiptPath'])==preservation['receiptSha256']and sha(preservation['logPath'])==preservation['logSha256']
++   failed=json.loads(Path(preservation['receiptPath']).read_text());assert failed['completed']is False and failed['exitCode']==1 and failed['rootModulesUnchanged']is True
+    actual={}
+    for file in private.rglob('*'):
+     assert not file.is_symlink()
+     if file.is_file():actual[str(file.relative_to(private))]=sha(file)
+    assert actual==preservation['partialGatewayFileSha256']
+-   archived=work/'archived-c090-partial';private.rename(archived);receipt['archivedExactFailedPartial']={'path':str(archived),'filesSha256':actual,'noDeletionOrClean':True}
++   archived=work/('archived-failed-'+preservation['failedAttemptGeneration'][:12]);private.rename(archived);receipt['archivedExactFailedPartial']={'path':str(archived),'filesSha256':actual,'noDeletionOrClean':True}
+   if not oracle.exists():oracle.mkdir(mode=0o700)
+   assert not oracle.is_symlink()and set(f.name for f in oracle.iterdir())in[set(),{'Hexalith.EventStore.Gateway.dll','Hexalith.EventStore.Gateway.pdb'}]
+   for src,dst,digest in [(interface['oracle']['sourceDll'],interface['oracle']['isolatedDll'],interface['oracle']['dllSha256']),(interface['oracle']['sourcePdb'],interface['oracle']['isolatedPdb'],interface['oracle']['pdbSha256'])]:
+--- 3e3d-failed/scratch-writable-path-audit.json
++++ documentation-retry-prep/scratch-writable-path-audit.json
+@@ -52,11 +52,6 @@
+     {
+       "property": "ProjectAssetsCacheFile",
+       "path": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.assets.cache",
+-      "insideIsolatedRoot": true
+-    },
+-    {
+-      "property": "DocumentationFile",
+-      "path": "/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/Hexalith.EventStore.Gateway.xml",
+       "insideIsolatedRoot": true
+     },
+     {
+@@ -119,5 +114,9 @@
+   "futureBuildRequiresRootReviewOfAllPathsAndTargets": true,
+   "emitCompilerGeneratedFiles": "false",
+   "compilerGeneratedFilesOutputPath": "",
+-  "knownFailedPartialTreeUnchangedByEvaluation": true
++  "knownFailedPartialTreeUnchangedByEvaluation": true,
++  "generateDocumentationFile": "false",
++  "documentationFile": "",
++  "NoWarn": ";IDE0028",
++  "TreatWarningsAsErrors": "true"
+ }
+--- 3e3d-failed/PLAN.md
++++ documentation-retry-prep/PLAN.md
+@@ -11,3 +11,7 @@
+ Producer attempt1 (c090 release) failed CS2021 before emitting candidate assembly. All ordinarySource52/app147/Gateway34/Domain98/Gatewaybinobj stayed unchanged. Complete executed hooks/source/log/receipt/oracle and12-file partial Temp tree are byte-preserved in failed-attempt-c090; active originals remain untouched until a separately authorized retry archives the exact known partial tree. No ALC/native/host ran. The unconditional CompilerGeneratedFilesOutputPath override was removed: original and corrected private evaluation both show EmitCompilerGeneratedFiles=false and empty generated-output path. SDK would otherwise skip its MakeDir but Csc received the late nonempty directory option. Missing-vs-trailing parser rejection was not separately compiler-reproduced. No directory creation or emission enablement is used as a workaround.
+ 
+ Retry wrapper uses a fresh producer-attempts/attempt-* receipt/log/after-snapshot directory, never overwrites the top-level failed log/receipt, and archives only the exact recorded12-file failed partial tree (no symlinks/hash drift) before a new Build. Existing oracle is reused only with the exact two ordinary pinned DLL/PDB bytes. If partial content differs or an unknown generation exists, it refuses rather than cleaning. No Clean/Rebuild or target signals. Current candidate build release is false pending root review and new explicit authorization.
++
++Producer attempt2 (3e3d release) failed with105 unique documentation errors (CS1591x102/CS1573x2/CS1734x1; summary duplicates preserved). SDK BeforeCommon clears DocumentationFile for GenerateDocumentationFile=false, but the late unconditional override supplied Csc DocFileItem anyway. Only that XMLline was removed; no105 docs,NoWarn or TreatWarningsAsErrors changes. Currentordinary/correctedprivate docsfalse/path empty andgeneratedfalse/path empty match. Remaining optionalpath targets were audited against unchanged feature booleans; cache destinations are relocationonly. All2nd-attempt3e3d files/oracle/current13filepartial/actualfreshwork log+receipt are preserved in failed-attempt-3e3d, while all activeoriginals remain untouched before newauthorization.
++
++The retry wrapper now reads latest-failed-output-binding.json, verifies the actual latest failedreceipt/log/preservation hashes and13-filepartial tree, then archives that exact known generation into a freshattempt directory only when rootexecutes. It no longer assumes c090. Unknown or changed output refuses; every prior receipt/log remainsimmutable. No build/repro/ALC/native/hosts executed during this preparation.

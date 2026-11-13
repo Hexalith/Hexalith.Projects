@@ -1,0 +1,94 @@
+{
+  "diagnosticOnly": true,
+  "closedRowKeys": [
+    "allocatedBytes",
+    "allocationMode",
+    "authenticationAccepted",
+    "authenticationOtherExcluded",
+    "captureOrdinal",
+    "elapsedTicks",
+    "frequency",
+    "nonAuthenticationDiscarded",
+    "nullValue",
+    "role",
+    "runOrdinal",
+    "sensitiveSegmentExcluded",
+    "stage",
+    "yielded"
+  ],
+  "closedReceiptKeys": [
+    "activeAtDrainEnd",
+    "admitted",
+    "capRowsDropped",
+    "closedRowsDropped",
+    "countersFinal",
+    "diagnosticOnly",
+    "disposedOrUnwound",
+    "featureAcceptance",
+    "frequency",
+    "incompleteHardDrain",
+    "ioFailures",
+    "lateDisposedOrDropCountersMayIncrease",
+    "maximumBytes",
+    "maximumRows",
+    "queueCapacity",
+    "queuedAtDrainEnd",
+    "queuedRowsDropped",
+    "role",
+    "runOrdinal",
+    "windowEndTicks",
+    "windowStartTicks",
+    "writtenBytes",
+    "writtenRows"
+  ],
+  "allowedStages": [
+    "AclFile",
+    "ActorBoundary",
+    "AuthenticationSerialization",
+    "ComponentFile",
+    "ComponentPolicy",
+    "ResultTail",
+    "SettingsEnumerationSortDictionary",
+    "Whole"
+  ],
+  "strictTypesAndPartitionsPassed": true,
+  "all423CapturesAnd3360RowsValidated": true,
+  "all419SettingsAllocationSegmentsSameThread": true,
+  "files": {
+    "folders.jsonl": {
+      "bytes": 282396,
+      "sha256": "7e9bfbd5b4f2e43f9a2e57b6dbaa0768336acdb0a9e77d7a495a8ddd1b1de044",
+      "approvedClosedMetadataCopied": true
+    },
+    "folders.closed.json": {
+      "bytes": 528,
+      "sha256": "da223f3182bc36e9ed5d329feb6dc1f4fb1119d57aa31501c504aa1055f3146c",
+      "approvedClosedMetadataCopied": true
+    },
+    "gateway.jsonl": {
+      "bytes": 747467,
+      "sha256": "26c7d579ca63efc02ef4dde913a5778d7040ac98c7d7e5c138e6d5b34d90e620",
+      "approvedClosedMetadataCopied": true
+    },
+    "gateway.closed.json": {
+      "bytes": 529,
+      "sha256": "c67b7a4f95cff5a958b8743069b78ad908bdacc91ae22ada7ad190902d60c63a",
+      "approvedClosedMetadataCopied": true
+    },
+    "projects.jsonl": {
+      "bytes": 70734,
+      "sha256": "3ba9defec07bdc0da6ab6fa28b073af2b60d43ef3c576b87457316a84e102bc2",
+      "approvedClosedMetadataCopied": true
+    },
+    "projects.closed.json": {
+      "bytes": 526,
+      "sha256": "f9af3dd569566a2ad434fa1ff08c025c3003ff25471944d974ce3381fb93bc76",
+      "approvedClosedMetadataCopied": true
+    },
+    "window.control": {
+      "bytes": 61,
+      "sha256": "13790b007ce73defbb0315f8fecdbaf1b960fecc26153cb15f14539084114cad",
+      "copied": false
+    }
+  }
+}

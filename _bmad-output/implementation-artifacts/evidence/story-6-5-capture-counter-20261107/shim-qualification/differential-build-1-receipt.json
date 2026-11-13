@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "/tmp/story65-capture-counter-prep-20261107/differential/Differential.csproj",
+    "-c",
+    "Debug",
+    "--nologo",
+    "-p:RestoreConfigFile=/tmp/story65-capture-counter-prep-20261107/differential/NuGet.Config",
+    "-nodeReuse:false"
+  ],
+  "cwd": "/tmp/story65-capture-counter-prep-20261107/differential",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "removedMappingAndCpuKeys": [],
+  "startedUtc": "2026-11-07T09:18:09.136407+00:00",
+  "finishedUtc": "2026-11-07T09:18:11.564423+00:00",
+  "exitCode": 0,
+  "logSha256": "8d2429d2ca1617a1e9d606bee017580ee3e3b92f9be6e1a5cc151bbee03eae5e",
+  "helperSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "driverSha256": "85a0de4751eb4e8b52e6ac3fc6b9c700e735a3edb42d98588f41da9ca4c68d47",
+  "baselineServiceDefaultsSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+  "scratchOnly": true
+}

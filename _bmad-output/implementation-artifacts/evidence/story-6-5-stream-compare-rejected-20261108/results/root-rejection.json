@@ -1,0 +1,50 @@
+{
+  "decision": "reject",
+  "productionEdits": false,
+  "featureAcceptance": false,
+  "reason": "No material consistent whole-operation warm benefit against actual compiled SDK or namespace-only RWL control; no further qualification or rerun justified.",
+  "behavioralParityChecks": 1244,
+  "rawBatches": 324,
+  "candidateRatios": [
+    {
+      "role": "folders",
+      "readers": 1,
+      "candidateVsActualMedianBatchWallRatio": 1.0159601109921637,
+      "candidateVsControlMedianBatchWallRatio": 1.0166544912547564
+    },
+    {
+      "role": "folders",
+      "readers": 2,
+      "candidateVsActualMedianBatchWallRatio": 1.0496806367876261,
+      "candidateVsControlMedianBatchWallRatio": 1.075576089372167
+    },
+    {
+      "role": "folders",
+      "readers": 4,
+      "candidateVsActualMedianBatchWallRatio": 1.0131714408944423,
+      "candidateVsControlMedianBatchWallRatio": 0.9997630950215151
+    },
+    {
+      "role": "projects",
+      "readers": 1,
+      "candidateVsActualMedianBatchWallRatio": 1.0067102737618365,
+      "candidateVsControlMedianBatchWallRatio": 1.0241014729938098
+    },
+    {
+      "role": "projects",
+      "readers": 2,
+      "candidateVsActualMedianBatchWallRatio": 0.9908695424256079,
+      "candidateVsControlMedianBatchWallRatio": 1.018382236632092
+    },
+    {
+      "role": "projects",
+      "readers": 4,
+      "candidateVsActualMedianBatchWallRatio": 1.0005704368559503,
+      "candidateVsControlMedianBatchWallRatio": 1.0123404577998059
+    }
+  ],
+  "all747SourceAndCompiledInputsStillMatch": true,
+  "candidateHasNoOrdinaryDeadlineOrFeatureBenefitClaim": true,
+  "manifestSha256": "bb25da6a857941f806125b71c60d0fdbb4877e31053a4e02dac369c51a9ae628",
+  "runtimeReceiptSha256": "170c6e62104cbe017af4becf32a2c0ef0ddc429c1751a1e4aba20c48081f84e5"
+}

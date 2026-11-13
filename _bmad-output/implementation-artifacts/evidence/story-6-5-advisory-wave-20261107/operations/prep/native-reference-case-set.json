@@ -1,0 +1,705 @@
+{
+  "referenceXml": "/tmp/story65-parsed-template-native-20261107/server-tests.xml",
+  "referenceXmlSha256": "5968938b5da4c1d137e9197eebbd46176bef34a6726972885cb7ada51d16360e",
+  "class": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+  "caseIdentity": "type/method/name (including theory arguments); execution GUID is not a stable case identity",
+  "caseCount": 139,
+  "canonicalCaseSet": [
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryHeaderDoesNotRequireUnconsumedSetupOrContextEvidence",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryHeaderDoesNotRequireUnconsumedSetupOrContextEvidence"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject(conversation: False, revoke: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject(conversation: False, revoke: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject(conversation: True, revoke: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryPolicyBindsLiteralReadActionAndRechecksTheExactProject(conversation: True, revoke: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "AuthorizedConversationHintReservesOneOfThe200DetailSlots",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AuthorizedConversationHintReservesOneOfThe200DetailSlots"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationAndIdentityMismatchCannotBecomeSuggestions"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 1)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 2)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership(linked: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership(linked: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationRevocationAndCandidateFolderRevocationDoNotDisclose"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DeniedAndUnknownFoldersNeverScore",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DeniedAndUnknownFoldersNeverScore",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DeniedMatchingFolderInputIsNoMatchWhileProtectedConversationIsSafeDenial",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedMatchingFolderInputIsNoMatchWhileProtectedConversationIsSafeDenial"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FinalConversationObservationReplacesInitialScoringEvidence",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalConversationObservationReplacesInitialScoringEvidence"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls(pending: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls(pending: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessSuggestionStillRequiresFinalProjectAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessSuggestionStillRequiresFinalProjectAuthority(pending: False, revoke: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessSuggestionStillRequiresFinalProjectAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessSuggestionStillRequiresFinalProjectAuthority(pending: False, revoke: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessSuggestionStillRequiresFinalProjectAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessSuggestionStillRequiresFinalProjectAuthority(pending: True, revoke: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "FolderlessSuggestionStillRequiresFinalProjectAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessSuggestionStillRequiresFinalProjectAuthority(pending: True, revoke: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InitialConversationFailureSeparatesDenialFromUnavailable",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"ActorException\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InitialConversationFailureSeparatesDenialFromUnavailable",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"safe-denial\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"conversation\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"denied\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"empty\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"file\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidAttachmentPayloadsNeverReadMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"Attachments\\\\\\\":[]}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidAttachmentPayloadsNeverReadMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":[],\\\\\\\"includeArchived\\\\\\\":\\\\\\\"true\\\\\\\"}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidAttachmentPayloadsNeverReadMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":[null]}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidAttachmentPayloadsNeverReadMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":null}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"ConversationId\\\\\\\":\\\\\\\"conversation\\\\\\\"}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\" conversation \\\\\\\"}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"\\\\\\\"}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"conversation\\\\\\\",\\\\\\\"conversationId\\\\\\\":\\\"\u00b7\u00b7\u00b7)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"conversation\\\\\\\",\\\\\\\"extra\\\\\\\":1}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":null}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"aggregate\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"blank\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"duplicate\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"globalAdmin\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"paging\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"payload-size\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"referenceKind\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"unknown\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"untrimmed\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LagCanSuggestWhileUnusableProjectionStatesCannot",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Rebuilding, candidate: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LagCanSuggestWhileUnusableProjectionStatesCannot",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Stale, candidate: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LagCanSuggestWhileUnusableProjectionStatesCannot",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Unavailable, candidate: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LaggingSuggestionWithMissingSetupNeverBecomesAContextCertificate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LaggingSuggestionWithMissingSetupNeverBecomesAContextCertificate(conversation: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LaggingSuggestionWithMissingSetupNeverBecomesAContextCertificate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LaggingSuggestionWithMissingSetupNeverBecomesAContextCertificate(conversation: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"blank-project\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"incomplete\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"invalid-project\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"label\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"lifecycle\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedOwnerMetadataIsIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"untrimmed-project\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"blank-name\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"folder-id\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"lifecycle\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"missing-name\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"oversized-name\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"unsafe-name\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"untrimmed-name\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: -1, missingObservation: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: 0, missingObservation: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: 1, missingObservation: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"etag\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"projects\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"tenant\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"unavailable\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"[]\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":null,\\\\\\\"incomplete\\\\\\\":false}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":{\\\\\\\"conversationId\\\\\\\":\\\\\\\"wrong\\\\\\\",\\\\\\\"projectId\\\\\\\":\\\"\u00b7\u00b7\u00b7)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{}\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-project\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-tenant\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-default\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-undefined\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-project\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-tenant\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"sequence\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads(wrongType: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads(wrongType: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MissingSupportedReadAdmissionNeverCallsOwners",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"audience\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MissingSupportedReadAdmissionNeverCallsOwners",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"role\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MissingSupportedReadAdmissionNeverCallsOwners",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"scope\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MissingViewAndUnavailableOwnerReturnIncomplete",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingViewAndUnavailableOwnerReturnIncomplete"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "OldButValidIndexReceiptRemainsUsable",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.OldButValidIndexReceiptRemainsUsable"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "RawAttachmentLimitIncludes32",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 32)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "RawAttachmentLimitIncludes32",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 33)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "RawOversizeIsRejectedBeforeDeduplication",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawOversizeIsRejectedBeforeDeduplication"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ReadScopeCannotReplaceTheRequiredReadPermission",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ReadScopeCannotReplaceTheRequiredReadPermission(conversation: False, substituteListPermission: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ReadScopeCannotReplaceTheRequiredReadPermission",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ReadScopeCannotReplaceTheRequiredReadPermission(conversation: False, substituteListPermission: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ReadScopeCannotReplaceTheRequiredReadPermission",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ReadScopeCannotReplaceTheRequiredReadPermission(conversation: True, substituteListPermission: False)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ReadScopeCannotReplaceTheRequiredReadPermission",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ReadScopeCannotReplaceTheRequiredReadPermission(conversation: True, substituteListPermission: True)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "SessionFallbackHintsAreNotSupportedAdvisoryInputs",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SessionFallbackHintsAreNotSupportedAdvisoryInputs(field: \\\"openedProjectId\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "SessionFallbackHintsAreNotSupportedAdvisoryInputs",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SessionFallbackHintsAreNotSupportedAdvisoryInputs(field: \\\"selectedProjectId\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "SessionFallbackHintsAreNotSupportedAdvisoryInputs",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SessionFallbackHintsAreNotSupportedAdvisoryInputs(field: \\\"sessionProjectId\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "SharedDeadlineIsNotRestartedBetweenDependentReads",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SharedDeadlineIsNotRestartedBetweenDependentReads"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "SwallowedDependencyFailureLogsOnlyTypeAndCorrelation",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SwallowedDependencyFailureLogsOnlyTypeAndCorrelation"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"removed\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"revoked\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"stale\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"unavailable\\\")"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnacceptedCommittedFolderBindingCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: 999)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnacceptedCommittedFolderBindingCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: Conflict)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnacceptedCommittedFolderBindingCannotBecomeACandidate",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: Pending)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnauthorizedMalformedRequestDeniesBeforeValidationOrOwnerReads",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnauthorizedMalformedRequestDeniesBeforeValidationOrOwnerReads"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnmatchedCandidateFolderDoesNotCallItsOwner",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnmatchedCandidateFolderDoesNotCallItsOwner"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidJsonPayloadHasAnInclusive16384ByteLimit",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidJsonPayloadHasAnInclusive16384ByteLimit(size: 16384)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidJsonPayloadHasAnInclusive16384ByteLimit",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidJsonPayloadHasAnInclusive16384ByteLimit(size: 16385)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 200)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 201)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 199)"
+    ],
+    [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 200)"
+    ]
+  ],
+  "notAdditionalUniqueCasesBeyondExisting1038": true
+}

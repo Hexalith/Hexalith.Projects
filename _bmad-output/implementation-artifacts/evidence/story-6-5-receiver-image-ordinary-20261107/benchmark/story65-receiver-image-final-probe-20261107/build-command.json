@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story65-receiver-image-final-probe-20261107/Probe.csproj",
+    "--configuration",
+    "Debug",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false",
+    "-p:Optimize=false",
+    "-p:DebugType=portable",
+    "-p:DebugSymbols=true",
+    "-m:1"
+  ],
+  "cwd": "/tmp/story65-receiver-image-final-probe-20261107",
+  "removedEnvironment": [
+    "CustomBeforeMicrosoftCommonTargets",
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "explicitEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "startedAtUtc": "2026-11-07T07:08:16.282313+00:00",
+  "exitCode": 0
+}

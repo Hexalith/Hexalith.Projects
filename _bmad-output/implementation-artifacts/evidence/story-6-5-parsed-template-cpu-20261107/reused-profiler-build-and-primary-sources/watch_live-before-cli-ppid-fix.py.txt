@@ -1,0 +1,231 @@
+"""Metadata-only conditional profiler for the parent's exact ordinary managed run.
+No end-only run.json prerequisite. Never start/stop/build a fixture or print argv/env/config.
+"""
+from pathlib import Path
+import argparse,datetime,hashlib,json,os,subprocess,time
+ROOT=Path('/home/administrator/projects/hexalith/projects');OWNER=ROOT/'references/Hexalith.EventStore'
+ENTRY=OWNER/'src/Hexalith.EventStore/bin/Debug/net10.0/Hexalith.EventStore';GATEWAY=ENTRY.parent/'Hexalith.EventStore.Gateway.dll'
+APPHOST=ROOT/'src/Hexalith.Projects.AppHost/bin/Debug/net10.0/Hexalith.Projects.AppHost'
+class Guard(Exception):pass
+def sha(path):
+ with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+def read_json(path):
+ try:return json.loads(path.read_bytes())
+ except (FileNotFoundError,ValueError):return None
+def process(pid):
+ try:
+  fields=Path(f'/proc/{pid}/stat').read_text().rsplit(')',1)[1].split();return None if fields[0]=='Z' else (fields[19],int(fields[1]))
+ except (FileNotFoundError,ProcessLookupError):return None
+def write(path,value):
+ temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(value,indent=2)+'\n');temp.chmod(0o600);temp.replace(path)
+def mapped(pid,path):
+ try:return any(len(fields:=line.split(None,5))==6 and fields[5].strip()==str(path) for line in Path(f'/proc/{pid}/maps').read_text().splitlines())
+ except (FileNotFoundError,ProcessLookupError):return False
+def known_env(pid,key):
+ # Only after fresh receipt/start/path/ancestry classification. No other key/value is retained or logged.
+ prefix=key.encode()+b'=';raw=Path(f'/proc/{pid}/environ').read_bytes()
+ values=[item[len(prefix):] for item in raw.split(b'\0') if item.startswith(prefix)]
+ del raw
+ if len(values)!=1:raise Guard('known-owned-environment-key-unavailable')
+ return values[0].decode()
+def owned_session(args,min_ticks):
+ paths=[args.ownership] if args.ownership else sorted(Path('/tmp').glob('supported-project-reads-private-*/apphost-session.json'))
+ eligible=[]
+ for path in paths:
+  try:
+   if path.stat().st_mtime<args.not_before_epoch-2:continue
+   owned=read_json(path)
+   if not isinstance(owned,dict):continue
+   valid=True
+   for role in ('appHost','cli'):
+    pid=owned.get(role+'Pid');ticks=str(owned.get(role+'StartTicks'));current=process(pid) if type(pid)is int else None
+    if current is None or current[0]!=ticks or int(ticks)<min_ticks:valid=False;break
+   if not valid:continue # Protected pre-existing identities are never inspected for environment/arguments.
+   app=owned['appHostPid'];exe=Path(f'/proc/{app}/exe').readlink()
+   if exe!=APPHOST and not(exe.name=='dotnet' and mapped(app,Path(str(APPHOST)+'.dll'))):continue
+   config=Path(owned['_configuration'])
+   if config.parent!=path.parent or not config.parent.name.startswith('supported-project-reads-private-'):continue
+   if sha(config)!=owned['configurationSha256']:raise Guard('private-owner-config-hash-mismatch')
+   if known_env(app,'Projects__SupportedReads__ConfigurationFile')!=str(config):raise Guard('owned-apphost-config-path-mismatch')
+   eligible.append((path,owned))
+  except (FileNotFoundError,ProcessLookupError):continue
+ if len(eligible)>1:raise Guard('ambiguous-new-owned-apphost-session')
+ return eligible[0] if eligible else None
+
+def source_resource(owned):
+ # Source/ownership/config/start identity was already verified. Describe is capture-only.
+ cli=owned['cliPid'];before=process(cli)
+ if before is None or before[0]!=str(owned['cliStartTicks']):raise Guard('owned-cli-identity-changed')
+ executable=Path(f'/proc/{cli}/exe').readlink()
+ env=os.environ.copy();env['Projects__SupportedReads__ConfigurationFile']=owned['_configuration'];env['NAMESPACE']=owned['_isolation']
+ command=[str(executable),'describe','--apphost',str(ROOT/'src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj'),'--format','Json','--non-interactive']
+ result=subprocess.run(command,capture_output=True,env=env,timeout=15)
+ if process(cli)!=before:raise Guard('owned-cli-identity-changed')
+ if result.returncode:return None
+ try:graph=json.loads(result.stdout)
+ except ValueError:return None
+ selected=[resource for resource in graph.get('resources',[]) if resource.get('displayName')=='eventstore']
+ if len(selected)>1:raise Guard('ambiguous-owned-resource-graph')
+ if len(selected)!=1:return None
+ props=selected[0].get('properties',{})
+ if props.get('project.path')!=str(OWNER/'src/Hexalith.EventStore/Hexalith.EventStore.csproj'):raise Guard('owned-resource-source-project-mismatch')
+ wrapper=props.get('executable.pid');current=process(wrapper) if type(wrapper)is int else None
+ if current is None:return None
+ return {'wrapperPid':wrapper,'wrapperStartTicks':current[0],'resourceGraphSha256':hashlib.sha256(result.stdout).hexdigest(),
+         'appHostPid':owned['appHostPid'],'appHostStartTicks':owned['appHostStartTicks'],
+         'configurationSha256':owned['configurationSha256'],'sourceProjectMatches':True,'matchingEventstoreResources':1}
+
+def runtime(owned,resource):
+ if resource.get('appHostPid')!=owned['appHostPid'] or str(resource.get('appHostStartTicks'))!=str(owned['appHostStartTicks']) or resource.get('configurationSha256')!=owned['configurationSha256']:raise Guard('owned-resource-graph-binding-mismatch')
+ wrapper=resource['wrapperPid'];current=process(wrapper)
+ if current is None or current[0]!=str(resource['wrapperStartTicks']):raise Guard('owned-resource-wrapper-start-changed')
+ pending=[(wrapper,wrapper)];seen=set();candidates=[]
+ while pending:
+  pid,anchor=pending.pop()
+  if pid in seen:continue
+  seen.add(pid);info=process(pid)
+  if info is None:continue
+  try:
+   exe=Path(f'/proc/{pid}/exe').readlink()
+   if exe==ENTRY or(exe.name=='dotnet' and mapped(pid,Path(str(ENTRY)+'.dll'))):candidates.append((pid,info[0],anchor,exe))
+   pending.extend((int(p),anchor) for p in Path(f'/proc/{pid}/task/{pid}/children').read_text().split())
+  except (FileNotFoundError,ProcessLookupError):continue
+ if len(candidates)>1:raise Guard('ambiguous-owned-eventstore-entry-runtime')
+ return candidates[0] if candidates else None
+
+def generation(args,target):
+ # Rebind only a fresh ordinary source generation, never an authority result or credential.
+ if sha(args.owner_receipt)!=args.owner_receipt_sha256:raise Guard('pinned-owner-source-receipt-mismatch')
+ pinned=read_json(args.owner_receipt)
+ for relative,digest in pinned['sourceSha256'].items():
+  if sha(OWNER/relative)!=digest:raise Guard('owned-source-freeze-mismatch')
+ manifest_path=args.evidence/'source-manifest.json';manifest=read_json(manifest_path)
+ if not isinstance(manifest,dict)or not manifest:raise Guard('full-live-source-manifest-unavailable')
+ for relative,digest in manifest.items():
+  source=ROOT/relative
+  if Path(relative).is_absolute()or '..'in Path(relative).parts or not source.resolve().is_relative_to(ROOT):raise Guard('full-live-source-coordinate-invalid')
+  if sha(source)!=digest:raise Guard('full-live-source-manifest-mismatch')
+ producer=OWNER/'src/Hexalith.EventStore.Gateway/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll'
+ copies=[]
+ for role,path in [('source-producer',producer),('owned-api-copy',GATEWAY)]:
+  data=path.read_bytes();digest=hashlib.sha256(data).hexdigest()
+  if any(marker.encode()in data or marker.encode('utf-16-le')in data for marker in ['TimingHexalith','PrivateFocusedTiming','Story65Timing']):raise Guard('private-timing-marker-present')
+  copies.append({'role':role,'sha256':digest,'forbiddenTimingMarkersAbsent':True})
+ if copies[0]['sha256']!=copies[1]['sha256']:raise Guard('producer-api-gateway-copy-mismatch')
+ if not mapped(target[0],GATEWAY):raise Guard('owned-gateway-assembly-not-yet-mapped')
+ current=copies[0]['sha256'];prior=getattr(args,'native_gateway_sha256',args.gateway_sha256)
+ proof={'diagnosticOnly':True,'parentPreauthorizedAutomaticFreshGenerationPin':True,'sourceFileCount':len(pinned['sourceSha256']),
+        'fullLiveManifestCount':len(manifest),'fullLiveManifestFileSha256':sha(manifest_path),'allSourceInputsUnchanged':True,
+        'ordinaryDebugSourcePaths':True,'actualManagedLauncherEnforcesDebugSourceProfileBeforeHost':True,
+        'nativePriorGenerationGatewaySha256':prior,'freshGenerationGatewaySha256':current,'generationChanged':prior!=current,
+        'byteEquivalenceToPriorGenerationClaimed':False,'mappedOwnedGatewayVerified':True,'files':copies}
+ write(args.watch_output/'fresh-generation-proof.json',proof);args.native_gateway_sha256=prior;args.gateway_sha256=current
+ return proof
+
+def observations(evidence):
+ try:data=(evidence/'browser-advisory-seed-readiness.jsonl').read_bytes()
+ except FileNotFoundError:return []
+ rows=[]
+ for line in data.split(b'\n')[:-1]:
+  try:row=json.loads(line)
+  except ValueError:continue
+  if row.get('multiple')is True:rows.append(row)
+ return rows
+
+def decision(rows):
+ positive=any(row.get('result')=='MultipleCandidates' and row.get('incomplete')is False and type(row.get('candidateCount'))is int and row['candidateCount']>=2 and row.get('positiveCandidatesVerified')is True for row in rows)
+ if positive:return 'positive-skip'
+ if not rows:return 'wait'
+ latest=max(row.get('attempt',0)for row in rows if type(row.get('attempt'))is int)
+ return 'failed-attach'if 30-latest>=3 else'insufficient-windows-skip'
+
+def identity(args,path,owned,target):
+ if sha(args.owner_receipt)!=args.owner_receipt_sha256:raise Guard('pinned-owner-source-receipt-mismatch')
+ pid,ticks,anchor,exe=target
+ if process(pid) is None or process(pid)[0]!=ticks:raise Guard('owned-runtime-start-identity-changed')
+ # Already classified by exact new owned AppHost/DCP ancestry and exact entry source executable/DLL.
+ config=Path(owned['_configuration'])
+ if known_env(pid,'XDG_DATA_HOME')!=str(config.parent/'data-eventstore'):raise Guard('owned-eventstore-private-path-mismatch')
+ if known_env(pid,'EventStore__DomainService__AppId')!='eventstore':raise Guard('owned-eventstore-role-mismatch')
+ if sha(GATEWAY)!=args.gateway_sha256 or not mapped(pid,GATEWAY):raise Guard('owned-gateway-mapped-assembly-mismatch')
+ pinned=read_json(args.owner_receipt)
+ files=[{'Label':'gateway-assembly','Path':str(GATEWAY),'Sha256':args.gateway_sha256},
+        {'Label':'eventstore-entry-assembly','Path':str(ENTRY)+'.dll','Sha256':sha(Path(str(ENTRY)+'.dll'))},
+        {'Label':'owner-config','Path':str(config),'Sha256':owned['configurationSha256']},
+        {'Label':'source-audit','Path':str(args.owner_receipt),'Sha256':args.owner_receipt_sha256}]
+ for index,(relative,digest) in enumerate(sorted(pinned['sourceSha256'].items())):
+  source=OWNER/relative
+  if sha(source)!=digest:raise Guard('owned-source-freeze-mismatch')
+  files.append({'Label':f'source-{index:03d}','Path':str(source),'Sha256':digest})
+ return {'Role':'gateway','Resource':'eventstorehost','Pid':pid,'StartTicks':int(ticks),
+         'RequiredCommandToken':str(ENTRY) if exe==ENTRY else str(ENTRY)+'.dll',
+         'ExecutableSha256':sha(Path(f'/proc/{pid}/exe')),'Files':files}
+def first_multiple(evidence):
+ try:data=(evidence/'browser-advisory-seed-readiness.jsonl').read_bytes()
+ except FileNotFoundError:return None
+ for line in data.split(b'\n')[:-1]:
+  try:row=json.loads(line)
+  except ValueError:continue
+  if row.get('multiple')is True:return row
+ return None
+
+def main(args):
+ os.umask(0o077);args.watch_output.mkdir(mode=0o700,exist_ok=False)
+ receipt={'diagnosticOnly':True,'featureAcceptance':False,'phase':'waiting-new-owned-session',
+          'watcherPid':os.getpid(),'watcherStartTicks':process(os.getpid())[0],
+          'attachCondition':'first actual MULTIPLE is not a verified positive','runtimeResource':'eventstorehost',
+          'targetSignalsSent':False,'parentOwnsFixtureLifecycle':True,'profilerAttached':False,
+          'ordinaryAcceptanceBeforeAttachmentOnly':True,'endOnlyRunJsonNotRequired':True}
+ begin=time.monotonic();cutoff=begin+args.timeout;prepared=None;resource=None;next_graph=0;last_phase=receipt['phase']
+ btime=int(next(line.split()[1] for line in Path('/proc/stat').read_text().splitlines() if line.startswith('btime ')))
+ min_ticks=int((args.not_before_epoch-btime-2)*os.sysconf('SC_CLK_TCK'))
+ write(args.watch_output/'watcher-receipt.json',receipt)
+ try:
+  while time.monotonic()<cutoff:
+   multi_rows=observations(args.evidence);choice=decision(multi_rows);first=multi_rows[0]if multi_rows else None
+   if first:
+    positive=(first.get('result')=='MultipleCandidates' and first.get('incomplete')is False and type(first.get('candidateCount'))is int and first['candidateCount']>=2 and first.get('positiveCandidatesVerified')is True)
+    receipt['firstMultiple']={k:first.get(k) for k in ('attempt','incomplete','candidateCount','positiveCandidatesVerified','elapsedMilliseconds') if first.get(k)is None or type(first.get(k))in(int,float,bool)}
+    receipt['firstMultiple']['result']=first.get('result') if first.get('result')in(None,'SingleCandidate','MultipleCandidates','Empty')else'[unknown]'
+    if choice=='positive-skip':receipt['phase']='skipped-positive-multiple';break
+    if choice=='insufficient-windows-skip':receipt['phase']='skipped-insufficient-three-attempt-windows';break
+    if prepared is None:receipt['lateObserverReadiness']=True
+   session=owned_session(args,min_ticks)
+   if session:
+    path,owned=session
+    if resource is None and time.monotonic()>=next_graph:
+     receipt['phase']='owned-session-found-waiting-resource-graph';receipt['resourceGraphAttempts']=receipt.get('resourceGraphAttempts',0)+1
+     resource=source_resource(owned);next_graph=time.monotonic()+2
+     if resource:receipt['ownedResourceProof']=resource
+    target=runtime(owned,resource)if resource else None
+    if target:
+     if prepared is None:
+      proof=generation(args,target);prepared=identity(args,path,owned,target)
+      receipt['freshGenerationProof']=proof
+      receipt.update(phase='ready-waiting-first-multiple',targetPid=target[0],targetStartTicks=target[1],ownedAncestryAnchorPid=target[2],appHostPid=owned['appHostPid'],appHostStartTicks=owned['appHostStartTicks'],ownershipPathSha256=hashlib.sha256(str(path).encode()).hexdigest(),ownerConfigHashMatched=True,mappedGatewayAssemblyHashMatched=True,sourceFilesMatched=len(prepared['Files'])-4)
+     if first:
+      generation(args,target)
+      if decision(observations(args.evidence))!='failed-attach':receipt['phase']='skipped-changed-readiness-before-attach';break
+      receipt['identityReadyUtc']=datetime.datetime.now(datetime.timezone.utc).isoformat();write(args.watch_output/'watcher-receipt.json',receipt)
+      value=identity(args,path,owned,target);identity_path=args.watch_output/'private-identity.json';write(identity_path,value)
+      receipt.update(phase='failed-multiple-profile-requested',identitySha256=sha(identity_path));write(args.watch_output/'watcher-receipt.json',receipt)
+      command=['python3',str(args.wrapper),'--tool',str(args.tool),'--identity',str(identity_path),'--output',str(args.watch_output/'profile')]
+      receipt['profileWrapperExitCode']=subprocess.run(command,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode
+      receipt['profilerAttached']=isinstance(read_json(args.watch_output/'profile/attached.json'),dict);receipt['phase']='profile-finished';break
+   report=read_json(args.evidence/'run.json') # End-only, never a startup prerequisite.
+   if isinstance(report,dict)and report.get('result')in('failed','passed'):
+    receipt['phase']='managed-run-ended-before-attach';break
+   if receipt['phase']!=last_phase:write(args.watch_output/'watcher-receipt.json',receipt);last_phase=receipt['phase']
+   time.sleep(.1)
+  else:receipt['phase']='watcher-timeout-no-attach'
+ except Exception as error:receipt.update(phase='guard-refused-no-attach',fixedReason=str(error)if type(error)is Guard else'watcher-error',errorType=type(error).__name__)
+ finally:
+  private=args.watch_output/'private-identity.json'
+  if private.exists():private.unlink()
+  receipt['privateIdentityRemoved']=not private.exists();receipt['watcherWallSeconds']=time.monotonic()-begin;write(args.watch_output/'watcher-receipt.json',receipt)
+ print(json.dumps({'phase':receipt['phase'],'profilerAttached':receipt['profilerAttached'],'featureAcceptance':False}))
+if __name__=='__main__':
+ parser=argparse.ArgumentParser();parser.add_argument('--evidence',type=Path,required=True);parser.add_argument('--ownership',type=Path)
+ parser.add_argument('--not-before-utc',required=True);parser.add_argument('--owner-receipt',type=Path,required=True);parser.add_argument('--owner-receipt-sha256',required=True);parser.add_argument('--gateway-sha256',required=True)
+ parser.add_argument('--watch-output',type=Path,required=True);parser.add_argument('--tool',type=Path,required=True);parser.add_argument('--wrapper',type=Path,default=Path(__file__).parent/'run_probe.py');parser.add_argument('--timeout',type=int,default=1000)
+ args=parser.parse_args();args.not_before_epoch=datetime.datetime.fromisoformat(args.not_before_utc.replace('Z','+00:00')).timestamp();main(args)

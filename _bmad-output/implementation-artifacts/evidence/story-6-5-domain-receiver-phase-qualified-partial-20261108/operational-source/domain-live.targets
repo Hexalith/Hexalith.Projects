@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <Story65DomainOriginalAfterSdkTargets>$(AfterMicrosoftNETSdkTargets)</Story65DomainOriginalAfterSdkTargets>
+    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-csc-manifest.targets</AfterMicrosoftNETSdkTargets>
+    <Story65DomainReceiverPrivate>true</Story65DomainReceiverPrivate>
+  </PropertyGroup>
+  <Import Project="/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-source.targets" />
+</Project>

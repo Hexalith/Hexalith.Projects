@@ -1,0 +1,266 @@
+{
+  "preparationOnly": true,
+  "runsExecuted": 0,
+  "requiresRootReviewBeforeBuildOrRun": true,
+  "sourceCaseCatalogSha256": "90747645ef65677bfa992edf31e0c94455df1408a1024086b9b953b408bdcf1d",
+  "catalogCases": 52,
+  "fastCases": [
+    "success-unbounded",
+    "success-owner3-caller2",
+    "value-source-sync",
+    "value-source-sync-bounded",
+    "value-source-async",
+    "value-source-async-bounded",
+    "issuer-null",
+    "issuer-throw",
+    "value-source-fault",
+    "value-source-fault-bounded",
+    "value-source-cancel",
+    "value-source-cancel-bounded",
+    "null-query",
+    "missing-caller",
+    "foreign-tenant",
+    "duplicate-assertion",
+    "missing-workload",
+    "whitespace-workload",
+    "missing-key",
+    "whitespace-key",
+    "nonprojects",
+    "case-sensitive-workload",
+    "nontrimmed-workload",
+    "workload-provider-throw",
+    "key-provider-throw",
+    "timeout-provider-throw",
+    "gateway-provider-throw",
+    "invalid-budget",
+    "factory-throw",
+    "proof-clock-throw",
+    "dapr-request-throw",
+    "handler-throw",
+    "proof-key-invalid",
+    "buffer-throw",
+    "json-malformed",
+    "response-mismatch",
+    "response-disposal-throw",
+    "request-disposal-throw",
+    "late-response-disposal",
+    "late-request-disposal",
+    "buffered-body-delay",
+    "status401",
+    "status403",
+    "status404",
+    "status500",
+    "concurrent-two",
+    "concurrent-four"
+  ],
+  "slowCases": [
+    "profile-owner3-caller2-issuer",
+    "profile-owner3-caller2-transport",
+    "profile-owner3-caller2-buffer",
+    "bounded-uncooperative-issuer",
+    "unbounded-uncooperative-issuer"
+  ],
+  "catalogComparisonsAcrossFourModes": 208,
+  "concurrentCasesIncludedInCatalog": [
+    "concurrent-two",
+    "concurrent-four"
+  ],
+  "concurrentInvocationPairsAcrossFourModes": 24,
+  "concurrentInvocationPairsAreNotAdditionalCatalogCaseLabels": true,
+  "plannedProcesses": [
+    {
+      "mode": "canary-positive-control",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-current",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-suppressed",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 47
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "profile-owner3-caller2-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "profile-owner3-caller2-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "profile-owner3-caller2-buffer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "bounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "unbounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 47
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "profile-owner3-caller2-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "profile-owner3-caller2-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "profile-owner3-caller2-buffer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "bounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "unbounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 47
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "profile-owner3-caller2-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "profile-owner3-caller2-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "profile-owner3-caller2-buffer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "bounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "unbounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 47
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "profile-owner3-caller2-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "profile-owner3-caller2-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "profile-owner3-caller2-buffer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "bounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "unbounded-uncooperative-issuer",
+      "expectedCatalogCases": 1
+    }
+  ],
+  "expectedProcesses": 27,
+  "serialFreshFirstBusinessCanariesBeforeAllModes": true,
+  "stageAliases": {
+    "Whole": "WholePublicInvoke",
+    "ComponentFile": "IssuerAcquisition",
+    "ComponentPolicy": "HttpRequestAndProof",
+    "AclFile": "SendAndBuffer",
+    "SettingsEnumerationSortDictionary": "JsonBody"
+  },
+  "controlContentsHashOnly": true,
+  "noApplicationLifecycleOrBuildCommands": true,
+  "executionGate": "Required --execute --pins-sha256 SHA256 of root-reviewed preparation-receipt.json; all filesSha256/source51/app147 verified. Build/run not yet authorized.",
+  "sourceCaseManifestSha256": "6a9761392a7f90592b2247a77ba1389672788db1ec21ca731eaf04ef49065bde",
+  "actualInvocationComparisonsAcrossFourModes": 224,
+  "concurrentInvocationPairsAreIncludedInActualInvocationComparisons": true,
+  "expectedMainCellsEachMode": 52,
+  "expectedInvocationsEachMode": 56,
+  "priorProtocolControllerProvenance": {
+    "immutablePacket": "_bmad-output/implementation-artifacts/evidence/story-6-5-advisory-wave-20261107",
+    "relativePath": "source-and-qualification/prep/run_differential.py",
+    "sha256": "53316cd22f512376cae1c267f08b7a7b8f6802a207565e13de4e3b46b7380d29",
+    "readOriginalMatchesDurablePacket": true
+  },
+  "executionNotAuthorized": true,
+  "scratchBuiltArtifactsSnapshotted": [
+    "DLL",
+    "PDB",
+    "deps.json",
+    "runtimeconfig.json"
+  ],
+  "fixture147PrivateMarkersMustBeAbsent": true,
+  "controllerPreparedOnlyNoExecutions": true
+}

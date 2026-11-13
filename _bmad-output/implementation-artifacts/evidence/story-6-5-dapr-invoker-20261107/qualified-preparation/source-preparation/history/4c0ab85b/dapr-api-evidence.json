@@ -1,0 +1,44 @@
+{
+  "preparationOnly": true,
+  "packageVersion": "1.19.0",
+  "packageRepositoryCommit": "05f093ad5ee38de377872fee9021010fe5b6dc35",
+  "files": {
+    "DaprClient.cs": {
+      "url": "https://raw.githubusercontent.com/dapr/dotnet-sdk/05f093ad5ee38de377872fee9021010fe5b6dc35/src/Dapr.Client/DaprClient.cs",
+      "sha256": "f260788abb05946660ada72255911eea2578cc3e98d9d9f02e79d4dfb813ae31",
+      "bytes": 99177
+    },
+    "DaprClientGrpc.cs": {
+      "url": "https://raw.githubusercontent.com/dapr/dotnet-sdk/05f093ad5ee38de377872fee9021010fe5b6dc35/src/Dapr.Client/DaprClientGrpc.cs",
+      "sha256": "deffefd746e37f275c3592ce0e9be4483b49b81c3634bd92fedcdc9f88a92baf",
+      "bytes": 93008
+    },
+    "/home/administrator/.nuget/packages/dapr.client/1.19.0/dapr.client.nuspec": {
+      "sha256": "a2540abb6f4d7444f32e4b869ce8590dde9709458ff89bac6b78c106c3728469",
+      "bytes": 5235
+    },
+    "/home/administrator/.nuget/packages/dapr.client/1.19.0/lib/net8.0/Dapr.Client.xml": {
+      "sha256": "94d97ffc9c2809463ce93d73082a7d4eb762756d662c59b5dc4cd73a298cfdf5",
+      "bytes": 205910
+    },
+    "/home/administrator/.nuget/packages/dapr.client/1.19.0/lib/net10.0/Dapr.Client.xml": {
+      "sha256": "94d97ffc9c2809463ce93d73082a7d4eb762756d662c59b5dc4cd73a298cfdf5",
+      "bytes": 205910
+    }
+  },
+  "noAssemblyLoadOrRuntimeProbe": true,
+  "threeArgGeneric": "nonvirtual DaprClient.cs400-403 forwards HttpMethod.Post/appId/methodName/a fresh empty List<KeyValuePair<string,string>>/data to abstract generic core5arg",
+  "healthySeam": "delegates all five received arguments unchanged to separately built real DaprClient before replacing content by delegating ownership tracker",
+  "coreDaprGrpc": "creates HttpRequestMessage with JSON content using its exact serializer options; no Send in request creation",
+  "coreSourceLines": {
+    "DaprClient.cs": [
+      400,
+      403,
+      418
+    ],
+    "DaprClientGrpc.cs": [
+      431,
+      441
+    ]
+  }
+}

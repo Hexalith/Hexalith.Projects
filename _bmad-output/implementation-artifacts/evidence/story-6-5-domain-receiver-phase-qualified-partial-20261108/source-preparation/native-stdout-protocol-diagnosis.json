@@ -1,0 +1,58 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "causeLimit": "Original unexpected first native stdout line was not retained; no definitive logger/fixture cause claimed.",
+  "historyDirectory": "/tmp/story65-domain-receiver-phase-history-20261108/d91e15a7-protocol-attempt1",
+  "priorPreparationSha256": "d91e15a7ce3cff1e9ee2b30fb024923b2d9d281f9c8b48c1882bd4958e4f6374",
+  "priorControllerSha256": "72133f1fe39a4fe342bf5108d54c3b5de19ac5bc8158a0f54468669475486492",
+  "priorRuntimeManifestSha256": "fe67abdc0837f16446ff67610910385b14c2bc67198f08a3050b8ce38d4c8d08",
+  "priorIncompleteQualification": {
+    "path": "/tmp/story65-domain-receiver-phase-qualification-20261108",
+    "actualChildren": 8,
+    "passedChildren": 7,
+    "protocolFailureChildren": 1,
+    "nativeCasesProvenOnlyDevelopmentDomain14": 14,
+    "killedSidecarCasePassesNotClaimed": true
+  },
+  "nativeChange": "Bounded raw native stdout drain until exact NATIVE_DONE; CLOSED_FAILURE/EOF/deadline/bounds fail; no output content retained.",
+  "nativeDiscardLimits": {
+    "lines": 4096,
+    "bytes": 2097152,
+    "perLineBytes": 65536,
+    "bufferBytes": 131072
+  },
+  "existingPerLine512AndBuffer4096Unchanged": false,
+  "retainedFieldsOnly": [
+    "nativeStdoutLinesDiscarded",
+    "nativeStdoutBytesDiscarded",
+    "nativeStdoutCategory",
+    "nativeProtocolCompleted"
+  ],
+  "categoryVocabulary": [
+    "protocol-only",
+    "nonprotocol-output-discarded"
+  ],
+  "ordinaryReadyGoProtocolUnchanged": true,
+  "nativeExitZeroBusinessAndExactXmlStillMandatory": true,
+  "allCSharpEntryAttributesTestsCoreHelperBootstrapUnchanged": true,
+  "sameCompiledGenerationNoRebuildRequired": {
+    "buildReceiptPath": "/tmp/story65-domain-receiver-phase-fixture-build-20261108/receipt.json",
+    "buildReceiptSha256": "a5971947cc0959099bf1cd07c235a5ee1ce6ec2a4b9bcf8bef1f29ef57fecd56",
+    "compiledHandoffPath": "/tmp/story65-domain-receiver-phase-fixture-build-20261108/compiled-handoff.json",
+    "compiledHandoffSha256": "920da86313349cd15ffe3bd1a471e0bf95732f8b5c19dea01ca8d2389c57f61f",
+    "originalCompiledSourceGenerationRemainsD91e": true
+  },
+  "runtimeManifestChangePermittedOnlySourcePreparationSha256": true,
+  "freshRetryResultRoot": "/tmp/story65-domain-receiver-phase-qualification-native-output-retry-20261108",
+  "thisRevisionBuildLoadFixtureNativeHostWindowExecutions": 0,
+  "focusedPerLine512AndBuffer4096Unchanged": true,
+  "priorControllerOnlyRetry": {
+    "path": "/tmp/story65-domain-receiver-phase-qualification-protocol-retry-20261108",
+    "actualChildren": 8,
+    "passedChildren": 7,
+    "failure": "native-line-bound",
+    "discardedLinesBeforeBound": 2,
+    "discardedBytesBeforeBound": 928,
+    "rawOversizeLineNotRetained": true
+  }
+}

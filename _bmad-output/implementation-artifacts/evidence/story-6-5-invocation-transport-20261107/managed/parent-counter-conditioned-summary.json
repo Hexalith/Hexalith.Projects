@@ -1,0 +1,56 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "rawSha256": "145c3161584582aa44b8bd571d9a997d540a20b928f0e2de41f78181c86b944a",
+  "captures": 1542,
+  "rows": 1584,
+  "groupsByNumericStagePresenceOnly": [
+    {
+      "numericStageSet": [
+        "Whole"
+      ],
+      "captures": 1521,
+      "millisecondsByStage": {
+        "Whole": {
+          "count": 1521,
+          "median": 1.089169,
+          "minimum": 0.514703,
+          "maximum": 15.024269
+        }
+      }
+    },
+    {
+      "numericStageSet": [
+        "Whole",
+        "ComponentFile",
+        "ComponentPolicy"
+      ],
+      "captures": 21,
+      "millisecondsByStage": {
+        "Whole": {
+          "count": 21,
+          "median": 369.505174,
+          "minimum": 324.81443,
+          "maximum": 2062.854211
+        },
+        "ComponentFile": {
+          "count": 21,
+          "median": 339.232471,
+          "minimum": 286.231892,
+          "maximum": 2022.787672
+        },
+        "ComponentPolicy": {
+          "count": 21,
+          "median": 10.577497,
+          "minimum": 3.925388,
+          "maximum": 22.482136
+        }
+      }
+    }
+  ],
+  "noRequestKindOutcomeOrOldProbeJoin": true,
+  "wholeExcludesEligibilityAndAdmission": true,
+  "transportExcludesOuterResponseContentReadBuffering": true,
+  "ownedDisposeDoesNotProveReleaseCallbackOrFenceRemoval": true,
+  "residualIsUnattributed": true
+}

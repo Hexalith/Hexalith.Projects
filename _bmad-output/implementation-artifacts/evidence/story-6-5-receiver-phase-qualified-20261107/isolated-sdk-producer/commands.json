@@ -1,0 +1,32 @@
+{
+  "filePreparationOnly": true,
+  "readonlyEvaluationReleased": false,
+  "allowIsolatedScratchProducerBuild": false,
+  "sourceQualificationReady": false,
+  "applicationNativeHostsAllowed": false,
+  "futureReadonlyCommands": [
+    [
+      "python3",
+      "/tmp/story65-receiver-phase-producer-prep-20261107/audit_sdk_paths.py",
+      "--ordinary-only"
+    ],
+    [
+      "python3",
+      "/tmp/story65-receiver-phase-producer-prep-20261107/audit_sdk_paths.py",
+      "--evaluate-readonly"
+    ],
+    [
+      "python3",
+      "/tmp/story65-receiver-phase-producer-prep-20261107/validate_readonly.py",
+      "--evaluate-readonly"
+    ]
+  ],
+  "futureBuildCommand": [
+    "python3",
+    "/tmp/story65-receiver-phase-producer-prep-20261107/scratch_producer.py",
+    "--execute",
+    "--pins-sha256",
+    "FUTURE_ROOT_RELEASED_PIN_SHA_REQUIRED"
+  ],
+  "noCommandsExecutedHere": true
+}

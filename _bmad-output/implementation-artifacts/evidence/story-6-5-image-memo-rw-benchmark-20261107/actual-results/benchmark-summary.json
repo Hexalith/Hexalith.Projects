@@ -1,0 +1,2340 @@
+{
+  "DiagnosticOnly": true,
+  "FeatureAcceptance": false,
+  "ProductionCandidateBenefitClaimed": false,
+  "Domain66IsNotWholeHostCaptureOrDeadlineBenchmark": true,
+  "SourceDerivedOwnerDomainDirectReferenceCohortOnly": true,
+  "CompleteDomainExecutableOwnersDiscoveryUnionNotClaimed": true,
+  "Technical66IsSeparatePeMvidStressNotClaimedActualHostCallPopulation": true,
+  "NoFileReadAuthorityOrConfigurationObservationRemoved": true,
+  "MemoColdMeansNewMemoNotColdFilesystemJitPoolOrProcess": true,
+  "OriginalReaderCountAndByteBoundsUnchanged": true,
+  "BalancedAllSixVariantPermutationsPerPathAndReaderCount": true,
+  "BatchStartBarrierOnlyNoPerImageBarrier": true,
+  "ComparisonAndMeasurementBookkeepingIncludedIdentically": true,
+  "RawBatches": 324,
+  "Results": [
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.523803,
+        "Median": 17.4678675,
+        "P95NearestRank": 28.63398,
+        "Max": 28.63398
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 12.653,
+        "Median": 19.1225,
+        "P95NearestRank": 21.834,
+        "Max": 21.834
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 27734880,
+        "Median": 27744856,
+        "P95NearestRank": 27784080,
+        "Max": 27784080
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.419227,
+        "Median": 17.394872499999998,
+        "P95NearestRank": 27.804683,
+        "Max": 27.804683
+      },
+      "GcCollectionsByGeneration": [
+        4,
+        3,
+        3
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 13.234828,
+        "Median": 14.6158015,
+        "P95NearestRank": 15.608704,
+        "Max": 15.608704
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 9.576,
+        "Median": 11.906,
+        "P95NearestRank": 23.977,
+        "Max": 23.977
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57653.333333333336,
+        "Median": 57653.333333333336,
+        "P95NearestRank": 57661.333333333336,
+        "Max": 57661.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 3.679683,
+        "Median": 4.8303895,
+        "P95NearestRank": 5.980461,
+        "Max": 5.980461
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 46.783816,
+        "Median": 51.958364,
+        "P95NearestRank": 58.210292,
+        "Max": 58.210292
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 43.667,
+        "Median": 50.212500000000006,
+        "P95NearestRank": 97.433,
+        "Max": 97.433
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57595.333333333336,
+        "Median": 57596.333333333336,
+        "P95NearestRank": 57638,
+        "Max": 57638
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 3.602974,
+        "Median": 4.2435935,
+        "P95NearestRank": 5.119137,
+        "Max": 5.600954
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.983475,
+        "Median": 17.423181999999997,
+        "P95NearestRank": 22.737356,
+        "Max": 22.737356
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 12.342,
+        "Median": 15.84,
+        "P95NearestRank": 20.397,
+        "Max": 20.397
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 27734880,
+        "Median": 27738504,
+        "P95NearestRank": 27744856,
+        "Max": 27744856
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.884756,
+        "Median": 17.3497235,
+        "P95NearestRank": 22.670016,
+        "Max": 22.670016
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        3
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 13.873709,
+        "Median": 14.737999,
+        "P95NearestRank": 15.199921,
+        "Max": 15.199921
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 11.773,
+        "Median": 12.538,
+        "P95NearestRank": 14.095,
+        "Max": 14.095
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57653.333333333336,
+        "Median": 57653.333333333336,
+        "P95NearestRank": 57653.333333333336,
+        "Max": 57653.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 4.27569,
+        "Median": 4.8629325,
+        "P95NearestRank": 5.457453,
+        "Max": 5.457453
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 50.144894,
+        "Median": 53.854417,
+        "P95NearestRank": 55.457919,
+        "Max": 55.457919
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 49.48,
+        "Median": 53.3255,
+        "P95NearestRank": 54.277,
+        "Max": 54.277
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57595.333333333336,
+        "Median": 57595.333333333336,
+        "P95NearestRank": 57622,
+        "Max": 57622
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 3.734368,
+        "Median": 4.35621,
+        "P95NearestRank": 5.025466,
+        "Max": 5.222426
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.467095,
+        "Median": 17.4339705,
+        "P95NearestRank": 22.087975,
+        "Max": 22.087975
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 13.679,
+        "Median": 15.768999999999998,
+        "P95NearestRank": 18.471,
+        "Max": 18.471
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 27734960,
+        "Median": 27744156,
+        "P95NearestRank": 27745184,
+        "Max": 27745184
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.388589,
+        "Median": 17.355201,
+        "P95NearestRank": 22.012955,
+        "Max": 22.012955
+      },
+      "GcCollectionsByGeneration": [
+        5,
+        4,
+        4
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 13.010606,
+        "Median": 14.478702,
+        "P95NearestRank": 16.111,
+        "Max": 16.111
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 11.434,
+        "Median": 13.4555,
+        "P95NearestRank": 14.599,
+        "Max": 14.599
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57680,
+        "Median": 57680,
+        "P95NearestRank": 57680,
+        "Max": 57680
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 4.180026,
+        "Median": 4.7634785,
+        "P95NearestRank": 5.783081,
+        "Max": 5.783081
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 48.765054,
+        "Median": 54.305865499999996,
+        "P95NearestRank": 59.485191,
+        "Max": 59.485191
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 47.043,
+        "Median": 55.7265,
+        "P95NearestRank": 104.915,
+        "Max": 104.915
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57602,
+        "Median": 57602,
+        "P95NearestRank": 57602,
+        "Max": 57602
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 3.670535,
+        "Median": 4.4804245,
+        "P95NearestRank": 5.197938,
+        "Max": 5.928626
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 19.258511,
+        "Median": 20.570008,
+        "P95NearestRank": 23.321702,
+        "Max": 23.321702
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 24.024,
+        "Median": 27.5275,
+        "P95NearestRank": 45.113,
+        "Max": 45.113
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 13896324,
+        "Median": 13896324,
+        "P95NearestRank": 18066148,
+        "Max": 18066148
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 19.160036,
+        "Median": 20.477515500000003,
+        "P95NearestRank": 23.296739,
+        "Max": 23.296739
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 19.104694,
+        "Median": 20.702984999999998,
+        "P95NearestRank": 22.912348,
+        "Max": 22.912348
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 32.408,
+        "Median": 34.043,
+        "P95NearestRank": 37.453,
+        "Max": 37.453
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57646.666666666664,
+        "Median": 57646.666666666664,
+        "P95NearestRank": 63112,
+        "Max": 63112
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 6.09175,
+        "Median": 6.8314105000000005,
+        "P95NearestRank": 7.745963,
+        "Max": 8.546717
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 78.886201,
+        "Median": 80.260085,
+        "P95NearestRank": 87.785056,
+        "Max": 87.785056
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 134.471,
+        "Median": 146.47949999999997,
+        "P95NearestRank": 184.048,
+        "Max": 184.048
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57593.666666666664,
+        "Median": 57593.666666666664,
+        "P95NearestRank": 57593.666666666664,
+        "Max": 57593.666666666664
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 5.820855,
+        "Median": 6.690842,
+        "P95NearestRank": 7.456309,
+        "Max": 8.199558
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 18.947561,
+        "Median": 21.011249,
+        "P95NearestRank": 28.552117,
+        "Max": 28.552117
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 24.672,
+        "Median": 28.500999999999998,
+        "P95NearestRank": 39.433,
+        "Max": 39.433
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 13896324,
+        "Median": 13901326,
+        "P95NearestRank": 18087768,
+        "Max": 18087768
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 18.85608,
+        "Median": 20.893912999999998,
+        "P95NearestRank": 28.513833,
+        "Max": 28.513833
+      },
+      "GcCollectionsByGeneration": [
+        4,
+        4,
+        4
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 20.251085,
+        "Median": 21.2282195,
+        "P95NearestRank": 23.088,
+        "Max": 23.088
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 34.19,
+        "Median": 36.7045,
+        "P95NearestRank": 55.13,
+        "Max": 55.13
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57646.666666666664,
+        "Median": 57646.666666666664,
+        "P95NearestRank": 57646.666666666664,
+        "Max": 57646.666666666664
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 6.484233,
+        "Median": 7.0661155,
+        "P95NearestRank": 7.864587,
+        "Max": 7.909769
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 79.838097,
+        "Median": 84.59867249999999,
+        "P95NearestRank": 90.805493,
+        "Max": 90.805493
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 136.172,
+        "Median": 151.7095,
+        "P95NearestRank": 195.684,
+        "Max": 195.684
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57593.666666666664,
+        "Median": 57593.666666666664,
+        "P95NearestRank": 57603,
+        "Max": 57603
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 6.350613,
+        "Median": 7.047655,
+        "P95NearestRank": 7.716392,
+        "Max": 8.549772
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 20.245193,
+        "Median": 21.30599,
+        "P95NearestRank": 26.252568,
+        "Max": 26.252568
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 26.06,
+        "Median": 26.8875,
+        "P95NearestRank": 32.214,
+        "Max": 32.214
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 13896572,
+        "Median": 13897030,
+        "P95NearestRank": 18079576,
+        "Max": 18079576
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 19.084481,
+        "Median": 21.239417500000002,
+        "P95NearestRank": 26.212356,
+        "Max": 26.212356
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        3
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 14.742752,
+        "Median": 16.185741,
+        "P95NearestRank": 16.639282,
+        "Max": 16.639282
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 25.783,
+        "Median": 29.996000000000002,
+        "P95NearestRank": 32.337,
+        "Max": 32.337
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57673.333333333336,
+        "Median": 57673.333333333336,
+        "P95NearestRank": 60408,
+        "Max": 60408
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 4.647156,
+        "Median": 5.228196499999999,
+        "P95NearestRank": 6.290369,
+        "Max": 6.319554
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 59.609237,
+        "Median": 60.565577000000005,
+        "P95NearestRank": 63.361784,
+        "Max": 63.361784
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 114.567,
+        "Median": 122.1615,
+        "P95NearestRank": 140.658,
+        "Max": 140.658
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 57600.333333333336,
+        "Median": 57600.333333333336,
+        "P95NearestRank": 57609.666666666664,
+        "Max": 57609.666666666664
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 4.625545,
+        "Median": 5.038606,
+        "P95NearestRank": 5.507499,
+        "Max": 6.054689
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 21.236118,
+        "Median": 26.267726500000002,
+        "P95NearestRank": 30.845888,
+        "Max": 30.845888
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 34.061,
+        "Median": 43.555,
+        "P95NearestRank": 48.532,
+        "Max": 48.532
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 6976016,
+        "Median": 6978522,
+        "P95NearestRank": 11171820,
+        "Max": 11171820
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 20.764528,
+        "Median": 25.9198465,
+        "P95NearestRank": 30.519444,
+        "Max": 30.695067
+      },
+      "GcCollectionsByGeneration": [
+        4,
+        4,
+        4
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 24.481812,
+        "Median": 28.22324,
+        "P95NearestRank": 29.233,
+        "Max": 29.233
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 63.965,
+        "Median": 68.9125,
+        "P95NearestRank": 70.228,
+        "Max": 70.228
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 56632,
+        "Median": 57128.33333333333,
+        "P95NearestRank": 57643.333333333336,
+        "Max": 57643.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 7.184426,
+        "Median": 9.260409,
+        "P95NearestRank": 10.307956,
+        "Max": 12.011759
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 108.637244,
+        "Median": 111.24058099999999,
+        "P95NearestRank": 114.751453,
+        "Max": 114.751453
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 269.671,
+        "Median": 274.14750000000004,
+        "P95NearestRank": 280.674,
+        "Max": 280.674
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 56820.333333333336,
+        "Median": 57034.91666666667,
+        "P95NearestRank": 57249.5,
+        "Max": 57249.5
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 7.680996,
+        "Median": 9.322386,
+        "P95NearestRank": 9.830134,
+        "Max": 10.814883
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 21.364205,
+        "Median": 22.902963999999997,
+        "P95NearestRank": 34.170675,
+        "Max": 34.170675
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 35.564,
+        "Median": 37.2695,
+        "P95NearestRank": 50.282,
+        "Max": 50.282
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 6976016,
+        "Median": 6977046,
+        "P95NearestRank": 11173856,
+        "Max": 11173856
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 20.967259,
+        "Median": 22.7016755,
+        "P95NearestRank": 34.013322,
+        "Max": 34.018278
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        2
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 26.904412,
+        "Median": 27.43695,
+        "P95NearestRank": 29.135015,
+        "Max": 29.135015
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 66.63,
+        "Median": 68.33449999999999,
+        "P95NearestRank": 72.107,
+        "Max": 72.107
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 56270,
+        "Median": 57300,
+        "P95NearestRank": 57643.333333333336,
+        "Max": 57643.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 7.625772,
+        "Median": 9.1622655,
+        "P95NearestRank": 10.685387,
+        "Max": 10.827813
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 107.864917,
+        "Median": 112.0013525,
+        "P95NearestRank": 119.303567,
+        "Max": 119.303567
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 267.76,
+        "Median": 275.0105,
+        "P95NearestRank": 298.682,
+        "Max": 298.682
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 56734.5,
+        "Median": 56992,
+        "P95NearestRank": 57335.333333333336,
+        "Max": 57335.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 7.788555,
+        "Median": 9.340937,
+        "P95NearestRank": 10.177719,
+        "Max": 12.135373
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 21.6034,
+        "Median": 22.539757,
+        "P95NearestRank": 27.935618,
+        "Max": 27.935618
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 40.112,
+        "Median": 42.492,
+        "P95NearestRank": 65.238,
+        "Max": 65.238
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 6972074,
+        "Median": 6975199,
+        "P95NearestRank": 11170510,
+        "Max": 11170510
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 21.410212,
+        "Median": 22.3784905,
+        "P95NearestRank": 27.782063,
+        "Max": 27.825897
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.852006,
+        "Median": 16.6054855,
+        "P95NearestRank": 16.901524,
+        "Max": 16.901524
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 59.211,
+        "Median": 65.162,
+        "P95NearestRank": 66.847,
+        "Max": 66.847
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 45653.333333333336,
+        "Median": 47026.666666666664,
+        "P95NearestRank": 48743.333333333336,
+        "Max": 48743.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 5.097745,
+        "Median": 5.408398999999999,
+        "P95NearestRank": 5.715405,
+        "Max": 5.716107
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "domain",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 62.606918,
+        "Median": 63.504681000000005,
+        "P95NearestRank": 64.436825,
+        "Max": 64.436825
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 248.022,
+        "Median": 252.90800000000002,
+        "P95NearestRank": 254.489,
+        "Max": 254.489
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 46097.833333333336,
+        "Median": 47213.666666666664,
+        "P95NearestRank": 48415.333333333336,
+        "Max": 48415.333333333336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 4.93967,
+        "Median": 5.251651,
+        "P95NearestRank": 5.538228,
+        "Max": 6.293835
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 16.39166,
+        "Median": 18.9983865,
+        "P95NearestRank": 20.786186,
+        "Max": 20.786186
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 15.145,
+        "Median": 18.7895,
+        "P95NearestRank": 20.483,
+        "Max": 20.483
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 28029584,
+        "Median": 28031696,
+        "P95NearestRank": 28039336,
+        "Max": 28039336
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 16.296126,
+        "Median": 18.909010000000002,
+        "P95NearestRank": 20.723075,
+        "Max": 20.723075
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 14.083632,
+        "Median": 14.946735499999999,
+        "P95NearestRank": 15.342884,
+        "Max": 15.342884
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 11.044,
+        "Median": 12.605,
+        "P95NearestRank": 14.849,
+        "Max": 14.849
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351674.6666666667,
+        "Median": 351749.3333333333,
+        "P95NearestRank": 355898.6666666667,
+        "Max": 355898.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 4.081727,
+        "Median": 4.852512,
+        "P95NearestRank": 5.982204,
+        "Max": 5.982204
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 50.568427,
+        "Median": 54.676973000000004,
+        "P95NearestRank": 61.78773,
+        "Max": 61.78773
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 48.053,
+        "Median": 53.9715,
+        "P95NearestRank": 98.462,
+        "Max": 98.462
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351360.6666666667,
+        "Median": 351378.3333333334,
+        "P95NearestRank": 355584.6666666667,
+        "Max": 355584.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 3.765798,
+        "Median": 4.52217,
+        "P95NearestRank": 5.289895,
+        "Max": 5.7755
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.80249,
+        "Median": 16.971747999999998,
+        "P95NearestRank": 25.861968,
+        "Max": 25.861968
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 12.072,
+        "Median": 14.3645,
+        "P95NearestRank": 21.545,
+        "Max": 21.545
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 28029584,
+        "Median": 28029584,
+        "P95NearestRank": 28043784,
+        "Max": 28043784
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.692864,
+        "Median": 16.8945745,
+        "P95NearestRank": 25.779438,
+        "Max": 25.779438
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        2
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 14.504373,
+        "Median": 15.3700065,
+        "P95NearestRank": 17.084134,
+        "Max": 17.084134
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 11.673,
+        "Median": 12.574,
+        "P95NearestRank": 15.537,
+        "Max": 15.537
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351674.6666666667,
+        "Median": 351674.6666666667,
+        "P95NearestRank": 355898.6666666667,
+        "Max": 355898.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 4.560088,
+        "Median": 5.088241,
+        "P95NearestRank": 5.926662,
+        "Max": 5.926662
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 51.082217,
+        "Median": 53.4719755,
+        "P95NearestRank": 60.113343,
+        "Max": 60.113343
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 48.716,
+        "Median": 51.272999999999996,
+        "P95NearestRank": 59.541,
+        "Max": 59.541
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351360.6666666667,
+        "Median": 351378.3333333334,
+        "P95NearestRank": 355606.6666666667,
+        "Max": 355606.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 4.028664,
+        "Median": 4.4176285,
+        "P95NearestRank": 5.237203,
+        "Max": 5.791543
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 16.065171,
+        "Median": 20.45684,
+        "P95NearestRank": 26.383637,
+        "Max": 26.383637
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 12.927,
+        "Median": 18.238,
+        "P95NearestRank": 24.58,
+        "Max": 24.58
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 28029664,
+        "Median": 28033900,
+        "P95NearestRank": 28040064,
+        "Max": 28040064
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 6,
+        "Min": 15.966882,
+        "Median": 20.36607,
+        "P95NearestRank": 26.317423,
+        "Max": 26.317423
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        3
+      ],
+      "TotalReportedMemoHits": 0,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 13.699001,
+        "Median": 14.5035745,
+        "P95NearestRank": 17.677293,
+        "Max": 17.677293
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 11.239,
+        "Median": 12.909500000000001,
+        "P95NearestRank": 22.528,
+        "Max": 22.528
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351701.3333333333,
+        "Median": 351772,
+        "P95NearestRank": 356000,
+        "Max": 356000
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 18,
+        "Min": 4.147092,
+        "Median": 4.889062,
+        "P95NearestRank": 6.908393,
+        "Max": 6.908393
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 1,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 48.111572,
+        "Median": 53.4833305,
+        "P95NearestRank": 59.131826,
+        "Max": 59.131826
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 45.119,
+        "Median": 52.099999999999994,
+        "P95NearestRank": 58.076,
+        "Max": 58.076
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351367.3333333333,
+        "Median": 351376.6666666666,
+        "P95NearestRank": 355613.3333333333,
+        "Max": 355613.3333333333
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 3.73607,
+        "Median": 4.397836,
+        "P95NearestRank": 5.293035,
+        "Max": 5.697971
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 18.944676,
+        "Median": 19.471047499999997,
+        "P95NearestRank": 24.890008,
+        "Max": 24.890008
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 23.956,
+        "Median": 25.5745,
+        "P95NearestRank": 32.441,
+        "Max": 32.441
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 14191028,
+        "Median": 14191084,
+        "P95NearestRank": 14195904,
+        "Max": 14195904
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 18.851616,
+        "Median": 19.404018,
+        "P95NearestRank": 24.816516,
+        "Max": 24.816516
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        2
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 19.722581,
+        "Median": 20.0607495,
+        "P95NearestRank": 20.633276,
+        "Max": 20.633276
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 34.955,
+        "Median": 35.6665,
+        "P95NearestRank": 43.06,
+        "Max": 43.06
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351668,
+        "Median": 351668,
+        "P95NearestRank": 351705.3333333333,
+        "Max": 351705.3333333333
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 6.179008,
+        "Median": 6.669411500000001,
+        "P95NearestRank": 7.038906,
+        "Max": 7.108455
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 78.289272,
+        "Median": 79.48335750000001,
+        "P95NearestRank": 81.067592,
+        "Max": 81.067592
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 138.745,
+        "Median": 141.66,
+        "P95NearestRank": 143.8,
+        "Max": 143.8
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351359,
+        "Median": 351359,
+        "P95NearestRank": 351370.6666666667,
+        "Max": 351370.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 6.218845,
+        "Median": 6.5805834999999995,
+        "P95NearestRank": 7.08182,
+        "Max": 7.808108
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 18.738429,
+        "Median": 20.2495515,
+        "P95NearestRank": 29.385901,
+        "Max": 29.385901
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 23.1,
+        "Median": 26.175,
+        "P95NearestRank": 33.909,
+        "Max": 33.909
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 14191028,
+        "Median": 14191028,
+        "P95NearestRank": 14196016,
+        "Max": 14196016
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 18.644553,
+        "Median": 20.114791,
+        "P95NearestRank": 29.306693,
+        "Max": 29.306693
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 20.156197,
+        "Median": 20.664343000000002,
+        "P95NearestRank": 24.556762,
+        "Max": 24.556762
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 35.1,
+        "Median": 36.05500000000001,
+        "P95NearestRank": 41.638,
+        "Max": 41.638
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351668,
+        "Median": 351691.3333333334,
+        "P95NearestRank": 351792,
+        "Max": 351792
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 6.396598,
+        "Median": 6.766871500000001,
+        "P95NearestRank": 8.730295,
+        "Max": 9.307748
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 80.03153,
+        "Median": 81.20053250000001,
+        "P95NearestRank": 83.124396,
+        "Max": 83.124396
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 141.875,
+        "Median": 143.99,
+        "P95NearestRank": 147.788,
+        "Max": 147.788
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351359,
+        "Median": 351363.6666666666,
+        "P95NearestRank": 351399.3333333333,
+        "Max": 351399.3333333333
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 6.344459,
+        "Median": 6.7354164999999995,
+        "P95NearestRank": 7.145001,
+        "Max": 8.135423
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 19.519118,
+        "Median": 20.257523499999998,
+        "P95NearestRank": 33.028223,
+        "Max": 33.028223
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 25.319,
+        "Median": 26.320500000000003,
+        "P95NearestRank": 37.777,
+        "Max": 37.777
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 14191276,
+        "Median": 14191276,
+        "P95NearestRank": 14196264,
+        "Max": 14196264
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 12,
+        "Min": 19.420583,
+        "Median": 20.18823,
+        "P95NearestRank": 32.942257,
+        "Max": 32.942257
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        2
+      ],
+      "TotalReportedMemoHits": 396,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 16.089994,
+        "Median": 16.6053545,
+        "P95NearestRank": 17.557498,
+        "Max": 17.557498
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 28.632,
+        "Median": 30.427500000000002,
+        "P95NearestRank": 32.646,
+        "Max": 32.646
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351694.6666666667,
+        "Median": 351694.6666666667,
+        "P95NearestRank": 351818.6666666667,
+        "Max": 351818.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 36,
+        "Min": 5.074301,
+        "Median": 5.4848435,
+        "P95NearestRank": 5.909329,
+        "Max": 5.970085
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        0
+      ],
+      "TotalReportedMemoHits": 2376,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 2,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 62.968366,
+        "Median": 65.04204150000001,
+        "P95NearestRank": 73.095172,
+        "Max": 73.095172
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 124.127,
+        "Median": 126.68,
+        "P95NearestRank": 139.48,
+        "Max": 139.48
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351365.6666666667,
+        "Median": 351370.3333333334,
+        "P95NearestRank": 351392.6666666667,
+        "Max": 351392.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 144,
+        "Min": 5.065622,
+        "Median": 5.3413385,
+        "P95NearestRank": 6.395591,
+        "Max": 7.643686
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        0
+      ],
+      "TotalReportedMemoHits": 9504,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 21.451798,
+        "Median": 24.2917025,
+        "P95NearestRank": 31.224716,
+        "Max": 31.224716
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 35.67,
+        "Median": 40.5955,
+        "P95NearestRank": 46.271,
+        "Max": 46.271
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 7271750,
+        "Median": 7273368,
+        "P95NearestRank": 7276260,
+        "Max": 7276260
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 20.598103,
+        "Median": 23.7797335,
+        "P95NearestRank": 30.773074,
+        "Max": 31.088252
+      },
+      "GcCollectionsByGeneration": [
+        3,
+        3,
+        3
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 25.906675,
+        "Median": 26.356130999999998,
+        "P95NearestRank": 27.316411,
+        "Max": 27.316411
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 70.952,
+        "Median": 71.4805,
+        "P95NearestRank": 73.421,
+        "Max": 73.421
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351664.6666666667,
+        "Median": 351664.6666666667,
+        "P95NearestRank": 351664.6666666667,
+        "Max": 351664.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 8.127044,
+        "Median": 8.763985,
+        "P95NearestRank": 9.282101,
+        "Max": 9.413123
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "oracle",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 103.820267,
+        "Median": 106.907036,
+        "P95NearestRank": 112.400501,
+        "Max": 112.400501
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 284.752,
+        "Median": 290.2365,
+        "P95NearestRank": 306.983,
+        "Max": 306.983
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351362.8333333333,
+        "Median": 351363.4166666666,
+        "P95NearestRank": 351379.5,
+        "Max": 351379.5
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 7.741025,
+        "Median": 8.765205,
+        "P95NearestRank": 10.229643,
+        "Max": 10.880256
+      },
+      "GcCollectionsByGeneration": [
+        6,
+        6,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 20.695761,
+        "Median": 22.114182,
+        "P95NearestRank": 29.703298,
+        "Max": 29.703298
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 34.174,
+        "Median": 38.5695,
+        "P95NearestRank": 43.835,
+        "Max": 43.835
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 7271750,
+        "Median": 7271843,
+        "P95NearestRank": 7275444,
+        "Max": 7275444
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 19.864113,
+        "Median": 21.634263,
+        "P95NearestRank": 29.532152,
+        "Max": 29.547332
+      },
+      "GcCollectionsByGeneration": [
+        1,
+        1,
+        1
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 26.601363,
+        "Median": 27.5634205,
+        "P95NearestRank": 31.214556,
+        "Max": 31.214556
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 71.387,
+        "Median": 73.6145,
+        "P95NearestRank": 84.382,
+        "Max": 84.382
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351664.6666666667,
+        "Median": 351664.6666666667,
+        "P95NearestRank": 351664.6666666667,
+        "Max": 351664.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 8.250733,
+        "Median": 9.1757065,
+        "P95NearestRank": 11.444058,
+        "Max": 11.924434
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "control",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 106.012883,
+        "Median": 109.50403549999999,
+        "P95NearestRank": 113.457693,
+        "Max": 113.457693
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 288.224,
+        "Median": 296.265,
+        "P95NearestRank": 329.306,
+        "Max": 329.306
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351362.8333333333,
+        "Median": 351364,
+        "P95NearestRank": 351368.6666666667,
+        "Max": 351368.6666666667
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 7.474583,
+        "Median": 8.967166500000001,
+        "P95NearestRank": 10.545441,
+        "Max": 11.745499
+      },
+      "GcCollectionsByGeneration": [
+        6,
+        6,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "memo-cold",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 22.509302,
+        "Median": 24.606168500000003,
+        "P95NearestRank": 30.526924,
+        "Max": 30.526924
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 45.614,
+        "Median": 47.2405,
+        "P95NearestRank": 53.701,
+        "Max": 53.701
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 7271914,
+        "Median": 7272007,
+        "P95NearestRank": 7277550,
+        "Max": 7277550
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 24,
+        "Min": 22.219508,
+        "Median": 24.380675500000002,
+        "P95NearestRank": 30.392947,
+        "Max": 30.427755
+      },
+      "GcCollectionsByGeneration": [
+        2,
+        2,
+        2
+      ],
+      "TotalReportedMemoHits": 1188,
+      "TotalFreshResultsWithoutReportedReuse": 396,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warmup",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 17.960367,
+        "Median": 18.392545,
+        "P95NearestRank": 18.564217,
+        "Max": 18.564217
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 65.434,
+        "Median": 71.0245,
+        "P95NearestRank": 73.761,
+        "Max": 73.761
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351691.3333333333,
+        "Median": 351691.3333333333,
+        "P95NearestRank": 351753.3333333333,
+        "Max": 351753.3333333333
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 72,
+        "Min": 5.332533,
+        "Median": 6.0245995,
+        "P95NearestRank": 6.492475,
+        "Max": 6.844022
+      },
+      "GcCollectionsByGeneration": [
+        0,
+        0,
+        0
+      ],
+      "TotalReportedMemoHits": 4752,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    },
+    {
+      "Variant": "candidate",
+      "Path": "technical",
+      "Readers": 4,
+      "Phase": "warm",
+      "Samples": 6,
+      "BatchWallMilliseconds": {
+        "Count": 6,
+        "Min": 71.038772,
+        "Median": 72.4379475,
+        "P95NearestRank": 73.508563,
+        "Max": 73.508563
+      },
+      "ProcessCpuMilliseconds": {
+        "Count": 6,
+        "Min": 279.033,
+        "Median": 281.83299999999997,
+        "P95NearestRank": 288.736,
+        "Max": 288.736
+      },
+      "ProcessAllocatedBytesPerObservation": {
+        "Count": 6,
+        "Min": 351369.5,
+        "Median": 351370.0833333334,
+        "P95NearestRank": 351376.5,
+        "Max": 351376.5
+      },
+      "ObservationWallMilliseconds": {
+        "Count": 288,
+        "Min": 5.631736,
+        "Median": 5.854084,
+        "P95NearestRank": 7.172976,
+        "Max": 7.969652
+      },
+      "GcCollectionsByGeneration": [
+        6,
+        6,
+        0
+      ],
+      "TotalReportedMemoHits": 19008,
+      "TotalFreshResultsWithoutReportedReuse": 0,
+      "NonHitsDistinguishedFromRejections": true
+    }
+  ]
+}

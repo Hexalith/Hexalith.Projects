@@ -1,0 +1,79 @@
+{
+  "readOnlyOnly": true,
+  "command": [
+    "dotnet",
+    "msbuild",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+    "-nologo",
+    "-p:Configuration=Debug",
+    "-p:BuildProjectReferences=false",
+    "-p:NuGetAudit=false",
+    "-p:EnablePrivateCatalogInvocationProof=true",
+    "-p:EnablePrivateOwnerSourceReadProof=true",
+    "-p:CustomBeforeMicrosoftCommonTargets=/tmp/story65-outbound-assertion-ops-prep-20261107/server-scratch.props",
+    "-target:HexalithVerifySourceMappingSelection;Story65ValidateServerCompilerPaths",
+    "-getProperty:CustomBeforeDirectoryBuildProps,CustomAfterMicrosoftCommonProps,CustomBeforeDirectoryBuildTargets,CustomAfterDirectoryBuildTargets,AfterMicrosoftNETSdkTargets,HEXALITH_SOURCE_MAPPING_HASH,Configuration,Story65ServerOriginalAfterSdkTargets,Story65ServerLateGuardImported,HexalithSourceMappingApplies,_HXWObservedConfiguration,_HXWPreLateSelectionCaptured,_HXWFinalTargetsImported"
+  ],
+  "exitCode": 0,
+  "originalSevenEmittedEnvironmentValues": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "effectiveSelectedProperties": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;/tmp/story65-outbound-assertion-ops-prep-20261107/server-late-guard.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug",
+    "Story65ServerOriginalAfterSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "Story65ServerLateGuardImported": "true",
+    "HexalithSourceMappingApplies": "true",
+    "_HXWObservedConfiguration": "Debug",
+    "_HXWPreLateSelectionCaptured": "true",
+    "_HXWFinalTargetsImported": "true"
+  },
+  "effectiveChangedProperties": [
+    "AfterMicrosoftNETSdkTargets"
+  ],
+  "allSevenEffectiveValuesUnchangedClaim": false,
+  "originalAfterImportFirstAndExactHash": "f22a6e827316f7bcc984349998ce9b08d3c31045160d98c89ed5e1c92bbd5334",
+  "allOriginalMappingFilesHashesStillMatch": true,
+  "mappingTargetDefinitionAndVerificationExecutedReadOnly": true,
+  "sourceMappingContractPrimaryFile": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.values.targets",
+  "sourceMappingContractPrimarySha256": "bb9f381ce292252ba4e1cdba65b307811a587abb2e5996a031454eaa25a366aa",
+  "allAfterGuardsAreContainsChainChecks": [
+    {
+      "Condition": "!$([System.String]::Copy(';$(AfterMicrosoftNETSdkTargets);').Contains(';/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;', System.StringComparison.Ordinal))",
+      "Text": "HXW006: Source mapping property 'AfterMicrosoftNETSdkTargets' must include selected mapping import '/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets' but was '$(AfterMicrosoftNETSdkTargets)'."
+    },
+    {
+      "Condition": "!$([System.String]::Copy(';$(AfterMicrosoftNETSdkTargets);').Contains(';/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;', System.StringComparison.Ordinal))",
+      "Text": "HXW006: Source mapping property 'AfterMicrosoftNETSdkTargets' must include selected mapping import '/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets' but was '$(AfterMicrosoftNETSdkTargets)'."
+    },
+    {
+      "Condition": "!$([System.String]::Copy(';$(AfterMicrosoftNETSdkTargets);').Contains(';/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;', System.StringComparison.Ordinal))",
+      "Text": "HXW006: Source mapping property 'AfterMicrosoftNETSdkTargets' must include selected mapping import '/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets' but was '$(AfterMicrosoftNETSdkTargets)'."
+    },
+    {
+      "Condition": "!$([System.String]::Copy(';$(AfterMicrosoftNETSdkTargets);').Contains(';/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets;', System.StringComparison.Ordinal))",
+      "Text": "HXW006: Source mapping property 'AfterMicrosoftNETSdkTargets' must include selected mapping import '/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets' but was '$(AfterMicrosoftNETSdkTargets)'."
+    }
+  ],
+  "sdkFinalImportPrimaryFile": "/home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.Sdk.targets",
+  "sdkFinalImportPrimarySha256": "7958c0c5010ec8d9092c079ccafac6eb7289db34829b6e2a33ba6eaefaaaa770",
+  "sdkFinalImportLine": 1510,
+  "noOriginalMappingFileEdited": true,
+  "noBuildCoreCompileResolveReferencesOrAssemblyLoad": true,
+  "source54App147ServerModuleMetadataServer66Gateway34Domain98RootServer10Sdk8Unchanged": true,
+  "guardSourceAndWritablePathValidationSucceeded": true,
+  "futureGeneratorAndCscWriteObservationStillPending": true,
+  "importOrderClaimLimitedToPinnedSdkImportGraph": true,
+  "addedServerOnlyFinalImport": "/tmp/story65-outbound-assertion-ops-prep-20261107/server-late-guard.targets"
+}

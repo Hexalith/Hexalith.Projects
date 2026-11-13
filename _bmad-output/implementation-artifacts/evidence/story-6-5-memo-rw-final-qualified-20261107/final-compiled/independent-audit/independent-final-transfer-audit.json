@@ -1,0 +1,4428 @@
+{
+  "auditUtc": "2026-11-07T21:19:12.672843+00:00",
+  "passed": true,
+  "diagnosticOnly": true,
+  "actualCompiledProductionTransferMeasured": true,
+  "liveCriticalPathOrHostDeadlineGainClaimed": false,
+  "auditSourceSha256": "647699e97ca0839bb36f46c6228a662fa59bb6292765c0136bb3089ee2bf347f",
+  "evidenceSha256": {
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/benchmark-samples.jsonl": "a370a19bcf17cfda88d904ebbecc93eaf9a0a15c86188eefc6ef9b93db644920",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/benchmark-summary.json": "29db4fc5d4281a407ff4456d803dec85313e681a46740ba2e9986a24bb6bdd70",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/inventory.json": "5f4c7da060c3c8e50b86d590512a02f5ab2fd23667016408be396928ba06e432",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/native-qualified-production-binding.json": "1ebed01e8867fac1dce5ccb9b03243fde600a63669d523ef09c803e6c1dc622a",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/parity.json": "0cb025f0305d5144fdf38dd3748144fe6734c590577945065f6d1c982500f1f2",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/production-monitor-control-rw-copy-agreement.json": "4fd01398e719d132839d0640c15d4ec24ddde46640261ff6d1b7b5605b2903a3",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/result.json": "fca9cd2ff9bd1424d009837d65a62ba50aea4fe70e92d36629fa9dbd73ec6b63",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/runtime-facts.json": "6962caae1eb12aa4d0ce8ae8a7a35b456fd1001256e21bc507399dd01fa6d3f6",
+    "/tmp/story65-image-memo-rw-final-compiled-results-20261107/selected-variant-path-proofs.json": "049b850bc31c477c7a479cf34a8dcde8842ba0ec66ca15f7efa13400669f2515",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/preparation-receipt.json": "7f7d51907f9142d02b00fbc46cf394f820c89812f95234c36d1d74edc0e07464",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/final-binding.json": "9c2f3ebfac36e1fe6be3e1ba591124b1204763cac851ca51eab633369a9c7d12",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/prototype-receipt.json": "9fd33edb26ef948ac7beb8f1f13cf1358f3b0ed737306203d8fbd3ed3887d883",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/resolved-commands.json": "b81552026cdabf5e909dac179e0484c296bd644728edebb00b3adf638ba2cc98",
+    "/tmp/story65-image-memo-rw-final-compiled-execution-20261107/attempt-1/command-receipt.json": "0b374891ea6b6ae52232c517b4037701994a17392afa68baba1ef169cfcd031d",
+    "/tmp/story65-image-memo-rw-final-compiled-execution-20261107/attempt-1/execution-release.json": "37eb420e99f3700e1b6c328c27133f8961cc502ba1c299cae2e2802c8cdea81e",
+    "/tmp/story65-image-memo-rw-final-compiled-execution-20261107/attempt-1/inputs-before.json": "190b9f6db07645881676170f23c4af6a859faccbe176be0b53d3e3e1df3860fd",
+    "/tmp/story65-image-memo-rw-final-compiled-execution-20261107/attempt-1/inputs-after.json": "190b9f6db07645881676170f23c4af6a859faccbe176be0b53d3e3e1df3860fd",
+    "/tmp/story65-image-memo-rw-final-compiled-run-20261107.py": "4059f0dc1e44c1bb8ba989b365f75fab758689b94bd6c11e7f60a49ab52c0910"
+  },
+  "compiledOutputSha256": {
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.dll": "5be7b70f77d0cf922e03c837bf98ebbe0f1f3c86eae689dbb4c448924b7eb410",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.Commons.UniqueIds.pdb": "9b1ec301c7ee8ac940af50c9b754ccf0e07f76d90c8fee427c6651be4e48c3ca",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll": "067c49c6711c24cc14267e708cb968ad113da07ab5633419f3115a47362308c5",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Contracts.pdb": "5be545713f73dd5cb263d3887e76476477e33fc11ce2e24267d2dc2a27138354",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.deps.json": "f9e75c1576fbc9a370712f1b0733fb7397eb95abd644722e97e04ff5144cecb0",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll": "38477dbba1c052de18c2053e077c05af424fc40cf6fdb7374855484d1b8a55c2",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.pdb": "c02a41fa8d3f7827c1c5130819ad1a9d9a30557943bc568af07249411f6b4df5",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.runtimeconfig.json": "2854c873c21edc9fa7c2056f9d4744054aeb11f009d271702daa7794b74e895f",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+    "/tmp/story65-image-memo-rw-final-compiled-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.pdb": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6"
+  },
+  "frozenInputs": {
+    "preparationSha256": "7f7d51907f9142d02b00fbc46cf394f820c89812f95234c36d1d74edc0e07464",
+    "bindingSha256": "9c2f3ebfac36e1fe6be3e1ba591124b1204763cac851ca51eab633369a9c7d12",
+    "all62Prepared590ExternalCurrent": true,
+    "all653ExactFrozenUnionBeforeEqualsAfterEqualsCurrent": true,
+    "all62ExecutedSourceSnapshotHashesMatch": true,
+    "prototype59Unchanged": true,
+    "oldCopiedHelpersAndTimingMeasurementBodiesByteExact": true,
+    "sourceControlCount": 56
+  },
+  "execution": {
+    "supervisorSha256": "4059f0dc1e44c1bb8ba989b365f75fab758689b94bd6c11e7f60a49ab52c0910",
+    "allThreeCommandsExitZero": true,
+    "buildWarnings": 0,
+    "buildErrors": 0,
+    "diagnosticProcesses": [
+      {
+        "pid": 1709166,
+        "startTicks": "12370861",
+        "recordedGroupAbsent": true,
+        "freshPidAbsent": true,
+        "wallSeconds": 0.612833771010628,
+        "peakObservedRssBytes": 167809024
+      },
+      {
+        "pid": 1709217,
+        "startTicks": "12370934",
+        "recordedGroupAbsent": true,
+        "freshPidAbsent": true,
+        "wallSeconds": 1.717149813004653,
+        "peakObservedRssBytes": 172756992
+      },
+      {
+        "pid": 1709673,
+        "startTicks": "12371118",
+        "recordedGroupAbsent": true,
+        "freshPidAbsent": true,
+        "wallSeconds": 13.358095399002195,
+        "peakObservedRssBytes": 401227776
+      }
+    ],
+    "freshProcessGroups": {
+      "1709166": [],
+      "1709217": [],
+      "1709673": []
+    },
+    "supervisorFreshPidAbsent": true,
+    "noSignalsSent": true,
+    "noApplicationBuildNativeTestHostProfileOrSourceEdit": true
+  },
+  "sourceAndNativeBinding": {
+    "ownerReceiptSha256": "489bcaf2b508c8a2ad9ca51738bb12cfa200643f2c3baa384ae4fa503700d513",
+    "nativeAuditSha256": "93ab46016105006e2572f47960c6a9a7c2203f0db622a764e5c0525028fe6f37",
+    "sourceControlsSha256": "5b21157c1fba18533e2c20c7c12d08ff4d23eca714372f66cde4640c315be327",
+    "nativeAlreadyQualifiedUniquePasses": 1048,
+    "sourceControls": 56,
+    "compiledSdkSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+    "compiledSdkPdbSha256": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6",
+    "actualSdkDefaultContextMatchedTypedPath": true,
+    "productionRuntimeRwlGateCheckPassed": true,
+    "copiedMonitorAndRwVariantPathsProven": true,
+    "scratchParityChecksNotAddedToNativePasses": true
+  },
+  "cohort": {
+    "images": 66,
+    "bytes": 27656504,
+    "chargedBytes": 27690296,
+    "allImagesEligibleAndBoundsFit": true,
+    "sameOrdinalIdentityAndPhysicalPathSelectionAsInitialCorrected66": true,
+    "everyPhysicalFileCurrentShaBoundIn590Inputs": true,
+    "imagesWhoseBytesChangedSinceInitialExperiment": [
+      {
+        "fullName": "Hexalith.EventStore.ServiceDefaults, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+        "oldSha256": "5bb66fad2959bc0db70cd9e3392c175da56c1bb0e5446fe14b3ad37f109a7872",
+        "currentSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542"
+      }
+    ],
+    "sourceDerivedOwnerDomainDirectReferencesOnly": true,
+    "completeRuntimeDiscoveryUnionClaimed": false
+  },
+  "behavioralQualification": {
+    "parityChecks": 621,
+    "parityPassed": 621,
+    "selectedVariantProofs": 3,
+    "completeIdentityAgreementRows": 12,
+    "nativePassInflation": 0,
+    "naturalProcessors": 14,
+    "runtime": "10.0.14",
+    "matchedDebugDisableOptimizations": true,
+    "ownerMatchedServerGc": true,
+    "forcedGc": 0,
+    "actualHarnessSha256": "38477dbba1c052de18c2053e077c05af424fc40cf6fdb7374855484d1b8a55c2"
+  },
+  "rawReconciliation": {
+    "strictDuplicateKeysAndNestedSchema": true,
+    "batches": 324,
+    "observations": 4032,
+    "imageCalls": 266112,
+    "memoHits": 258984,
+    "freshNonReusedResults": 7128,
+    "independentlyReproducedSummaryGroups": 54,
+    "allChargesAndHitCountsExact": true,
+    "sixBalancedVariantPermutationsEachPathReaderCount": true,
+    "allWorkerIterationsAndTimingsValid": true
+  },
+  "timingComparisons": [
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 19.7028965,
+        "processCpuMilliseconds": 18.953,
+        "processAllocatedBytesPerObservation": 27737740.0,
+        "observationMedianMilliseconds": 19.079302499999997,
+        "observationP95Milliseconds": 19.079302499999997
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 20.117387,
+        "processCpuMilliseconds": 18.919,
+        "processAllocatedBytesPerObservation": 27738808.0,
+        "observationMedianMilliseconds": 20.0347905,
+        "observationP95Milliseconds": 20.0347905
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -23.817111849847638,
+          "Median": -9.982279325225246,
+          "P95NearestRank": 50.57128273657292,
+          "Max": 50.57128273657292,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            29.36964117383367,
+            -22.831305902539135,
+            -11.618386600885788,
+            -8.346172049564704,
+            50.57128273657292,
+            -23.817111849847638
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -60.816777041942615,
+          "Median": 6.351901039707641,
+          "P95NearestRank": 37.87450126949583,
+          "Max": 37.87450126949583,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            36.35379842724189,
+            -42.93425560799017,
+            -8.788443616029816,
+            21.4922456954451,
+            37.87450126949583,
+            -60.816777041942615
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03578250809143091,
+          "Median": -0.0010368558133744266,
+          "P95NearestRank": 0.05659195298195474,
+          "Max": 0.05659195298195474,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            0.05659195298195474,
+            -0.03578250809143091,
+            0.02964968664491696,
+            -0.030911107785480674,
+            0.015662158868523512,
+            -0.017735870495272366
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -23.862159566621333,
+          "Median": -9.994302373568859,
+          "P95NearestRank": 50.927783981737626,
+          "Max": 50.927783981737626,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            23.185908187366834,
+            -23.003650384980112,
+            -11.633513098000881,
+            -8.355091649136837,
+            50.927783981737626,
+            -23.862159566621333
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -23.862159566621333,
+          "Median": -9.994302373568859,
+          "P95NearestRank": 50.927783981737626,
+          "Max": 50.927783981737626,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            23.185908187366834,
+            -23.003650384980112,
+            -11.633513098000881,
+            -8.355091649136837,
+            50.927783981737626,
+            -23.862159566621333
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 19.7028965,
+        "processCpuMilliseconds": 18.953,
+        "processAllocatedBytesPerObservation": 27737740.0,
+        "observationMedianMilliseconds": 19.079302499999997,
+        "observationP95Milliseconds": 19.079302499999997
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 19.489866499999998,
+        "processCpuMilliseconds": 16.8955,
+        "processAllocatedBytesPerObservation": 27740156.0,
+        "observationMedianMilliseconds": 19.4166,
+        "observationP95Milliseconds": 19.4166
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -26.147483095233337,
+          "Median": -2.485241432502061,
+          "P95NearestRank": 50.46604889201143,
+          "Max": 50.46604889201143,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -16.774074414717166,
+            11.803591549713044,
+            41.4084898555098,
+            -26.147483095233337,
+            50.46604889201143,
+            -24.77209960284942
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -10.010247559462826,
+          "Median": 11.78846218802979,
+          "P95NearestRank": 41.5840867992767,
+          "Max": 41.5840867992767,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -7.732864674868201,
+            19.930711228856744,
+            41.5840867992767,
+            3.646213147202837,
+            24.629508196721318,
+            -10.010247559462826
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03595544753863811,
+          "Median": 0.0081339881289888,
+          "P95NearestRank": 0.035968380130690925,
+          "Max": 0.035968380130690925,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.022519502725559803,
+            0.0,
+            0.035968380130690925,
+            -0.035868946862926965,
+            0.0162679762579776,
+            -0.03595544753863811
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -26.294060581690793,
+          "Median": -4.715280635971702,
+          "P95NearestRank": 50.7690796590049,
+          "Max": 50.7690796590049,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -21.11686952738546,
+            11.686308255442057,
+            41.69806412074046,
+            -26.294060581690793,
+            50.7690796590049,
+            -24.817346957434538
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -26.294060581690793,
+          "Median": -4.715280635971702,
+          "P95NearestRank": 50.7690796590049,
+          "Max": 50.7690796590049,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -21.11686952738546,
+            11.686308255442057,
+            41.69806412074046,
+            -26.294060581690793,
+            50.7690796590049,
+            -24.817346957434538
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 21.082697,
+        "processCpuMilliseconds": 33.167500000000004,
+        "processAllocatedBytesPerObservation": 13901174.0,
+        "observationMedianMilliseconds": 21.010555,
+        "observationP95Milliseconds": 21.031066
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 23.631898,
+        "processCpuMilliseconds": 30.323,
+        "processAllocatedBytesPerObservation": 13896692.0,
+        "observationMedianMilliseconds": 23.515083,
+        "observationP95Milliseconds": 23.539102999999997
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -30.608148058331743,
+          "Median": -4.950984645550443,
+          "P95NearestRank": 33.04004952064474,
+          "Max": 33.04004952064474,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -16.61962904812706,
+            33.04004952064474,
+            3.174363929120072,
+            -13.07633322022096,
+            -30.608148058331743,
+            23.730983110063143
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -35.782485651564436,
+          "Median": 15.590582336993709,
+          "P95NearestRank": 63.71098122124113,
+          "Max": 63.71098122124113,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -13.666155802654323,
+            36.75034867503486,
+            63.71098122124113,
+            15.944494479468974,
+            -35.782485651564436,
+            15.236670194518442
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03438451148960464,
+          "Median": 0.014881246554088179,
+          "P95NearestRank": 0.058056982194032436,
+          "Max": 0.058056982194032436,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0013723347930261198,
+            0.0279778813547793,
+            0.0017846117533970585,
+            0.058056982194032436,
+            -0.03438451148960464,
+            0.037332926518618414
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -30.41989242640859,
+          "Median": -5.125428563504352,
+          "P95NearestRank": 32.97717762003754,
+          "Max": 32.97717762003754,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -16.312628746912182,
+            32.97717762003754,
+            2.9256430356773278,
+            -13.176500162686033,
+            -30.41989242640859,
+            23.57721741529899
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -30.35913865375165,
+          "Median": -4.976419723342001,
+          "P95NearestRank": 32.80560482437078,
+          "Max": 32.80560482437078,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -16.202035458977658,
+            32.80560482437078,
+            3.3326058166634365,
+            -13.28544526334744,
+            -30.35913865375165,
+            23.471995337465934
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 21.082697,
+        "processCpuMilliseconds": 33.167500000000004,
+        "processAllocatedBytesPerObservation": 13901174.0,
+        "observationMedianMilliseconds": 21.010555,
+        "observationP95Milliseconds": 21.031066
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 22.212721000000002,
+        "processCpuMilliseconds": 27.672,
+        "processAllocatedBytesPerObservation": 13901156.0,
+        "observationMedianMilliseconds": 22.133948,
+        "observationP95Milliseconds": 22.145371
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -22.322789345940187,
+          "Median": -3.1594037823752528,
+          "P95NearestRank": 37.88510619049716,
+          "Max": 37.88510619049716,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -3.2316087266918703,
+            -3.0871988380586357,
+            -13.673696198664508,
+            12.973569891058844,
+            -22.322789345940187,
+            37.88510619049716
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -17.420583633766405,
+          "Median": 23.296043832166944,
+          "P95NearestRank": 72.77533039647575,
+          "Max": 72.77533039647575,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            2.058438054120737,
+            72.77533039647575,
+            23.127767038722947,
+            42.65955263697929,
+            -17.420583633766405,
+            23.464320625610945
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.058425228652358996,
+          "Median": 0.014106586742546057,
+          "P95NearestRank": 0.05707777343146869,
+          "Max": 0.05707777343146869,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.027608878501661493,
+            0.0006042949834306199,
+            -0.058425228652358996,
+            0.05707777343146869,
+            -0.035880204427973794,
+            0.03554768037712375
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -22.22812138881961,
+          "Median": -3.0545136946289517,
+          "P95NearestRank": 37.81752120717719,
+          "Max": 37.81752120717719,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -3.1461354200872593,
+            -2.9628919691706446,
+            -14.016609125881164,
+            13.165028031372362,
+            -22.22812138881961,
+            37.81752120717719
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -22.125251844447224,
+          "Median": -2.9674216109054132,
+          "P95NearestRank": 37.729558316458636,
+          "Max": 37.729558316458636,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -2.9973538742040673,
+            -2.9374893476067587,
+            -13.750573299000557,
+            13.197499985868632,
+            -22.125251844447224,
+            37.729558316458636
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 27.380648,
+        "processCpuMilliseconds": 46.304500000000004,
+        "processAllocatedBytesPerObservation": 6975474.0,
+        "observationMedianMilliseconds": 27.16004225,
+        "observationP95Milliseconds": 27.209453500000002
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 27.655872000000002,
+        "processCpuMilliseconds": 43.225,
+        "processAllocatedBytesPerObservation": 6980010.0,
+        "observationMedianMilliseconds": 27.429187749999997,
+        "observationP95Milliseconds": 27.6077965
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -36.39723235470173,
+          "Median": -2.3988663984637775,
+          "P95NearestRank": 23.56900658559249,
+          "Max": 23.56900658559249,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            13.503869962615234,
+            23.56900658559249,
+            -18.30160275954279,
+            14.211914070026666,
+            -18.594678012811126,
+            -36.39723235470173
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -13.671498534704874,
+          "Median": 3.5773683051491534,
+          "P95NearestRank": 27.358613330557226,
+          "Max": 27.358613330557226,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            5.9244776865892135,
+            27.358613330557226,
+            0.9809300182141323,
+            18.39954784165039,
+            1.2302589237090933,
+            -13.671498534704874
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.17353590355057014,
+          "Median": -0.05070320267347994,
+          "P95NearestRank": -0.022358443107073356,
+          "Max": -0.022358443107073356,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -0.04490788603240814,
+            -0.05649851931455174,
+            -0.17353590355057014,
+            -0.022358443107073356,
+            -0.027174325880363615,
+            -0.09142477433805585
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -36.563681635021005,
+          "Median": -2.397175701806587,
+          "P95NearestRank": 23.817876714521713,
+          "Max": 23.817876714521713,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            13.520307909426354,
+            23.817876714521713,
+            -18.314659313039527,
+            14.309316007386563,
+            -18.457768896133096,
+            -36.563681635021005
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -36.66060589107387,
+          "Median": -2.786200878266188,
+          "P95NearestRank": 23.176961139259134,
+          "Max": 23.176961139259134,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            13.041657539718333,
+            23.176961139259134,
+            -18.61405929625071,
+            13.851011641768341,
+            -18.858291657076688,
+            -36.66060589107387
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "memo-cold",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 27.380648,
+        "processCpuMilliseconds": 46.304500000000004,
+        "processAllocatedBytesPerObservation": 6975474.0,
+        "observationMedianMilliseconds": 27.16004225,
+        "observationP95Milliseconds": 27.209453500000002
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 24.3649475,
+        "processCpuMilliseconds": 45.0275,
+        "processAllocatedBytesPerObservation": 6979963.0,
+        "observationMedianMilliseconds": 24.2122705,
+        "observationP95Milliseconds": 24.285332
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -25.910527377803316,
+          "Median": 1.9770533235443306,
+          "P95NearestRank": 41.49782506252635,
+          "Max": 41.49782506252635,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            25.30549186478137,
+            -16.484231495577305,
+            14.346724143304446,
+            41.49782506252635,
+            -25.910527377803316,
+            -10.392617496215784
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -16.477495775657538,
+          "Median": -0.1381026214346881,
+          "P95NearestRank": 17.99662035298537,
+          "Max": 17.99662035298537,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -3.326002157855412,
+            -16.477495775657538,
+            12.393141517268337,
+            17.99662035298537,
+            -13.809092250300337,
+            3.049796914986036
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.1337902040135952,
+          "Median": -0.03540332139398972,
+          "P95NearestRank": 0.01617139847329696,
+          "Max": 0.01617139847329696,
+          "productionLowerRounds": 5,
+          "sixRoundValues": [
+            -0.02406089554868318,
+            -0.1337902040135952,
+            -0.046700076285388636,
+            -0.024106566502590798,
+            -0.11398723629353347,
+            0.01617139847329696
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -26.08309365434083,
+          "Median": 1.7346097022438558,
+          "P95NearestRank": 41.533887894231384,
+          "Max": 41.533887894231384,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            25.335683739100247,
+            -16.44331142311777,
+            14.028861703476103,
+            41.533887894231384,
+            -26.08309365434083,
+            -10.559642298988392
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -26.015969024190955,
+          "Median": 1.4146697281589349,
+          "P95NearestRank": 41.35510183215763,
+          "Max": 41.35510183215763,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            25.254545913811867,
+            -16.432600909715912,
+            13.699160515030195,
+            41.35510183215763,
+            -26.015969024190955,
+            -10.869821058712326
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 13.864829499999999,
+        "processCpuMilliseconds": 12.079,
+        "processAllocatedBytesPerObservation": 57680.0,
+        "observationMedianMilliseconds": 4.4474105,
+        "observationP95Milliseconds": 5.0220590000000005
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 14.067332,
+        "processCpuMilliseconds": 11.8925,
+        "processAllocatedBytesPerObservation": 57653.333333333336,
+        "observationMedianMilliseconds": 4.510833,
+        "observationP95Milliseconds": 5.0748405000000005
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -6.114219599244852,
+          "Median": 2.473224549542319,
+          "P95NearestRank": 11.292062328560615,
+          "Max": 11.292062328560615,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            4.854038819780171,
+            11.292062328560615,
+            9.238475494600884,
+            0.06611821690574171,
+            0.09241027930446677,
+            -6.114219599244852
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -23.13161988000888,
+          "Median": 3.3633047526415605,
+          "P95NearestRank": 28.163836863294243,
+          "Max": 28.163836863294243,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            3.720518215037094,
+            28.163836863294243,
+            -23.13161988000888,
+            3.006091290246027,
+            6.861396553119192,
+            2.071304188433709
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.046253469010171244,
+          "Median": 0.046253469010171244,
+          "P95NearestRank": 0.046253469010171244,
+          "Max": 0.046253469010171244,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.046253469010171244,
+            0.046253469010171244,
+            0.046253469010171244,
+            0.046253469010171244,
+            0.046253469010171244,
+            0.046253469010171244
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -6.059703469793909,
+          "Median": 4.253439126468905,
+          "P95NearestRank": 11.631752684827056,
+          "Max": 11.631752684827056,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            4.070257120907783,
+            11.137361775759036,
+            11.631752684827056,
+            1.3875157656757287,
+            4.4366211320300275,
+            -6.059703469793909
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -6.042245330276508,
+          "Median": 0.32199972884697226,
+          "P95NearestRank": 13.756107376419147,
+          "Max": 13.756107376419147,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            10.334453660932574,
+            13.756107376419147,
+            1.127711666383413,
+            -0.4837122086894685,
+            -2.5495576069311188,
+            -6.042245330276508
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 13.864829499999999,
+        "processCpuMilliseconds": 12.079,
+        "processAllocatedBytesPerObservation": 57680.0,
+        "observationMedianMilliseconds": 4.4474105,
+        "observationP95Milliseconds": 5.0220590000000005
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 14.0885345,
+        "processCpuMilliseconds": 12.322,
+        "processAllocatedBytesPerObservation": 57680.0,
+        "observationMedianMilliseconds": 4.6093375000000005,
+        "observationP95Milliseconds": 5.0522975
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -8.84715369117064,
+          "Median": -3.4786386307041948,
+          "P95NearestRank": 5.934788312344397,
+          "Max": 5.934788312344397,
+          "productionLowerRounds": 5,
+          "sixRoundValues": [
+            -8.84715369117064,
+            -3.3236825817825166,
+            -2.055366767692013,
+            -3.7444653074447665,
+            5.934788312344397,
+            -3.6335946796258733
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -33.57229725404851,
+          "Median": -3.7263555372630712,
+          "P95NearestRank": 33.87734414597061,
+          "Max": 33.87734414597061,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -12.653860499813497,
+            5.201149425287355,
+            -33.57229725404851,
+            23.164964055996997,
+            33.87734414597061,
+            -20.501106431579696
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.12928248222365823,
+          "Median": 0.0,
+          "P95NearestRank": 0.0,
+          "Max": 0.0,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.0,
+            -0.12928248222365823,
+            -0.013867702121761472,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -13.003101585488075,
+          "Median": -4.165723782992475,
+          "P95NearestRank": 9.659124191243684,
+          "Max": 9.659124191243684,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -13.003101585488075,
+            2.720722338026782,
+            -1.0312522192054807,
+            -7.30019534677947,
+            9.659124191243684,
+            -7.538227830840927
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -8.408231889957818,
+          "Median": -1.324196360320845,
+          "P95NearestRank": 3.9548088572902262,
+          "Max": 3.9548088572902262,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -1.3215973837745865,
+            -8.408231889957818,
+            -2.941847627226668,
+            -1.3267953368671037,
+            3.9548088572902262,
+            0.2818889698056326
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 15.265062499999999,
+        "processCpuMilliseconds": 30.076,
+        "processAllocatedBytesPerObservation": 57673.333333333336,
+        "observationMedianMilliseconds": 5.019113,
+        "observationP95Milliseconds": 5.2387415
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 22.2236555,
+        "processCpuMilliseconds": 36.027,
+        "processAllocatedBytesPerObservation": 57646.666666666664,
+        "observationMedianMilliseconds": 7.362046250000001,
+        "observationP95Milliseconds": 7.6485585
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -34.93315558642769,
+          "Median": -31.56221553284513,
+          "P95NearestRank": -22.368492057120438,
+          "Max": -22.368492057120438,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -32.78191533356033,
+            -27.213816691498536,
+            -22.368492057120438,
+            -31.41579108923712,
+            -34.93315558642769,
+            -31.708639976453135
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -30.98311817279046,
+          "Median": -17.84520815926066,
+          "P95NearestRank": 29.715885234429674,
+          "Max": 29.715885234429674,
+          "productionLowerRounds": 5,
+          "sixRoundValues": [
+            -23.758441486257386,
+            -7.1600896088230055,
+            29.715885234429674,
+            -18.158326828349168,
+            -30.98311817279046,
+            -17.532089490172154
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.016891178581990296,
+          "Median": 0.04625881808719701,
+          "P95NearestRank": 0.04625881808719701,
+          "Max": 0.04625881808719701,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            -0.016891178581990296,
+            0.04625881808719701,
+            0.04625881808719701,
+            0.04625881808719701,
+            0.04625881808719701,
+            0.04625881808719701
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -36.46260376735433,
+          "Median": -31.033351120415425,
+          "P95NearestRank": -23.14796760910819,
+          "Max": -23.14796760910819,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -33.12641604838632,
+            -29.543934312231322,
+            -23.14796760910819,
+            -30.702884579017685,
+            -36.46260376735433,
+            -31.363817661813165
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -33.3567544268058,
+          "Median": -32.07481009506647,
+          "P95NearestRank": -27.086087724665674,
+          "Max": -27.086087724665674,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -32.6184784948654,
+            -27.086087724665674,
+            -28.442828555843537,
+            -33.20032110219916,
+            -33.3567544268058,
+            -31.53114169526754
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 15.265062499999999,
+        "processCpuMilliseconds": 30.076,
+        "processAllocatedBytesPerObservation": 57673.333333333336,
+        "observationMedianMilliseconds": 5.019113,
+        "observationP95Milliseconds": 5.2387415
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 15.056874,
+        "processCpuMilliseconds": 27.5235,
+        "processAllocatedBytesPerObservation": 57673.333333333336,
+        "observationMedianMilliseconds": 4.9669525,
+        "observationP95Milliseconds": 5.156849
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -2.8993141219587404,
+          "Median": 1.5740284264126214,
+          "P95NearestRank": 14.096026680636808,
+          "Max": 14.096026680636808,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            1.86295977398363,
+            1.2850970788416127,
+            14.096026680636808,
+            6.376453680584038,
+            -2.8993141219587404,
+            -0.8396664798653641
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -3.25652954320671,
+          "Median": 11.681464731165347,
+          "P95NearestRank": 62.309551329200396,
+          "Max": 62.309551329200396,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -0.3668058834210952,
+            17.49418435591743,
+            62.309551329200396,
+            18.77881084459725,
+            -3.25652954320671,
+            5.8687451064132645
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.0,
+          "Median": 0.0,
+          "P95NearestRank": 0.0,
+          "Max": 0.0,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -4.508057936690191,
+          "Median": 2.4173932688916766,
+          "P95NearestRank": 11.535128298690122,
+          "Max": 11.535128298690122,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            3.6536302581275715,
+            -2.4803811809089416,
+            11.535128298690122,
+            8.05106125878301,
+            -4.508057936690191,
+            1.1811562796557817
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -3.2302327157104016,
+          "Median": 0.9321058120285719,
+          "P95NearestRank": 12.273295208136513,
+          "Max": 12.273295208136513,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -0.45059857064191355,
+            2.3148101946990574,
+            12.273295208136513,
+            5.158994973599906,
+            -3.2302327157104016,
+            -2.196236015699793
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 17.0735125,
+        "processCpuMilliseconds": 66.3255,
+        "processAllocatedBytesPerObservation": 47198.33333333333,
+        "observationMedianMilliseconds": 5.65605075,
+        "observationP95Milliseconds": 5.771053
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 29.201207,
+        "processCpuMilliseconds": 71.0685,
+        "processAllocatedBytesPerObservation": 56956.666666666664,
+        "observationMedianMilliseconds": 9.7886705,
+        "observationP95Milliseconds": 10.4262415
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -44.65784511155652,
+          "Median": -41.79542247672908,
+          "P95NearestRank": -38.20285390234663,
+          "Max": -38.20285390234663,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -42.55132811192212,
+            -38.20285390234663,
+            -39.67184356381891,
+            -41.03951684153604,
+            -44.65784511155652,
+            -44.07420489410756
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -11.522782608695648,
+          "Median": -7.7808911903215865,
+          "P95NearestRank": -3.934884508951275,
+          "Max": -3.934884508951275,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -9.088536380245326,
+            -4.421601761348482,
+            -6.473246000397848,
+            -3.934884508951275,
+            -9.222430515934466,
+            -11.522782608695648
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -19.609090383392125,
+          "Median": -16.630357983984933,
+          "P95NearestRank": -15.0231169895242,
+          "Max": -15.0231169895242,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -19.609090383392125,
+            -18.03710423128694,
+            -15.0231169895242,
+            -16.327131417804996,
+            -16.131471785922045,
+            -16.93358455016487
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -45.18013615985308,
+          "Median": -42.17632140591138,
+          "P95NearestRank": -39.49834616694739,
+          "Max": -39.49834616694739,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -42.87029406514383,
+            -41.16913024708,
+            -41.48234874667892,
+            -39.49834616694739,
+            -44.32410974569425,
+            -45.18013615985308
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -47.674562869716,
+          "Median": -44.41754670875769,
+          "P95NearestRank": -41.13835787506769,
+          "Max": -41.13835787506769,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -43.28814689974172,
+            -45.09528184141639,
+            -41.13835787506769,
+            -46.95717515156349,
+            -47.674562869716,
+            -43.739811576098994
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warmup",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 17.0735125,
+        "processCpuMilliseconds": 66.3255,
+        "processAllocatedBytesPerObservation": 47198.33333333333,
+        "observationMedianMilliseconds": 5.65605075,
+        "observationP95Milliseconds": 5.771053
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 17.1118715,
+        "processCpuMilliseconds": 67.375,
+        "processAllocatedBytesPerObservation": 47541.66666666667,
+        "observationMedianMilliseconds": 5.66032625,
+        "observationP95Milliseconds": 5.826381
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -4.7657381867257875,
+          "Median": -0.3418264334219323,
+          "P95NearestRank": 4.821636452714673,
+          "Max": 4.821636452714673,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -4.7657381867257875,
+            4.821636452714673,
+            -0.03950869314124361,
+            -4.000312905924441,
+            -0.644144173702621,
+            3.876938447159417
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -6.793720639828749,
+          "Median": -0.9318170541209425,
+          "P95NearestRank": 3.115452272937702,
+          "Max": 3.115452272937702,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -6.793720639828749,
+            0.5903536218194727,
+            -2.4539877300613577,
+            -4.444850153076995,
+            3.115452272937702,
+            2.4652369366611415
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -3.5721717416938303,
+          "Median": -1.4190184027774944,
+          "P95NearestRank": 4.478585404739466,
+          "Max": 4.478585404739466,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -3.5721717416938303,
+            -1.4495813102526123,
+            -1.3988863235094295,
+            2.222701769529567,
+            4.478585404739466,
+            -1.4391504820455592
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -5.234702969030868,
+          "Median": 0.6622898298401458,
+          "P95NearestRank": 4.371934969460445,
+          "Max": 4.371934969460445,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -5.234702969030868,
+            4.371934969460445,
+            0.16598758425430127,
+            -3.408330968387574,
+            1.1585920754259904,
+            2.644862350283206
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -9.17629411938673,
+          "Median": 0.6690951394431988,
+          "P95NearestRank": 5.55409428745719,
+          "Max": 5.55409428745719,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -9.17629411938673,
+            4.812154293020554,
+            0.26539733622410466,
+            -5.106220138465711,
+            1.0727929426622929,
+            5.55409428745719
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 51.5818635,
+        "processCpuMilliseconds": 50.405,
+        "processAllocatedBytesPerObservation": 57602.0,
+        "observationMedianMilliseconds": 4.2317725,
+        "observationP95Milliseconds": 4.8473065
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 50.486320000000006,
+        "processCpuMilliseconds": 49.0265,
+        "processAllocatedBytesPerObservation": 57595.333333333336,
+        "observationMedianMilliseconds": 4.1401355,
+        "observationP95Milliseconds": 4.619663
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -5.671795615057307,
+          "Median": 0.3701422849755831,
+          "P95NearestRank": 8.498127048821313,
+          "Max": 8.498127048821313,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -3.402685306222508,
+            -0.6718532423305223,
+            8.498127048821313,
+            4.585849697227129,
+            -5.671795615057307,
+            1.4121378122816886
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -25.380658436214,
+          "Median": 0.027022861607955972,
+          "P95NearestRank": 43.81572698283467,
+          "Max": 43.81572698283467,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -0.7414564001168356,
+            -4.559870857468429,
+            43.81572698283467,
+            0.7955021233327475,
+            -25.380658436214,
+            2.36554200768333
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.00810222695495355,
+          "Median": 0.011575011864373153,
+          "P95NearestRank": 0.047457548643969893,
+          "Max": 0.047457548643969893,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.011575011864373153,
+            0.011575011864373153,
+            0.047457548643969893,
+            0.011575011864373153,
+            0.00810222695495355,
+            0.011575011864373153
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -5.43729539431882,
+          "Median": 2.1788696674354235,
+          "P95NearestRank": 5.555181754975513,
+          "Max": 5.555181754975513,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -3.5015336744405157,
+            4.191296992192783,
+            3.0370844742769965,
+            5.555181754975513,
+            -5.43729539431882,
+            1.3206548605938506
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -4.5020272508464405,
+          "Median": 1.523095928255358,
+          "P95NearestRank": 30.948550269775012,
+          "Max": 30.948550269775012,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.579056497527719,
+            -4.5020272508464405,
+            30.948550269775012,
+            2.467135358982997,
+            0.4279077639496087,
+            3.6219437989151615
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 51.5818635,
+        "processCpuMilliseconds": 50.405,
+        "processAllocatedBytesPerObservation": 57602.0,
+        "observationMedianMilliseconds": 4.2317725,
+        "observationP95Milliseconds": 4.8473065
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 50.5423805,
+        "processCpuMilliseconds": 50.12,
+        "processAllocatedBytesPerObservation": 57602.0,
+        "observationMedianMilliseconds": 4.1705545,
+        "observationP95Milliseconds": 4.6696645
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -6.770576564483422,
+          "Median": 1.8946257608751127,
+          "P95NearestRank": 4.4938284247014515,
+          "Max": 4.4938284247014515,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -6.770576564483422,
+            2.3404881102782715,
+            2.158330740997161,
+            1.6309207807530646,
+            -0.010334819043855692,
+            4.4938284247014515
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -40.52621363934108,
+          "Median": -2.3297237840947007,
+          "P95NearestRank": 36.239180735281515,
+          "Max": 36.239180735281515,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -8.721434770031822,
+            2.5570906716189556,
+            36.239180735281515,
+            -1.3329690274985873,
+            -3.3264785406908137,
+            -40.52621363934108
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.003471981112423972,
+          "Median": 0.0,
+          "P95NearestRank": 0.03587838385241682,
+          "Max": 0.03587838385241682,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0,
+            0.0,
+            0.03587838385241682,
+            -0.003471981112423972,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -5.929149372977205,
+          "Median": 1.0559885907091893,
+          "P95NearestRank": 10.720590858983336,
+          "Max": 10.720590858983336,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -5.929149372977205,
+            10.720590858983336,
+            -1.8156498943299293,
+            2.0592768852968124,
+            0.052700296121566126,
+            2.4712335714271783
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -7.233613693804264,
+          "Median": -0.3572668682024549,
+          "P95NearestRank": 19.738598867778666,
+          "Max": 19.738598867778666,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -7.233613693804264,
+            -5.94458844300031,
+            19.738598867778666,
+            -2.9788854085452288,
+            2.264351672140319,
+            9.010518927921197
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 60.58569,
+        "processCpuMilliseconds": 121.083,
+        "processAllocatedBytesPerObservation": 57600.333333333336,
+        "observationMedianMilliseconds": 5.012065,
+        "observationP95Milliseconds": 5.5218325
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 86.574465,
+        "processCpuMilliseconds": 148.7685,
+        "processAllocatedBytesPerObservation": 57593.666666666664,
+        "observationMedianMilliseconds": 7.201732,
+        "observationP95Milliseconds": 7.585725500000001
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -32.76019750197459,
+          "Median": -30.947027604064267,
+          "P95NearestRank": -26.937750905517554,
+          "Max": -26.937750905517554,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -32.03477100440565,
+            -26.937750905517554,
+            -27.131003649945452,
+            -32.76019750197459,
+            -29.85928420372289,
+            -32.12687005176775
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -32.92761834811046,
+          "Median": -18.776317717431763,
+          "P95NearestRank": -11.60778559167175,
+          "Max": -11.60778559167175,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -32.92761834811046,
+            -18.65248695422418,
+            -11.60778559167175,
+            -31.805500871815063,
+            -17.19531068107426,
+            -18.900148480639345
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.011575346826342425,
+          "Median": 0.011575346826342425,
+          "P95NearestRank": 0.011575346826342425,
+          "Max": 0.011575346826342425,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.011575346826342425,
+            0.011575346826342425,
+            0.011575346826342425,
+            0.011575346826342425,
+            0.011575346826342425,
+            0.011575346826342425
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -34.135827240542596,
+          "Median": -31.146876703361173,
+          "P95NearestRank": -27.304850580838302,
+          "Max": -27.304850580838302,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -33.12869807013558,
+            -27.51248160986902,
+            -27.304850580838302,
+            -34.135827240542596,
+            -30.04062637314321,
+            -32.25312703357913
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -32.41187035691866,
+          "Median": -27.190063235114195,
+          "P95NearestRank": -24.19303796216522,
+          "Max": -24.19303796216522,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -31.608322882836248,
+            -25.63824450879004,
+            -24.19303796216522,
+            -28.247814131090397,
+            -26.132312339137997,
+            -32.41187035691866
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 60.58569,
+        "processCpuMilliseconds": 121.083,
+        "processAllocatedBytesPerObservation": 57600.333333333336,
+        "observationMedianMilliseconds": 5.012065,
+        "observationP95Milliseconds": 5.5218325
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 59.4293995,
+        "processCpuMilliseconds": 115.629,
+        "processAllocatedBytesPerObservation": 57600.333333333336,
+        "observationMedianMilliseconds": 4.91639525,
+        "observationP95Milliseconds": 5.186451
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -2.107923849665716,
+          "Median": 1.8196019454383094,
+          "P95NearestRank": 6.9301882176040275,
+          "Max": 6.9301882176040275,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -2.107923849665716,
+            6.9301882176040275,
+            4.746615151840761,
+            -0.34677135387453095,
+            2.7988410863352353,
+            0.8403628045413836
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -1.612682559770151,
+          "Median": 5.263784230890922,
+          "P95NearestRank": 10.101219112651517,
+          "Max": 10.101219112651517,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            -1.612682559770151,
+            7.363171935208279,
+            10.101219112651517,
+            5.625250466084708,
+            4.902317995697136,
+            1.5960501615765121
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.04107085010874867,
+          "Median": 0.0,
+          "P95NearestRank": 0.0,
+          "Max": 0.0,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0,
+            0.0,
+            -0.04107085010874867,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -2.9129922773923234,
+          "Median": 1.8169585711291347,
+          "P95NearestRank": 7.084910858632765,
+          "Max": 7.084910858632765,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -2.9129922773923234,
+            5.839477873020149,
+            7.084910858632765,
+            -2.031765401339336,
+            3.396616104615191,
+            0.23730103764307842
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -10.604062474197285,
+          "Median": 4.526799959270544,
+          "P95NearestRank": 14.129727889794363,
+          "Max": 14.129727889794363,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -0.43612456400089483,
+            14.129727889794363,
+            -10.604062474197285,
+            3.454787095934786,
+            7.945269431185431,
+            5.598812822606303
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 68.544702,
+        "processCpuMilliseconds": 264.04650000000004,
+        "processAllocatedBytesPerObservation": 47728.66666666667,
+        "observationMedianMilliseconds": 5.5291075,
+        "observationP95Milliseconds": 6.196229499999999
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 114.51971950000001,
+        "processCpuMilliseconds": 282.451,
+        "processAllocatedBytesPerObservation": 57120.75,
+        "observationMedianMilliseconds": 9.5448465,
+        "observationP95Milliseconds": 10.2682195
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -43.67734294237734,
+          "Median": -41.92673692053302,
+          "P95NearestRank": -38.98857756231777,
+          "Max": -38.98857756231777,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -42.65008575349596,
+            -43.67734294237734,
+            -38.98857756231777,
+            -39.8726000796604,
+            -42.06617092244785,
+            -41.78730291861819
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -13.518189755998545,
+          "Median": -9.879157507095137,
+          "P95NearestRank": -2.418854368725454,
+          "Max": -2.418854368725454,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -10.092753272020438,
+            -13.518189755998545,
+            -2.418854368725454,
+            -3.373522934936668,
+            -11.445076455102242,
+            -9.665561742169837
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -17.917899032586703,
+          "Median": -16.455698806448755,
+          "P95NearestRank": -9.011087199642597,
+          "Max": -9.011087199642597,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -17.917899032586703,
+            -15.252036532738744,
+            -17.477585211028448,
+            -15.904624732493245,
+            -9.011087199642597,
+            -17.006772880404263
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -44.91511720688095,
+          "Median": -42.30185323284361,
+          "P95NearestRank": -39.95835009673482,
+          "Max": -39.95835009673482,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -42.87809314319505,
+            -44.91511720688095,
+            -39.95835009673482,
+            -40.72133557873292,
+            -42.5196720255556,
+            -42.08403444013163
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -43.555657190120414,
+          "Median": -40.596471235467504,
+          "P95NearestRank": -33.81082870127424,
+          "Max": -33.81082870127424,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -41.12998647158243,
+            -33.81082870127424,
+            -38.80492502796985,
+            -40.06295599935259,
+            -41.526136796619916,
+            -43.555657190120414
+          ]
+        }
+      }
+    },
+    {
+      "path": "domain",
+      "phase": "warm",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 68.544702,
+        "processCpuMilliseconds": 264.04650000000004,
+        "processAllocatedBytesPerObservation": 47728.66666666667,
+        "observationMedianMilliseconds": 5.5291075,
+        "observationP95Milliseconds": 6.196229499999999
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 65.063677,
+        "processCpuMilliseconds": 257.985,
+        "processAllocatedBytesPerObservation": 47385.33333333333,
+        "observationMedianMilliseconds": 5.42669775,
+        "observationP95Milliseconds": 5.7874805
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -0.3828945530256256,
+          "Median": 3.4955456972071475,
+          "P95NearestRank": 6.919792021715088,
+          "Max": 6.919792021715088,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -0.12382947426180513,
+            6.919792021715088,
+            4.842210157157734,
+            -0.3828945530256256,
+            6.422334277959885,
+            2.1488812372565613
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -1.3126346956416346,
+          "Median": -0.5614220034165562,
+          "P95NearestRank": 5.992015384797633,
+          "Max": 5.992015384797633,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -1.3126346956416346,
+            5.992015384797633,
+            3.7711372241413077,
+            -0.8850423848647093,
+            -0.23780162196840315,
+            -0.9274659823535925
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -5.007356349638226,
+          "Median": 1.1920588421772127,
+          "P95NearestRank": 10.400280600314616,
+          "Max": 10.400280600314616,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -5.007356349638226,
+            1.2853416284270835,
+            1.0987760559273418,
+            1.6332096533790086,
+            10.400280600314616,
+            -0.5414555165380475
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -2.8705320835988313,
+          "Median": 2.472815381659055,
+          "P95NearestRank": 4.3608805231676095,
+          "Max": 4.3608805231676095,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -2.8705320835988313,
+            3.827161547131852,
+            4.3608805231676095,
+            -0.9853282085675041,
+            3.3434650455927084,
+            1.6021657177254012
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": 1.6669537574969695,
+          "Median": 5.016492628776081,
+          "P95NearestRank": 27.711503767291703,
+          "Max": 27.711503767291703,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            2.581086470719729,
+            27.711503767291703,
+            6.643008347950241,
+            1.6669537574969695,
+            13.078983766802876,
+            3.3899769096019217
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 21.716144,
+        "processCpuMilliseconds": 18.636000000000003,
+        "processAllocatedBytesPerObservation": 28034336.0,
+        "observationMedianMilliseconds": 21.633778,
+        "observationP95Milliseconds": 21.633778
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 16.889864000000003,
+        "processCpuMilliseconds": 15.083,
+        "processAllocatedBytesPerObservation": 28032208.0,
+        "observationMedianMilliseconds": 16.796348000000002,
+        "observationP95Milliseconds": 16.796348000000002
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -23.946524955805202,
+          "Median": 22.030995289732182,
+          "P95NearestRank": 84.78180028281545,
+          "Max": 84.78180028281545,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            75.34440443340256,
+            9.380213136883754,
+            -23.946524955805202,
+            34.68177744258061,
+            84.78180028281545,
+            7.8126520699031365
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -38.08726203121171,
+          "Median": 36.646212162286616,
+          "P95NearestRank": 237.95051102743406,
+          "Max": 237.95051102743406,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            237.95051102743406,
+            38.69193154034232,
+            -38.08726203121171,
+            34.600492784230916,
+            94.26195177406807,
+            15.1693474565189
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.0002853645103551017,
+          "Median": 0.00382417253753653,
+          "P95NearestRank": 0.016752158802479933,
+          "Max": 0.016752158802479933,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.016752158802479933,
+            0.007362959064804997,
+            0.0002853645103551017,
+            0.00028538601026806276,
+            0.016752158802479933,
+            0.00028538601026806276
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -24.055267419101046,
+          "Median": 22.167864586182475,
+          "P95NearestRank": 85.18250870216121,
+          "Max": 85.18250870216121,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            75.63418928770844,
+            9.416916254228225,
+            -24.055267419101046,
+            34.91881291813672,
+            85.18250870216121,
+            7.862282017861855
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -24.055267419101046,
+          "Median": 22.167864586182475,
+          "P95NearestRank": 85.18250870216121,
+          "Max": 85.18250870216121,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            75.63418928770844,
+            9.416916254228225,
+            -24.055267419101046,
+            34.91881291813672,
+            85.18250870216121,
+            7.862282017861855
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 21.716144,
+        "processCpuMilliseconds": 18.636000000000003,
+        "processAllocatedBytesPerObservation": 28034336.0,
+        "observationMedianMilliseconds": 21.633778,
+        "observationP95Milliseconds": 21.633778
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 21.391754,
+        "processCpuMilliseconds": 21.003,
+        "processAllocatedBytesPerObservation": 28041452.0,
+        "observationMedianMilliseconds": 21.3099185,
+        "observationP95Milliseconds": 21.3099185
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -32.69244529730459,
+          "Median": -0.6996843048756869,
+          "P95NearestRank": 73.17590694135205,
+          "Max": 73.17590694135205,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            73.17590694135205,
+            -16.558641814778674,
+            -32.69244529730459,
+            15.1592732050273,
+            47.44588468727762,
+            -17.44890996054842
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -46.78710612972418,
+          "Median": -11.176445570655801,
+          "P95NearestRank": 219.0300875968008,
+          "Max": 219.0300875968008,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            219.0300875968008,
+            -15.430488259411101,
+            -35.655755105506735,
+            -6.922402881900503,
+            85.47272207940588,
+            -46.78710612972418
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03557487369778567,
+          "Median": -0.029142601014564562,
+          "P95NearestRank": 0.01646672579846964,
+          "Max": 0.01646672579846964,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            0.01646672579846964,
+            -0.027701265671109532,
+            -0.03557219458190097,
+            -0.03557487369778567,
+            0.01646672579846964,
+            -0.030583936358019592
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -32.75134387037381,
+          "Median": -0.7510535371618001,
+          "P95NearestRank": 73.46377443251197,
+          "Max": 73.46377443251197,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            73.46377443251197,
+            -16.68488345539153,
+            -32.75134387037381,
+            15.182776381067931,
+            47.538430639909656,
+            -17.473530001202462
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -32.75134387037381,
+          "Median": -0.7510535371618001,
+          "P95NearestRank": 73.46377443251197,
+          "Max": 73.46377443251197,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            73.46377443251197,
+            -16.68488345539153,
+            -32.75134387037381,
+            15.182776381067931,
+            47.538430639909656,
+            -17.473530001202462
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 23.517722,
+        "processCpuMilliseconds": 28.122500000000002,
+        "processAllocatedBytesPerObservation": 14193806.0,
+        "observationMedianMilliseconds": 23.425908999999997,
+        "observationP95Milliseconds": 23.4454945
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 23.189217999999997,
+        "processCpuMilliseconds": 28.7515,
+        "processAllocatedBytesPerObservation": 14193452.0,
+        "observationMedianMilliseconds": 23.097969,
+        "observationP95Milliseconds": 23.1195415
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -21.28133999773736,
+          "Median": 2.8458981969463837,
+          "P95NearestRank": 28.353851407937448,
+          "Max": 28.353851407937448,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -9.292036291673389,
+            14.983832685566156,
+            26.449553167541385,
+            28.353851407937448,
+            -9.998751418855756,
+            -21.28133999773736
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -24.60338484179544,
+          "Median": 7.175310776391402,
+          "P95NearestRank": 26.26875199489307,
+          "Max": 26.26875199489307,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -6.426320803106911,
+            26.26875199489307,
+            20.776942355889716,
+            23.998498600969075,
+            -7.6624210277374205,
+            -24.60338484179544
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.02335692880898188,
+          "Median": 0.0024941176868464865,
+          "P95NearestRank": 0.036890396068711695,
+          "Max": 0.036890396068711695,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0032409438868619134,
+            0.027195340325025796,
+            0.0017472914868310596,
+            0.036890396068711695,
+            0.0009581845446415826,
+            -0.02335692880898188
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -21.323319727115752,
+          "Median": 2.9216683069210934,
+          "P95NearestRank": 28.479659412758963,
+          "Max": 28.479659412758963,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -9.279480959498454,
+            15.12281757334064,
+            27.039574168292525,
+            28.479659412758963,
+            -10.15247836043801,
+            -21.323319727115752
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -21.226716605357467,
+          "Median": 2.9286585324406147,
+          "P95NearestRank": 28.502129363006866,
+          "Max": 28.502129363006866,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -9.229191485096521,
+            15.08650854997775,
+            26.814421095329365,
+            28.502129363006866,
+            -10.112592579598434,
+            -21.226716605357467
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 23.517722,
+        "processCpuMilliseconds": 28.122500000000002,
+        "processAllocatedBytesPerObservation": 14193806.0,
+        "observationMedianMilliseconds": 23.425908999999997,
+        "observationP95Milliseconds": 23.4454945
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 23.955019999999998,
+        "processCpuMilliseconds": 29.195999999999998,
+        "processAllocatedBytesPerObservation": 14193750.0,
+        "observationMedianMilliseconds": 23.87330275,
+        "observationP95Milliseconds": 23.894785499999998
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -33.25374686241206,
+          "Median": -5.189628884093761,
+          "P95NearestRank": 45.13675585326313,
+          "Max": 45.13675585326313,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -33.25374686241206,
+            31.296249418240652,
+            7.305552426886752,
+            45.13675585326313,
+            -18.599776885875396,
+            -17.684810195074274
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -23.169484387220983,
+          "Median": 0.5034630004448979,
+          "P95NearestRank": 38.841554273487944,
+          "Max": 38.841554273487944,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -23.169484387220983,
+            20.32443393038188,
+            6.11421021726366,
+            38.841554273487944,
+            -5.1072842163738645,
+            -17.22890009047434
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.05331858176516047,
+          "Median": -0.0003522591998150748,
+          "P95NearestRank": 0.035142490540129856,
+          "Max": 0.035142490540129856,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -0.05331858176516047,
+            0.026941636693167403,
+            -0.0014936039931634504,
+            0.035142490540129856,
+            -0.05196808342835535,
+            0.0007890855935333008
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -33.18604339266855,
+          "Median": -5.183187979975019,
+          "P95NearestRank": 45.59680647763879,
+          "Max": 45.59680647763879,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -33.18604339266855,
+            31.35397559756543,
+            7.312486451620193,
+            45.59680647763879,
+            -18.80793109083062,
+            -17.67886241157023
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -33.1252408216772,
+          "Median": -5.160281947745122,
+          "P95NearestRank": 45.775938622470335,
+          "Max": 45.775938622470335,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -33.1252408216772,
+            31.199717595799935,
+            7.268558622944399,
+            45.775938622470335,
+            -18.87713866997406,
+            -17.589122518434642
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 26.976827,
+        "processCpuMilliseconds": 48.9965,
+        "processAllocatedBytesPerObservation": 7275501.0,
+        "observationMedianMilliseconds": 26.807876999999998,
+        "observationP95Milliseconds": 26.880001
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 22.801737000000003,
+        "processCpuMilliseconds": 39.5955,
+        "processAllocatedBytesPerObservation": 7273990.0,
+        "observationMedianMilliseconds": 22.613887,
+        "observationP95Milliseconds": 22.6772785
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -17.147324671230802,
+          "Median": 10.50442413156788,
+          "P95NearestRank": 66.78244235205271,
+          "Max": 66.78244235205271,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            48.334914544355456,
+            -1.6272869805635581,
+            -17.147324671230802,
+            7.928109594076704,
+            66.78244235205271,
+            13.080738669059055
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -0.8032038661177632,
+          "Median": 22.974145737050122,
+          "P95NearestRank": 68.76005515973338,
+          "Max": 68.76005515973338,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            35.686224162280155,
+            10.446937187884275,
+            -0.8032038661177632,
+            14.762848863809674,
+            68.76005515973338,
+            31.185442610290572
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.002254550893465712,
+          "Median": 0.019494115334228734,
+          "P95NearestRank": 0.0597471264051741,
+          "Max": 0.0597471264051741,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.03673362212486264,
+            0.002254608543594827,
+            0.002254608543594827,
+            0.002254550893465712,
+            0.0597471264051741,
+            0.05411060504620924
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -17.135940507862102,
+          "Median": 10.826800014986304,
+          "P95NearestRank": 69.68304001767558,
+          "Max": 69.68304001767558,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            52.457588696724656,
+            -1.8831526475085014,
+            -17.135940507862102,
+            7.8875814680337,
+            69.68304001767558,
+            13.766018561938909
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -17.078350176288204,
+          "Median": 10.777260279309363,
+          "P95NearestRank": 66.71283855355368,
+          "Max": 66.71283855355368,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            49.052091758510265,
+            -1.6631980514316136,
+            -17.078350176288204,
+            8.331346146547824,
+            66.71283855355368,
+            13.223174412070904
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "memo-cold",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 26.976827,
+        "processCpuMilliseconds": 48.9965,
+        "processAllocatedBytesPerObservation": 7275501.0,
+        "observationMedianMilliseconds": 26.807876999999998,
+        "observationP95Milliseconds": 26.880001
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 28.564574,
+        "processCpuMilliseconds": 49.769499999999994,
+        "processAllocatedBytesPerObservation": 7275401.0,
+        "observationMedianMilliseconds": 28.395294500000002,
+        "observationP95Milliseconds": 28.452035000000002
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -28.794999965457958,
+          "Median": 2.128428934265175,
+          "P95NearestRank": 32.173002341144574,
+          "Max": 32.173002341144574,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            32.173002341144574,
+            -21.642856169426683,
+            -28.794999965457958,
+            -25.209444445720152,
+            25.899714037957033,
+            31.815994254117452
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -19.960645557280564,
+          "Median": 2.397211092178325,
+          "P95NearestRank": 20.506340338742568,
+          "Max": 20.506340338742568,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            15.751774292473497,
+            -10.957352108116847,
+            -19.960645557280564,
+            -11.802625410220347,
+            17.223763245594782,
+            20.506340338742568
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03702152360472999,
+          "Median": 0.0013801676761904247,
+          "P95NearestRank": 0.05672093601916117,
+          "Max": 0.05672093601916117,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            0.03447823623201618,
+            -0.033504695604757995,
+            -0.03702152360472999,
+            -0.03171790087963533,
+            0.05672093601916117,
+            0.05185482737923852
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -29.034012146784626,
+          "Median": 1.9832073017914507,
+          "P95NearestRank": 32.093941992521735,
+          "Max": 32.093941992521735,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            32.093941992521735,
+            -22.240088655517642,
+            -29.034012146784626,
+            -25.29281613964619,
+            26.206503259100543,
+            31.722885945805057
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -28.85212461209432,
+          "Median": 2.169250465842577,
+          "P95NearestRank": 31.662188728215824,
+          "Max": 31.662188728215824,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            31.662188728215824,
+            -21.84397978584498,
+            -28.85212461209432,
+            -25.25180677621034,
+            26.182480717530133,
+            31.251505644337605
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 14.797941,
+        "processCpuMilliseconds": 12.341000000000001,
+        "processAllocatedBytesPerObservation": 353813.3333333333,
+        "observationMedianMilliseconds": 4.830005,
+        "observationP95Milliseconds": 5.4905735
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 14.790454,
+        "processCpuMilliseconds": 12.564,
+        "processAllocatedBytesPerObservation": 353928.0,
+        "observationMedianMilliseconds": 4.820109,
+        "observationP95Milliseconds": 5.3352465
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -16.452774800463544,
+          "Median": -4.241326334562628,
+          "P95NearestRank": 43.024209331182895,
+          "Max": 43.024209331182895,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            0.2526840704329292,
+            -0.14868176046403114,
+            -16.452774800463544,
+            -8.333970908661225,
+            43.024209331182895,
+            -8.965182965321826
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -42.57836827901183,
+          "Median": -3.4112805820461887,
+          "P95NearestRank": 76.13884759989509,
+          "Max": 76.13884759989509,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -34.359178565333636,
+            0.6038351693186339,
+            -42.57836827901183,
+            -7.426396333411011,
+            76.13884759989509,
+            5.518066114290576
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03239830323304993,
+          "Median": -0.0029733285293820355,
+          "P95NearestRank": 0.5643332353849617,
+          "Max": 0.5643332353849617,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            0.0075374990577969925,
+            0.5643332353849617,
+            -0.013484156116561063,
+            -0.03239830323304993,
+            -0.03239830323304993,
+            0.0075374990577969925
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -19.063309359049608,
+          "Median": -5.89781457671103,
+          "P95NearestRank": 43.00103065345182,
+          "Max": 43.00103065345182,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            2.0141397160405416,
+            -1.593206972923289,
+            -19.063309359049608,
+            -10.287809797856939,
+            43.00103065345182,
+            -10.202422180498772
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -20.55865714927848,
+          "Median": 0.7278608673795373,
+          "P95NearestRank": 43.198755078444215,
+          "Max": 43.198755078444215,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            6.839097293249785,
+            5.28782585165144,
+            -20.55865714927848,
+            -3.8321041168923653,
+            43.198755078444215,
+            -10.04440420689564
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 14.797941,
+        "processCpuMilliseconds": 12.341000000000001,
+        "processAllocatedBytesPerObservation": 353813.3333333333,
+        "observationMedianMilliseconds": 4.830005,
+        "observationP95Milliseconds": 5.4905735
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 14.6728275,
+        "processCpuMilliseconds": 13.965499999999999,
+        "processAllocatedBytesPerObservation": 353813.3333333333,
+        "observationMedianMilliseconds": 4.834689,
+        "observationP95Milliseconds": 5.313508
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -11.979249196591136,
+          "Median": 3.0015047073472134,
+          "P95NearestRank": 25.731621934711455,
+          "Max": 25.731621934711455,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            1.7692144168839352,
+            -0.03882132931894988,
+            4.233794997810492,
+            8.034653840705497,
+            25.731621934711455,
+            -11.979249196591136
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -25.409885655514543,
+          "Median": -4.4513143782057725,
+          "P95NearestRank": 27.81549394073981,
+          "Max": 27.81549394073981,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            5.862385321100905,
+            -25.409885655514543,
+            0.24644824586836922,
+            -15.69154580827733,
+            27.81549394073981,
+            -9.149077002279915
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.039692941396751724,
+          "Median": 0.0,
+          "P95NearestRank": 0.5757000331555018,
+          "Max": 0.5757000331555018,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0,
+            0.5757000331555018,
+            -0.039692941396751724,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -14.613491030909254,
+          "Median": 3.2410768935551615,
+          "P95NearestRank": 20.514372174560293,
+          "Max": 20.514372174560293,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            5.29479853196666,
+            -1.6803215919371173,
+            4.3522675498072205,
+            2.1298862373031024,
+            20.514372174560293,
+            -14.613491030909254
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -8.646692588657846,
+          "Median": 0.8357319610823755,
+          "P95NearestRank": 36.44895630938163,
+          "Max": 36.44895630938163,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            1.582839779863776,
+            0.08862414230097482,
+            -0.9287729413597012,
+            12.988170820978628,
+            36.44895630938163,
+            -8.646692588657846
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 16.6861925,
+        "processCpuMilliseconds": 30.2515,
+        "processAllocatedBytesPerObservation": 353806.6666666667,
+        "observationMedianMilliseconds": 5.4164815,
+        "observationP95Milliseconds": 5.760209
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 20.264905,
+        "processCpuMilliseconds": 35.4525,
+        "processAllocatedBytesPerObservation": 353780.0,
+        "observationMedianMilliseconds": 6.759132,
+        "observationP95Milliseconds": 6.8513755
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -23.468563555877353,
+          "Median": -18.601734686591918,
+          "P95NearestRank": -15.100496569648103,
+          "Max": -15.100496569648103,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -23.468563555877353,
+            -18.70672516366326,
+            -21.12086575788128,
+            -18.17685927842383,
+            -15.100496569648103,
+            -18.49674420952058
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -21.54145457452763,
+          "Median": -15.448756368630907,
+          "P95NearestRank": -7.957911365623849,
+          "Max": -7.957911365623849,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -15.540633514049041,
+            -15.71793416572077,
+            -21.54145457452763,
+            -8.980144404332147,
+            -7.957911365623849,
+            -15.356879223212772
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.02750275027502136,
+          "Median": 0.0075376410952232575,
+          "P95NearestRank": 0.0075376410952232575,
+          "Max": 0.0075376410952232575,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0075376410952232575,
+            0.0075376410952232575,
+            0.0075376410952232575,
+            0.0075376410952232575,
+            -0.02750275027502136,
+            0.0075376410952232575
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -25.304274063155706,
+          "Median": -18.758216251053433,
+          "P95NearestRank": -18.075088550055305,
+          "Max": -18.075088550055305,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -25.304274063155706,
+            -18.856920587984284,
+            -22.666638873314827,
+            -18.152667898478402,
+            -18.075088550055305,
+            -18.659511914122582
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -25.314399216884432,
+          "Median": -17.64613422484326,
+          "P95NearestRank": -12.454328567864248,
+          "Max": -12.454328567864248,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -25.314399216884432,
+            -18.956657546384882,
+            -17.11603090423487,
+            -17.578456829147537,
+            -12.454328567864248,
+            -17.713811620538976
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 16.6861925,
+        "processCpuMilliseconds": 30.2515,
+        "processAllocatedBytesPerObservation": 353806.6666666667,
+        "observationMedianMilliseconds": 5.4164815,
+        "observationP95Milliseconds": 5.760209
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 16.5503135,
+        "processCpuMilliseconds": 31.299500000000002,
+        "processAllocatedBytesPerObservation": 353806.6666666667,
+        "observationMedianMilliseconds": 5.52188675,
+        "observationP95Milliseconds": 5.667661
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -1.976331232025108,
+          "Median": -1.382145013342151,
+          "P95NearestRank": 2.9369392781387615,
+          "Max": 2.9369392781387615,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -1.8112543683053373,
+            -1.976331232025108,
+            0.6703448457245242,
+            2.9369392781387615,
+            -1.6430045172749375,
+            -1.1212855094093643
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -8.355123894907235,
+          "Median": -3.353299584154618,
+          "P95NearestRank": 12.277771979264518,
+          "Max": 12.277771979264518,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -2.5683355027143695,
+            1.552295961979011,
+            -8.355123894907235,
+            12.277771979264518,
+            -4.896817068905213,
+            -4.138263665594866
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.03503511045477303,
+          "Median": 0.0,
+          "P95NearestRank": 0.0,
+          "Max": 0.0,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0,
+            0.0,
+            0.0,
+            -0.03503511045477303,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -4.2644772477334225,
+          "Median": -1.973680602605743,
+          "P95NearestRank": 5.317240451293537,
+          "Max": 5.317240451293537,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -4.2644772477334225,
+            1.0391184275350573,
+            -2.0809675633433833,
+            5.317240451293537,
+            -2.5825460165131764,
+            -1.8663936418681026
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -4.235939484827867,
+          "Median": -0.1649869659645642,
+          "P95NearestRank": 8.470983579752044,
+          "Max": 8.470983579752044,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            1.3987716408582873,
+            -4.235939484827867,
+            8.470983579752044,
+            0.4927607922223798,
+            -0.8227347241515082,
+            -0.8898225126333537
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 17.8558515,
+        "processCpuMilliseconds": 70.9845,
+        "processAllocatedBytesPerObservation": 353812.6666666666,
+        "observationMedianMilliseconds": 5.9214935,
+        "observationP95Milliseconds": 6.0668255
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 27.9274055,
+        "processCpuMilliseconds": 73.773,
+        "processAllocatedBytesPerObservation": 353786.0,
+        "observationMedianMilliseconds": 9.03329325,
+        "observationP95Milliseconds": 10.107571
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -38.34165304849487,
+          "Median": -34.65997467259097,
+          "P95NearestRank": -30.36467775754318,
+          "Max": -30.36467775754318,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -38.34165304849487,
+            -33.963512423422735,
+            -30.36467775754318,
+            -35.356436921759204,
+            -37.98024137708072,
+            -31.877127757252012
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -10.38582901098305,
+          "Median": -1.6215453278859648,
+          "P95NearestRank": 7.542310026296284,
+          "Max": 7.542310026296284,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -4.8951902855979945,
+            0.43495880048629587,
+            0.7881082597111178,
+            -3.6780494562582255,
+            -10.38582901098305,
+            7.542310026296284
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.016578967695513036,
+          "Median": 0.007537712115923689,
+          "P95NearestRank": 0.025062892785454594,
+          "Max": 0.025062892785454594,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.019785450345111144,
+            0.025062892785454594,
+            0.007537712115923689,
+            0.007537712115923689,
+            -0.016578967695513036,
+            -0.004710244593586488
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -37.09003802493551,
+          "Median": -34.62661882642701,
+          "P95NearestRank": -28.935784649729822,
+          "Max": -28.935784649729822,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -36.21584521900997,
+            -33.65339316293488,
+            -28.935784649729822,
+            -35.59984448991914,
+            -37.09003802493551,
+            -31.91193946586097
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -46.527281876414165,
+          "Median": -35.79855106259507,
+          "P95NearestRank": -30.033393741562577,
+          "Max": -30.033393741562577,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -46.527281876414165,
+            -36.259578386725025,
+            -30.033393741562577,
+            -35.3375237384651,
+            -44.153054760892196,
+            -34.76501695630772
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warmup",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 17.8558515,
+        "processCpuMilliseconds": 70.9845,
+        "processAllocatedBytesPerObservation": 353812.6666666666,
+        "observationMedianMilliseconds": 5.9214935,
+        "observationP95Milliseconds": 6.0668255
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 18.148986999999998,
+        "processCpuMilliseconds": 71.1575,
+        "processAllocatedBytesPerObservation": 353803.3333333333,
+        "observationMedianMilliseconds": 5.9725417499999995,
+        "observationP95Milliseconds": 6.2786835
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -10.397193256192349,
+          "Median": -3.060141568652192,
+          "P95NearestRank": 6.2333172329956055,
+          "Max": 6.2333172329956055,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -10.397193256192349,
+            6.2333172329956055,
+            -3.9567353751167045,
+            -4.121008644764901,
+            -2.1635477621876786,
+            5.761792362803919
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -5.629002124959004,
+          "Median": -1.8886946003612848,
+          "P95NearestRank": 13.68210976478974,
+          "Max": 13.68210976478974,
+          "productionLowerRounds": 5,
+          "sixRoundValues": [
+            -1.9059880490911008,
+            -4.814819556283845,
+            -1.8329827628595585,
+            -1.8714011516314688,
+            -5.629002124959004,
+            13.68210976478974
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.005274798144783155,
+          "Median": 0.0,
+          "P95NearestRank": 0.01224721281698482,
+          "Max": 0.01224721281698482,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            -0.005274798144783155,
+            0.01224721281698482,
+            0.0,
+            0.0,
+            0.0,
+            0.005276000791409885
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -5.70216107205086,
+          "Median": -2.0691598720502746,
+          "P95NearestRank": 6.099078706176586,
+          "Max": 6.099078706176586,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -5.70216107205086,
+            3.5988940855651963,
+            -2.120780667934863,
+            -3.4101257449878797,
+            -2.0175390761656864,
+            6.099078706176586
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -20.714053742938077,
+          "Median": -3.6958507213826097,
+          "P95NearestRank": 11.092199470071673,
+          "Max": 11.092199470071673,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -20.714053742938077,
+            11.092199470071673,
+            -2.518723223673036,
+            -6.914036634605725,
+            -4.872978219092183,
+            3.8190611182692846
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 1,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 53.048789,
+        "processCpuMilliseconds": 51.588499999999996,
+        "processAllocatedBytesPerObservation": 353498.0,
+        "observationMedianMilliseconds": 4.32369775,
+        "observationP95Milliseconds": 5.2658760000000004
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 53.217310499999996,
+        "processCpuMilliseconds": 53.9625,
+        "processAllocatedBytesPerObservation": 353472.6666666667,
+        "observationMedianMilliseconds": 4.3924275,
+        "observationP95Milliseconds": 5.0056365
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -12.644654913947662,
+          "Median": -0.007372604722083453,
+          "P95NearestRank": 13.876724618073922,
+          "Max": 13.876724618073922,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            4.2128913175348615,
+            -1.2756807414332383,
+            13.876724618073922,
+            -12.644654913947662,
+            -5.266871280139007,
+            1.2609355319890714
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -26.87712293665455,
+          "Median": -1.2557913977818527,
+          "P95NearestRank": 87.39477621356599,
+          "Max": 87.39477621356599,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            8.744054665918966,
+            -26.87712293665455,
+            87.39477621356599,
+            -6.597604300940041,
+            -10.14719341061624,
+            4.086021505376336
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.19910869797535868,
+          "Median": 0.0045265169018149365,
+          "P95NearestRank": 0.5993862797500471,
+          "Max": 0.5993862797500471,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -0.00810919884887129,
+            0.5993862797500471,
+            -0.19910869797535868,
+            0.007166985094553269,
+            0.007166985094553269,
+            0.0018860487090766043
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -10.186131433598177,
+          "Median": -0.24151309371770457,
+          "P95NearestRank": 15.742672708539573,
+          "Max": 15.742672708539573,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            3.6836220509299578,
+            -4.081245777243603,
+            15.742672708539573,
+            -10.186131433598177,
+            -8.387946565617144,
+            3.5982195898081937
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -3.628650168657521,
+          "Median": 4.431651421202531,
+          "P95NearestRank": 10.099664316998002,
+          "Max": 10.099664316998002,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            10.099664316998002,
+            6.4858190892598255,
+            9.382803616536428,
+            -3.628650168657521,
+            2.3774837531452375,
+            -3.558081591337159
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 1,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 53.048789,
+        "processCpuMilliseconds": 51.588499999999996,
+        "processAllocatedBytesPerObservation": 353498.0,
+        "observationMedianMilliseconds": 4.32369775,
+        "observationP95Milliseconds": 5.2658760000000004
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 52.446813,
+        "processCpuMilliseconds": 51.562,
+        "processAllocatedBytesPerObservation": 353488.6666666666,
+        "observationMedianMilliseconds": 4.35687275,
+        "observationP95Milliseconds": 5.038501999999999
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -24.87143125655702,
+          "Median": 1.134837153674506,
+          "P95NearestRank": 22.319468156502275,
+          "Max": 22.319468156502275,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            -6.62242084046013,
+            1.9310278685391813,
+            22.319468156502275,
+            8.444101937995786,
+            -24.87143125655702,
+            0.3386464388098309
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -24.922733790027085,
+          "Median": 0.04952582206300682,
+          "P95NearestRank": 101.35383781061766,
+          "Max": 101.35383781061766,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -6.630405706642895,
+            -0.826396185242062,
+            101.35383781061766,
+            15.388499407686474,
+            -24.922733790027085,
+            0.9254478293680757
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.20097977640999298,
+          "Median": 1.394288295930579e-07,
+          "P95NearestRank": 0.597488962108117,
+          "Max": 0.597488962108117,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -0.0052805579286663296,
+            0.597488962108117,
+            -0.20097977640999298,
+            0.005280836786325516,
+            0.005280836786325516,
+            -0.0052805579286663296
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -28.569267603088843,
+          "Median": -0.02334121923414645,
+          "P95NearestRank": 24.765023529561958,
+          "Max": 24.765023529561958,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -7.057035069298411,
+            -0.8586557024647834,
+            24.765023529561958,
+            9.34849495983161,
+            -28.569267603088843,
+            0.8119732639964905
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -14.08483911250411,
+          "Median": 6.526593199639208,
+          "P95NearestRank": 17.484748987805855,
+          "Max": 17.484748987805855,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -8.1800996372563,
+            17.484748987805855,
+            14.406166252970332,
+            15.897231245563926,
+            -14.08483911250411,
+            -1.3529798536919158
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 2,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 66.09842549999999,
+        "processCpuMilliseconds": 129.5825,
+        "processAllocatedBytesPerObservation": 353477.6666666667,
+        "observationMedianMilliseconds": 5.502929249999999,
+        "observationP95Milliseconds": 5.710072500000001
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 82.618882,
+        "processCpuMilliseconds": 145.9145,
+        "processAllocatedBytesPerObservation": 353471.0,
+        "observationMedianMilliseconds": 6.79994075,
+        "observationP95Milliseconds": 7.523026
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -25.498362256548457,
+          "Median": -19.922750940291536,
+          "P95NearestRank": -14.694221811962949,
+          "Max": -14.694221811962949,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -25.498362256548457,
+            -14.694221811962949,
+            -20.512900936176525,
+            -16.92677209146266,
+            -19.332600944406543,
+            -22.868211228547132
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -15.421443288076485,
+          "Median": -9.8761358798561,
+          "P95NearestRank": -3.4651223929426878,
+          "Max": -3.4651223929426878,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -15.421443288076485,
+            -5.581445600893142,
+            -13.181874153429373,
+            -6.57039760628283,
+            -3.4651223929426878,
+            -14.803813966250512
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.0014144965146845045,
+          "Median": 0.0018860576020962583,
+          "P95NearestRank": 0.009524590890541695,
+          "Max": 0.009524590890541695,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            -0.0014144965146845045,
+            0.009524590890541695,
+            0.0018860576020962583,
+            0.0012258969793732533,
+            0.0018860576020962583,
+            0.0018860576020962583
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -24.44455897139318,
+          "Median": -18.21492928502046,
+          "P95NearestRank": -14.621367391776596,
+          "Max": -14.621367391776596,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -24.44455897139318,
+            -14.621367391776596,
+            -19.89639005384155,
+            -15.135581428419776,
+            -16.533468516199367,
+            -22.420563848112053
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -35.931056842493945,
+          "Median": -22.92361335937067,
+          "P95NearestRank": -7.717444773093341,
+          "Max": -7.717444773093341,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -35.931056842493945,
+            -7.717444773093341,
+            -22.681560557999493,
+            -23.16566616074185,
+            -17.435207545621555,
+            -29.740756514717326
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 2,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 66.09842549999999,
+        "processCpuMilliseconds": 129.5825,
+        "processAllocatedBytesPerObservation": 353477.6666666667,
+        "observationMedianMilliseconds": 5.502929249999999,
+        "observationP95Milliseconds": 5.710072500000001
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 66.28400049999999,
+        "processCpuMilliseconds": 128.8845,
+        "processAllocatedBytesPerObservation": 353477.6666666667,
+        "observationMedianMilliseconds": 5.474089749999999,
+        "observationP95Milliseconds": 5.842613
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -3.3604860237544387,
+          "Median": -1.7909274389773966,
+          "P95NearestRank": 3.6612394261425374,
+          "Max": 3.6612394261425374,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -3.3604860237544387,
+            3.281810962585152,
+            -2.3747713249086533,
+            3.6612394261425374,
+            -1.6590461586942107,
+            -1.9228087192605825
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -4.503589326831914,
+          "Median": -1.6734864569157293,
+          "P95NearestRank": 6.955690199797782,
+          "Max": 6.955690199797782,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            -1.6214763038635782,
+            2.8246460367886472,
+            -4.503589326831914,
+            6.955690199797782,
+            -1.7254966099678803,
+            -1.750624940670198
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.011409131453932186,
+          "Median": 0.0,
+          "P95NearestRank": 0.002640430842859587,
+          "Max": 0.002640430842859587,
+          "productionLowerRounds": 1,
+          "sixRoundValues": [
+            0.0,
+            0.0,
+            -0.011409131453932186,
+            0.002640430842859587,
+            0.0,
+            0.0
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -4.735220610265811,
+          "Median": 0.14570453645590398,
+          "P95NearestRank": 5.309356488997619,
+          "Max": 5.309356488997619,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            -4.735220610265811,
+            5.309356488997619,
+            1.353634797494574,
+            4.540627176955159,
+            -1.062225724582766,
+            -2.8147060811078317
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -19.108685486504807,
+          "Median": -3.2120895682576536,
+          "P95NearestRank": 10.171204740811767,
+          "Max": 10.171204740811767,
+          "productionLowerRounds": 5,
+          "sixRoundValues": [
+            -0.02071418369555822,
+            -5.114091865584447,
+            -19.108685486504807,
+            10.171204740811767,
+            -4.3955108267204395,
+            -2.0286683097948677
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 4,
+      "baseline": "monitor-control",
+      "productionMedian": {
+        "batchWallMilliseconds": 70.52893,
+        "processCpuMilliseconds": 276.577,
+        "processAllocatedBytesPerObservation": 353481.5,
+        "observationMedianMilliseconds": 5.74354075,
+        "observationP95Milliseconds": 7.0641065
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 107.81821500000001,
+        "processCpuMilliseconds": 292.14,
+        "processAllocatedBytesPerObservation": 353472.5,
+        "observationMedianMilliseconds": 8.9503915,
+        "observationP95Milliseconds": 9.9412885
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -41.028866074984826,
+          "Median": -34.81589169203835,
+          "P95NearestRank": -31.84451594669182,
+          "Max": -31.84451594669182,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -35.75463664662165,
+            -41.028866074984826,
+            -33.08070760613453,
+            -31.84451594669182,
+            -34.79001883095951,
+            -34.841764553117194
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -12.38572971880193,
+          "Median": -5.583120679040138,
+          "P95NearestRank": -1.8524681848282154,
+          "Max": -1.8524681848282154,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -5.819397536463011,
+            -12.38572971880193,
+            -4.804539944129171,
+            -1.8524681848282154,
+            -5.346843821617265,
+            -6.269698481903651
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": 0.0015559755117688923,
+          "Median": 0.002381129603368226,
+          "P95NearestRank": 0.00660113001917928,
+          "Max": 0.00660113001917928,
+          "productionLowerRounds": 0,
+          "sixRoundValues": [
+            0.0018860620486060853,
+            0.002876197158130367,
+            0.0015559755117688923,
+            0.0032063054826281245,
+            0.0018860620486060853,
+            0.00660113001917928
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -40.153132199579,
+          "Median": -34.93430484766098,
+          "P95NearestRank": -32.503324317579064,
+          "Max": -32.503324317579064,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -35.79553618794956,
+            -40.153132199579,
+            -34.15864134294535,
+            -33.389755308268754,
+            -35.709968352376606,
+            -32.503324317579064
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -38.63301665065906,
+          "Median": -32.823808918800566,
+          "P95NearestRank": -18.29962764599675,
+          "Max": -18.29962764599675,
+          "productionLowerRounds": 6,
+          "sixRoundValues": [
+            -38.63301665065906,
+            -36.47916086234848,
+            -30.54759434240033,
+            -18.29962764599675,
+            -35.1000234952008,
+            -29.55811661050758
+          ]
+        }
+      }
+    },
+    {
+      "path": "technical",
+      "phase": "warm",
+      "readers": 4,
+      "baseline": "rw-copy",
+      "productionMedian": {
+        "batchWallMilliseconds": 70.52893,
+        "processCpuMilliseconds": 276.577,
+        "processAllocatedBytesPerObservation": 353481.5,
+        "observationMedianMilliseconds": 5.74354075,
+        "observationP95Milliseconds": 7.0641065
+      },
+      "baselineMedian": {
+        "batchWallMilliseconds": 70.911149,
+        "processCpuMilliseconds": 278.471,
+        "processAllocatedBytesPerObservation": 353481.5,
+        "observationMedianMilliseconds": 5.815663499999999,
+        "observationP95Milliseconds": 6.842679
+      },
+      "pairedPercentChange": {
+        "batchWallMilliseconds": {
+          "Count": 6,
+          "Min": -2.9984381459831067,
+          "Median": -0.43179375217988203,
+          "P95NearestRank": 2.526391322191124,
+          "Max": 2.526391322191124,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            0.6409080613882789,
+            -0.106326915185051,
+            -1.3078390152881259,
+            2.526391322191124,
+            -0.7572605891747131,
+            -2.9984381459831067
+          ]
+        },
+        "processCpuMilliseconds": {
+          "Count": 6,
+          "Min": -3.2315446190335106,
+          "Median": -1.106715496570193,
+          "P95NearestRank": 3.293996995608972,
+          "Max": 3.293996995608972,
+          "productionLowerRounds": 4,
+          "sixRoundValues": [
+            0.10453644619641267,
+            -0.475797481072171,
+            -3.2315446190335106,
+            3.293996995608972,
+            -1.7376335120682151,
+            -1.7584005781043022
+          ]
+        },
+        "processAllocatedBytesPerObservation": {
+          "Count": 6,
+          "Min": -0.003064618181569667,
+          "Median": 0.0,
+          "P95NearestRank": 0.004715003944100182,
+          "Max": 0.004715003944100182,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.0,
+            -0.003064618181569667,
+            0.0,
+            -0.00033004918676970973,
+            0.0,
+            0.004715003944100182
+          ]
+        },
+        "observationMedianMilliseconds": {
+          "Count": 6,
+          "Min": -2.4382964908998828,
+          "Median": -0.16309336569787503,
+          "P95NearestRank": 2.5314075755419996,
+          "Max": 2.5314075755419996,
+          "productionLowerRounds": 3,
+          "sixRoundValues": [
+            0.6107385149996647,
+            -2.0407476184924223,
+            -2.4382964908998828,
+            2.5314075755419996,
+            -0.8014767362540365,
+            0.47529000485828643
+          ]
+        },
+        "observationP95Milliseconds": {
+          "Count": 6,
+          "Min": -5.60165068943923,
+          "Median": 0.08571164370416717,
+          "P95NearestRank": 10.288815586724498,
+          "Max": 10.288815586724498,
+          "productionLowerRounds": 2,
+          "sixRoundValues": [
+            0.07620526558760332,
+            10.288815586724498,
+            0.09521802182073102,
+            5.628370076916922,
+            -3.07780917812972,
+            -5.60165068943923
+          ]
+        }
+      }
+    }
+  ],
+  "gcCollections": [
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        5,
+        4,
+        4
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        5,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        4,
+        3,
+        3
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "domain",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 1,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 1,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        2,
+        2,
+        1
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 2,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 2,
+      "phase": "warm",
+      "summedSixBatches": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        5,
+        4,
+        3
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "production",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        4,
+        4,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "variant": "monitor-control",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        3,
+        3,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 4,
+      "phase": "memo-cold",
+      "summedSixBatches": [
+        4,
+        4,
+        3
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warmup",
+      "summedSixBatches": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "variant": "rw-copy",
+      "path": "technical",
+      "readers": 4,
+      "phase": "warm",
+      "summedSixBatches": [
+        4,
+        4,
+        0
+      ]
+    }
+  ],
+  "interpretation": [
+    "Compiled production retains warm concurrent net whole-cohort benefit versus copied Monitor: Domain and Technical batch wall, process CPU, observation median and per-batch p95 are lower in every one of six balanced 2- and 4-reader rounds.",
+    "Domain warm median batch wall is 60.586 vs86.574ms at2readers and68.545 vs114.520ms at4readers; process CPU121.083 vs148.768ms and264.047 vs282.451ms. These are separate distributions; median paired changes differ from ratios of medians.",
+    "Production and RW-copy outputs agree exactly, but timing equality is not established. Domain warm4 production p95 is higher in all6 rounds, paired +1.67% to+27.71%; Domain2/4 production batch wall is higher in4of6 rounds. Technical warm production/RW-copy batch wall ranges overlap closely.",
+    "Single-reader warm Domain batch wall median is51.582 vs50.486ms Monitor (+2.17% ratio), with3of6 paired wins and mixed tails/CPU. No general single-reader speedup.",
+    "Cold results are mixed; Technical cold1 median wall21.716 vs16.890ms Monitor (+28.6% ratio), and cold4 median wall26.977 vs22.802ms and CPU48.997 vs39.596ms. Production is slower than Monitor in5of6 cold1 wall rounds and4of6 cold4 wall rounds. These observed costs remain reported.",
+    "Warm Domain4 process allocated bytes/observation is lower versus Monitor in all6 rounds (paired median-16.46%). Other allocation changes are small; no general memory mechanism is established.",
+    "Natural GC differs across sequential batches, particularly cold Technical; no causal attribution or removal of outliers. No forced collections, cold filesystem, fresh-process-per-sample isolation, confidence interval or guaranteed scheduling fairness is claimed.",
+    "Six balanced rounds come from one process/session; paired comparisons are sequential measurements, not independent randomized repetitions. Process CPU/allocation include background/GC and batch release/join bookkeeping.",
+    "All three variants consume the same current66 files, including the new SDK512 bytes larger than the initial compiled SDK. Cross-generation wall medians are not treated as identical-input repetitions.",
+    "This is complete selected66-image computation with preserved full fresh file/EOF/PE/MVID reads and bounded scope/memo behavior. Domain adapter calls the selected helper, not the original DomainService entry method. Configuration, authority/discovery, leases, service transport and the2second distributed deadline remain outside the measured workload.",
+    "621 scratch behavioral checks validate the final transfer and are never added to the already-qualified1048 native cases. No live acceptance or whole-host critical-path gain follows from this benchmark alone."
+  ]
+}

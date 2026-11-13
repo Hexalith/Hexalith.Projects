@@ -1,0 +1,36 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "productionSourceChangesByThisDiagnostic": false,
+  "scope": "Private owner-stage timing and exact cleanup recovery only",
+  "runResult": "failed",
+  "positiveAttempts": 30,
+  "allPositiveAttemptsEmptyIncomplete": true,
+  "browserCasesCollected": 0,
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 142,
+    "passed": 142,
+    "failed": 0,
+    "skipped": 0
+  },
+  "originalManagedPlacementCleanupFailurePreserved": true,
+  "placementRecoveryReceipt": "managed/post-placement-cleanup-recovery.json",
+  "originalCompileFailurePreserved": true,
+  "compileFailureRecoveryReceipt": "failed-build/post-build-failure-cleanup.json",
+  "allRecoveryPrivateMaterialRemoved": true,
+  "timingFiles": 13,
+  "timingRecords": 239764,
+  "binariesRestored": false,
+  "restorationOwner": "Fresh approved implementation handoff; no rebuild performed in this evidence task"
+}

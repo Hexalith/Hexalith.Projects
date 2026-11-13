@@ -1,0 +1,38 @@
+{
+  "Mode": "pre-capped",
+  "Group": "double-success",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "technical-double-dispose-retry-success",
+        "Passed": true,
+        "MiddlewareEntries": 1,
+        "AcquireCalls": 1,
+        "NextCalls": 0,
+        "ReleaseCallbacks": 2,
+        "ErrorType": null,
+        "Faults": 1,
+        "TokenMatched": true,
+        "LifetimeMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 111,
+        "MinimumLastDisposeTicks": 7474610,
+        "MaximumLastDisposeTicks": 8932496,
+        "FirstDisposeHoldTicks": 200877970,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinal": 0,
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "SyntheticDurationBracketOnly": true
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

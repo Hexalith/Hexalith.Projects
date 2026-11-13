@@ -1,0 +1,101 @@
+{
+  "edits": [
+    {
+      "old": "        // One linked dependency budget begins with scope authorization, before validating caller input.\r\n",
+      "new": "        using var terminal = conversation ? null : Hexalith.PrivateCaptureCounter.AdvisoryTerminalCapture.Begin();\r\n        // One linked dependency budget begins with scope authorization, before validating caller input.\r\n"
+    },
+    {
+      "old": "        try\r\n        {\r\n            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();",
+      "new": "        try\r\n        {\r\n        try\r\n        {\r\n            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();"
+    },
+    {
+      "old": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialScope);\r\n            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();"
+    },
+    {
+      "old": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();",
+      "new": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false))\r\n            {\r\n                terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered);\r\n                return Denied();\r\n            }"
+    },
+    {
+      "old": "        catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }\r\n        catch (Exception exception)\r\n        {\r\n            LogFailure(query, exception);",
+      "new": "        catch (OperationCanceledException) when (callerToken.IsCancellationRequested)\r\n        {\r\n            terminal?.Failure(Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation);\r\n            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.CallerCancellationRethrown);\r\n            throw;\r\n        }\r\n        catch (Exception exception)\r\n        {\r\n            terminal?.Failure(exception is OperationCanceledException ? Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation : Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Other);\r\n            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InitialScopeFallbackEntered);\r\n            LogFailure(query, exception);"
+    },
+    {
+      "old": "        if (query.AggregateId != \"projects\" || query.Paging is not null || query.IsGlobalAdmin",
+      "new": "        terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.EnvelopeValidation);\r\n        if (query.AggregateId != \"projects\" || query.Paging is not null || query.IsGlobalAdmin"
+    },
+    {
+      "old": "            || query.EntityId is not null && query.EntityId != query.AggregateId) return Invalid();",
+      "new": "            || query.EntityId is not null && query.EntityId != query.AggregateId) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }"
+    },
+    {
+      "old": "                || input is null || !Identity(query.TenantId, input.ConversationId)) return Invalid();",
+      "new": "                || input is null || !Identity(query.TenantId, input.ConversationId)) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }"
+    },
+    {
+      "old": "                    || !Identity(query.TenantId, item.ReferenceId))) return Invalid();",
+      "new": "                    || !Identity(query.TenantId, item.ReferenceId))) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.InvalidReturnEntered); return Invalid(); }"
+    },
+    {
+      "old": "            ProjectResolution resolved = new ProjectResolutionEngine().Resolve(",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Response);\r\n            ProjectResolution resolved = new ProjectResolutionEngine().Resolve("
+    },
+    {
+      "old": "            return QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectAdvisoryResolutionResponse(",
+      "new": "            QueryResult response = QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectAdvisoryResolutionResponse("
+    },
+    {
+      "old": "        }\r\n\r\n        try\r\n        {\r\n            ConversationAdvisoryMetadataResult? observed = null;",
+      "new": "            terminal?.ResponseReturned(incomplete != 0);\r\n            return response;\r\n        }\r\n\r\n        try\r\n        {\r\n            ConversationAdvisoryMetadataResult? observed = null;"
+    },
+    {
+      "old": "                var read = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);",
+      "new": "                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialConversation);\r\n                var read = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);"
+    },
+    {
+      "old": "            string[] acceptedInputs = await FilterInputsAsync(inputs.Where(item => item.ReferenceKind == \"folder\")",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.InitialInputs);\r\n            string[] acceptedInputs = await FilterInputsAsync(inputs.Where(item => item.ReferenceKind == \"folder\")"
+    },
+    {
+      "old": "                var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,",
+      "new": "                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Index);\r\n                var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,"
+    },
+    {
+      "old": "                await Parallel.ForEachAsync(selected, new ParallelOptions",
+      "new": "                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.Discovery);\r\n                await Parallel.ForEachAsync(selected, new ParallelOptions"
+    },
+    {
+      "old": "                var final = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);",
+      "new": "                terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalConversation);\r\n                var final = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);"
+    },
+    {
+      "old": "            acceptedInputs = await FilterInputsAsync(acceptedInputs, query, Omitted, token).WaitAsync(token).ConfigureAwait(false);",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalInputs);\r\n            acceptedInputs = await FilterInputsAsync(acceptedInputs, query, Omitted, token).WaitAsync(token).ConfigureAwait(false);"
+    },
+    {
+      "old": "            await Parallel.ForEachAsync(candidates.ToArray(), new ParallelOptions",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalCandidates);\r\n            await Parallel.ForEachAsync(candidates.ToArray(), new ParallelOptions"
+    },
+    {
+      "old": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();",
+      "new": "            terminal?.Enter(Hexalith.PrivateCaptureCounter.AdvisoryBoundary.FinalScope);\r\n            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();"
+    },
+    {
+      "old": "                if (read.Denied) return Denied();",
+      "new": "                if (read.Denied) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }"
+    },
+    {
+      "old": "                if (final.Denied) return Denied();",
+      "new": "                if (final.Denied) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }"
+    },
+    {
+      "old": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();",
+      "new": "            if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) { terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.DenialReturnEntered); return Denied(); }"
+    },
+    {
+      "old": "        catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }\r\n        catch (Exception exception) { LogFailure(query, exception); Omitted(); return Response([]); }\r\n    }",
+      "new": "        catch (OperationCanceledException) when (callerToken.IsCancellationRequested)\r\n        {\r\n            terminal?.Failure(Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation);\r\n            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.CallerCancellationRethrown);\r\n            throw;\r\n        }\r\n        catch (Exception exception)\r\n        {\r\n            terminal?.Failure(exception is OperationCanceledException ? Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Cancellation : Hexalith.PrivateCaptureCounter.AdvisoryExceptionKind.Other);\r\n            terminal?.Termination(Hexalith.PrivateCaptureCounter.AdvisoryTermination.OperationFallbackEntered);\r\n            LogFailure(query, exception); Omitted(); return Response([]);\r\n        }\r\n        }\r\n        finally\r\n        {\r\n            terminal?.Close(callerToken.IsCancellationRequested, token.IsCancellationRequested);\r\n        }\r\n    }"
+    }
+  ],
+  "reverseRestoresOriginalBytes": true
+}

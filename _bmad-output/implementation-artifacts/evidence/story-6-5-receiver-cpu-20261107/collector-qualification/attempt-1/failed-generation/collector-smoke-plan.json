@@ -1,0 +1,179 @@
+{
+  "filePreparationOnly": true,
+  "executed": false,
+  "scope": "One local reflection smoke executable only; no diagnostic fixture, application, native test, host or target attachment.",
+  "collectorBuild": "Debug, cached package refs unchanged; NuGet.Config clears all sources; no dependency/tool updates.",
+  "smokeBuild": "Debug BCL-only, no PackageReference or ProjectReference.",
+  "checks": [
+    "allthree typedrole/resource/sourceproject maps accept only their finite native and dotnet coordinates",
+    "unknownrole/wrongresource/wrongsourceproject/arbitrarycommandtoken reject",
+    "nativeargv0 andactualexe exact; dotnetargv0 exactactualexe; fixedDLLmarker index1 or2 iff exec; markeroccurs once",
+    "crossednative/dotnet modes, forgeddotnetpath, shifted/duplicatemarker, duplicateexec, wrongapplicationName, sensitive/unrecognized option reject",
+    "targetentry/DomainService/SDK assembly labels accept only fixed exactsibling paths",
+    "Verify invalidPID andcollector-selfPID refuse beforeproc/attach; no claim of complete DCPownership independently established",
+    "CountMapped and actual RequireMapped gate reject missingmap",
+    "same-length syntheticfile mutation: alreadyrequired fresh hash differs; actual RequireHashMatch gate refuses input-hash-mismatch",
+    "MetadataName validCLRlabels retained; control/path/quote/address/filefallback rejected",
+    "ownPID StartTicks positive andstable twice; unchangedtwo same-start rejectionchecks additionally source-equality verified",
+    "source-equality full Collect body exceptcomment, completeCpuGroup+Analyze suffix and MetadataName exact; no synthetictrace parser algorithm recreation"
+  ],
+  "smokeOnlyNoNative1038Inflation": true,
+  "fullTraceParserExecutedInSmoke": false,
+  "actualAllowedTargetProcVerificationPendingWatcherBeforeLive": true,
+  "buildOrRunAuthorized": false,
+  "runtimeStartHashOrMapFailureMustSkipOrQualifyPartialNotLoosenGuard": true,
+  "parserLimits": [
+    "Managed/External approximate sampled classifications; no exactCPU/wait fraction",
+    "PollGC/safepoint and instrumentation overhead",
+    "lost/unresolved/truncated/group/row caps retained",
+    "suspend/GCpairs walltime and incompletepairing; not CPU or all-GC proof",
+    "no HTTP/requestproviders, correlation/logical-root joins, payloads, heapdump or forcedGC"
+  ],
+  "commands": [
+    {
+      "kind": "restore",
+      "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector/ReceiverCpuProbe.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-parallel",
+        "-p:NuGetAudit=false"
+      ],
+      "environmentRemove": [
+        "DOTNET_PROCESSOR_COUNT",
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration"
+      ],
+      "buildEnvironment": {
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      }
+    },
+    {
+      "kind": "build",
+      "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector/ReceiverCpuProbe.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "--disable-build-servers",
+        "-m:1",
+        "/nr:false",
+        "-p:NuGetAudit=false"
+      ],
+      "environmentRemove": [
+        "DOTNET_PROCESSOR_COUNT",
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration"
+      ],
+      "buildEnvironment": {
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      }
+    },
+    {
+      "kind": "restore",
+      "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "restore",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/CollectorSmoke.csproj",
+        "--configfile",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/NuGet.Config",
+        "--ignore-failed-sources",
+        "--disable-parallel",
+        "-p:NuGetAudit=false"
+      ],
+      "environmentRemove": [
+        "DOTNET_PROCESSOR_COUNT",
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration"
+      ],
+      "buildEnvironment": {
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      }
+    },
+    {
+      "kind": "build",
+      "cwd": "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "build",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/CollectorSmoke.csproj",
+        "-c",
+        "Debug",
+        "--no-restore",
+        "--disable-build-servers",
+        "-m:1",
+        "/nr:false",
+        "-p:NuGetAudit=false"
+      ],
+      "environmentRemove": [
+        "DOTNET_PROCESSOR_COUNT",
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration"
+      ],
+      "buildEnvironment": {
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      }
+    },
+    {
+      "kind": "smoke",
+      "cwd": "/tmp/story65-receiver-cpu-prep-20261107",
+      "argv": [
+        "/home/administrator/.dotnet/dotnet",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector-smoke/bin/Debug/net10.0/ReceiverCpuGuardSmoke.dll",
+        "/tmp/story65-receiver-cpu-prep-20261107/collector/bin/Debug/net10.0/ReceiverCpuProbe.dll"
+      ],
+      "environmentRemove": [
+        "DOTNET_PROCESSOR_COUNT",
+        "CustomBeforeMicrosoftCommonTargets",
+        "CustomBeforeDirectoryBuildProps",
+        "CustomAfterMicrosoftCommonProps",
+        "CustomBeforeDirectoryBuildTargets",
+        "CustomAfterDirectoryBuildTargets",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration"
+      ],
+      "runtimeProcessorOverride": null
+    }
+  ]
+}

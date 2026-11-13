@@ -1,0 +1,74 @@
+{
+  "started": true,
+  "passed": true,
+  "mode": "pre-capped",
+  "group": "double-fault",
+  "variant": "private",
+  "role": "folders",
+  "signalsSent": false,
+  "featureAcceptance": false,
+  "rawBusinessValuesPersisted": false,
+  "command": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-receiver-phase-qualification-retry-20261107/runtime/folders/private/Hexalith.Folders.Server.dll",
+    "pre-capped",
+    "double-fault",
+    "/tmp/story65-receiver-phase-qualification-retry-20261107/runtime/folders/private/runtime-binding.json",
+    "3677d4f3e965fa618b07a3f427f3e0484609de4edf60db7a16ebece214560780",
+    "/tmp/story65-receiver-phase-qualification-retry-20261107/processes/22051-folders-private-pre-capped-double-fault/business.json"
+  ],
+  "pid": 2591846,
+  "startTicks": "13064348",
+  "groupId": 2591846,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "artifacts": {
+    "folders.jsonl": {
+      "sha256": "83a6eb17e37ea6286417e46142c0b706db961994e8e8b00fd3c148737150314a",
+      "bytes": 8388568,
+      "contentsArchived": true
+    },
+    "window.control": {
+      "sha256": "6f823aa26a6b4df648628ace5208442db43d175ea8b4cce6d729e5eded3d692e",
+      "bytes": 49,
+      "contentsArchived": false
+    },
+    "folders.closed.json": {
+      "sha256": "d2967d15207cbc3b5d6ef83f961a3e258fb2c03f0f8e62681aa7b01e5c8d29a0",
+      "bytes": 531,
+      "contentsArchived": true
+    }
+  },
+  "stageCounts": {
+    "Whole": 27870
+  },
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "folders",
+    "runOrdinal": 22051,
+    "admitted": 92899,
+    "disposedOrUnwound": 92899,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 27360,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 37674,
+    "ioFailures": 0,
+    "writtenRows": 27870,
+    "writtenBytes": 8388568,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 130644106805539,
+    "windowEndTicks": 130652106805539,
+    "frequency": 1000000000
+  },
+  "businessSha256": "6b7f3f7913a0d5ea4ef466ea695f38f1282afc0c4942ccce954050f7cc8b42c0",
+  "wallSeconds": 8.82347952199052,
+  "directoryReleased": true,
+  "remainingGroup": []
+}

@@ -1,0 +1,4215 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "nativeAcceptanceCases": 0,
+  "browserAcceptanceCases": 0,
+  "recordedResult": "failed; intentional external cutoff after three actual MULTIPLE roots and span drain",
+  "ordinaryBaseline": "separate ordinary-live/ remains failed; no instrumentation acceptance claim",
+  "coverage": {
+    "files": 11,
+    "records": 68305,
+    "pairedSpans": 9469,
+    "aggregates": 49255,
+    "resources": 112,
+    "capsReached": 0,
+    "unpairedBegins": 0,
+    "unpairedEnds": 0
+  },
+  "runtimePidRoles": {
+    "2007435": "Gateway",
+    "2007546": "Projects",
+    "2007879": "Folders"
+  },
+  "poolTelemetry": [
+    {
+      "role": "Gateway",
+      "pid": 2007435,
+      "pools": {
+        "private": {
+          "capacity": {
+            "events": 6312,
+            "units": 12624,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "rent.success": {
+            "events": 6312,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 6312,
+            "units": 6490099392,
+            "minUnits": 26624,
+            "maxUnits": 4748800
+          },
+          "rent.length": {
+            "events": 6312,
+            "units": 9231138816,
+            "minUnits": 32768,
+            "maxUnits": 16777216
+          },
+          "rent.allocated": {
+            "events": 6312,
+            "units": 21626976,
+            "minUnits": 0,
+            "maxUnits": 16777240
+          },
+          "rent.allocating": {
+            "events": 4,
+            "units": 21626976,
+            "minUnits": 131096,
+            "maxUnits": 16777240
+          },
+          "rent.outstanding": {
+            "events": 6312,
+            "units": 8987,
+            "minUnits": 1,
+            "maxUnits": 4
+          },
+          "rent.lifetime-peak": {
+            "events": 6312,
+            "units": 24352,
+            "minUnits": 2,
+            "maxUnits": 4
+          },
+          "return.success": {
+            "events": 6312,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 6312,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "technical-ordinary": {
+          "capacity": {
+            "events": 1540,
+            "units": 1540,
+            "minUnits": 1,
+            "maxUnits": 1
+          },
+          "rent.success": {
+            "events": 1540,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 1540,
+            "units": 1895691840,
+            "minUnits": 26624,
+            "maxUnits": 4748800
+          },
+          "rent.length": {
+            "events": 1540,
+            "units": 3887792128,
+            "minUnits": 32768,
+            "maxUnits": 16777216
+          },
+          "rent.allocated": {
+            "events": 1540,
+            "units": 85197256,
+            "minUnits": 0,
+            "maxUnits": 8388632
+          },
+          "rent.allocating": {
+            "events": 19,
+            "units": 85197256,
+            "minUnits": 262168,
+            "maxUnits": 8388632
+          },
+          "rent.outstanding": {
+            "events": 1540,
+            "units": 2444,
+            "minUnits": 1,
+            "maxUnits": 4
+          },
+          "rent.lifetime-peak": {
+            "events": 1540,
+            "units": 6010,
+            "minUnits": 2,
+            "maxUnits": 4
+          },
+          "return.success": {
+            "events": 1540,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 1540,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "stream-ordinary": {
+          "capacity": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.length": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocated": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocating": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.outstanding": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.lifetime-peak": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "selection": {
+          "private": {
+            "events": 6312,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "ordinary": {
+            "events": 1540,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "capacity": {
+            "events": 6312,
+            "units": 12624,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "scope.open": {
+            "events": 6312,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.absent": {
+            "events": 1540,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.closed": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        }
+      },
+      "rootlessAggregateRows": 0
+    },
+    {
+      "role": "Projects",
+      "pid": 2007546,
+      "pools": {
+        "private": {
+          "capacity": {
+            "events": 1428,
+            "units": 2856,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "rent.success": {
+            "events": 1428,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 1428,
+            "units": 665209944,
+            "minUnits": 15656,
+            "maxUnits": 2653992
+          },
+          "rent.length": {
+            "events": 1428,
+            "units": 886652928,
+            "minUnits": 16384,
+            "maxUnits": 4194304
+          },
+          "rent.allocated": {
+            "events": 1428,
+            "units": 8372440,
+            "minUnits": 0,
+            "maxUnits": 4194328
+          },
+          "rent.allocating": {
+            "events": 9,
+            "units": 8372440,
+            "minUnits": 16408,
+            "maxUnits": 4194328
+          },
+          "rent.outstanding": {
+            "events": 1428,
+            "units": 2144,
+            "minUnits": 1,
+            "maxUnits": 2
+          },
+          "rent.lifetime-peak": {
+            "events": 1428,
+            "units": 2779,
+            "minUnits": 1,
+            "maxUnits": 2
+          },
+          "return.success": {
+            "events": 1428,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 1428,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "technical-ordinary": {
+          "capacity": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.length": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocated": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocating": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.outstanding": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.lifetime-peak": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "stream-ordinary": {
+          "capacity": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.length": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocated": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocating": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.outstanding": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.lifetime-peak": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "selection": {
+          "private": {
+            "events": 1428,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "ordinary": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "capacity": {
+            "events": 1428,
+            "units": 2856,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "scope.open": {
+            "events": 1428,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.absent": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.closed": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        }
+      },
+      "rootlessAggregateRows": 0
+    },
+    {
+      "role": "Folders",
+      "pid": 2007879,
+      "pools": {
+        "private": {
+          "capacity": {
+            "events": 7776,
+            "units": 15552,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "rent.success": {
+            "events": 7776,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 7776,
+            "units": 3500260128,
+            "minUnits": 9728,
+            "maxUnits": 2653992
+          },
+          "rent.length": {
+            "events": 7776,
+            "units": 5163794432,
+            "minUnits": 16384,
+            "maxUnits": 8388608
+          },
+          "rent.allocated": {
+            "events": 7776,
+            "units": 16777264,
+            "minUnits": 0,
+            "maxUnits": 8388632
+          },
+          "rent.allocating": {
+            "events": 2,
+            "units": 16777264,
+            "minUnits": 8388632,
+            "maxUnits": 8388632
+          },
+          "rent.outstanding": {
+            "events": 7776,
+            "units": 13783,
+            "minUnits": 1,
+            "maxUnits": 4
+          },
+          "rent.lifetime-peak": {
+            "events": 7776,
+            "units": 30519,
+            "minUnits": 2,
+            "maxUnits": 4
+          },
+          "return.success": {
+            "events": 7776,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 7776,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "technical-ordinary": {
+          "capacity": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.length": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocated": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocating": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.outstanding": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.lifetime-peak": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "stream-ordinary": {
+          "capacity": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.minimum": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.length": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocated": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.allocating": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.outstanding": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "rent.lifetime-peak": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.success": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "return.clear": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        },
+        "selection": {
+          "private": {
+            "events": 7776,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "ordinary": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "capacity": {
+            "events": 7776,
+            "units": 15552,
+            "minUnits": 2,
+            "maxUnits": 2
+          },
+          "scope.open": {
+            "events": 7776,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.absent": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          },
+          "scope.closed": {
+            "events": 0,
+            "units": 0,
+            "minUnits": 0,
+            "maxUnits": 0
+          }
+        }
+      },
+      "rootlessAggregateRows": 0
+    }
+  ],
+  "runtimeResources": [
+    {
+      "role": "Gateway",
+      "pid": 2007435,
+      "samples": 64,
+      "wallSeconds": 7.66335947,
+      "processCpuSeconds": 10.721451,
+      "allocatedBytesDelta": 6844246960,
+      "gcDeltas": {
+        "gc0": 74,
+        "gc1": 34,
+        "gc2": 27
+      },
+      "maximumThreadPoolPending": 1,
+      "processorCounts": [
+        14
+      ],
+      "processorOverrides": [
+        "absent"
+      ]
+    },
+    {
+      "role": "Projects",
+      "pid": 2007546,
+      "samples": 14,
+      "wallSeconds": 7.478761432,
+      "processCpuSeconds": 0.925709,
+      "allocatedBytesDelta": 262429584,
+      "gcDeltas": {
+        "gc0": 6,
+        "gc1": 3,
+        "gc2": 3
+      },
+      "maximumThreadPoolPending": 0,
+      "processorCounts": [
+        14
+      ],
+      "processorOverrides": [
+        "absent"
+      ]
+    },
+    {
+      "role": "Folders",
+      "pid": 2007879,
+      "samples": 34,
+      "wallSeconds": 7.181390463,
+      "processCpuSeconds": 2.382205,
+      "allocatedBytesDelta": 165148288,
+      "gcDeltas": {
+        "gc0": 15,
+        "gc1": 8,
+        "gc2": 8
+      },
+      "maximumThreadPoolPending": 6,
+      "processorCounts": [
+        14
+      ],
+      "processorOverrides": [
+        "absent"
+      ]
+    }
+  ],
+  "bindingAttribution": [
+    {
+      "role": "Gateway",
+      "pid": 2007435,
+      "bindingCoreByDirectCoarseAnchor": {
+        "catalog.release-core": {
+          "calls": 245,
+          "elapsedMs": 315.68966400000005,
+          "selfMs": 302.69227900000016
+        },
+        "transport.guarded-send": {
+          "calls": 4,
+          "elapsedMs": 5.396345,
+          "selfMs": 5.146993
+        },
+        "native.receiver": {
+          "calls": 2,
+          "elapsedMs": 2.4695090000000004,
+          "selfMs": 2.291124
+        }
+      }
+    },
+    {
+      "role": "Projects",
+      "pid": 2007546,
+      "bindingCoreByDirectCoarseAnchor": {
+        "catalog.release-core": {
+          "calls": 31,
+          "elapsedMs": 44.139276,
+          "selfMs": 41.874834
+        }
+      }
+    },
+    {
+      "role": "Folders",
+      "pid": 2007879,
+      "bindingCoreByDirectCoarseAnchor": {
+        "catalog.release-core": {
+          "calls": 40,
+          "elapsedMs": 50.632635,
+          "selfMs": 48.23350799999999
+        }
+      }
+    }
+  ],
+  "advisoryCriticalPaths": [
+    {
+      "number": 1,
+      "rootMs": 2001.488488,
+      "projectPhases": [
+        {
+          "stage": "advisory.root",
+          "ordinal": 1,
+          "parent": 0,
+          "startMs": 0.0,
+          "endMs": 2001.130626,
+          "elapsedMs": 2001.488488,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.scope",
+          "ordinal": 2,
+          "parent": 1,
+          "startMs": 1.298068,
+          "endMs": 3.549792,
+          "elapsedMs": 1.956053,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 3,
+          "parent": 1,
+          "startMs": 3.688209,
+          "endMs": 753.925153,
+          "elapsedMs": 749.898541,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 4,
+          "parent": 3,
+          "startMs": 3.834151,
+          "endMs": 718.354562,
+          "elapsedMs": 714.51981,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 5,
+          "parent": 3,
+          "startMs": 3.862706,
+          "endMs": 753.541833,
+          "elapsedMs": 749.68576,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 6,
+          "parent": 1,
+          "startMs": 755.172311,
+          "endMs": 756.427126,
+          "elapsedMs": 1.251018,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 7,
+          "parent": 1,
+          "startMs": 755.195772,
+          "endMs": 756.550739,
+          "elapsedMs": 1.238662,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 8,
+          "parent": 1,
+          "startMs": 755.223045,
+          "endMs": 756.708979,
+          "elapsedMs": 1.210136,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 9,
+          "parent": 1,
+          "startMs": 755.259034,
+          "endMs": 756.605775,
+          "elapsedMs": 1.347993,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 10,
+          "parent": 1,
+          "startMs": 756.500658,
+          "endMs": 757.623626,
+          "elapsedMs": 1.01533,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 12,
+          "parent": 1,
+          "startMs": 756.658587,
+          "endMs": 757.516705,
+          "elapsedMs": 0.857085,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 13,
+          "parent": 1,
+          "startMs": 756.765328,
+          "endMs": 757.681408,
+          "elapsedMs": 0.765845,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 11,
+          "parent": 1,
+          "startMs": 756.811954,
+          "endMs": 757.741659,
+          "elapsedMs": 0.905803,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 14,
+          "parent": 1,
+          "startMs": 757.569837,
+          "endMs": 1429.935094,
+          "elapsedMs": 672.363464,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 15,
+          "parent": 1,
+          "startMs": 757.800287,
+          "endMs": 1477.23333,
+          "elapsedMs": 719.490323,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 16,
+          "parent": 1,
+          "startMs": 1477.275121,
+          "endMs": 2002.825802,
+          "elapsedMs": 525.548969,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 17,
+          "parent": 16,
+          "startMs": 1477.364784,
+          "endMs": 2002.427517,
+          "elapsedMs": 525.062303,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 18,
+          "parent": 16,
+          "startMs": 1477.408935,
+          "endMs": 2002.743854,
+          "elapsedMs": 525.37754,
+          "crossesDeadline": true
+        }
+      ],
+      "ownerCallsStarted": 6,
+      "ownerCallsCompletedBeforeDeadline": 4,
+      "ownerCallIntervals": [
+        {
+          "stage": "owner.client",
+          "ordinal": 70,
+          "parent": 0,
+          "startMs": 3.89594,
+          "endMs": 718.252986,
+          "elapsedMs": 714.357667,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 71,
+          "parent": 0,
+          "startMs": 3.918754,
+          "endMs": 753.517175,
+          "elapsedMs": 749.61366,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 212,
+          "parent": 0,
+          "startMs": 757.658038,
+          "endMs": 1429.884497,
+          "elapsedMs": 672.224625,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 213,
+          "parent": 0,
+          "startMs": 757.844793,
+          "endMs": 1477.206628,
+          "elapsedMs": 719.361635,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 354,
+          "parent": 0,
+          "startMs": 1477.447944,
+          "endMs": 2002.386618,
+          "elapsedMs": 524.939446,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 355,
+          "parent": 0,
+          "startMs": 1477.469212,
+          "endMs": 2002.699288,
+          "elapsedMs": 525.223143,
+          "crossesDeadline": true
+        }
+      ],
+      "pipelineIntervals": [
+        {
+          "stage": "gateway.owner",
+          "ordinal": 3,
+          "parent": 0,
+          "startMs": 60.64984,
+          "endMs": 737.789433,
+          "elapsedMs": 677.136718,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 4,
+          "parent": 0,
+          "startMs": 65.42121,
+          "endMs": 683.74716,
+          "elapsedMs": 618.32138,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 5,
+          "parent": 4,
+          "startMs": 161.950187,
+          "endMs": 646.50175,
+          "elapsedMs": 484.549189,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 6,
+          "parent": 3,
+          "startMs": 166.524561,
+          "endMs": 724.911962,
+          "elapsedMs": 558.386088,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 7,
+          "parent": 5,
+          "startMs": 202.476118,
+          "endMs": 641.281217,
+          "elapsedMs": 438.804258,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 8,
+          "parent": 6,
+          "startMs": 209.504356,
+          "endMs": 713.845056,
+          "elapsedMs": 504.339968,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 1,
+          "parent": 0,
+          "startMs": 308.49316,
+          "endMs": 624.210917,
+          "elapsedMs": 315.705975,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 2,
+          "parent": 1,
+          "startMs": 310.337642,
+          "endMs": 476.177601,
+          "elapsedMs": 165.415188,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 3,
+          "parent": 0,
+          "startMs": 311.869882,
+          "endMs": 690.349883,
+          "elapsedMs": 378.472908,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 4,
+          "parent": 3,
+          "startMs": 311.901733,
+          "endMs": 522.958898,
+          "elapsedMs": 211.053719,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 9,
+          "parent": 0,
+          "startMs": 383.604124,
+          "endMs": 451.285794,
+          "elapsedMs": 67.551669,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 10,
+          "parent": 9,
+          "startMs": 383.859046,
+          "endMs": 451.084285,
+          "elapsedMs": 66.507532,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 11,
+          "parent": 0,
+          "startMs": 387.360119,
+          "endMs": 459.35496,
+          "elapsedMs": 71.993548,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 12,
+          "parent": 11,
+          "startMs": 387.580865,
+          "endMs": 459.286147,
+          "elapsedMs": 71.702507,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 13,
+          "parent": 0,
+          "startMs": 391.773046,
+          "endMs": 515.502919,
+          "elapsedMs": 123.729452,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 14,
+          "parent": 13,
+          "startMs": 391.967732,
+          "endMs": 515.420119,
+          "elapsedMs": 123.449581,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 15,
+          "parent": 0,
+          "startMs": 396.691266,
+          "endMs": 470.135311,
+          "elapsedMs": 73.443836,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 16,
+          "parent": 15,
+          "startMs": 396.954093,
+          "endMs": 470.085205,
+          "elapsedMs": 73.129779,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 5,
+          "parent": 1,
+          "startMs": 476.242075,
+          "endMs": 623.639995,
+          "elapsedMs": 147.383091,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 6,
+          "parent": 3,
+          "startMs": 522.999988,
+          "endMs": 690.234981,
+          "elapsedMs": 167.226968,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 17,
+          "parent": 0,
+          "startMs": 540.115004,
+          "endMs": 602.835293,
+          "elapsedMs": 62.719917,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 18,
+          "parent": 17,
+          "startMs": 540.395506,
+          "endMs": 602.779244,
+          "elapsedMs": 62.383027,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 19,
+          "parent": 0,
+          "startMs": 545.600363,
+          "endMs": 608.767664,
+          "elapsedMs": 63.165768,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 20,
+          "parent": 19,
+          "startMs": 545.877598,
+          "endMs": 608.684163,
+          "elapsedMs": 62.80401,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 21,
+          "parent": 0,
+          "startMs": 586.971002,
+          "endMs": 674.180252,
+          "elapsedMs": 87.208028,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 22,
+          "parent": 21,
+          "startMs": 587.188612,
+          "endMs": 674.130376,
+          "elapsedMs": 86.940482,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 23,
+          "parent": 0,
+          "startMs": 590.564472,
+          "endMs": 665.800514,
+          "elapsedMs": 75.23487,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 24,
+          "parent": 23,
+          "startMs": 590.792844,
+          "endMs": 665.723856,
+          "elapsedMs": 74.928477,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 25,
+          "parent": 0,
+          "startMs": 816.646868,
+          "endMs": 1462.941618,
+          "elapsedMs": 646.292966,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 26,
+          "parent": 0,
+          "startMs": 821.986762,
+          "endMs": 1414.360188,
+          "elapsedMs": 592.371432,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 27,
+          "parent": 26,
+          "startMs": 925.865334,
+          "endMs": 1379.952027,
+          "elapsedMs": 454.084259,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 28,
+          "parent": 25,
+          "startMs": 930.108262,
+          "endMs": 1450.636332,
+          "elapsedMs": 520.525795,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 29,
+          "parent": 28,
+          "startMs": 960.727279,
+          "endMs": 1445.576604,
+          "elapsedMs": 484.838574,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 30,
+          "parent": 27,
+          "startMs": 964.600692,
+          "endMs": 1363.857402,
+          "elapsedMs": 399.255538,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 7,
+          "parent": 0,
+          "startMs": 1038.917863,
+          "endMs": 1343.807648,
+          "elapsedMs": 304.885416,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 8,
+          "parent": 7,
+          "startMs": 1038.980414,
+          "endMs": 1199.600395,
+          "elapsedMs": 160.615453,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 9,
+          "parent": 0,
+          "startMs": 1046.26317,
+          "endMs": 1411.008409,
+          "elapsedMs": 364.742564,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 10,
+          "parent": 9,
+          "startMs": 1046.28408,
+          "endMs": 1251.151522,
+          "elapsedMs": 204.859907,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 31,
+          "parent": 0,
+          "startMs": 1108.020422,
+          "endMs": 1178.826974,
+          "elapsedMs": 70.806211,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 32,
+          "parent": 31,
+          "startMs": 1108.255627,
+          "endMs": 1178.775023,
+          "elapsedMs": 70.517483,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 33,
+          "parent": 0,
+          "startMs": 1112.824607,
+          "endMs": 1185.061921,
+          "elapsedMs": 72.236313,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 34,
+          "parent": 33,
+          "startMs": 1113.110183,
+          "endMs": 1185.005563,
+          "elapsedMs": 71.89549,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 35,
+          "parent": 0,
+          "startMs": 1117.645237,
+          "endMs": 1189.716446,
+          "elapsedMs": 72.070447,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 36,
+          "parent": 35,
+          "startMs": 1117.875232,
+          "endMs": 1189.663163,
+          "elapsedMs": 71.786358,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 37,
+          "parent": 0,
+          "startMs": 1124.112894,
+          "endMs": 1244.050181,
+          "elapsedMs": 119.938279,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 38,
+          "parent": 37,
+          "startMs": 1124.341706,
+          "endMs": 1243.98744,
+          "elapsedMs": 119.64369,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 11,
+          "parent": 7,
+          "startMs": 1199.652827,
+          "endMs": 1343.672437,
+          "elapsedMs": 144.011745,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 12,
+          "parent": 9,
+          "startMs": 1251.209143,
+          "endMs": 1410.907855,
+          "elapsedMs": 159.691027,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 39,
+          "parent": 0,
+          "startMs": 1255.58794,
+          "endMs": 1324.432055,
+          "elapsedMs": 68.844145,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 40,
+          "parent": 39,
+          "startMs": 1255.804999,
+          "endMs": 1324.392088,
+          "elapsedMs": 68.586628,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 41,
+          "parent": 0,
+          "startMs": 1263.896733,
+          "endMs": 1330.154237,
+          "elapsedMs": 66.256994,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 42,
+          "parent": 41,
+          "startMs": 1264.074506,
+          "endMs": 1330.087198,
+          "elapsedMs": 66.010587,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 43,
+          "parent": 0,
+          "startMs": 1307.524,
+          "endMs": 1388.530345,
+          "elapsedMs": 81.006035,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 44,
+          "parent": 43,
+          "startMs": 1307.797879,
+          "endMs": 1388.478865,
+          "elapsedMs": 80.680827,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 45,
+          "parent": 0,
+          "startMs": 1311.621152,
+          "endMs": 1396.924372,
+          "elapsedMs": 85.302699,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 46,
+          "parent": 45,
+          "startMs": 1311.875664,
+          "endMs": 1396.878093,
+          "elapsedMs": 85.001948,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 47,
+          "parent": 0,
+          "startMs": 1535.959179,
+          "endMs": 2103.262995,
+          "elapsedMs": 567.301151,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 48,
+          "parent": 0,
+          "startMs": 1539.452517,
+          "endMs": 2107.872168,
+          "elapsedMs": 568.416525,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 49,
+          "parent": 48,
+          "startMs": 1634.580403,
+          "endMs": 2017.14162,
+          "elapsedMs": 382.559173,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 50,
+          "parent": 47,
+          "startMs": 1638.883799,
+          "endMs": 2012.438182,
+          "elapsedMs": 373.552408,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 51,
+          "parent": 50,
+          "startMs": 1672.284408,
+          "endMs": 2003.180532,
+          "elapsedMs": 330.892626,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 52,
+          "parent": 49,
+          "startMs": 1684.011172,
+          "endMs": 2003.398904,
+          "elapsedMs": 319.389004,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 13,
+          "parent": 0,
+          "startMs": 1746.864863,
+          "endMs": 2003.937916,
+          "elapsedMs": 257.070849,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 14,
+          "parent": 13,
+          "startMs": 1746.902195,
+          "endMs": 1902.013968,
+          "elapsedMs": 155.102274,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 15,
+          "parent": 0,
+          "startMs": 1756.150708,
+          "endMs": 2004.737203,
+          "elapsedMs": 248.585273,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 16,
+          "parent": 15,
+          "startMs": 1756.230913,
+          "endMs": 1955.678681,
+          "elapsedMs": 199.441716,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 53,
+          "parent": 0,
+          "startMs": 1814.969395,
+          "endMs": 1887.867325,
+          "elapsedMs": 72.89766,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 54,
+          "parent": 53,
+          "startMs": 1815.193027,
+          "endMs": 1887.816798,
+          "elapsedMs": 72.621636,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 55,
+          "parent": 0,
+          "startMs": 1819.145301,
+          "endMs": 1878.019866,
+          "elapsedMs": 58.873413,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 56,
+          "parent": 55,
+          "startMs": 1819.353894,
+          "endMs": 1877.968908,
+          "elapsedMs": 58.612198,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 57,
+          "parent": 0,
+          "startMs": 1823.431844,
+          "endMs": 1897.215113,
+          "elapsedMs": 73.782427,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 58,
+          "parent": 57,
+          "startMs": 1823.702106,
+          "endMs": 1897.157422,
+          "elapsedMs": 73.454624,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 59,
+          "parent": 0,
+          "startMs": 1829.909686,
+          "endMs": 1949.460146,
+          "elapsedMs": 119.550841,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 60,
+          "parent": 59,
+          "startMs": 1830.167544,
+          "endMs": 1949.396353,
+          "elapsedMs": 119.226745,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 17,
+          "parent": 13,
+          "startMs": 1902.105575,
+          "endMs": 2003.883801,
+          "elapsedMs": 101.775221,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 18,
+          "parent": 15,
+          "startMs": 1955.762483,
+          "endMs": 2004.687767,
+          "elapsedMs": 48.923411,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 61,
+          "parent": 0,
+          "startMs": 1960.418751,
+          "endMs": 2004.224954,
+          "elapsedMs": 43.781685,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 62,
+          "parent": 61,
+          "startMs": 1960.613618,
+          "endMs": 2004.155219,
+          "elapsedMs": 43.539918,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 63,
+          "parent": 0,
+          "startMs": 1964.034495,
+          "endMs": 2004.231047,
+          "elapsedMs": 40.192815,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 64,
+          "parent": 63,
+          "startMs": 1964.194364,
+          "endMs": 2004.192171,
+          "elapsedMs": 39.985745,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        }
+      ],
+      "deadlinePhase": "third owner-call wave: final input pair; final candidate pair never starts"
+    },
+    {
+      "number": 2,
+      "rootMs": 1998.125623,
+      "projectPhases": [
+        {
+          "stage": "advisory.root",
+          "ordinal": 19,
+          "parent": 0,
+          "startMs": 0.0,
+          "endMs": 1998.13948,
+          "elapsedMs": 1998.125623,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.scope",
+          "ordinal": 20,
+          "parent": 19,
+          "startMs": 0.021371,
+          "endMs": 1.846983,
+          "elapsedMs": 1.822686,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 21,
+          "parent": 19,
+          "startMs": 1.92344,
+          "endMs": 746.977649,
+          "elapsedMs": 745.052756,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 22,
+          "parent": 21,
+          "startMs": 2.002361,
+          "endMs": 746.931861,
+          "elapsedMs": 744.928177,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 23,
+          "parent": 21,
+          "startMs": 2.02444,
+          "endMs": 698.745624,
+          "elapsedMs": 696.720082,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 24,
+          "parent": 19,
+          "startMs": 748.305844,
+          "endMs": 749.607332,
+          "elapsedMs": 1.295406,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 25,
+          "parent": 19,
+          "startMs": 748.340506,
+          "endMs": 749.569179,
+          "elapsedMs": 1.240417,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 26,
+          "parent": 19,
+          "startMs": 748.393412,
+          "endMs": 750.017831,
+          "elapsedMs": 1.570438,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 27,
+          "parent": 19,
+          "startMs": 748.433967,
+          "endMs": 749.919455,
+          "elapsedMs": 1.514915,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 28,
+          "parent": 19,
+          "startMs": 749.602053,
+          "endMs": 750.615776,
+          "elapsedMs": 1.01237,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 29,
+          "parent": 19,
+          "startMs": 749.636048,
+          "endMs": 750.562521,
+          "elapsedMs": 0.925311,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 30,
+          "parent": 19,
+          "startMs": 749.965534,
+          "endMs": 750.985615,
+          "elapsedMs": 1.019479,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 31,
+          "parent": 19,
+          "startMs": 750.048701,
+          "endMs": 750.821213,
+          "elapsedMs": 0.77148,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 32,
+          "parent": 19,
+          "startMs": 750.848666,
+          "endMs": 1479.269578,
+          "elapsedMs": 728.417787,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 33,
+          "parent": 19,
+          "startMs": 751.01403,
+          "endMs": 1427.38864,
+          "elapsedMs": 676.37406,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 34,
+          "parent": 19,
+          "startMs": 1479.323102,
+          "endMs": 1999.692174,
+          "elapsedMs": 520.36798,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 35,
+          "parent": 34,
+          "startMs": 1479.443209,
+          "endMs": 1999.635224,
+          "elapsedMs": 520.193148,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 36,
+          "parent": 34,
+          "startMs": 1479.508535,
+          "endMs": 1999.261411,
+          "elapsedMs": 519.817326,
+          "crossesDeadline": true
+        }
+      ],
+      "ownerCallsStarted": 6,
+      "ownerCallsCompletedBeforeDeadline": 4,
+      "ownerCallIntervals": [
+        {
+          "stage": "owner.client",
+          "ordinal": 565,
+          "parent": 0,
+          "startMs": 2.061051,
+          "endMs": 698.669106,
+          "elapsedMs": 696.607103,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 566,
+          "parent": 0,
+          "startMs": 2.083127,
+          "endMs": 746.902865,
+          "elapsedMs": 744.819908,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 707,
+          "parent": 0,
+          "startMs": 750.894905,
+          "endMs": 1479.207559,
+          "elapsedMs": 728.308345,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 708,
+          "parent": 0,
+          "startMs": 751.032415,
+          "endMs": 1427.33119,
+          "elapsedMs": 676.297492,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 849,
+          "parent": 0,
+          "startMs": 1479.544605,
+          "endMs": 1999.601028,
+          "elapsedMs": 520.057435,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 850,
+          "parent": 0,
+          "startMs": 1479.569863,
+          "endMs": 1999.231574,
+          "elapsedMs": 519.673413,
+          "crossesDeadline": true
+        }
+      ],
+      "pipelineIntervals": [
+        {
+          "stage": "gateway.owner",
+          "ordinal": 67,
+          "parent": 0,
+          "startMs": 65.092199,
+          "endMs": 683.592337,
+          "elapsedMs": 618.499987,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 68,
+          "parent": 0,
+          "startMs": 69.693736,
+          "endMs": 734.135305,
+          "elapsedMs": 664.439094,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 69,
+          "parent": 67,
+          "startMs": 176.812861,
+          "endMs": 646.203047,
+          "elapsedMs": 469.387621,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 70,
+          "parent": 68,
+          "startMs": 182.475699,
+          "endMs": 719.264874,
+          "elapsedMs": 536.787632,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 71,
+          "parent": 69,
+          "startMs": 209.969054,
+          "endMs": 637.243192,
+          "elapsedMs": 427.274729,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 72,
+          "parent": 70,
+          "startMs": 214.100835,
+          "endMs": 714.424706,
+          "elapsedMs": 500.324813,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 19,
+          "parent": 0,
+          "startMs": 291.891834,
+          "endMs": 614.823166,
+          "elapsedMs": 322.928537,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 20,
+          "parent": 19,
+          "startMs": 291.922733,
+          "endMs": 464.218807,
+          "elapsedMs": 172.290061,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 21,
+          "parent": 0,
+          "startMs": 297.094545,
+          "endMs": 678.682889,
+          "elapsedMs": 381.584797,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 22,
+          "parent": 21,
+          "startMs": 297.118351,
+          "endMs": 510.158611,
+          "elapsedMs": 213.032214,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 73,
+          "parent": 0,
+          "startMs": 365.09456,
+          "endMs": 448.613709,
+          "elapsedMs": 83.520381,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 74,
+          "parent": 73,
+          "startMs": 365.320817,
+          "endMs": 448.482375,
+          "elapsedMs": 83.159595,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 75,
+          "parent": 0,
+          "startMs": 370.010619,
+          "endMs": 438.288075,
+          "elapsedMs": 68.276565,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 76,
+          "parent": 75,
+          "startMs": 370.234371,
+          "endMs": 438.23851,
+          "elapsedMs": 68.002816,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 77,
+          "parent": 0,
+          "startMs": 375.116,
+          "endMs": 458.592256,
+          "elapsedMs": 83.477438,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 78,
+          "parent": 77,
+          "startMs": 375.40101,
+          "endMs": 458.535436,
+          "elapsedMs": 83.133424,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 79,
+          "parent": 0,
+          "startMs": 381.179641,
+          "endMs": 503.135928,
+          "elapsedMs": 121.955816,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 80,
+          "parent": 79,
+          "startMs": 381.405708,
+          "endMs": 503.082154,
+          "elapsedMs": 121.674633,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 23,
+          "parent": 19,
+          "startMs": 464.275857,
+          "endMs": 614.729074,
+          "elapsedMs": 150.440563,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 24,
+          "parent": 21,
+          "startMs": 510.232403,
+          "endMs": 678.591603,
+          "elapsedMs": 168.351304,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 81,
+          "parent": 0,
+          "startMs": 527.541754,
+          "endMs": 592.783719,
+          "elapsedMs": 65.240832,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 82,
+          "parent": 81,
+          "startMs": 527.711953,
+          "endMs": 592.729534,
+          "elapsedMs": 65.014897,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 83,
+          "parent": 0,
+          "startMs": 534.744326,
+          "endMs": 598.529085,
+          "elapsedMs": 63.786523,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 84,
+          "parent": 83,
+          "startMs": 535.011432,
+          "endMs": 598.491923,
+          "elapsedMs": 63.480021,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 85,
+          "parent": 0,
+          "startMs": 572.859041,
+          "endMs": 664.884209,
+          "elapsedMs": 92.024336,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 86,
+          "parent": 85,
+          "startMs": 573.092141,
+          "endMs": 664.835114,
+          "elapsedMs": 91.741801,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 87,
+          "parent": 0,
+          "startMs": 577.767635,
+          "endMs": 655.970667,
+          "elapsedMs": 78.20233,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 88,
+          "parent": 87,
+          "startMs": 577.991277,
+          "endMs": 655.90984,
+          "elapsedMs": 77.918834,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 89,
+          "parent": 0,
+          "startMs": 811.351035,
+          "endMs": 1407.163618,
+          "elapsedMs": 595.809728,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 90,
+          "parent": 0,
+          "startMs": 815.460096,
+          "endMs": 1464.980465,
+          "elapsedMs": 649.517534,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 91,
+          "parent": 89,
+          "startMs": 916.131213,
+          "endMs": 1374.615665,
+          "elapsedMs": 458.48297,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 92,
+          "parent": 90,
+          "startMs": 920.820198,
+          "endMs": 1452.465203,
+          "elapsedMs": 531.643933,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 93,
+          "parent": 91,
+          "startMs": 951.684138,
+          "endMs": 1361.782659,
+          "elapsedMs": 410.097961,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 94,
+          "parent": 92,
+          "startMs": 955.606495,
+          "endMs": 1447.701452,
+          "elapsedMs": 492.086612,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 25,
+          "parent": 0,
+          "startMs": 1034.37307,
+          "endMs": 1422.788426,
+          "elapsedMs": 388.412119,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 26,
+          "parent": 25,
+          "startMs": 1034.418548,
+          "endMs": 1242.424881,
+          "elapsedMs": 208.000292,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 27,
+          "parent": 0,
+          "startMs": 1038.524333,
+          "endMs": 1336.972971,
+          "elapsedMs": 298.443589,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 28,
+          "parent": 27,
+          "startMs": 1038.546866,
+          "endMs": 1186.176117,
+          "elapsedMs": 147.622928,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 95,
+          "parent": 0,
+          "startMs": 1095.814318,
+          "endMs": 1156.011202,
+          "elapsedMs": 60.197105,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 96,
+          "parent": 95,
+          "startMs": 1096.037819,
+          "endMs": 1155.960584,
+          "elapsedMs": 59.919969,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 97,
+          "parent": 0,
+          "startMs": 1101.330672,
+          "endMs": 1161.776587,
+          "elapsedMs": 60.446636,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 98,
+          "parent": 97,
+          "startMs": 1101.621153,
+          "endMs": 1161.725317,
+          "elapsedMs": 60.103473,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 99,
+          "parent": 0,
+          "startMs": 1106.449643,
+          "endMs": 1180.558927,
+          "elapsedMs": 74.110035,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 100,
+          "parent": 99,
+          "startMs": 1106.703664,
+          "endMs": 1180.502588,
+          "elapsedMs": 73.797262,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 101,
+          "parent": 0,
+          "startMs": 1111.255751,
+          "endMs": 1232.938609,
+          "elapsedMs": 121.684222,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 102,
+          "parent": 101,
+          "startMs": 1111.518168,
+          "endMs": 1232.876339,
+          "elapsedMs": 121.356248,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 29,
+          "parent": 27,
+          "startMs": 1186.229911,
+          "endMs": 1336.864562,
+          "elapsedMs": 150.627176,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 30,
+          "parent": 25,
+          "startMs": 1242.48137,
+          "endMs": 1422.679145,
+          "elapsedMs": 180.189208,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 103,
+          "parent": 0,
+          "startMs": 1253.551882,
+          "endMs": 1320.578478,
+          "elapsedMs": 67.026806,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 104,
+          "parent": 103,
+          "startMs": 1253.772307,
+          "endMs": 1320.529683,
+          "elapsedMs": 66.756013,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 105,
+          "parent": 0,
+          "startMs": 1258.368004,
+          "endMs": 1326.105933,
+          "elapsedMs": 67.739562,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 106,
+          "parent": 105,
+          "startMs": 1258.668835,
+          "endMs": 1326.049815,
+          "elapsedMs": 67.379737,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 107,
+          "parent": 0,
+          "startMs": 1308.119517,
+          "endMs": 1412.442257,
+          "elapsedMs": 104.322469,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 108,
+          "parent": 107,
+          "startMs": 1308.344963,
+          "endMs": 1412.38139,
+          "elapsedMs": 104.034142,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 109,
+          "parent": 0,
+          "startMs": 1312.848011,
+          "endMs": 1389.853385,
+          "elapsedMs": 77.005034,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 110,
+          "parent": 109,
+          "startMs": 1313.079448,
+          "endMs": 1389.799471,
+          "elapsedMs": 76.71858,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 111,
+          "parent": 0,
+          "startMs": 1534.476164,
+          "endMs": 2089.610571,
+          "elapsedMs": 555.132854,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 112,
+          "parent": 0,
+          "startMs": 1538.17618,
+          "endMs": 2085.486572,
+          "elapsedMs": 547.304821,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 113,
+          "parent": 111,
+          "startMs": 1629.141797,
+          "endMs": 2023.814218,
+          "elapsedMs": 394.672491,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 114,
+          "parent": 112,
+          "startMs": 1633.347074,
+          "endMs": 2019.506147,
+          "elapsedMs": 386.15707,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 115,
+          "parent": 114,
+          "startMs": 1667.623656,
+          "endMs": 2000.023109,
+          "elapsedMs": 332.39803,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 116,
+          "parent": 113,
+          "startMs": 1672.489027,
+          "endMs": 2000.054765,
+          "elapsedMs": 327.566589,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 31,
+          "parent": 0,
+          "startMs": 1749.403085,
+          "endMs": 2000.900884,
+          "elapsedMs": 251.495595,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 32,
+          "parent": 31,
+          "startMs": 1749.469563,
+          "endMs": 1910.457965,
+          "elapsedMs": 160.983613,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 33,
+          "parent": 0,
+          "startMs": 1753.642633,
+          "endMs": 2000.952402,
+          "elapsedMs": 247.181891,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 34,
+          "parent": 33,
+          "startMs": 1753.665958,
+          "endMs": 1949.932797,
+          "elapsedMs": 196.260145,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 117,
+          "parent": 0,
+          "startMs": 1818.041784,
+          "endMs": 1879.977472,
+          "elapsedMs": 61.936459,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 118,
+          "parent": 117,
+          "startMs": 1818.486177,
+          "endMs": 1879.922596,
+          "elapsedMs": 61.438162,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 119,
+          "parent": 0,
+          "startMs": 1824.621962,
+          "endMs": 1884.949324,
+          "elapsedMs": 60.328183,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 120,
+          "parent": 119,
+          "startMs": 1824.892705,
+          "endMs": 1884.878908,
+          "elapsedMs": 59.983538,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 121,
+          "parent": 0,
+          "startMs": 1830.190793,
+          "endMs": 1940.213927,
+          "elapsedMs": 110.024907,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 122,
+          "parent": 121,
+          "startMs": 1830.488929,
+          "endMs": 1940.154302,
+          "elapsedMs": 109.66438,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 123,
+          "parent": 0,
+          "startMs": 1836.699705,
+          "endMs": 1903.45685,
+          "elapsedMs": 66.758257,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 124,
+          "parent": 123,
+          "startMs": 1836.983994,
+          "endMs": 1903.393928,
+          "elapsedMs": 66.408762,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 35,
+          "parent": 31,
+          "startMs": 1910.535986,
+          "endMs": 2000.829065,
+          "elapsedMs": 90.287198,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 36,
+          "parent": 33,
+          "startMs": 1949.993163,
+          "endMs": 2000.779357,
+          "elapsedMs": 50.781835,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 125,
+          "parent": 0,
+          "startMs": 1971.472671,
+          "endMs": 2001.326481,
+          "elapsedMs": 29.852978,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 126,
+          "parent": 125,
+          "startMs": 1971.676164,
+          "endMs": 2001.289088,
+          "elapsedMs": 29.613817,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 127,
+          "parent": 0,
+          "startMs": 1976.869563,
+          "endMs": 2001.643122,
+          "elapsedMs": 24.772548,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 128,
+          "parent": 127,
+          "startMs": 1977.091511,
+          "endMs": 2001.607033,
+          "elapsedMs": 24.515732,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        }
+      ],
+      "deadlinePhase": "third owner-call wave: final input pair; final candidate pair never starts"
+    },
+    {
+      "number": 3,
+      "rootMs": 1997.730207,
+      "projectPhases": [
+        {
+          "stage": "advisory.root",
+          "ordinal": 37,
+          "parent": 0,
+          "startMs": 0.0,
+          "endMs": 1997.747721,
+          "elapsedMs": 1997.730207,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.scope",
+          "ordinal": 38,
+          "parent": 37,
+          "startMs": 0.045047,
+          "endMs": 1.775424,
+          "elapsedMs": 1.727902,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 39,
+          "parent": 37,
+          "startMs": 1.847894,
+          "endMs": 703.335484,
+          "elapsedMs": 701.486568,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 40,
+          "parent": 39,
+          "startMs": 1.94424,
+          "endMs": 703.302551,
+          "elapsedMs": 701.358411,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 41,
+          "parent": 39,
+          "startMs": 1.960926,
+          "endMs": 649.724775,
+          "elapsedMs": 647.764501,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 42,
+          "parent": 37,
+          "startMs": 704.63038,
+          "endMs": 705.773343,
+          "elapsedMs": 1.145808,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 43,
+          "parent": 37,
+          "startMs": 704.662356,
+          "endMs": 705.750974,
+          "elapsedMs": 1.096533,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 44,
+          "parent": 37,
+          "startMs": 704.683633,
+          "endMs": 705.874903,
+          "elapsedMs": 1.194076,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.project-allowed",
+          "ordinal": 45,
+          "parent": 37,
+          "startMs": 704.748328,
+          "endMs": 705.854177,
+          "elapsedMs": 1.106831,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 46,
+          "parent": 37,
+          "startMs": 705.82362,
+          "endMs": 706.76898,
+          "elapsedMs": 0.944779,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 47,
+          "parent": 37,
+          "startMs": 705.925731,
+          "endMs": 706.789485,
+          "elapsedMs": 0.862411,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 48,
+          "parent": 37,
+          "startMs": 706.016923,
+          "endMs": 706.876247,
+          "elapsedMs": 0.858923,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.detail",
+          "ordinal": 49,
+          "parent": 37,
+          "startMs": 706.10351,
+          "endMs": 706.915303,
+          "elapsedMs": 0.813045,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 50,
+          "parent": 37,
+          "startMs": 706.844561,
+          "endMs": 1375.447366,
+          "elapsedMs": 668.60051,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 51,
+          "parent": 37,
+          "startMs": 706.90343,
+          "endMs": 1424.985712,
+          "elapsedMs": 718.079868,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "projects.filter-inputs",
+          "ordinal": 52,
+          "parent": 37,
+          "startMs": 1425.02598,
+          "endMs": 1999.32057,
+          "elapsedMs": 574.293227,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 53,
+          "parent": 52,
+          "startMs": 1425.096837,
+          "endMs": 1999.257363,
+          "elapsedMs": 574.159434,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "projects.folder-allowed",
+          "ordinal": 54,
+          "parent": 52,
+          "startMs": 1425.120402,
+          "endMs": 1999.278008,
+          "elapsedMs": 574.158517,
+          "crossesDeadline": true
+        }
+      ],
+      "ownerCallsStarted": 6,
+      "ownerCallsCompletedBeforeDeadline": 4,
+      "ownerCallIntervals": [
+        {
+          "stage": "owner.client",
+          "ordinal": 1060,
+          "parent": 0,
+          "startMs": 1.996742,
+          "endMs": 703.27102,
+          "elapsedMs": 701.273046,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 1061,
+          "parent": 0,
+          "startMs": 2.023908,
+          "endMs": 649.692433,
+          "elapsedMs": 647.688423,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 1202,
+          "parent": 0,
+          "startMs": 706.920478,
+          "endMs": 1375.39806,
+          "elapsedMs": 668.478825,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 1203,
+          "parent": 0,
+          "startMs": 706.939359,
+          "endMs": 1424.935435,
+          "elapsedMs": 717.998851,
+          "crossesDeadline": false
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 1344,
+          "parent": 0,
+          "startMs": 1425.148026,
+          "endMs": 1999.217586,
+          "elapsedMs": 574.06946,
+          "crossesDeadline": true
+        },
+        {
+          "stage": "owner.client",
+          "ordinal": 1345,
+          "parent": 0,
+          "startMs": 1425.15524,
+          "endMs": 1999.244833,
+          "elapsedMs": 574.089844,
+          "crossesDeadline": true
+        }
+      ],
+      "pipelineIntervals": [
+        {
+          "stage": "gateway.owner",
+          "ordinal": 131,
+          "parent": 0,
+          "startMs": 61.54811,
+          "endMs": 685.823466,
+          "elapsedMs": 624.272942,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 132,
+          "parent": 0,
+          "startMs": 67.137265,
+          "endMs": 634.09446,
+          "elapsedMs": 566.954349,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 133,
+          "parent": 131,
+          "startMs": 154.584465,
+          "endMs": 672.019408,
+          "elapsedMs": 517.434492,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 134,
+          "parent": 132,
+          "startMs": 161.733688,
+          "endMs": 593.544749,
+          "elapsedMs": 431.809397,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 135,
+          "parent": 133,
+          "startMs": 183.936074,
+          "endMs": 666.470718,
+          "elapsedMs": 482.524284,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 136,
+          "parent": 134,
+          "startMs": 187.74721,
+          "endMs": 587.994263,
+          "elapsedMs": 400.245449,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 37,
+          "parent": 0,
+          "startMs": 265.693877,
+          "endMs": 569.207834,
+          "elapsedMs": 303.507715,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 38,
+          "parent": 37,
+          "startMs": 265.720368,
+          "endMs": 417.506879,
+          "elapsedMs": 151.780148,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 39,
+          "parent": 0,
+          "startMs": 269.335029,
+          "endMs": 630.568701,
+          "elapsedMs": 361.228361,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 40,
+          "parent": 39,
+          "startMs": 269.353665,
+          "endMs": 466.479194,
+          "elapsedMs": 197.117082,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 137,
+          "parent": 0,
+          "startMs": 331.49211,
+          "endMs": 387.998251,
+          "elapsedMs": 56.50534,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 138,
+          "parent": 137,
+          "startMs": 331.701664,
+          "endMs": 387.945279,
+          "elapsedMs": 56.24123,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 139,
+          "parent": 0,
+          "startMs": 338.036179,
+          "endMs": 395.925306,
+          "elapsedMs": 57.888827,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 140,
+          "parent": 139,
+          "startMs": 338.248349,
+          "endMs": 395.871573,
+          "elapsedMs": 57.62107,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 141,
+          "parent": 0,
+          "startMs": 342.637376,
+          "endMs": 407.15243,
+          "elapsedMs": 64.514353,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 142,
+          "parent": 141,
+          "startMs": 342.900915,
+          "endMs": 407.097234,
+          "elapsedMs": 64.196309,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 143,
+          "parent": 0,
+          "startMs": 347.108312,
+          "endMs": 460.078332,
+          "elapsedMs": 112.969319,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 144,
+          "parent": 143,
+          "startMs": 347.406196,
+          "endMs": 459.993318,
+          "elapsedMs": 112.586,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 41,
+          "parent": 37,
+          "startMs": 417.594989,
+          "endMs": 569.079186,
+          "elapsedMs": 151.478115,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 42,
+          "parent": 39,
+          "startMs": 466.532898,
+          "endMs": 630.475301,
+          "elapsedMs": 163.934408,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 145,
+          "parent": 0,
+          "startMs": 471.510421,
+          "endMs": 550.771817,
+          "elapsedMs": 79.261576,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 146,
+          "parent": 145,
+          "startMs": 471.693896,
+          "endMs": 550.712162,
+          "elapsedMs": 79.016162,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 147,
+          "parent": 0,
+          "startMs": 475.19614,
+          "endMs": 556.747102,
+          "elapsedMs": 81.550342,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 148,
+          "parent": 147,
+          "startMs": 475.374163,
+          "endMs": 556.672518,
+          "elapsedMs": 81.295369,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 149,
+          "parent": 0,
+          "startMs": 542.346419,
+          "endMs": 612.025488,
+          "elapsedMs": 69.678187,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 150,
+          "parent": 149,
+          "startMs": 542.572415,
+          "endMs": 611.94904,
+          "elapsedMs": 69.373569,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 151,
+          "parent": 0,
+          "startMs": 546.379684,
+          "endMs": 616.467976,
+          "elapsedMs": 70.088532,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 152,
+          "parent": 151,
+          "startMs": 546.583317,
+          "endMs": 616.424662,
+          "elapsedMs": 69.841506,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 153,
+          "parent": 0,
+          "startMs": 767.143748,
+          "endMs": 1410.47906,
+          "elapsedMs": 643.332838,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 154,
+          "parent": 0,
+          "startMs": 770.871067,
+          "endMs": 1358.840768,
+          "elapsedMs": 587.966414,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 155,
+          "parent": 153,
+          "startMs": 869.262961,
+          "endMs": 1395.938262,
+          "elapsedMs": 526.67436,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 156,
+          "parent": 154,
+          "startMs": 873.025288,
+          "endMs": 1317.472262,
+          "elapsedMs": 444.4447,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 157,
+          "parent": 156,
+          "startMs": 900.576134,
+          "endMs": 1307.067037,
+          "elapsedMs": 406.48921,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 158,
+          "parent": 155,
+          "startMs": 906.058799,
+          "endMs": 1391.24686,
+          "elapsedMs": 485.178312,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 43,
+          "parent": 0,
+          "startMs": 981.749829,
+          "endMs": 1355.207795,
+          "elapsedMs": 373.45551,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 44,
+          "parent": 43,
+          "startMs": 981.79171,
+          "endMs": 1193.765001,
+          "elapsedMs": 211.96725,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 45,
+          "parent": 0,
+          "startMs": 985.616271,
+          "endMs": 1289.440469,
+          "elapsedMs": 303.820501,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 46,
+          "parent": 45,
+          "startMs": 985.641871,
+          "endMs": 1144.381088,
+          "elapsedMs": 158.730531,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 159,
+          "parent": 0,
+          "startMs": 1045.164878,
+          "endMs": 1119.752774,
+          "elapsedMs": 74.585863,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 160,
+          "parent": 159,
+          "startMs": 1045.402668,
+          "endMs": 1119.67818,
+          "elapsedMs": 74.272267,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 161,
+          "parent": 0,
+          "startMs": 1051.034846,
+          "endMs": 1128.156187,
+          "elapsedMs": 77.121482,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 162,
+          "parent": 161,
+          "startMs": 1051.269829,
+          "endMs": 1128.095309,
+          "elapsedMs": 76.823245,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 163,
+          "parent": 0,
+          "startMs": 1055.590976,
+          "endMs": 1138.206806,
+          "elapsedMs": 82.631341,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 164,
+          "parent": 163,
+          "startMs": 1055.863793,
+          "endMs": 1138.145247,
+          "elapsedMs": 82.280462,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 165,
+          "parent": 0,
+          "startMs": 1061.133186,
+          "endMs": 1187.362905,
+          "elapsedMs": 126.229608,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 166,
+          "parent": 165,
+          "startMs": 1061.376827,
+          "endMs": 1187.291437,
+          "elapsedMs": 125.912525,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 47,
+          "parent": 45,
+          "startMs": 1144.442888,
+          "endMs": 1289.344534,
+          "elapsedMs": 144.896045,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 48,
+          "parent": 43,
+          "startMs": 1193.81613,
+          "endMs": 1355.115937,
+          "elapsedMs": 161.291511,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 167,
+          "parent": 0,
+          "startMs": 1201.20594,
+          "endMs": 1270.085087,
+          "elapsedMs": 68.880339,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 168,
+          "parent": 167,
+          "startMs": 1201.394213,
+          "endMs": 1270.03517,
+          "elapsedMs": 68.639914,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 169,
+          "parent": 0,
+          "startMs": 1205.873772,
+          "endMs": 1274.581868,
+          "elapsedMs": 68.708426,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 170,
+          "parent": 169,
+          "startMs": 1206.174492,
+          "endMs": 1274.536079,
+          "elapsedMs": 68.361396,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 171,
+          "parent": 0,
+          "startMs": 1252.540887,
+          "endMs": 1331.276908,
+          "elapsedMs": 78.733277,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 172,
+          "parent": 171,
+          "startMs": 1252.783686,
+          "endMs": 1331.15391,
+          "elapsedMs": 78.367189,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 173,
+          "parent": 0,
+          "startMs": 1261.404021,
+          "endMs": 1340.170988,
+          "elapsedMs": 78.767438,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 174,
+          "parent": 173,
+          "startMs": 1261.663534,
+          "endMs": 1340.122004,
+          "elapsedMs": 78.458339,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 175,
+          "parent": 0,
+          "startMs": 1482.021186,
+          "endMs": 2092.570482,
+          "elapsedMs": 610.5408,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner",
+          "ordinal": 176,
+          "parent": 0,
+          "startMs": 1485.7405,
+          "endMs": 2098.342963,
+          "elapsedMs": 612.592905,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 177,
+          "parent": 176,
+          "startMs": 1576.311824,
+          "endMs": 2061.174486,
+          "elapsedMs": 484.855318,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.invoker",
+          "ordinal": 178,
+          "parent": 175,
+          "startMs": 1580.398822,
+          "endMs": 2033.617255,
+          "elapsedMs": 453.208673,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 179,
+          "parent": 178,
+          "startMs": 1607.621754,
+          "endMs": 1999.905083,
+          "elapsedMs": 392.281737,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.owner-send",
+          "ordinal": 180,
+          "parent": 177,
+          "startMs": 1611.79508,
+          "endMs": 2029.385465,
+          "elapsedMs": 417.587389,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 49,
+          "parent": 0,
+          "startMs": 1690.678662,
+          "endMs": 1997.765511,
+          "elapsedMs": 307.083021,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 50,
+          "parent": 49,
+          "startMs": 1690.71895,
+          "endMs": 1840.872897,
+          "elapsedMs": 150.147143,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.owner",
+          "ordinal": 51,
+          "parent": 0,
+          "startMs": 1694.46718,
+          "endMs": 2000.872853,
+          "elapsedMs": 306.402778,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-first",
+          "ordinal": 52,
+          "parent": 51,
+          "startMs": 1694.487519,
+          "endMs": 1892.877947,
+          "elapsedMs": 198.385648,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 181,
+          "parent": 0,
+          "startMs": 1753.600309,
+          "endMs": 1818.756069,
+          "elapsedMs": 65.15578,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 182,
+          "parent": 181,
+          "startMs": 1753.831015,
+          "endMs": 1818.691695,
+          "elapsedMs": 64.858626,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 183,
+          "parent": 0,
+          "startMs": 1758.451411,
+          "endMs": 1825.015345,
+          "elapsedMs": 66.562522,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 184,
+          "parent": 183,
+          "startMs": 1758.648301,
+          "endMs": 1824.948957,
+          "elapsedMs": 66.297961,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 185,
+          "parent": 0,
+          "startMs": 1762.660927,
+          "endMs": 1829.838122,
+          "elapsedMs": 67.177014,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 186,
+          "parent": 185,
+          "startMs": 1762.888136,
+          "endMs": 1829.782554,
+          "elapsedMs": 66.892925,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 187,
+          "parent": 0,
+          "startMs": 1767.241801,
+          "endMs": 1886.763336,
+          "elapsedMs": 119.521204,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 188,
+          "parent": 187,
+          "startMs": 1767.484019,
+          "endMs": 1886.703069,
+          "elapsedMs": 119.217096,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 53,
+          "parent": 49,
+          "startMs": 1840.928955,
+          "endMs": 1997.617335,
+          "elapsedMs": 156.67826,
+          "crossesDeadline": false,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "folders.authorize-final",
+          "ordinal": 54,
+          "parent": 51,
+          "startMs": 1892.928915,
+          "endMs": 2000.835661,
+          "elapsedMs": 107.903219,
+          "crossesDeadline": true,
+          "component": "Hexalith.Folders.Server",
+          "pid": 2007879
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 189,
+          "parent": 0,
+          "startMs": 1898.220924,
+          "endMs": 1978.836416,
+          "elapsedMs": 80.615152,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 190,
+          "parent": 189,
+          "startMs": 1898.439677,
+          "endMs": 1978.772964,
+          "elapsedMs": 80.331513,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 191,
+          "parent": 0,
+          "startMs": 1905.321475,
+          "endMs": 1984.345042,
+          "elapsedMs": 79.021773,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 192,
+          "parent": 191,
+          "startMs": 1905.577369,
+          "endMs": 1984.284325,
+          "elapsedMs": 78.70376,
+          "crossesDeadline": false,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 193,
+          "parent": 0,
+          "startMs": 1965.751561,
+          "endMs": 2001.286447,
+          "elapsedMs": 35.488407,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 194,
+          "parent": 193,
+          "startMs": 1966.001844,
+          "endMs": 2001.15324,
+          "elapsedMs": 35.070197,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.native-stream",
+          "ordinal": 195,
+          "parent": 0,
+          "startMs": 1974.226251,
+          "endMs": 2001.229326,
+          "elapsedMs": 26.933025,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        },
+        {
+          "stage": "gateway.actor-pair-await",
+          "ordinal": 196,
+          "parent": 195,
+          "startMs": 1974.471685,
+          "endMs": 2001.070074,
+          "elapsedMs": 26.596064,
+          "crossesDeadline": true,
+          "component": "Hexalith.EventStore.Gateway",
+          "pid": 2007435
+        }
+      ],
+      "deadlinePhase": "third owner-call wave: final input pair; final candidate pair never starts"
+    }
+  ],
+  "findings": [
+    "All three roots start six owner calls and complete four before the fixed two-second deadline; they expire during final-input pair, before the final-candidate pair.",
+    "Gateway synchronous inner ArrayPool.Rent allocated106824232 bytes (private21626976+ordinary85197256) versus6844246960 process allocation delta; pool rents are not the main remaining process allocation source.",
+    "Release-core anchors include real binding.core computation in all three roles. This identifies repeated pure work under release; it does not assign the remaining process allocation to that work.",
+    "Both original ordinary pools retain capacity1 and the selected private pool capacity2. Selection/open/absent counters and actual outstanding loan peaks are measured, not inferred from source mode alone.",
+    "No EventPipe or allocation stacks were captured in this dataset; definitive attribution of the remaining process allocation is pending."
+  ],
+  "limits": [
+    "Instrumentation changes latency, allocation and lock hold time; diagnostic spans are not ordinary performance/acceptance proof.",
+    "Rent allocation delta is strictly synchronous immediately around inner.Rent; whole-process counters include all managed work plus private diagnostic overhead.",
+    "Scalar outstanding loan counts include concurrent gated rents; lifetime peaks are separately retained. No strong array history is retained.",
+    "Coarse parent IDs are local to each assembly; cross-process monotonic temporal alignment is used on this one host. Inclusive overlapping spans/population medians must not be added as a critical path.",
+    "Only3 intentional diagnostic roots; startup/SINGLE warmup gated out; opened spans drain but newly starting work after gate closure may have no children.",
+    "No actor/network residual is asserted to be pure transport.",
+    "All7 overlaid assemblies require FORCE ordinary restore; source restoration alone or an incremental build is insufficient. Parent/owner agent owns that later restoration.",
+    "No external observer ran: previous observer race is preserved in the separate prior packet, while this dataset uses112 built-in resource samples."
+  ]
+}

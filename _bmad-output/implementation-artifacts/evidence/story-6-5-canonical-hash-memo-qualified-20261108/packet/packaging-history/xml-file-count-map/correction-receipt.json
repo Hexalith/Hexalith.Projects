@@ -1,0 +1,20 @@
+{
+  "packagingOnly": true,
+  "qualificationOrRuntimeNotRepeated": true,
+  "initialAssemblerExitCode": 1,
+  "failure": "AssertionError while checking source XML filename/count labels before manifest/seal",
+  "cause": "Contracts and UI expected file counts were swapped in packaging metadata only",
+  "actualXmlCounts": {
+    "owner450.xml": 450,
+    "contracts-tests.xml": 46,
+    "server-tests.xml": 324,
+    "ui-tests.xml": 211,
+    "integration-tests.xml": 45
+  },
+  "actualXmlAllPassAndTotal1076Unchanged": true,
+  "preservedPartialDirectory": "/tmp/story65-canonical-hash-memo-repair-evidence-before-xml-file-count-map-20261108",
+  "originalAssemblerSha256": "be125ad2b059de903d95be32b51340710a4a8b786150f86e6f7d54839776ec72",
+  "correctedAssemblerSha256": "8294beee9759fb25bfaef73589ee94b50b0c45fd45fec6fe4737019a41fb6672",
+  "originalReadmeSha256": "c6773078c786a3bb783b5fcfadb2529b8515b5c55512253ac5fa03745e727e31",
+  "correctedReadmeSha256": "a1f4b82876bca42ef624ccd82ff72a2dbb9ee47475116039d96351e8d3a72450"
+}

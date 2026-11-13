@@ -1,0 +1,90 @@
+--- preserved/DomainRouteCatalogFilter.private.cs
++++ corrected/DomainRouteCatalogFilter.private.cs
+@@ -15,13 +15,13 @@
+         bool captureTransferred = false;
+         try
+         {
+-        using var filterBody = counters?.Stage(CaptureCounters.Stage.ResultTail, CaptureCounters.AllocationMode.None);
++        using var filterBody = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ResultTail, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+         ArgumentNullException.ThrowIfNull(context);
+         ArgumentNullException.ThrowIfNull(next);
+         DomainRouteCatalogDecision decision;
+         try
+         {
+-            using var guardDecision = counters?.Stage(CaptureCounters.Stage.ComponentFile, CaptureCounters.AllocationMode.None);
++            using var guardDecision = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ComponentFile, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+             decision = guard is DomainRouteCatalogGuard receiver
+                 ? await receiver.AcquireDecisionWithTimingAsync(context, counters).ConfigureAwait(false)
+                 : new(await guard.AcquireAsync(context).ConfigureAwait(false));
+@@ -38,7 +38,7 @@
+             using var scope = lease is null ? null : guard is DomainRouteCatalogGuard
+                 ? RouteCatalogRemoteCall.EnterReceiver(lease, context.HttpContext.RequestAborted)
+                 : RouteCatalogRemoteCall.Enter(lease);
+-            using var filterNext = counters?.Stage(CaptureCounters.Stage.SettingsEnumerationSortDictionary, CaptureCounters.AllocationMode.None);
++            using var filterNext = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.SettingsEnumerationSortDictionary, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+             object? result = decision.TerminalRefusal ?? await next(context).ConfigureAwait(false);
+             filterNext?.Dispose();
+             // ASP.NET executes IResult after endpoint filters return, including streamed/custom results.
+@@ -50,7 +50,7 @@
+             }
+             if (lease is not null)
+             {
+-                using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);
++                using var leaseRelease = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AuthenticationSerialization, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+                 await lease.DisposeAsync().ConfigureAwait(false);
+                 leaseRelease?.Dispose();
+             }
+@@ -61,7 +61,7 @@
+             captureTransferred = false;
+             if (lease is not null)
+             {
+-                using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);
++                using var leaseRelease = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AuthenticationSerialization, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+                 await lease.DisposeAsync().ConfigureAwait(false);
+                 leaseRelease?.Dispose();
+             }
+--- preserved/DomainRouteCatalogGuard.private.cs
++++ corrected/DomainRouteCatalogGuard.private.cs
+@@ -30,12 +30,12 @@
+     private async Task<DomainRouteCatalogDecision> AcquireCoreAsync(EndpointFilterInvocationContext context, bool allowRefusal, CaptureCounters? counters = null)
+     {
+         ArgumentNullException.ThrowIfNull(context);
+-        using var authorityAcquire = counters?.Stage(CaptureCounters.Stage.ComponentPolicy, CaptureCounters.AllocationMode.None);
++        using var authorityAcquire = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ComponentPolicy, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+         RouteCatalogDispatchLease lease = await authority.AcquireAsync(context.HttpContext.RequestAborted).ConfigureAwait(false);
+         authorityAcquire?.Dispose();
+         try
+         {
+-            using var validation = counters?.Stage(CaptureCounters.Stage.AclFile, CaptureCounters.AllocationMode.None);
++            using var validation = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AclFile, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+             var snapshot = lease.Snapshot;
+             if (snapshot.Envelope.SchemaVersion == 3
+                 && Hexalith.EventStore.ServiceDefaults.Authentication.RouteCatalogSurfacePolicy.Surface(context.HttpContext.User) != "service")
+@@ -136,7 +136,7 @@
+         }
+         catch
+         {
+-            using var leaseRelease = counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);
++            using var leaseRelease = counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AuthenticationSerialization, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+             await lease.DisposeAsync().ConfigureAwait(false);
+             leaseRelease?.Dispose();
+             throw;
+--- preserved/DomainRouteCatalogResult.private.cs
++++ corrected/DomainRouteCatalogResult.private.cs
+@@ -29,14 +29,14 @@
+         {
+         using var scope = trustedReceiver ? RouteCatalogRemoteCall.EnterReceiver(lease, httpContext.RequestAborted)
+             : RouteCatalogRemoteCall.Enter(lease);
+-        using var resultExecution = _counters?.Stage(CaptureCounters.Stage.ActorBoundary, CaptureCounters.AllocationMode.None);
++        using var resultExecution = _counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.ActorBoundary, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+         await result.ExecuteAsync(httpContext).ConfigureAwait(false);
+         resultExecution?.Dispose();
+         }
+         finally
+         {
+             // Original remote scope has unwound; original await-using lease disposal follows.
+-            releaseInterval = _counters?.Stage(CaptureCounters.Stage.AuthenticationSerialization, CaptureCounters.AllocationMode.None);
++            releaseInterval = _counters?.Stage(global::Hexalith.PrivateCaptureCounter.Stage.AuthenticationSerialization, global::Hexalith.PrivateCaptureCounter.AllocationMode.None);
+         }
+         }
+         finally

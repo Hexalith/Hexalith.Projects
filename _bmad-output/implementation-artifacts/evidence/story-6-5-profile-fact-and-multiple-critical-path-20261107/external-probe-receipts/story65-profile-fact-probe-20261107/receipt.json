@@ -1,0 +1,51 @@
+{
+  "diagnosticOnly": true,
+  "ownerSourceOrOutputsEdited": false,
+  "cwd": "/tmp",
+  "summary": [
+    {
+      "mode": "two-full-warm-decodes",
+      "medians": {
+        "meanTwoReadMs": 0.6427599999999998,
+        "allocatedBytesPerTwoReads": 1052463,
+        "capturesPerTwoReads": 2,
+        "hitsPerTwoReads": 2
+      }
+    },
+    {
+      "mode": "two-modeled-profile-facts",
+      "medians": {
+        "meanTwoReadMs": 0.23196399999999984,
+        "allocatedBytesPerTwoReads": 439579,
+        "capturesPerTwoReads": 2,
+        "hitsPerTwoReads": 2
+      }
+    }
+  ],
+  "artifacts": {
+    "Probe.csproj": "90e7525f4c40156c6420181a7ac631525593382b55d1b46569bf0dc42aa20d66",
+    "initial-read-samples.json": "6b4295e522c70b91c7cc23208b058626727316f62c322b8386ac44b2a0faba67",
+    "results.json": "1edfa8cb1f527797c3e65e61b4218569d17d51f541167d36c054c041b31e2871",
+    "build-final.log": "280025bf33c8c74a1bd2851bc1f627728d28d5b23aa08d961d5542a5c651bdef",
+    "run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build.log": "d6cf66129724c881d1192eceb066f0fcd300e5ae778110152de208a51d2fffff",
+    "Program.cs": "862902bb9b94295a8a34e4da0248580bec72d890ac516d3f62554c5893f847b0",
+    "run-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "qualification": "Modeled proposed scalar path only, using actual old TryCapture checks; final modeled samples include disposal. The later actual compiled ReadProfile XML is authoritative.",
+  "buildArgv": [
+    "dotnet",
+    "build",
+    "/tmp/story65-profile-fact-probe-20261107/Probe.csproj",
+    "--configuration",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "--disable-build-servers"
+  ],
+  "runArgv": [
+    "dotnet",
+    "/tmp/story65-profile-fact-probe-20261107/bin/Debug/net10.0/Probe.dll",
+    "/tmp/story65-profile-fact-probe-20261107/results.json"
+  ]
+}

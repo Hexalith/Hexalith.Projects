@@ -1,0 +1,70 @@
+{
+  "Mode": "disabled",
+  "Group": "nested",
+  "Passed": true,
+  "Cases": [
+    {
+      "Result": {
+        "Case": "nested-two-results-success",
+        "Passed": true,
+        "FilterEntries": 2,
+        "AuthorityAcquireCalls": 2,
+        "NextCalls": 2,
+        "ReleaseCallbacks": 2,
+        "ErrorType": null,
+        "Faults": 0,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 255,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [],
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": false
+    },
+    {
+      "Result": {
+        "Case": "nested-inner-result-fault",
+        "Passed": true,
+        "FilterEntries": 2,
+        "AuthorityAcquireCalls": 2,
+        "NextCalls": 2,
+        "ReleaseCallbacks": 2,
+        "ErrorType": "System.InvalidOperationException",
+        "Faults": 1,
+        "TokensMatched": true,
+        "LifetimeAndHandoffMatched": true,
+        "CallerRestored": true,
+        "ExpectedStageMask": 255,
+        "MinimumLastDisposeTicks": 0,
+        "MaximumLastDisposeTicks": 0,
+        "FirstDisposeHoldTicks": 0,
+        "DoubleDisposeOrder": true,
+        "ReleaseBoundaryRestored": true,
+        "ExactContextReachedNext": true,
+        "FirstDependencyProbeObserved": true,
+        "EntrySuppressionObserved": true
+      },
+      "CaptureOrdinals": [],
+      "AdmittedDelta": 0,
+      "ActualStageRowsRequired": false,
+      "HandoffCounterObservationRequired": false,
+      "HandoffChecks": 0,
+      "SyntheticDurationBracketOnly": false
+    }
+  ],
+  "AllSetupBeforeReady": true,
+  "RawBusinessValuesPersisted": false,
+  "ActualCounterCountsAndAllocationsZero": true
+}

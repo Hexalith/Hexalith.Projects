@@ -1,0 +1,21 @@
+--- before/harness/MvcCorpus.cs
++++ after/harness/MvcCorpus.cs
+@@ -45,6 +45,18 @@
+     {
+         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+         builder.Services.AddAdminApi(builder.Configuration);
++        // Constructor-only dependencies from TechnicalHttpCatalogFixture; no action/transport is executed.
++        builder.Services.AddSingleton<Dapr.Client.DaprClient>(Substitute.For<Dapr.Client.DaprClient>());
++        builder.Services.AddSingleton(Substitute.For<Dapr.Actors.Client.IActorProxyFactory>());
++        builder.Services.AddSingleton<Hexalith.EventStore.Services.DaprSnapshotPolicyRepository>();
++        builder.Services.AddSingleton<Microsoft.Extensions.Options.IOptions<Hexalith.EventStore.Server.Commands.CommandStatusOptions>>(
++            Microsoft.Extensions.Options.Options.Create(new Hexalith.EventStore.Server.Commands.CommandStatusOptions { StateStoreName = "statestore" }));
++        builder.Services.AddSingleton(Substitute.For<Hexalith.EventStore.Authorization.ITenantValidator>());
++        builder.Services.AddSingleton(Substitute.For<Hexalith.EventStore.Authorization.IRbacValidator>());
++        builder.Services.AddSingleton(Substitute.For<Hexalith.EventStore.Commands.ICommandActivityReader>());
++        builder.Services.AddSingleton(Substitute.For<Hexalith.EventStore.Admin.Abstractions.Services.ITenantCommandService>());
++        builder.Services.AddSingleton(Substitute.For<Hexalith.EventStore.Admin.Abstractions.Services.ITenantQueryService>());
++        builder.Services.AddHttpContextAccessor();
+         builder.Services.AddEventStoreHttpHostSecurity();
+         builder.Services.PostConfigure<AuthorizationOptions>(options =>
+         {

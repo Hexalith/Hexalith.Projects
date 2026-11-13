@@ -1,0 +1,825 @@
+{
+  "kind": "matrix",
+  "mode": "capped",
+  "cases": 57,
+  "supplementalCases": 9,
+  "allPairsEqual": true,
+  "allExpectedOutcomes": true,
+  "counterPartitionChecked": false,
+  "counterPartitionEqual": true,
+  "expectedCounts": [
+    2142,
+    938,
+    231,
+    840,
+    126,
+    7
+  ],
+  "actualCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "settingRows": 0,
+  "admitted": 161,
+  "disposedOrUnwound": 161,
+  "queueDropped": 994,
+  "ioFailures": 0,
+  "results": [
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "JsonException"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "TaskCanceledException"
+      ]
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": false,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "cancel-during-enumeration",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": true,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-configuration",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": true,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    },
+    {
+      "scenario": "null-declarations",
+      "mode": "capped",
+      "concurrency": 1,
+      "supplemental": true,
+      "pairs": 1,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "JsonException"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "TaskCanceledException"
+      ]
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": false,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "cancel-during-enumeration",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": true,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-configuration",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": true,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    },
+    {
+      "scenario": "null-declarations",
+      "mode": "capped",
+      "concurrency": 2,
+      "supplemental": true,
+      "pairs": 2,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FixtureException"
+      ]
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "JsonException"
+      ]
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "RouteCatalogUnavailableException"
+      ]
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "FileNotFoundException"
+      ]
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "TaskCanceledException"
+      ]
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": false,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "cancel-during-enumeration",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": true,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "none"
+      ]
+    },
+    {
+      "scenario": "null-configuration",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": true,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    },
+    {
+      "scenario": "null-declarations",
+      "mode": "capped",
+      "concurrency": 4,
+      "supplemental": true,
+      "pairs": 4,
+      "equal": true,
+      "expectedOutcome": true,
+      "errorTypes": [
+        "ArgumentNullException"
+      ]
+    }
+  ]
+}

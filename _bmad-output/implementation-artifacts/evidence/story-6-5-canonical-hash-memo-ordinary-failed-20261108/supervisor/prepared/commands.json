@@ -1,0 +1,29 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "exactManagedChildCommand": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "supervisorCommandAfterActualRootRelease": [
+    "python3",
+    "/tmp/story65-canonical-hash-acceptance-prep-20261108/supervise.py",
+    "--execute",
+    "--release",
+    "/tmp/story65-canonical-hash-acceptance-release-20261108.json",
+    "--release-sha256",
+    "ACTUAL_ROOT_RELEASE_SHA256_REQUIRED"
+  ],
+  "noProfilerWatcherOverlayShimNoBuildOrTopologyCutoff": true,
+  "source65": true,
+  "native1076Actual": true,
+  "compiledTransferStillPending": true,
+  "existingDebugSourceTwoProofFlagsOwnedByUnchangedStandardLauncher": true,
+  "postManagedBrowserXmlPersistencePrivacyA11yIndependentReviewStillRequired": true,
+  "builds": 0,
+  "managedRuns": 0,
+  "apps": 0
+}

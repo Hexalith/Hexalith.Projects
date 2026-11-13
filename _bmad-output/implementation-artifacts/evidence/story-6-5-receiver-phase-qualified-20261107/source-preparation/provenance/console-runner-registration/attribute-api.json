@@ -1,0 +1,108 @@
+{
+  "namespace": "Xunit.Runner.Common",
+  "name": "RegisterConsoleResultWriterAttribute",
+  "metadata_name": "RegisterConsoleResultWriterAttribute",
+  "definition_name": {
+    "namespace": "Xunit.Runner.Common",
+    "segments": [
+      "RegisterConsoleResultWriterAttribute"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "class",
+  "attributes": [],
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+    "type_token": 33554711,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": true,
+  "is_abstract": false,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "base_type": "System.Attribute",
+  "interfaces": [
+    "Xunit.Runner.Common.IRegisterConsoleResultWriterAttribute",
+    "Xunit.Runner.Common.IRegisterResultWriterAttribute"
+  ],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": ".ctor",
+      "kind": "constructor",
+      "attributes": [],
+      "signature": "void .ctor(string id, System.Type resultWriterType)",
+      "digest": "35b894b4c5",
+      "canonical_signature": "M:Xunit.Runner.Common.RegisterConsoleResultWriterAttribute.#ctor(string,System.Type)",
+      "metadata_token": 100665296,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665296,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e88c12d1-bfa6-4fa2-997d-7e870bb20880",
+        "method_token": 100665296,
+        "attributes": "Public, HideBySig, SpecialName, RTSpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Used to decorate xUnit.net test assemblies to indicate the availability of a custom result writer (in console mode).",
+        "samples": []
+      }
+    }
+  ],
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Xunit.Runner.Common.RegisterConsoleResultWriterAttribute",
+  "documentation": {
+    "summary": "Used to decorate xUnit.net test assemblies to indicate the availability of a custom result writer (in console mode).",
+    "samples": []
+  }
+}

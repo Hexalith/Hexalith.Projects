@@ -1,0 +1,106 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "processCount": 15,
+  "behavioralCells": 100,
+  "freshCanaries": 3,
+  "serialCanariesFirst": true,
+  "runtimeOverride": null,
+  "strictStages": [
+    "Whole",
+    "ComponentFile",
+    "ComponentPolicy"
+  ],
+  "plannedProcesses": [
+    {
+      "mode": "canary-positive-control",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-current",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-suppressed",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 23
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "held-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "held-base",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 23
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "held-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "held-base",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 23
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "held-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "held-base",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 23
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "held-issuer",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "held-base",
+      "expectedCatalogCases": 1
+    }
+  ]
+}

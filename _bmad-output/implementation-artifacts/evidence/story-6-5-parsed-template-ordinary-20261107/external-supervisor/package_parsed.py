@@ -1,0 +1,58 @@
+from pathlib import Path
+import json,hashlib,shutil,re,statistics
+ROOT=Path('/home/administrator/projects/hexalith/projects');P=Path('/tmp/story65-parsed-template-acceptance-evidence-20261107');L=Path('/tmp/story65-parsed-template-acceptance-live-20261107');N=Path('/tmp/story65-parsed-template-native-20261107');T=Path('/tmp/story65-receiver-acceptance-prep-20261107')
+def sha(path):
+ with path.open('rb')as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+def put(source,relative):target=P/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
+def save(relative,value):target=P/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_text(json.dumps(value,indent=2)+'\n')
+for file in L.iterdir():
+ if file.is_file():put(file,Path('ordinary-live')/file.name)
+for suffix in ['-command.json','-console.log','-preflight-source.json','-postflight-source.json','-independent-audit.json']:
+ file=Path(str(L)+suffix)
+ if file.exists():put(file,Path('ordinary-live')/('launcher'+suffix))
+for file in N.rglob('*'):
+ if file.is_file():put(file,Path('native-qualification')/file.relative_to(N))
+receipt=Path('/tmp/story65-owner-tests/parsed-template-command-receipt.json');assert sha(receipt)=='2a031e4d183152beb50b56428805fab3af7b08b787dbad3fc6240ca3dd6e1fb8';put(receipt,Path('owner/command-receipt.json'));owner=json.loads(receipt.read_text());refs=set()
+def gather(value):
+ if isinstance(value,str)and value.startswith('/tmp/'):
+  file=Path(value)
+  if file.is_file()and file.suffix in['.xml','.json','.log','.txt','.cs','.csproj']:refs.add(file)
+ elif isinstance(value,dict):
+  for child in value.values():gather(child)
+ elif isinstance(value,list):
+  for child in value:gather(child)
+gather(owner)
+for file in refs:put(file,Path('owner/referenced')/str(file).lstrip('/'))
+benchmark=owner['benchmark'];benchreceipt=Path(benchmark['receipt']);assert sha(benchreceipt)==benchmark['receiptSha256'];benchfiles=[]
+for file in benchreceipt.parent.iterdir():
+ if not file.is_file()or file.suffix in['.dll','.pdb','.exe']or file.name.endswith('.deps.json'):continue
+ put(file,Path('benchmark/final-compiled')/file.name);benchfiles.append({'file':file.name,'sha256':sha(file)})
+save('benchmark/provenance.json',{'receiptSha256':benchmark['receiptSha256'],'actualFinalCompiledBenchmark':True,'files':benchfiles,'notNativeOrBrowserAcceptance':True,'binObjDepsRetained':False})
+for name in ['supervise.py','audit.py','README.md','preparation-receipt.json','package_parsed.py']:put(T/name,Path('external-supervisor')/name)
+run=json.loads((L/'run.json').read_text());rows=[json.loads(x)for x in(L/'browser-advisory-seed-readiness.jsonl').read_bytes().split(b'\n')[:-1]];multi=[x for x in rows if x['multiple']];single=[x for x in rows if not x['multiple']];canon=lambda x:json.dumps(x,sort_keys=True,separators=(',',':'))
+detailfacts=all(all(d.get('present')and d.get('hasETag')and d.get('identityMatches')and d.get('freshness')=='Current'and d.get('advisoryHeaderValid')and d.get('folderBindingMatches')and d.get('folderState')=='Included'for d in row.get('details',[]))for row in multi)
+save('current-readiness-and-causality.json',{'ordinaryUninstrumented':True,'singleAttempts':len(single),'singleVerifiedPositiveAttempts':[x['attempt']for x in single if x['positiveCandidatesVerified']],'multipleAttempts':len(multi),'multipleVerifiedPositiveAttempts':[x['attempt']for x in multi if x['positiveCandidatesVerified']],'allMultipleEmptyIncomplete':all(x['result']is None and x['incomplete']is True and x['candidateCount']==0 for x in multi),'multipleExternalFixtureMedianMs':statistics.median(x['elapsedMilliseconds']for x in multi),'externalElapsedIncludesLaterEvidenceReads':True,'postResponseDetailsPresentCurrentValidHeadersIncludedFolderBindings':detailfacts,'postResponseOwnerStateFactsStable':len({canon(x['ownerStates'])for x in rows})==1,'postResponseGenerationFactsStable':len({canon(x['generationFacts'])for x in rows})==1,'runtimeLogFacts':run['runtimeLogFacts'],'runtimeDenialReasons':run['runtimeDenialReasons'],'runtimeFailureTypes':run['runtimeFailureTypes'],'runtimeInvalidIdentityComponents':run['runtimeInvalidIdentityComponents'],'runtimeStartupFailures':run['runtimeStartupFailures'],'runtimeTransportStatuses':run['runtimeTransportStatuses'],'sourceDeadlineUnchanged':'linked cancellation CancelAfter(TimeSpan.FromSeconds(2))','causalLimit':'Post-response metadata and closed log categories do not identify current cancellation stage, owner-call count, transport duration or computational cost. No prior diagnostic stage finding is substituted for this changed48-source ordinary run.'})
+save('tested-revisions-and-profile.json',{'canonicalRevisions':run['revisions'],'sourceDiffSha256':run['sourceDiffSha256'],'sourceManifestSha256':run['sourceManifestSha256'],'sourceMappingHash':run['sourceMappingHash'],'compilationProfile':run['compilationProfile'],'runtimeModes':run['runtimeModes'],'liveHostSourceReferences':run['liveHostSourceReferences'],'nativeAuditSha256':'696d669ab030d532653567ebdb7deac1481fe63dd68f27c79fda3e3a277d72e8','freshManagedGenerationNotClaimedByteEquivalentToNative':True,'runtimeEntryAndRuntimeFileProofsAreRecordedByManagedLauncher':True})
+# A separately qualified post-run observation, never substituted for ended-process memory.
+outputs=[];unchanged=all(sha(ROOT/'references/Hexalith.EventStore'/path)==digest for path,digest in owner['sourceSha256'].items())
+if unchanged:
+ for name in ['Hexalith.EventStore.Contracts','Hexalith.EventStore.Client','Hexalith.EventStore.DomainService','Hexalith.EventStore.Gateway','Hexalith.EventStore.ServiceDefaults','Hexalith.EventStore.Server','Hexalith.EventStore.Admin.Abstractions','Hexalith.EventStore.CatalogConstruction']:
+  producer=ROOT/'references/Hexalith.EventStore/src'/name/'bin/Debug/net10.0'/(name+'.dll');api=ROOT/'references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net10.0'/(name+'.dll')
+  if not producer.exists()or not api.exists():continue
+  a,b=sha(producer),sha(api);data=api.read_bytes();outputs.append({'assembly':name,'producerSha256':a,'apiCopySha256':b,'same':a==b,'forbiddenTimingMarkersAbsent':not any(marker.encode()in data or marker.encode('utf-16-le')in data for marker in['TimingHexalith','PrivateFocusedTiming','Story65Timing'])})
+save('fresh-output-generation.json',{'observedAfterCleanup':True,'all48SourceHashesStillMatchAtObservation':unchanged,'files':outputs,'notLoadedMemoryHashesOrNativeByteEquivalence':True})
+command=json.loads(Path(str(L)+'-command.json').read_text());pid=command['supervisorPid'];ticks=command['supervisorStartTicks']
+try:f=Path(f'/proc/{pid}/stat').read_text().rsplit(')',1)[1].split();absent=f[0]=='Z'or f[19]!=str(ticks)
+except FileNotFoundError:absent=True
+assert absent;save('supervisor-absence.json',{'pid':pid,'recordedStartTicks':ticks,'recordedIdentityAbsent':True,'noTargetOrLauncherSignalsSent':True})
+save('acceptance-status.json',{'nativeOwner412':412,'nativeProjects626':626,'uniqueNativeQualified':1038,'allNativeFailuresErrorsSkipsWarnings':0,'actualManagedResult':run['result'],'singleActualPositiveAttempt':2,'multiple30EmptyIncomplete':True,'actualBrowserCases':0,'browserXmlAbsent':not(L/'browser.xml').exists(),'browserPersistencePrivacyManualAccessibilityAcceptance':'not exercised','featureAcceptance':False,'profilerOverlayCutoffSignals':False,'all48SourceAnd17188LiveInputsMatched':True,'originalAndIndependentCleanupPreservationVerified':True,'priorEvidencePacketsUnchanged':True})
+violations=[]
+for file in P.rglob('*'):
+ if not file.is_file()or file.suffix not in['.json','.jsonl','.log','.txt','.md','.py','.cs','.xml','.props','.targets']:continue
+ data=file.read_bytes()
+ if re.search(rb'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}',data)or(bytes([45])*5+b'BEGIN PRIVATE KEY'+bytes([45])*5)in data or(bytes([45])*5+b'BEGIN RSA PRIVATE KEY'+bytes([45])*5)in data:violations.append(str(file.relative_to(P)))
+assert not violations;save('privacy-and-preservation-check.json',{'noJwtOrPrivateKeyPatternValues':True,'matchingValuesPrinted':False,'rawPrivateActivationTrustProofConfigCredentialCopied':False,'managedArtifactsSanitized':True,'browserArtifactPrivacyAcceptanceNotClaimedBecauseNotRun':True,'privateRuntimeRemovedByManagedAndIndependentAudit':True,'noSourceGitPriorEvidenceMutation':True})
+(P/'README.md').write_text('''This temporary packet retains ordinary parsed-template acceptance failure. Pre-live qualification passed412 owner+626 Projects=1038 unique native cases, all48 source hashes/LF verified,147 clean assembly copies/eight matching SDK copies with TechnicalHttpParsedTemplate and prior receiver methods, five matrix rows/12cases and frozen/sprint/index guards. New owner2a031e4d... receipt, parent native audit696d669a..., exact native XML/commands/logs,48 captured sources and final actual compiled benchmark6c99cbb5... source/results/commands are retained. Benchmark/native improvements do not establish runtime/browser acceptance.\n\nOne fresh standard npm managed run used naturalCPU/DOTNET_PROCESSOR_COUNT unset, ordinary Debug/source, no profiler/overlay/cutoff/signals and unchanged authorization/order/two-second deadline/expectations. SINGLE failed cold attempt1, then returned genuine SingleCandidate on attempt2,incomplete=false,candidate1. All30 MULTIPLE attempts returned null/empty,incomplete=true,candidate0, with no verified positive. Median external fixture elapsed2411.63025ms includes later evidence reads and is not internal execution time. Browser seeding failed, zero browser cases/XML/receipts ran; authenticated OIDC browser/persistence/privacy/manual accessibility acceptance remains unexercised. Story6.5 acceptance is failed.\n\nCurrent detail/owner/generation observations occur after responses, and closed runtime logs do not retain current stage/call timing/count/correlation. They cannot prove which call cancelled, whether transport or computation dominates, or whether background worker categories caused advisory incompleteness. Prior diagnostic findings remain historical, not assigned to this changed-source ordinary run. Full readiness and closed log facts are retained without fake timing passes.\n\nIndependent audit verifies21 exact runtime/managed-launcher identities, five exact containers, namespace/private directory absence and all six original cleanup/preservation/sidecar/private/native-descendant flags. Supervisor identity is separately absent. All48 source snapshots and17188 live manifest hashes matched after cleanup before release. Actual runtime entry hashes, Debug/source mapping/graph and runtime-file aggregate proofs are retained. Fresh output producer/API hashes are separate post-run observations, with no native byte-equivalence or loaded-memory substitution.\n\nAll ordinary artifacts were sanitized by the existing launcher. No private activation, TrustProof/config/credential input or profiler trace was copied; text scanning found no JWT-shaped/private-key values. No repository source/spec/Git or prior evidence packet was changed. No new live run, build or test is performed by packaging. Parent owns subsequent measured work.\n''')
+files=sorted(f for f in P.rglob('*')if f.is_file()and f.name!='SHA256SUMS');(P/'SHA256SUMS').write_text(''.join(sha(f)+'  '+str(f.relative_to(P))+'\n'for f in files))
+for line in(P/'SHA256SUMS').read_text().splitlines():digest,name=line.split('  ',1);assert sha(P/name)==digest
+print(json.dumps({'packet':str(P),'entries':len(files),'checksumsSha256':sha(P/'SHA256SUMS'),'source48':True,'native1038':True,'featureAcceptance':False,'privacyPatternViolations':0},indent=2))

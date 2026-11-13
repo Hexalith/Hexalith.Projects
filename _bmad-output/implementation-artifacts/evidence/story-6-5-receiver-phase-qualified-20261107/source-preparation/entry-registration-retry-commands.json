@@ -1,0 +1,147 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "sourceQualificationReady": false,
+  "originalPreparationSha256": "2989126d708ac18a25e41aa96079a60833bfb46af112fa363ee682e8ac937951",
+  "reason": "entry-assembly-only supported xUnit XML writer registration",
+  "projects": [
+    "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+    "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj"
+  ],
+  "restoreArgv": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "restore",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "--configfile",
+      "/tmp/story65-receiver-phase-prep-20261107/driver/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "buildArgv": [
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/projects/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/tenants/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/folders/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "/home/administrator/.dotnet/dotnet",
+      "build",
+      "/tmp/story65-receiver-phase-prep-20261107/entry/excluded/Entry.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:BuildProjectReferences=false",
+      "-p:NuGetAudit=false"
+    ]
+  ],
+  "cwd": "/tmp/story65-receiver-phase-prep-20261107",
+  "explicitBuildEnvironment": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "removeInheritedEnvironment": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "CustomAfterMicrosoftCommonTargets",
+    "HEXALITH_SOURCE_MAPPING_PATH",
+    "HexalithSourceMappingHash",
+    "HexalithSourceMappingMode",
+    "DOTNET_ADDITIONAL_DEPS",
+    "DOTNET_SHARED_STORE"
+  ],
+  "runtimeProcessorOverride": null,
+  "futureQualificationCommand": [
+    "python3",
+    "/tmp/story65-receiver-phase-prep-20261107/qualification_controller.py",
+    "--runtime-manifest",
+    "<ROOT_NEW_EXACT_COMPILED_RUNTIME_MANIFEST>",
+    "--runtime-manifest-sha256",
+    "<ROOT_REVIEWED_RUNTIME_MANIFEST_SHA256>",
+    "--preparation-sha256",
+    "<ROOT_FINAL_SOURCE_PREPARATION_SHA256>",
+    "--native-reference",
+    "/tmp/story65-receiver-phase-ops-prep-20261107/native-reference-case-set.json",
+    "--native-reference-sha256",
+    "188290c760bcd13dbad01dcf133845cda5d82b42a46889ac6c6c2aa7e43f018b",
+    "--result-root",
+    "/tmp/story65-receiver-phase-qualification-retry-20261107"
+  ],
+  "requiresRootReviewedNewRuntimeManifestBeforeExecution": true,
+  "driverCompanionSdkOrOriginalTestsRebuildRequired": false,
+  "nativeSelectionsArgvAndExpected47Unchanged": true,
+  "rawReference": "/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll",
+  "rawReferenceSha256": "4070293988b67cb44ac29647abb68188b528e1b29ab846f0223cdaff9c12a789",
+  "rawReferencePrivate": false,
+  "thisRevisionBuildsLoadsRunsWindowsStarted": 0
+}

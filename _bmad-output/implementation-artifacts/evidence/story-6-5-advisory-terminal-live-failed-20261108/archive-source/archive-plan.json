@@ -1,0 +1,25 @@
+{
+  "filePreparationOnly": true,
+  "notExecuted": true,
+  "script": "/tmp/story65-advisory-terminal-archive-prep-20261108/archive_closed.py",
+  "scriptSha256": "23cf04e07bd15e597e89467fa01efbab0385222a62cff7319262d7719f849105",
+  "ordinaryReceipt": "/tmp/story65-advisory-terminal-live-prep-20261108/operational-ordinary-0leyzmb9/receipt.json",
+  "ordinaryReceiptSha256": "ad4c3908e6070dea8e789a06ce06fb467517b23bb8a0934fd50b4f6e4d0f5cc7",
+  "command": [
+    "python3",
+    "/tmp/story65-advisory-terminal-archive-prep-20261108/archive_closed.py",
+    "--execute",
+    "--reviewed-script-sha256",
+    "23cf04e07bd15e597e89467fa01efbab0385222a62cff7319262d7719f849105",
+    "--operational-pins-sha256",
+    "de8aa188d2341afd516e52d3370ec3d20a5446dc63f75a0c98e7e2722adb78c7",
+    "--ordinary-receipt",
+    "/tmp/story65-advisory-terminal-live-prep-20261108/operational-ordinary-0leyzmb9/receipt.json",
+    "--ordinary-receipt-sha256",
+    "ad4c3908e6070dea8e789a06ce06fb467517b23bb8a0934fd50b4f6e4d0f5cc7",
+    "--remove-reviewed-owned"
+  ],
+  "rootReviewAndExecutionRequired": true,
+  "controlContentsNeverCopied": true,
+  "onlyThreeExactOwnedFilesMayBeRemovedAfterClosureGuards": true
+}

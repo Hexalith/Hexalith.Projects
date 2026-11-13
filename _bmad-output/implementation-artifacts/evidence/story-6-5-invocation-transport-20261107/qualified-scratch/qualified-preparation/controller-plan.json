@@ -1,0 +1,122 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "processCount": 16,
+  "eligibleProcesses": 15,
+  "excludedProcesses": 1,
+  "behavioralCells": 80,
+  "actualEligibleSendAsyncEntriesPerVariant": 84,
+  "caseComparisons": 80,
+  "freshCanaries": 3,
+  "excludedCells": 20,
+  "excludedActualSendAsyncEntriesPerVariant": 21,
+  "serialCanariesFirst": true,
+  "runtimeOverride": null,
+  "strictStages": [
+    "Whole",
+    "ComponentFile",
+    "ComponentPolicy"
+  ],
+  "counterStateExcluded": "unavailable; never helper reflection; no fabricated zeros; one actual nonmatching entry only",
+  "excludedWindowSeconds": 8,
+  "excludedAdditionalClosureOpportunitySeconds": 4,
+  "businessValuesComparedOnlyInMemory": true,
+  "plannedProcesses": [
+    {
+      "mode": "canary-positive-control",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-current",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "canary-suppressed",
+      "group": "canary",
+      "case": null,
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 18
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "held-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "disabled",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 18
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "held-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "active",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 18
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "held-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "capped",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "fast",
+      "case": null,
+      "expectedCatalogCases": 18
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "held-transport",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "failing-sink",
+      "group": "slow",
+      "case": "held-release",
+      "expectedCatalogCases": 1
+    },
+    {
+      "mode": "excluded",
+      "group": "excluded",
+      "case": null,
+      "expectedCatalogCases": 20
+    }
+  ]
+}

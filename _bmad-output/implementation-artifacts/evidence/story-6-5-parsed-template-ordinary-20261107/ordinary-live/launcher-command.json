@@ -1,0 +1,38 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-parsed-template-acceptance-live-20261107"
+  },
+  "environmentRemovals": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "inheritedKeysActuallyRemoved": [],
+  "inheritedSourceMappingCleared": true,
+  "startedAtUtc": "2026-11-07T08:10:46.796232+00:00",
+  "stdoutStderr": "/tmp/story65-parsed-template-acceptance-live-20261107-console.log",
+  "launcherPid": 3529051,
+  "launcherStartTicks": "7664816",
+  "supervisorPid": 3529050,
+  "supervisorStartTicks": "7664812",
+  "ordinaryAcceptanceOnly": true,
+  "profilerEnabled": false,
+  "privateDiagnosticOverride": false,
+  "cutoffEnabled": false,
+  "sourceReceiptSha256": "2a031e4d183152beb50b56428805fab3af7b08b787dbad3fc6240ca3dd6e1fb8",
+  "sourceCount": 48,
+  "nativeAuditSha256": "696d669ab030d532653567ebdb7deac1481fe63dd68f27c79fda3e3a277d72e8",
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T08:17:04.547940+00:00",
+  "logSha256": "8e8021908960de8fa63f102999506a8e04861a2e3ce25bdd86eb137e65ad2da4"
+}

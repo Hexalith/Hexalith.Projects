@@ -1,0 +1,93 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "project": "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
+  "configuration": "Debug",
+  "optimize": false,
+  "assemblyNameForActualSdkFriendAccess": "Hexalith.EventStore.Server.Tests",
+  "noProjectReferencesOrApplicationBuilds": true,
+  "buildEnvironmentSet": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "buildEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "runtimeEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "plannedCommands": [
+    [
+      "dotnet",
+      "restore",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configfile",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configuration",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "dotnet",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "all",
+      "/tmp/story65-image-memo-rw-results-retry-20261107"
+    ]
+  ],
+  "runtimeExpected": "10.0.14",
+  "sdkExpected": "10.0.403",
+  "runtimeProcessorCount": 14,
+  "runtimeServerGcMustMatchActualFoldersRuntimeconfig": true,
+  "forcedCollections": 0,
+  "variants": [
+    "oracle",
+    "control",
+    "candidate"
+  ],
+  "paths": [
+    "domain",
+    "technical"
+  ],
+  "readers": [
+    1,
+    2,
+    4
+  ],
+  "balancedVariantPermutationRounds": 6,
+  "memoColdIterationsPerReader": 1,
+  "warmupIterationsPerReader": 3,
+  "warmIterationsPerReader": 12,
+  "plannedRawBatchRecords": 324,
+  "plannedMeasuredObservations": 4032,
+  "imagesPerObservation": 66,
+  "plannedSelectedImageCalls": 266112,
+  "standaloneRunWallBoundSecondsForFutureRootSupervisor": 300,
+  "timeoutMaySignalOnlyOwnedStandaloneBenchmarkNotAnyAppTarget": true,
+  "appHostsBuildsNativeTestsProfilesSourceEditsAuthorized": false,
+  "currentGenerationAllCommandsStillUnexecuted": true,
+  "priorInventoryCountFailurePreserved": "/tmp/story65-image-memo-rw-execution-20261107/attempt-1"
+}

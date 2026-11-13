@@ -1,0 +1,90 @@
+{
+  "preparationOnly": true,
+  "role": "gateway",
+  "eligiblePopulation": "every actual DaprDomainQueryInvoker.InvokeAsync entry including null guard",
+  "allocationMode": 0,
+  "allocatedBytes": 0,
+  "allCountColumns": 0,
+  "CountCalls": 0,
+  "stages": [
+    {
+      "number": 0,
+      "serialized": "Whole",
+      "alias": "WholeInvokerIncludingNullGuard"
+    },
+    {
+      "number": 1,
+      "serialized": "ComponentFile",
+      "alias": "CatalogAcquire"
+    },
+    {
+      "number": 2,
+      "serialized": "ComponentPolicy",
+      "alias": "ResolveAndRegistration"
+    },
+    {
+      "number": 3,
+      "serialized": "AclFile",
+      "alias": "DaprRequestAndAuthorityBinding"
+    },
+    {
+      "number": 4,
+      "serialized": "SettingsEnumerationSortDictionary",
+      "alias": "CreateClientAndSendIncludingDefaultBuffering"
+    },
+    {
+      "number": 5,
+      "serialized": "AuthenticationSerialization",
+      "alias": "JsonBody"
+    },
+    {
+      "number": 6,
+      "serialized": "ActorBoundary",
+      "alias": "OverlappingHttpOwnership"
+    },
+    {
+      "number": 7,
+      "serialized": "ResultTail",
+      "alias": "OverlappingLeaseOwnership"
+    }
+  ],
+  "stage6Overlaps": [
+    3,
+    4,
+    5
+  ],
+  "stage7Overlaps": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "sumOverlappingStages": false,
+  "residualIsExactDisposal": false,
+  "includesNetworkOrServerAttribution": false,
+  "pairedToPreviousRootsOrControllers": false,
+  "windowSeconds": 8,
+  "maximumRows": 65536,
+  "maximumBytes": 8388608,
+  "queueCapacity": 4096,
+  "bootstrapHistoricalName": "GatewayControllerBootstrap reused byte-exact fixed Role.Gateway; no controller-specific input",
+  "existingPrivateDirectory": "/tmp/story65-capture-counter-private-20261107",
+  "directoryPins": {
+    "uid": 1000,
+    "mode": "0700",
+    "device": 2096,
+    "inode": 8752986
+  },
+  "firstBusinessCanaries": [
+    "unsafe-thread-positive-control",
+    "normal-actual-invoker",
+    "pre-suppressed-actual-invoker"
+  ],
+  "modes": [
+    "disabled",
+    "active",
+    "capped",
+    "failing-sink"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "sourceQualificationReady": false,
+  "applicationNativeAndHostsNotAuthorized": true,
+  "lane": "native40",
+  "expectedNativeCases": 40,
+  "expectedSourceSelections": [
+    {
+      "class": "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryControllerTests",
+      "cases": 1
+    },
+    {
+      "class": "Hexalith.EventStore.Server.Tests.Controllers.BoundOwnerQueryAuthorityTests",
+      "cases": 15
+    },
+    {
+      "class": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+      "cases": 19
+    },
+    {
+      "class": "Hexalith.EventStore.Server.Tests.Controllers.ProjectionCurrentAuthorityTests",
+      "cases": 4
+    },
+    {
+      "method": "Hexalith.EventStore.Server.Tests.Controllers.QueriesControllerTests.CatalogBackedOwnerAuthoritySubmitsResolveTenantOwnerAuthorityWithNullProjection",
+      "cases": 1
+    }
+  ],
+  "fullHistoricalXml40Absent": true,
+  "only19CasesPreviouslyXmlCorroborated": true,
+  "noHistoricalRetentionOrOrdinaryUniqueCountClaim": true,
+  "actualPrivateGatewayMapMandatory": true,
+  "filterAndExactObservedCanonicalXmlPending": true
+}

@@ -1,0 +1,921 @@
+{
+  "auditCompleted": true,
+  "reconciliationPassed": true,
+  "allRawCostMeasurementsValid": false,
+  "costAnomalies": [
+    {
+      "variant": "candidate",
+      "state": "warm",
+      "readers": 1,
+      "round": 2,
+      "field": "AllocatedBytes",
+      "value": -186168048
+    }
+  ],
+  "costValidity": {
+    "validBatchAllocationCells": 53,
+    "totalBatchAllocationCells": 54,
+    "allOtherBatchNumericCostsNonnegative": true,
+    "affectedPublishedSummaryMetric": "candidate/warm/1/MedianAllocatedBytesPerObservation and ratios using it; published numerical recomputation passes, allocation validity fails",
+    "warmAllocationRatiosUsingOnlyValidPairedRoundsAcrossAllReaders": {
+      "actual": {
+        "count": 8,
+        "minimum": 1.1356952776502787,
+        "maximum": 2.943434055937409
+      },
+      "control": {
+        "count": 8,
+        "minimum": 1.1346972541003504,
+        "maximum": 2.9505138815264202
+      }
+    }
+  },
+  "auditKind": "read-only independent completed-experiment reconciliation",
+  "observedUtc": "2026-11-08T05:18:19.886548+00:00",
+  "decision": "Reject production: inconsistent whole-pass wall changes and higher valid two-/four-reader warm allocation.",
+  "bindings": {
+    "sourcePreparationSha256": "d1f1239af7879f498dc8765325ed1ffda10114286f68845340dc0e8a5976a8ad",
+    "runtimeReleaseSha256": "5221005e0d7be369d199fc383d7ca03dc18eb9643b1ffc3e6f030f07e9b4c178",
+    "runtimeReceiptSha256": "f190fe7baceaa1e912f7587023dbea3c33bfb367ae3aaf24ab36d1fe864d313d",
+    "compileReceiptSha256": "1b741840c6f3c02d58027b89a1c12ea9ca18b183cb200d7fccd2a78679ad6a53",
+    "auditScriptSha256": "00ba7c11e7263cd8b18be45cba26abb06eb9fce022c0fb434d07366602c1a65e",
+    "resultFilesSha256": {
+      "closed.json": "0ed14a805e4e6f1f5b76b0d59c4574c4f36ca48290e16c5a117627ca8ab371fc",
+      "corpus-counts.json": "c778b4bdddb4721064d95841961b4413711fcf49cc7643ad9094af35c2508e1e",
+      "parity.json": "d964cc2a8b55bf3b0c7d1ec073afbc2877dcfe38d938d4b10300495dbb032d6f",
+      "raw-batches.jsonl": "08bb965bb605e779c27c458f7894f729286b71223c5a10e2cf29799a7f19960b",
+      "runtime-facts.json": "41f0e5dac5b3f576b8097b695d327a854d89e2ca394c809953a7d51929f3f2f7",
+      "summary.json": "b0cfe71f6f0bbd3bdf701553434e7ebb955b99387ee308a8a09a59500c5c3cc3"
+    },
+    "diConstructorOnlyCorrectionSha256": "90cfa051d66e4952e89fd1e941458f922685bbc1cde8d35e0eada6b1324bd93d"
+  },
+  "currentInputs": {
+    "runtimeMapCounts": {
+      "filesSha256": 59,
+      "inputsSha256": 211,
+      "compiledInputsSha256": 282,
+      "coordinatorInputsSha256": 4
+    },
+    "runtimeDistinctPaths": 556,
+    "compilePinnedPaths": 272,
+    "auditedDistinctPathsIncludingCompileOnlyWrapperAndQualifiedSupervisorHelpers": 558,
+    "source65Current": true,
+    "allCurrentHashesMatch": true,
+    "sdkSha256": "873dbb74ee259d91c99ea2804e5801134c993abb4ef7806e79f242e5d23faf96",
+    "contractsSha256": "f1cf82fe57d5ae0037772d3ccea77766a141cd49ec66c2079c3c8b046c8089df"
+  },
+  "closure": {
+    "commandsExitZero": 3,
+    "runtimeWallSeconds": 14.851317152992124,
+    "runtimePeakObservedRssBytes": 334495744,
+    "bounds": {
+      "wallSeconds": 180,
+      "cpuSoftSeconds": 90,
+      "cpuHardSeconds": 91,
+      "rssBytes": 2147483648
+    },
+    "guardReason": null,
+    "signalsSent": false,
+    "identities": [
+      {
+        "pid": 1193129,
+        "startTicks": "15215120",
+        "group": 1193127
+      },
+      {
+        "pid": 1193156,
+        "startTicks": "15215185",
+        "group": 1193127
+      },
+      {
+        "pid": 1195733,
+        "startTicks": "15217419",
+        "group": 1195732
+      }
+    ],
+    "freshPidGroupAndSessionScanIncludesZombies": true,
+    "matchingLiveOrZombieProcesses": 0,
+    "unreadableProcStat": 0
+  },
+  "coverage": {
+    "diagnosticParityChecks": 386,
+    "nativeTestsExecutedByThisExperiment": 0,
+    "markedAndEligibleTechnicalEndpoints": 103,
+    "gateway": 35,
+    "admin": 68,
+    "constrainedFallbackEndpoints": 3,
+    "unmarkedOwnerQueryExcluded": true,
+    "actualServiceFilterTypesResolved": 3,
+    "batches": 54,
+    "wholeObservationPasses": 2079,
+    "perPassDescribeCalls": 103,
+    "describeCallsInMeasuredObservations": 214137,
+    "summaryGroups": 18,
+    "states": [
+      "memo-cold",
+      "warm"
+    ],
+    "readers": [
+      1,
+      2,
+      4
+    ],
+    "balancedCyclicRounds": 3,
+    "warmIterationsPerReader": 32,
+    "observationsPerRound": {
+      "memo-cold": 7,
+      "warm": 224
+    },
+    "rawSchemaAndNestedCountsExact": true,
+    "allPublishedSummaryValuesIndependentlyRecomputedIncludingInvalidAllocationInput": true,
+    "imageHitsPerObservationFrequency": {
+      "8": 11,
+      "11": 3,
+      "13": 9,
+      "10": 4,
+      "14": 14,
+      "16": 2022,
+      "9": 1,
+      "15": 11,
+      "12": 4
+    }
+  },
+  "memo": {
+    "sharedEntryLimit": 256,
+    "sharedChargedByteLimit": 2097152,
+    "entryChargeIncludesDigestAllowance": 512,
+    "actualCandidateEntriesPerOwner": 145,
+    "actualCandidateChargedBytesPerOwner": 689608,
+    "chargedBytesAreNotMeasuredHeapBytes": true,
+    "warmupOutsideClockPassesPerWarmOwner": 1,
+    "eligibleMemoLookupsPerFullPass": 203,
+    "warmMeasuredHitDeltaPerPass": 203,
+    "constraintFallbackDeltaPerPass": 3,
+    "unavailableScopeFallbackDelta": 0,
+    "unsupportedKeyFallbackDelta": 0,
+    "candidateMeasuredCounterDeltas": {
+      "UnsupportedKeyFallbacks": 0,
+      "Hits": 138694,
+      "Stores": 1305,
+      "ConstraintFallbacks": 2079,
+      "ChargedBytes": 6206472,
+      "Entries": 1305,
+      "UnavailableScopeFallbacks": 0
+    },
+    "coldConcurrentDuplicateMissesPermitted": true,
+    "scopeAndCompleteIncludedInEveryObservationBySource": true
+  },
+  "comparison": [
+    {
+      "state": "memo-cold",
+      "readers": 1,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 24.045389,
+        "ObservationMedianMilliseconds": 24.008783,
+        "ObservationP95Milliseconds": 27.962883,
+        "MedianAllocatedBytesPerObservation": 18117264.0,
+        "MedianCpuMillisecondsPerObservation": null
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 1.0084296138420819,
+          "ObservationMedianMilliseconds": 1.008713609841309,
+          "ObservationP95Milliseconds": 0.948939555694345,
+          "MedianAllocatedBytesPerObservation": 1.1074994168245031,
+          "MedianCpuMillisecondsPerObservation": null
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 1.0778344345788615,
+          "ObservationMedianMilliseconds": 1.0781294112760271,
+          "ObservationP95Milliseconds": 1.2379524800989552,
+          "MedianAllocatedBytesPerObservation": 1.1082402890766303,
+          "MedianCpuMillisecondsPerObservation": null
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 0.8084675120005638,
+            "allocation": 1.1025663246328605,
+            "cpu": 0.3090778467696393
+          },
+          {
+            "round": 2,
+            "wall": 0.9724038232892517,
+            "allocation": 1.107193769289416,
+            "cpu": 0.4809977474219376
+          },
+          {
+            "round": 3,
+            "wall": 1.4347681684189124,
+            "allocation": 1.1138454551860755,
+            "cpu": 2.0635171674914488
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 1.0778344345788615,
+            "allocation": 1.1056334796342315,
+            "cpu": 1.0778453829634942
+          },
+          {
+            "round": 2,
+            "wall": 1.0239424474715797,
+            "allocation": 1.107934437075722,
+            "cpu": 1.0235268249780158
+          },
+          {
+            "round": 3,
+            "wall": 1.4485711329646624,
+            "allocation": 1.1138454551860755,
+            "cpu": 2.087371626154706
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 3,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 3,
+          "minimum": 1.1025663246328605,
+          "maximum": 1.1138454551860755
+        },
+        "control": {
+          "count": 3,
+          "minimum": 1.1056334796342315,
+          "maximum": 1.1138454551860755
+        }
+      },
+      "allocationSummaryContainsInvalidInput": false,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 0.9356071595876431,
+        "ObservationMedianMilliseconds": 0.9356145925445438,
+        "ObservationP95Milliseconds": 0.7665395650877422,
+        "MedianAllocatedBytesPerObservation": 0.9993314877112575,
+        "MedianCpuMillisecondsPerObservation": null
+      },
+      "batchCpuBelow30": {
+        "actual": 1,
+        "control": 3,
+        "candidate": 2
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 4,
+          "Gen1": 2,
+          "Gen2": 2
+        },
+        "control": {
+          "Gen0": 0,
+          "Gen1": 0,
+          "Gen2": 0
+        },
+        "candidate": {
+          "Gen0": 0,
+          "Gen1": 0,
+          "Gen2": 0
+        }
+      }
+    },
+    {
+      "state": "memo-cold",
+      "readers": 2,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 13.462295,
+        "ObservationMedianMilliseconds": 26.867204,
+        "ObservationP95Milliseconds": 27.282595,
+        "MedianAllocatedBytesPerObservation": 14131984.0,
+        "MedianCpuMillisecondsPerObservation": 24.920999999999935
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 1.0346893087163322,
+          "ObservationMedianMilliseconds": 1.0341696615447873,
+          "ObservationP95Milliseconds": 0.8822322582764788,
+          "MedianAllocatedBytesPerObservation": 1.1276769190797533,
+          "MedianCpuMillisecondsPerObservation": 0.738815926002785
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 1.1129244719304807,
+          "ObservationMedianMilliseconds": 1.1132648349378942,
+          "ObservationP95Milliseconds": 0.8325144007783147,
+          "MedianAllocatedBytesPerObservation": 1.1257053987719505,
+          "MedianCpuMillisecondsPerObservation": 0.8392180633429307
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 1.1503502095802687,
+            "allocation": 1.12862398761547,
+            "cpu": 1.1645222495627159
+          },
+          {
+            "round": 2,
+            "wall": 0.8684579805891444,
+            "allocation": 1.12798176928037,
+            "cpu": 0.47816034613428854
+          },
+          {
+            "round": 3,
+            "wall": 0.9197383604615004,
+            "allocation": 1.123399849217328,
+            "cpu": 0.8274300682945097
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 1.1894386696775299,
+            "allocation": 1.1257053987719505,
+            "cpu": 1.3227761782088217
+          },
+          {
+            "round": 2,
+            "wall": 0.8197113549150611,
+            "allocation": 1.1263216351401784,
+            "cpu": 0.6593380427017996
+          },
+          {
+            "round": 3,
+            "wall": 0.9892818264457863,
+            "allocation": 1.1248082892546427,
+            "cpu": 0.9988931806374484
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 3,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 3,
+          "minimum": 1.123399849217328,
+          "maximum": 1.12862398761547
+        },
+        "control": {
+          "count": 3,
+          "minimum": 1.1248082892546427,
+          "maximum": 1.1263216351401784
+        }
+      },
+      "allocationSummaryContainsInvalidInput": false,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 0.9297030794206174,
+        "ObservationMedianMilliseconds": 0.9289520598236451,
+        "ObservationP95Milliseconds": 1.0597201170954917,
+        "MedianAllocatedBytesPerObservation": 1.0017513643533678,
+        "MedianCpuMillisecondsPerObservation": 0.8803622780231813
+      },
+      "batchCpuBelow30": {
+        "actual": 0,
+        "control": 0,
+        "candidate": 0
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 5,
+          "Gen1": 2,
+          "Gen2": 2
+        },
+        "control": {
+          "Gen0": 0,
+          "Gen1": 0,
+          "Gen2": 0
+        },
+        "candidate": {
+          "Gen0": 1,
+          "Gen1": 1,
+          "Gen2": 0
+        }
+      }
+    },
+    {
+      "state": "memo-cold",
+      "readers": 4,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 7.264196,
+        "ObservationMedianMilliseconds": 28.910913,
+        "ObservationP95Milliseconds": 33.203998,
+        "MedianAllocatedBytesPerObservation": 12155536.0,
+        "MedianCpuMillisecondsPerObservation": 26.994499999999903
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 0.9364213003542488,
+          "ObservationMedianMilliseconds": 0.9374548331112339,
+          "ObservationP95Milliseconds": 1.0406506292044118,
+          "MedianAllocatedBytesPerObservation": 1.1450196994990394,
+          "MedianCpuMillisecondsPerObservation": 0.7840970154672833
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 1.039101133110356,
+          "ObservationMedianMilliseconds": 1.0398489097972687,
+          "ObservationP95Milliseconds": 1.116017043696083,
+          "MedianAllocatedBytesPerObservation": 1.145571334517148,
+          "MedianCpuMillisecondsPerObservation": 1.0633093383489707
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 0.9364213003542488,
+            "allocation": 1.1391712559514504,
+            "cpu": 0.7840970154672833
+          },
+          {
+            "round": 2,
+            "wall": 0.8954754293832096,
+            "allocation": 1.1456868053767113,
+            "cpu": 0.6471719724605042
+          },
+          {
+            "round": 3,
+            "wall": 1.151941226651833,
+            "allocation": 1.1373713701786206,
+            "cpu": 1.2745711522138266
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 1.0779009484129842,
+            "allocation": 1.145571334517148,
+            "cpu": 1.112097554946748
+          },
+          {
+            "round": 2,
+            "wall": 1.025062167010974,
+            "allocation": 1.1461514844649803,
+            "cpu": 1.0237717752021214
+          },
+          {
+            "round": 3,
+            "wall": 1.115530945944031,
+            "allocation": 1.1372836720685455,
+            "cpu": 1.170907079646019
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 3,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 3,
+          "minimum": 1.1373713701786206,
+          "maximum": 1.1456868053767113
+        },
+        "control": {
+          "count": 3,
+          "minimum": 1.1372836720685455,
+          "maximum": 1.1461514844649803
+        }
+      },
+      "allocationSummaryContainsInvalidInput": false,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 0.9011839853847967,
+        "ObservationMedianMilliseconds": 0.9015298513838922,
+        "ObservationP95Milliseconds": 0.9324684018784616,
+        "MedianAllocatedBytesPerObservation": 0.9995184629699719,
+        "MedianCpuMillisecondsPerObservation": 0.7374119526541278
+      },
+      "batchCpuBelow30": {
+        "actual": 0,
+        "control": 0,
+        "candidate": 0
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 4,
+          "Gen1": 2,
+          "Gen2": 2
+        },
+        "control": {
+          "Gen0": 3,
+          "Gen1": 0,
+          "Gen2": 0
+        },
+        "candidate": {
+          "Gen0": 3,
+          "Gen1": 0,
+          "Gen2": 0
+        }
+      }
+    },
+    {
+      "state": "warm",
+      "readers": 1,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 18.88913146875,
+        "ObservationMedianMilliseconds": 17.733290500000003,
+        "ObservationP95Milliseconds": 28.687358,
+        "MedianAllocatedBytesPerObservation": 9891189.0,
+        "MedianCpuMillisecondsPerObservation": 25.434906249999983
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 1.0465119494529493,
+          "ObservationMedianMilliseconds": 0.9913991536375166,
+          "ObservationP95Milliseconds": 1.297712246949383,
+          "MedianAllocatedBytesPerObservation": 1.1365561782083966,
+          "MedianCpuMillisecondsPerObservation": 1.037495124295413
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 0.8963078285983179,
+          "ObservationMedianMilliseconds": 0.8846353925682966,
+          "ObservationP95Milliseconds": 1.0666764283923138,
+          "MedianAllocatedBytesPerObservation": 1.1379544029658728,
+          "MedianCpuMillisecondsPerObservation": 0.9693169191633487
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 0.9987569468195864,
+            "allocation": 1.1380521093299591,
+            "cpu": 1.023134757068709
+          },
+          {
+            "round": 2,
+            "wall": 0.9589050931084315,
+            "allocation": null,
+            "cpu": 0.8835567022136342
+          },
+          {
+            "round": 3,
+            "wall": 1.4688306263750843,
+            "allocation": 2.943434055937409,
+            "cpu": 1.4718870617373851
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 0.9316680867982126,
+            "allocation": 1.1379544029658728,
+            "cpu": 0.9555932561579821
+          },
+          {
+            "round": 2,
+            "wall": 0.8212750387467291,
+            "allocation": null,
+            "cpu": 0.8254944437232715
+          },
+          {
+            "round": 3,
+            "wall": 1.8286455442082061,
+            "allocation": 2.9505138815264202,
+            "cpu": 1.5466737928914118
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 2,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 2,
+          "minimum": 1.1380521093299591,
+          "maximum": 2.943434055937409
+        },
+        "control": {
+          "count": 2,
+          "minimum": 1.1379544029658728,
+          "maximum": 2.9505138815264202
+        }
+      },
+      "allocationSummaryContainsInvalidInput": true,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 1.1675809538443134,
+        "ObservationMedianMilliseconds": 1.1206867393800068,
+        "ObservationP95Milliseconds": 1.2165940977108536,
+        "MedianAllocatedBytesPerObservation": 0.9987712822641821,
+        "MedianCpuMillisecondsPerObservation": 1.0703363407614004
+      },
+      "batchCpuBelow30": {
+        "actual": 0,
+        "control": 0,
+        "candidate": 0
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 29,
+          "Gen1": 0,
+          "Gen2": 0
+        },
+        "control": {
+          "Gen0": 26,
+          "Gen1": 0,
+          "Gen2": 0
+        },
+        "candidate": {
+          "Gen0": 38,
+          "Gen1": 2,
+          "Gen2": 2
+        }
+      }
+    },
+    {
+      "state": "warm",
+      "readers": 2,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 4.974259171875,
+        "ObservationMedianMilliseconds": 9.876652499999999,
+        "ObservationP95Milliseconds": 12.461027,
+        "MedianAllocatedBytesPerObservation": 9863895.875,
+        "MedianCpuMillisecondsPerObservation": 11.890578124999962
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 0.9136329959392206,
+          "ObservationMedianMilliseconds": 0.9646784576068383,
+          "ObservationP95Milliseconds": 0.4658477444191572,
+          "MedianAllocatedBytesPerObservation": 1.1358798199057583,
+          "MedianCpuMillisecondsPerObservation": 0.8830689144591752
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 0.9304401576310352,
+          "ObservationMedianMilliseconds": 0.96246301166997,
+          "ObservationP95Milliseconds": 0.8538792456605473,
+          "MedianAllocatedBytesPerObservation": 1.1359973254719815,
+          "MedianCpuMillisecondsPerObservation": 0.9934077151924061
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 1.2185122770871988,
+            "allocation": 1.1357757424792059,
+            "cpu": 1.096857144183325
+          },
+          {
+            "round": 2,
+            "wall": 0.9743495144254393,
+            "allocation": 1.1358798199057583,
+            "cpu": 0.931890344912047
+          },
+          {
+            "round": 3,
+            "wall": 0.5826057083029308,
+            "allocation": 1.1361490457278063,
+            "cpu": 0.7006945282078967
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 1.1834369653237473,
+            "allocation": 1.1346972541003504,
+            "cpu": 0.867784012456299
+          },
+          {
+            "round": 2,
+            "wall": 0.938236652012155,
+            "allocation": 1.1359973254719815,
+            "cpu": 0.9436392284024334
+          },
+          {
+            "round": 3,
+            "wall": 0.930440157631035,
+            "allocation": 1.1362508125444277,
+            "cpu": 1.0005166946268995
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 3,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 3,
+          "minimum": 1.1357757424792059,
+          "maximum": 1.1361490457278063
+        },
+        "control": {
+          "count": 3,
+          "minimum": 1.1346972541003504,
+          "maximum": 1.1362508125444277
+        }
+      },
+      "allocationSummaryContainsInvalidInput": false,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 0.9819363324401145,
+        "ObservationMedianMilliseconds": 1.0023018504711412,
+        "ObservationP95Milliseconds": 0.5455663043534743,
+        "MedianAllocatedBytesPerObservation": 0.9998965617580355,
+        "MedianCpuMillisecondsPerObservation": 0.888928987518624
+      },
+      "batchCpuBelow30": {
+        "actual": 0,
+        "control": 0,
+        "candidate": 0
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 39,
+          "Gen1": 5,
+          "Gen2": 1
+        },
+        "control": {
+          "Gen0": 38,
+          "Gen1": 5,
+          "Gen2": 1
+        },
+        "candidate": {
+          "Gen0": 38,
+          "Gen1": 7,
+          "Gen2": 0
+        }
+      }
+    },
+    {
+      "state": "warm",
+      "readers": 4,
+      "candidatePerObservation": {
+        "MedianAmortizedWallMilliseconds": 3.1405146875,
+        "ObservationMedianMilliseconds": 11.440271500000001,
+        "ObservationP95Milliseconds": 20.73097,
+        "MedianAllocatedBytesPerObservation": 9866107.375,
+        "MedianCpuMillisecondsPerObservation": 12.57599218750002
+      },
+      "ratios": {
+        "actual": {
+          "MedianAmortizedWallMilliseconds": 1.1019226388322927,
+          "ObservationMedianMilliseconds": 1.0197595563865964,
+          "ObservationP95Milliseconds": 0.5451188599329116,
+          "MedianAllocatedBytesPerObservation": 1.1360968074987907,
+          "MedianCpuMillisecondsPerObservation": 1.0387962633130459
+        },
+        "control": {
+          "MedianAmortizedWallMilliseconds": 1.0900116578672385,
+          "ObservationMedianMilliseconds": 1.0056751168036677,
+          "ObservationP95Milliseconds": 1.5039325306351157,
+          "MedianAllocatedBytesPerObservation": 1.1360004071410625,
+          "MedianCpuMillisecondsPerObservation": 1.0371531310262563
+        }
+      },
+      "roundRatios": {
+        "actual": [
+          {
+            "round": 1,
+            "wall": 1.107488571804202,
+            "allocation": 1.1356952776502787,
+            "cpu": 1.0387962633130459
+          },
+          {
+            "round": 2,
+            "wall": 0.6090176745755882,
+            "allocation": 1.1363447783977207,
+            "cpu": 0.8143379458556534
+          },
+          {
+            "round": 3,
+            "wall": 1.3939357148371845,
+            "allocation": 1.1360968074987907,
+            "cpu": 1.2249836703350292
+          }
+        ],
+        "control": [
+          {
+            "round": 1,
+            "wall": 1.0020651618251861,
+            "allocation": 1.135553101246222,
+            "cpu": 0.9653506286337982
+          },
+          {
+            "round": 2,
+            "wall": 0.9905381034537172,
+            "allocation": 1.1361922835930938,
+            "cpu": 0.9963487306894107
+          },
+          {
+            "round": 3,
+            "wall": 1.3870541175666922,
+            "allocation": 1.1360423958209558,
+            "cpu": 1.227976728426648
+          }
+        ]
+      },
+      "allocationValidity": {
+        "candidate": 3,
+        "actual": 3,
+        "control": 3
+      },
+      "validPairedAllocationRatioBounds": {
+        "actual": {
+          "count": 3,
+          "minimum": 1.1356952776502787,
+          "maximum": 1.1363447783977207
+        },
+        "control": {
+          "count": 3,
+          "minimum": 1.135553101246222,
+          "maximum": 1.1361922835930938
+        }
+      },
+      "allocationSummaryContainsInvalidInput": false,
+      "controlOverActual": {
+        "MedianAmortizedWallMilliseconds": 1.0109273886009253,
+        "ObservationMedianMilliseconds": 1.0140049598002316,
+        "ObservationP95Milliseconds": 0.3624623105284558,
+        "MedianAllocatedBytesPerObservation": 1.0000848594394176,
+        "MedianCpuMillisecondsPerObservation": 1.0015842716351477
+      },
+      "batchCpuBelow30": {
+        "actual": 0,
+        "control": 0,
+        "candidate": 0
+      },
+      "gcCollectionTotals": {
+        "actual": {
+          "Gen0": 58,
+          "Gen1": 19,
+          "Gen2": 0
+        },
+        "control": {
+          "Gen0": 58,
+          "Gen1": 19,
+          "Gen2": 1
+        },
+        "candidate": {
+          "Gen0": 67,
+          "Gen1": 21,
+          "Gen2": 1
+        }
+      }
+    }
+  ],
+  "warmPairedRoundWallWinsOutOf9": {
+    "actual": 5,
+    "control": 5
+  },
+  "ownerLifecycle": {
+    "initializeAndDisposeOutsideObservationAndBatchWall": true,
+    "reportedSeparatelyByPublishedSummary": true,
+    "noOwnerLifecycleSavingClaim": true,
+    "allOwnerAllocationFieldsNonnegative": true,
+    "ownerAllocationBytesByVariant": {
+      "actual": {
+        "OwnerInitializeAllocatedBytes": {
+          "minimum": 240,
+          "maximum": 240
+        },
+        "OwnerDisposeAllocatedBytes": {
+          "minimum": 0,
+          "maximum": 0
+        }
+      },
+      "control": {
+        "OwnerInitializeAllocatedBytes": {
+          "minimum": 240,
+          "maximum": 240
+        },
+        "OwnerDisposeAllocatedBytes": {
+          "minimum": 0,
+          "maximum": 0
+        }
+      },
+      "candidate": {
+        "OwnerInitializeAllocatedBytes": {
+          "minimum": 440,
+          "maximum": 440
+        },
+        "OwnerDisposeAllocatedBytes": {
+          "minimum": 0,
+          "maximum": 0
+        }
+      }
+    }
+  },
+  "limits": [
+    "One candidate warm single-reader round reports a negative allocated-byte delta (-186168048); its cause is not established and that allocation sample is unusable. The published medians were recomputed exactly but retain this invalid input; valid paired rounds are reported separately, not substituted into published summaries.",
+    "One bounded scratch process with three balanced cyclic rounds, Debug disable-optimization, .NET 10.0.14, natural 14 processors and Server GC; no independent repeated process series or significance claim.",
+    "Whole fresh marked technical MVC observation plus Complete over this installed 103-endpoint Gateway/Admin corpus; no full receiver, authority operation, unmarked owner query, network or two-second host-deadline claim.",
+    "No explicit Start/Run/network call by reviewed source construction; lifecycle/network inactivity was not independently instrumented.",
+    "Memo-cold means fresh owner on a previously exercised process/JIT/runtime; warm includes one full unmeasured owner-warming pass. Shared-owner concurrent cold duplicate computations are allowed.",
+    "Candidate adds key construction and a fingerprint scope; actual/control retain the existing image memo. All source image/PE/MVID/schema/policy observations and Complete remain in each measured pass.",
+    "Allocation uses process-wide precise total allocated bytes across the batch and includes task/setup effects; GC totals and process CPU are batch costs, not isolated method or reader costs. CPU summary is null whenever any group batch is below 30 ms.",
+    "Owner initialization and disposal are outside the measured observation/batch wall and reported separately; no disposal-in-clock or whole lifecycle benefit claim.",
+    "The 256-entry/2 MiB charged policy includes UTF16 key bytes plus 512 fixed allowance per entry; this is not a CLR heap bound measurement. Successful pure digest entries can remain after later Complete failure; every later pass still performs Complete.",
+    "386 checks are diagnostic parity coverage, not added native qualification. Original compile-closure/import and DI setup failures remain preserved separately; only this final DI-corrected attempt passed.",
+    "Current hash equality is scoped to the explicitly bound source/runtime/compiled input maps, not an assertion of all historical assembly generations or host acceptance."
+  ]
+}

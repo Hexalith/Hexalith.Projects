@@ -1,0 +1,23 @@
+<Project>
+  <!-- Imported last, after the retained mapping.final.targets and SDK generator declarations. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <Story65GatewayLateGuardImported>true</Story65GatewayLateGuardImported>
+  </PropertyGroup>
+  <Target Name="Story65ValidateGatewayCompilerPaths" DependsOnTargets="Story65GatewayControllerSourceSubstitution" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/project.assets.json'" Text="Private qualification refused changed restored assets path." />
+    <ItemGroup>
+      <_Story65GatewayWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+      <_Story65GatewayWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+      <_Story65GatewayOriginalController Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs'" />
+      <_Story65GatewayPrivateController Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-gateway-controller-prep-20261107/QueriesController.private.cs'" />
+      <_Story65GatewayHelper Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-gateway-controller-prep-20261107/CaptureCounters.cs'" />
+      <_Story65GatewayBootstrap Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-gateway-controller-prep-20261107/GatewayControllerBootstrap.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65GatewayOriginalController)' != '' or '@(_Story65GatewayPrivateController->Count())' != '1' or '@(_Story65GatewayHelper->Count())' != '1' or '@(_Story65GatewayBootstrap->Count())' != '1'" Text="Private qualification refused an unexpected controller compiler input set." />
+    <Error Condition="!$([System.String]::Copy('%(_Story65GatewayWritable.FullPath)').StartsWith('/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/', System.StringComparison.Ordinal))" Text="Private qualification refused a compiler/generated/cache write outside its isolated output." />
+  </Target>
+  <Target Name="Story65GuardGatewayBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateGatewayCompilerPaths" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)');@(EmbeddedResource->'Resource|%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-writable-paths.txt" Lines="@(_Story65GatewayWritable->'%(FullPath)')" Overwrite="true" />
+  </Target>
+</Project>

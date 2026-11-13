@@ -1,0 +1,57 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "nativeAcceptanceCases": 0,
+  "browserAcceptanceCases": 0,
+  "ordinaryRunResultUntouched": true,
+  "toolSha256": "87256f0a88a61f86ba7a19559896021afce25aa0b85cadc158b0416c8df8d925",
+  "identitySha256": "6cae3eda7a8426c3120453762fa662e79a093fcf510312d9b6f42590df42f129",
+  "noTargetSignalsOrGcRequests": true,
+  "collect": {
+    "exitCode": 0,
+    "wallSeconds": 8.528760059009073,
+    "peakObservedRssBytes": 72900608,
+    "guardReason": null,
+    "cpuHardLimitSeconds": 41,
+    "rssGuardBytes": 805306368,
+    "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+    "fixedFailures": [],
+    "unrecognizedStdoutStderrRetained": false
+  },
+  "analyze": {
+    "exitCode": 2,
+    "wallSeconds": 7.124795626004925,
+    "peakObservedRssBytes": 389582848,
+    "guardReason": null,
+    "cpuHardLimitSeconds": 46,
+    "rssGuardBytes": 1073741824,
+    "onlyDirectlyOwnedDiagnosticChildSignaled": false,
+    "fixedFailures": [],
+    "unrecognizedStdoutStderrRetained": false
+  },
+  "privateRuntimeMetadataRemoval": {
+    "removed": [
+      {
+        "ordinal": 1,
+        "kind": "file",
+        "bytes": 45227418,
+        "knownName": "allocations.nettrace",
+        "sha256": "db08b57183925c3d408954c4ff4ce5cd7622f97cdac962dd3770c4d41cd20836",
+        "absenceVerified": true
+      },
+      {
+        "ordinal": 2,
+        "kind": "file",
+        "bytes": 19622139,
+        "knownName": "allocations.etlx",
+        "sha256": "f1c585fbdbeea73e867d84bbd03e217fc35a627013b04690f64c47afe337572c",
+        "absenceVerified": true
+      }
+    ],
+    "allNonAllowlistedPrivateFilesAbsent": true,
+    "allSubdirectoriesRemoved": true,
+    "symlinkTargetsFollowedOrHashed": false
+  },
+  "sanitizedSummaryExists": true,
+  "incomplete": true
+}

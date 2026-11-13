@@ -1,0 +1,64 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "cwd": "/tmp/story65-advisory-wave-prep-20261107/differential",
+  "scratchRestoreArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "restore",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/Differential.csproj",
+    "--configfile",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/NuGet.Config",
+    "--ignore-failed-sources",
+    "--disable-build-servers"
+  ],
+  "scratchBuildArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-advisory-wave-prep-20261107/differential/Differential.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "scratchRuntimeControllerArgv": [
+    "python3",
+    "/tmp/story65-advisory-wave-prep-20261107/run_differential.py",
+    "--execute",
+    "--mode",
+    "all"
+  ],
+  "runtimeProcessorCountOverride": null,
+  "scratchBuildEnv": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "runtimeEnvRemove": [
+    "DOTNET_PROCESSOR_COUNT",
+    "CustomBeforeMicrosoftCommonTargets",
+    "all inherited Hexalith*Root source mapping values"
+  ],
+  "applicationBuildsAuthorized": false,
+  "nativeCommandPreparedOnly": {
+    "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "-xml",
+      "/tmp/story65-advisory-wave-prep-20261107/advisory-native-instrumented.xml"
+    ],
+    "expectedUnchangedCaseSet": "139 historical ordinary passing case IDs; preserve exact set",
+    "applicationOverlayAndNativeBuildOwner": "implement_6_5 ops prep; not run here"
+  },
+  "freshInitializationCanaryModes": [
+    "canary-positive-control",
+    "canary-current",
+    "canary-suppressed"
+  ],
+  "plannedFreshProcesses": 22,
+  "scratchRuntimeControllerArgvUnexecuted": true
+}

@@ -1,0 +1,78 @@
+{
+  "scratch": {
+    "parityChecks": 178,
+    "batches": 216,
+    "observations": 16380
+  },
+  "finalCompiled": {
+    "parityChecks": 178,
+    "batches": 216,
+    "observations": 16380
+  },
+  "actualNativeExecutions": 1076,
+  "newCanonicalNativeCases": 23,
+  "additionalUnchangedHostByteMemoCases": 5,
+  "nativeXml": [
+    {
+      "path": "native/final/owner450.xml",
+      "passExecutions": 450,
+      "sha256": "eb557fc6188019ca9f01795c0e440c93d496a98835c39170c8e62494d4f4737a"
+    },
+    {
+      "path": "native/final/contracts-tests.xml",
+      "passExecutions": 46,
+      "sha256": "77d1bed9058186516752630d2395933802be6c534b5fae872c6e2bcc1f43c919"
+    },
+    {
+      "path": "native/final/server-tests.xml",
+      "passExecutions": 324,
+      "sha256": "5bf48be724c1afd51c48b6dac1e9401c2e09a4f8bac37f27cfd06ae6bd5145a1"
+    },
+    {
+      "path": "native/final/ui-tests.xml",
+      "passExecutions": 211,
+      "sha256": "4bc3509f8c099d4ba3fa9a97fef1605c0eea4356c425fe1ed785d1e72b289e28"
+    },
+    {
+      "path": "native/final/integration-tests.xml",
+      "passExecutions": 45,
+      "sha256": "c9dcc0f6efbc0f6832428882d4844e8588780a285e519a6c18ad7d6af180f290"
+    }
+  ],
+  "smokeExecutionsNotAddedToNativeTotal": 28,
+  "ordinaryManagedAcceptance": "pending",
+  "fullHostDeadlineBenefitClaimed": false,
+  "binaryCopiesIncluded": 0,
+  "rawStdoutIncluded": false,
+  "archives": [
+    {
+      "path": "scratch/results/raw-batches.jsonl.gz",
+      "sourcePath": "/tmp/story65-canonical-hash-memo-results-20261108/raw-batches.jsonl",
+      "originalSha256": "a259f417d86368d9aa1a70a88eb06988b794be653d78aa1e35fd802a68194845",
+      "originalBytes": 862454,
+      "gzipSha256": "3c8c4287793f92d482f9fb8dfe7e63b34c120b02d11bac7be3b9f8a093a8a52d",
+      "gzipBytes": 106181,
+      "strictBatches": 216,
+      "strictObservations": 16380,
+      "decompressionByteIdentical": true,
+      "duplicateJsonKeysAndBatchCaptureIdentitiesRejected": true
+    },
+    {
+      "path": "final/results/raw-batches.jsonl.gz",
+      "sourcePath": "/tmp/story65-canonical-hash-memo-final-compiled-results-20261108/raw-batches.jsonl",
+      "originalSha256": "6f31f7ace70360fa1d04674eb55cad249d6dacf2ed291a17c34a9710f143dd26",
+      "originalBytes": 883708,
+      "gzipSha256": "36d8dd2aba4ed8c1ac7d8abb5aec46c7017f124f8009c99206565a1d4242ffd8",
+      "gzipBytes": 108193,
+      "strictBatches": 216,
+      "strictObservations": 16380,
+      "decompressionByteIdentical": true,
+      "duplicateJsonKeysAndBatchCaptureIdentitiesRejected": true
+    }
+  ],
+  "requiredIndependentAudits": {
+    "audits/scratch-independent/independent-benchmark-audit.json": "f8a1b620421a7a42b7fbf2ba604566bde4175ded7162e703b4c5b9e546d5832a",
+    "audits/native-independent/independent-native-audit.json": "857afbd14563603cf2b1f24f9785a5decf6687b0055b1c25034184eb499001c8",
+    "audits/final-independent/independent-final-compiled-audit.json": "717fbecbd7a72196e1cb2ca2885c9aaaad263cc97780b9918bc9909f209c5a4f"
+  }
+}

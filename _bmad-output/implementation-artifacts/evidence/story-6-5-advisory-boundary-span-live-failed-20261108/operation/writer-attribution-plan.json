@@ -1,0 +1,27 @@
+{
+  "filePreparationOnly": true,
+  "helperUnchanged": true,
+  "functionNotExecuted": true,
+  "fixedRoleAloneNotPhysicalProcessProof": true,
+  "helperSourceFacts": {
+    "opensFileOnlyAfterFirstQueuedRow": "CaptureCounters.cs224",
+    "holdsOutputUntilDrainFinally": "CaptureCounters.cs252",
+    "exclusive0600NoFollowWriter": "CaptureCounters.cs153-168"
+  },
+  "physicalProofSource": "writer_fd_proof.py",
+  "physicalProofSourceSha256": "f1921d9df6bdbc82393226cc6c8038cd3bd472d18d07f54e4e3e48eaa66bd67a",
+  "beforeCall": [
+    "fresh standard ownedProjects exact source/wrapper/start/exe/entry",
+    "current privateProjects producer DLLPDB/hash/map",
+    "same pinned private-directory FD"
+  ],
+  "observation": [
+    "after window publication only; finite normal lifetime",
+    "fixed projects.jsonl inode only, no row reads",
+    "own Projects PID/start rechecked before and after",
+    "writableFD fdinfo access mode +statdev/inode match",
+    "record only fixed-role/PIDstart/FDnumber/inode/access booleans"
+  ],
+  "failureMeaning": "unobserved physical attribution, not missing business/recorder outcome",
+  "neverDelayCleanupOrRepeatWindow": true
+}

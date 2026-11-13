@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="Story65DaprInvokerSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <ItemGroup>
+      <Compile Remove="../Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs" />
+      <Compile Include="/tmp/story65-dapr-invoker-prep-20261107/DaprDomainQueryInvoker.private.cs" />
+      <Compile Include="/tmp/story65-dapr-invoker-prep-20261107/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-dapr-invoker-prep-20261107/GatewayControllerBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

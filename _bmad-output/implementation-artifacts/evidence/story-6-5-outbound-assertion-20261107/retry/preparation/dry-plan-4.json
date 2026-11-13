@@ -1,0 +1,38 @@
+{
+  "preparationOnly": true,
+  "commands": {
+    "private": [
+      "/usr/bin/python3",
+      "/tmp/story65-outbound-assertion-ops-prep-20261107/live/build_restore.py",
+      "--phase",
+      "private",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "ordinary": [
+      "/usr/bin/python3",
+      "/tmp/story65-outbound-assertion-ops-prep-20261107/live/build_restore.py",
+      "--phase",
+      "ordinary",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "managed": [
+      "/usr/bin/python3",
+      "/tmp/story65-outbound-assertion-ops-prep-20261107/live/supervise_managed.py",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ],
+    "native29": [
+      "/usr/bin/python3",
+      "/tmp/story65-outbound-assertion-ops-prep-20261107/live/native_qualification.py",
+      "--execute",
+      "--pins-sha256",
+      "REVIEWED_PINS_REQUIRED"
+    ]
+  },
+  "finally": "Ordinary restore after EVERY private build attempt, including partial/nonzero builds; after managed launch only once exact cleanup proof passes. Failed restore retries create distinct attempt directories."
+}

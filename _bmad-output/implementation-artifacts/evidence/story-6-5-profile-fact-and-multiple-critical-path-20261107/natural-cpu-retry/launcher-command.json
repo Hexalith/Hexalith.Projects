@@ -1,0 +1,28 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-natural-cpu-live-retry-20261107"
+  },
+  "startedAtUtc": "2026-11-07T04:01:30.361450+00:00",
+  "stdoutStderr": "/tmp/story65-natural-cpu-live-retry-20261107-console.log",
+  "privateDiagnosticOverride": false,
+  "inheritedSourceMappingCleared": true,
+  "environmentRemovals": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "reason": "Remove agent-imposed build processor override from runtime; use natural available14 CPUs without ThreadPool/GC overrides.",
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T04:07:37.916897+00:00",
+  "logSha256": "ba2c7132c13b73e8b586974fd76ae09434c1b0738298fde320e1f862cef57891"
+}

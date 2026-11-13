@@ -1,0 +1,193 @@
+{
+  "preparationOnly": true,
+  "cases": [
+    {
+      "name": "legacy-bound-success",
+      "fault": "",
+      "legacy": true,
+      "slow": false
+    },
+    {
+      "name": "committed-conflicting-resolver",
+      "fault": "",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "null-query",
+      "fault": "null",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "acquire-throw",
+      "fault": "acquire",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "undeclared-query",
+      "fault": "undeclared",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "resolver-throw",
+      "fault": "resolver",
+      "legacy": true,
+      "slow": false
+    },
+    {
+      "name": "registration-null",
+      "fault": "registration-null",
+      "legacy": true,
+      "slow": false
+    },
+    {
+      "name": "missing-delegated-context",
+      "fault": "missing-caller",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "dapr-create-throw",
+      "fault": "dapr",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "real-binding-poison",
+      "fault": "binding-poison",
+      "legacy": true,
+      "slow": false
+    },
+    {
+      "name": "client-factory-throw",
+      "fault": "factory",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "transport-throw",
+      "fault": "transport",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "transport-catalog",
+      "fault": "transport-catalog",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "transport-cancel",
+      "fault": "transport-cancel",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "default-buffer-io-fault",
+      "fault": "buffer-io",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "default-buffer-cancel",
+      "fault": "buffer-cancel",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "status-403",
+      "fault": "status-403",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "status-503-committed",
+      "fault": "status-503",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "json-malformed",
+      "fault": "json-malformed",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "json-null",
+      "fault": "json-null",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "projection-mismatch",
+      "fault": "projection",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "response-dispose-throw",
+      "fault": "response-dispose",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "request-dispose-throw",
+      "fault": "request-dispose",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "logger-throw",
+      "fault": "logger",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "lease-release-throw",
+      "fault": "release",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "lease-release-cancel",
+      "fault": "release-cancel",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "lease-release-catalog",
+      "fault": "release-catalog",
+      "legacy": false,
+      "slow": false
+    },
+    {
+      "name": "held-release",
+      "fault": "held-release",
+      "legacy": false,
+      "slow": true
+    },
+    {
+      "name": "caller-cancel-release",
+      "fault": "cancel-release",
+      "legacy": false,
+      "slow": true
+    },
+    {
+      "name": "uncooperative-acquire-cancel",
+      "fault": "held-acquire",
+      "legacy": false,
+      "slow": true
+    }
+  ],
+  "fast": 27,
+  "slow": 3,
+  "cellsPerMode": 30,
+  "modes": 4,
+  "plannedBehavioralCells": 120,
+  "canaries": 3,
+  "nativeCases": 15,
+  "nativeExecuted": 0
+}

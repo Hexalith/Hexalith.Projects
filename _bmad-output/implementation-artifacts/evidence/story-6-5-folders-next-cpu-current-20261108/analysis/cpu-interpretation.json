@@ -1,0 +1,2965 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "noExactCpuTimeClaim": true,
+  "sourceSummarySha256": "bcb376757db73fa06b030bec5c13381f2c363996bd9eeccd06923b19591df507",
+  "totalSamples": 112727,
+  "sampleTypeCounts": {
+    "External": 111187,
+    "Managed": 1540
+  },
+  "managedSampleFraction": 0.013661323374169454,
+  "externalSampleFraction": 0.9863386766258305,
+  "classAggregation": {
+    "Managed": {
+      "classSamples": 1540,
+      "leafPartition": [
+        {
+          "frame": "System.Threading.Thread.<PollGC>g__PollGCWorker|67_0()",
+          "samples": 429,
+          "fractionOfClassSamples": 0.2785714285714286
+        },
+        {
+          "frame": "System.IO.Strategies.BufferedFileStreamStrategy.ReadSpan(value class System.Span`1<unsigned int8>,value class System.ArraySegment`1<unsigned int8>)",
+          "samples": 406,
+          "fractionOfClassSamples": 0.2636363636363636
+        },
+        {
+          "frame": "System.Threading.Monitor.Enter_Slowpath(class System.Object)",
+          "samples": 97,
+          "fractionOfClassSamples": 0.06298701298701298
+        },
+        {
+          "frame": "Microsoft.Win32.SafeHandles.SafeFileHandle.ReleaseHandle()",
+          "samples": 90,
+          "fractionOfClassSamples": 0.05844155844155844
+        },
+        {
+          "frame": "System.Threading.LowLevelLifoSemaphore.WaitForSignal(int32)",
+          "samples": 75,
+          "fractionOfClassSamples": 0.048701298701298704
+        },
+        {
+          "frame": "[unresolved]",
+          "samples": 65,
+          "fractionOfClassSamples": 0.04220779220779221
+        },
+        {
+          "frame": "System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "samples": 63,
+          "fractionOfClassSamples": 0.04090909090909091
+        },
+        {
+          "frame": "System.Threading.PortableThreadPool+WorkerThread.MaybeAddWorkingWorker(class System.Threading.PortableThreadPool)",
+          "samples": 44,
+          "fractionOfClassSamples": 0.02857142857142857
+        },
+        {
+          "frame": "System.Security.Cryptography.SHA256.HashData(unsigned int8[])",
+          "samples": 43,
+          "fractionOfClassSamples": 0.02792207792207792
+        },
+        {
+          "frame": "System.MemoryExtensions.SequenceEqual(value class System.ReadOnlySpan`1<!!0>,value class System.ReadOnlySpan`1<!!0>)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.01883116883116883
+        },
+        {
+          "frame": "Interop+Sys.Open(class System.String,value class OpenFlags,int32)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.01883116883116883
+        },
+        {
+          "frame": "System.Threading.LowLevelLifoSemaphore.Wait(int32,bool)",
+          "samples": 25,
+          "fractionOfClassSamples": 0.016233766233766232
+        },
+        {
+          "frame": "System.Reflection.Assembly.Load(class System.Reflection.AssemblyName)",
+          "samples": 13,
+          "fractionOfClassSamples": 0.008441558441558441
+        },
+        {
+          "frame": "System.Reflection.RuntimeAssembly.get_Location()",
+          "samples": 12,
+          "fractionOfClassSamples": 0.007792207792207792
+        },
+        {
+          "frame": "Microsoft.Win32.SafeHandles.SafeFileHandle.Open(class System.String,value class System.IO.FileMode,value class System.IO.FileAccess,value class System.IO.FileShare,value class System.IO.FileOptions,int64,value class System.IO.UnixFileMode,int64&,value class System.IO.UnixFileMode&,bool,bool&,class System.Func`4<value class ErrorInfo,value class OpenFlags,class System.String,class System.Exception>)",
+          "samples": 10,
+          "fractionOfClassSamples": 0.006493506493506494
+        },
+        {
+          "frame": "System.Reflection.RuntimeAssembly.GetReferencedAssemblies()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "System.Reflection.PortableExecutable.PEReader.Dispose()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Interop+Crypto.CryptoNative_RsaSignHash(class System.Security.Cryptography.SafeEvpPKeyHandle,int,value class System.Security.Cryptography.RSASignaturePaddingMode,int,unsigned int8&,int32,unsigned int8&,int32)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "System.Runtime.CompilerServices.RuntimeHelpers.InitializeArray(class System.Array,value class System.RuntimeFieldHandle)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "System.Threading.WaitHandle.WaitOneNoCheck(int32,bool,class System.Object,value class WaitHandleWaitSourceMap)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "System.DateTimeParse.Lex(value class DS,value class System.__DTString&,value class System.DateTimeToken&,value class System.DateTimeRawInfo&,value class System.DateTimeResult&,class System.Globalization.DateTimeFormatInfo&,value class System.Globalization.DateTimeStyles)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "System.Linq.Enumerable.ToArray(class System.Collections.Generic.IEnumerable`1<!!0>)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "System.GC.RunFinalizers()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "System.Security.Cryptography.CryptographicOperations.HashData(value class System.Security.Cryptography.HashAlgorithmName,value class System.ReadOnlySpan`1<unsigned int8>)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "System.Reflection.RuntimeCustomAttributeData.GetCustomAttributeRecords(class System.Reflection.RuntimeModule,int32)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "System.String.Concat(class System.String,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Interop+Crypto.CryptoNative_DecodePkcs8PrivateKey(unsigned int8*,int32,int32)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Interop+Crypto.EvpMdCtxCreate(int)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(!!0,class System.Text.Json.JsonSerializerOptions)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Microsoft.IdentityModel.Tokens.AsymmetricAdapter.VerifyUsingSpan(bool,value class System.ReadOnlySpan`1<unsigned int8>,unsigned int8[])",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "System.Threading.Monitor.Exit_Slowpath(value class LeaveHelperAction,class System.Object)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "System.ReadOnlyMemory`1[System.Byte].ToArray()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "System.Diagnostics.Tracing.EventPipeEventProvider.Callback(unsigned int8*,int32,unsigned int8,int64,int64,value class EVENT_FILTER_DESCRIPTOR*,void*)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Diagnostics.Tracing.EventSource.DebugCheckEvent(class System.Collections.Generic.Dictionary`2<class System.String,class System.String>&,class System.Collections.Generic.Dictionary`2<int32,value class EventMetadata>,class System.Reflection.MethodInfo,class System.Diagnostics.Tracing.EventAttribute,class System.Diagnostics.Tracing.ManifestBuilder,value class System.Diagnostics.Tracing.EventManifestOptions)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Reflection.RuntimeMethodInfo.<get_Signature>g__LazyCreateSignature|25_0()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Diagnostics.Tracing.EventParameterInfo.GetTypeInfoFromType(class System.Type,class System.Diagnostics.Tracing.TraceLoggingTypeInfo&)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Security.Cryptography.RandomNumberGenerator.GetBytes(int32)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Array.Resize(!!0[]&,int32)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Reflection.RuntimeAssembly.GetCodeBase()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Text.Json.WriteStack.Push()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Array.Copy(class System.Array,int32,class System.Array,int32,int32)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Threading.Tasks.Task.InternalWaitCore(int32,value class System.Threading.CancellationToken)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Threading.Tasks.Task.RunOrQueueCompletionAction(class System.Threading.Tasks.ITaskCompletionAction,bool)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Text.Json.JsonSerializerOptions..ctor(value class System.Text.Json.JsonSerializerDefaults)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Digest(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler..ctor()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Text.Json.ReadStack.Push()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.RuntimeType+RuntimeTypeCache+MemberInfoCache`1[System.__Canon].PopulateInterfaces(value class Filter)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Security.Cryptography.IncrementalHash.GetHashAndReset()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Linq.Enumerable+IEnumerableWhereIterator`1[System.Collections.Generic.KeyValuePair`2[System.__Canon,System.__Canon]].ToArray()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.IO.File.OpenRead(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Diagnostics.Metrics.RuntimeMetrics+<>c.<.cctor>b__7_12()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.Equal(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`3<!!0,!!0,bool>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Reflection.CustomAttribute.CreateCustomAttributeInstance(class System.Reflection.RuntimeModule,class System.RuntimeType,class System.IRuntimeMethodInfo,int&,int,int32&)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Net.Security.SslStreamPal.DecryptMessage(class System.Net.Security.SafeDeleteSslContext,value class System.Span`1<unsigned int8>,int32&,int32&)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Microsoft.AspNetCore.Authentication.AuthenticationMiddleware+<Invoke>d__6.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1+AsyncStateMachineBox`1[System.__Canon,Grpc.Net.Client.Internal.GrpcCall`2+<ReadMessageAsync>d__98[System.__Canon,System.__Canon]].ClearStateUponCompletion()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.GC.<AllocateUninitializedArray>g__AllocateNewArrayWorker|77_0(int32,bool)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.IO.Strategies.OSFileStreamStrategy.Read(value class System.Span`1<unsigned int8>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Net.Security.SslStreamPal.EncryptMessage(class System.Net.Security.SafeDeleteSslContext,value class System.ReadOnlyMemory`1<unsigned int8>,int32,int32)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Security.Cryptography.HashProviderDispenser+EvpHashProvider.FinalizeHashAndReset(value class System.Span`1<unsigned int8>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Text.Json.JsonReaderHelper.TranscodeHelper(value class System.ReadOnlySpan`1<unsigned int8>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Dapr.Client.DaprClientGrpc+<GetByteStateAndETagAsync>d__46.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Threading.WaitHandle.WaitMultiple(value class System.ReadOnlySpan`1<class System.Threading.WaitHandle>,bool,int32)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Net.Http.HttpConnection+HttpContentReadStream.Dispose(bool)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Collections.Generic.Dictionary`2[System.Net.Sockets.SocketError,Interop+Error].Add(!0,!1)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Security.Cryptography.IncrementalHash.CreateHash(value class System.Security.Cryptography.HashAlgorithmName)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Reflection.CustomAttribute.AddCustomAttributes(value class ListBuilder`1<class System.Object>&,class System.Reflection.RuntimeModule,int32,class System.RuntimeType,bool,value class ListBuilder`1<class System.Object>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Interop+Kernel32.SetEvent(class Microsoft.Win32.SafeHandles.SafeWaitHandle)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Reflection.FieldAccessor.GetValue(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Threading.CancellationToken.ThrowIfCancellationRequested()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Runtime.EH.DispatchEx(value class System.Runtime.StackFrameIterator&,value class ExInfo&)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Microsoft.Extensions.Configuration.ConfigurationProvider.GetChildKeys(class System.Collections.Generic.IEnumerable`1<class System.String>,class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReportDecodePhase(class System.String,int64)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "System.Text.Json.Utf8JsonWriter..ctor(class System.IO.Stream,value class System.Text.Json.JsonWriterOptions)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        }
+      ],
+      "firstHexalithPartition": [
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogFreshStreamImageDigest.Compute(class System.Reflection.Assembly,class System.IO.Stream,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 390,
+          "fractionOfClassSamples": 0.2532467532467532
+        },
+        {
+          "frame": "[no retained Hexalith frame]",
+          "samples": 280,
+          "fractionOfClassSamples": 0.18181818181818182
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog.ReadExecutableDigest(class System.Reflection.Assembly)",
+          "samples": 131,
+          "fractionOfClassSamples": 0.08506493506493507
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogInputs+<CaptureAsync>d__0.MoveNext()",
+          "samples": 68,
+          "fractionOfClassSamples": 0.04415584415584416
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 47,
+          "fractionOfClassSamples": 0.03051948051948052
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.TryCapture(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput&)",
+          "samples": 39,
+          "fractionOfClassSamples": 0.025324675324675326
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.WriteCanonical(class System.Text.Json.Utf8JsonWriter,value class System.Text.Json.JsonElement)",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendOrdinaryAsync>d__30.MoveNext()",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.CanonicalBytes(!!0)",
+          "samples": 35,
+          "fractionOfClassSamples": 0.022727272727272728
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<ReadAsync>d__7.MoveNext()",
+          "samples": 35,
+          "fractionOfClassSamples": 0.022727272727272728
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestMemo.TryCompute(class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>,class System.String&,bool&)",
+          "samples": 33,
+          "fractionOfClassSamples": 0.02142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&,class System.String&)",
+          "samples": 33,
+          "fractionOfClassSamples": 0.02142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Normalize(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 25,
+          "fractionOfClassSamples": 0.016233766233766232
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Hash(!!0)",
+          "samples": 23,
+          "fractionOfClassSamples": 0.014935064935064935
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_0+<<AddEventStoreDevelopmentDomainCatalog>b__1>d.MoveNext()",
+          "samples": 20,
+          "fractionOfClassSamples": 0.012987012987012988
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.Identity(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHostObservation,class Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory&)",
+          "samples": 20,
+          "fractionOfClassSamples": 0.012987012987012988
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadValidatedDocument(value class System.ReadOnlyMemory`1<unsigned int8>)",
+          "samples": 18,
+          "fractionOfClassSamples": 0.011688311688311689
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendAsync>d__25.MoveNext()",
+          "samples": 18,
+          "fractionOfClassSamples": 0.011688311688311689
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<GetHeldMetadataDispatchAsync>d__27.MoveNext()",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelBatchStateAccessor+<>c__DisplayClass5_0.<ReadAsync>b__0()",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.ReadEndpoints(class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,bool)",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.BoundStreamReadProof.Issue(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,class System.String,class System.String,value class System.DateTimeOffset)",
+          "samples": 11,
+          "fractionOfClassSamples": 0.007142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<AcquireBoundAssertionAsync>d__34.MoveNext()",
+          "samples": 9,
+          "fractionOfClassSamples": 0.005844155844155844
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<>c__DisplayClass26_0+<<SendLeasedAsync>g__SendTransportAsync|0>d.MoveNext()",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReportDecodePhase(class System.String,int64)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c.<AddEventStoreDevelopmentDomainCatalog>b__1_2(class System.Reflection.Assembly)",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelStore+<GetAsync>d__10`1[System.__Canon].MoveNext()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<ReadWorkloadStreamAsync>d__11.MoveNext()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingMemo.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&,bool&)",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions+<>c+<<UseEventStoreHttpHostSecurity>b__4_0>d.MoveNext()",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ProjectionRouteCatalogFingerprint.Compute(class System.String,class System.String,class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.Client.Projections.ProjectionDispatchRoute>,class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.Client.Projections.ProjectionDispatchRoute>)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentTechnicalHttpTransport.CanonicalPath(class System.String)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<CompareExchangeAsync>d__8.MoveNext()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Projections.TenantAccess.SystemUtcClock.get_UtcNow()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestScope.get_IsOpen()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog.Targets(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration>)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.GetMetadataActivation(class System.Object)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendLeasedAsync>d__26.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.RouteCatalogSurfacePolicy.Surface(class System.Security.Claims.ClaimsPrincipal)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReleaseCoreAsync>d__40.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingScope.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Digest(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireCoreAsync>d__33.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersServerServiceCollectionExtensions+<>c.<AddFoldersDomainServices>b__0_5(class System.IServiceProvider,class System.Object)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<>c__DisplayClass12_0.<SendWorkloadAsync>b__0()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass20_0+<<UseFiniteDevelopmentRouteCatalogReceiver>b__1>d.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ProjectionDispatchOptions.GetMinimumOutcomeEnvelopeBytes(int32)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacyStartupFilter+<>c__DisplayClass2_0+<<Configure>b__1>d.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.RefusalBoundary(class System.String,class System.String,class Microsoft.AspNetCore.Http.Endpoint,bool)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot.Resolve(class System.String,class System.String,class System.String,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<>c__DisplayClass5_1+<<ReadAsync>b__0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.CheckDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.LegacyProjectionCatalogRegistration+<>c__DisplayClass7_0.<Bind>b__2(class DomainMetadata)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ValidateAsync>d__41.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest+<>c.<CaptureAsync>b__5_1(value class System.Collections.Generic.KeyValuePair`2<class System.String,class System.Collections.Generic.IEnumerable`1<class System.String>>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest.IsGateway(class Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot,class System.String,class System.String,class System.Net.Http.HttpMethod)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionEvaluator.Evaluate(class System.Security.Claims.ClaimsPrincipal,class System.String,class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthenticationOptions,class System.Collections.Generic.IReadOnlyCollection`1<class System.String>,value class Microsoft.Extensions.Primitives.StringValues,value class System.DateTimeOffset,value class System.TimeSpan)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.RouteCatalogDomainObservation.Capabilities(class System.IServiceProvider)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel+<GetOnceAsync>d__10.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.CompleteRemote(class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer.GetTokenScopeFailure(class System.String,class System.String,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogAuthorityComponentPolicy.IsDedicatedComponent(value class System.Text.Json.JsonElement,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainProjectionHandlerRouteValidator.MaterializeAndValidateNamed(class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.DomainService.IAsyncDomainProjectionHandler>,class Hexalith.EventStore.Client.Projections.ProjectionDispatchOptions)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch.RequireOpen()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpEndpointInventory+<>c.<ValidateAsync>b__1_2(class System.Object)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0+<<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline..ctor(value class System.TimeSpan,class System.TimeProvider,value class System.Threading.CancellationToken,int64)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore.Request(class System.Net.Http.HttpMethod,class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.Push(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease,bool)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<ReadBoundedTokenResponseAsync>d__30.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthorizationDetails.Decode(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory+<>c.<.ctor>b__3_3(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1+<<AddEventStoreRouteCatalogObservation>b__1>d.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAdmissionGate.Release()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Verify(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,class System.Security.Claims.ClaimsPrincipal,class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.CaptureMetadataScopes(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease..ctor(class Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot,class System.Func`1<class System.Threading.Tasks.Task>,class System.Object,unsigned int8[])",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Digest(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.EnrollRemote(class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch..ctor(class System.Object,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteScope[],value class System.Threading.CancellationToken)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest+<CaptureAsync>d__5.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationContract.ResolveAuthorityAlgorithms(class Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationOptions)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthorizationDetails.Encode(class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionRequest)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.Hash(unsigned int8[])",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogFilter+<InvokeAsync>d__3.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c__DisplayClass0_0.<Validate>b__2(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryHandlerRouteValidator.MaterializeAndValidate(class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.DomainService.IDomainQueryHandler>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_1.<AddEventStoreDevelopmentDomainCatalog>b__6(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidatedBytesMemo.get_IsClosed()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline.ThrowIfCancellationRequested()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.Equal(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`3<!!0,!!0,bool>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestScope.TryCompute(class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>,class System.String&)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteScope.Dispose()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogResult+<ExecuteAsync>d__5.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Freeze>b__3_4(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.RouteCatalogDomainObservation.Auxiliary(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory.Snapshot(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`2<!!0,class System.String>,class System.Func`2<!!0,!!0>,class System.Func`2<!!0,class System.String>,class System.Collections.Generic.Dictionary`2<!!0,class System.String>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogTrustValidator.ValidateAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Authentication.FoldersHumanAuthorizationResultHandler+<HandleAsync>d__1.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Freeze>b__3_5(class Hexalith.EventStore.Contracts.Routing.RouteCatalogDeclaredInvocation)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Queries.QueryCallerAuthority.get_Permissions()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreClaimTransformEvidence.Allowed(class System.String,class System.String,class System.Collections.Generic.IEnumerable`1<class System.String>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<ReadAsync>d__5.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        }
+      ],
+      "inclusiveHexalithFrames": [
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_0+<<AddEventStoreDevelopmentDomainCatalog>b__1>d.MoveNext()",
+          "samples": 890,
+          "fractionOfClassSamples": 0.577922077922078
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogInputs+<CaptureAsync>d__0.MoveNext()",
+          "samples": 865,
+          "fractionOfClassSamples": 0.5616883116883117
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog.ReadExecutableDigest(class System.Reflection.Assembly)",
+          "samples": 553,
+          "fractionOfClassSamples": 0.35909090909090907
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c.<AddEventStoreDevelopmentDomainCatalog>b__1_17(class System.Reflection.Assembly)",
+          "samples": 553,
+          "fractionOfClassSamples": 0.35909090909090907
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogFreshStreamImageDigest.Compute(class System.Reflection.Assembly,class System.IO.Stream)",
+          "samples": 422,
+          "fractionOfClassSamples": 0.274025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogFreshStreamImageDigest.Compute(class System.Reflection.Assembly,class System.IO.Stream,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 420,
+          "fractionOfClassSamples": 0.2727272727272727
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendAsync>d__25.MoveNext()",
+          "samples": 311,
+          "fractionOfClassSamples": 0.20194805194805196
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1+<<AddEventStoreRouteCatalogObservation>b__1>d.MoveNext()",
+          "samples": 269,
+          "fractionOfClassSamples": 0.17467532467532468
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost+<ObserveAsync>d__5.MoveNext()",
+          "samples": 269,
+          "fractionOfClassSamples": 0.17467532467532468
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0+<<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0>d.MoveNext()",
+          "samples": 269,
+          "fractionOfClassSamples": 0.17467532467532468
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendOrdinaryAsync>d__30.MoveNext()",
+          "samples": 184,
+          "fractionOfClassSamples": 0.11948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ValidateAsync>d__41.MoveNext()",
+          "samples": 164,
+          "fractionOfClassSamples": 0.10649350649350649
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 148,
+          "fractionOfClassSamples": 0.09610389610389611
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<SendWorkloadAsync>d__12.MoveNext()",
+          "samples": 147,
+          "fractionOfClassSamples": 0.09545454545454546
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<AcquireBoundAssertionAsync>d__34.MoveNext()",
+          "samples": 136,
+          "fractionOfClassSamples": 0.08831168831168831
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<IssueAsync>d__19.MoveNext()",
+          "samples": 131,
+          "fractionOfClassSamples": 0.08506493506493507
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<SendTranslatingAsync>d__19.MoveNext()",
+          "samples": 129,
+          "fractionOfClassSamples": 0.08376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<GetHeldMetadataDispatchAsync>d__27.MoveNext()",
+          "samples": 125,
+          "fractionOfClassSamples": 0.08116883116883117
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<ReadAsync>d__7.MoveNext()",
+          "samples": 124,
+          "fractionOfClassSamples": 0.08051948051948052
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireCoreAsync>d__33.MoveNext()",
+          "samples": 120,
+          "fractionOfClassSamples": 0.07792207792207792
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<>c__DisplayClass12_0.<SendWorkloadAsync>b__0()",
+          "samples": 115,
+          "fractionOfClassSamples": 0.07467532467532467
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.SendTranslatingAsync(class System.Func`1<class System.Threading.Tasks.Task`1<class System.Net.Http.HttpResponseMessage>>,value class System.Threading.CancellationToken)",
+          "samples": 115,
+          "fractionOfClassSamples": 0.07467532467532467
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ValidateAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics)",
+          "samples": 114,
+          "fractionOfClassSamples": 0.07402597402597402
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Handlers.DaprServiceInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 112,
+          "fractionOfClassSamples": 0.07272727272727272
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.GetHeldMetadataDispatchAsync(class System.Net.Http.HttpRequestMessage,class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 111,
+          "fractionOfClassSamples": 0.07207792207792207
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.Identity(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHostObservation,class Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory&)",
+          "samples": 105,
+          "fractionOfClassSamples": 0.06818181818181818
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1.<AddEventStoreRouteCatalogObservation>b__1(value class System.Threading.CancellationToken)",
+          "samples": 97,
+          "fractionOfClassSamples": 0.06298701298701298
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.ObserveAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogStateCoordinates,value class System.Threading.CancellationToken)",
+          "samples": 97,
+          "fractionOfClassSamples": 0.06298701298701298
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0.<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0(class System.IServiceProvider,value class System.Threading.CancellationToken)",
+          "samples": 96,
+          "fractionOfClassSamples": 0.06233766233766234
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_0.<AddEventStoreDevelopmentDomainCatalog>b__1(class System.IServiceProvider,value class System.Threading.CancellationToken)",
+          "samples": 95,
+          "fractionOfClassSamples": 0.06168831168831169
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Hash(!!0)",
+          "samples": 94,
+          "fractionOfClassSamples": 0.06103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ComputeDeclarationDigest(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 87,
+          "fractionOfClassSamples": 0.05649350649350649
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory..ctor(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHostObservation)",
+          "samples": 84,
+          "fractionOfClassSamples": 0.05454545454545454
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory.Snapshot(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`2<!!0,class System.String>,class System.Func`2<!!0,!!0>,class System.Func`2<!!0,class System.String>,class System.Collections.Generic.Dictionary`2<!!0,class System.String>)",
+          "samples": 84,
+          "fractionOfClassSamples": 0.05454545454545454
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.CanonicalBytes(!!0)",
+          "samples": 71,
+          "fractionOfClassSamples": 0.046103896103896105
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<CompareExchangeAsync>d__8.MoveNext()",
+          "samples": 70,
+          "fractionOfClassSamples": 0.045454545454545456
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReadAdmissionStateAsync>d__34.MoveNext()",
+          "samples": 65,
+          "fractionOfClassSamples": 0.04220779220779221
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly)",
+          "samples": 53,
+          "fractionOfClassSamples": 0.03441558441558441
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogSidecarMetadata.Observe(class Microsoft.AspNetCore.Routing.RouteEndpoint)",
+          "samples": 53,
+          "fractionOfClassSamples": 0.03441558441558441
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 51,
+          "fractionOfClassSamples": 0.033116883116883114
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogActivationBinding.ComputeDigest(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation)",
+          "samples": 50,
+          "fractionOfClassSamples": 0.032467532467532464
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingScope.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&)",
+          "samples": 50,
+          "fractionOfClassSamples": 0.032467532467532464
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingMemo.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&,bool&)",
+          "samples": 47,
+          "fractionOfClassSamples": 0.03051948051948052
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog.Targets(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration>)",
+          "samples": 46,
+          "fractionOfClassSamples": 0.02987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<ReadWorkloadStreamAsync>d__11.MoveNext()",
+          "samples": 43,
+          "fractionOfClassSamples": 0.02792207792207792
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.Observe()",
+          "samples": 42,
+          "fractionOfClassSamples": 0.02727272727272727
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.ReadEndpoints(class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,bool)",
+          "samples": 42,
+          "fractionOfClassSamples": 0.02727272727272727
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.TryCapture(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput&)",
+          "samples": 39,
+          "fractionOfClassSamples": 0.025324675324675326
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.WriteCanonical(class System.Text.Json.Utf8JsonWriter,value class System.Text.Json.JsonElement)",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<ReadStreamAsync>d__18.MoveNext()",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<>c__DisplayClass5_1+<<ReadAsync>b__0>d.MoveNext()",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendOrdinaryAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 36,
+          "fractionOfClassSamples": 0.023376623376623377
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestScope.TryCompute(class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>,class System.String&)",
+          "samples": 34,
+          "fractionOfClassSamples": 0.02207792207792208
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ComputeOperationContractDigest(class Hexalith.EventStore.Contracts.Routing.RouteOperationContract)",
+          "samples": 34,
+          "fractionOfClassSamples": 0.02207792207792208
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestMemo.TryCompute(class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>,class System.String&,bool&)",
+          "samples": 33,
+          "fractionOfClassSamples": 0.02142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&,class System.String&)",
+          "samples": 33,
+          "fractionOfClassSamples": 0.02142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogFreshStreamImageDigest.Complete(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestScope,class System.Reflection.Assembly,value class System.ReadOnlySpan`1<unsigned int8>)",
+          "samples": 30,
+          "fractionOfClassSamples": 0.01948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogRemoteExecution+<InvokeAsync>d__5`1[System.ValueTuple`2[System.ReadOnlyMemory`1[System.Byte],System.__Canon]].MoveNext()",
+          "samples": 30,
+          "fractionOfClassSamples": 0.01948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadProfile(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.01883116883116883
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.RouteCatalogDomainObservation.Auxiliary(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.01883116883116883
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelStore+<GetAsync>d__10`1[System.__Canon].MoveNext()",
+          "samples": 28,
+          "fractionOfClassSamples": 0.01818181818181818
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelBatchStateAccessor+<ReadAsync>d__5.MoveNext()",
+          "samples": 28,
+          "fractionOfClassSamples": 0.01818181818181818
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ReadModelBatchProtocol+<ResolveVisibleAsync>d__23.MoveNext()",
+          "samples": 28,
+          "fractionOfClassSamples": 0.01818181818181818
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<>c__DisplayClass5_1.<ReadAsync>b__0(value class System.Threading.CancellationToken)",
+          "samples": 27,
+          "fractionOfClassSamples": 0.01753246753246753
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline+<>c__DisplayClass14_0`1[System.__Canon].<ReadAsync>b__0()",
+          "samples": 27,
+          "fractionOfClassSamples": 0.01753246753246753
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.ReadStreamAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 27,
+          "fractionOfClassSamples": 0.01753246753246753
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.ReadWorkloadStreamAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 27,
+          "fractionOfClassSamples": 0.01753246753246753
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot..ctor(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,int64,class System.String,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogStateCoordinates)",
+          "samples": 26,
+          "fractionOfClassSamples": 0.016883116883116882
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReleaseCoreAsync>d__40.MoveNext()",
+          "samples": 26,
+          "fractionOfClassSamples": 0.016883116883116882
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Normalize(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 25,
+          "fractionOfClassSamples": 0.016233766233766232
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogSidecarMetadata.ObserveEndpoint(class Microsoft.AspNetCore.Routing.RouteEndpoint)",
+          "samples": 25,
+          "fractionOfClassSamples": 0.016233766233766232
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore.CompareExchangeAsync(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogActivationState,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 23,
+          "fractionOfClassSamples": 0.014935064935064935
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogTrustValidator.ValidateAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 22,
+          "fractionOfClassSamples": 0.014285714285714285
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot..ctor(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String,int64,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteCatalogAuxiliaryOperation>,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteCatalogProjectionCapability>,class System.String)",
+          "samples": 22,
+          "fractionOfClassSamples": 0.014285714285714285
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Decode(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String)",
+          "samples": 22,
+          "fractionOfClassSamples": 0.014285714285714285
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel+<GetOnceAsync>d__10.MoveNext()",
+          "samples": 22,
+          "fractionOfClassSamples": 0.014285714285714285
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireAsync>d__21.MoveNext()",
+          "samples": 21,
+          "fractionOfClassSamples": 0.013636363636363636
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard+<AcquireCoreAsync>d__5.MoveNext()",
+          "samples": 20,
+          "fractionOfClassSamples": 0.012987012987012988
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogFilter+<InvokeAsync>d__3.MoveNext()",
+          "samples": 20,
+          "fractionOfClassSamples": 0.012987012987012988
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.PermissionProjectionCatchUp+<ReadAsync>d__2.MoveNext()",
+          "samples": 20,
+          "fractionOfClassSamples": 0.012987012987012988
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacyStartupFilter+<>c__DisplayClass2_0+<<Configure>b__1>d.MoveNext()",
+          "samples": 19,
+          "fractionOfClassSamples": 0.012337662337662338
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.LayeredFolderAuthorizationService+<AuthorizeCoreAsync>d__13.MoveNext()",
+          "samples": 19,
+          "fractionOfClassSamples": 0.012337662337662338
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadValidatedDocument(value class System.ReadOnlyMemory`1<unsigned int8>)",
+          "samples": 18,
+          "fractionOfClassSamples": 0.011688311688311689
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore.ReadAsync(value class System.Threading.CancellationToken)",
+          "samples": 18,
+          "fractionOfClassSamples": 0.011688311688311689
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacyStartupFilter+<>c__DisplayClass2_0.<Configure>b__1(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 18,
+          "fractionOfClassSamples": 0.011688311688311689
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions+<>c+<<UseEventStoreHttpHostSecurity>b__4_0>d.MoveNext()",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersApiRouteTelemetry+<>c+<<UseFoldersApiRouteTelemetry>b__5_0>d.MoveNext()",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogRemoteExecution.InvokeAsync(class System.Func`1<class System.Threading.Tasks.Task`1<!!0>>,value class System.Threading.CancellationToken)",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelBatchStateAccessor.ReadAsync(class System.String,value class System.Threading.CancellationToken)",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ReadModelBatchProtocol.ResolveVisibleAsync(class Hexalith.EventStore.Client.Projections.IReadModelBatchStateAccessor,class System.String,value class System.Threading.CancellationToken,class System.TimeProvider)",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelStore.GetAsync(class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 17,
+          "fractionOfClassSamples": 0.01103896103896104
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer.IssueAsync(class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionRequest,value class System.Threading.CancellationToken)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.SendWorkloadAsync(class System.Net.Http.HttpMethod,class System.String,class System.Object,class System.String,class System.String,value class System.Threading.CancellationToken,class System.String,class System.String,class System.String)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainServiceNativeSourceCredentials.IssueAsync(class System.String,class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions+<>c.<UseEventStoreHttpHostSecurity>b__4_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersApiRouteTelemetry+<>c.<UseFoldersApiRouteTelemetry>b__5_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.DaprReadModelBatchStateAccessor+<>c__DisplayClass5_0.<ReadAsync>b__0()",
+          "samples": 16,
+          "fractionOfClassSamples": 0.01038961038961039
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendLeasedAsync>d__26.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer.AcquireBoundAssertionAsync(class Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationOptions,class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionIssuerOptions,class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionRequest,value class System.Threading.CancellationToken)",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.RouteCatalogDomainObservation.Capabilities(class System.IServiceProvider)",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel+<GetOnceAsync>d__10.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.GatewayOrganizationStreamSequenceReader+<GetCurrentSequenceAsync>d__2.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.TenantAccessAuthorizer+<AuthorizeAsync>d__7.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Projections.TenantAccess.EventStoreFolderTenantAccessProjectionStore+<GetAsync>d__4.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EffectivePermissionsFolderPermissionEvidenceProvider+<GetEvidenceAsync>d__3.MoveNext()",
+          "samples": 15,
+          "fractionOfClassSamples": 0.00974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendLeasedAsync(class System.Net.Http.HttpRequestMessage,class System.String,class System.String,class System.String,class System.Net.Http.HttpMessageInvoker,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease,value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch)",
+          "samples": 14,
+          "fractionOfClassSamples": 0.00909090909090909
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Queries.FolderOwnerReadQueryHandler+<ExecuteAsync>d__7.MoveNext()",
+          "samples": 14,
+          "fractionOfClassSamples": 0.00909090909090909
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.LayeredFolderAuthorizationService+<AuthorizeCurrentMetadataReadAsync>d__9.MoveNext()",
+          "samples": 14,
+          "fractionOfClassSamples": 0.00909090909090909
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersDevelopmentOwnerMetadataDiagnostics+<ReadAsync>d__3.MoveNext()",
+          "samples": 14,
+          "fractionOfClassSamples": 0.00909090909090909
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.TenantAccessAuthorizer+<AuthorizeMutationAsync>d__4.MoveNext()",
+          "samples": 14,
+          "fractionOfClassSamples": 0.00909090909090909
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersDomainServiceEndpoints+<>c+<<MapFoldersDomainServiceEndpoints>b__23_0>d.MoveNext()",
+          "samples": 13,
+          "fractionOfClassSamples": 0.008441558441558441
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryDispatcher+<ExecuteCoreAsync>d__2.MoveNext()",
+          "samples": 13,
+          "fractionOfClassSamples": 0.008441558441558441
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryDispatcher+<ExecuteAsync>d__0.MoveNext()",
+          "samples": 13,
+          "fractionOfClassSamples": 0.008441558441558441
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainServiceNativeSourceCredentials.IssueAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 11,
+          "fractionOfClassSamples": 0.007142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.BoundStreamReadProof.Issue(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,class System.String,class System.String,value class System.DateTimeOffset)",
+          "samples": 11,
+          "fractionOfClassSamples": 0.007142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.SameAdmissionActivation(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation)",
+          "samples": 11,
+          "fractionOfClassSamples": 0.007142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<ReadAsync>d__5.MoveNext()",
+          "samples": 11,
+          "fractionOfClassSamples": 0.007142857142857143
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch+<InvokeAsync>d__22.MoveNext()",
+          "samples": 10,
+          "fractionOfClassSamples": 0.006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<>c__DisplayClass26_0+<<SendLeasedAsync>g__SendTransportAsync|0>d.MoveNext()",
+          "samples": 10,
+          "fractionOfClassSamples": 0.006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReadAdmissionStateAsync(value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics)",
+          "samples": 10,
+          "fractionOfClassSamples": 0.006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.RefusalBoundary(class System.String,class System.String,class Microsoft.AspNetCore.Http.Endpoint,bool)",
+          "samples": 9,
+          "fractionOfClassSamples": 0.005844155844155844
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass25_0.<ReadEndpoints>b__5(class System.String)",
+          "samples": 9,
+          "fractionOfClassSamples": 0.005844155844155844
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.PermissionProjectionCatchUp.ReadAsync(class System.Func`2<value class System.Threading.CancellationToken,class System.Threading.Tasks.Task`1<class Hexalith.Folders.Authorization.EffectivePermissionsReadModelResult>>,bool,value class System.DateTimeOffset,value class System.Threading.CancellationToken)",
+          "samples": 9,
+          "fractionOfClassSamples": 0.005844155844155844
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch.InvokeAsync(class System.Func`2<value class System.Threading.CancellationToken,class System.Threading.Tasks.Task`1<class System.Net.Http.HttpResponseMessage>>)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<>c__DisplayClass26_0.<SendLeasedAsync>g__SendTransportAsync|0(value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReportDecodePhase(class System.String,int64)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersDomainServiceEndpoints+<>c.<MapFoldersDomainServiceEndpoints>b__23_0(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,class System.IServiceProvider,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryDispatcher.ExecuteAsync(class System.IServiceProvider,class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryDispatcher.ExecuteCoreAsync(class System.IServiceProvider,class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Authentication.FoldersHumanAuthorizationResultHandler+<HandleAsync>d__1.MoveNext()",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass20_0+<<UseFiniteDevelopmentRouteCatalogReceiver>b__1>d.MoveNext()",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Server.HistoricalMutationAuthorization+<>c+<<UseHistoricalMutationAuthorization>b__2_0>d.MoveNext()",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.EventStoreDomainServiceSecurityExtensions+<>c+<<UseEventStoreDomainServiceEndpointSecurity>b__4_0>d.MoveNext()",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.TenantAccessAuthorizer.AuthorizeAsync(class Hexalith.Folders.Authorization.TenantAccessAuthorizationContext,bool,value class System.Threading.CancellationToken,class System.String)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.LayeredFolderAuthorizationService.AuthorizeCoreAsync(class Hexalith.Folders.Authorization.LayeredFolderAuthorizationContext,bool,value class System.Threading.CancellationToken,bool)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.LayeredFolderAuthorizationService.AuthorizeCurrentMetadataReadAsync(class Hexalith.Folders.Authorization.LayeredFolderAuthorizationContext,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Projections.TenantAccess.EventStoreFolderTenantAccessProjectionStore.GetAsync(class System.String,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.TenantAccessAuthorizer.AuthorizeMutationAsync(class Hexalith.Folders.Authorization.TenantAccessAuthorizationContext,value class System.Threading.CancellationToken)",
+          "samples": 8,
+          "fractionOfClassSamples": 0.005194805194805195
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c.<AddEventStoreDevelopmentDomainCatalog>b__1_2(class System.Reflection.Assembly)",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline+<ReadAsync>d__14`1[System.__Canon].MoveNext()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<WaitForLocalAdmissionAsync>d__22.MoveNext()",
+          "samples": 7,
+          "fractionOfClassSamples": 0.004545454545454545
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline+<ReadWithAdmissionAsync>d__13`1[System.__Canon].MoveNext()",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EffectivePermissionsFolderPermissionEvidenceProvider.GetEvidenceAsync(class Hexalith.Folders.Authorization.FolderPermissionEvidenceRequest,value class System.Threading.CancellationToken)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel+<>c__DisplayClass9_0.<GetAsync>b__0(value class System.Threading.CancellationToken)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel.GetOnceAsync(class Hexalith.Folders.Authorization.EffectivePermissionsReadModelRequest,value class System.Threading.CancellationToken)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreFolderEffectivePermissionsReadModel.GetAsync(class Hexalith.Folders.Authorization.EffectivePermissionsReadModelRequest,value class System.Threading.CancellationToken)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Server.HistoricalMutationAuthorization+<>c.<UseHistoricalMutationAuthorization>b__2_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass20_0.<UseFiniteDevelopmentRouteCatalogReceiver>b__1(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Authentication.FoldersHumanAuthorizationResultHandler.HandleAsync(class Microsoft.AspNetCore.Http.RequestDelegate,class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Authorization.AuthorizationPolicy,class Microsoft.AspNetCore.Authorization.Policy.PolicyAuthorizationResult)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.EventStoreDomainServiceSecurityExtensions+<>c.<UseEventStoreDomainServiceEndpointSecurity>b__4_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<GetAuthorityMetadataAsync>d__28.MoveNext()",
+          "samples": 6,
+          "fractionOfClassSamples": 0.003896103896103896
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogResult+<ExecuteAsync>d__5.MoveNext()",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ProjectionRouteCatalogFingerprint.Compute(class System.String,class System.String,class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.Client.Projections.ProjectionDispatchRoute>,class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.Client.Projections.ProjectionDispatchRoute>)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Verify(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,class System.Security.Claims.ClaimsPrincipal,class System.String)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.AcquireCoreAsync(value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAdmissionGate,bool)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainProjectionHandlerRouteValidator.MaterializeAndValidateNamed(class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.DomainService.IAsyncDomainProjectionHandler>,class Hexalith.EventStore.Client.Projections.ProjectionDispatchOptions)",
+          "samples": 5,
+          "fractionOfClassSamples": 0.003246753246753247
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentTechnicalHttpTransport.CanonicalPath(class System.String)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReleaseAsync>d__39.MoveNext()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease+<DisposeAsync>d__30.MoveNext()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogResult.ExecuteAsync(class Microsoft.AspNetCore.Http.HttpContext)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.Folders.Projections.TenantAccess.SystemUtcClock.get_UtcNow()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageDigestScope.get_IsOpen()",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogImageBuffers.Select(class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard.AcquireDecisionAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.AcquireAsync(value class System.Threading.CancellationToken)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogFilter.InvokeAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext,class Microsoft.AspNetCore.Http.EndpointFilterDelegate)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard.AcquireCoreAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext,bool)",
+          "samples": 4,
+          "fractionOfClassSamples": 0.0025974025974025974
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.GetMetadataActivation(class System.Object)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch.get_Activation()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.RouteCatalogSurfacePolicy.Surface(class System.Security.Claims.ClaimsPrincipal)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest.CaptureAsync(class System.Net.Http.HttpRequestMessage,class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest+<CaptureAsync>d__5.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.DisposeAsync()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<>c__DisplayClass33_0.<AcquireCoreAsync>b__2()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReleaseAsync(class System.String)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReleaseCoreAsync(class System.String)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Bind(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Digest(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersServerServiceCollectionExtensions+<>c.<AddFoldersDomainServices>b__0_5(class System.IServiceProvider,class System.Object)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ProjectionDispatchOptions.GetMinimumOutcomeEnvelopeBytes(int32)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Projections.ProjectionDispatchOptions.Validate()",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Queries.FolderOwnerReadQueryHandler.ExecuteAsync(class Hexalith.EventStore.Contracts.Queries.QueryEnvelope,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel.GetOnceAsync(class Hexalith.Folders.Authorization.EffectivePermissionsReadModelRequest,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel+<>c__DisplayClass9_0.<GetAsync>b__0(value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreOrganizationEffectivePermissionsReadModel.GetAsync(class Hexalith.Folders.Authorization.EffectivePermissionsReadModelRequest,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader.ReadAsync(class Hexalith.EventStore.Contracts.Identity.AggregateIdentity,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersDevelopmentOwnerMetadataDiagnostics.ReadAsync(class Hexalith.EventStore.Contracts.Identity.AggregateIdentity,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.GatewayOrganizationStreamSequenceReader.GetCurrentSequenceAsync(class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 3,
+          "fractionOfClassSamples": 0.001948051948051948
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot.Resolve(class System.String,class System.String,class System.String,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.ValidateDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.CheckDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.LegacyProjectionCatalogRegistration+<>c__DisplayClass7_0.<Bind>b__2(class DomainMetadata)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.LegacyProjectionCatalogRegistration.Bind(class Response,class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.DomainService.LegacyProjectionCatalogRegistration>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest+<>c.<CaptureAsync>b__5_1(value class System.Collections.Generic.KeyValuePair`2<class System.String,class System.Collections.Generic.IEnumerable`1<class System.String>>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogMetadataRequest.IsGateway(class Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot,class System.String,class System.String,class System.Net.Http.HttpMethod)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionEvaluator.Evaluate(class System.Security.Claims.ClaimsPrincipal,class System.String,class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthenticationOptions,class System.Collections.Generic.IReadOnlyCollection`1<class System.String>,value class Microsoft.Extensions.Primitives.StringValues,value class System.DateTimeOffset,value class System.TimeSpan)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadJwtBearerEvents.TokenValidated(class Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.CompleteRemote(class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteBoundary.Complete()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer.GetTokenScopeFailure(class System.String,class System.String,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogAuthorityComponentPolicy.IsDedicatedComponent(value class System.Text.Json.JsonElement,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch.RequireOpen()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHeldMetadataDispatch..ctor(class System.Object,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteScope[],value class System.Threading.CancellationToken)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Validate(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c__DisplayClass0_0.<Validate>b__2(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpEndpointInventory.ValidateAsync(class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,class System.IServiceProvider)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpEndpointInventory+<ValidateAsync>d__1.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpEndpointInventory+<>c.<ValidateAsync>b__1_2(class System.Object)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Freeze>b__3_0(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Freeze(class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver>)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline..ctor(value class System.TimeSpan,class System.TimeProvider,value class System.Threading.CancellationToken,int64)",
+          "samples": 2,
+          "fractionOfClassSamples": 0.0012987012987012987
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore.Request(class System.Net.Http.HttpMethod,class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.Push(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease,bool)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteScope..ctor(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease,bool,value class System.Nullable`1<value class System.Threading.CancellationToken>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.EnterReceiver(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease,value class System.Threading.CancellationToken)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer.ReadBoundedTokenResponseAsync(class System.Net.Http.HttpContent,value class System.Threading.CancellationToken)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<ReadBoundedTokenResponseAsync>d__30.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthorizationDetails.Decode(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory+<>c.<.ctor>b__3_3(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAdmissionGate.Release()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.CaptureMetadataScopes(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease..ctor(class Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot,class System.Func`1<class System.Threading.Tasks.Task>,class System.Object,unsigned int8[])",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Valid(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding.Digest(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Validate>b__0_4(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteBoundary.Enroll()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease.EnrollRemote(class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogDispatchLease>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.LayeredFolderAuthorizationService.Snapshot(value class Hexalith.Folders.Authorization.AuthorizationLayer,class System.String,bool,class System.String,class System.String,class Hexalith.Folders.Authorization.LayeredFolderAuthorizationContext,class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationContract.Validate(class Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationOptions,class Microsoft.Extensions.Hosting.IHostEnvironment,class System.String,class Microsoft.Extensions.Logging.ILogger)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationContract.ResolveAuthorityAlgorithms(class Hexalith.EventStore.ServiceDefaults.Authentication.JwtBearerAuthenticationOptions)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAuthorizationDetails.Encode(class Hexalith.EventStore.ServiceDefaults.Authentication.WorkloadAssertionRequest)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.Hash(unsigned int8[])",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainQueryHandlerRouteValidator.MaterializeAndValidate(class System.Collections.Generic.IEnumerable`1<class Hexalith.EventStore.DomainService.IDomainQueryHandler>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_1.<AddEventStoreDevelopmentDomainCatalog>b__6(class System.String)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidatedBytesMemo.get_IsClosed()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.BeginPrivateDecodeScope()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.PrivateHostMemoEnabled()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline.ThrowIfCancellationRequested()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.Equal(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`3<!!0,!!0,bool>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.Matches(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput+<>c.<Matches>b__10_3(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver,class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpReceiver)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteScope.Dispose()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.Freeze(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Freeze>b__3_4(class Hexalith.EventStore.Contracts.Routing.RouteCatalogTechnicalHttpEndpoint)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpCatalogBinding+<>c.<Freeze>b__3_5(class Hexalith.EventStore.Contracts.Routing.RouteCatalogDeclaredInvocation)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Queries.QueryCallerAuthority.get_Permissions()",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        },
+        {
+          "frame": "Hexalith.Folders.Authorization.EventStoreClaimTransformEvidence.Allowed(class System.String,class System.String,class System.Collections.Generic.IEnumerable`1<class System.String>)",
+          "samples": 1,
+          "fractionOfClassSamples": 0.0006493506493506494
+        }
+      ],
+      "inclusiveIsOverlappingNotAdditive": true
+    },
+    "External": {
+      "classSamples": 111187,
+      "leafPartition": [
+        {
+          "frame": "System.Threading.LowLevelLifoSemaphore.WaitForSignal(int32)",
+          "samples": 40657,
+          "fractionOfClassSamples": 0.3656632519988848
+        },
+        {
+          "frame": "System.Threading.WaitHandle.WaitMultiple(value class System.ReadOnlySpan`1<class System.Threading.WaitHandle>,bool,int32)",
+          "samples": 21063,
+          "fractionOfClassSamples": 0.18943761410956317
+        },
+        {
+          "frame": "System.Threading.WaitHandle.WaitOneNoCheck(int32,bool,class System.Object,value class WaitHandleWaitSourceMap)",
+          "samples": 14086,
+          "fractionOfClassSamples": 0.12668747245631234
+        },
+        {
+          "frame": "System.Threading.Monitor.Wait(class System.Object,int32)",
+          "samples": 7045,
+          "fractionOfClassSamples": 0.06336172394254724
+        },
+        {
+          "frame": "Interop+Sys.Read(class System.Runtime.InteropServices.SafeHandle,unsigned int8*,int32)",
+          "samples": 7045,
+          "fractionOfClassSamples": 0.06336172394254724
+        },
+        {
+          "frame": "Microsoft.Extensions.Logging.Console.ConsoleLoggerProcessor.TryDequeue(value class Microsoft.Extensions.Logging.Console.LogMessageEntry&)",
+          "samples": 7045,
+          "fractionOfClassSamples": 0.06336172394254724
+        },
+        {
+          "frame": "System.Threading.ManualResetEventSlim.Wait(int32,value class System.Threading.CancellationToken)",
+          "samples": 7045,
+          "fractionOfClassSamples": 0.06336172394254724
+        },
+        {
+          "frame": "[unresolved]",
+          "samples": 6998,
+          "fractionOfClassSamples": 0.06293901265435707
+        },
+        {
+          "frame": "System.Threading.Tasks.Task.InternalWaitCore(int32,value class System.Threading.CancellationToken)",
+          "samples": 68,
+          "fractionOfClassSamples": 0.0006115822892964106
+        },
+        {
+          "frame": "System.IO.Strategies.BufferedFileStreamStrategy.ReadSpan(value class System.Span`1<unsigned int8>,value class System.ArraySegment`1<unsigned int8>)",
+          "samples": 28,
+          "fractionOfClassSamples": 0.0002518280014749926
+        },
+        {
+          "frame": "System.Threading.Monitor.Enter_Slowpath(class System.Object)",
+          "samples": 20,
+          "fractionOfClassSamples": 0.00017987714391070898
+        },
+        {
+          "frame": "Interop+Crypto.CryptoNative_RsaSignHash(class System.Security.Cryptography.SafeEvpPKeyHandle,int,value class System.Security.Cryptography.RSASignaturePaddingMode,int,unsigned int8&,int32,unsigned int8&,int32)",
+          "samples": 16,
+          "fractionOfClassSamples": 0.0001439017151285672
+        },
+        {
+          "frame": "Interop+Crypto.CryptoNative_DecodePkcs8PrivateKey(unsigned int8*,int32,int32)",
+          "samples": 13,
+          "fractionOfClassSamples": 0.00011692014354196084
+        },
+        {
+          "frame": "System.Linq.Enumerable.ToArray(class System.Collections.Generic.IEnumerable`1<!!0>)",
+          "samples": 13,
+          "fractionOfClassSamples": 0.00011692014354196084
+        },
+        {
+          "frame": "System.String.Concat(class System.String,class System.String)",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "System.Security.Cryptography.SHA256.HashData(unsigned int8[])",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "System.Text.Json.JsonReaderHelper.TranscodeHelper(value class System.ReadOnlySpan`1<unsigned int8>)",
+          "samples": 6,
+          "fractionOfClassSamples": 5.39631431732127e-05
+        },
+        {
+          "frame": "System.Text.Json.JsonReaderHelper.TryDecodeBase64(value class System.ReadOnlySpan`1<unsigned int8>,unsigned int8[]&)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "System.Threading.PortableThreadPool+WorkerThread.MaybeAddWorkingWorker(class System.Threading.PortableThreadPool)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Microsoft.Extensions.Configuration.ConfigurationProvider.GetChildKeys(class System.Collections.Generic.IEnumerable`1<class System.String>,class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "System.Linq.Enumerable.<ToArray>g__EnumerableToArray|324_0(class System.Collections.Generic.IEnumerable`1<!!0>)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "System.Text.Json.WriteStack.Push()",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart()",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "Dapr.Client.DaprClientGrpc+<GetByteStateAndETagAsync>d__46.MoveNext()",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "System.Net.Sockets.SocketException.GetNativeErrorForSocketError(value class System.Net.Sockets.SocketError)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "System.Text.Json.Utf8JsonWriter..ctor(class System.IO.Stream,value class System.Text.Json.JsonWriterOptions)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "System.ReadOnlyMemory`1[System.Byte].ToArray()",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        }
+      ],
+      "firstHexalithPartition": [
+        {
+          "frame": "[no retained Hexalith frame]",
+          "samples": 111058,
+          "fractionOfClassSamples": 0.9988397924217759
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.BoundStreamReadProof.Issue(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,class System.String,class System.String,value class System.DateTimeOffset)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 28,
+          "fractionOfClassSamples": 0.0002518280014749926
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingMemo.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&,bool&)",
+          "samples": 19,
+          "fractionOfClassSamples": 0.00017088328671517353
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.TryCapture(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput&)",
+          "samples": 13,
+          "fractionOfClassSamples": 0.00011692014354196084
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&,class System.String&)",
+          "samples": 10,
+          "fractionOfClassSamples": 8.993857195535449e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<GetHeldMetadataDispatchAsync>d__27.MoveNext()",
+          "samples": 10,
+          "fractionOfClassSamples": 8.993857195535449e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.CheckDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration,class System.String)",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.WriteCanonical(class System.Text.Json.Utf8JsonWriter,value class System.Text.Json.JsonElement)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogInputs+<CaptureAsync>d__0.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.CanonicalBytes(!!0)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory+<>c.<.ctor>b__3_3(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadValidatedDocument(value class System.ReadOnlyMemory`1<unsigned int8>)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.CaptureMetadataScopes(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        }
+      ],
+      "inclusiveHexalithFrames": [
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_0+<<AddEventStoreDevelopmentDomainCatalog>b__1>d.MoveNext()",
+          "samples": 75,
+          "fractionOfClassSamples": 0.0006745392896651587
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1+<<AddEventStoreRouteCatalogObservation>b__1>d.MoveNext()",
+          "samples": 64,
+          "fractionOfClassSamples": 0.0005756068605142688
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost+<ObserveAsync>d__5.MoveNext()",
+          "samples": 64,
+          "fractionOfClassSamples": 0.0005756068605142688
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0+<<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0>d.MoveNext()",
+          "samples": 64,
+          "fractionOfClassSamples": 0.0005756068605142688
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogInputs+<CaptureAsync>d__0.MoveNext()",
+          "samples": 51,
+          "fractionOfClassSamples": 0.0004586867169723079
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendAsync>d__25.MoveNext()",
+          "samples": 47,
+          "fractionOfClassSamples": 0.0004227112881901661
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 46,
+          "fractionOfClassSamples": 0.0004137174309946307
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<SendTranslatingAsync>d__19.MoveNext()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<AcquireBoundAssertionAsync>d__34.MoveNext()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.GetHeldMetadataDispatchAsync(class System.Net.Http.HttpRequestMessage,class System.String,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<IssueAsync>d__19.MoveNext()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<SendWorkloadAsync>d__12.MoveNext()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<>c__DisplayClass12_0.<SendWorkloadAsync>b__0()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<GetHeldMetadataDispatchAsync>d__27.MoveNext()",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.SendTranslatingAsync(class System.Func`1<class System.Threading.Tasks.Task`1<class System.Net.Http.HttpResponseMessage>>,value class System.Threading.CancellationToken)",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Handlers.DaprServiceInvocationHandler.SendAsync(class System.Net.Http.HttpRequestMessage,value class System.Threading.CancellationToken)",
+          "samples": 44,
+          "fractionOfClassSamples": 0.0003957297166035598
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ValidateAsync>d__41.MoveNext()",
+          "samples": 37,
+          "fractionOfClassSamples": 0.00033277271623481164
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogActivationBinding.ComputeDigest(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation)",
+          "samples": 32,
+          "fractionOfClassSamples": 0.0002878034302571344
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingScope.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&)",
+          "samples": 32,
+          "fractionOfClassSamples": 0.0002878034302571344
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingMemo.TryCompute(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String&,bool&)",
+          "samples": 32,
+          "fractionOfClassSamples": 0.0002878034302571344
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ValidateAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics)",
+          "samples": 30,
+          "fractionOfClassSamples": 0.0002698157158660635
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<ReadWorkloadStreamAsync>d__11.MoveNext()",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient+<ReadStreamAsync>d__18.MoveNext()",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<>c__DisplayClass5_1.<ReadAsync>b__0(value class System.Threading.CancellationToken)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline+<>c__DisplayClass14_0`1[System.__Canon].<ReadAsync>b__0()",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Streams.GatewayNativeSourceMetadataReader+<>c__DisplayClass5_1+<<ReadAsync>b__0>d.MoveNext()",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.ReadStreamAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainServiceNativeSourceCredentials.IssueAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.EventStoreGatewayClient.ReadWorkloadStreamAsync(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,value class System.Threading.CancellationToken)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.Client.Gateway.BoundStreamReadProof.Issue(class Hexalith.EventStore.Contracts.Streams.StreamReadRequest,class System.String,class System.String,value class System.DateTimeOffset)",
+          "samples": 29,
+          "fractionOfClassSamples": 0.000260821858670528
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly,class System.Buffers.ArrayPool`1<unsigned int8>)",
+          "samples": 28,
+          "fractionOfClassSamples": 0.0002518280014749926
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.TechnicalHttpActionObservation.AssemblyIdentity(class System.Reflection.Assembly)",
+          "samples": 28,
+          "fractionOfClassSamples": 0.0002518280014749926
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogSidecarMetadata.Observe(class Microsoft.AspNetCore.Routing.RouteEndpoint)",
+          "samples": 28,
+          "fractionOfClassSamples": 0.0002518280014749926
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogServiceCollectionExtensions+<>c__DisplayClass0_1.<AddEventStoreRouteCatalogObservation>b__1(value class System.Threading.CancellationToken)",
+          "samples": 26,
+          "fractionOfClassSamples": 0.00023384028708392168
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog+<>c__DisplayClass1_0.<AddEventStoreDevelopmentDomainCatalog>b__1(class System.IServiceProvider,value class System.Threading.CancellationToken)",
+          "samples": 26,
+          "fractionOfClassSamples": 0.00023384028708392168
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.ObserveAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogStateCoordinates,value class System.Threading.CancellationToken)",
+          "samples": 26,
+          "fractionOfClassSamples": 0.00023384028708392168
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogBootstrap+<>c__DisplayClass0_0.<AddEventStoreDevelopmentRouteCatalogBootstrap>g__Capture|0(class System.IServiceProvider,value class System.Threading.CancellationToken)",
+          "samples": 26,
+          "fractionOfClassSamples": 0.00023384028708392168
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.RouteCatalogDomainObservation.Auxiliary(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>)",
+          "samples": 17,
+          "fractionOfClassSamples": 0.00015289557232410264
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput.TryCapture(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogBindingInput&)",
+          "samples": 13,
+          "fractionOfClassSamples": 0.00011692014354196084
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogSidecarMetadata.ObserveEndpoint(class Microsoft.AspNetCore.Routing.RouteEndpoint)",
+          "samples": 11,
+          "fractionOfClassSamples": 9.893242915088995e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.Observe()",
+          "samples": 11,
+          "fractionOfClassSamples": 9.893242915088995e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.ReadEndpoints(class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,bool)",
+          "samples": 11,
+          "fractionOfClassSamples": 9.893242915088995e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ComputeDeclarationDigest(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 10,
+          "fractionOfClassSamples": 8.993857195535449e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&,class System.String&)",
+          "samples": 10,
+          "fractionOfClassSamples": 8.993857195535449e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DevelopmentDomainRouteCatalog.Targets(class System.IServiceProvider,class System.Collections.Generic.IEnumerable`1<class Microsoft.AspNetCore.Http.Endpoint>,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration>)",
+          "samples": 9,
+          "fractionOfClassSamples": 8.094471475981904e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.ValidateDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.CheckDeclaration(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration,class System.String)",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadProfile(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String)",
+          "samples": 8,
+          "fractionOfClassSamples": 7.19508575642836e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DevelopmentRouteCatalogTrustValidator.ValidateAsync(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,class System.String,value class System.Threading.CancellationToken)",
+          "samples": 7,
+          "fractionOfClassSamples": 6.295700036874815e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireCoreAsync>d__33.MoveNext()",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.CanonicalBytes(!!0)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogHost.Identity(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHostObservation,class Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory&)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory.Snapshot(class System.Collections.Generic.IReadOnlyList`1<!!0>,class System.Func`2<!!0,class System.String>,class System.Func`2<!!0,!!0>,class System.Func`2<!!0,class System.String>,class System.Collections.Generic.Dictionary`2<!!0,class System.String>)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Hash(!!0)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory..ctor(class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogHostObservation)",
+          "samples": 5,
+          "fractionOfClassSamples": 4.4969285977677245e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot..ctor(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String,int64,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteCatalogAuxiliaryOperation>,class System.Collections.Generic.IReadOnlyList`1<class Hexalith.EventStore.Contracts.Routing.RouteCatalogProjectionCapability>,class System.String)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.CommittedRouteCatalogSnapshot..ctor(class Hexalith.EventStore.Contracts.Routing.RouteCatalogActivation,int64,class System.String,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogStateCoordinates)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<CompareExchangeAsync>d__8.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.Decode(value class System.ReadOnlyMemory`1<unsigned int8>,class System.String)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler+<SendOrdinaryAsync>d__30.MoveNext()",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ComputeOperationContractDigest(class Hexalith.EventStore.Contracts.Routing.RouteOperationContract)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.WriteCanonical(class System.Text.Json.Utf8JsonWriter,value class System.Text.Json.JsonElement)",
+          "samples": 3,
+          "fractionOfClassSamples": 2.698157158660635e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogDecodeScope.TryCapture(value class System.ReadOnlyMemory`1<unsigned int8>,unsigned int8[]&,class System.String&,bool&)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver.RefusalBoundary(class System.String,class System.String,class Microsoft.AspNetCore.Http.Endpoint,bool)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass25_0.<ReadEndpoints>b__5(class System.String)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.HistoricalMutationAuthorization+<>c.<UseHistoricalMutationAuthorization>b__2_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Authentication.FoldersHumanAuthorizationResultHandler+<HandleAsync>d__1.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacyStartupFilter+<>c__DisplayClass2_0.<Configure>b__1(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard+<AcquireCoreAsync>d__5.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard.AcquireDecisionAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.AcquireAsync(value class System.Threading.CancellationToken)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass20_0.<UseFiniteDevelopmentRouteCatalogReceiver>b__1(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions+<>c+<<UseEventStoreHttpHostSecurity>b__4_0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogFilter+<InvokeAsync>d__3.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore+<ReadAsync>d__7.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.FiniteRouteCatalogReceiver+<>c__DisplayClass20_0+<<UseFiniteDevelopmentRouteCatalogReceiver>b__1>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.AcquireCoreAsync(value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics,class Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAdmissionGate,bool)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogFilter.InvokeAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext,class Microsoft.AspNetCore.Http.EndpointFilterDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.ReadDiagnosticsPrivacyStartupFilter+<>c__DisplayClass2_0+<<Configure>b__1>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreHttpHostSecurityExtensions+<>c.<UseEventStoreHttpHostSecurity>b__4_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.HistoricalMutationAuthorization+<>c+<<UseHistoricalMutationAuthorization>b__2_0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.Authentication.FoldersHumanAuthorizationResultHandler.HandleAsync(class Microsoft.AspNetCore.Http.RequestDelegate,class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Authorization.AuthorizationPolicy,class Microsoft.AspNetCore.Authorization.Policy.PolicyAuthorizationResult)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<AcquireAsync>d__21.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority.ReadAdmissionStateAsync(value class System.Threading.CancellationToken,class Hexalith.EventStore.ServiceDefaults.Diagnostics.DispatchDiagnostics)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogAuthority+<ReadAdmissionStateAsync>d__34.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.EventStoreDomainServiceSecurityExtensions+<>c+<<UseEventStoreDomainServiceEndpointSecurity>b__4_0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.EventStoreDomainServiceSecurityExtensions+<>c.<UseEventStoreDomainServiceEndpointSecurity>b__4_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.DaprRouteCatalogStateStore.ReadAsync(value class System.Threading.CancellationToken)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.DomainService.DomainRouteCatalogGuard.AcquireCoreAsync(class Microsoft.AspNetCore.Http.EndpointFilterInvocationContext,bool)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersApiRouteTelemetry+<>c.<UseFoldersApiRouteTelemetry>b__5_0(class Microsoft.AspNetCore.Http.HttpContext,class Microsoft.AspNetCore.Http.RequestDelegate)",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.Folders.Server.FoldersApiRouteTelemetry+<>c+<<UseFoldersApiRouteTelemetry>b__5_0>d.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Authentication.JwtWorkloadAssertionIssuer+<GetAuthorityMetadataAsync>d__28.MoveNext()",
+          "samples": 2,
+          "fractionOfClassSamples": 1.79877143910709e-05
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.ObservedRouteCatalogInventory+<>c.<.ctor>b__3_3(class Hexalith.EventStore.Contracts.Routing.RouteContractDeclaration)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ReadValidatedDocument(value class System.ReadOnlyMemory`1<unsigned int8>)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        },
+        {
+          "frame": "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogRemoteCall.CaptureMetadataScopes(class System.Object)",
+          "samples": 1,
+          "fractionOfClassSamples": 8.99385719553545e-06
+        }
+      ],
+      "inclusiveIsOverlappingNotAdditive": true
+    },
+    "Error": {
+      "classSamples": 0,
+      "leafPartition": [],
+      "firstHexalithPartition": [],
+      "inclusiveHexalithFrames": [],
+      "inclusiveIsOverlappingNotAdditive": true
+    },
+    "Unknown": {
+      "classSamples": 0,
+      "leafPartition": [],
+      "firstHexalithPartition": [],
+      "inclusiveHexalithFrames": [],
+      "inclusiveIsOverlappingNotAdditive": true
+    }
+  },
+  "externalHeuristicPartitions": [
+    {
+      "category": "recognized-managed-wait-api-visible",
+      "samples": 89896,
+      "fractionOfExternalSamples": 0.8085117864498548
+    },
+    {
+      "category": "other-external-unclassified",
+      "samples": 7115,
+      "fractionOfExternalSamples": 0.06399129394623472
+    },
+    {
+      "category": "file-or-os-read-api-visible-native-work-or-wait",
+      "samples": 7108,
+      "fractionOfExternalSamples": 0.06392833694586597
+    },
+    {
+      "category": "network-api-visible-native-work-or-wait",
+      "samples": 7031,
+      "fractionOfExternalSamples": 0.06323580994180975
+    },
+    {
+      "category": "crypto-api-visible-native-work-or-transition",
+      "samples": 37,
+      "fractionOfExternalSamples": 0.00033277271623481164
+    }
+  ],
+  "externalClassificationIsNotBlockedTimeOrNativeCpuAccounting": true,
+  "suspendRestartByReason": {
+    "SuspendForGC": {
+      "pairedCount": 5,
+      "sumWallMilliseconds": 2.1873219999994262,
+      "unionWallMilliseconds": 2.1873219999997673,
+      "medianWallMilliseconds": 0.5899509999999282,
+      "maximumWallMilliseconds": 0.674525000000358
+    },
+    "SuspendForGCPrep": {
+      "pairedCount": 10,
+      "sumWallMilliseconds": 20.166457999999523,
+      "unionWallMilliseconds": 20.166457999999693,
+      "medianWallMilliseconds": 1.9736605000000509,
+      "maximumWallMilliseconds": 3.114466999999422
+    },
+    "SuspendOther": {
+      "pairedCount": 7043,
+      "sumWallMilliseconds": 355.43886899999825,
+      "unionWallMilliseconds": 355.4388689999987,
+      "medianWallMilliseconds": 0.03435699999999997,
+      "maximumWallMilliseconds": 4.271567000000232
+    }
+  },
+  "gcStartStopCollectionCycles": {
+    "pairedCount": 15,
+    "sumWallMilliseconds": 251.09282099999922,
+    "unionWallMilliseconds": 243.79590799999914,
+    "medianWallMilliseconds": 17.270998999999847,
+    "maximumWallMilliseconds": 31.264078000000154,
+    "collectionTypeNotRetained": "Cycles can include background/concurrent collections; these are not stop-the-world pause or CPU durations."
+  },
+  "limits": [
+    "Managed means cooperative GC mode at sampling; runtime source explicitly treats that as an approximation to managed execution.",
+    "External means preemptive mode, and can include waiting, native computation and transitions. No external fraction is called blocked fraction or exact native CPU.",
+    "Only runtime-known managed threads with nonempty walked stacks contribute; native-only threads need not be represented.",
+    "Sampling suspends managed execution itself, skips sampling during other suspensions and has nominal1ms sleep plus work; sample counts are not exact CPU milliseconds.",
+    "Managed Thread.PollGC leaf samples can reflect safepoint/sampling bias. Current counts are retained in the leaf partition; leaf and first-Hexalith/inclusive views remain separate.",
+    "SuspendOther includes sampler-induced suspensions and is distinct from GC-related reasons.",
+    "Suspend start overwrites and unpaired restart counts are retained in the source summary. Paired intervals are observed wall intervals, not complete precise GC pause accounting.",
+    "GCStart\u2192GCStop collection-cycle wall intervals may include background/concurrent collection; they are separate from SuspendEE\u2192RestartEE suspension wall intervals.",
+    "Inclusive frame sample totals overlap and must not be summed as a disjoint CPU partition.",
+    "Frames marked unresolved remain fixed labels; no source/module paths, IPs, object addresses or payload are emitted."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "sources": [
+    {
+      "name": "runtime sampler",
+      "revision": "60629d14374c56f1cb51819049ad1fa529307f8d",
+      "path": "src/native/eventpipe/ep-sample-profiler.c",
+      "url": "https://github.com/dotnet/runtime/blob/60629d14374c56f1cb51819049ad1fa529307f8d/src/native/eventpipe/ep-sample-profiler.c"
+    },
+    {
+      "name": "runtime adaptation",
+      "revision": "60629d14374c56f1cb51819049ad1fa529307f8d",
+      "path": "src/coreclr/vm/eventing/eventpipe/ep-rt-coreclr.cpp",
+      "url": "https://github.com/dotnet/runtime/blob/60629d14374c56f1cb51819049ad1fa529307f8d/src/coreclr/vm/eventing/eventpipe/ep-rt-coreclr.cpp"
+    },
+    {
+      "name": "reader parser",
+      "revision": "4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee",
+      "path": "src/TraceEvent/EventPipe/SampleProfilerTraceEventParser.cs",
+      "url": "https://github.com/microsoft/perfview/blob/4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee/src/TraceEvent/EventPipe/SampleProfilerTraceEventParser.cs"
+    },
+    {
+      "name": "reader interpretation",
+      "revision": "4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee",
+      "path": "src/TraceEvent/Computers/SampleProfilerThreadTimeComputer.cs",
+      "url": "https://github.com/microsoft/perfview/blob/4b14fe0c8c6101cb3c1c6bfed2e317a9d29f68ee/src/TraceEvent/Computers/SampleProfilerThreadTimeComputer.cs"
+    }
+  ],
+  "runtimeSourceIsNet10BaseContract": "Installed patch behavior is interpreted with actual sample classifications/coverage. No exact CPU interpretation follows from nominal interval.",
+  "toolReusedWithoutNewCompile": true,
+  "debugToolSha256": "7bbaef3570c82e5797d633c2f24e5333b21f0098ffbf7ac6bac448e70911ef9b",
+  "providers": [
+    {
+      "name": "Microsoft-DotNETCore-SampleProfiler",
+      "keywords": 0,
+      "level": "Informational4"
+    },
+    {
+      "name": "Microsoft-Windows-DotNETRuntime",
+      "keywords": "0x1",
+      "level": "Informational4"
+    }
+  ],
+  "requestStackwalk": true,
+  "requestRundown": true,
+  "collectionDurationSeconds": 8,
+  "runtimeBufferMiB": 64,
+  "hardFileLimitMiB": 256,
+  "stopBeforeLimitMiB": 224,
+  "additionalApplicationNetworkBodyProviders": false,
+  "heapDumpOrForcedGc": false
+}

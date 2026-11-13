@@ -1,0 +1,73 @@
+{
+  "preparationOnly": true,
+  "cases": [
+    {
+      "name": "valid-schema3-origin",
+      "slow": false
+    },
+    {
+      "name": "valid-no-origin",
+      "slow": false
+    },
+    {
+      "name": "initial-guard-forbid",
+      "slow": false
+    },
+    {
+      "name": "signature-forbid",
+      "slow": false
+    },
+    {
+      "name": "origin-forbid",
+      "slow": false
+    },
+    {
+      "name": "acquire-throw",
+      "slow": false
+    },
+    {
+      "name": "admission-forbid",
+      "slow": false
+    },
+    {
+      "name": "mediator-throw-with-prior-marker",
+      "slow": false
+    },
+    {
+      "name": "mediator-cancel",
+      "slow": false
+    },
+    {
+      "name": "response-header-throw",
+      "slow": false
+    },
+    {
+      "name": "release-throw",
+      "slow": false
+    },
+    {
+      "name": "prior-marker-success",
+      "slow": false
+    },
+    {
+      "name": "delayed-release",
+      "slow": true
+    },
+    {
+      "name": "caller-cancel-during-release",
+      "slow": true
+    },
+    {
+      "name": "uncooperative-acquire-cancel",
+      "slow": true
+    }
+  ],
+  "caseCount": 15,
+  "fastCount": 12,
+  "slowCount": 3,
+  "allActionsEligible": true,
+  "totalBehavioralComparisons": 60,
+  "freshCanaries": 3,
+  "controlledProcesses": 19,
+  "sourceSha256": "835b556fe1eecfb657305bb1c64b0f962e3527926a3476e1aa282fa926d3c4d6"
+}

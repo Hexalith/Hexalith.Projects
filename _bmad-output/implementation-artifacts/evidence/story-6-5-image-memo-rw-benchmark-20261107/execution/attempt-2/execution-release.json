@@ -1,0 +1,40 @@
+{
+  "releasedUtc": "2026-11-07T20:34:17.465151+00:00",
+  "preparationSha256": "ff43de5c3ecd8faa1583faa6f384f298fa397d08ed02d754fd84ec091eca24a2",
+  "rootAndIndependentReaderAllSourceAndInputPinsVerified": true,
+  "allowStandaloneRestoreBuildLoadBenchmark": true,
+  "originalDisabledPreparationPreserved": true,
+  "productionAppBuildNativeTestsHostsProfilesOrSourceEditsAuthorized": false,
+  "commands": [
+    [
+      "dotnet",
+      "restore",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configfile",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/NuGet.Config",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/ImageMemoBenchmark.csproj",
+      "--configuration",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-nodeReuse:false",
+      "-p:UseSharedCompilation=false",
+      "-p:NuGetAudit=false"
+    ],
+    [
+      "dotnet",
+      "/tmp/story65-image-memo-rw-prep-20261107/harness/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "all",
+      "/tmp/story65-image-memo-rw-results-retry-20261107"
+    ]
+  ],
+  "runtimeWallBoundSeconds": 300,
+  "noAutomaticFixOrRetry": true,
+  "supervisorPid": 1376547,
+  "supervisorStartTicks": "12126041"
+}

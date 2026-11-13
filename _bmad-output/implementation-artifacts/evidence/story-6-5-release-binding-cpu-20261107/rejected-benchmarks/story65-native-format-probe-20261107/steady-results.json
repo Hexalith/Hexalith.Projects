@@ -1,0 +1,886 @@
+{
+  "oracle": {
+    "FullName": "Hexalith.EventStore.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "location": "/tmp/story65-native-format-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+    "sha256": "cdeebc16220ea2a5a9df16f275e55611fafeb2624ec0cdd3e0b002ba1e77fd5b",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "candidate": {
+    "FullName": "Hexalith.EventStore.Server.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "location": "/tmp/story65-native-format-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "sha256": "89179d9f2a1cbcb72553556e4201cfe713b72729072883466bfd427fb7eabb63",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "serverGc": true,
+  "noHostStarted": true,
+  "parityChecks": 18,
+  "endpointCount": 6,
+  "actorCount": 12,
+  "interfaceMethodCount": 108,
+  "uniqueMethodRefs": 108,
+  "freshGetMethodsStableReferences": true,
+  "actorIdentityChars": 16887,
+  "actorIdentitySha256": "7e30db879f0e723b40b655755ac86119bf05799709613b6f28e8fd93c761afaa",
+  "actors": [
+    {
+      "ActorTypeName": "AggregateActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.AggregateActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IAggregateActor",
+        "Hexalith.EventStore.Server.Actors.IIdempotencyLegacySourceActor"
+      ]
+    },
+    {
+      "ActorTypeName": "CoordinatedCommandActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.CoordinatedCommandActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.ICoordinatedCommandActor"
+      ]
+    },
+    {
+      "ActorTypeName": "IdempotencyAdmissionActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.IdempotencyAdmissionActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IIdempotencyAdmissionActor"
+      ]
+    },
+    {
+      "ActorTypeName": "IdempotencyAdmissionDirectoryActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.IdempotencyAdmissionDirectoryActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IIdempotencyAdmissionDirectoryActor",
+        "Hexalith.EventStore.Server.Actors.IIdempotencyAdmissionDirectoryInspectionActor"
+      ]
+    },
+    {
+      "ActorTypeName": "IdempotencyTenantLifecycleActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.IdempotencyTenantLifecycleActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IIdempotencyTenantLifecycleActor",
+        "Hexalith.EventStore.Server.Actors.IIdempotencyTenantLifecycleMigrationActor"
+      ]
+    },
+    {
+      "ActorTypeName": "IdempotencyLegacyInventoryActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.IdempotencyLegacyInventoryActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IIdempotencyLegacyInventoryActor"
+      ]
+    },
+    {
+      "ActorTypeName": "IdentityActorRegistryActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.IdentityActorRegistryActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IIdentityActorRegistryActor"
+      ]
+    },
+    {
+      "ActorTypeName": "ETagActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.ETagActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IETagActor"
+      ]
+    },
+    {
+      "ActorTypeName": "GlobalPositionActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.GlobalPositionActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IGlobalPositionActor"
+      ]
+    },
+    {
+      "ActorTypeName": "ProjectionActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.EventReplayProjectionActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IDaprProjectionActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionWriteActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionRebuildWriteActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionRebuildInspectionActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionReplayPublicationActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionBoundReplayCompletionActor"
+      ]
+    },
+    {
+      "ActorTypeName": "ProjectionLifecycleActor",
+      "implementation": "Hexalith.EventStore.Server.Actors.ProjectionLifecycleActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Actors.IProjectionLifecycleActor",
+        "Hexalith.EventStore.Server.Actors.IProjectionDeliveryLeaseActor"
+      ]
+    },
+    {
+      "ActorTypeName": "SharedProjectionSourceRosterActor",
+      "implementation": "Hexalith.EventStore.Server.Projections.SharedProjectionSourceRosterActor",
+      "interfaces": [
+        "Hexalith.EventStore.Server.Projections.ISharedProjectionSourceRosterActor"
+      ]
+    }
+  ],
+  "observesPerPass": 18,
+  "completeFreshImages": 4,
+  "firstTimedAfterParity": [
+    {
+      "variant": "compiled-baseline",
+      "elapsedMs": 4.0548,
+      "allocatedBytes": 2388096,
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "variant": "copied-baseline",
+      "elapsedMs": 2.3425,
+      "allocatedBytes": 2391040,
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "variant": "bounded-join",
+      "elapsedMs": 1.4951,
+      "allocatedBytes": 1893600,
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    }
+  ],
+  "rows": [
+    {
+      "sample": 0,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.263134375,
+      "cpuMsPerPass": 2.3701354166666664,
+      "allocatedBytesPerPass": 2388113,
+      "totalAllocatedBytes": 229258920,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 0,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.4516145833333334,
+      "cpuMsPerPass": 2.4994166666666664,
+      "allocatedBytesPerPass": 2391034,
+      "totalAllocatedBytes": 229539312,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 0,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.2798979166666666,
+      "cpuMsPerPass": 2.311104166666667,
+      "allocatedBytesPerPass": 1896829,
+      "totalAllocatedBytes": 182095616,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 1,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.1513927083333333,
+      "cpuMsPerPass": 2.2156354166666667,
+      "allocatedBytesPerPass": 2391034,
+      "totalAllocatedBytes": 229539280,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 1,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.099307291666667,
+      "cpuMsPerPass": 2.893041666666667,
+      "allocatedBytesPerPass": 1896829,
+      "totalAllocatedBytes": 182095616,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 1,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.748640625,
+      "cpuMsPerPass": 2.3020104166666666,
+      "allocatedBytesPerPass": 2388154,
+      "totalAllocatedBytes": 229262800,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 2,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5838510416666667,
+      "cpuMsPerPass": 1.9385833333333335,
+      "allocatedBytesPerPass": 1896772,
+      "totalAllocatedBytes": 182090112,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 2,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5716854166666667,
+      "cpuMsPerPass": 1.61925,
+      "allocatedBytesPerPass": 2387905,
+      "totalAllocatedBytes": 229238968,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 2,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.690178125,
+      "cpuMsPerPass": 1.9110416666666667,
+      "allocatedBytesPerPass": 2390744,
+      "totalAllocatedBytes": 229511504,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 3,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5835406250000001,
+      "cpuMsPerPass": 1.7619791666666667,
+      "allocatedBytesPerPass": 2387905,
+      "totalAllocatedBytes": 229238968,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 3,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5515083333333333,
+      "cpuMsPerPass": 1.5441666666666667,
+      "allocatedBytesPerPass": 2390744,
+      "totalAllocatedBytes": 229511504,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 3,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.7148062499999999,
+      "cpuMsPerPass": 1.4459895833333334,
+      "allocatedBytesPerPass": 1896645,
+      "totalAllocatedBytes": 182077960,
+      "gcDelta": [
+        70,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 4,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.7078239583333332,
+      "cpuMsPerPass": 1.672375,
+      "allocatedBytesPerPass": 2390768,
+      "totalAllocatedBytes": 229513736,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 4,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5667541666666667,
+      "cpuMsPerPass": 1.5493645833333334,
+      "allocatedBytesPerPass": 1896645,
+      "totalAllocatedBytes": 182077960,
+      "gcDelta": [
+        70,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 4,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.7484822916666667,
+      "cpuMsPerPass": 1.58903125,
+      "allocatedBytesPerPass": 2387888,
+      "totalAllocatedBytes": 229237256,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 5,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4150291666666668,
+      "cpuMsPerPass": 1.4346666666666668,
+      "allocatedBytesPerPass": 1896645,
+      "totalAllocatedBytes": 182077960,
+      "gcDelta": [
+        70,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 5,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4754854166666667,
+      "cpuMsPerPass": 1.47078125,
+      "allocatedBytesPerPass": 2387888,
+      "totalAllocatedBytes": 229237256,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 5,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5029364583333333,
+      "cpuMsPerPass": 1.48915625,
+      "allocatedBytesPerPass": 2390801,
+      "totalAllocatedBytes": 229516936,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 6,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4734145833333334,
+      "cpuMsPerPass": 1.4719270833333333,
+      "allocatedBytesPerPass": 2387929,
+      "totalAllocatedBytes": 229241200,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 6,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.6247718750000002,
+      "cpuMsPerPass": 1.5799062499999998,
+      "allocatedBytesPerPass": 2390768,
+      "totalAllocatedBytes": 229513736,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 6,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4555760416666665,
+      "cpuMsPerPass": 1.4549270833333334,
+      "allocatedBytesPerPass": 1896645,
+      "totalAllocatedBytes": 182077960,
+      "gcDelta": [
+        70,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 7,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.6226385416666667,
+      "cpuMsPerPass": 1.56309375,
+      "allocatedBytesPerPass": 2390768,
+      "totalAllocatedBytes": 229513736,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 7,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.0265583333333335,
+      "cpuMsPerPass": 1.7184166666666665,
+      "allocatedBytesPerPass": 1896645,
+      "totalAllocatedBytes": 182077960,
+      "gcDelta": [
+        70,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 7,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.162715625,
+      "cpuMsPerPass": 1.9329166666666666,
+      "allocatedBytesPerPass": 2387888,
+      "totalAllocatedBytes": 229237256,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 8,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 2.124535416666667,
+      "cpuMsPerPass": 1.9808645833333334,
+      "allocatedBytesPerPass": 1896604,
+      "totalAllocatedBytes": 182074016,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 8,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.6482354166666668,
+      "cpuMsPerPass": 1.6015833333333334,
+      "allocatedBytesPerPass": 2387921,
+      "totalAllocatedBytes": 229240456,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 8,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.6100239583333333,
+      "cpuMsPerPass": 1.5675208333333333,
+      "allocatedBytesPerPass": 2390806,
+      "totalAllocatedBytes": 229517392,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 9,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5854947916666668,
+      "cpuMsPerPass": 1.5727916666666666,
+      "allocatedBytesPerPass": 2387891,
+      "totalAllocatedBytes": 229237544,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 9,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.54305625,
+      "cpuMsPerPass": 1.5358124999999998,
+      "allocatedBytesPerPass": 2390801,
+      "totalAllocatedBytes": 229516936,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 9,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4799906250000001,
+      "cpuMsPerPass": 1.4769375,
+      "allocatedBytesPerPass": 1896612,
+      "totalAllocatedBytes": 182074760,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 10,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.5807697916666665,
+      "cpuMsPerPass": 1.5523020833333332,
+      "allocatedBytesPerPass": 2390801,
+      "totalAllocatedBytes": 229516936,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 10,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.473696875,
+      "cpuMsPerPass": 1.4153020833333334,
+      "allocatedBytesPerPass": 1896612,
+      "totalAllocatedBytes": 182074760,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 10,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.64626875,
+      "cpuMsPerPass": 1.5292083333333333,
+      "allocatedBytesPerPass": 2387929,
+      "totalAllocatedBytes": 229241200,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 11,
+      "variant": "bounded-join",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.4754729166666667,
+      "cpuMsPerPass": 1.4693229166666668,
+      "allocatedBytesPerPass": 1896635,
+      "totalAllocatedBytes": 182076992,
+      "gcDelta": [
+        69,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 204,
+        "methodMisses": 12,
+        "retainedFormattingBytes": 71032
+      }
+    },
+    {
+      "sample": 11,
+      "variant": "compiled-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.7495760416666668,
+      "cpuMsPerPass": 1.5846145833333332,
+      "allocatedBytesPerPass": 2387960,
+      "totalAllocatedBytes": 229244176,
+      "gcDelta": [
+        88,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    },
+    {
+      "sample": 11,
+      "variant": "copied-baseline",
+      "iterations": 96,
+      "elapsedMsPerPass": 1.6821854166666668,
+      "cpuMsPerPass": 1.6285729166666665,
+      "allocatedBytesPerPass": 2390806,
+      "totalAllocatedBytes": 229517456,
+      "gcDelta": [
+        87,
+        0,
+        0
+      ],
+      "details": {
+        "imageHits": 8,
+        "methodHits": 0,
+        "methodMisses": 0,
+        "retainedFormattingBytes": 0
+      }
+    }
+  ]
+}

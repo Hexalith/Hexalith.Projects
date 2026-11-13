@@ -1,0 +1,24 @@
+<Project>
+  <!-- Qualification only: these are project-local properties, never CLI-global output paths. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Gateway'">
+    <BaseOutputPath>/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/</BaseOutputPath>
+    <OutputPath>/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/bin/Debug/net10.0/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <BaseIntermediateOutputPath>/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/obj/Debug/net10.0/</IntermediateOutputPath>
+    <!-- Keep the already-restored NuGet extensions/imports in the ordinary project, read-only. -->
+    <ProjectAssetsFile>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/obj/project.assets.json</ProjectAssetsFile>
+    <ProjectAssetsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.assets.cache</ProjectAssetsCacheFile>
+    <DocumentationFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.xml</DocumentationFile>
+    <GeneratedAssemblyInfoFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <GeneratedGlobalUsingsFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.GlobalUsings.g.cs</GeneratedGlobalUsingsFile>
+    <GeneratedMSBuildEditorConfigFile>$(IntermediateOutputPath)Hexalith.EventStore.Gateway.GeneratedMSBuildEditorConfig.editorconfig</GeneratedMSBuildEditorConfigFile>
+    <CompilerGeneratedFilesOutputPath>$(IntermediateOutputPath)generated/</CompilerGeneratedFilesOutputPath>
+    <ProjectDepsFilePath>$(OutputPath)Hexalith.EventStore.Gateway.deps.json</ProjectDepsFilePath>
+    <ProjectRuntimeConfigFilePath>$(OutputPath)Hexalith.EventStore.Gateway.runtimeconfig.json</ProjectRuntimeConfigFilePath>
+    <PublishDir>/tmp/story65-gateway-controller-ops-prep-20261107/isolated-gateway/publish/</PublishDir>
+  </PropertyGroup>
+  <Import Project="/tmp/story65-gateway-controller-ops-prep-20261107/gateway-source.targets" />
+</Project>

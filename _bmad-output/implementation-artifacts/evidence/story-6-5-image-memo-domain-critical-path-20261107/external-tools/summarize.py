@@ -1,0 +1,35 @@
+from pathlib import Path
+import json,collections,statistics
+RUN=Path('/tmp/story65-owner-domain-diagnostic-20261107');OVERLAY=Path('/tmp/story65-owner-domain-overlay-20261107');PACKET=Path('/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-image-memo-domain-critical-path-20261107')
+spans=json.loads((RUN/'paired-spans.json').read_text());analysis=json.loads((RUN/'timing-analysis.json').read_text());run=json.loads((RUN/'managed/run.json').read_text());aggregates=[]
+for f in OVERLAY.glob('*.jsonl'):
+ aggregates.extend(r for r in (json.loads(line) for line in f.read_text().splitlines()) if r['state']=='aggregate')
+byid={(s['component'],s['pid'],s['ordinal']):s for s in spans};bypid={r['pid']:name for name,r in run['runtimeModes'].items()};roots=[s for s in spans if s['stage']=='advisory.root']
+def view(s,origin=0):return {**s,'startMs':(s['startTicks']-origin)*1000/s['frequency'],'endMs':(s['endTicks']-origin)*1000/s['frequency']}
+def aggregate_view(a,origin=0):return {'component':a['component'],'pid':a['pid'],'stage':a['stage'],'parent':a['parent'],'count':a['count'],'elapsedMs':a['elapsedTicks']*1000/a['frequency'],'units':a.get('units',0),'minUnits':a.get('minUnits',0),'maxUnits':a.get('maxUnits',0),'firstMs':(a['firstTicks']-origin)*1000/a['frequency'],'lastMs':(a['lastTicks']-origin)*1000/a['frequency']}
+def for_parent(s):return [a for a in aggregates if a['component']==s['component'] and a['pid']==s['pid'] and a['parent']==s['ordinal']]
+processStats=[]
+for pid,name in sorted(bypid.items()):
+ rows=[r for r in aggregates if r['pid']==pid];groups=collections.defaultdict(list)
+ for r in rows:groups[r['stage']].append(r)
+ summary={stage:{'calls':sum(r['count'] for r in group),'elapsedMs':sum(r['elapsedTicks']*1000/r['frequency'] for r in group),'units':sum(r.get('units',0) for r in group),'minUnits':min(r.get('minUnits',0) for r in group),'maxUnits':max(r.get('maxUnits',0) for r in group)} for stage,group in groups.items()}
+ for prefix in ['image.memo','binding.memo']:
+  count=lambda suffix:summary.get(prefix+'.'+suffix,{}).get('calls',0)
+  if count('calls'):assert count('calls')==count('hit')+count('miss')+count('reject')
+ processStats.append({'runtimeRole':name,'pid':pid,'aggregates':summary})
+rootPaths=[];completed=[]
+for number,root in enumerate(roots,1):
+ calls=[s for s in spans if s['stage']=='owner.client' and root['startTicks']<=s['startTicks']<root['endTicks']];details=[]
+ for call in calls:
+  done=call['endTicks']<=root['endTicks']
+  if done:completed.append(call['elapsedMs'])
+  scoped=[s for s in spans if call['startTicks']<=s['startTicks']<=s['endTicks']<=call['endTicks'] and (call['traceId'] is None or s['traceId']==call['traceId'])]
+  coarse={'gateway.owner','gateway.invoker','gateway.owner-send','folders.owner','folders.authorize-first','folders.authorize-final','gateway.native-stream','gateway.actor-pair-await','catalog.acquire','catalog.admission-wait','catalog.validate','catalog.native-revalidate','catalog.held-metadata','host.capture','technical.observe','finite.observe','domain.capture','domain.targets','domain.implementations'}
+  captures=[s for s in scoped if s['stage']=='domain.capture'];captureRows=[]
+  for capture in captures:
+   own=[s for s in scoped if s['component']==capture['component'] and s['pid']==capture['pid'] and s['parent']==capture['ordinal']]
+   captureRows.append({'capture':view(capture,root['startTicks']),'directChildren':[view(s,root['startTicks']) for s in own],'directAggregates':[aggregate_view(a,root['startTicks']) for a in for_parent(capture)]})
+  details.append({'ownerClient':view(call,root['startTicks']),'endsWithinAdvisoryRoot':done,'capturedCoarsePath':[view(s,root['startTicks']) for s in scoped if s['stage'] in coarse],'domainCaptures':captureRows})
+ rootPaths.append({'number':number,'advisory':view(root,root['startTicks']),'ownerCalls':details})
+summary={'diagnosticOnly':True,'featureAcceptance':False,'completedNativeBrowserCases':0,'nativeXmlEmitted':False,'coverage':analysis['coverage'],'runtimeProcesses':bypid,'completedOwnerCalls':len(completed),'completedOwnerMedianMs':statistics.median(completed),'ownerCallsCrossingAdvisoryEnd':sum(not d['endsWithinAdvisoryRoot'] for r in rootPaths for d in r['ownerCalls']),'collectionPopulationMemoAndDomainCounters':processStats,'stagePopulationSummary':analysis['stagePopulationSummary'],'advisoryCriticalPaths':rootPaths,'findings':['Actual technical image memo participation is confirmed by authority scope-present/host-memo counters and exclusive per-TryCompute hit/miss/reject outcomes. Every recorded image memo and binding memo TryCompute is a hit.','Folders Domain capture hashes67 distinct executable images per capture and Projects hashes66. Direct fresh ReadExecutableDigest stream hashes dominate those observed captures; this work is outside TechnicalHttpActionObservation image memo. Targets, installed implementation enumeration, finite surface and configuration are separately timed.','Current short admission waits are small compared with the remaining fresh host capture cost. Each of the three genuine advisory roots completes three owner calls and starts a fourth that crosses the root end.'],'limits':['Timing instrumentation is diagnostic overhead and does not establish ordinary performance acceptance or a predicted optimization saving.','Memo/core counters aggregate only while an instrumented coarse parent is active. Work before any instrumented parent is not counted. Absence of a memo event is not equated with memo ineligibility. Core calls outside an owned memo scope remain distinct from TryCompute rejection.','Counter populations include all gated activity, including concurrent background work. Per-owner paths use the exact individual interval plus existing Activity trace, and retain local assembly parents. Inclusive or concurrent stage durations must not be added as a sequential critical path.','Domain executable timing combines fresh file opening/stream reads and SHA computation. The profile does not separate their individual cost. Read/hash aggregate intervals within one capture are sequential; cross-capture work may overlap.','Actual actor bodies are intentionally not overlaid in this run; prior actor-body evidence remains historical. Current pair-await spans include receiver authority and transport wrapping and are not called pure actor/network RTT.','All original business observations, order, deadlines, request fields, cancellation, lease/replay behavior and policies remain unchanged.','The three ordinary Server consumer copies have changed SHA after private graph build but contain no private timing marker; see untouched-sdk-binary-audit.json. This is not an ordinary binary restoration claim.']}
+(PACKET/'critical-path-and-memo-analysis.json').write_text(json.dumps(summary,indent=2)+'\n');print('retained 3 exact root paths,9 complete/3 crossing, metadata memo count equations verified')

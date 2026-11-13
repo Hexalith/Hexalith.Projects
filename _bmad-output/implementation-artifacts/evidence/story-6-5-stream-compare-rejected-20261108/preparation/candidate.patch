@@ -1,0 +1,113 @@
+--- current-rwl-control/RouteCatalogImageDigestMemo.cs
++++ short-chunk-token/RouteCatalogImageDigestMemo.cs
+@@ -11,7 +11,7 @@
+     internal const int MaximumImageBytes = 16 * 1024 * 1024;
+     private const int MaximumRetainedBytes = 64 * 1024 * 1024;
+     private readonly ReaderWriterLockSlim _gate = new(LockRecursionPolicy.NoRecursion);
+-    private readonly Dictionary<Assembly, (byte[] Bytes, string Digest)> _images = new(ReferenceEqualityComparer.Instance);
++    private readonly Dictionary<Assembly, (byte[] Bytes, string Digest, object Version)> _images = new(ReferenceEqualityComparer.Instance);
+     private int _retainedBytes;
+     private bool _closed;
+ 
+@@ -65,11 +65,41 @@
+             // Hash the retained private copy, never a buffer returned later to the image pool.
+             byte[] owned = current.ToArray();
+             digest = Convert.ToHexStringLower(SHA256.HashData(owned));
+-            _images[assembly] = (owned, digest);
++            _images[assembly] = (owned, digest, new object());
+             _retainedBytes += chargedBytes - replacedBytes;
+             return true;
+         }
+         finally { _gate.ExitWriteLock(); }
++    }
++
++    // Token never retains bytes/entry/assembly; every chunk is compared under short protection.
++    internal bool TryMatchNativeChunk(Assembly assembly, ReadOnlySpan<byte> current, int offset, ref object? version)
++    {
++        _gate.EnterReadLock();
++        try
++        {
++            if (_closed || !_images.TryGetValue(assembly, out var entry)
++                || version is not null && !ReferenceEquals(version, entry.Version)
++                || offset < 0 || offset > entry.Bytes.Length - current.Length
++                || !current.SequenceEqual(entry.Bytes.AsSpan(offset, current.Length))) return false;
++            version = entry.Version;
++            return true;
++        }
++        finally { _gate.ExitReadLock(); }
++    }
++
++    internal bool TryCompleteNativeMatch(Assembly assembly, object version, int count, out string digest)
++    {
++        digest = string.Empty;
++        _gate.EnterReadLock();
++        try
++        {
++            if (_closed || !_images.TryGetValue(assembly, out var entry)
++                || !ReferenceEquals(version, entry.Version) || entry.Bytes.Length != count) return false;
++            digest = entry.Digest;
++            return true;
++        }
++        finally { _gate.ExitReadLock(); }
+     }
+ 
+     /// <summary>Clears only deterministic input storage; every future call uses the ordinary hash path.</summary>
+--- current-rwl-control/RouteCatalogImageDigestScope.cs
++++ short-chunk-token/RouteCatalogImageDigestScope.cs
+@@ -55,6 +55,22 @@
+         }
+     }
+ 
++    internal bool TryMatchNativeChunk(Assembly assembly, ReadOnlySpan<byte> current, int offset, ref object? version)
++    {
++        lock (_gate) return !_closed && _memo.TryMatchNativeChunk(assembly, current, offset, ref version);
++    }
++
++    internal bool TryCompleteNativeMatch(Assembly assembly, object version, int count, out string digest)
++    {
++        lock (_gate)
++        {
++            digest = string.Empty;
++            if (_closed || !_memo.TryCompleteNativeMatch(assembly, version, count, out digest)) return false;
++            CacheHits++;
++            return true;
++        }
++    }
++
+     /// <summary>Closes all flowed participation and releases scope-owned bytes without retaining authority results.</summary>
+     public void Dispose()
+     {
+--- current-rwl-control/RouteCatalogFreshStreamImageDigest.cs
++++ short-chunk-token/RouteCatalogFreshStreamImageDigest.cs
+@@ -25,12 +25,16 @@
+         {
+             bytes = buffers.Rent(requested);
+             int count = 0;
++            bool nativeMatch = image.GetType() == typeof(FileStream);
++            object? version = null;
+             while (true)
+             {
+                 int limit = Math.Min(bytes.Length, RouteCatalogImageDigestMemo.MaximumImageBytes);
+                 if (count == limit)
+                 {
+                     // A full allocation is never proof of EOF. Consume the next original byte before growing or falling back.
++                    // Keep the original full-capacity ReadByte/growth path, without a fast-match claim.
++                    nativeMatch = false;
+                     int next = image.ReadByte();
+                     if (next < 0) return Complete(scope, assembly, bytes.AsSpan(0, count));
+                     if (limit == RouteCatalogImageDigestMemo.MaximumImageBytes)
+@@ -43,7 +47,13 @@
+                 }
+                 int read = image.Read(bytes.AsSpan(count, Math.Min(ReadChunkBytes,
+                     Math.Min(bytes.Length, RouteCatalogImageDigestMemo.MaximumImageBytes) - count)));
+-                if (read == 0) return Complete(scope, assembly, bytes.AsSpan(0, count));
++                if (read == 0)
++                {
++                    if (nativeMatch && version is not null
++                        && scope.TryCompleteNativeMatch(assembly, version, count, out string matched)) return matched;
++                    return Complete(scope, assembly, bytes.AsSpan(0, count));
++                }
++                if (nativeMatch) nativeMatch = scope.TryMatchNativeChunk(assembly, bytes.AsSpan(count, read), count, ref version);
+                 count += read;
+             }
+         }

@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)" Condition="'$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)' != '' and Exists('$(HexalithOriginalCustomBeforeMicrosoftCommonTargets)')" />
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+    <Story65TerminalOriginalAfterSdk>$(AfterMicrosoftNETSdkTargets)</Story65TerminalOriginalAfterSdk>
+    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-advisory-terminal-live-prep-20261108/advisory-compiler-observer.targets</AfterMicrosoftNETSdkTargets>
+  </PropertyGroup>
+  <Target Name="Story65AdvisoryTerminalSource" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server' and '$(Story65TerminalPrivate)' == 'true'">
+    <ItemGroup><_TerminalOriginal Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs'" /></ItemGroup>
+    <Error Condition="'@(_TerminalOriginal->Count())' != '1'" Text="Exactly one ordinary advisory executor compile item is required." />
+    <ItemGroup>
+      <Compile Remove="@(_TerminalOriginal)" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/ProjectAdvisoryQueryExecutor.private.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryWaveBootstrap.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTerminalCapture.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryBoundary.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryTermination.cs" />
+      <Compile Include="/tmp/story65-advisory-terminal-prep-20261108/AdvisoryExceptionKind.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

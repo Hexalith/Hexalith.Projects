@@ -1,0 +1,108 @@
+{
+  "offlineGuardQualificationOnly": true,
+  "passed": true,
+  "checks": 24,
+  "results": [
+    {
+      "case": "genuine-completed-http200-failure",
+      "passed": true
+    },
+    {
+      "case": "genuine-positive-skips-all",
+      "passed": true
+    },
+    {
+      "case": "insufficient-three-windows-skips-all",
+      "passed": true
+    },
+    {
+      "case": "ignore-missing-result",
+      "passed": true
+    },
+    {
+      "case": "ignore-wrong-status",
+      "passed": true
+    },
+    {
+      "case": "ignore-boolean-status",
+      "passed": true
+    },
+    {
+      "case": "ignore-float-attempt",
+      "passed": true
+    },
+    {
+      "case": "ignore-zero-attempt",
+      "passed": true
+    },
+    {
+      "case": "ignore-negative-count",
+      "passed": true
+    },
+    {
+      "case": "ignore-nan-elapsed",
+      "passed": true
+    },
+    {
+      "case": "ignore-not-public-gateway",
+      "passed": true
+    },
+    {
+      "case": "ignore-fabricated-write",
+      "passed": true
+    },
+    {
+      "case": "ignore-bootstrap-credential",
+      "passed": true
+    },
+    {
+      "case": "ignore-authority-supplied",
+      "passed": true
+    },
+    {
+      "case": "source55-valid-shaped-hashes",
+      "passed": true
+    },
+    {
+      "case": "reject-source-hash-shape",
+      "passed": true
+    },
+    {
+      "case": "reject-source-relative-escape",
+      "passed": true
+    },
+    {
+      "case": "reject-resolved-source-escape",
+      "passed": true
+    },
+    {
+      "case": "matching-evidence-before-private-config",
+      "passed": true
+    },
+    {
+      "case": "foreign-fresh-evidence-never-reads-config",
+      "passed": true
+    },
+    {
+      "case": "collect-all-before-sequential-parsers-and-purge",
+      "passed": true
+    },
+    {
+      "case": "parser-tracked-before-fallible-proc-read",
+      "passed": true
+    },
+    {
+      "case": "all-postspawn-errors-reap-exact-pidfd-child",
+      "passed": true
+    },
+    {
+      "case": "purge-derivatives-no-symlink-target-access",
+      "passed": true
+    }
+  ],
+  "actualApplicationProcesses": 0,
+  "actualCollectorParserProcesses": 0,
+  "actualAttaches": 0,
+  "actualSignals": 0,
+  "fixtureValuesPersisted": false
+}

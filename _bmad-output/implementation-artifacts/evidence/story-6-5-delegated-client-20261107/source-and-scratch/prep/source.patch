@@ -1,0 +1,68 @@
+--- a/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs
++++ b/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs
+@@ -7,6 +7,10 @@
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
+ using Microsoft.AspNetCore.Http;
+ using Microsoft.Extensions.Configuration;
++using ClientCounters = Hexalith.PrivateCaptureCounter.CaptureCounters;
++using ClientBootstrap = Hexalith.PrivateCaptureCounter.AdvisoryWaveBootstrap;
++using ClientStage = Hexalith.PrivateCaptureCounter.Stage;
++using ClientAllocation = Hexalith.PrivateCaptureCounter.AllocationMode;
+ 
+ namespace Hexalith.EventStore.DomainService;
+ 
+@@ -30,6 +34,8 @@
+             return QueryResult.Failure("safe-denial");
+         if (string.IsNullOrWhiteSpace(workload) || string.IsNullOrWhiteSpace(key))
+             return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
++        // PRIVATE DIAGNOSTIC: only the already-read validated literal selects this fixed-role recorder.
++        using var delegatedTimings = workload == "projects" ? ClientBootstrap.Begin() : null;
+         TimeSpan? timeout = OperationTimeout();
+         long started = timeout is null ? 0 : clock.GetTimestamp();
+         using CancellationTokenSource? deadline = timeout is { } budget ? new(budget, clock) : null;
+@@ -41,7 +47,7 @@
+             OriginatingQuery = caller.OriginalQuery,
+             OriginatingAssertion = context.Request.Headers[EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName][0],
+         };
+-        QueryResult result = await InvokeOwnerAsync(query, request, workload, key, deadline is not null, operationToken).ConfigureAwait(false);
++        QueryResult result = await InvokeOwnerAsync(query, request, workload, key, deadline is not null, operationToken, delegatedTimings).ConfigureAwait(false);
+         // All owned request/response content is disposed before this check. A late body or
+         // synchronous disposal cannot turn an expired operation into a protected result.
+         if (timeout is { } elapsedBudget && (operationToken.IsCancellationRequested || clock.GetElapsedTime(started) >= elapsedBudget))
+@@ -50,23 +56,35 @@
+     }
+ 
+     private async Task<QueryResult> InvokeOwnerAsync(SubmitQueryRequest query, BoundOwnerQueryRequest request,
+-        string workload, string key, bool bounded, CancellationToken cancellationToken)
++        string workload, string key, bool bounded, CancellationToken cancellationToken, ClientCounters? delegatedTimings = null)
+     {
++        const ClientStage IssuerAcquisition = ClientStage.ComponentFile;
++        const ClientStage HttpRequestAndProof = ClientStage.ComponentPolicy;
++        const ClientStage SendAndBuffer = ClientStage.AclFile;
++        const ClientStage JsonBody = ClientStage.SettingsEnumerationSortDictionary;
++        using var acquisitionTiming = delegatedTimings?.Stage(IssuerAcquisition, ClientAllocation.None);
+         string gateway = configuration["Authentication:QueryAuthority:GatewayWorkloadId"] ?? "eventstore";
+         ValueTask<string?> acquisition = issuer.IssueAsync(new(gateway, EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery), cancellationToken);
+         string? assertion = bounded
+             ? await acquisition.AsTask().WaitAsync(cancellationToken).ConfigureAwait(false)
+             : await acquisition.ConfigureAwait(false);
++        acquisitionTiming?.Dispose();
+         if (bounded) cancellationToken.ThrowIfCancellationRequested();
+         if (assertion is null) return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
++        using var requestProofTiming = delegatedTimings?.Stage(HttpRequestAndProof, ClientAllocation.None);
+         using HttpRequestMessage message = dapr.CreateInvokeMethodRequest(gateway, "api/v1/queries/owner-authority/workload", request);
+         message.Headers.TryAddWithoutValidation(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, assertion);
+         message.Headers.TryAddWithoutValidation(BoundOwnerQueryProof.HeaderName, BoundOwnerQueryProof.Issue(request, workload, key, clock.GetUtcNow()));
++        requestProofTiming?.Dispose();
++        using var sendTiming = delegatedTimings?.Stage(SendAndBuffer, ClientAllocation.None);
+         using HttpResponseMessage response = await clients.CreateClient().SendAsync(message, cancellationToken).ConfigureAwait(false);
++        sendTiming?.Dispose();
+         if (response.StatusCode == HttpStatusCode.NotFound)
+             return QueryResult.Failure("safe-denial");
+         if (!response.IsSuccessStatusCode) return QueryResult.Failure(QueryAdapterFailureReason.QueryExecutionFailure);
++        using var jsonTiming = delegatedTimings?.Stage(JsonBody, ClientAllocation.None);
+         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(cancellationToken).ConfigureAwait(false);
++        jsonTiming?.Dispose();
+         return result?.Success == true ? QueryResult.FromPayload(result.Payload, query.QueryType)
+             : QueryResult.Failure(QueryAdapterFailureReason.ResponseMismatch);
+     }

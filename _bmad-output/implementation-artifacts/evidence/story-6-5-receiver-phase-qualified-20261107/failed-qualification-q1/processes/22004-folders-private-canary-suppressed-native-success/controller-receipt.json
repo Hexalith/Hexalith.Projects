@@ -1,0 +1,80 @@
+{
+  "started": true,
+  "passed": true,
+  "mode": "canary-suppressed",
+  "group": "native-success",
+  "variant": "private",
+  "role": "folders",
+  "signalsSent": false,
+  "featureAcceptance": false,
+  "rawBusinessValuesPersisted": false,
+  "command": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-receiver-phase-qualification-20261107/runtime/folders/private/Hexalith.Folders.Server.dll",
+    "canary-suppressed",
+    "native-success",
+    "/tmp/story65-receiver-phase-qualification-20261107/runtime/folders/private/runtime-binding.json",
+    "9b10aea56cd82889da2fc638f8f6f8963d45f2b5117cd5ba341c43cb75cbf816",
+    "/tmp/story65-receiver-phase-qualification-20261107/processes/22004-folders-private-canary-suppressed-native-success/business.json"
+  ],
+  "pid": 2372301,
+  "startTicks": "12899148",
+  "groupId": 2372301,
+  "processGroupAbsent": true,
+  "exitCode": 0,
+  "artifacts": {
+    "folders.closed.json": {
+      "sha256": "1e22b99d19497e271d629e7b08f18d4d9c7dbf2f95b871a111dd2797aec554ab",
+      "bytes": 508,
+      "contentsArchived": true
+    },
+    "window.control": {
+      "sha256": "535fc976f58a530de24a84a33120eb693eafe9790dab479fdd3f9994bcd2dd43",
+      "bytes": 49,
+      "contentsArchived": false
+    },
+    "folders.jsonl": {
+      "sha256": "5aa49e51205530b150d5a7c7ac7efe735a33a413371daa7c4a5a9aa1adbf72ff",
+      "bytes": 2185,
+      "contentsArchived": true
+    }
+  },
+  "stageCounts": {
+    "Whole": 1,
+    "ComponentFile": 1,
+    "ComponentPolicy": 1,
+    "AclFile": 1,
+    "SettingsEnumerationSortDictionary": 1,
+    "AuthenticationSerialization": 1,
+    "ResultTail": 1
+  },
+  "closed": {
+    "diagnosticOnly": 1,
+    "featureAcceptance": 0,
+    "role": "folders",
+    "runOrdinal": 22004,
+    "admitted": 1,
+    "disposedOrUnwound": 1,
+    "activeAtDrainEnd": 0,
+    "queuedRowsDropped": 0,
+    "closedRowsDropped": 0,
+    "capRowsDropped": 0,
+    "ioFailures": 0,
+    "writtenRows": 7,
+    "writtenBytes": 2185,
+    "queuedAtDrainEnd": 0,
+    "incompleteHardDrain": 0,
+    "countersFinal": 1,
+    "lateDisposedOrDropCountersMayIncrease": 0,
+    "maximumRows": 65536,
+    "maximumBytes": 8388608,
+    "queueCapacity": 4096,
+    "windowStartTicks": 128992219162500,
+    "windowEndTicks": 129000219162500,
+    "frequency": 1000000000
+  },
+  "businessSha256": "8815906424636854084fdfc3b1a85d2a7ccf01076bdfc96b69d20edde76673d2",
+  "wallSeconds": 8.783522939993418,
+  "directoryReleased": true,
+  "remainingGroup": []
+}

@@ -1,0 +1,22 @@
+<Project>
+  <Target Name="Story65DomainReceiverSourceSubstitution" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService' and '$(Story65DomainReceiverPrivate)' == 'true'">
+    <ItemGroup>
+      <_Story65OriginalDomainRouteCatalogFilter Include="@(Compile)" Condition="'%(Compile.Identity)' == 'DomainRouteCatalogFilter.cs'" />
+      <_Story65OriginalDomainRouteCatalogGuard Include="@(Compile)" Condition="'%(Compile.Identity)' == 'DomainRouteCatalogGuard.cs'" />
+      <_Story65OriginalDomainRouteCatalogResult Include="@(Compile)" Condition="'%(Compile.Identity)' == 'DomainRouteCatalogResult.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65OriginalDomainRouteCatalogFilter->Count())' != '1'" Text="Domain receiver original Compile count refused." />
+    <Error Condition="'@(_Story65OriginalDomainRouteCatalogGuard->Count())' != '1'" Text="Domain receiver original Compile count refused." />
+    <Error Condition="'@(_Story65OriginalDomainRouteCatalogResult->Count())' != '1'" Text="Domain receiver original Compile count refused." />
+    <ItemGroup>
+      <Compile Remove="DomainRouteCatalogFilter.cs" />
+      <Compile Include="/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogFilter.private.cs" />
+      <Compile Remove="DomainRouteCatalogGuard.cs" />
+      <Compile Include="/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogGuard.private.cs" />
+      <Compile Remove="DomainRouteCatalogResult.cs" />
+      <Compile Include="/tmp/story65-domain-receiver-phase-prep-20261108/DomainRouteCatalogResult.private.cs" />
+      <Compile Include="/tmp/story65-domain-receiver-phase-prep-20261108/CaptureCounters.cs" />
+      <Compile Include="/tmp/story65-domain-receiver-phase-prep-20261108/ReceiverPhaseBootstrap.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

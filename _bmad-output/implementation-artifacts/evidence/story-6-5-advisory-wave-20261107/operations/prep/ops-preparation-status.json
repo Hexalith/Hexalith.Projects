@@ -1,0 +1,36 @@
+{
+  "preparationOnly": true,
+  "noSdkAppBuildOrHosts": true,
+  "allFiveSyntaxPassed": true,
+  "allFourNonexecutingPlansPassed": true,
+  "sourceAndHarnessQualificationOwnedSeparately": true,
+  "finalOperationalPinsPendingSourceHarnessReceipt": true,
+  "plans": [
+    {
+      "script": "build_restore.py",
+      "args": [
+        "--phase",
+        "private"
+      ],
+      "exitCode": 0
+    },
+    {
+      "script": "build_restore.py",
+      "args": [
+        "--phase",
+        "ordinary"
+      ],
+      "exitCode": 0
+    },
+    {
+      "script": "supervise_managed.py",
+      "args": [],
+      "exitCode": 0
+    },
+    {
+      "script": "run_and_restore.py",
+      "args": [],
+      "exitCode": 0
+    }
+  ]
+}

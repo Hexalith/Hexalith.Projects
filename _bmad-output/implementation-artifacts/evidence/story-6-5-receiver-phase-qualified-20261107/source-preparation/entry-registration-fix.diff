@@ -1,0 +1,48 @@
+--- original298912/entry/projects/Entry.csproj
++++ registration-retry/entry/projects/Entry.csproj
+@@ -4,4 +4,8 @@
+     <TreatWarningsAsErrors>true</TreatWarningsAsErrors><NuGetAudit>false</NuGetAudit><ServerGarbageCollection>true</ServerGarbageCollection>
+   </PropertyGroup>
+   <ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../../driver/ReceiverDriver.csproj" /></ItemGroup>
++  <ItemGroup>
++    <Compile Include="../NativeResultWriterRegistration.cs" Link="NativeResultWriterRegistration.cs" />
++    <Reference Include="xunit.v3.runner.common"><HintPath>/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll</HintPath><Private>false</Private></Reference>
++  </ItemGroup>
+ </Project>
+--- original298912/entry/tenants/Entry.csproj
++++ registration-retry/entry/tenants/Entry.csproj
+@@ -4,4 +4,8 @@
+     <TreatWarningsAsErrors>true</TreatWarningsAsErrors><NuGetAudit>false</NuGetAudit><ServerGarbageCollection>true</ServerGarbageCollection>
+   </PropertyGroup>
+   <ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../../driver/ReceiverDriver.csproj" /></ItemGroup>
++  <ItemGroup>
++    <Compile Include="../NativeResultWriterRegistration.cs" Link="NativeResultWriterRegistration.cs" />
++    <Reference Include="xunit.v3.runner.common"><HintPath>/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll</HintPath><Private>false</Private></Reference>
++  </ItemGroup>
+ </Project>
+--- original298912/entry/folders/Entry.csproj
++++ registration-retry/entry/folders/Entry.csproj
+@@ -4,4 +4,8 @@
+     <TreatWarningsAsErrors>true</TreatWarningsAsErrors><NuGetAudit>false</NuGetAudit><ServerGarbageCollection>true</ServerGarbageCollection>
+   </PropertyGroup>
+   <ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../../driver/ReceiverDriver.csproj" /></ItemGroup>
++  <ItemGroup>
++    <Compile Include="../NativeResultWriterRegistration.cs" Link="NativeResultWriterRegistration.cs" />
++    <Reference Include="xunit.v3.runner.common"><HintPath>/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll</HintPath><Private>false</Private></Reference>
++  </ItemGroup>
+ </Project>
+--- original298912/entry/excluded/Entry.csproj
++++ registration-retry/entry/excluded/Entry.csproj
+@@ -4,4 +4,8 @@
+     <TreatWarningsAsErrors>true</TreatWarningsAsErrors><NuGetAudit>false</NuGetAudit><ServerGarbageCollection>true</ServerGarbageCollection>
+   </PropertyGroup>
+   <ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../../driver/ReceiverDriver.csproj" /></ItemGroup>
++  <ItemGroup>
++    <Compile Include="../NativeResultWriterRegistration.cs" Link="NativeResultWriterRegistration.cs" />
++    <Reference Include="xunit.v3.runner.common"><HintPath>/home/administrator/.nuget/packages/xunit.v3.runner.common/4.0.2/lib/netstandard2.0/xunit.v3.runner.common.dll</HintPath><Private>false</Private></Reference>
++  </ItemGroup>
+ </Project>
+--- /dev/null
++++ registration-retry/entry/NativeResultWriterRegistration.cs
+@@ -0,0 +1 @@
++[assembly: Xunit.Runner.Common.RegisterConsoleResultWriter("xml", typeof(Xunit.Runner.Common.XmlV2ResultWriter))]

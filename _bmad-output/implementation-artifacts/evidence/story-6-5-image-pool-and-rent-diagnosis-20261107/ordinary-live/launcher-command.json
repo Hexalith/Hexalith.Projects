@@ -1,0 +1,28 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environmentAssignments": {
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "E2E_SUPPORTED_READS_ONLY": "1",
+    "E2E_RESOURCE_TIMEOUT_SECONDS": "900",
+    "E2E_SUPPORTED_EVIDENCE": "/tmp/story65-pool-selected-live-20261107"
+  },
+  "startedAtUtc": "2026-11-07T04:48:38.311068+00:00",
+  "stdoutStderr": "/tmp/story65-pool-selected-live-20261107-console.log",
+  "privateDiagnosticOverride": false,
+  "inheritedSourceMappingCleared": true,
+  "environmentRemovals": [
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "reason": "Qualify shared private two-buffer pool with ordinary source and natural available14 CPUs; no ThreadPool/GC overrides.",
+  "exitCode": 1,
+  "finishedAtUtc": "2026-11-07T04:54:37.043959+00:00",
+  "logSha256": "c0ffcad141b9023016cc9c91f86fe7cccab434c3b6452c17a993c138a6536d9b"
+}

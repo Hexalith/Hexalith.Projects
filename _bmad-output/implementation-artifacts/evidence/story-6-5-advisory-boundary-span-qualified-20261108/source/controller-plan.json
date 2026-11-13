@@ -1,0 +1,32 @@
+{
+  "executeReleased": false,
+  "processes": 23,
+  "businessCases": 49,
+  "businessComparisons": 196,
+  "canaries": 3,
+  "protocolCases": 14,
+  "retainedCases": 47,
+  "addedCases": [
+    "folder-unavailable",
+    "clock-exception-identity"
+  ],
+  "modes": [
+    "disabled",
+    "active",
+    "capped",
+    "failing-sink"
+  ],
+  "fiveSlowCasesOwnFreshProcessEach": true,
+  "atomicNoOverwriteControlPublication": true,
+  "allStateGroupAbsenceBeforePrivateCleanup": true,
+  "separateCompiledPinsRequired": true,
+  "fixedWindowSeconds": 8,
+  "preserveFailures": true,
+  "countsArePlannedNotExecuted": true,
+  "plannedControlledProcesses": 23,
+  "plannedBusinessComparisons": 196,
+  "retainedTerminalProtocolCases": 4,
+  "newBoundarySpanCases": 10,
+  "maximumRowsPerCapture": 8,
+  "sourceQualificationReady": false
+}

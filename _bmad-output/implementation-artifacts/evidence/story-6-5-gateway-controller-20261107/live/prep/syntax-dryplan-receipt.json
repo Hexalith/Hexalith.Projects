@@ -1,0 +1,63 @@
+{
+  "allSixPythonAstPass": true,
+  "fiveNonexecutingPlans": [
+    {
+      "label": "private",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/build_restore.py",
+        "--phase",
+        "private"
+      ],
+      "exitCode": 0,
+      "sha256": "5fb92685fc8d70d6f3c85b788378b4018962154415ce89c332483d3fb21ed5c9",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "ordinary",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/build_restore.py",
+        "--phase",
+        "ordinary"
+      ],
+      "exitCode": 0,
+      "sha256": "9c36b3510507efe9bf56449d79c047e508e809781c8593cb4a2ab71681a063f1",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "native40",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/native_qualification.py"
+      ],
+      "exitCode": 0,
+      "sha256": "4053d610ec2d83c1c8ec3d2eae25de33fab82b6a9a103d0eb759f1a416ca72a6",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "managed",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/supervise_managed.py"
+      ],
+      "exitCode": 0,
+      "sha256": "80555fe73c15b874ff07c5e98a211ab21a0ac502a54ed3498371f00b7b57da42",
+      "applicationBuildNativeOrHostExecuted": false
+    },
+    {
+      "label": "pipeline",
+      "command": [
+        "python3",
+        "/tmp/story65-gateway-controller-ops-prep-20261107/live/run_and_restore.py"
+      ],
+      "exitCode": 0,
+      "sha256": "872b13509e4f762598b1edb8951437adfd37e85399e5eed427f73264651f7037",
+      "applicationBuildNativeOrHostExecuted": false
+    }
+  ],
+  "sourceQualificationReady": true,
+  "native40AndLiveStillPending": true,
+  "operationalPinsSha256": "6da760b2d178da8bb41d0de3105bd8b5a6d38c262ef02df7bb868f1747360ef8",
+  "finalNativeDllPdbGenerationCoherenceChecksPresent": true
+}

@@ -1,0 +1,10 @@
+<Project>
+<Target Name="Story65PrivateDiagnosticOverlay" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectName)' == 'Hexalith.Projects.Server'">
+<ItemGroup>
+<Compile Remove="Queries/ProjectAdvisoryQueryExecutor.cs;Folders/DelegatedProjectFolderDirectory.cs" />
+<Compile Include="/tmp/story65-advisory-diagnostic-overlay-20261107/ProjectAdvisoryQueryExecutor.cs" />
+<Compile Include="/tmp/story65-advisory-diagnostic-overlay-20261107/DelegatedProjectFolderDirectory.cs" />
+<Compile Include="/tmp/story65-advisory-diagnostic-overlay-20261107/Story65PrivateDiagnostic.cs" />
+</ItemGroup>
+</Target>
+</Project>

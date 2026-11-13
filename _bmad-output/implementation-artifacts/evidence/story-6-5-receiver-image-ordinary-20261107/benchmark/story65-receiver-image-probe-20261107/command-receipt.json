@@ -1,0 +1,1118 @@
+{
+  "createdUtc": "2026-11-07T06:53:29.430678+00:00",
+  "diagnosticOnly": true,
+  "productionSourceChanges": false,
+  "ownerBuilds": false,
+  "hostsStarted": false,
+  "commands": [
+    {
+      "argv": [
+        "dotnet",
+        "build",
+        "/tmp/story65-receiver-image-probe-20261107/Probe.csproj",
+        "--configuration",
+        "Debug",
+        "--disable-build-servers",
+        "-p:NuGetAudit=false",
+        "-p:Optimize=false",
+        "-p:DebugType=portable",
+        "-p:DebugSymbols=true",
+        "-m:1"
+      ],
+      "cwd": "/tmp/story65-receiver-image-probe-20261107",
+      "exitCode": 0,
+      "explicitEnvironment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+      },
+      "removedEnvironment": [
+        "Custom*",
+        "AfterMicrosoftNETSdkTargets",
+        "HEXALITH_SOURCE_MAPPING_HASH",
+        "Configuration",
+        "DOTNET_PROCESSOR_COUNT"
+      ]
+    },
+    {
+      "argv": [
+        "dotnet",
+        "/tmp/story65-receiver-image-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "/tmp/story65-receiver-image-probe-20261107/results.json"
+      ],
+      "cwd": "/tmp/story65-receiver-image-probe-20261107",
+      "exitCode": 0,
+      "removedEnvironment": [
+        "DOTNET_PROCESSOR_COUNT",
+        "DOTNET_TieredCompilation",
+        "DOTNET_TC_QuickJit",
+        "DOTNET_ReadyToRun",
+        "COMPlus_TieredCompilation"
+      ]
+    }
+  ],
+  "artifactSha256": {
+    "Probe.csproj": "da80bf1b619c739842d86a322a468a8e4e5c63ab8cb7dcba68a554cc9198fdb1",
+    "results.json": "d287dedb57aeec5d6801d7fc0b681dbad1f9255d65bd8266f57efb9324cd2cc7",
+    "RequestFingerprint.cs": "a06657ceff43f2685162a9c2d4555eac93b5bea6f26433081d6ab3a2ca6748e2",
+    "build-command.json": "db2e0fae865839f7a0e28fc447a137205adc1892cffac49803916443216cee35",
+    "run.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run-command.json": "3b0c5d261c5bd83235c61a5905b669e7a4ab97dec40f38adf73dfbc762b0462b",
+    "Fingerprint.cs": "0be948315aa98d1ad918d5907026d629b80b02545ffc5b8e097818fb7f6ec487",
+    "build.log": "31dd1d1789a91bb0f943ea47e1fa618fae7c6e1c7beffa0ebfae35e546c7149a",
+    "Program.cs": "934b58c2e3e0ab90836275d0885e291703bd6f2276986f1852702385fd49183a"
+  },
+  "resultsPath": "/tmp/story65-receiver-image-probe-20261107/results.json",
+  "resultsSha256": "d287dedb57aeec5d6801d7fc0b681dbad1f9255d65bd8266f57efb9324cd2cc7",
+  "sourceSha256": {
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs": "6c265a315fb853015ee636dd99fdb0493849f50a1dc24be45452c28d09a740fc",
+    "src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "0eb508bfd91864a28008b2a15c51c36ae07b18f493a0482b9ce06da0f12dc104",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": "5fa9ce0a5b5b299e64b4cbce4ad4dd58ef920ae1872abc5a590551042abeb147",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": "56c16b809f6bb457f1b43849b69cc5ef391288d8b01092ba87fafa146714b296",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": "b085ff4de038eac60ca4a2539df24573c8678c4e215fc7f21ce179e38c51bac8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs": "fe9038e346121082bd1e017ff58b816c7388dbaf7390c2690c91cff8141f70ee",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs": "64123712fcc3c7f6304dc99aa10ad659e6c9052113ce472a65bc6e52c1a19578",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs": "c01570410e73b7660a470bced9d0b1606815d19f3821ddeb1fd2c97e47e63374",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs": "81dd6632eb070b86d97b91d3c7b419d1f0d3b2f07ac7bc4bb00cf91c86a363e1",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs": "dbdcb49c07f9d544ec07c3353fea93bffff02f3fb51684b29f6aa996b6c9df23",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs": "10c05e91f8b057c67f1b64e3ab7639fd169d6ac9075e1fbdbd43da17559ce0f2",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs": "ba9c972766dc8d87ae765eb115bfdc94fc3d9e3f80fcd1fa1ca9e85f3b24dbef",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingCollection.cs": "90650a5bd96d7d8faf53ad5a2f2312cde8fdd272c787bb890cfcf6760b6a9a89",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpFixture.cs": "f0d3e1ea600121427861441327ccc6b217c617787396d407921d5614f77f278b",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingHttpHandler.cs": "942fec05cea5c6e24cedf7e086e6d473671928bf0673107d960e1a627314ebd6",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ReleaseBindingReuseTests.cs": "f8ef709f55b09b87e1eeb6f50758aecba75c02276e97304ab38ec74a74b772f8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs": "36bcb838fc8870726b736f3f43f20db1ef43ff3329e61d33d6714a869fa06ca5",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDiskImageAssembly.cs": "3487e8aa0120f8f651cc2be358e886aea6230c7fc230d0caf5624dceed0f9f15",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolCollection.cs": "87eb190e55c0935f63cd005451ca8cd080a28291ba10cf2efe16c4ee0687bbf9",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolTests.cs": "b6dd8697c596ab1d4d6e8e73efbe27367c76a8389c956fef322ba57ab478475f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs": "da26e9b3f9c85a87ef0613b62c69b9712d50dcad7af0484a5dd5f7dd453fe8fd",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "11893e7b57d2edeef88b1e2f7504dfa7d1470bc321982194df089c5d75c2689f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs": "3283f0204a07aee0a8dce644fc6bd142c26f000df28c8765a90ae13ea741defa",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs": "ad5addf2a5998855a9b68cc178edb5a9c2330fbb1b344f60199b2252334f354d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs": "38d4c35756651bc001f7c874d5b1985503bf0b4c1e48aab083c593388ccf984b"
+  },
+  "all41OwnerSourcesVerifiedUnchanged": true,
+  "measuredPrecheckSourceSha256": {
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": "56c16b809f6bb457f1b43849b69cc5ef391288d8b01092ba87fafa146714b296",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "0eb508bfd91864a28008b2a15c51c36ae07b18f493a0482b9ce06da0f12dc104",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs": "b77d97f692ab1e265c4fd76f14fdf14d858833133a737eee5dd7ac9877ec8f90",
+    "src/Hexalith.EventStore.Server/Routing/DevelopmentNativeActorReceiver.cs": "4605afbbc42d7a3acaba4ea09eb4d3283548b60b5ce874ef3d6a432f74f84283"
+  },
+  "baselineCompiledSdk": {
+    "FullName": "Hexalith.EventStore.ServiceDefaults, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.ServiceDefaults.dll",
+    "sha256": "5d21a3dafb16243f49d7868f6505c43edd3c44bf1dd58b778e05e0de2cdd56bf",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "baselineCompiledServer": {
+    "FullName": "Hexalith.EventStore.Server, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.dll",
+    "sha256": "cdeebc16220ea2a5a9df16f275e55611fafeb2624ec0cdd3e0b002ba1e77fd5b",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "externalHarness": {
+    "FullName": "Hexalith.EventStore.Server.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Location": "/tmp/story65-receiver-image-probe-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "sha256": "24ac9838045e53c22802b5cd913e2c068cf749aff5a169554265302256e18677",
+    "configuration": "Debug",
+    "flags": "Default, IgnoreSymbolStoreSequencePoints, EnableEditAndContinue, DisableOptimizations",
+    "IsJITOptimizerDisabled": true,
+    "IsJITTrackingEnabled": true
+  },
+  "sdkVersion": "10.0.403",
+  "runtime": "10.0.14",
+  "processorCount": 14,
+  "serverGc": true,
+  "fairness": {
+    "bothVariantsExecuteIdenticalCurrentCompiledDebugMethods": true,
+    "DebuggableAttributeOptimizerDisabledAllThreeAssemblies": true,
+    "baseline": "Existing compiled prechecks with explicit foreign image-scope suppression and no owned image scope.",
+    "candidate": "Existing compiled prechecks with explicit foreign suppression and a scope borrowing the SAME actual Authority._imageDigests, gated by its compiled private host selector and memo open state.",
+    "noCopiedBehaviorOrAlgorithm": true,
+    "noSourceMappingForScratchReferences": "All references point at current ordinary Debug owner-test output; no owner projects built."
+  },
+  "workload": {
+    "provenance": "Actual AddEventStoreServer12actor registrations and MapActorsHandlers6 native endpoint delegates; app built only, never Start/Run; unrelated eager DI validation disabled. No Dapr transport or credentials used.",
+    "actualCompiledMethods": [
+      "DevelopmentNativeActorReceiver.Observe",
+      "TechnicalHttpRouteCatalogReceiver.Fingerprint",
+      "TechnicalHttpObservationPass.Complete",
+      "DevelopmentNativeActorReceiver.Allows",
+      "TechnicalHttpRouteCatalogReceiver.RequestFingerprint"
+    ],
+    "sequence": "Region1: actual native Observe, Fingerprint(which observes again), Complete(which observes again and rechecks images), Allows(which observes again). Region1 closes. Region2: actual RequestFingerprint and its Complete. Region2 closes. No auth,Acquire,InvokeNative or next is invoked.",
+    "freshImageObservationsPerTimedMethodRequest": 20,
+    "allOriginalFullFileReadPeLoadedMvidChecksAndFreshRegistrationReflectionRemain": true,
+    "regionsPerTimedRequest": 2,
+    "sameAuthorityMemoAllWorkers": true,
+    "boundsUnchanged": {
+      "imageBytes": 16777216,
+      "chargedTotalBytes": 67108864,
+      "entries": 128
+    },
+    "memoCount": 4,
+    "memoChargedBytes": 5037392,
+    "scopeCreationGateChecksDisposeIncluded": true
+  },
+  "warmup": {
+    "singleThreadMatchedRequestsPerVariant": 48,
+    "eachConcurrencyMatchedRequestsPerWorkerVariant": 12,
+    "samplesPerConcurrency": 9,
+    "measuredRequestsPerSampleWorker": 24,
+    "variantsAlternateFirstEachSample": true
+  },
+  "concurrencyMediansAndAllSamples": {
+    "2": {
+      "ordinary": {
+        "medianMeanRequestMs": 12.115420833333332,
+        "medianCohortElapsedMs": 290.9267,
+        "medianProcessCpuMsPerRequest": 12.049624999999999,
+        "medianAllocatedBytesPerRequest": 907193,
+        "fullSamples": [
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 322.4083,
+            "meanRequestMs": 12.871364583333333,
+            "allocatedBytesPerRequest": 906863,
+            "processAllocatedBytes": 43530368,
+            "processCpuMs": 616.157,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              295.5332,
+              322.2923
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 307.8931,
+            "meanRequestMs": 12.720912499999999,
+            "allocatedBytesPerRequest": 907774,
+            "processAllocatedBytes": 43573568,
+            "processCpuMs": 653.387,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              307.7322,
+              302.8716
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 314.401,
+            "meanRequestMs": 13.050877083333333,
+            "allocatedBytesPerRequest": 907313,
+            "processAllocatedBytes": 43551608,
+            "processCpuMs": 715.47,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              312.1627,
+              314.2794
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 300.3641,
+            "meanRequestMs": 12.510024999999999,
+            "allocatedBytesPerRequest": 907095,
+            "processAllocatedBytes": 43542224,
+            "processCpuMs": 602.986,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              300.217,
+              300.2642
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 280.2609,
+            "meanRequestMs": 11.672218749999999,
+            "allocatedBytesPerRequest": 907068,
+            "processAllocatedBytes": 43539696,
+            "processCpuMs": 555.588,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              280.1248,
+              280.1417
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 286.6117,
+            "meanRequestMs": 11.935360416666667,
+            "allocatedBytesPerRequest": 907235,
+            "processAllocatedBytes": 43547704,
+            "processCpuMs": 561.781,
+            "gcDelta": [
+              13,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              286.4389,
+              286.4584
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 290.9267,
+            "meanRequestMs": 12.115420833333332,
+            "allocatedBytesPerRequest": 907193,
+            "processAllocatedBytes": 43547088,
+            "processCpuMs": 578.382,
+            "gcDelta": [
+              13,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              290.7811,
+              290.7591
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 285.6206,
+            "meanRequestMs": 11.840741666666668,
+            "allocatedBytesPerRequest": 907164,
+            "processAllocatedBytes": 43544264,
+            "processCpuMs": 570.392,
+            "gcDelta": [
+              13,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              285.5074,
+              282.8482
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 287.52,
+            "meanRequestMs": 11.95598125,
+            "allocatedBytesPerRequest": 907233,
+            "processAllocatedBytes": 43547584,
+            "processCpuMs": 568.211,
+            "gcDelta": [
+              12,
+              0,
+              0
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              287.3829,
+              286.5042
+            ]
+          }
+        ]
+      },
+      "owned": {
+        "medianMeanRequestMs": 4.6387,
+        "medianCohortElapsedMs": 112.0031,
+        "medianProcessCpuMsPerRequest": 3.841333333333333,
+        "medianAllocatedBytesPerRequest": 902937,
+        "fullSamples": [
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 135.7012,
+            "meanRequestMs": 5.650075,
+            "allocatedBytesPerRequest": 903465,
+            "processAllocatedBytes": 43366744,
+            "processCpuMs": 250.21,
+            "gcDelta": [
+              10,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              135.5926,
+              135.611
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 148.8025,
+            "meanRequestMs": 6.169985416666666,
+            "allocatedBytesPerRequest": 903598,
+            "processAllocatedBytes": 43373440,
+            "processCpuMs": 230.899,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              147.4234,
+              148.7359
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 131.2949,
+            "meanRequestMs": 5.364272916666667,
+            "allocatedBytesPerRequest": 903284,
+            "processAllocatedBytes": 43359112,
+            "processCpuMs": 200.344,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              126.3096,
+              131.1755
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 130.3431,
+            "meanRequestMs": 5.389066666666667,
+            "allocatedBytesPerRequest": 903166,
+            "processAllocatedBytes": 43352760,
+            "processCpuMs": 277.297,
+            "gcDelta": [
+              11,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              128.4737,
+              130.2015
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 104.2042,
+            "meanRequestMs": 4.315229166666667,
+            "allocatedBytesPerRequest": 902717,
+            "processAllocatedBytes": 43330816,
+            "processCpuMs": 171.016,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              104.0733,
+              103.0577
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 107.3613,
+            "meanRequestMs": 4.34066875,
+            "allocatedBytesPerRequest": 902921,
+            "processAllocatedBytes": 43340944,
+            "processCpuMs": 168.674,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              107.2098,
+              101.1423
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 108.8382,
+            "meanRequestMs": 4.518335416666667,
+            "allocatedBytesPerRequest": 902937,
+            "processAllocatedBytes": 43341408,
+            "processCpuMs": 179.485,
+            "gcDelta": [
+              7,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              108.7466,
+              108.1335
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 111.7082,
+            "meanRequestMs": 4.637660416666667,
+            "allocatedBytesPerRequest": 902851,
+            "processAllocatedBytes": 43338224,
+            "processCpuMs": 183.238,
+            "gcDelta": [
+              9,
+              1,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              111.6001,
+              111.0076
+            ]
+          },
+          {
+            "workers": 2,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 48,
+            "elapsedMs": 112.0031,
+            "meanRequestMs": 4.6387,
+            "allocatedBytesPerRequest": 902904,
+            "processAllocatedBytes": 43339808,
+            "processCpuMs": 184.384,
+            "gcDelta": [
+              9,
+              0,
+              0
+            ],
+            "imageHits": 960,
+            "workerElapsedMs": [
+              111.8555,
+              110.8021
+            ]
+          }
+        ]
+      }
+    },
+    "4": {
+      "ordinary": {
+        "medianMeanRequestMs": 13.076487499999999,
+        "medianCohortElapsedMs": 318.2003,
+        "medianProcessCpuMsPerRequest": 12.7710625,
+        "medianAllocatedBytesPerRequest": 3445013,
+        "fullSamples": [
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 324.7121,
+            "meanRequestMs": 13.180905208333334,
+            "allocatedBytesPerRequest": 3187523,
+            "processAllocatedBytes": 306009144,
+            "processCpuMs": 1226.022,
+            "gcDelta": [
+              17,
+              4,
+              4
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              315.2028,
+              324.4968,
+              309.948,
+              315.7193
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 318.4795,
+            "meanRequestMs": 13.076487499999999,
+            "allocatedBytesPerRequest": 3890026,
+            "processAllocatedBytes": 373450928,
+            "processCpuMs": 1244.326,
+            "gcDelta": [
+              20,
+              5,
+              5
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              311.3769,
+              311.6785,
+              313.9325,
+              318.3549
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 312.0009,
+            "meanRequestMs": 12.896394791666665,
+            "allocatedBytesPerRequest": 2832080,
+            "processAllocatedBytes": 271883264,
+            "processCpuMs": 1215.392,
+            "gcDelta": [
+              19,
+              2,
+              2
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              311.8331,
+              311.6398,
+              310.164,
+              304.417
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 330.2562,
+            "meanRequestMs": 13.412796875,
+            "allocatedBytesPerRequest": 4239542,
+            "processAllocatedBytes": 407004464,
+            "processCpuMs": 1266.178,
+            "gcDelta": [
+              19,
+              6,
+              5
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              326.1092,
+              330.0896,
+              314.5483,
+              316.8814
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 317.5766,
+            "meanRequestMs": 12.91858125,
+            "allocatedBytesPerRequest": 3447210,
+            "processAllocatedBytes": 330939096,
+            "processCpuMs": 1212.761,
+            "gcDelta": [
+              19,
+              4,
+              4
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              317.3699,
+              308.4542,
+              310.1795,
+              304.1802
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 304.1073,
+            "meanRequestMs": 12.59575,
+            "allocatedBytesPerRequest": 2657001,
+            "processAllocatedBytes": 255075752,
+            "processCpuMs": 1205.422,
+            "gcDelta": [
+              13,
+              2,
+              2
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              299.5916,
+              303.9443,
+              302.3192,
+              303.3369
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 309.7007,
+            "meanRequestMs": 12.680771875,
+            "allocatedBytesPerRequest": 2480031,
+            "processAllocatedBytes": 238088248,
+            "processCpuMs": 1210.182,
+            "gcDelta": [
+              16,
+              3,
+              3
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              309.5355,
+              302.6077,
+              297.986,
+              307.2249
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 327.0404,
+            "meanRequestMs": 13.1841625,
+            "allocatedBytesPerRequest": 4414531,
+            "processAllocatedBytes": 423801728,
+            "processCpuMs": 1244.39,
+            "gcDelta": [
+              17,
+              4,
+              4
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              326.8416,
+              312.9984,
+              310.0306,
+              315.809
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": false,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 318.2003,
+            "meanRequestMs": 13.116282291666666,
+            "allocatedBytesPerRequest": 3445013,
+            "processAllocatedBytes": 330728048,
+            "processCpuMs": 1232.851,
+            "gcDelta": [
+              14,
+              4,
+              4
+            ],
+            "imageHits": 0,
+            "workerElapsedMs": [
+              311.3163,
+              317.9844,
+              312.9691,
+              316.8933
+            ]
+          }
+        ]
+      },
+      "owned": {
+        "medianMeanRequestMs": 10.121697916666667,
+        "medianCohortElapsedMs": 243.7055,
+        "medianProcessCpuMsPerRequest": 6.7399375,
+        "medianAllocatedBytesPerRequest": 902939,
+        "fullSamples": [
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 249.7984,
+            "meanRequestMs": 10.399121874999999,
+            "allocatedBytesPerRequest": 904343,
+            "processAllocatedBytes": 86817360,
+            "processCpuMs": 662.103,
+            "gcDelta": [
+              17,
+              1,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              249.5614,
+              249.5869,
+              249.5657,
+              249.6017
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 238.2786,
+            "meanRequestMs": 9.897389583333334,
+            "allocatedBytesPerRequest": 903136,
+            "processAllocatedBytes": 86702864,
+            "processCpuMs": 627.834,
+            "gcDelta": [
+              15,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              237.9989,
+              237.9509,
+              237.9156,
+              236.284
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 247.7209,
+            "meanRequestMs": 10.242598958333334,
+            "allocatedBytesPerRequest": 902681,
+            "processAllocatedBytes": 86657776,
+            "processCpuMs": 647.034,
+            "gcDelta": [
+              12,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              243.1792,
+              246.2494,
+              246.2741,
+              247.5868
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 235.0922,
+            "meanRequestMs": 9.738311458333333,
+            "allocatedBytesPerRequest": 902745,
+            "processAllocatedBytes": 86664000,
+            "processCpuMs": 614.782,
+            "gcDelta": [
+              15,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              234.2375,
+              231.379,
+              234.9744,
+              234.287
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 243.7055,
+            "meanRequestMs": 10.062455208333333,
+            "allocatedBytesPerRequest": 902939,
+            "processAllocatedBytes": 86682608,
+            "processCpuMs": 649.79,
+            "gcDelta": [
+              16,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              237.9848,
+              243.5216,
+              243.5683,
+              240.921
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 243.0937,
+            "meanRequestMs": 10.121697916666667,
+            "allocatedBytesPerRequest": 902985,
+            "processAllocatedBytes": 86687016,
+            "processCpuMs": 641.277,
+            "gcDelta": [
+              14,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              242.9077,
+              242.8725,
+              242.9073,
+              242.9955
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 250.2767,
+            "meanRequestMs": 10.356177083333334,
+            "allocatedBytesPerRequest": 903028,
+            "processAllocatedBytes": 86691136,
+            "processCpuMs": 652.007,
+            "gcDelta": [
+              16,
+              1,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              243.8054,
+              250.0717,
+              250.1576,
+              250.1583
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 259.0737,
+            "meanRequestMs": 10.750719791666667,
+            "allocatedBytesPerRequest": 902839,
+            "processAllocatedBytes": 86673016,
+            "processCpuMs": 678.749,
+            "gcDelta": [
+              16,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              258.2509,
+              258.2336,
+              256.635,
+              258.9496
+            ]
+          },
+          {
+            "workers": 4,
+            "enabled": true,
+            "iterationsPerWorker": 24,
+            "requests": 96,
+            "elapsedMs": 238.3199,
+            "meanRequestMs": 9.808505208333335,
+            "allocatedBytesPerRequest": 902730,
+            "processAllocatedBytes": 86662472,
+            "processCpuMs": 617.521,
+            "gcDelta": [
+              13,
+              0,
+              0
+            ],
+            "imageHits": 1920,
+            "workerElapsedMs": [
+              238.137,
+              238.1094,
+              232.7019,
+              232.6682
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "pairedAnalysis": {
+    "2": {
+      "meanRequestMs": {
+        "medianPercentChange": -60.833024254533605,
+        "totalPercentChange": -59.31796049217331
+      },
+      "processCpuMs": {
+        "medianPercentChange": -67.87507538675158,
+        "totalPercentChange": -65.9640997249534
+      }
+    },
+    "4": {
+      "meanRequestMs": {
+        "medianPercentChange": -21.104645617014338,
+        "totalPercentChange": -21.94147219558361
+      },
+      "processCpuMs": {
+        "medianPercentChange": -46.76334877965299,
+        "totalPercentChange": -47.62754301957655
+      }
+    }
+  },
+  "firstOwnedRequest": {
+    "elapsedMs": 42.602,
+    "allocatedBytes": 15143512,
+    "ImageHits": 16,
+    "Count": 4,
+    "RetainedBytes": 5037392
+  },
+  "coldQualification": "First full owned request includes four cold owned image captures/SHA and fixture/method JIT/reflection initialization;16later images reuse exact fresh bytes. Not a fair process-cold comparison against the already-warm ordinary variant; warm measurements are separate.",
+  "controls": {
+    "allSixNativeKindsFingerprintAndAllowsParity": [
+      {
+        "path": "dapr/config",
+        "Allows": true,
+        "ownedHits": 12
+      },
+      {
+        "path": "actors/{actorTypeName}/{actorId}",
+        "Allows": true,
+        "ownedHits": 20
+      },
+      {
+        "path": "actors/{actorTypeName}/{actorId}/method/{methodName}",
+        "Allows": true,
+        "ownedHits": 20
+      },
+      {
+        "path": "actors/{actorTypeName}/{actorId}/method/remind/{reminderName}",
+        "Allows": true,
+        "ownedHits": 20
+      },
+      {
+        "path": "actors/{actorTypeName}/{actorId}/method/timer/{timerName}",
+        "Allows": true,
+        "ownedHits": 20
+      },
+      {
+        "path": "/healthz",
+        "Allows": true,
+        "ownedHits": 12
+      }
+    ],
+    "parityChecks": 10,
+    "foreignScopeNeverUsedOrPopulatedAndRestored": true,
+    "retentionDisabledUsesOrdinaryFallback": true,
+    "ownerDisposedUsesOrdinaryFallbackAndClearsMemo": true,
+    "stateAndTrustCalls": 0
+  },
+  "cpuEvidenceQualification": {
+    "source": "/tmp/story65-release-binding-cpu-owner-profile-20261107/profile/cpu-summary.json",
+    "sha256": "bc6b1da92b86a0cf2f3142a064b5542a7dcf68953a6e29ee84a469a194e0ddfe",
+    "externalSamplesAreNotExactCpuOrBlockedTime": true,
+    "unresolvedFrames": 14073,
+    "lostEvents": 0,
+    "missingStacks": 0,
+    "truncation": 0,
+    "completeRows": 120064
+  },
+  "implementationProposalOnly": {
+    "sources": [
+      "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs",
+      "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs",
+      "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogServiceCollectionExtensions.cs"
+    ],
+    "ownerBinding": "Existing Authority DI factory attaches the concrete constructed owner to the registered TechnicalReceiver; no receiver lookup resolves or constructs authority early. Until attachment/custom authority/disabled/closed, suppress ambient scope and use ordinary computation.",
+    "authorityHelper": "Internal retained-memo borrower under exact existing selector/open gates; no state/trust/lease/host validation and no new memo.",
+    "scopePlacement": "Two synchronous regions only; native region ends before config/health next and any auth/acquire/dispatch; RequestFingerprint ends after Complete.",
+    "testsRequiredBeforeAcceptance": [
+      "Actual middleware+DI attachment without early authority resolution",
+      "Original full observation counts/order with real native delegates and RequestFingerprint",
+      "Every selector/custom/missing/closed/foreign fallback",
+      "Original fresh same-length image mutation/PE/MVID and Complete rejection",
+      "No leaked scope into authentication,Acquire,InvokeNative,next or escaped closed contexts",
+      "All360existing owner cases plus new meaningful cases"
+    ]
+  },
+  "limitations": [
+    "Metadata-only fake state/trust Authority fixture; does not exercise distributed deadline or browser acceptance.",
+    "Only native actor-method prechecks timed; all six native kinds parity checked. No unrelated MVC/schema cohort timing claim.",
+    "Existing private scope also selects the already-approved shared pool2; its allocation/concurrency effect is included, no pool setting changed."
+  ],
+  "activeExternalProbeProcesses": []
+}

@@ -1,0 +1,62 @@
+{
+  "preparationOnly": true,
+  "role": "projects",
+  "labels": [
+    {
+      "serializedStage": "Whole",
+      "advisoryAlias": "Whole",
+      "numericStage": 0
+    },
+    {
+      "serializedStage": "ComponentFile",
+      "advisoryAlias": "InitialScope",
+      "numericStage": 1
+    },
+    {
+      "serializedStage": "ComponentPolicy",
+      "advisoryAlias": "InitialFilterInputs",
+      "numericStage": 2
+    },
+    {
+      "serializedStage": "AclFile",
+      "advisoryAlias": "IndexRead",
+      "numericStage": 3
+    },
+    {
+      "serializedStage": "SettingsEnumerationSortDictionary",
+      "advisoryAlias": "DiscoveryParallel",
+      "numericStage": 4
+    },
+    {
+      "serializedStage": "AuthenticationSerialization",
+      "advisoryAlias": "FinalFilterInputs",
+      "numericStage": 5
+    },
+    {
+      "serializedStage": "ActorBoundary",
+      "advisoryAlias": "FinalCandidateParallel",
+      "numericStage": 6
+    },
+    {
+      "serializedStage": "ResultTail",
+      "advisoryAlias": "FinalScope",
+      "numericStage": 7
+    }
+  ],
+  "allRows": {
+    "allocationMode": 0,
+    "allocatedBytes": 0,
+    "yielded": 0,
+    "nullValue": 0,
+    "authenticationAccepted": 0,
+    "nonAuthenticationDiscarded": 0,
+    "sensitiveSegmentExcluded": 0,
+    "authenticationOtherExcluded": 0
+  },
+  "join": "process-local opaque captureOrdinal joins local phase rows only; no request, trace, downstream or identity join",
+  "wallTime": "caller wait only; a WaitAsync timeout does not imply downstream quiescence",
+  "wholeLifetime": "using is declared before the original linked CTS; reverse disposal includes CTS.Dispose, stopping before recorder queue operations",
+  "exceptions": "interval implicit using-finally closes throws and early returns; successful await statements immediately call idempotent Dispose",
+  "helperSourceSha256": "112af486d745427be6fc181c01e10ee9367f27a7163dcac603a92d15504da498",
+  "bootstrap": "AdvisoryWaveBootstrap.Begin: synchronous flow suppression around separate NoInlining fixed-role helper call; no ambient application values read"
+}

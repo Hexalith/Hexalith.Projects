@@ -1,0 +1,46 @@
+{
+  "observedUtc": "2026-11-07T22:54:01.471679+00:00",
+  "diagnosisKind": "primary-source-and-cached-metadata-derived; original console error text was discarded",
+  "runtimeExceptionTextCaptured": false,
+  "failureDirectory": "/tmp/story65-receiver-phase-qualification-20261107/processes/22008-folders-ordinary-native-TechnicalHttpInstalledMetadataTests",
+  "failureEvidenceSha256": {
+    "controller-receipt.json": "de96da6509feafd262a57e2ac68fc25500eb2f95f41638257de4ba226491af45",
+    "started.json": "584bf0f0df6f647ea0e60d91bda29251761c909627c0a7b5db996d94d754399b",
+    "runtime-facts.json": "91dc0f453f465a740e27d254e25c848bfa3b5457e7bc2e7dbefe7c3d7c082e2f",
+    "business.json": "7a38d6d14f70bcd2841b9d14fb2965ef42d68a88c5c98dc4991f2d1e00af2d17"
+  },
+  "observedNativeExitCode": 3,
+  "observedXmlAbsent": true,
+  "observedBusinessPassed": false,
+  "observedExpectedCases": 8,
+  "noNativePassesFromThisFailureClaimed": true,
+  "originalPreparation": {
+    "path": "/tmp/story65-receiver-phase-prep-20261107/preparation-receipt.json",
+    "sha256": "2989126d708ac18a25e41aa96079a60833bfb46af112fa363ee682e8ac937951",
+    "rootPreservedHistory": "/tmp/story65-receiver-phase-history-20261107/298912-attempt1"
+  },
+  "sourceDerivedCause": [
+    "ConsoleRunner supplied testAssembly selects tests; CommandLineParserBase separately gets writer registrations from Assembly.GetEntryAssembly().",
+    "All four genuine thin entry assemblies have only System.Runtime and Story65.ReceiverPhase.Driver AssemblyRefs and no writer attributes in their original source.",
+    "RegisteredRunnerConfig reflection build starts empty and discovers writers only from attributes on that entry assembly.",
+    "No XML writer means no -xml parser; unknown -xml raises ArgumentException before discovery; ConsoleRunner maps ArgumentException to exit3."
+  ],
+  "predictedDiscardedMessage": "unknown option: -xml",
+  "predictedMessageIsNotRuntimeObserved": true,
+  "supportedFix": "Link one public RegisterConsoleResultWriter(\"xml\",typeof(XmlV2ResultWriter)) assembly attribute into all four genuine entries; add only pinned cached runner.common4.0.2 compile-only Private=false reference.",
+  "primaryMetadataReceipt": "/tmp/story65-receiver-phase-prep-20261107/provenance/console-runner-registration/primary-source-metadata-receipt.json",
+  "primaryMetadataReceiptSha256": "e44bd421f9a3aef39d9453cefc6f94e4f988467f80d4956c9aae89c278d3792d",
+  "sourceChangeDiff": "/tmp/story65-receiver-phase-prep-20261107/entry-registration-fix.diff",
+  "sourceChangeDiffSha256": "64567e3c386456696e69f39b6ec9962ba373f112af0c6fb887ca26dc90b8bf61",
+  "changedOriginalPreparedFilesBeforeIndexRefresh": [
+    "entry/excluded/Entry.csproj",
+    "entry/folders/Entry.csproj",
+    "entry/projects/Entry.csproj",
+    "entry/tenants/Entry.csproj"
+  ],
+  "allOtherOriginal59PreparedFilesUnchanged": true,
+  "nativeRunnerDriverSourceSdkTestAssemblyAssertionsArgvUnchanged": true,
+  "noSetEntryAssemblyOrPrivateRunnerMutation": true,
+  "newRuntimeManifestRequired": true,
+  "thisRevisionCompilerTargetLoadNativeTestHostsWindows": 0
+}

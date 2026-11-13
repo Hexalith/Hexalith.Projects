@@ -1,0 +1,23 @@
+<Project>
+  <!-- Imported last, after the retained mapping.final.targets and SDK generator declarations. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Server'">
+    <Story65ServerLateGuardImported>true</Story65ServerLateGuardImported>
+  </PropertyGroup>
+  <Target Name="Story65ValidateServerCompilerPaths" DependsOnTargets="Story65OutboundAssertionSourceSubstitution" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Server'">
+    <Error Condition="'$(ProjectAssetsFile)' != '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/obj/project.assets.json'" Text="Private qualification refused changed restored assets path." />
+    <ItemGroup>
+      <_Story65ServerWritable Include="$(OutputPath);$(OutDir);$(TargetPath);$(TargetRefPath);$(IntermediateOutputPath);$(ProjectAssetsCacheFile);$(DocumentationFile);$(GeneratedAssemblyInfoFile);$(GeneratedGlobalUsingsFile);$(GeneratedMSBuildEditorConfigFile);$(CompilerGeneratedFilesOutputPath);$(ProjectDepsFilePath);$(ProjectRuntimeConfigFilePath);$(PublishDir);$(CoreCompileInputsCacheFile);$(ResolveAssemblyReferencesStateFile);$(SourceLink);$(PdbFile)" />
+      <_Story65ServerWritable Include="@(IntermediateAssembly);@(IntermediateRefAssembly);@(FileWrites)" />
+      <_Story65ServerOriginalHandler Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/DomainServices/DomainServiceWorkloadAssertionHandler.cs'" />
+      <_Story65ServerPrivateHandler Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-outbound-assertion-prep-20261107/DomainServiceWorkloadAssertionHandler.private.cs'" />
+      <_Story65ServerHelper Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-outbound-assertion-prep-20261107/CaptureCounters.cs'" />
+      <_Story65ServerBootstrap Include="@(Compile)" Condition="'%(Compile.FullPath)' == '/tmp/story65-outbound-assertion-prep-20261107/GatewayControllerBootstrap.cs'" />
+    </ItemGroup>
+    <Error Condition="'@(_Story65ServerOriginalHandler)' != '' or '@(_Story65ServerPrivateHandler->Count())' != '1' or '@(_Story65ServerHelper->Count())' != '1' or '@(_Story65ServerBootstrap->Count())' != '1'" Text="Private qualification refused an unexpected handler compiler input set." />
+    <Error Condition="!$([System.String]::Copy('%(_Story65ServerWritable.FullPath)').StartsWith('/tmp/story65-outbound-assertion-ops-prep-20261107/isolated-server/', System.StringComparison.Ordinal))" Text="Private qualification refused a compiler/generated/cache write outside its isolated output." />
+  </Target>
+  <Target Name="Story65GuardServerBeforeCsc" BeforeTargets="CoreCompile" DependsOnTargets="Story65ValidateServerCompilerPaths" Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.Server'">
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-compiler-inputs.txt" Lines="@(Compile->'Compile|%(FullPath)');@(AdditionalFiles->'AdditionalFile|%(FullPath)');@(Analyzer->'Analyzer|%(FullPath)');@(ReferencePathWithRefAssemblies->'Reference|%(FullPath)');@(EmbeddedResource->'Resource|%(FullPath)')" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)story65-writable-paths.txt" Lines="@(_Story65ServerWritable->'%(FullPath)')" Overwrite="true" />
+  </Target>
+</Project>

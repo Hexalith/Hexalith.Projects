@@ -1,0 +1,742 @@
+{
+  "Hexalith.EventStore-3689236.jsonl": {
+    "gateway.stream-controller": {
+      "pairedSpans": 378,
+      "minimumMilliseconds": 17.217738,
+      "medianMilliseconds": 137.6986445,
+      "maximumMilliseconds": 482.720712,
+      "inclusiveTotalMilliseconds": 55851.283611
+    },
+    "gateway.domain-send": {
+      "pairedSpans": 90,
+      "minimumMilliseconds": 530.873203,
+      "medianMilliseconds": 647.8900639999999,
+      "maximumMilliseconds": 2224.649573,
+      "inclusiveTotalMilliseconds": 101714.735589
+    },
+    "gateway.domain-invoker": {
+      "pairedSpans": 90,
+      "minimumMilliseconds": 655.204966,
+      "medianMilliseconds": 699.6647680000001,
+      "maximumMilliseconds": 2394.490885,
+      "inclusiveTotalMilliseconds": 106698.617642
+    },
+    "gateway.owner-controller": {
+      "pairedSpans": 80,
+      "minimumMilliseconds": 0.582552,
+      "medianMilliseconds": 832.7020515,
+      "maximumMilliseconds": 1043.675616,
+      "inclusiveTotalMilliseconds": 51422.046595
+    }
+  },
+  "Hexalith.EventStore.Client-3688873.jsonl": {
+    "native-metadata.read": {
+      "pairedSpans": 4,
+      "minimumMilliseconds": 152.812325,
+      "medianMilliseconds": 169.69905699999998,
+      "maximumMilliseconds": 265.029879,
+      "inclusiveTotalMilliseconds": 757.240318
+    }
+  },
+  "Hexalith.EventStore.Client-3689857.jsonl": {
+    "native-metadata.read": {
+      "pairedSpans": 266,
+      "minimumMilliseconds": 148.274208,
+      "medianMilliseconds": 236.0563265,
+      "maximumMilliseconds": 2001.973509,
+      "inclusiveTotalMilliseconds": 66350.872387
+    }
+  },
+  "Hexalith.EventStore.DomainService-3689496.jsonl": {
+    "delegated.issuer": {
+      "pairedSpans": 86,
+      "minimumMilliseconds": 3.984254,
+      "medianMilliseconds": 4.2632905,
+      "maximumMilliseconds": 20.4662,
+      "inclusiveTotalMilliseconds": 387.452634
+    },
+    "delegated.send": {
+      "pairedSpans": 86,
+      "minimumMilliseconds": 42.233109,
+      "medianMilliseconds": 933.6849199999999,
+      "maximumMilliseconds": 1187.440641,
+      "inclusiveTotalMilliseconds": 59343.026273999996
+    },
+    "delegated.body": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 0.038956,
+      "medianMilliseconds": 0.053128499999999995,
+      "maximumMilliseconds": 5.967098,
+      "inclusiveTotalMilliseconds": 9.307952
+    },
+    "delegated.owner-operation": {
+      "pairedSpans": 86,
+      "minimumMilliseconds": 47.23717,
+      "medianMilliseconds": 938.743133,
+      "maximumMilliseconds": 1192.470765,
+      "inclusiveTotalMilliseconds": 59816.157889
+    },
+    "delegated.invoke": {
+      "pairedSpans": 86,
+      "minimumMilliseconds": 47.30398,
+      "medianMilliseconds": 938.8199365,
+      "maximumMilliseconds": 1192.535701,
+      "inclusiveTotalMilliseconds": 59824.434665
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3685052.jsonl": {
+    "catalog.binding-compute": {
+      "pairedSpans": 7,
+      "minimumMilliseconds": 2.061833,
+      "medianMilliseconds": 2.33824,
+      "maximumMilliseconds": 13.246193,
+      "inclusiveTotalMilliseconds": 30.200791
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3688873.jsonl": {
+    "invocation.handler": {
+      "pairedSpans": 283,
+      "minimumMilliseconds": 0.634567,
+      "medianMilliseconds": 2.279225,
+      "maximumMilliseconds": 8342.767216,
+      "inclusiveTotalMilliseconds": 12792.584837
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 408,
+      "minimumMilliseconds": 0.871372,
+      "medianMilliseconds": 1.2003409999999999,
+      "maximumMilliseconds": 43.356334,
+      "inclusiveTotalMilliseconds": 1131.26297
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 0.978379,
+      "medianMilliseconds": 1.754087,
+      "maximumMilliseconds": 25.81351,
+      "inclusiveTotalMilliseconds": 187.975697
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 4.872685,
+      "medianMilliseconds": 5.6139805,
+      "maximumMilliseconds": 51.416859,
+      "inclusiveTotalMilliseconds": 535.745167
+    },
+    "host.identity": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 0.748574,
+      "medianMilliseconds": 0.873085,
+      "maximumMilliseconds": 7.863616,
+      "inclusiveTotalMilliseconds": 96.097437
+    },
+    "host.observe": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 6.762992,
+      "medianMilliseconds": 8.6836895,
+      "maximumMilliseconds": 95.905284,
+      "inclusiveTotalMilliseconds": 882.747707
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 6.795826,
+      "medianMilliseconds": 8.720576000000001,
+      "maximumMilliseconds": 98.858674,
+      "inclusiveTotalMilliseconds": 887.977036
+    },
+    "catalog.trust": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 0.631356,
+      "medianMilliseconds": 1.0342164999999999,
+      "maximumMilliseconds": 31.729698,
+      "inclusiveTotalMilliseconds": 145.440181
+    },
+    "catalog.validate": {
+      "pairedSpans": 56,
+      "minimumMilliseconds": 9.167356,
+      "medianMilliseconds": 13.479326,
+      "maximumMilliseconds": 165.636518,
+      "inclusiveTotalMilliseconds": 1362.397726
+    },
+    "catalog.state-read": {
+      "pairedSpans": 68,
+      "minimumMilliseconds": 2.448766,
+      "medianMilliseconds": 3.16345,
+      "maximumMilliseconds": 38.911812,
+      "inclusiveTotalMilliseconds": 311.080252
+    },
+    "catalog.cas": {
+      "pairedSpans": 34,
+      "minimumMilliseconds": 2.634776,
+      "medianMilliseconds": 3.4914354999999997,
+      "maximumMilliseconds": 14.092616,
+      "inclusiveTotalMilliseconds": 139.139365
+    },
+    "catalog.acquire-core": {
+      "pairedSpans": 34,
+      "minimumMilliseconds": 25.128501,
+      "medianMilliseconds": 29.6952145,
+      "maximumMilliseconds": 146.596829,
+      "inclusiveTotalMilliseconds": 1286.1403
+    },
+    "catalog.acquire": {
+      "pairedSpans": 34,
+      "minimumMilliseconds": 25.151065,
+      "medianMilliseconds": 29.7793835,
+      "maximumMilliseconds": 149.648139,
+      "inclusiveTotalMilliseconds": 1292.552066
+    },
+    "catalog.release": {
+      "pairedSpans": 34,
+      "minimumMilliseconds": 4.901889,
+      "medianMilliseconds": 6.7236775,
+      "maximumMilliseconds": 21.431554,
+      "inclusiveTotalMilliseconds": 273.911893
+    },
+    "invocation.transport": {
+      "pairedSpans": 18,
+      "minimumMilliseconds": 126.069617,
+      "medianMilliseconds": 181.3199535,
+      "maximumMilliseconds": 8181.094243,
+      "inclusiveTotalMilliseconds": 11367.391163999999
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3689236.jsonl": {
+    "invocation.handler": {
+      "pairedSpans": 1790,
+      "minimumMilliseconds": 0.187484,
+      "medianMilliseconds": 2.0219325,
+      "maximumMilliseconds": 1063.474299,
+      "inclusiveTotalMilliseconds": 13218.080091
+    },
+    "catalog.acquire-core": {
+      "pairedSpans": 337,
+      "minimumMilliseconds": 0.040448,
+      "medianMilliseconds": 55.534262,
+      "maximumMilliseconds": 266.615726,
+      "inclusiveTotalMilliseconds": 24148.409084
+    },
+    "catalog.acquire": {
+      "pairedSpans": 337,
+      "minimumMilliseconds": 0.094604,
+      "medianMilliseconds": 61.151591,
+      "maximumMilliseconds": 465.248234,
+      "inclusiveTotalMilliseconds": 27079.520413
+    },
+    "technical.assembly-image": {
+      "pairedSpans": 13053,
+      "minimumMilliseconds": 0.024908,
+      "medianMilliseconds": 0.163959,
+      "maximumMilliseconds": 28.539592,
+      "inclusiveTotalMilliseconds": 9401.842943
+    },
+    "technical.schema": {
+      "pairedSpans": 76016,
+      "minimumMilliseconds": 0.002405,
+      "medianMilliseconds": 0.003437,
+      "maximumMilliseconds": 13.125777,
+      "inclusiveTotalMilliseconds": 847.332552
+    },
+    "technical.complete": {
+      "pairedSpans": 862,
+      "minimumMilliseconds": 0.023796,
+      "medianMilliseconds": 3.2467075,
+      "maximumMilliseconds": 35.869565,
+      "inclusiveTotalMilliseconds": 4790.229778
+    },
+    "technical.observe-all": {
+      "pairedSpans": 349,
+      "minimumMilliseconds": 20.845907,
+      "medianMilliseconds": 24.733924,
+      "maximumMilliseconds": 116.454796,
+      "inclusiveTotalMilliseconds": 10924.604914
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 3441,
+      "minimumMilliseconds": 0.857274,
+      "medianMilliseconds": 1.113773,
+      "maximumMilliseconds": 42.568078,
+      "inclusiveTotalMilliseconds": 6336.433193
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 349,
+      "minimumMilliseconds": 0.912821,
+      "medianMilliseconds": 1.118145,
+      "maximumMilliseconds": 19.319862,
+      "inclusiveTotalMilliseconds": 625.544397
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 23.681982,
+      "medianMilliseconds": 28.8739225,
+      "maximumMilliseconds": 225.695823,
+      "inclusiveTotalMilliseconds": 12862.579497
+    },
+    "host.identity": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 2.904129,
+      "medianMilliseconds": 3.366254,
+      "maximumMilliseconds": 40.799772,
+      "inclusiveTotalMilliseconds": 1940.163389
+    },
+    "host.observe": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 28.050908,
+      "medianMilliseconds": 33.956654,
+      "maximumMilliseconds": 264.021577,
+      "inclusiveTotalMilliseconds": 15645.482926
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 28.075816,
+      "medianMilliseconds": 33.997547999999995,
+      "maximumMilliseconds": 265.898017,
+      "inclusiveTotalMilliseconds": 15660.508572
+    },
+    "catalog.trust": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 0.63342,
+      "medianMilliseconds": 0.7071685000000001,
+      "maximumMilliseconds": 20.095724,
+      "inclusiveTotalMilliseconds": 449.371705
+    },
+    "catalog.validate": {
+      "pairedSpans": 348,
+      "minimumMilliseconds": 30.641037,
+      "medianMilliseconds": 36.938608,
+      "maximumMilliseconds": 286.904282,
+      "inclusiveTotalMilliseconds": 17279.330294
+    },
+    "catalog.state-read": {
+      "pairedSpans": 679,
+      "minimumMilliseconds": 1.943584,
+      "medianMilliseconds": 3.034138,
+      "maximumMilliseconds": 44.606892,
+      "inclusiveTotalMilliseconds": 3122.649977
+    },
+    "catalog.cas": {
+      "pairedSpans": 339,
+      "minimumMilliseconds": 2.382916,
+      "medianMilliseconds": 3.097985,
+      "maximumMilliseconds": 39.716521,
+      "inclusiveTotalMilliseconds": 1481.228172
+    },
+    "invocation.transport": {
+      "pairedSpans": 25,
+      "minimumMilliseconds": 36.177002,
+      "medianMilliseconds": 58.898672,
+      "maximumMilliseconds": 1000.104072,
+      "inclusiveTotalMilliseconds": 5812.132531
+    },
+    "catalog.release": {
+      "pairedSpans": 331,
+      "minimumMilliseconds": 4.218421,
+      "medianMilliseconds": 5.856923,
+      "maximumMilliseconds": 46.126188,
+      "inclusiveTotalMilliseconds": 2839.259629
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3689496.jsonl": {
+    "invocation.handler": {
+      "pairedSpans": 1151,
+      "minimumMilliseconds": 0.615446,
+      "medianMilliseconds": 2.25528,
+      "maximumMilliseconds": 1187.24426,
+      "inclusiveTotalMilliseconds": 61553.737587999996
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 1848,
+      "minimumMilliseconds": 0.872525,
+      "medianMilliseconds": 1.096568,
+      "maximumMilliseconds": 83.76727,
+      "inclusiveTotalMilliseconds": 2747.63654
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 0.956868,
+      "medianMilliseconds": 1.1166109999999998,
+      "maximumMilliseconds": 84.835232,
+      "inclusiveTotalMilliseconds": 393.392511
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 16.963964,
+      "medianMilliseconds": 18.002271,
+      "maximumMilliseconds": 53.349945,
+      "inclusiveTotalMilliseconds": 3694.048776
+    },
+    "host.identity": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 0.941839,
+      "medianMilliseconds": 1.088002,
+      "maximumMilliseconds": 11.258473,
+      "inclusiveTotalMilliseconds": 253.68031
+    },
+    "host.observe": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 19.188197,
+      "medianMilliseconds": 20.526887000000002,
+      "maximumMilliseconds": 73.94067,
+      "inclusiveTotalMilliseconds": 4298.402824
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 19.208345,
+      "medianMilliseconds": 20.5617125,
+      "maximumMilliseconds": 76.270911,
+      "inclusiveTotalMilliseconds": 4307.529871
+    },
+    "catalog.trust": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 0.632637,
+      "medianMilliseconds": 0.70351,
+      "maximumMilliseconds": 28.71764,
+      "inclusiveTotalMilliseconds": 205.14203
+    },
+    "catalog.validate": {
+      "pairedSpans": 186,
+      "minimumMilliseconds": 21.514044,
+      "medianMilliseconds": 23.468874,
+      "maximumMilliseconds": 250.160916,
+      "inclusiveTotalMilliseconds": 5218.5755309999995
+    },
+    "catalog.state-read": {
+      "pairedSpans": 358,
+      "minimumMilliseconds": 2.064292,
+      "medianMilliseconds": 2.7489175,
+      "maximumMilliseconds": 11.097879,
+      "inclusiveTotalMilliseconds": 1111.120103
+    },
+    "catalog.cas": {
+      "pairedSpans": 179,
+      "minimumMilliseconds": 2.367715,
+      "medianMilliseconds": 2.847331,
+      "maximumMilliseconds": 15.011165,
+      "inclusiveTotalMilliseconds": 594.486324
+    },
+    "catalog.acquire-core": {
+      "pairedSpans": 175,
+      "minimumMilliseconds": 34.681464,
+      "medianMilliseconds": 39.403145,
+      "maximumMilliseconds": 110.636281,
+      "inclusiveTotalMilliseconds": 7542.946017
+    },
+    "catalog.acquire": {
+      "pairedSpans": 175,
+      "minimumMilliseconds": 34.707695,
+      "medianMilliseconds": 39.528912,
+      "maximumMilliseconds": 110.760511,
+      "inclusiveTotalMilliseconds": 7631.387727
+    },
+    "catalog.release": {
+      "pairedSpans": 145,
+      "minimumMilliseconds": 4.885171,
+      "medianMilliseconds": 8.427164,
+      "maximumMilliseconds": 39.929538,
+      "inclusiveTotalMilliseconds": 1495.009085
+    },
+    "invocation.transport": {
+      "pairedSpans": 86,
+      "minimumMilliseconds": 3.034764,
+      "medianMilliseconds": 879.70646,
+      "maximumMilliseconds": 1094.025258,
+      "inclusiveTotalMilliseconds": 55163.480279
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3689700.jsonl": {
+    "invocation.handler": {
+      "pairedSpans": 9,
+      "minimumMilliseconds": 1.111376,
+      "medianMilliseconds": 9.896435,
+      "maximumMilliseconds": 73.117535,
+      "inclusiveTotalMilliseconds": 181.72418000000002
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 24,
+      "minimumMilliseconds": 6.357208,
+      "medianMilliseconds": 10.810500000000001,
+      "maximumMilliseconds": 93.561613,
+      "inclusiveTotalMilliseconds": 400.319642
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 8.330663,
+      "medianMilliseconds": 11.61305,
+      "maximumMilliseconds": 94.8905,
+      "inclusiveTotalMilliseconds": 147.859158
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 2.105345,
+      "medianMilliseconds": 4.933912,
+      "maximumMilliseconds": 8.887452,
+      "inclusiveTotalMilliseconds": 26.290906
+    },
+    "host.identity": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 0.100275,
+      "medianMilliseconds": 0.127688,
+      "maximumMilliseconds": 0.253552,
+      "inclusiveTotalMilliseconds": 0.763292
+    },
+    "host.observe": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 13.317712,
+      "medianMilliseconds": 16.120474,
+      "maximumMilliseconds": 65.216466,
+      "inclusiveTotalMilliseconds": 129.375021
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 13.46147,
+      "medianMilliseconds": 16.235447,
+      "maximumMilliseconds": 68.066656,
+      "inclusiveTotalMilliseconds": 132.714179
+    },
+    "catalog.trust": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 4.671163,
+      "medianMilliseconds": 7.377654,
+      "maximumMilliseconds": 116.952125,
+      "inclusiveTotalMilliseconds": 146.794218
+    },
+    "catalog.validate": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 36.914808,
+      "medianMilliseconds": 49.173921,
+      "maximumMilliseconds": 293.072259,
+      "inclusiveTotalMilliseconds": 478.73786299999995
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3689857.jsonl": {
+    "technical.assembly-image": {
+      "pairedSpans": 1476,
+      "minimumMilliseconds": 0.583825,
+      "medianMilliseconds": 0.7632369999999999,
+      "maximumMilliseconds": 9.014367,
+      "inclusiveTotalMilliseconds": 1265.069068
+    },
+    "invocation.handler": {
+      "pairedSpans": 1696,
+      "minimumMilliseconds": 0.601071,
+      "medianMilliseconds": 2.6921525,
+      "maximumMilliseconds": 446.586363,
+      "inclusiveTotalMilliseconds": 70232.140985
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 2907,
+      "minimumMilliseconds": 0.871763,
+      "medianMilliseconds": 1.112792,
+      "maximumMilliseconds": 89.240044,
+      "inclusiveTotalMilliseconds": 4635.868566
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 0.890559,
+      "medianMilliseconds": 1.077924,
+      "maximumMilliseconds": 74.720805,
+      "inclusiveTotalMilliseconds": 873.443264
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 16.993389,
+      "medianMilliseconds": 18.656152,
+      "maximumMilliseconds": 78.869988,
+      "inclusiveTotalMilliseconds": 10139.949255
+    },
+    "host.identity": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 0.752672,
+      "medianMilliseconds": 0.980429,
+      "maximumMilliseconds": 13.122135,
+      "inclusiveTotalMilliseconds": 596.575735
+    },
+    "host.observe": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 18.957774,
+      "medianMilliseconds": 21.189328,
+      "maximumMilliseconds": 190.885042,
+      "inclusiveTotalMilliseconds": 11689.207661
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 18.98646,
+      "medianMilliseconds": 21.214248,
+      "maximumMilliseconds": 193.205845,
+      "inclusiveTotalMilliseconds": 11714.950008
+    },
+    "catalog.trust": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 0.619583,
+      "medianMilliseconds": 0.693486,
+      "maximumMilliseconds": 11.650252,
+      "inclusiveTotalMilliseconds": 465.682781
+    },
+    "catalog.validate": {
+      "pairedSpans": 489,
+      "minimumMilliseconds": 21.341695,
+      "medianMilliseconds": 24.33198,
+      "maximumMilliseconds": 304.166827,
+      "inclusiveTotalMilliseconds": 13624.640733
+    },
+    "catalog.state-read": {
+      "pairedSpans": 394,
+      "minimumMilliseconds": 2.044486,
+      "medianMilliseconds": 2.8036820000000002,
+      "maximumMilliseconds": 26.637093,
+      "inclusiveTotalMilliseconds": 1347.257072
+    },
+    "catalog.cas": {
+      "pairedSpans": 197,
+      "minimumMilliseconds": 2.363369,
+      "medianMilliseconds": 2.958224,
+      "maximumMilliseconds": 54.347559,
+      "inclusiveTotalMilliseconds": 807.945984
+    },
+    "catalog.acquire-core": {
+      "pairedSpans": 194,
+      "minimumMilliseconds": 35.493271,
+      "medianMilliseconds": 40.329713999999996,
+      "maximumMilliseconds": 214.612174,
+      "inclusiveTotalMilliseconds": 9272.232699
+    },
+    "catalog.acquire": {
+      "pairedSpans": 194,
+      "minimumMilliseconds": 35.51881,
+      "medianMilliseconds": 40.366704999999996,
+      "maximumMilliseconds": 214.749802,
+      "inclusiveTotalMilliseconds": 9292.81768
+    },
+    "catalog.release": {
+      "pairedSpans": 192,
+      "minimumMilliseconds": 4.274732,
+      "medianMilliseconds": 5.803723,
+      "maximumMilliseconds": 58.008792,
+      "inclusiveTotalMilliseconds": 1829.987675
+    },
+    "invocation.transport": {
+      "pairedSpans": 297,
+      "minimumMilliseconds": 111.907678,
+      "medianMilliseconds": 194.547691,
+      "maximumMilliseconds": 346.924295,
+      "inclusiveTotalMilliseconds": 57575.883571
+    }
+  },
+  "Hexalith.EventStore.ServiceDefaults-3689974.jsonl": {
+    "invocation.handler": {
+      "pairedSpans": 8,
+      "minimumMilliseconds": 2.455158,
+      "medianMilliseconds": 10.641451,
+      "maximumMilliseconds": 61.656013,
+      "inclusiveTotalMilliseconds": 144.841336
+    },
+    "catalog.binding-compute": {
+      "pairedSpans": 22,
+      "minimumMilliseconds": 5.155622,
+      "medianMilliseconds": 14.7573965,
+      "maximumMilliseconds": 72.722057,
+      "inclusiveTotalMilliseconds": 460.267314
+    },
+    "catalog.activation-digest": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 8.805233,
+      "medianMilliseconds": 16.708411,
+      "maximumMilliseconds": 73.974877,
+      "inclusiveTotalMilliseconds": 140.797673
+    },
+    "host.capture-inputs": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 2.986403,
+      "medianMilliseconds": 5.914414,
+      "maximumMilliseconds": 20.280491,
+      "inclusiveTotalMilliseconds": 46.273713
+    },
+    "host.identity": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 0.100806,
+      "medianMilliseconds": 0.130503,
+      "maximumMilliseconds": 0.336423,
+      "inclusiveTotalMilliseconds": 0.8240590000000001
+    },
+    "host.observe": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 9.552642,
+      "medianMilliseconds": 35.487767,
+      "maximumMilliseconds": 175.682382,
+      "inclusiveTotalMilliseconds": 293.694046
+    },
+    "catalog.host-capture": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 9.60808,
+      "medianMilliseconds": 35.670882,
+      "maximumMilliseconds": 177.975479,
+      "inclusiveTotalMilliseconds": 296.482824
+    },
+    "catalog.trust": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 4.935695,
+      "medianMilliseconds": 9.751422,
+      "maximumMilliseconds": 20.393035,
+      "inclusiveTotalMilliseconds": 59.041814
+    },
+    "catalog.validate": {
+      "pairedSpans": 5,
+      "minimumMilliseconds": 31.274379,
+      "medianMilliseconds": 83.718349,
+      "maximumMilliseconds": 310.18164,
+      "inclusiveTotalMilliseconds": 582.1023190000001
+    }
+  },
+  "Hexalith.Folders-3689857.jsonl": {
+    "folders.tenant-authority": {
+      "pairedSpans": 148,
+      "minimumMilliseconds": 0.727834,
+      "medianMilliseconds": 1.1615465,
+      "maximumMilliseconds": 9.788005,
+      "inclusiveTotalMilliseconds": 194.26518
+    },
+    "folders.authority-core": {
+      "pairedSpans": 148,
+      "minimumMilliseconds": 1.083324,
+      "medianMilliseconds": 240.4779835,
+      "maximumMilliseconds": 344.708479,
+      "inclusiveTotalMilliseconds": 34680.053754
+    },
+    "folders.folder-evidence": {
+      "pairedSpans": 144,
+      "minimumMilliseconds": 150.53314,
+      "medianMilliseconds": 239.314701,
+      "maximumMilliseconds": 341.744779,
+      "inclusiveTotalMilliseconds": 34465.820889
+    },
+    "folders.current-authority": {
+      "pairedSpans": 120,
+      "minimumMilliseconds": 151.843797,
+      "medianMilliseconds": 240.95567749999998,
+      "maximumMilliseconds": 298.896578,
+      "inclusiveTotalMilliseconds": 29084.083119
+    }
+  },
+  "Hexalith.Folders.Server-3689857.jsonl": {
+    "folders.first-authorization": {
+      "pairedSpans": 60,
+      "minimumMilliseconds": 227.399282,
+      "medianMilliseconds": 240.5737565,
+      "maximumMilliseconds": 291.377141,
+      "inclusiveTotalMilliseconds": 14565.915534
+    },
+    "folders.final-authorization": {
+      "pairedSpans": 60,
+      "minimumMilliseconds": 151.875698,
+      "medianMilliseconds": 241.90141699999998,
+      "maximumMilliseconds": 298.915054,
+      "inclusiveTotalMilliseconds": 14521.420638
+    },
+    "folders.owner-handler": {
+      "pairedSpans": 60,
+      "minimumMilliseconds": 399.648649,
+      "medianMilliseconds": 482.69412950000003,
+      "maximumMilliseconds": 590.384445,
+      "inclusiveTotalMilliseconds": 29097.156839
+    }
+  }
+}

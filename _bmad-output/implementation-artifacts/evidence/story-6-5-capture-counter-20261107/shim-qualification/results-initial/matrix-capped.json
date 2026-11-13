@@ -1,0 +1,430 @@
+{
+  "kind": "matrix",
+  "mode": "capped",
+  "cases": 57,
+  "allPairsEqual": true,
+  "counterPartitionChecked": false,
+  "counterPartitionEqual": true,
+  "expectedCounts": [
+    1890,
+    826,
+    203,
+    742,
+    112,
+    7
+  ],
+  "actualCounts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "settingRows": 0,
+  "admitted": 133,
+  "disposedOrUnwound": 133,
+  "queueDropped": 868,
+  "ioFailures": 0,
+  "results": [
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 1,
+      "pairs": 1,
+      "equal": true
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 2,
+      "pairs": 2,
+      "equal": true
+    },
+    {
+      "scenario": "empty-minimal",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "null-and-empty-values",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "mixed-case-prefixes-and-names",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "deep-and-array-keys",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "sensitive-substrings",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "unrecognized-authentication-name",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "discarded-key-throws",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "null-key-value-then-later-throw",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "mutation-at-tryget-ordinal",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-second-observation",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "declared-invocations-absent",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "publickeys-and-token-presence",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-valid",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "actor-owner-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "component-file-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "component-role-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "acl-file-error",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "initially-cancelled",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    },
+    {
+      "scenario": "repeated-capture-fresh-state",
+      "mode": "capped",
+      "concurrency": 4,
+      "pairs": 4,
+      "equal": true
+    }
+  ]
+}

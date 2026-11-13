@@ -1,0 +1,416 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "operationalPinsSha256": "fe1232466a7aabd3e4091a4c3a61f6c7d7a6cbb84d357a95c94c18d308c0c1a7",
+  "roles": [
+    {
+      "role": "projects",
+      "captures": 3,
+      "rows": 24,
+      "phases": [
+        {
+          "stage": "Whole",
+          "phase": "Whole",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 2026.991044,
+            "p95": 2044.941752,
+            "minimum": 2017.968359,
+            "maximum": 2044.941752
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 1.0,
+            "p95": 1.0,
+            "minimum": 1.0,
+            "maximum": 1.0
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ComponentFile",
+          "phase": "Guard",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 17.769515,
+            "p95": 19.820721,
+            "minimum": 16.015626,
+            "maximum": 19.820721
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 0.008689496892819077,
+            "p95": 0.00977839594243417,
+            "minimum": 0.00793650996982753,
+            "maximum": 0.00977839594243417
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ComponentPolicy",
+          "phase": "AuthorityAcquire",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 17.650275,
+            "p95": 19.761146,
+            "minimum": 15.889333,
+            "maximum": 19.761146
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 0.008631187163515843,
+            "p95": 0.00974900508736535,
+            "minimum": 0.007873925737801917,
+            "maximum": 0.00974900508736535
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "AclFile",
+          "phase": "PostAcquireValidation",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 0.112697,
+            "p95": 0.120231,
+            "minimum": 0.054546,
+            "maximum": 0.120231
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 5.51101271661062e-05,
+            "p95": 5.958022060344902e-05,
+            "minimum": 2.6909837693392394e-05,
+            "maximum": 5.958022060344902e-05
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "SettingsEnumerationSortDictionary",
+          "phase": "Next",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 1999.515631,
+            "p95": 2002.162818,
+            "minimum": 1997.771246,
+            "maximum": 2002.162818
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 0.9877511910703834,
+            "p95": 0.9899913628923257,
+            "minimum": 0.9777861051760657,
+            "maximum": 0.9899913628923257
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "AuthenticationSerialization",
+          "phase": "LastRelease",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 4.915037,
+            "p95": 26.904086,
+            "minimum": 4.087054,
+            "maximum": 26.904086
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 0.0024247946307156946,
+            "p95": 0.013156407009484346,
+            "minimum": 0.002025331062190356,
+            "maximum": 0.013156407009484346
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ActorBoundary",
+          "phase": "ResultExecute",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 0.068372,
+            "p95": 0.070697,
+            "minimum": 0.066018,
+            "maximum": 0.070697
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 3.388160160939372e-05,
+            "p95": 3.457164485533962e-05,
+            "minimum": 3.2569458160862005e-05,
+            "maximum": 3.457164485533962e-05
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ResultTail",
+          "phase": "FilterUntilReturn",
+          "wallMilliseconds": {
+            "n": 3,
+            "median": 2017.304433,
+            "p95": 2021.994691,
+            "minimum": 2013.798805,
+            "maximum": 2021.994691
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 3,
+            "median": 0.9975350887638159,
+            "p95": 0.997933786235347,
+            "minimum": 0.9864850336333687,
+            "maximum": 0.997933786235347
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        }
+      ],
+      "wholeMinusFilterUntilReturnMillisecondsUnattributed": {
+        "n": 3,
+        "median": 4.996353,
+        "p95": 27.637319,
+        "minimum": 4.169554,
+        "maximum": 27.637319
+      },
+      "allStagesWithinWhole": true,
+      "strictFinalZeroDropsIoActiveQueued": true,
+      "rowSha256": "a725a4ff27610234a4429f5026a03723a7809ee3dc69ba3eb01527ad6250e8d6",
+      "closedReceiptSha256": "a5ed5a5ca9d2675025941a280d79d797be680e89a39296c3f977ca8ae1f18832"
+    },
+    {
+      "role": "folders",
+      "captures": 36,
+      "rows": 288,
+      "phases": [
+        {
+          "stage": "Whole",
+          "phase": "Whole",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 336.9285385,
+            "p95": 378.923479,
+            "minimum": 270.371609,
+            "maximum": 384.369871
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 1.0,
+            "p95": 1.0,
+            "minimum": 1.0,
+            "maximum": 1.0
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ComponentFile",
+          "phase": "Guard",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 18.117105000000002,
+            "p95": 28.42379,
+            "minimum": 15.092073,
+            "maximum": 28.529374
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.05722876292792527,
+            "p95": 0.09220069942486707,
+            "minimum": 0.04375902150938305,
+            "maximum": 0.09400391147886093
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ComponentPolicy",
+          "phase": "AuthorityAcquire",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 18.074482500000002,
+            "p95": 28.363675,
+            "minimum": 15.019293,
+            "maximum": 28.484267
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.05701311825020741,
+            "p95": 0.09200028017076456,
+            "minimum": 0.04359017748048418,
+            "maximum": 0.09385528450810872
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "AclFile",
+          "phase": "PostAcquireValidation",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 0.052196000000000006,
+            "p95": 0.079122,
+            "minimum": 0.036962,
+            "maximum": 0.095614
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.00015050651164812443,
+            "p95": 0.0002606348536927721,
+            "minimum": 0.00010013243938722318,
+            "maximum": 0.0002856133149394224
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "SettingsEnumerationSortDictionary",
+          "phase": "Next",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 293.12514150000004,
+            "p95": 342.471635,
+            "minimum": 246.777107,
+            "maximum": 342.823246
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.8978646686126308,
+            "p95": 0.9314601020795833,
+            "minimum": 0.8352054996003395,
+            "maximum": 0.9358359825015188
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "AuthenticationSerialization",
+          "phase": "LastRelease",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 4.381270000000001,
+            "p95": 21.603417,
+            "minimum": 3.267308,
+            "maximum": 40.936891
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.01431966565971765,
+            "p95": 0.06918707223691646,
+            "minimum": 0.00858197597906939,
+            "maximum": 0.11557975089548359
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ActorBoundary",
+          "phase": "ResultExecute",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 1.9575384999999998,
+            "p95": 22.64861,
+            "minimum": 0.058292,
+            "maximum": 41.021975
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.005436448115526931,
+            "p95": 0.06765478466406752,
+            "minimum": 0.00016850881765345226,
+            "maximum": 0.10939972726163606
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        },
+        {
+          "stage": "ResultTail",
+          "phase": "FilterUntilReturn",
+          "wallMilliseconds": {
+            "n": 36,
+            "median": 310.591191,
+            "p95": 362.142878,
+            "minimum": 265.27665,
+            "maximum": 362.795567
+          },
+          "sameLocalCaptureFractionOfWhole": {
+            "n": 36,
+            "median": 0.970506722981419,
+            "p95": 0.9876984834018511,
+            "minimum": 0.8789916670436713,
+            "maximum": 0.988679310529836
+          },
+          "zeroWholeDenominatorsExcludedFromFractions": 0
+        }
+      ],
+      "wholeMinusFilterUntilReturnMillisecondsUnattributed": {
+        "n": 36,
+        "median": 8.922939,
+        "p95": 41.032244,
+        "minimum": 3.83873,
+        "maximum": 45.374892
+      },
+      "allStagesWithinWhole": true,
+      "strictFinalZeroDropsIoActiveQueued": true,
+      "rowSha256": "eb2f3f19442f9e4e7f19d81dda8680fb10404954725c7c122142ff95bc6a9785",
+      "closedReceiptSha256": "c9088395aea781d4f173c880a7fcd25064e757c51753400c5d35d4bc97e278f4"
+    }
+  ],
+  "coverage": {
+    "complete": false,
+    "availableRolesComplete": true,
+    "missingRoles": [
+      "tenants"
+    ],
+    "missingRoleReason": "unobserved; no request, outcome, or cause inferred"
+  },
+  "outcomes": {
+    "SINGLE": {
+      "completedAttempts": 22,
+      "verifiedPositives": 1
+    },
+    "MULTIPLE": {
+      "completedAttempts": 10,
+      "verifiedPositives": 0
+    },
+    "browserInvocations": 0,
+    "browserOutcome": "not-executed",
+    "matrixCompleted": false,
+    "managedRunResult": "failed"
+  },
+  "sourcePreservation": {
+    "source59Current": true,
+    "fullLiveManifestCount": 17350,
+    "fullLiveManifestMismatches": 0
+  },
+  "separateQualifications": {
+    "ownedCleanupAndOrdinaryRestorationClosedBeforeAnalysis": true,
+    "ordinaryReceiptSha256": "e985d27b5645a831e2ff69788794db372f780d11f25951bde61d453c9db50e10",
+    "ordinaryBinaryGenerationsNotReauditedHere": true,
+    "priorOrdinaryNative1048NotRerunOrInflatedByThisAnalysis": true,
+    "actualPrivateNative103SeparateDiagnosticGate": true,
+    "matrixAndFrozenControlQualificationNotInferredFromScalarTimings": true,
+    "optionalParentAuditIsPinnedReferenceOnly": true
+  },
+  "conventions": {
+    "percentile": "nearest-rank ceil(0.95*n), median midpoint for even n",
+    "fractions": "per capture having that stage, paired only to its own local Whole; no service or request joins",
+    "missingStage": "no outcome, route, denial, expiry, or cancellation inference",
+    "stage5": "last recorded release interval only, may include implicit unwind glue; not aggregate release work, release count, or callback count",
+    "stage7": "FilterUntilReturn overlaps Guard, AuthorityAcquire, PostAcquireValidation, Next and in-filter LastRelease when present; it excludes later IResult execution; stage durations are not an additive partition",
+    "guard": "Guard includes AuthorityAcquire and PostAcquireValidation when present; no subtraction or additive residual assigned to those intervals",
+    "nested": "Folders may have two distinct nested filters and overlapping local capture lifetimes; capture ordinals are not request counts or a cross-capture join",
+    "residual": "Whole minus FilterUntilReturn is an unattributed same-local-capture interval complement only; it is not assigned to a handoff, response, disposal, cancellation, or other cause; no other residual computed",
+    "whole": "excludes entry-name eligibility and initial admission lock wait; includes post-timestamp admission/allocation/bookkeeping and may span deferred IResult handoff, execution and owned release; stops before queueing",
+    "population": "all admitted DomainRouteCatalogFilter invocations in the two available processes during one failed-MULTI-triggered window; endpoint, request, command/query kind and outcome are unrecorded",
+    "limits": "no request/root/Activity/trace joins, prior probe pairing, missing-stage outcome or cancellation inference, cause assertion, overhead subtraction, or ordinary host/deadline gain claim"
+  },
+  "inputSha256": {
+    "/tmp/story65-domain-receiver-phase-ops-prep-20261108/operational-pins.json": "fe1232466a7aabd3e4091a4c3a61f6c7d7a6cbb84d357a95c94c18d308c0c1a7",
+    "/tmp/story65-domain-receiver-phase-ops-prep-20261108/latest-operational-result.json": "bcecb959db4a8d89eaebe91628bb0750662599056ca71dfc605524886faeb3b6",
+    "/tmp/story65-domain-receiver-phase-ops-prep-20261108/operational-ordinary-l7aq0d71/receipt.json": "e985d27b5645a831e2ff69788794db372f780d11f25951bde61d453c9db50e10",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/independent-cleanup-source-audit.json": "95f83d25c331ecdcd651dec0f706deba178703c40e0abb40f42d1c7a71603c47",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/supplemental-cleanup-qualification.json": "ba38d8062bf908d312157091ee7ec4270ed8fe1dd56effdd04314369e329a730",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/execution-entry-counts.json": "bc77bcd4e71e37c17b4c2243e2680c521178b91d3b84d23849b63af5b640cc33",
+    "/tmp/story65-domain-receiver-phase-ops-prep-20261108/latest-native-attempt.json": "10c667736b57308b97656d1c06652ee7accc4bf80221b3c4787ddbfc1cdb1256",
+    "/tmp/story65-domain-receiver-phase-ops-prep-20261108/native-private-domain-receiver-aodh4sm1/receipt.json": "9123f5eb6020e4644e7bc2d1f9ec8d695718574ff1c118a3d1d2eec01dcbf128",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/supervisor.json": "195f97614c69990265119427da14b32e0b1f6f7e9750e63cc72a4b0e565ffe4c",
+    "/tmp/story65-domain-receiver-phase-closed-recorders-20261108/partial-validation.json": "b7327dc809c26cb64d570160176b058813f985f2044be4df6224ba35248ffb77",
+    "/tmp/story65-domain-receiver-phase-closed-recorders-20261108/projects.jsonl": "a725a4ff27610234a4429f5026a03723a7809ee3dc69ba3eb01527ad6250e8d6",
+    "/tmp/story65-domain-receiver-phase-closed-recorders-20261108/projects.closed.json": "a5ed5a5ca9d2675025941a280d79d797be680e89a39296c3f977ca8ae1f18832",
+    "/tmp/story65-domain-receiver-phase-closed-recorders-20261108/folders.jsonl": "eb2f3f19442f9e4e7f19d81dda8680fb10404954725c7c122142ff95bc6a9785",
+    "/tmp/story65-domain-receiver-phase-closed-recorders-20261108/folders.closed.json": "c9088395aea781d4f173c880a7fcd25064e757c51753400c5d35d4bc97e278f4",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/managed/source-manifest.json": "c78428fc45e635a2e00ebafa93ff4e89bb6bc8051be503b3f6b3b508e6a08497",
+    "/tmp/story65-domain-receiver-phase-prep-20261108/preparation-receipt.json": "91282cf8bd429d6f301f3f0edbe5c2c0224eff81c7b7490941a6c5bf356973af",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/managed/browser-advisory-seed-readiness.jsonl": "b86c84fc62ec02f669942c74073e323eb07a24bcfa3330a528a836cff4c9f1bb",
+    "/tmp/story65-domain-receiver-phase-diagnostic-20261108/parent-post-restoration-audit.json": "156a00e3838a04abdfb72eeee2ddafbc3ef948dd5ba00899ebd8a36466f38368"
+  }
+}

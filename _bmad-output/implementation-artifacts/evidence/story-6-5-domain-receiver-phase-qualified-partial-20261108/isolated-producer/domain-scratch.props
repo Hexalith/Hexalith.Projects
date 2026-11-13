@@ -1,0 +1,29 @@
+<Project>
+  <!-- Producer-only project-local paths. Original Base/Assets/Extensions remain read-only. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.EventStore.DomainService'">
+    <Story65DomainOriginalAfterSdkTargets>$(AfterMicrosoftNETSdkTargets)</Story65DomainOriginalAfterSdkTargets>
+    <AfterMicrosoftNETSdkTargets>$(AfterMicrosoftNETSdkTargets);/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-csc-manifest.targets</AfterMicrosoftNETSdkTargets>
+    <Story65DomainReceiverPrivate>true</Story65DomainReceiverPrivate>
+    <Story65DomainReceiverIsolatedRoot>/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-domain/</Story65DomainReceiverIsolatedRoot>
+    <OutputPath>/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-domain/bin/Debug/net10.0/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <IntermediateOutputPath>/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-domain/obj/Debug/net10.0/</IntermediateOutputPath>
+    <ProjectAssetsFile>/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/obj/project.assets.json</ProjectAssetsFile>
+    <CoreCompileInputsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.csproj.CoreCompileInputs.cache</CoreCompileInputsCacheFile>
+    <ResolveAssemblyReferencesStateFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.csproj.AssemblyReference.cache</ResolveAssemblyReferencesStateFile>
+    <ProjectAssetsCacheFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.assets.cache</ProjectAssetsCacheFile>
+    <GeneratedAssemblyInfoFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.AssemblyInfo.cs</GeneratedAssemblyInfoFile>
+    <GeneratedGlobalUsingsFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.GlobalUsings.g.cs</GeneratedGlobalUsingsFile>
+    <GeneratedMSBuildEditorConfigFile>$(IntermediateOutputPath)Hexalith.EventStore.DomainService.GeneratedMSBuildEditorConfig.editorconfig</GeneratedMSBuildEditorConfigFile>
+    <DocumentationFile Condition="'$(GenerateDocumentationFile)' == 'true'">$(OutputPath)Hexalith.EventStore.DomainService.xml</DocumentationFile>
+    <CompilerGeneratedFilesOutputPath Condition="'$(EmitCompilerGeneratedFiles)' == 'true'">$(IntermediateOutputPath)generated</CompilerGeneratedFilesOutputPath>
+    <SourceLink Condition="'$(SourceLink)' != ''">$(IntermediateOutputPath)Hexalith.EventStore.DomainService.sourcelink.json</SourceLink>
+    <PdbFile Condition="'$(PdbFile)' != ''">$(IntermediateOutputPath)Hexalith.EventStore.DomainService.pdb</PdbFile>
+    <ProjectDepsFilePath>$(OutputPath)Hexalith.EventStore.DomainService.deps.json</ProjectDepsFilePath>
+    <ProjectRuntimeConfigFilePath>$(OutputPath)Hexalith.EventStore.DomainService.runtimeconfig.json</ProjectRuntimeConfigFilePath>
+    <PublishDir>/tmp/story65-domain-receiver-phase-producer-prep-20261108/isolated-domain/publish/</PublishDir>
+  </PropertyGroup>
+  <Import Project="/tmp/story65-domain-receiver-phase-producer-prep-20261108/domain-source.targets" />
+</Project>

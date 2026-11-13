@@ -1,0 +1,58 @@
+{
+  "preparationOnly": true,
+  "executed": false,
+  "scratchCwd": "/tmp/story65-gateway-controller-prep-20261107",
+  "clearAllMappingHookVariablesForHarness": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets"
+  ],
+  "scratchRestoreArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "restore",
+    "/tmp/story65-gateway-controller-prep-20261107/GatewayProof.csproj",
+    "--configfile",
+    "/tmp/story65-gateway-controller-prep-20261107/NuGet.Config",
+    "--ignore-failed-sources",
+    "--disable-build-servers"
+  ],
+  "scratchBuildArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-gateway-controller-prep-20261107/GatewayProof.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "buildOnlyEnv": {
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "runtimeProcessorOverride": null,
+  "factsArgv": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-gateway-controller-prep-20261107/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+    "facts"
+  ],
+  "controllerArgvTemplate": [
+    "python3",
+    "/tmp/story65-gateway-controller-prep-20261107/freshcontroller.py",
+    "--execute",
+    "--pins-sha256",
+    "<approved-final-preparation-sha>",
+    "--results",
+    "results-qualified-initial"
+  ],
+  "producerBuildOwner": "/tmp/story65-gateway-controller-ops-prep-20261107",
+  "native40Executed": false,
+  "hostsStarted": 0
+}

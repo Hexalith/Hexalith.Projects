@@ -1,0 +1,41 @@
+        // Scratch-only: evaluate these functions at the two original Hash argument checkpoints.
+        string RequestDigest()
+        {
+            var preimage = new { parameters = requests, constraints = TechnicalHttpRouteTemplate.ObserveConstraints(endpoint, services, pass) };
+            var memo = FingerprintScope.Current;
+            if (preimage.constraints.Length != 0) { memo?.ConstraintFallback(); return Hash(preimage); }
+            if (memo is null || !memo.IsOpen) { memo?.UnavailableFallback(); return Hash(preimage); }
+            string? key;
+            try
+            {
+                var builder = new FingerprintKeyBuilder(response: false); builder.Count(preimage.parameters.Length); builder.Count(preimage.constraints.Length);
+                foreach (var parameter in preimage.parameters)
+                {
+                    builder.String(parameter.Name); builder.String(parameter.type); builder.String(parameter.source);
+                    builder.String(parameter.BinderModelName); builder.String(parameter.binder);
+                    builder.NullableEnum(parameter.EmptyBodyBehavior is null ? null : (int)parameter.EmptyBodyBehavior.Value); builder.String(parameter.schema);
+                }
+                key = builder.Complete();
+            }
+            catch { key = null; }
+            if (key is null) { memo.UnsupportedFallback(); return Hash(preimage); }
+            if (memo.TryGet(key, out string reused)) return reused;
+            string digest = Hash(preimage); memo.Store(key, digest); return digest;
+        }
+        string ResponseDigest()
+        {
+            var preimage = responses.Select(response => new { response.StatusCode, type = pass.TypeIdentity(response.Type), schema = pass.Schema(response.Type) }).ToArray();
+            var memo = FingerprintScope.Current;
+            if (memo is null || !memo.IsOpen) { memo?.UnavailableFallback(); return Hash(preimage); }
+            string? key;
+            try
+            {
+                var builder = new FingerprintKeyBuilder(response: true); builder.Count(preimage.Length);
+                foreach (var response in preimage) { builder.Integer(response.StatusCode); builder.String(response.type); builder.String(response.schema); }
+                key = builder.Complete();
+            }
+            catch { key = null; }
+            if (key is null) { memo.UnsupportedFallback(); return Hash(preimage); }
+            if (memo.TryGet(key, out string reused)) return reused;
+            string digest = Hash(preimage); memo.Store(key, digest); return digest;
+        }

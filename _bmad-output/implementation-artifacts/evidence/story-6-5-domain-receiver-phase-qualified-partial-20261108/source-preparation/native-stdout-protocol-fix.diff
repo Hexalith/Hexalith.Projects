@@ -1,0 +1,32 @@
+--- preserved-f785/controller
++++ native-output-bounds/controller
+@@ -164,9 +164,10 @@
+  def __init__(self,p,deadline):
+   self.proc=p;self.deadline=deadline;self.buf=b'';self.selector=selectors.DefaultSelector();self.selector.register(p.stdout,selectors.EVENT_READ)
+  def next(self,raw=False):
++  line_limit=65536 if raw else 512;buffer_limit=131072 if raw else 4096
+   while time.monotonic()<self.deadline:
+    if b'\n'in self.buf:
+-    line,self.buf=self.buf.split(b'\n',1);assert len(line)<=512;return line if raw else line.decode('ascii').strip()
++    line,self.buf=self.buf.split(b'\n',1);assert len(line)<=line_limit;return line if raw else line.decode('ascii').strip()
+    try:
+     fields=dict(x.split(':',1)for x in Path('/proc',str(self.proc.pid),'status').read_text().splitlines()if':'in x)
+     assert int(fields.get('VmRSS','0 kB').split()[0])*1024<=1024**3
+@@ -174,7 +175,7 @@
+    if self.selector.select(.1):
+     b=os.read(self.proc.stdout.fileno(),1024)
+     if not b:raise RuntimeError('OwnedChildClosedBeforeProtocol')
+-    self.buf+=b;assert len(self.buf)<=4096
++    self.buf+=b;assert len(self.buf)<=buffer_limit
+   raise TimeoutError('OwnedChildWallBound')
+  def close(self):self.selector.close()
+ 
+@@ -276,7 +277,7 @@
+     if line==b'CLOSED_FAILURE':raise RuntimeError('ClosedNativeDriverFailure')
+     receipt['nativeStdoutLinesDiscarded']+=1;receipt['nativeStdoutBytesDiscarded']+=len(line)+1
+     receipt['nativeStdoutCategory']='nonprotocol-output-discarded'
+-    assert receipt['nativeStdoutLinesDiscarded']<=512 and receipt['nativeStdoutBytesDiscarded']<=262144
++    assert receipt['nativeStdoutLinesDiscarded']<=4096 and receipt['nativeStdoutBytesDiscarded']<=2097152
+   else:
+    first=reader.next()
+    parts=first.split(':');assert len(parts)==3 and parts[0]=='READY';frequency,start=map(int,parts[1:]);assert frequency>0 and start>0

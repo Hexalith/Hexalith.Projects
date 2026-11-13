@@ -1,0 +1,50 @@
+--- 59e1534a/run_differential.py
++++ current/run_differential.py
+@@ -73,16 +73,28 @@
+  return found
+ 
+ def ready_line(proc,deadline):
+- selector=selectors.DefaultSelector();selector.register(proc.stdout,selectors.EVENT_READ)
+- try:
+-  while time.monotonic()<deadline:
+-   if not selector.select(.1):
+-    if proc.poll() is not None:raise RuntimeError('ChildExitedBeforeProtocol')
+-    continue
+-   line=proc.stdout.readline(4097)
+-   if len(line)>4096 or not line.endswith(b'\n'):raise RuntimeError('ClosedProtocolBoundExceeded')
+-   return line.decode('ascii').strip()
+-  raise TimeoutError('ChildProtocolTimeout')
++ # Pending bytes belong to this one child. Always consume a complete pending line
++ # before selecting: a prior os.read may already have received the next message.
++ if not hasattr(proc,'_terminal_pending'):proc._terminal_pending=bytearray()
++ pending=proc._terminal_pending
++ fd=proc.stdout.fileno();os.set_blocking(fd,False)
++ selector=selectors.DefaultSelector();selector.register(fd,selectors.EVENT_READ)
++ try:
++  while True:
++   end=pending.find(b'\n')
++   if end>=0:
++    if end+1>4096:raise RuntimeError('ClosedProtocolBoundExceeded')
++    line=bytes(pending[:end+1]);del pending[:end+1]
++    return line.decode('ascii').strip()
++   if len(pending)>=4096:raise RuntimeError('ClosedProtocolBoundExceeded')
++   remaining=deadline-time.monotonic()
++   if remaining<=0:raise TimeoutError('ChildProtocolTimeout')
++   if not selector.select(min(.1,remaining)):continue
++   try:chunk=os.read(fd,4096-len(pending))
++   except BlockingIOError:continue
++   if not chunk:
++    raise RuntimeError('ChildProtocolPartialLineAtEof' if pending else 'ChildExitedBeforeProtocol')
++   pending.extend(chunk)
+  finally:selector.close()
+ 
+ def wait_closed(fd):
+@@ -138,7 +150,7 @@
+   for k in REMOVE:env.pop(k,None)
+   for k in list(env):
+    if k.startswith('Hexalith') and k.endswith('Root'):env.pop(k,None)
+-  proc=subprocess.Popen(command,cwd=PREP/'differential',env=env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True)
++  proc=subprocess.Popen(command,cwd=PREP/'differential',env=env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,bufsize=0)
+   fields=Path('/proc',str(proc.pid),'stat').read_text().rsplit(')',1)[1].split();start=fields[19]
+   assert int(fields[2])==proc.pid and int(fields[3])==proc.pid
+   line=ready_line(proc,time.monotonic()+20).split(':');assert len(line)==3 and line[0]=='READY'

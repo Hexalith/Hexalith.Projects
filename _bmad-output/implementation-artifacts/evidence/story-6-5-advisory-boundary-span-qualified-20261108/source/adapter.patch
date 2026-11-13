@@ -1,0 +1,84 @@
+--- accepted/AdvisoryTerminalCapture.cs
++++ boundary-spans/AdvisoryTerminalCapture.cs
+@@ -12,6 +12,9 @@
+     private AdvisoryTermination _termination;
+     private bool _closed;
+     private int _disposed;
++    private CaptureCounters.Interval? _activeSpan;
++    private int _seenSpanStages;
++    private bool _spansDisabled;
+ 
+     private AdvisoryTerminalCapture(CaptureCounters capture) => _capture = capture;
+ 
+@@ -33,7 +36,17 @@
+     internal void Enter(AdvisoryBoundary boundary)
+     {
+         if (boundary is < AdvisoryBoundary.None or > AdvisoryBoundary.EnvelopeValidation) return;
+-        try { lock (_gate) { if (!_closed) _last = boundary; } } catch { }
++        try
++        {
++            lock (_gate)
++            {
++                if (_closed) return;
++                StopSpan();
++                _last = boundary;
++                StartSpan(boundary);
++            }
++        }
++        catch { }
+     }
+ 
+     internal void Failure(AdvisoryExceptionKind exception)
+@@ -43,6 +56,7 @@
+         {
+             lock (_gate)
+             {
++                StopSpan();
+                 if (_closed || _firstFailure != AdvisoryBoundary.None) return;
+                 _firstFailure = _last;
+                 _exception = exception;
+@@ -80,6 +94,7 @@
+         {
+             lock (_gate)
+             {
++                StopSpan();
+                 if (_closed) return;
+                 _closed = true;
+                 // Stage4 is the exact unchanged helper's ONLY count-bearing row. These six
+@@ -94,6 +109,36 @@
+             }
+         }
+         catch { }
++    }
++
++    // The original executor emits selected markers at most once. Unselected markers
++    // still end a selected interval. Never overwrite a prior helper stage on a repeat.
++    private void StartSpan(AdvisoryBoundary boundary)
++    {
++        if (_spansDisabled) return;
++        Stage? stage = boundary switch
++        {
++            AdvisoryBoundary.InitialScope => Stage.ComponentFile,
++            AdvisoryBoundary.InitialInputs => Stage.ComponentPolicy,
++            AdvisoryBoundary.Discovery => Stage.AclFile,
++            AdvisoryBoundary.FinalInputs => Stage.AuthenticationSerialization,
++            AdvisoryBoundary.FinalCandidates => Stage.ActorBoundary,
++            AdvisoryBoundary.Index => Stage.ResultTail,
++            _ => null,
++        };
++        if (stage is not { } selected) return;
++        int bit = 1 << (int)selected;
++        if ((_seenSpanStages & bit) != 0) { _spansDisabled = true; return; }
++        _seenSpanStages |= bit;
++        _activeSpan = _capture.Stage(selected, AllocationMode.None);
++        if (_activeSpan is null) _spansDisabled = true;
++    }
++
++    private void StopSpan()
++    {
++        CaptureCounters.Interval? active = _activeSpan;
++        _activeSpan = null;
++        try { active?.Dispose(); } catch { _spansDisabled = true; }
+     }
+ 
+     private void Add(Count slot, int value)

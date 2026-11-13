@@ -1,0 +1,2357 @@
+{
+  "createdUtc": "2026-11-07T04:43:20.173506+00:00",
+  "ownerHead": "3d4ba67db99f2f0bcd64b7d353609b555870cc9b",
+  "basis": "Exact executed arrays and environment values saved by this controller; additive receipt. Source graph/dependencies unchanged.",
+  "build": {
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+      "Configuration": "Debug"
+    },
+    "mappingSource": "/tmp/story65-owner-repair-native-20261107/mapping.log",
+    "mappingSha256": "ecd8d6b4819e5b1b9c9ca26a840925ed51aa2e77d19bd91c47580d7dc5a57977",
+    "explicitBuildEnvironment": {
+      "MSBUILDDISABLENODEREUSE": "1",
+      "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+      "DOTNET_PROCESSOR_COUNT": "2",
+      "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+    },
+    "removedOverrideKeys": [],
+    "startedAtUtc": "2026-11-07T04:42:46.666711+00:00",
+    "log": "/tmp/story65-owner-tests/image-pool-final-build.log",
+    "exitCode": 0,
+    "logSha256": "1988516347c17284970e6316af7c38e40e84fa21b343fad708a0bf0897ac52de",
+    "finishedAtUtc": "2026-11-07T04:43:16.299836+00:00",
+    "reason": "Required one-new-C#-type-per-file fixture move; production source unchanged since first71/340pass.",
+    "warnings": 0,
+    "errors": 0
+  },
+  "nativeInvocations": [
+    {
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests",
+        "-xml",
+        "/tmp/story65-owner-tests/image-pool-final-focused.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T04:43:20.173558+00:00",
+      "explicitEnvironment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+      },
+      "sourceMappingEnvironment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+        "Configuration": "Debug"
+      },
+      "log": "/tmp/story65-owner-tests/image-pool-final-focused.log",
+      "exitCode": 0,
+      "logSha256": "177aba38e5fa8cfac7a1a180d35355d92c03bd86793dd762cfcbb0c65692d6d8",
+      "finishedAtUtc": "2026-11-07T04:43:25.307134+00:00",
+      "xml": "/tmp/story65-owner-tests/image-pool-final-focused.xml",
+      "xmlSha256": "623570c0e9a238057cce64eaf5fbe5935f83547266538de155586506328a41fc",
+      "totals": {
+        "total": 71,
+        "passed": 71,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "testCases": [
+        {
+          "id": "54ae781f-8d25-4614-b5b1-cee150f44932",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.ObservingALargeImageDoesNotAllocateAnImageSizedTemporaryCopy",
+          "result": "Pass"
+        },
+        {
+          "id": "0b35e913-fbc3-4121-aecf-4e3e21a76ba4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.OrdinaryAndWarmScopedAssemblyReadsKeepBoundedTemporaryAllocation(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "3b8af9e0-70bd-4e41-8bcc-5be24cec458e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.OrdinaryAndWarmScopedAssemblyReadsKeepBoundedTemporaryAllocation(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "99f3a38b-98c9-4dcf-9c21-af4ba5d4e598",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "fe9830e0-3d12-481a-abc3-10523337bd63",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 4097)",
+          "result": "Pass"
+        },
+        {
+          "id": "3534fd42-9c2e-4db3-8d2e-5a76a98bf9f8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 4194321)",
+          "result": "Pass"
+        },
+        {
+          "id": "f7b9d1e4-6bd0-471c-bf7b-077c5d714e51",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.AssemblyOverloadKeepsCurrentBytesReplacementEmptyAndFailureSemantics(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "5aa67041-b57d-4240-8571-33687de0eca6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.AssemblyOverloadKeepsCurrentBytesReplacementEmptyAndFailureSemantics(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "d6947e8e-3846-4239-984c-9e7fb7a85910",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"scope\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "72d070e4-e5e5-44e3-b184-7f9df2a838f8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"memo\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a5fe7294-0b08-4fe0-b5bb-2128cb169cdf",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultReadersKeepFreshImageAndDigestAfterPoolPoisoningAndMutation",
+          "result": "Pass"
+        },
+        {
+          "id": "65c24be6-5b54-4bb7-bab6-1eac7f377be2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultStreamFailuresReturnSelectedBuffersWithoutRetainingPartialImages",
+          "result": "Pass"
+        },
+        {
+          "id": "bcf4f7b5-c243-4307-b69f-259b686c85e1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "eb0e5522-5a67-4122-85e3-207a21d8832f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "02b22da1-c308-42da-aace-bb673a3e813c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.OpenScopesShareStorageWhileForeignSuppressionRestoresOrdinarySelection",
+          "result": "Pass"
+        },
+        {
+          "id": "42d091ac-14c4-45ba-b4a5-d23a59bccd6d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ScopeClosureDuringReadStillConsumesOriginalEofAndHashesEveryByte",
+          "result": "Pass"
+        },
+        {
+          "id": "110cf50c-085e-434b-8044-c07c8319e60d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.FailedReadNeverRetainsPartialBytesOrLeaksAGrownBuffer",
+          "result": "Pass"
+        },
+        {
+          "id": "84c80619-fdb4-49a5-b76f-854f68979349",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ConcurrentActualExecutableReadsKeepExactDigestAndOwnerIsolation",
+          "result": "Pass"
+        },
+        {
+          "id": "2c74e521-7878-4d0f-954b-c46691d86931",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+          "result": "Pass"
+        },
+        {
+          "id": "b4680b62-70b6-4bcd-99f9-bcfd29759691",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 0, hint: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "5cb8d69f-9233-41ae-9b18-ac636afbff14",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4097, hint: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "0f23f928-d1d0-4e67-b8f1-dcadeba5fc95",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4097, hint: 16777217)",
+          "result": "Pass"
+        },
+        {
+          "id": "63b7168b-f3f9-493d-8a88-7dd80943f35c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 131089, hint: 1024)",
+          "result": "Pass"
+        },
+        {
+          "id": "9e399baf-0d14-48f0-b8d0-bde9065c7b96",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4194321, hint: -1)",
+          "result": "Pass"
+        },
+        {
+          "id": "8eeb52bf-849b-4749-a894-89921d1e88f2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777216, hint: 4096)",
+          "result": "Pass"
+        },
+        {
+          "id": "1909e362-fda0-40d8-b78f-f85c672d5e5f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777233, hint: 1024)",
+          "result": "Pass"
+        },
+        {
+          "id": "b7224a4e-d9c4-4da7-a0d1-ecef43ffcbc2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777233, hint: 16777233)",
+          "result": "Pass"
+        },
+        {
+          "id": "3028d5c3-d75e-4c84-b4f3-1d5d064207af",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ForeignSuppressionAndClosedMemoKeepOrdinaryStreamingFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "6008fb32-4689-483d-af9b-3c33a79dc13d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7ff1b3d7-acf1-4a45-8c9c-1c71b4c0753c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2772530e-c29e-4ccf-a693-d2e31f0d9246",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2f67beeb-ae29-4cdb-b495-cffb667fdaa6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"trust\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "cbbd2251-b23d-44e3-9d43-c6bb05a5640d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"different-bytes-same-root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "73fdcbb4-f094-459a-932d-43de03f44cf9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"disabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "820628bb-37e0-4b27-8057-5af91328bec1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"scope-only\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "cf30845d-4a41-4895-bc6c-f2f79882184b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"enabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "1402dad0-895e-4886-bcbf-84619f5a02b1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.CrossAcquisitionBenefitRequiresExplicitPrivateOption(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "e0d3a557-505c-4f4a-a5dc-f4fdef4d66eb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.CrossAcquisitionBenefitRequiresExplicitPrivateOption(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "f569dfc6-3045-423a-9ea0-3f133bcf03b7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.DisposalPreservesInFlightFenceCleanupAndFreshFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "6404915d-96bc-4a05-8ee4-8095af36b5ce",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.LifecycleAndReadbackSuppressForeignImageComputations",
+          "result": "Pass"
+        },
+        {
+          "id": "428d1dae-8b14-4ba2-a5cf-2449b8ba174e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MeasureFullFreshImageObservationWithOwnedMemo",
+          "result": "Pass"
+        },
+        {
+          "id": "0ebc3085-ff0e-4836-aac5-569e9ae255b3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.LargerImagesKeepTheExistingUnpooledReadAndExactHash(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "7a9c323a-cc69-4ef5-b17f-aa40abf7f626",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.LargerImagesKeepTheExistingUnpooledReadAndExactHash(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "606f474a-06b6-4547-ae4d-f45219ff00e9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.CompleteStillRejectsChangedImageBytesWithTheSameLoadedModule(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "ff78951d-129f-489d-ac35-6c89785793cf",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.CompleteStillRejectsChangedImageBytesWithTheSameLoadedModule(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "47ad7c9d-972d-4445-bba4-714ed59c865c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MemoBoundsAndDisposalUseOrdinaryFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "fc2672c3-2fe5-410c-b93a-771dc771278a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"different-module\\\", enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "ab91aed1-7537-430e-83f0-9ffb8a222a30",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"different-module\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "e34d8dfd-72b5-47f0-99d2-e73c313a6003",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"invalid-pe\\\", enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "0bd0b5a2-7a87-4758-ac96-29249cc32c63",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"invalid-pe\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "dcd40963-d8d7-40ae-b4b0-370d24a95006",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"truncated\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "9668959b-c20e-40cf-aa82-e00245e76015",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MissingImagePreservesReadFailureWithoutBorrowingABuffer(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "aa9fc641-5145-47d0-b346-f136596b46bc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MissingImagePreservesReadFailureWithoutBorrowingABuffer(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "5c8f30ee-db93-48ad-888f-b63a9255d777",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.ClosedAndForeignScopesKeepIndependentOwnership",
+          "result": "Pass"
+        },
+        {
+          "id": "f6dc826d-22c6-42fd-b83c-0003527749bd",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.WarmSameLengthImageMutationOutsideMetadataCannotReuseOldSha",
+          "result": "Pass"
+        },
+        {
+          "id": "70b27bfe-5a79-4e34-bf21-21cbb3d69ed9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.ConcurrentScopesReturnExactImageIdentity",
+          "result": "Pass"
+        },
+        {
+          "id": "7677524d-04e3-48e2-a4a1-4221f60dbb4e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.EveryReadHashesOnlyFreshImageBytesAndReturnsTheBufferAfterUse(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "57886d4d-a1a8-4ee7-b8a8-362ad8089251",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.EveryReadHashesOnlyFreshImageBytesAndReturnsTheBufferAfterUse(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "3af6a647-c771-44bb-8f4e-38a8e88a8fd6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5ab49167-57a7-439c-8946-39f44d13aaaf",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"new-catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a66729c9-0ae0-4099-a243-ae1997716121",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"different-bytes-same-root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f13d2186-e622-467d-bdf1-7c8c36ab51c2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "848dfecb-150c-4335-a265-fd515e9b42d7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"trust-proof\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "635789de-0840-4d97-a582-fddafb036c6a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ActualPrivateBootstrapCompositionEnablesScope",
+          "result": "Pass"
+        },
+        {
+          "id": "09cbfbd9-a9b4-4229-b684-db4ac8077500",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"enabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "66e680ee-7d86-4b14-8f7b-cb2ae80ca420",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"flag\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "590a973a-4179-4309-a14c-e3a81e688c0e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"technical\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7910223c-d074-4954-a330-83e8a47578d4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"fixture\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "613e6911-bea0-4b12-a4b5-d205194275d8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"profile\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "02d6d77c-a2ab-46f7-92f7-a3af9c0eb374",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"environment\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "3de11709-2dae-4dc3-babe-9c4afe0a1f38",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"missing-environment\\\")",
+          "result": "Pass"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests",
+        "-class",
+        "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests",
+        "-xml",
+        "/tmp/story65-owner-tests/image-pool-final-regression.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "startedAtUtc": "2026-11-07T04:43:25.307949+00:00",
+      "explicitEnvironment": {
+        "MSBUILDDISABLENODEREUSE": "1",
+        "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+        "DOTNET_PROCESSOR_COUNT": "2",
+        "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+      },
+      "sourceMappingEnvironment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+        "Configuration": "Debug"
+      },
+      "log": "/tmp/story65-owner-tests/image-pool-final-regression.log",
+      "exitCode": 0,
+      "logSha256": "ade6fcc26a8697744e1ba27fe645ee7b9ee3b95d43262acf4c222e805dd8d0e5",
+      "finishedAtUtc": "2026-11-07T04:43:48.782512+00:00",
+      "xml": "/tmp/story65-owner-tests/image-pool-final-regression.xml",
+      "xmlSha256": "e43d1b552c5a7641d23cd3dc8b34ed228418485b7a9649d2cb2b80f2adf52399",
+      "totals": {
+        "total": 340,
+        "passed": 340,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "testCases": [
+        {
+          "id": "5e8c111a-aa4e-42b5-805d-d988337374bd",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"null-receiver\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "45e21cb0-b514-4154-b053-5cf185da8513",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"null-endpoint\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7dd4b2a8-df8c-43c8-9838-db9e8cd206df",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"duplicate-receiver\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "d86880b2-8ddf-41da-a951-e56489a79726",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"duplicate-action\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "27305434-6686-4567-92b8-c63629d28cf0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"unknown-peer\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "15973d3d-8f57-47db-9acc-e7a2487f8c54",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"wrong-version\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "dc1b67d4-6fa7-46a7-bad1-e8ce6ab480bc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"missing-actions\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5641618b-eb06-4653-acac-62d060af525a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"missing-methods\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "24b61391-2a07-41f5-b6b5-c30be1816155",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"null-grant\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b8975bc7-734b-496b-9097-c42942c1ad22",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"null-grant-methods\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "6ce8c230-3b08-4128-b062-8d2de0371a4e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.MalformedMembershipHasNamedInventoryRefusal(scenario: \\\"duplicate-grant\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7ee3ae63-b2d3-4b3c-b1db-971245d21532",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.NonemptyMembershipChangesTheOwnerBindingAndCoversEveryDescriptor",
+          "result": "Pass"
+        },
+        {
+          "id": "54efe726-5900-405c-9b0b-96200ae940a2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"same\\\", admitted: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "a83e627e-4d97-4ac4-bac5-432aa0e4ae1e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"missing-receiver\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "6bfa26ac-c32e-4a6c-ae14-0cdaf12c254b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"missing-action\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "2b024a83-85bf-4f13-9731-1895ebabb1e5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"extra-action\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "53ad5c86-c3e6-4d46-88a3-96ceff24988f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"changed-schema\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "301b69b1-1291-4a7d-b10c-56ecd62ff0de",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"changed-verb\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "b1958ebf-49e6-41c3-b27a-b164d86dfd8d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.EachReceiverIndependentlyChecksItsCompleteInstalledInventory(scenario: \\\"extra-peer\\\", admitted: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "b1120097-b028-4152-8e6e-b7664a19fc0c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpBindingTests.NewSnapshotDeeplyFreezesMembershipWithoutChangingLegacyConstructor",
+          "result": "Pass"
+        },
+        {
+          "id": "b64b5e87-5384-462a-87e3-d0eafc044514",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.ObservingALargeImageDoesNotAllocateAnImageSizedTemporaryCopy",
+          "result": "Pass"
+        },
+        {
+          "id": "71324b0b-4cd0-4500-a08c-9a18821166f3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.OrdinaryAndWarmScopedAssemblyReadsKeepBoundedTemporaryAllocation(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "dc0413ca-37dd-4c6f-8f55-32bc34cd4d6b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.OrdinaryAndWarmScopedAssemblyReadsKeepBoundedTemporaryAllocation(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "fe9ab4a8-10b5-472f-99fb-4eab7d6d2923",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "0a6afaca-04a2-4b1f-86fe-711db9f08bc7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 4097)",
+          "result": "Pass"
+        },
+        {
+          "id": "9fc1fc31-37c9-4d89-a6b8-3bc4dc292246",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.EveryReadHashesTheCurrentCompleteBytesEvenWhenLengthAndTimestampStayEqual(length: 4194321)",
+          "result": "Pass"
+        },
+        {
+          "id": "6479c981-f949-4d55-80e6-b86238d580fe",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.AssemblyOverloadKeepsCurrentBytesReplacementEmptyAndFailureSemantics(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "b11c2a05-a3ab-4f97-91c1-865c9e9dabad",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.DevelopmentExecutableImageTests.AssemblyOverloadKeepsCurrentBytesReplacementEmptyAndFailureSemantics(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "47a14df5-2887-41ab-918d-d811393f6c73",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.ForeignCallbackCannotBypassAnotherAuthorityAdmission",
+          "result": "Pass"
+        },
+        {
+          "id": "6fbdaa3a-5515-4d4f-9953-30f8b9a00c14",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.FailedAdmissionCannotStrandQueuedCompletion(canceled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "f1fefe94-46b3-4e09-954b-ce7d8de4fc25",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.FailedAdmissionCannotStrandQueuedCompletion(canceled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "dc68b514-f2fe-45f7-bc14-fd04905d6d58",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.ReleaseWaitsForLocalAdmissionWithoutInvalidatingItsFreshEtag(selected: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "3244574f-f7a5-40f0-a168-5ae6757d5ebe",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.ReleaseWaitsForLocalAdmissionWithoutInvalidatingItsFreshEtag(selected: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "f56a8c8e-e975-49ca-906d-f72837cbc634",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.PendingGenerationAndOwnerQuiescenceDoNotHoldTheAdmissionGate",
+          "result": "Pass"
+        },
+        {
+          "id": "97bb10bc-cf80-4218-9abe-ee9fac0ac23b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.NestedAuthorityCallbackCanReleaseTheExactLiveAncestorWithoutDeadlock",
+          "result": "Pass"
+        },
+        {
+          "id": "c93c7875-e4d8-464b-968e-2df0eb0f9d37",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.RemoteDrainAndOwnerVerifiedReconciliationKeepTheirOriginalDurableSemantics",
+          "result": "Pass"
+        },
+        {
+          "id": "007ef86e-a1df-4197-84b9-c955eebcd760",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.EscapedClosedContextDoesNotRetainSchedulingOwnership",
+          "result": "Pass"
+        },
+        {
+          "id": "8dd41462-6f1a-45a3-8803-d1445219a753",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.LocalLeaseReleaseSchedulingTests.ReentrantObserverCompletionRebasesOntoFreshLeaseInventory",
+          "result": "Pass"
+        },
+        {
+          "id": "03e27112-5206-43ed-b8ac-04a629eec846",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"parameter-type\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "cf91c11b-90e8-4b52-9120-e0ba5aa14658",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"binder\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5059c545-443b-4836-8168-d36c0961951c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"source\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f2994a93-8064-421d-824c-174ebf668193",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"model-name\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "3d5fbcbe-6ab1-4658-93a6-23b1bd610533",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"filter-factory\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "883bf5f4-fc91-44b1-9d69-55e5ea9f6468",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"human-policy\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0348beea-b4fe-4480-b49f-054cff1936bb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.CompiledBindingAndInstalledGuardsCannotBeWeakenedBeforeCapture(scenario: \\\"control-policy\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ee94fb83-ea78-4c74-b418-c1fdf56a2db7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInstalledMetadataTests.MinimalDelegateCannotBorrowRealSdkMvcMetadataAndPerformEffects",
+          "result": "Pass"
+        },
+        {
+          "id": "ffb938c1-6c63-417e-9fe9-54abe3822878",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"scope\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "da12ff3f-65cb-4bd8-888c-17cf31b5afe5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"memo\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "517a1551-aa51-45cd-986b-906ff47008d8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultReadersKeepFreshImageAndDigestAfterPoolPoisoningAndMutation",
+          "result": "Pass"
+        },
+        {
+          "id": "95efdf0d-76b0-48ec-a142-f894c8af29c5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultStreamFailuresReturnSelectedBuffersWithoutRetainingPartialImages",
+          "result": "Pass"
+        },
+        {
+          "id": "0c15f665-f6b6-4adb-b454-c9849abbe1e7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "264807fc-5f83-4de3-baa4-fe99e17f147c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "c015ff39-b242-48b5-8445-c1648fce3039",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.OpenScopesShareStorageWhileForeignSuppressionRestoresOrdinarySelection",
+          "result": "Pass"
+        },
+        {
+          "id": "98c07ec3-7365-44f4-bbf3-ba082baf0772",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ScopeClosureDuringReadStillConsumesOriginalEofAndHashesEveryByte",
+          "result": "Pass"
+        },
+        {
+          "id": "da0f51e9-081a-4fa7-ac35-25f3c18c7a34",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.FailedReadNeverRetainsPartialBytesOrLeaksAGrownBuffer",
+          "result": "Pass"
+        },
+        {
+          "id": "04a91dbc-1498-44e4-9408-2f365206ea54",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ConcurrentActualExecutableReadsKeepExactDigestAndOwnerIsolation",
+          "result": "Pass"
+        },
+        {
+          "id": "3f4044c9-ce09-4c19-ab83-0d7c3d9cd83d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.MeasureCompleteWarmExecutableStreamObservation",
+          "result": "Pass"
+        },
+        {
+          "id": "ef1c3ad0-13e7-4acb-8fc7-b7fa6ec2eacf",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 0, hint: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "4de54a8f-cd31-4c70-a0bf-ffe508ac12a0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4097, hint: 0)",
+          "result": "Pass"
+        },
+        {
+          "id": "031f0d78-405c-4ab7-a887-38c7ca299a21",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4097, hint: 16777217)",
+          "result": "Pass"
+        },
+        {
+          "id": "950a7bdf-5810-48a5-9e46-a61c26969fbd",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 131089, hint: 1024)",
+          "result": "Pass"
+        },
+        {
+          "id": "ceb05846-0308-46b6-b008-688982ecea12",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 4194321, hint: -1)",
+          "result": "Pass"
+        },
+        {
+          "id": "3ecb3699-649b-497d-b2f5-0c427379ee51",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777216, hint: 4096)",
+          "result": "Pass"
+        },
+        {
+          "id": "30abc6f0-aafb-42e0-bde7-a28232be2e06",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777233, hint: 1024)",
+          "result": "Pass"
+        },
+        {
+          "id": "ff59dfaa-b94d-415e-b811-0fae93111a58",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.CompleteEofAndGrowthAreObservedOnceWithBoundedCapture(length: 16777233, hint: 16777233)",
+          "result": "Pass"
+        },
+        {
+          "id": "91fc6384-37b1-4866-b2ac-99d61faae110",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.FreshExecutableStreamDigestTests.ForeignSuppressionAndClosedMemoKeepOrdinaryStreamingFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "c3cd698f-c329-48cf-9c70-726ae55a0a0a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.ExactNativeRequestsShareOneLeaseUntilCallbackReturns",
+          "result": "Pass"
+        },
+        {
+          "id": "95d84f43-bf7d-42e5-9983-1ebef16c23cb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.DetachedNativeReadCannotBorrowAReleasedLease",
+          "result": "Pass"
+        },
+        {
+          "id": "d06afa5d-52aa-491a-81e0-12a0552a92b4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.LocalObservationDriftStillRefusesEachScopedNativeRequest",
+          "result": "Pass"
+        },
+        {
+          "id": "f710ef82-be07-4697-a01d-b931aa183506",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.FailedNativeReadClosesTheScopeAndReleasesItsLease",
+          "result": "Pass"
+        },
+        {
+          "id": "9de01562-5d91-4202-be56-d2cb8770f2bd",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeSourceReadScopeTests.GuardedNativeHttpReadsReuseOneLeaseWithoutSkippingPerRequestValidation",
+          "result": "Pass"
+        },
+        {
+          "id": "9a2d9f29-cdb0-4e2f-bb89-601a99f6cd69",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"valid\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a5e47ce5-2152-4421-826d-92c65f930b6f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-payload\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "fc9c9151-9dfa-48d0-8abf-284d73e08bec",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-query\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "6d1e8aab-be2f-4a3a-8b5f-167fbad043f7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-tenant\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2a2c7b06-d007-463e-8873-3aede60c3bc7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"mutated-actor\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "cc45c4ea-20d7-44ef-984e-89665e4db054",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"copied-marker\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "4115e555-d503-47a8-8c21-6be1ba57a6bc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"human-surface\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "eeffa47b-ab7b-4ce1-a5ec-4c492c48001b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"missing-surface\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "48ae7e0d-8759-45a2-a990-237d3652b3a3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"foreign-route\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5a5cc1c2-8424-4f66-bd5b-6962eac882d5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"payload\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "091a8a85-71b1-49bd-9a5a-a64ce2ff4fa1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"tenant\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7b90f41f-2fe9-4fa7-8721-7909aa6273d2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"actor\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9ed050bb-6d10-4a6e-afc7-800c3abdf0aa",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"unconfigured-caller\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "08341962-3c06-4991-acb3-a813645fc9c4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"signature\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "3887cfad-930a-4b15-b8f9-9f636ef38632",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"changed-endpoint\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "97117074-bb65-467c-bdef-9dc5acf70764",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"ui-only\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f93f53dd-13fe-46e2-bded-792af3837f86",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"confirmation\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c616ba05-3d57-46b4-a3b3-e2420410e5f5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"query\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ced7d46f-9cef-47c4-9689-e0835933b876",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.BoundOwnerCatalogAdmissionTests.ControllerProofBindsExactInFlightQueryBeforeRealMediatorEligibility(scenario: \\\"stale-authority\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "6ad93b4c-5370-45eb-92ee-65115f0b2997",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.CancellationAfterAConflictStopsBeforeAnotherProviderReadOrExchange",
+          "result": "Pass"
+        },
+        {
+          "id": "ea9b0bbc-9a43-4fbc-8c90-d1005a2efe95",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.EveryRetryRevalidatesTheCurrentStateAndIndependentObservation(mutation: \\\"pending\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "45ef8e7f-6784-4e5c-9abd-1466de5d054e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.EveryRetryRevalidatesTheCurrentStateAndIndependentObservation(mutation: \\\"observed-host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "255bedce-6f8a-40c1-a2e0-28721455c5fa",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.SustainedContentionCanClearAfterFortyEightConflicts",
+          "result": "Pass"
+        },
+        {
+          "id": "f3bf2d63-a1ca-4257-b6a1-86dcb970d049",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.PermanentContentionRetainsExactlyNinetySixFreshAttemptsAndNoDispatchFence",
+          "result": "Pass"
+        },
+        {
+          "id": "6772e84b-5c67-4c98-b4c2-35ac2c55f287",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.AwaitedAcquireLetsTheIndependentContentionOwnerFinishBeforeTheBoundIsExhausted",
+          "result": "Pass"
+        },
+        {
+          "id": "d84dc4fa-1537-4fb5-99dd-709cab6e0ab9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.PreCancelledAcquireNeverTouchesTheProvider",
+          "result": "Pass"
+        },
+        {
+          "id": "62094951-9b7e-4d74-9228-6bce8e12b18d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogUpdateContentionTests.QueuedAdmissionCanCancelWhileSameAuthorityControlStillAdvancesAndInvalidatesTheHeldRead",
+          "result": "Pass"
+        },
+        {
+          "id": "6a446eac-e9ec-4cd9-a343-2d2ca91ace40",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests.ExactTextReuseIsBoundedToOneEntryAndOneObservation",
+          "result": "Pass"
+        },
+        {
+          "id": "2e613f6e-abd7-4f1d-a946-aa0395f078c0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests.MeasurePerObservationParsingBenefit",
+          "result": "Pass"
+        },
+        {
+          "id": "bbfe0878-9fa3-406a-b9ce-959a07b5bdf2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpInvocationReuseTests.RealObservationUsesEachFreshConfigurationTextForItsOwnGrants",
+          "result": "Pass"
+        },
+        {
+          "id": "ebbc4672-d031-49d9-8fb8-f36d9be32c23",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.DuplicateDeclarationIsNotCollapsed(sameReference: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "7f2c565e-2091-4de2-a199-e87dcdd7ce99",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.DuplicateDeclarationIsNotCollapsed(sameReference: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "5edaefb8-4f7c-4a6f-a140-3285b6617d6a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.MalformedDocumentsAndDisposedSchemasCannotProduceIdentity",
+          "result": "Pass"
+        },
+        {
+          "id": "dab1c708-22fb-4828-8321-3ed0f919da29",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.SuccessiveCapturesRefuseChangedNestedDeclarationAndRecoverOnlyAfterRestoration",
+          "result": "Pass"
+        },
+        {
+          "id": "3ed14961-7fa5-4b78-b2c6-99c1197b7d58",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.OwnedDocumentsKeepNestedListsAndSchemasIndependent",
+          "result": "Pass"
+        },
+        {
+          "id": "87a0f159-8d5a-4994-93da-46f5687ec051",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ObservedInventoryDigestTests.MissingInventoryRetainsPreconditionRefusal",
+          "result": "Pass"
+        },
+        {
+          "id": "36757c90-89f1-47b0-b2d9-ece83fd24df0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bdf20241-3227-4c3c-a170-7199cb915a09",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "117b32db-66a5-4608-9405-ec10f18e18ca",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "67484fc4-8087-4cd3-8106-615983eb51eb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"trust\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ed22534f-3954-4af7-91b5-f75746e418f5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.ChangedAuthorityStillRevalidatesAfterEarlierScopeClosed(changed: \\\"different-bytes-same-root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2571d5b3-b36e-4b24-b849-ff3a29de6203",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"disabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2247caf8-b06b-450a-800c-8fa121e50563",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"scope-only\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "94be4055-88b2-49e0-90e6-0cf435a1f9ec",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.NestedForeignAcquisitionAndReleaseUseOnlyTheirOwnComputationContext(mode: \\\"enabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bfa97cfb-c886-43bc-9a52-ffd6dd0f9f31",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.CrossAcquisitionBenefitRequiresExplicitPrivateOption(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "7465001a-fb3c-41e0-9fa0-aadf969ef100",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.CrossAcquisitionBenefitRequiresExplicitPrivateOption(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "89ac7878-cf64-490e-b469-e19706e53c6a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.DisposalPreservesInFlightFenceCleanupAndFreshFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "e735220f-50bf-4dac-97cb-520f4e64a740",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HostMemoAdmissionTests.LifecycleAndReadbackSuppressForeignImageComputations",
+          "result": "Pass"
+        },
+        {
+          "id": "816b87c1-3afd-46e5-a123-f21a136af48d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.PrivateModeIsSelectedOnceAndNextCallUsesChangedFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "fa6691f5-257e-49f0-8f16-b2ae5836c195",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.CancellationAtInitialOrFinalWaitPreservesGateAndOtherFence(finalWait: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "434debfe-6da7-4216-85e5-4c96e9ee07f8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.CancellationAtInitialOrFinalWaitPreservesGateAndOtherFence(finalWait: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "e010be60-5c35-4d3c-b066-13b1053a87be",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ReentrantFinalPhaseReleaseKeepsItsActualOwnerExceptionAndRetriesFreshly",
+          "result": "Pass"
+        },
+        {
+          "id": "d810e7db-eb05-4abf-9c40-9779e52679c6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.EscapedInitialTurnCannotBypassLaterFinalPhase",
+          "result": "Pass"
+        },
+        {
+          "id": "38b47004-7b94-486a-80e0-8f57e09b9a9e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ChangedAuthorityDuringObservationCannotInheritOldValidation(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "71339bc8-a6a1-4f1d-8519-41fde95ae8f3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ChangedAuthorityDuringObservationCannotInheritOldValidation(changed: \\\"catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c9893cbf-4c08-4be8-bd52-1bc2eeea4dda",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ChangedAuthorityDuringObservationCannotInheritOldValidation(changed: \\\"proof\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b52df7ca-c04a-4491-9acc-d33156388d98",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ChangedAuthorityDuringObservationCannotInheritOldValidation(changed: \\\"pending\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "4e0a68bb-4c64-406d-94b4-1096bae2dabb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ObserverCanCompletePriorLeaseWithoutRetainingALiveTurn",
+          "result": "Pass"
+        },
+        {
+          "id": "f1171681-d109-4255-95b1-5b9ecea34d1c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"valid\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "60f52b0b-eddc-4902-a572-ccaa15ae818c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"pending\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "59fdfa33-b95e-423e-b413-816cf8ff055b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "d8ff31a4-5373-49be-bfd7-13edd9f5c1c7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "98c65ef7-5628-46cb-859e-4ef0b272b3cb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "867e6fb2-19fd-4131-9847-192f53a90ba9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"sequence\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bf5977da-04e9-4222-9da2-6ee2f7e752af",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ResponseLossKeepsExactRecoveryAndMalformedFenceRefusal(changed: \\\"duplicate\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0b075204-e202-4c0f-a1d8-7a4a9ebe5d78",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ParallelObservationsKeepFinalWritesSerializedAndFallbackUnchanged(selected: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "12a3d2b6-caa2-4d02-b1ee-28fa1fe6134c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ParallelCatalogObservationTests.ParallelObservationsKeepFinalWritesSerializedAndFallbackUnchanged(selected: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "4e125f0e-2cd9-4197-885b-2e8d4406aab7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MeasureFullFreshImageObservationWithOwnedMemo",
+          "result": "Pass"
+        },
+        {
+          "id": "05768cfc-7d3b-486b-85d7-fd1d7d6d885d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.LargerImagesKeepTheExistingUnpooledReadAndExactHash(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "9462c321-7152-4a7b-ab69-733a8b3dc5ad",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.LargerImagesKeepTheExistingUnpooledReadAndExactHash(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "daca4096-6748-4ed8-8133-0db5fe3d27b4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.CompleteStillRejectsChangedImageBytesWithTheSameLoadedModule(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "b5571f11-fff4-4b15-b1ed-4117314b86be",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.CompleteStillRejectsChangedImageBytesWithTheSameLoadedModule(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "1ca7a8c1-ca49-4c71-9dbd-34735a63d1e8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MemoBoundsAndDisposalUseOrdinaryFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "993ec4b1-4db5-47bd-8c9c-915b3cef4658",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"different-module\\\", enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "246f5737-893b-49f9-92bc-dd2af1f3cb34",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"different-module\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "b691a450-c8fc-4354-9205-99975922795e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"invalid-pe\\\", enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "ad2eff15-9d9a-4ef2-aa4a-475b642b964d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"invalid-pe\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "ad10ade0-2aae-47c2-b74e-4b465b5ff2fe",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.FailedImageValidationReturnsItsOwnedBufferAndClosesTheFile(failure: \\\"truncated\\\", enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "74b862a1-2a82-46f4-a8df-5d81cedfcb08",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MissingImagePreservesReadFailureWithoutBorrowingABuffer(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "c01160ef-c204-47f1-b2a0-e798e0eb3387",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.MissingImagePreservesReadFailureWithoutBorrowingABuffer(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "a58a8807-b40d-48f0-9eff-eb463db8cd8f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.ClosedAndForeignScopesKeepIndependentOwnership",
+          "result": "Pass"
+        },
+        {
+          "id": "9ef1c214-b2cc-4508-8bdd-e6b244929ac0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.WarmSameLengthImageMutationOutsideMetadataCannotReuseOldSha",
+          "result": "Pass"
+        },
+        {
+          "id": "0a7705d2-19c1-4481-b85d-348fbc5bb61f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.ConcurrentScopesReturnExactImageIdentity",
+          "result": "Pass"
+        },
+        {
+          "id": "861f02c2-b1e7-452a-b4a3-a34964073d10",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.EveryReadHashesOnlyFreshImageBytesAndReturnsTheBufferAfterUse(enabled: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "c710cc05-5fc6-4515-a9e8-0d3d44f68180",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.TechnicalHttpImageObservationTests.EveryReadHashesOnlyFreshImageBytesAndReturnsTheBufferAfterUse(enabled: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "dd53211b-b1e1-405d-9483-220e55ecf52f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "4f0a8d15-b7d6-4797-9b86-4da395477da0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"trust\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ec003e69-5a56-45d3-89bf-95748dad50b1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "df24b754-ec79-42ff-919a-b25e63083335",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"coordinates\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ce2cdb2a-4703-4c58-87f0-2e98e661021a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"cancellation\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "34040b94-a098-460c-ab6b-77e901b49e1d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.WarmNativeValidationCannotRetainAuthority(changed: \\\"closed\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "598af758-c60c-44e0-9bf9-91de0d7ee33c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.MeasureRepresentativeNativeValidationDecodeCost",
+          "result": "Pass"
+        },
+        {
+          "id": "067d15d5-b7f2-4d1b-b528-aabd3e3a992a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.NativeValidationsOwnTheirDecodeScopeAndKeepFreshObservations(enabled: True, retain: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "78878dc2-4003-4223-b0dc-15e0b47e4b59",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.NativeValidationsOwnTheirDecodeScopeAndKeepFreshObservations(enabled: True, retain: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "1ed8a7d1-40b9-48ea-81ed-4a04ca844bae",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.NativeReadDecodeReuseTests.NativeValidationsOwnTheirDecodeScopeAndKeepFreshObservations(enabled: False, retain: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "855cb263-7a72-4db8-9ed9-5c99c624fd50",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.MutatedInputAndReturnedGraphCannotBecomeCachedTruth",
+          "result": "Pass"
+        },
+        {
+          "id": "b39a5188-fbce-49f5-86d2-48ee36e6e48d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.CloseClearsOwnedBytesAndEscapedWorkPerformsNormalValidation",
+          "result": "Pass"
+        },
+        {
+          "id": "0e74b88d-13e2-4a75-b440-e33f5a350676",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.ConcurrentDecodesReturnIndependentGraphsAndNestedScopesStayIndependent",
+          "result": "Pass"
+        },
+        {
+          "id": "c166bd1d-67ba-4e61-b983-013eefd1bf9a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.WarmHistoricalAndCurrentCatalogsRetainEveryCanonicalByte(fixtureName: \\\"CanonicalCatalog.json\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7226085a-db5d-4d67-9586-49c381d8d810",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.WarmHistoricalAndCurrentCatalogsRetainEveryCanonicalByte(fixtureName: \\\"V2CanonicalCatalog.json\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a3cd123d-5a81-4c6a-9aec-fd85a25c4ea8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.WarmHistoricalAndCurrentCatalogsRetainEveryCanonicalByte(fixtureName: \\\"schema-three\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ca6f3a82-9808-4db6-8ea4-7a6af412899c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.EntryLimitBoundsRetentionAndDisposeClearsIt",
+          "result": "Pass"
+        },
+        {
+          "id": "0ef7703d-fc20-4bf9-ba13-169584b16c92",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.ColdAndWarmWrongExpectedRootsRefuseWithoutChangingValidationOrder",
+          "result": "Pass"
+        },
+        {
+          "id": "1bb5eab7-d7aa-42a4-903e-dac265c49ef3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.WarmSchemaGraphsRemainIndependentAfterNestedOutputPoisoning",
+          "result": "Pass"
+        },
+        {
+          "id": "2e3c95b1-4170-41a9-87fa-3b3b61bf58fe",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogDecodeScopeTests.ByteLimitBoundsActualCanonicalSchemas",
+          "result": "Pass"
+        },
+        {
+          "id": "99263afc-6d2c-494d-b02e-3a1ece80d267",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"pending\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b495afc2-aaa9-44c5-9dcd-751aa2cec7c8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"missing\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2b686f9c-86f1-4a12-8951-c9e547f6d3ee",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "72ece87a-44f3-44b1-8b1c-cae53e1f6609",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"committed\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "eb2d891c-f4cb-4d63-b9ee-6bc00d17863e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"binding\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e438c7e8-5b5d-46e0-8618-4d46648fb005",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"proof\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "d62d418d-4a25-4f9e-9e84-958e3e9845b1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ChangedAuthorityCannotInheritThePriorObservationOrTrust(change: \\\"bytes\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "511bdb7d-0314-4409-b0ad-8a6af8bfa4af",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshFailureCancellationOrChangedLocalIdentityCannotCreateAFence(scenario: \\\"cancel\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b02edecd-00da-4bce-a68d-e556da377bf8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshFailureCancellationOrChangedLocalIdentityCannotCreateAFence(scenario: \\\"failure\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c7e3c9e4-d493-4176-9cc4-ca4c0358c3da",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshFailureCancellationOrChangedLocalIdentityCannotCreateAFence(scenario: \\\"identity\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "281a93ec-cd0d-41f5-95e3-cf3428214377",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshFailureCancellationOrChangedLocalIdentityCannotCreateAFence(scenario: \\\"profile\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "983410ed-bbd6-408f-9378-20a5f02a20d4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshFailureCancellationOrChangedLocalIdentityCannotCreateAFence(scenario: \\\"coordinates\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "da7178c0-d7f6-447d-b931-f181d923f6ea",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.EveryCaptureCanAdvanceForeignInventoryWithoutLosingPeersOrUsingItsOldETag",
+          "result": "Pass"
+        },
+        {
+          "id": "7fe7818a-79d5-4261-90b0-f67788764896",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshedInventoryLimitsRemainClosed(limit: \\\"cap\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "d2a502e9-e047-4832-98e0-c9af0360af6d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.RefreshedInventoryLimitsRemainClosed(limit: \\\"overflow\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "836b5fc7-673b-4da9-bbaf-acca266004fb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.PendingSuccessorDoesNotStrandAnAlreadyRecordedOwnFence(pendingOnRefresh: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "dea38aae-9565-4a12-a5ee-d832b9ec2d1e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.PendingSuccessorDoesNotStrandAnAlreadyRecordedOwnFence(pendingOnRefresh: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "8deb9a6f-cef3-4aea-959b-241a61f5afeb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.WinningFenceAndSnapshotKeepTheirValidatedLocalBindingUntilCleanup",
+          "result": "Pass"
+        },
+        {
+          "id": "8958a2f3-1846-4439-97d8-59b0e8a119c6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ResponseLossCannotReturnAMisboundOrDuplicateOwnFence(field: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9e10ee29-8b30-4b0e-b169-45bb66a43d0e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ResponseLossCannotReturnAMisboundOrDuplicateOwnFence(field: \\\"root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a5f02db1-e5f7-4ac3-bac5-5b50bf1315be",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ResponseLossCannotReturnAMisboundOrDuplicateOwnFence(field: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "55df9393-452d-4620-8758-32598ea6a1dc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ResponseLossCannotReturnAMisboundOrDuplicateOwnFence(field: \\\"sequence\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "4e164feb-cf82-4e43-82ec-20e60a27f2ce",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.ResponseLossCannotReturnAMisboundOrDuplicateOwnFence(field: \\\"duplicate\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "79876b6c-f372-4bf1-9895-a346e45e4f6e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.MutableReadAliasesCannotRewriteThePrivatelyValidatedActivation(field: \\\"bytes\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "34be3abb-7b70-4c3c-b59a-83a936adaf24",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.MutableReadAliasesCannotRewriteThePrivatelyValidatedActivation(field: \\\"hosts\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "889274fa-a223-4e86-9b4b-79ca3e89d3c6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.CompletedValidatorCannotRewriteThePrivateComparisonSnapshotThroughItsActivationArgument",
+          "result": "Pass"
+        },
+        {
+          "id": "933cc1d5-a993-4347-aa0a-71c3871075bc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.CatalogAdmissionRebaseTests.LostSuccessfulCasResponseRetainsOneExactOwnFenceWithoutDuplicatingAdmission",
+          "result": "Pass"
+        },
+        {
+          "id": "0464c623-776c-45eb-9ed9-91eba21b11dc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ClosingScopeAfterHandleCreationPreventsRemoteEffectWithoutFalseRetention",
+          "result": "Pass"
+        },
+        {
+          "id": "f200759d-19dc-4184-8223-c09b6f71c048",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.PublicScopesNeverConferReceiverBorrowing(mode: \\\"public-genuine\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "188347e8-d500-43f0-997f-2f9076c6ce2d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.PublicScopesNeverConferReceiverBorrowing(mode: \\\"public-constructed\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "835a3f29-4553-4e9d-b735-faed7805b632",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.PublicScopesNeverConferReceiverBorrowing(mode: \\\"mixed\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b281c70e-558e-4f0c-9ef1-2f0a2b00c4f3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EscapedClosedReceiverContextCannotBorrowStillOpenLease",
+          "result": "Pass"
+        },
+        {
+          "id": "fc86a21e-6ca0-49f7-bc2a-fedaf46a9375",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.CancellationBeforeEnrollmentHasNoRemoteEffectOrFalseRetention",
+          "result": "Pass"
+        },
+        {
+          "id": "28be341d-44ea-4089-9f28-347feaf286d9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"duplicate-role\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "76e0a7ac-95e6-48ff-bf31-41651c71f68e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"duplicate-core\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "fee0b649-176c-482e-b3b7-8db4b9531179",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"domain\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a8d2c93e-5462-4054-82f5-00ac87425d94",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"operation\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5404330e-78da-4f30-9c38-e81af3406431",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"method\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "33aa7ca2-e937-446d-b51d-6db55ebbc349",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"caller\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "fdda6b2c-c7f0-4e93-a675-3ced2072f318",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"verb\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "23598a64-0fc2-41ab-a139-83979b34e743",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"invocation-path\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "1812f985-8c83-4d59-8879-659cd898a373",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"gateway-name-only\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9617bf82-4785-45cb-8383-8605355708e1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"http\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "3e738b5f-f9c6-4fc7-bd7b-0844f77c5f26",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"native\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2109bf13-12a3-4d04-8f86-c4f22fc2b23f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"sidecar\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f09945b5-74e6-4158-81ab-d15d8d22a5d4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"callback\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bcb18c6d-6285-4493-8a65-693936cd6791",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GatewayRoleAndCoreTupleAreExactAndUnambiguous(changed: \\\"domain-auxiliary\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "d8d28785-d8eb-4592-9d2b-b5d2396ad8ae",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"range\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f1eab08a-5623-4200-9fa8-3738dc7fd536",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"proof\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "34f43a1c-f762-4d53-9b7b-84911aa1d492",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"projection\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "aa34b3ea-0a9f-4561-a534-e3790b6d3f8f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"cursor\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bbe74043-7b51-46c5-b4f7-9a97cb0935e6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"other-target\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "77edfab7-2d8d-4039-a4ff-f504abbe9cdb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"unknown\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c559696f-d0e4-4d17-a837-fb97022974f3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OnlyExactMetadataSemanticsQualify(changed: \\\"duplicate\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "720f602d-96c7-4354-b5c5-685bdb413020",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.RemoteFaultRetainsAllExactAncestorFencesAndDrains",
+          "result": "Pass"
+        },
+        {
+          "id": "ad29d746-7441-4db3-97c7-449213d71d3d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.GenuineReceiverRevalidatesHostAndTrustWithoutStateOrFenceAcquisition",
+          "result": "Pass"
+        },
+        {
+          "id": "72c5d44c-bbb6-41c6-8b4b-9f1df9b591e9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.NonmetadataMethodKeepsOriginalFreshSenderPathUnderMixedScopes",
+          "result": "Pass"
+        },
+        {
+          "id": "53705445-39c3-43af-9e27-083167cf2931",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.OriginalMessageMutationDuringValidationCannotChangeCapturedWire",
+          "result": "Pass"
+        },
+        {
+          "id": "3b2e53f1-15cb-42ef-b2a8-e395006a7f41",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ClosingOriginalScopeDuringValidationCannotEscapeIntoRemoteEnrollment",
+          "result": "Pass"
+        },
+        {
+          "id": "0e275e85-01ff-48d0-b27e-538927d79e5d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ExposedActivationCopyCannotMutatePrivateIssuerBytes",
+          "result": "Pass"
+        },
+        {
+          "id": "d7561062-c779-47dc-9729-c95269053f3b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.LinkedParentCancellationRetainsActualAncestorsWithoutPublicBoundary(foreignBoundary: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "722febdc-e575-4655-bbb2-24cd6f02b135",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.LinkedParentCancellationRetainsActualAncestorsWithoutPublicBoundary(foreignBoundary: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "ec047d4f-5889-4d42-966d-d2786e72e4fc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.DisposingOldScopeAgainCannotClobberNewScope",
+          "result": "Pass"
+        },
+        {
+          "id": "bc274cd3-b85b-423f-b454-7bb9fb67bd57",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.MutableAdmissionInputsAreFreshlyRevalidated(changed: \\\"observer\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5cee650b-d0e3-41ba-9d1b-f85551298dd9",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.MutableAdmissionInputsAreFreshlyRevalidated(changed: \\\"trust\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "543237f0-17f6-44cd-b8ee-ff20232e79ce",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.MutableAdmissionInputsAreFreshlyRevalidated(changed: \\\"identity\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "902d2918-208a-4bba-b787-a20389cff3c2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ForeignIssuerIsRejected",
+          "result": "Pass"
+        },
+        {
+          "id": "af336e29-cdf0-4b94-84dc-8fde55f998ad",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EveryEffectiveSelectorIsRequired(changed: \\\"flag\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "91bdd505-a75a-4403-82ee-bb82d3c236a3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EveryEffectiveSelectorIsRequired(changed: \\\"fixture\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e63d6d83-1836-4a97-a3f3-8f089c1029f8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EveryEffectiveSelectorIsRequired(changed: \\\"profile\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "24cba9ff-f37a-40df-971e-8befd40c71a6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EveryEffectiveSelectorIsRequired(changed: \\\"technical\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e9d4ac09-e6b0-4a4c-bdd3-989abdae88a5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.EveryEffectiveSelectorIsRequired(changed: \\\"environment\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7b65504f-8ad6-48a9-95f6-eaf2ddfce4f7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ConcurrentMetadataCallsOwnTheirActualSharedReceiverUntilBothDrain(cancel: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "7742e9ee-70ce-46f3-b9a0-e8b1e7603295",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ConcurrentMetadataCallsOwnTheirActualSharedReceiverUntilBothDrain(cancel: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "a487dc1c-4b12-4d24-b4d4-8985ddf85cd0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ActualBoundPrivateOptionsAndEnvironmentSelectThePath",
+          "result": "Pass"
+        },
+        {
+          "id": "a9e59e5a-23e1-4cda-a4fd-6fd69e13f17f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.RealDomainFilterAndResultComposeWithSdkMetadataClient",
+          "result": "Pass"
+        },
+        {
+          "id": "66644675-11d1-4649-a4ff-7c20dbf172fa",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.HeldMetadataDispatchTests.ThrowingClosureCallbackRestoresAmbientStateAndDoubleDisposeIsSafe",
+          "result": "Pass"
+        },
+        {
+          "id": "ec8217d6-7095-432e-bec3-ae819039b458",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"epoch\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "28232500-ec8e-4906-b4a3-160ab58b9610",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"new-catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "46eff5be-7896-41c7-a668-9e9216662e33",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"different-bytes-same-root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "bf1e736d-9b9a-4739-a2cc-a95e4cc8809b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "8e7508d3-bdde-4612-b119-473905511374",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ContentionCannotReuseStateHostOrTrustAuthority(changed: \\\"trust-proof\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "91f6df52-e7dd-425f-9ed1-2cf1cc6cef29",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.ActualPrivateBootstrapCompositionEnablesScope",
+          "result": "Pass"
+        },
+        {
+          "id": "ced1ec24-fc30-45ea-b07b-ba0b5d7b76e7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"enabled\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "1560c506-aabe-4cea-be8b-da9c1917b7cd",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"flag\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2b9d9bdd-2fc9-4dbe-90b9-3bb110115bed",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"technical\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "334492f9-4860-4d6e-bea0-05548b5652a2",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"fixture\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a6eabbc3-4f49-4163-9dd5-775cb4b3ffe4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"profile\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ab9a8f3f-2ac3-4ed9-8c63-56d680f75bc0",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"environment\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "55c683a5-ae16-4831-bf2d-a62b14387a78",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.ScopedRouteCatalogAcquisitionTests.RequiresEveryEffectivePrivateSelector(changed: \\\"missing-environment\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "eeece126-cc01-4515-a48c-84b6a126e21d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.LifecycleChecksDoNotBorrowAnUnrelatedProfileFact",
+          "result": "Pass"
+        },
+        {
+          "id": "19b3ecf0-d871-41b8-a465-5f1a43a18ebe",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.ColdRootMismatchRetainsNoFactOrCanonicalInput",
+          "result": "Pass"
+        },
+        {
+          "id": "f800f1f6-47eb-4732-a599-b1225012579d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MeasureActualProfileFactReadsIncludingScopeDisposal",
+          "result": "Pass"
+        },
+        {
+          "id": "6058c109-af47-4c7e-b47f-715f7cda455b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.ConcurrentProfileReadsKeepFreshIndependentPublicGraphs",
+          "result": "Pass"
+        },
+        {
+          "id": "71aeb13d-4bdd-409b-b726-e389ad14c1d6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.ForeignAndClosedScopesUseIndependentFactsOrCompleteFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "259eecd8-d866-49b7-9a4e-a02bad1270a1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.ProfileFactsRespectDocumentAndTokenBoundsAndClearOnDisposal",
+          "result": "Pass"
+        },
+        {
+          "id": "219b9ef5-7433-4b13-a1a7-92a1c9946438",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MutableCallerBytesCannotChangeRememberedProfile",
+          "result": "Pass"
+        },
+        {
+          "id": "fdb3a603-df18-4b95-af0c-0af67dcdb2d7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"malformed\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "8b93fe86-d70e-484e-b30c-1ada7cef975d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"unknown\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9be4b3e5-17eb-44e9-bd7b-4737048b473e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"duplicate\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "612431fa-0d9a-4a23-b847-488dfcbff7b3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"noncanonical\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "781c84e4-1879-49de-92d8-0d789b6f0859",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"wrong-root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "8b4192a5-8e09-4772-b510-cf621a730d14",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"changed-valid-bytes\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c5b346c5-0a2b-4536-9805-3eaf7cfaf9f3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"empty\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7a790626-cd08-4136-929f-6decbf7d1023",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.WarmErrorsMatchOriginalDecodeExactly(scenario: \\\"oversized\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "09910f1d-bfb8-4f27-acb2-45f6731cbf49",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.ColdWarmAndPublicDecodeKeepParityCountersAndFreshGraphs",
+          "result": "Pass"
+        },
+        {
+          "id": "5898ecd2-2419-4c4d-8da8-d2ee18dfb872",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogProfileFactTests.MissingOrOversizedFactFallsBackAndLearnsOnlyAfterDecodeSuccess",
+          "result": "Pass"
+        },
+        {
+          "id": "1bad949c-2500-4129-b09b-ee7e4dd1552a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"attempt\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5181a002-ad17-4c7d-8919-45127b676e4d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"cap-version\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "75ccf5b7-d8bc-4f74-992a-0a993b73368b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"cap-fingerprint\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "49068df1-f1a6-48ad-9936-9962bb2d699e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"cap-types\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9d7fae99-c018-4a16-89cf-1cbac9629f3f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"receiver-app\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e127593d-c7d5-47bf-bd39-d69493befbfa",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"receiver-fence\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0105fde1-ed2e-46d4-a635-c036a16a6466",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-pattern\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "cf936674-2dc1-4917-b67b-73af3c8b2227",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-methods\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b21add44-3cba-4606-9088-ca71a2d6f22c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-action\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a13d66bd-0fd8-4b08-93c8-811e6f156558",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-request\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "edf5ad1f-1b82-4163-a7c9-fd962a979f21",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"cap-domain\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a41b41da-b103-4889-b3ca-fbbf6bdeb85b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-response\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "1acdea8b-a7cd-4d11-836c-21c460f6f45b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-policy-digest\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c3211072-dae5-4aff-a1f3-b86199512034",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-filter\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "a310b302-dc17-447c-a9cf-efc1be052f90",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-credential\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e71720c0-b848-47ad-9384-3bfb269a0b95",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"invocation-caller\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0130e8ab-daa7-43c8-b490-e39e9af6279a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"invocation-method\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0fcfd6b8-0382-4276-a396-c0f376e693f4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"invocation-verbs\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5628716c-bbca-47b2-9baa-aa5abaa91e68",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"null-host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "71432216-d50f-4b8f-967b-00434390bf9b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"null-auxiliary\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ae319d2e-ab47-4552-98e6-946f4b42972a",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"null-capability-types\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "51adf133-9285-44dc-b55f-dbe80df85ad5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"endpoint-policies\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "4222bc7d-dd24-4e6f-8ccc-18e94c33c4ba",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"null-endpoint-methods\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "1ded1260-2336-4c98-bad8-8eb040186720",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"cap-app\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "f8ba3a68-4d81-4fb4-a083-8134e76db1ff",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"domain-auxiliary\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "c6303181-bb4d-4406-a4c3-b0582e3fe237",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"catalog\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "e6877a60-9ad2-438e-92d7-77b74e39fa52",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"root\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "325a2244-df46-4524-a644-e3ea361cc6f8",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"predecessor\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "8c6de6e3-3617-4572-8791-5673fe982cec",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"owner\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "3de9bc61-d2d5-4039-afa5-3205e4fa58b7",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ad420090-c232-41c2-8763-44b35b27d8c3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host-app\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "8e4da456-afc3-45ef-9091-6e2224844f67",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host-inventory\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "7b68ef44-ed8f-4274-9973-97c417d5a868",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host-topology\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2924e4f3-9ef4-4c12-ae39-df6c489c838f",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host-authentication\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "dd564132-9d45-4e06-accc-2cc7de98c664",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"sidecar\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "91702042-b629-47ec-afac-3cf982849cc6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"host-executable\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "2338007d-98ca-455b-9a50-93c089489cf1",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"aux-method\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "009b7a0e-f785-4dc4-95a9-d6985594762d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"aux-operation\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "115f9eb2-0707-4c6a-b591-93e1134ae383",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"aux-domain\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "ce9e2785-28b9-44d6-b77c-da36aa8ae99e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"http-owner\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "29c6ca9c-72d3-45d9-9c56-bf1a84b08205",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"http-verbs\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "b766b977-e6b7-4dc9-8ad1-0b92f5908bbb",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"http-code\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "944a7c9a-efe9-4a7a-a9e8-aa6c8c190971",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"http-grants\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "5fd70803-220b-4dae-809e-3fa7c73de57e",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"native\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "fa128ea3-22df-47ad-a5c0-4059bc8f8ef5",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"callback\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "0bcfae76-d5ff-4cf4-861c-75e591b0ba30",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"aux-app\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "933ff718-70ce-44ed-a9c3-07d302733a0b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CurrentChangedInputsRetainOriginalDigestOrFailure(changed: \\\"null-invocation-verbs\\\")",
+          "result": "Pass"
+        },
+        {
+          "id": "9694fb2e-a2ca-4173-8abc-ca0e11382157",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.RestoredMutableCollectionsMatchOnlyOriginalPrivateCopies",
+          "result": "Pass"
+        },
+        {
+          "id": "b9e8c253-17b6-4598-8a01-6dd56ef56655",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.ConcurrentScopesKeepIndependentLifetimesAndExactDigests",
+          "result": "Pass"
+        },
+        {
+          "id": "76b7a5e0-d09e-4a0c-8e42-62292b89e2a6",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.CaptureOwnsAllCollectionsAndExcludesTrustProof",
+          "result": "Pass"
+        },
+        {
+          "id": "b06dd055-ac6d-4b31-be6b-f30016cb6a8c",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.BoundsAndDisposalRetainOrdinaryFallback",
+          "result": "Pass"
+        },
+        {
+          "id": "2b2e6f13-31d0-4b18-8394-5d010520fd1d",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.ClosedScopeAndForeignOwnerNeverBorrowRetainedResults",
+          "result": "Pass"
+        },
+        {
+          "id": "bf01611c-99e3-431d-8b39-8b6e517b97e4",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.MeasureCompleteWarmReuseIncludingCaptureAndComparison",
+          "result": "Pass"
+        },
+        {
+          "id": "a04ef6d4-f993-4794-a101-dc5559693fcc",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.OriginalV1AndV2DigestBytesAreUnchanged(technical: False)",
+          "result": "Pass"
+        },
+        {
+          "id": "26736f24-c179-4bc8-9336-900d06e3319b",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.OriginalV1AndV2DigestBytesAreUnchanged(technical: True)",
+          "result": "Pass"
+        },
+        {
+          "id": "dc918701-8556-40aa-883b-96b61965dae3",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.TotalByteLimitBoundsRetainedLargeInputs",
+          "result": "Pass"
+        },
+        {
+          "id": "9b0db3df-f39f-4ecd-be3a-a49931aaf597",
+          "name": "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogBindingReuseTests.UnsupportedCollectionUsesUnchangedComputation",
+          "result": "Pass"
+        }
+      ]
+    }
+  ],
+  "sourceSha256": {
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs": "cd0d76b8c66703e185897ba8434723962907a7a4cd559d25a92e2ef4974d4bbc",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogDecodeScope.cs": "787874f0f1c50549188584cbd0804381ccd9f16a44d0a70c4bf3f1eb7f99bcdd",
+    "src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidatedBytesMemo.cs": "6c265a315fb853015ee636dd99fdb0493849f50a1dc24be45452c28d09a740fc",
+    "src/Hexalith.EventStore.DomainService/DevelopmentDomainRouteCatalog.cs": "c323eaddac848b88d4d0963d88ac370ad6c314fc212998bc69a212fcefb77720",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/DevelopmentRouteCatalogTrustValidator.cs": "81f0377d7cb3449b81c09201c91828095dc359d5c698574a52dc911ee45c5324",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogActivationBinding.cs": "103819fe1f962ab7e504983d10c66ce251c55003f18136916daab9aad11f03cc",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAdmissionGate.cs": "3e5e3e8c9ea765b1e74d2e3136b96f973d54246395877797b1ae09971c1658af",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogAuthority.cs": "d93190e999c4ed3b9a4a1a621085aa6c4396f758461a9a3ef9e536acf599875a",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingInput.cs": "b3a38587e864da27a80c507b0ea2830b14d6291ce45a3bf8cf27b7df1a012454",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingMemo.cs": "a79f653509da433677a92b8444680d6eb00bcbd8b3444ac2abc4ecaf3c2615e8",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogBindingScope.cs": "50f3ffde6afa1e5da304ee75dfc513464f5491d61fff11295493498f6a6ac7e0",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogFreshStreamImageDigest.cs": "23b14a41a4156e5f80a1a333fcfa7139da52288c97d48a2b1a471e504b41f207",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogHostOptions.cs": "59ba9405674655ae4133c1b0d8de2b565f652f40913a167a3a121c3876505190",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageBuffers.cs": "4374af0f0f48bdad687ced06aa6a60c021b083e83cc99cc1a52347e4197d17ea",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestMemo.cs": "32302a0b5d83eaa076cf234d981b7ce10d97635dfb528dd603c5fb79111c8758",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogImageDigestScope.cs": "47592f6ecee24326bad4e6ef69886703d6925431d7a44a8564922fb115741aa3",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/RouteCatalogLocalAdmissionTurn.cs": "893401b7776158a4550925580978e4f73f2a488813484731c3a8e14fd053e956",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpActionObservation.cs": "36623f1a5eb30c573fa1124a8c71f3481793a5a736ec8bbad216b7ad9837573a",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpObservationPass.cs": "5fa9ce0a5b5b299e64b4cbce4ad4dd58ef920ae1872abc5a590551042abeb147",
+    "src/Hexalith.EventStore.ServiceDefaults/Routing/TechnicalHttpRouteCatalogReceiver.cs": "56c16b809f6bb457f1b43849b69cc5ef391288d8b01092ba87fafa146714b296",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/DevelopmentExecutableImageTests.cs": "b085ff4de038eac60ca4a2539df24573c8678c4e215fc7f21ce179e38c51bac8",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ExecutableImageAssembly.cs": "fe9038e346121082bd1e017ff58b816c7388dbaf7390c2690c91cff8141f70ee",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FragmentedExecutableImageStream.cs": "64123712fcc3c7f6304dc99aa10ad659e6c9052113ce472a65bc6e52c1a19578",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/FreshExecutableStreamDigestTests.cs": "c01570410e73b7660a470bced9d0b1606815d19f3821ddeb1fd2c97e47e63374",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/HostMemoAdmissionTests.cs": "ebf097393fcd8f60f7a9ebec30684b3580de3d990f142d42ab31aed7a5b74293",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/NativeReadDecodeReuseTests.cs": "dbdcb49c07f9d544ec07c3353fea93bffff02f3fb51684b29f6aa996b6c9df23",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ParallelCatalogObservationTests.cs": "10c05e91f8b057c67f1b64e3ab7639fd169d6ac9075e1fbdbd43da17559ce0f2",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RecordingExecutableImagePool.cs": "ba9c972766dc8d87ae765eb115bfdc94fc3d9e3f80fcd1fa1ca9e85f3b24dbef",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogBindingReuseTests.cs": "36bcb838fc8870726b736f3f43f20db1ef43ff3329e61d33d6714a869fa06ca5",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogDiskImageAssembly.cs": "3487e8aa0120f8f651cc2be358e886aea6230c7fc230d0caf5624dceed0f9f15",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolCollection.cs": "87eb190e55c0935f63cd005451ca8cd080a28291ba10cf2efe16c4ee0687bbf9",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogImageBufferPoolTests.cs": "b6dd8697c596ab1d4d6e8e73efbe27367c76a8389c956fef322ba57ab478475f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/RouteCatalogProfileFactTests.cs": "da26e9b3f9c85a87ef0613b62c69b9712d50dcad7af0484a5dd5f7dd453fe8fd",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/ScopedRouteCatalogAcquisitionTests.cs": "11893e7b57d2edeef88b1e2f7504dfa7d1470bc321982194df089c5d75c2689f",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpCatalogFixture.cs": "3283f0204a07aee0a8dce644fc6bd142c26f000df28c8765a90ae13ea741defa",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpImageObservationTests.cs": "ad5addf2a5998855a9b68cc178edb5a9c2330fbb1b344f60199b2252334f354d",
+    "tests/Hexalith.EventStore.Server.Tests/Routing/TechnicalHttpInvocationReuseTests.cs": "38d4c35756651bc001f7c874d5b1985503bf0b4c1e48aab083c593388ccf984b"
+  },
+  "sourceMappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story65-owner-repair-native-20261107/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "76be2937a72161d48b60c270c29808df78c8211bacbf1c46a4446033243f2c5d",
+    "Configuration": "Debug"
+  },
+  "mappingSource": "/tmp/story65-owner-repair-native-20261107/mapping.log",
+  "mappingSha256": "ecd8d6b4819e5b1b9c9ca26a840925ed51aa2e77d19bd91c47580d7dc5a57977",
+  "earlierCommandReceipt": "/tmp/story65-owner-tests/profile-fact-command-receipt.json",
+  "earlierFailures": "All initial failed fixture/stale-binary XML/logs listed in the earlier receipt remain separately retained; no current Profile refinement test failed.",
+  "externalPoolBenchmark": "/tmp/story65-pool-capacity-probe-20261107/benchmark-command-receipt.json",
+  "externalPoolConfirmation": "/tmp/story65-pool-capacity-probe-20261107/confirmation-command-receipt.json",
+  "restorationReceipt": "/tmp/story65-pool-capacity-probe-20261107/restoration-receipt.json",
+  "preFixtureMoveVerification": "/tmp/story65-owner-tests/image-pool-command-receipt.json",
+  "sourceFreeze": true,
+  "runtimeAcceptanceBoundary": "No owner runtime/live acceptance attempted. Parent owns ordinary source/copy audit, Projects626 and actual live/browser acceptance.",
+  "uniquePassingCases": 340,
+  "bounds": {
+    "selectedSharedPool": "Two arrays per bucket through16MiB; below64MiB raw array payload. Metadata/object overhead additional bounded storage.",
+    "ordinaryPools": "Both unchanged one-array pools below32MiB payload each; allthree pools below128MiB raw payload.",
+    "imageMemo": {
+      "entries": 128,
+      "captureBytes": 16777216,
+      "retainedChargedBytes": 67108864,
+      "perEntryChargeOverhead": 512
+    },
+    "scope": "Existing open current image scope only; disabled/foreign/lifecycle/closed scope selects supplied ordinary pool."
+  },
+  "noActiveOwnerBuildOrTestProcesses": true,
+  "processAudit": {
+    "checkedAtUtc": "2026-11-07T04:44:43.780284+00:00",
+    "matchingActiveBuildTestOrBenchmarkProcesses": []
+  },
+  "benchmarks": {
+    "summary": "/tmp/story65-pool-capacity-probe-20261107/final-benchmark-summary.json",
+    "summarySha256": "1df977874272d2c7709e9db06b32fd3b5826948d4c2603119e1f7aa5602e0649",
+    "chosenSlots": 2,
+    "fourWorkersFirstRun": {
+      "capacity1": {
+        "medianMs": 10.932845833333332,
+        "allocatedBytes": 6254408,
+        "warmGen2Collections": 57
+      },
+      "capacity2": {
+        "medianMs": 9.915392708333332,
+        "allocatedBytes": 131279,
+        "warmGen2Collections": 0
+      }
+    },
+    "fourWorkersConfirmation": {
+      "capacity1": {
+        "medianMs": 10.6760125,
+        "allocatedBytes": 6953004,
+        "warmGen2Collections": 54
+      },
+      "capacity2": {
+        "medianMs": 9.885377083333333,
+        "allocatedBytes": 131522,
+        "warmGen2Collections": 0
+      }
+    },
+    "warmMemoHitsVerifiedAllTwelveRawRuns": true,
+    "perPhaseAllocationsNotInferredFromPriorRuntimeDiagnostic": true
+  },
+  "caseSetComparison": {
+    "priorPassingUniqueNames": 333,
+    "currentPassingUniqueNames": 340,
+    "removed": [],
+    "added": [
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultReadersKeepFreshImageAndDigestAfterPoolPoisoningAndMutation",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.DefaultStreamFailuresReturnSelectedBuffersWithoutRetainingPartialImages",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"memo\\\")",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.EscapedClosedOwnersUseOrdinaryStorageAndCompleteFreshStreaming(close: \\\"scope\\\")",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: False)",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.FourConcurrentWarmLoansPreserveOwnershipAndBoundImageAllocation(selected: True)",
+      "Hexalith.EventStore.Server.Tests.Routing.RouteCatalogImageBufferPoolTests.OpenScopesShareStorageWhileForeignSuppressionRestoresOrdinarySelection"
+    ]
+  }
+}

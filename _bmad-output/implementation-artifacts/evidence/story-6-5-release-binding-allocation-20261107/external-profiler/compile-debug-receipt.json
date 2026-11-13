@@ -1,0 +1,29 @@
+{
+  "temporaryToolOnly": true,
+  "fixtureStarted": false,
+  "profilerAttached": false,
+  "repositoryBuild": false,
+  "offlineRestoreReceipt": "compile-attempt-2-receipt.json",
+  "environmentOverrides": {
+    "DOTNET_PROCESSOR_COUNT": "unset",
+    "CustomBeforeMicrosoftCommonTargets": "unset",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story65-allocation-prep-20261107/AllocationProbe.csproj",
+    "--configuration",
+    "Debug",
+    "--no-restore",
+    "--disable-build-servers",
+    "-m:1",
+    "/nr:false"
+  ],
+  "exitCode": 0,
+  "wallSeconds": 1.61010115800309,
+  "log": "compile-debug.log",
+  "logSha256": "1fb00c10e16f70f800e43781fb3db73c29bf770861f6c66f5e2a14d8405e1514",
+  "warnings": 5
+}

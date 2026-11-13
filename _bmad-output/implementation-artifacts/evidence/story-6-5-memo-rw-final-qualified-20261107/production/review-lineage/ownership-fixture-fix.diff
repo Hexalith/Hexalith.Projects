@@ -1,0 +1,17 @@
+--- before/tests/Hexalith.EventStore.Server.Tests/Routing/ImageDigestMemoConcurrencyTests.cs
++++ after/tests/Hexalith.EventStore.Server.Tests/Routing/ImageDigestMemoConcurrencyTests.cs
+@@ -74,10 +74,12 @@
+ 
+         byte[] ownedInput = Bytes();
+         string expected = Digest(ownedInput);
+-        memo.TryCompute(key, ownedInput, out string digest, out _).ShouldBeTrue();
++        Assembly ownershipKey = Key();
++        memo.TryCompute(ownershipKey, ownedInput, out string digest, out bool reusedOwnership).ShouldBeTrue();
++        reusedOwnership.ShouldBeFalse();
+         digest.ShouldBe(expected);
+         ownedInput.AsSpan().Fill(0xcc);
+-        memo.TryCompute(key, Bytes(), out digest, out bool reusedAfterPoison).ShouldBeTrue();
++        memo.TryCompute(ownershipKey, Bytes(), out digest, out bool reusedAfterPoison).ShouldBeTrue();
+         digest.ShouldBe(expected);
+         reusedAfterPoison.ShouldBeTrue();
+     }

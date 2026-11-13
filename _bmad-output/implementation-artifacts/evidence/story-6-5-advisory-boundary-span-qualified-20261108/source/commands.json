@@ -1,0 +1,68 @@
+{
+  "compileReleased": false,
+  "executionReleased": false,
+  "cwd": "/tmp/story65-advisory-boundary-span-prep-20261108/differential",
+  "buildEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "runtimeEnvironmentRemove": [
+    "CustomBeforeDirectoryBuildProps",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "CustomAfterDirectoryBuildTargets",
+    "AfterMicrosoftNETSdkTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH",
+    "Configuration",
+    "CustomBeforeMicrosoftCommonTargets",
+    "DOTNET_PROCESSOR_COUNT"
+  ],
+  "buildEnvironmentSet": {
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "DOTNET_CLI_USE_MSBUILD_SERVER": "0"
+  },
+  "runtimeProcessorOverride": null,
+  "restore": [
+    "/home/administrator/.dotnet/dotnet",
+    "restore",
+    "/tmp/story65-advisory-boundary-span-prep-20261108/differential/Differential.csproj",
+    "--configfile",
+    "/tmp/story65-advisory-boundary-span-prep-20261108/differential/NuGet.Config",
+    "--ignore-failed-sources",
+    "--disable-build-servers"
+  ],
+  "build": [
+    "/home/administrator/.dotnet/dotnet",
+    "build",
+    "/tmp/story65-advisory-boundary-span-prep-20261108/differential/Differential.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:NuGetAudit=false"
+  ],
+  "facts": [
+    "/home/administrator/.dotnet/dotnet",
+    "/tmp/story65-advisory-boundary-span-prep-20261108/differential/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "facts"
+  ],
+  "qualification": [
+    "python3",
+    "/tmp/story65-advisory-boundary-span-prep-20261108/run_differential.py",
+    "--execute",
+    "--pins-sha256",
+    "ROOT_RELEASED_COMPILED_PINS_SHA256",
+    "--result-root",
+    "/tmp/story65-advisory-boundary-span-qualification-20261108"
+  ],
+  "noCommandExecuted": true
+}

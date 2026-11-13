@@ -1,0 +1,1001 @@
+{
+  "diagnosticOnly": true,
+  "featureAcceptance": false,
+  "timingClock": "DateTimeOffset.UtcNow; wall-clock intervals, instrumentation overhead not subtracted",
+  "rawUrlsHeadersBodiesOrBusinessIdentitiesObserved": false,
+  "records": 966,
+  "observations": 30,
+  "nativeReadinessAttempts": 30,
+  "phaseAtFailure": {
+    "final-input": 27,
+    "initial-candidate": 3
+  },
+  "exceptionTypes": {
+    "TaskCanceledException": 30
+  },
+  "completedOwnerOutcomes": {
+    "Allowed": 57
+  },
+  "completedOwnerCallMilliseconds": {
+    "min": 872.223,
+    "median": 899.85,
+    "max": 1236.98
+  },
+  "failureElapsedMilliseconds": {
+    "min": 1996.974,
+    "median": 1999.5520000000001,
+    "max": 2001.491
+  },
+  "allPositiveReadinessAttemptsFailed": true,
+  "ownerInternalStagesObserved": false,
+  "conclusion": "The shared two-second advisory deadline expires while awaiting ordered Folder owner reauthorization; owner round-trip internals are not localized.",
+  "stageReceiptSha256": "04440e4fa99120b22099f3ebfd3ac0957d2e1262973c5fad605c70faf3c7971d",
+  "perObservation": [
+    {
+      "observation": 1,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 21.05,
+          "completedAtMilliseconds": 1054.826,
+          "elapsedMilliseconds": 1033.776,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 1063.358,
+          "completedAtMilliseconds": 1957.096,
+          "elapsedMilliseconds": 893.738,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1957.656,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2007.459
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2000.826,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 2,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.636,
+          "completedAtMilliseconds": 898.297,
+          "elapsedMilliseconds": 896.661,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 902.1,
+          "completedAtMilliseconds": 1787.041,
+          "elapsedMilliseconds": 884.941,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1787.405,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.095
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.916,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 3,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.76,
+          "completedAtMilliseconds": 911.493,
+          "elapsedMilliseconds": 909.733,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 915.463,
+          "completedAtMilliseconds": 1815.513,
+          "elapsedMilliseconds": 900.05,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1815.749,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.023
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.092,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 4,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.574,
+          "completedAtMilliseconds": 901.639,
+          "elapsedMilliseconds": 900.065,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 905.119,
+          "completedAtMilliseconds": 1811.241,
+          "elapsedMilliseconds": 906.122,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1811.52,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.973
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2001.013,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 5,
+      "recordCount": 25,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 5.211,
+          "completedAtMilliseconds": 1242.191,
+          "elapsedMilliseconds": 1236.98,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 1246.425,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.955
+        }
+      ],
+      "failure": {
+        "phase": "initial-candidate",
+        "atMilliseconds": 2000.058,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 6,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.502,
+          "completedAtMilliseconds": 902.591,
+          "elapsedMilliseconds": 901.089,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 906.083,
+          "completedAtMilliseconds": 1786.041,
+          "elapsedMilliseconds": 879.958,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1786.284,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.245
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2000.328,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 7,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.757,
+          "completedAtMilliseconds": 901.774,
+          "elapsedMilliseconds": 900.017,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 905.68,
+          "completedAtMilliseconds": 1802.36,
+          "elapsedMilliseconds": 896.68,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1802.667,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1998.843
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1997.96,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 8,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.487,
+          "completedAtMilliseconds": 886.297,
+          "elapsedMilliseconds": 884.81,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 890.136,
+          "completedAtMilliseconds": 1785.877,
+          "elapsedMilliseconds": 895.741,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1786.158,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1998.593
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1997.684,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 9,
+      "recordCount": 25,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.58,
+          "completedAtMilliseconds": 1000.826,
+          "elapsedMilliseconds": 999.246,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 1004.725,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.757
+        }
+      ],
+      "failure": {
+        "phase": "initial-candidate",
+        "atMilliseconds": 1999.874,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 10,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 2.471,
+          "completedAtMilliseconds": 897.079,
+          "elapsedMilliseconds": 894.608,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 901.196,
+          "completedAtMilliseconds": 1811.293,
+          "elapsedMilliseconds": 910.097,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1811.545,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.776
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.569,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 11,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.428,
+          "completedAtMilliseconds": 901.938,
+          "elapsedMilliseconds": 900.51,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 905.36,
+          "completedAtMilliseconds": 1814.108,
+          "elapsedMilliseconds": 908.748,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1814.378,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.994
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2001.119,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 12,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.406,
+          "completedAtMilliseconds": 897.653,
+          "elapsedMilliseconds": 896.247,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 900.875,
+          "completedAtMilliseconds": 1782.317,
+          "elapsedMilliseconds": 881.442,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1782.568,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1997.845
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1997.053,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 13,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 2.108,
+          "completedAtMilliseconds": 905.272,
+          "elapsedMilliseconds": 903.164,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 908.881,
+          "completedAtMilliseconds": 1816.929,
+          "elapsedMilliseconds": 908.048,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1817.188,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2002.471
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2001.491,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 14,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.709,
+          "completedAtMilliseconds": 905.694,
+          "elapsedMilliseconds": 903.985,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 908.948,
+          "completedAtMilliseconds": 1808.798,
+          "elapsedMilliseconds": 899.85,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1808.984,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.626
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2000.754,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 15,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.774,
+          "completedAtMilliseconds": 951.551,
+          "elapsedMilliseconds": 949.777,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 955.111,
+          "completedAtMilliseconds": 1871.905,
+          "elapsedMilliseconds": 916.794,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1872.139,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.635
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.738,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 16,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.856,
+          "completedAtMilliseconds": 885.266,
+          "elapsedMilliseconds": 883.41,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 888.81,
+          "completedAtMilliseconds": 1770.245,
+          "elapsedMilliseconds": 881.435,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1770.54,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1999.079
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.141,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 17,
+      "recordCount": 25,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.417,
+          "completedAtMilliseconds": 1169.336,
+          "elapsedMilliseconds": 1167.919,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 1173.139,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.917
+        }
+      ],
+      "failure": {
+        "phase": "initial-candidate",
+        "atMilliseconds": 2001.376,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 18,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.257,
+          "completedAtMilliseconds": 895.699,
+          "elapsedMilliseconds": 894.442,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 898.997,
+          "completedAtMilliseconds": 1794.77,
+          "elapsedMilliseconds": 895.773,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1794.997,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1999.456
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.617,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 19,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.862,
+          "completedAtMilliseconds": 890.657,
+          "elapsedMilliseconds": 888.795,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 895.624,
+          "completedAtMilliseconds": 1782.734,
+          "elapsedMilliseconds": 887.11,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1782.96,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1999.562
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.551,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 20,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.445,
+          "completedAtMilliseconds": 897.564,
+          "elapsedMilliseconds": 896.119,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 900.454,
+          "completedAtMilliseconds": 1780.576,
+          "elapsedMilliseconds": 880.122,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1780.836,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.123
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2000.161,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 21,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.466,
+          "completedAtMilliseconds": 918.272,
+          "elapsedMilliseconds": 916.806,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 921.431,
+          "completedAtMilliseconds": 1839.155,
+          "elapsedMilliseconds": 917.724,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1839.389,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1999.161
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.259,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 22,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.359,
+          "completedAtMilliseconds": 967.246,
+          "elapsedMilliseconds": 965.887,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 971.053,
+          "completedAtMilliseconds": 1888.47,
+          "elapsedMilliseconds": 917.417,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1888.797,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.204
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.275,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 23,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.533,
+          "completedAtMilliseconds": 918.979,
+          "elapsedMilliseconds": 917.446,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 921.826,
+          "completedAtMilliseconds": 1853.82,
+          "elapsedMilliseconds": 931.994,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1854.185,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2001.344
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 2000.515,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 24,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.784,
+          "completedAtMilliseconds": 949.173,
+          "elapsedMilliseconds": 947.389,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 953.027,
+          "completedAtMilliseconds": 1891.299,
+          "elapsedMilliseconds": 938.272,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1891.513,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1999.705
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1998.878,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 25,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.488,
+          "completedAtMilliseconds": 874.439,
+          "elapsedMilliseconds": 872.951,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 877.919,
+          "completedAtMilliseconds": 1761.543,
+          "elapsedMilliseconds": 883.624,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1761.749,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1998.088
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1997.204,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 26,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.274,
+          "completedAtMilliseconds": 891.668,
+          "elapsedMilliseconds": 890.394,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 895.105,
+          "completedAtMilliseconds": 1783.33,
+          "elapsedMilliseconds": 888.225,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1783.56,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.446
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.535,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 27,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.469,
+          "completedAtMilliseconds": 880.303,
+          "elapsedMilliseconds": 878.834,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 883.687,
+          "completedAtMilliseconds": 1760.448,
+          "elapsedMilliseconds": 876.761,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1760.67,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.435
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.673,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 28,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.577,
+          "completedAtMilliseconds": 873.8,
+          "elapsedMilliseconds": 872.223,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 877.422,
+          "completedAtMilliseconds": 1780.096,
+          "elapsedMilliseconds": 902.674,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1780.286,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.724
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.867,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 29,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.435,
+          "completedAtMilliseconds": 885.876,
+          "elapsedMilliseconds": 884.441,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 889.67,
+          "completedAtMilliseconds": 1794.817,
+          "elapsedMilliseconds": 905.147,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1795.068,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 1997.826
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1996.974,
+        "exceptionType": "TaskCanceledException"
+      }
+    },
+    {
+      "observation": 30,
+      "recordCount": 33,
+      "calls": [
+        {
+          "phase": "initial-input",
+          "startedAtMilliseconds": 1.297,
+          "completedAtMilliseconds": 891.508,
+          "elapsedMilliseconds": 890.211,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "initial-candidate",
+          "startedAtMilliseconds": 894.684,
+          "completedAtMilliseconds": 1781.002,
+          "elapsedMilliseconds": 886.318,
+          "clientResult": "success",
+          "ownerOutcome": "Allowed"
+        },
+        {
+          "phase": "final-input",
+          "startedAtMilliseconds": 1781.241,
+          "exceptionType": "OperationCanceledException",
+          "endedAtMilliseconds": 2000.335
+        }
+      ],
+      "failure": {
+        "phase": "final-input",
+        "atMilliseconds": 1999.45,
+        "exceptionType": "TaskCanceledException"
+      }
+    }
+  ]
+}

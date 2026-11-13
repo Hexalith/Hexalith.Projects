@@ -1,0 +1,17 @@
+using System.Reflection;
+internal sealed class NativeFormattingMemo
+{
+    private static readonly Type RuntimeType = typeof(object).GetType();
+    private static readonly Type RuntimeMethod = typeof(object).GetMethod(nameof(ToString), Type.EmptyTypes)!.GetType();
+    private readonly Dictionary<MethodInfo,string> _methods = new(ReferenceEqualityComparer.Instance);
+    internal int Hits, Misses; internal long Bytes;
+    internal string? Format(MethodInfo method)
+    {
+        if (method.GetType() != RuntimeMethod || method.DeclaringType?.GetType() != RuntimeType || method.ReflectedType?.GetType() != RuntimeType) return method.ToString();
+        if (_methods.TryGetValue(method, out var value)) { Hits++; return value; }
+        Misses++; value = method.ToString();
+        if (value is not null && _methods.Count < 1024 && value.Length <= (1024 * 1024 - 256) / 2 && Bytes + 256 + value.Length * 2L <= 1024 * 1024)
+        { _methods.Add(method,value); Bytes += 256 + value.Length * 2L; }
+        return value;
+    }
+}

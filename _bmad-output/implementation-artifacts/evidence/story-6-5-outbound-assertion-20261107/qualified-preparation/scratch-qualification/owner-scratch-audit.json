@@ -1,0 +1,142 @@
+{
+  "scratchQualificationOnly": true,
+  "featureAcceptance": false,
+  "allPassed": true,
+  "passingBehavioralCells": 100,
+  "passingFreshCanaries": 3,
+  "controlledProcesses": 15,
+  "strictValidatedRows": 83688,
+  "strictAllowedStages": [
+    "ComponentFile",
+    "ComponentPolicy",
+    "Whole"
+  ],
+  "allCountAndAllocationColumnsZero": true,
+  "stageCounts": {
+    "Whole": 83649,
+    "ComponentFile": 22,
+    "ComponentPolicy": 17
+  },
+  "casesByMode": {
+    "canary-positive-control": 1,
+    "canary-current": 1,
+    "canary-suppressed": 1,
+    "disabled": 25,
+    "active": 25,
+    "capped": 25,
+    "failing-sink": 25
+  },
+  "source54App147AndVariantsBeforeAfterIdentical": true,
+  "shared152InputsUnchanged": true,
+  "processIdentitiesAbsent": 15,
+  "privateDirectoryPinnedEmpty": true,
+  "controllerReceipts": [
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/canary-positive-control/canary/controller-receipt.json",
+      "sha256": "2cb845a1d648173fa271c44556da79952cfc68aa5cea9a5150940324e6fe28cf",
+      "mode": "canary-positive-control",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/canary-current/canary/controller-receipt.json",
+      "sha256": "38b8cb13760864454bd225a6c9f81d2705515b30baf6819cd8bea0bb4ca09e31",
+      "mode": "canary-current",
+      "cases": 1,
+      "rows": 3
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/canary-suppressed/canary/controller-receipt.json",
+      "sha256": "249b6d2b6abe088efbf3dd28db2f1ceb95e3eb42463a32b9fd9e82db5f1ea569",
+      "mode": "canary-suppressed",
+      "cases": 1,
+      "rows": 3
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/disabled/fast/controller-receipt.json",
+      "sha256": "3ce848a76e6b12cac221457ee7c612391aa55eda185421dce15b8c6a494a63ca",
+      "mode": "disabled",
+      "cases": 23,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/disabled/held-issuer/controller-receipt.json",
+      "sha256": "18cbe020910fec839c61a5a14adf1330ba3f1218d887b0687c4a7252969d8b3f",
+      "mode": "disabled",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/disabled/held-base/controller-receipt.json",
+      "sha256": "801572103ecd296abb477350ff5dc48044ef21632b2cec82089255187397cff4",
+      "mode": "disabled",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/active/fast/controller-receipt.json",
+      "sha256": "e795a7a4879ef4057d1af5cfc57f46cf71b549edd33725ccde14627380b0f793",
+      "mode": "active",
+      "cases": 23,
+      "rows": 54
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/active/held-issuer/controller-receipt.json",
+      "sha256": "5401a3dc6bcbb8473904d3fb7c15fcc9c64ebe6f7dbb84a4ebf635275bdbfff7",
+      "mode": "active",
+      "cases": 1,
+      "rows": 3
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/active/held-base/controller-receipt.json",
+      "sha256": "bd1cb0599d9e5f0bb66897a926ca2167a31e84e15385ce5542238c5d3ce19863",
+      "mode": "active",
+      "cases": 1,
+      "rows": 3
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/capped/fast/controller-receipt.json",
+      "sha256": "79cb5d37ce7a4e6ae205cdc50a8dce8c02d777dde26632b1fe66d09a4d408223",
+      "mode": "capped",
+      "cases": 23,
+      "rows": 27870
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/capped/held-issuer/controller-receipt.json",
+      "sha256": "ee0a30080753ab51037f5bf36494502aaf51e6923996c8c4387de7e53d6170a0",
+      "mode": "capped",
+      "cases": 1,
+      "rows": 27876
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/capped/held-base/controller-receipt.json",
+      "sha256": "ecee5b10caea31cb781c285421b008cb673ce28d763e467f46e5a61ae0e1c226",
+      "mode": "capped",
+      "cases": 1,
+      "rows": 27876
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/failing-sink/fast/controller-receipt.json",
+      "sha256": "4740478283429538739c6b5d1b0e20136d7362db20c6cc74773ff04f7a68330a",
+      "mode": "failing-sink",
+      "cases": 23,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/failing-sink/held-issuer/controller-receipt.json",
+      "sha256": "d5c65ebdef78d6a9658823ff806a2b04ab9a6e15a5bcdc3a61bef69956967a6c",
+      "mode": "failing-sink",
+      "cases": 1,
+      "rows": 0
+    },
+    {
+      "path": "/tmp/story65-outbound-assertion-prep-20261107/results-qualified-initial/failing-sink/held-base/controller-receipt.json",
+      "sha256": "55d95e7e05fd1abd69a9c1402989e551d73f1a7e55a72989f87a531acfeb5a2e",
+      "mode": "failing-sink",
+      "cases": 1,
+      "rows": 0
+    }
+  ],
+  "native29Executed": false,
+  "hostsStarted": 0
+}

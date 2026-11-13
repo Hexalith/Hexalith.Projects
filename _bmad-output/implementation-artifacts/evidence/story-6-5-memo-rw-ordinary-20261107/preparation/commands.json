@@ -1,0 +1,48 @@
+{
+  "filePreparationOnly": true,
+  "executionReleased": false,
+  "supervisorCommand": [
+    "python3",
+    "/tmp/story65-memo-rw-acceptance-prep-20261107/supervise.py",
+    "--owner-receipt",
+    "/tmp/story65-memo-rw-owner-native-20261107/command-source-freeze-receipt.json",
+    "--owner-receipt-sha256",
+    "489bcaf2b508c8a2ad9ca51738bb12cfa200643f2c3baa384ae4fa503700d513",
+    "--native-audit",
+    "/tmp/story65-memo-rw-native-20261107/parent-native-qualification.json",
+    "--native-audit-sha256",
+    "93ab46016105006e2572f47960c6a9a7c2203f0db622a764e5c0525028fe6f37",
+    "--evidence",
+    "/tmp/story65-memo-rw-acceptance-live-20261107"
+  ],
+  "exactManagedChildCommand": [
+    "npm",
+    "--prefix",
+    "tests/e2e",
+    "run",
+    "test:live:managed"
+  ],
+  "auditCommandAfterOriginalManagedCompletion": [
+    "python3",
+    "/tmp/story65-memo-rw-acceptance-prep-20261107/audit.py",
+    "--evidence",
+    "/tmp/story65-memo-rw-acceptance-live-20261107",
+    "--output",
+    "/tmp/story65-memo-rw-acceptance-live-20261107-independent-cleanup-source-audit.json"
+  ],
+  "sourceControlsPath": "/tmp/story65-memo-rw-native-20261107/source-controls.json",
+  "sourceCount": 56,
+  "ownerSourceCount": 49,
+  "qualifiedNativeUniquePasses": 1048,
+  "qualifiedSdkDllSha256": "6947e843daa27e9567c9f5ece4f884af75021240c5fbb6baee09bcd6cbfd3542",
+  "qualifiedSdkPdbSha256": "ffa22cd52ff313ce95ee647d13f753c475b588137d08c0bf676c19b66e92a4b6",
+  "naturalCpuOverrideAbsent": true,
+  "noProfilerWatcherOverlaySourceHookNoBuildCutoffOrTargetSignal": true,
+  "originalLauncherEmitsAndConsumesAllSevenMappingValuesNormally": true,
+  "actualSingleMultiplePositivesAndOidcBrowserPersistencePrivacyA11yRequired": true,
+  "actualBrowserXmlPersistedBoundaryPrivacyTelemetryAndA11yReceiptsRequireIndependentPostRunReview": true,
+  "postManagedOrdinary147MarkerAndSdkProducerRuntimeDllPdbGenerationCensusRequired": true,
+  "noFeatureAcceptanceInferredFromWrapperExitOrPreflight": true,
+  "genericSuperviseAuditUnchangedExceptNewDefaultEvidencePaths": true,
+  "commandsExecuted": 0
+}

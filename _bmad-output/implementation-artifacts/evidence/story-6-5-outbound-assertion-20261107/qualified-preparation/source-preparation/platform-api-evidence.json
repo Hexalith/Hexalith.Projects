@@ -1,0 +1,32 @@
+{
+  "metadataSourceOnly": true,
+  "version": "10.0.14",
+  "files": {
+    "/home/administrator/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.14/ref/net10.0/System.Net.Http.xml": {
+      "sha256": "9223b9dc2bf47d1dcbacde42b355f075b2e3f5fef8e927ec0789fd3238355799",
+      "members": [
+        "F:System.Net.Http.HttpCompletionOption.ResponseContentRead",
+        "M:System.Net.Http.HttpMessageInvoker.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)"
+      ]
+    },
+    "/home/administrator/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.14/ref/net10.0/System.Runtime.xml": {
+      "sha256": "a6708171773d23000bf45673b97cf0daaa8d34566c6581df6833c3a4a14d411a",
+      "members": [
+        "T:System.Threading.Tasks.Sources.IValueTaskSource`1",
+        "M:System.Threading.Tasks.Sources.ManualResetValueTaskSourceCore`1.GetResult(System.Int16)"
+      ]
+    },
+    "/home/administrator/.dotnet/packs/Microsoft.AspNetCore.App.Ref/10.0.14/ref/net10.0/Microsoft.Extensions.Logging.Abstractions.xml": {
+      "sha256": "1b4bfb2dbdad0012fcbf5781f4360e8d6979759868fc564cc3ac864ef5a034da",
+      "members": [
+        "F:Microsoft.Extensions.Logging.Abstractions.NullLogger`1.Instance"
+      ]
+    }
+  },
+  "noAssemblyLoadOrRuntimeProbe": true,
+  "qualifiedPriorValueTaskFixture": {
+    "path": "/tmp/story65-delegated-client-prep-20261107/driver/AssertionValueSource.cs",
+    "sha256": "595ad30ee1aff93d31064f323ea1d14668cc7056c9096296f14daa9621aae854"
+  },
+  "semanticsToQualify": "original ValueTask consumed once; HttpMessageInvoker null rejection bypassed only for protected-null test; default outer HttpClient buffering begins after handler return; typed NullLogger Instance is field"
+}

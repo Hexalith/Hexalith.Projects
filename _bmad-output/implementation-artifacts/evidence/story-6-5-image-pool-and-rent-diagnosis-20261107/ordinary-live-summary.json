@@ -1,0 +1,36 @@
+{
+  "result": "failed",
+  "nativeSeedCases": 1,
+  "nativeSeedFailed": 1,
+  "browserCasesExecuted": 0,
+  "single": {
+    "attempts": 2,
+    "positiveAttempt": 2,
+    "positiveObservations": [
+      {
+        "attempt": 2,
+        "result": "SingleCandidate",
+        "incomplete": false,
+        "candidateCount": 1,
+        "elapsedMilliseconds": 2363.9635
+      }
+    ]
+  },
+  "multiple": {
+    "attempts": 30,
+    "positiveObservations": 0,
+    "allEmptyIncomplete": true,
+    "medianExternalFixtureElapsedMs": 2394.4915499999997
+  },
+  "cleanup": {
+    "allSixAbsencesVerified": true,
+    "preexistingPreserved": true,
+    "ownedSidecarsAbsent": true,
+    "privateRemoved": true,
+    "nativeDescendantsAbsent": true
+  },
+  "sourceInputsParentReportedMatched": 17178,
+  "sourceRehashScope": "Parent independently rehashed all17178; this preservation task does not repeat them.",
+  "elapsedScope": "Public fixture elapsed also includes subsequent readiness evidence collection, not only the internal two-second executor budget.",
+  "featureAcceptance": false
+}
