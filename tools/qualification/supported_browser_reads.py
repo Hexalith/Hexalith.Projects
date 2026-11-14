@@ -27,13 +27,35 @@ JWT_PATTERN = re.compile(r'eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-
 
 
 def sanitize_output(value, protected):
-    """Redact known protected values and arbitrary JWT-shaped credentials before artifact writes."""
+    """Redact decoded XML content without consuming its closing markup or changing clean receipts."""
     import html
-    for marker in sorted(set(protected), key=len, reverse=True):
-        if marker:
-            for encoded in (marker, html.escape(marker), json.dumps(marker)[1:-1]):
-                value = value.replace(encoded, '[redacted]')
-    return JWT_PATTERN.sub('[redacted-jwt]', value)
+
+    def redact(text):
+        for marker in sorted(set(protected), key=len, reverse=True):
+            if marker:
+                for encoded in (marker, html.escape(marker), json.dumps(marker)[1:-1]):
+                    text = text.replace(encoded, '[redacted]')
+        text = JWT_PATTERN.sub('[redacted-jwt]', text)
+        return re.sub(r'(?im)^([ \t]*(?:-[ \t]*)?(?:cookie|set-cookie|authorization):)[^\r\n]*',
+                      r'\1 [redacted-header]', text)
+
+    try:
+        document = ET.fromstring(value)
+    except ET.ParseError:
+        return redact(value)
+    changed = False
+    for element in document.iter():
+        for name in ('text', 'tail'):
+            original = getattr(element, name)
+            if original is not None:
+                replacement = redact(original)
+                changed |= original != replacement
+                setattr(element, name, replacement)
+        for name, original in element.attrib.items():
+            replacement = redact(original)
+            changed |= original != replacement
+            element.set(name, replacement)
+    return ET.tostring(document, encoding='unicode') if changed else value
 
 
 def write_sanitized_output(path, value, protected):
@@ -72,7 +94,7 @@ def wait_for_oidc(authority, context, *, seconds=120, clock=time.monotonic, slee
         sleep(0.25)
 
 
-def prepare_oidc(root, private, isolation, owned, run, free_port, password):
+def prepare_oidc(root, private, isolation, owned, run, free_port, password, *, extra_permissions=()):
     """Own an HTTPS Keycloak before AppHost startup; leave all existing private guards intact."""
     realm = json.loads((root / 'src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json').read_text())
     clients = {client['clientId']: client for client in realm['clients']}
@@ -99,6 +121,7 @@ def prepare_oidc(root, private, isolation, owned, run, free_port, password):
                    'tenants:create', 'tenants:add-user', 'tenants:refresh-access', 'tenants:read', 'global-administrators:read']
     # Retain the native fixture's exact authority vocabulary rather than broadening a production role.
     permissions += ['admin:reconcile-global-administrators-delivery', 'global-administrators:bootstrap']
+    permissions += list(extra_permissions)
     realm['users'] = []
     for name, tenant in [('actor-1', isolation + '-tenant'), ('foreign-actor', isolation + '-foreign')]:
         user = copy.deepcopy(template)

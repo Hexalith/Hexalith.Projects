@@ -1,5 +1,7 @@
 import type { ApiRequestFixtureParams, EnhancedApiPromise } from '@seontechnologies/playwright-utils/api-request';
 import type { APIRequestContext } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { appendFile } from 'node:fs/promises';
 import { mutationHeaders, queryHeaders, type MutationHeaderOptions, type AuthHeaderOptions } from './correlation.js';
 import type { CreateProjectInput } from '../factories/project-factory.js';
 
@@ -601,13 +603,44 @@ export async function confirmNewProjectProposal(
 ): Promise<{ status: number; body: AcceptedCommand }> {
   const apiUrl = process.env.API_URL?.trim();
   if (!apiUrl) throw new Error('[projects-api-client] API_URL is required for proposal confirmation.');
-  const response = await request.post(`${apiUrl.replace(/\/$/, '')}/api/v1/projects/proposals/confirm`, {
-    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
-    data: input,
-  });
-  const contentType = response.headers()['content-type'] ?? '';
-  const body = contentType.includes('json') ? await response.json() : null;
-  return { status: response.status(), body: body as AcceptedCommand };
+  const traceId = createHash('sha256').update(headerOptions.correlationId ?? input.projectId).digest('hex').slice(0, 32);
+  const spanId = createHash('sha256').update(`${traceId}:client`).digest('hex').slice(0, 16);
+  const started = performance.now();
+  const startedAtUtc = new Date().toISOString();
+  let status: number | null = null;
+  let failureType: string | null = null;
+  try {
+    const response = await request.post(`${apiUrl.replace(/\/$/, '')}/api/v1/projects/proposals/confirm`, {
+      headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId, traceparent: `00-${traceId}-${spanId}-01` },
+      data: input,
+      // Confirm performs sequential ACL/resolution, Create, assignment, Folder and File work.
+      // Its HTTP bound uses the normal API client's 30s budget, independently of UI actions' 15s.
+      // The existing 60s test deadline and asynchronous convergence assertions remain in force.
+      timeout: 30_000,
+    });
+    status = response.status();
+    const contentType = response.headers()['content-type'] ?? '';
+    const body = contentType.includes('json') ? await response.json() : null;
+    return { status, body: body as AcceptedCommand };
+  } catch (failure) {
+    failureType = failure instanceof Error ? failure.name : 'UnknownError';
+    throw failure;
+  } finally {
+    const observation = process.env.E2E_PROPOSAL_OBSERVATIONS_FILE;
+    if (observation) {
+      try {
+        await appendFile(observation, JSON.stringify({ traceId, projectId: input.projectId,
+          rootIdempotencyKey: headerOptions.idempotencyKey, correlationId: headerOptions.correlationId,
+          folderRequested: Boolean(input.folder), fileReferenceIds: input.fileReferences?.map(file => file.fileReferenceId) ?? [],
+          httpStatus: status, failureType, durationMs: Math.round(performance.now() - started),
+          startedAtUtc, finishedAtUtc: new Date().toISOString(),
+        }) + '\n', { mode: 0o600 });
+      } catch {
+        // A diagnostic storage error cannot replace the real operation/test failure.
+        console.warn('[proposal-observer] private operation metadata could not be retained.');
+      }
+    }
+  }
 }
 
 /** POST /api/v1/projects/{id}/archive → 202 (FR-4). */

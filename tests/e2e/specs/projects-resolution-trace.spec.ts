@@ -72,7 +72,8 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await expect(detail.resolutionTraceCandidateComparison).toBeVisible();
     // The supported Folder mapping suggests the primary. Opaque legacy File references cannot be
     // mapped into owner File identity and never imply a second candidate.
-    await expect(detail.resolutionTraceOutcome).toContainText('SingleCandidate');
+    await expect(detail.resolutionTraceOutcome).toContainText('Resolved');
+    await expect(detail.resolutionTraceCandidates).toHaveCount(1);
     await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.primary.projectId);
     await expect(detail.resolutionTraceCandidates.filter({ hasText: resolutionProjects.secondary.projectId })).toHaveCount(0);
 

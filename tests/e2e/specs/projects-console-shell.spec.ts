@@ -142,16 +142,19 @@ test.describe('Projects console shell shared rendering', () => {
     await detail.auditTimelineCopy.first().click();
     await expect(detail.safeDiagnosticExportFeedback.getByTestId('project-feedback-success')).toBeVisible();
 
-    // Warning: a browser context without clipboard permission reports the copy as unavailable.
+    // Warning: explicitly deny clipboard permissions. Chromium can otherwise allow a write from
+    // a user gesture even when this context never requested a permission grant.
     const denied = await browser.newContext({
       baseURL: process.env.BASE_URL,
       ignoreHTTPSErrors: true,
       storageState: await page.context().storageState(),
     });
     try {
+      await denied.grantPermissions([], { origin: new URL(process.env.BASE_URL!).origin });
       const deniedPage = await denied.newPage();
       const deniedDetail = new ProjectDetailPage(deniedPage);
       await deniedDetail.goto(seededProject.projectId);
+      expect(await deniedPage.evaluate(async () => (await navigator.permissions.query({ name: 'clipboard-write' as PermissionName })).state)).toBe('denied');
       await openProjectDetailSection(deniedPage, 'audit');
       await deniedDetail.auditTimelineCopy.first().click();
       await expect(deniedDetail.safeDiagnosticExportFeedback.getByTestId('project-feedback-warning')).toBeVisible();

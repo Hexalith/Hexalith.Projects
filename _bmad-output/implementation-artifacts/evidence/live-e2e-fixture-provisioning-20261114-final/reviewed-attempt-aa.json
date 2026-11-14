@@ -1,0 +1,109 @@
+{
+  "result": "failed",
+  "matrixCompleted": false,
+  "failure": "A committed source Project is missing from the projection journal.",
+  "phases": [
+    {
+      "name": "smoke",
+      "exitCode": 0,
+      "collected": 8,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "full",
+      "exitCode": 0,
+      "collected": 146,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "repeat",
+      "exitCode": 0,
+      "collected": 14,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "retry",
+      "exitCode": 0,
+      "collected": 2,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    }
+  ],
+  "retryIsolation": [
+    {
+      "retry": 1,
+      "repeatEachIndex": 1,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    },
+    {
+      "retry": 1,
+      "repeatEachIndex": 0,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    }
+  ],
+  "persistedSmokeProjectCleanup": {
+    "projectCount": 2,
+    "createdEventCount": 2,
+    "archivedEventCount": 2,
+    "allArchived": true,
+    "watermark": 9,
+    "journalSha256": "ec77a43a324d2e84b4bae28a008782c72ee64b8e86eb4f67af578f71b9f09964",
+    "versionSha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+    "journalEventCount": 6,
+    "projectIdentitySha256": [
+      "1e9ed0e2583af79bbdb4e51fbe4c96e421ec7c50b5f94a400460a6d79245f48d",
+      "cda33975fdc08a0fa6bd0aea615353a222825fe515f6d76288b5691180adf384"
+    ],
+    "independentProviderRereads": 2,
+    "sourceMetadataCount": 2,
+    "committedSourceProjectCount": 2,
+    "positivelyEmptySourceCount": 0,
+    "sourceMetadataHeadSha256": [
+      "1b8a6a506c414213ccade3ce5e6a69b49be2ebb09f3169034662a10346b2fe09",
+      "a3015c3f26ccfb77d0018438cad8b22c53411f5ed40d644822ef8651e6cf7c35"
+    ],
+    "sourceMetadataKeySha256": [
+      "a3e4159c171cfa38c8e6693cd47126f7482616b480289bf110d87f50f97d7ebc",
+      "db613e86bd2b0f2eee91aff17d7211bbfe15bc1cd604a8c302fc7ad3e031de91"
+    ]
+  },
+  "ownedSidecarsAbsent": true,
+  "ownedApplicationsAbsent": true,
+  "privateMaterialRemoved": true,
+  "preexistingResourcesPreserved": true,
+  "command": [
+    "run-with-temp",
+    "python3",
+    "tools/qualification/run_live_project_fixtures.py",
+    "--timeout",
+    "600",
+    "--evidence",
+    "/tmp/projects-live-fixtures-reviewed-20261114-aa"
+  ],
+  "acceptanceEvidence": false,
+  "reason": "Final complete-source proof rejected an unjournaled committed stream; source rejection-event classification is being corrected and independently verified.",
+  "sessions": [
+    {
+      "name": "private",
+      "captureVerified": true,
+      "ownedSidecarsAbsent": true,
+      "applicationsAbsent": true,
+      "absenceVerified": true,
+      "remainingApplications": {},
+      "remainingContainers": []
+    }
+  ]
+}

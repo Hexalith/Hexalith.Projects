@@ -51,4 +51,33 @@ public sealed class ProjectsWorkerCatalogTests
         });
         Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentWorkerCatalog());
     }
+
+#if HEXALITH_SOURCE_FIXTURE
+    /// <summary>Worker peer enrollment rejects missing or mixed private profiles.</summary>
+    /// <param name="reads">Whether the real-owner profile is selected.</param>
+    /// <param name="fixtures">Whether the compatibility profile is selected.</param>
+    /// <param name="accepted">Whether enrollment must be accepted.</param>
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(false, true, true)]
+    [InlineData(true, true, false)]
+    public void WorkerBootstrapRequiresExactlyOneProfile(bool reads, bool fixtures, bool accepted)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:Directory"] = Path.GetTempPath(),
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:HostId"] = "projects-workers",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:CoordinatorHostId"] = "eventstore",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:AttemptId"] = "profile-selection",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:RequiredHostIds:0"] = "projects-workers",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:RequiredHostIds:1"] = "eventstore",
+            ["Projects:SupportedReads:Enabled"] = reads.ToString(),
+            ["Projects:IsolatedLiveFixtures:Enabled"] = fixtures.ToString(),
+        });
+        if (accepted) builder.AddProjectsDevelopmentWorkerCatalog().ShouldBeTrue();
+        else Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentWorkerCatalog());
+    }
+#endif
 }

@@ -5,6 +5,7 @@ using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
+IsolatedLiveE2EFixtureProfile.Configure(builder);
 SupportedProjectReadFixtureProfile.Configure(builder);
 const string projectsUiOidcClientId = "hexalith-projects-ui";
 const string projectsUiOidcClientSecret = "projects-ui-local-e2e";
@@ -62,7 +63,11 @@ IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.
 _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
 
 DevelopmentRouteCatalogComposition? supportedReadCatalog = null;
-if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
+if (IsolatedLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
+{
+    supportedReadCatalog = IsolatedLiveE2EFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, projectsUi, daprComponentsPath);
+}
+else if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
 {
     if (!SupportedProjectBrowserFixtureProfile.IsEnabled(builder.Configuration))
         _ = projectsUi.WithExplicitStart();

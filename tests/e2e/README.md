@@ -48,35 +48,50 @@ system Chrome when available. CI always keeps the managed browser matrix; locall
 
 ### Live AppHost route
 
-The managed runner owns the complete lifecycle: it enables the explicit fixture profile, starts the
-Projects AppHost, waits for every required resource, describes the graph exactly once, derives all
-dynamic URLs, runs the startup/auth smoke and full Chromium suite with two workers, and always stops
-that exact AppHost. Configure the non-URL values from `.env.example` or the shell:
+The managed runner owns a fresh Redis backend, private discovery, SDK compiled catalog, Platform
+mTLS/workload authority and real HTTPS Keycloak. It creates source authority through authenticated
+Tenant commands only in that newly owned backend. The ordinary shared tenant and its roles remain
+untouched. It enables the explicit metadata fixture profile, discovers the AppHost URLs, and runs the
+startup/auth smoke, complete Chromium matrix, repeats and actual retries with two workers:
 
 ```bash
-cd tests/e2e
-export KEYCLOAK_REALM=hexalith
-export KEYCLOAK_CLIENT_ID=hexalith-eventstore
-export TEST_USER_USERNAME=<local-realm-username>
-export TEST_USER_PASSWORD=<local-realm-password>
-npm run test:live:managed
+run-with-temp npm --prefix tests/e2e run test:live:managed
 ```
 
-If you copied `.env.example`, load the completed file into the shell before invoking the runner:
+Credentials for this isolated lane are generated and kept in the private run directory. Set
+`E2E_LIVE_FIXTURE_EVIDENCE` to a new persistent directory for sanitized logs, native XML and JUnit.
+`E2E_RESOURCE_TIMEOUT_SECONDS` bounds operations (default 600). The launcher cleans its exact
+processes, containers, browser session, keys, mapping and build outputs on every exit. Unverified
+cleanup fails the run and preserves a metadata-only recovery identity outside disposable scratch.
+The final check starts the ordinary AppHost with every fixture flag disabled and inspects its
+actual Projects process environment plus resource graph for fixture ingress and sibling bindings.
+The private gateway uses inline projections with the SDK's supported background-worker suppression
+switch during this deterministic fixture run. This lane does not qualify production background
+projection retry or parallel callback delivery. The private Projects worker sidecar also selects
+`AppMaxConcurrency=1` to serialize legacy journal callbacks; the browser matrix still uses two workers.
+The typed API fixture uses a 30-second HTTP transport default, preserving explicit per-call deadlines,
+independently of the 15-second UI action limit. Proposal confirmation has the same explicit HTTP
+bound for its sequential ACL, create, conversation, folder and file steps, within the existing
+60-second test deadline. Private operation records and sanitized owner spans retain actual stage status
+and timing; no request bodies, session cookies or credential header values are retained.
+
+For an operator-enrolled shared backend, explicitly select the legacy shared lane and load existing
+credentials from `.env` before invoking the runner:
 
 ```bash
 set -a
 . ./.env
 set +a
-npm run test:live:managed
+E2E_SHARED_APPHOST=1 npm run test:live:managed
 ```
 
 Do not preconfigure ports: `BASE_URL`, `API_URL`, `EVENTSTORE_API_URL`, `KEYCLOAK_URL`, and
-`FIXTURE_API_URL` are assigned by Aspire and exported from the single captured graph. The runner
+`FIXTURE_API_URL` are assigned by Aspire and exported from its captured graph. The runner
 derives tenant and principal identities from the signed token, then provisions tenant access through
 supported EventStore and Projects APIs. A unique `E2E_RUN_ID` (1-64 characters of `[A-Za-z0-9._-]`)
-is generated unless explicitly supplied; the smoke and full phases run as `<run>-smoke` and
-`<run>-full`, so their fixture graphs, Project IDs, and request identities never collide.
+is generated for each isolated run. Each phase has a distinct suffix. The retry phase deliberately
+fails after successful setup, then verifies on the actual Playwright retry that the previous
+Project is archived, its sibling graph is gone, and the new attempt has disjoint identities.
 
 Every `aspire wait` is bounded by `E2E_RESOURCE_TIMEOUT_SECONDS` (default `600`). The runner marks
 the AppHost as owned before `aspire start`, so a partial start, a failed phase, or an interruption
@@ -84,8 +99,8 @@ still ends with `aspire stop --apphost <exact AppHost>`; it never uses `aspire s
 prepares local Debug/source builds with the Platform-owned `hexalith-module prepare-build` command
 used by `tools/qualification/run_supported_project_reads.py`. It consumes the returned mapping and
 root-declared sibling checkouts; it never initializes nested submodules or changes package pins.
-A source mapping or compilation failure blocks local execution. `CI=true` selects the separate
-package lane and is not a workaround for a local source failure. The released package cohort must
+A source mapping or compilation failure blocks local execution. The isolated lane always uses
+Debug source assets. The separately selected CI/package lane is not a workaround for a local source failure. Its released package cohort must
 contain the supported snapshot limits and Tenants recovery contract before that lane can qualify.
 
 Global setup runs once, before the two workers start, and derives the concrete current tenant and
@@ -105,7 +120,7 @@ HTTP 409 and synchronous HTTP 422 are resolved through authenticated command-sta
 Only terminal `Completed` followed by list HTTP 200 with the unchanged token succeeds. Submission,
 status and convergence share one 45-second deadline. Diagnostics retain only statuses/categories.
 
-The ordinary live profile still needs actual compiled catalog/workload enrollment. If the catalog
+The shared legacy profile still needs actual compiled catalog/workload enrollment. If the catalog
 check fails, stop and resolve that hosting prerequisite rather than bypassing it. The existing
 `E2E_SUPPORTED_READS_ONLY=1` runner proves its separately scoped actual-owner read/browser matrix;
 it disables compatibility fixture hosts and does not establish this full fixture matrix.

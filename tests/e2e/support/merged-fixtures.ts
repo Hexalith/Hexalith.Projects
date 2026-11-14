@@ -70,6 +70,9 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
       apiRequest<T>({
         ...params,
         baseUrl: params.baseUrl?.trim() || requireProjectsApiUrl(),
+        // Backend transport uses the API client's documented 30s default, independently of the
+        // browser's 15s action budget. An explicit operation deadline always takes precedence.
+        timeout: params.timeout ?? 30_000,
       })) as ApiRequest;
     await use(projectsApiRequest as Parameters<typeof use>[0]);
   },

@@ -1,0 +1,1524 @@
+{
+  "result": "passed",
+  "commands": [
+    [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--artifacts-path",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tool-artifacts"
+    ],
+    [
+      "dotnet",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tool-artifacts/bin/Hexalith.Builds.Module.Cli/debug/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/source-mapping",
+      "--output",
+      "json"
+    ],
+    [
+      "openssl",
+      "req",
+      "-x509",
+      "-newkey",
+      "rsa:2048",
+      "-nodes",
+      "-days",
+      "1",
+      "-subj",
+      "/CN=localhost",
+      "-addext",
+      "subjectAltName=DNS:localhost,IP:127.0.0.1",
+      "-addext",
+      "keyUsage=digitalSignature,keyCertSign",
+      "-keyout",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.key",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.pem"
+    ],
+    [
+      "openssl",
+      "pkcs12",
+      "-export",
+      "-in",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.pem",
+      "-inkey",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.key",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.pfx",
+      "-passout",
+      "file:/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/password"
+    ],
+    [
+      "openssl",
+      "genpkey",
+      "-algorithm",
+      "RSA",
+      "-pkeyopt",
+      "rsa_keygen_bits:2048",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/user.pem"
+    ],
+    [
+      "openssl",
+      "genpkey",
+      "-algorithm",
+      "RSA",
+      "-pkeyopt",
+      "rsa_keygen_bits:2048",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/owner.pem"
+    ],
+    [
+      "openssl",
+      "pkcs8",
+      "-topk8",
+      "-nocrypt",
+      "-in",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/owner.pem",
+      "-outform",
+      "DER",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/owner.der"
+    ],
+    [
+      "openssl",
+      "pkey",
+      "-in",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/owner.pem",
+      "-pubout",
+      "-outform",
+      "DER",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/owner-public.der"
+    ],
+    [
+      "openssl",
+      "genpkey",
+      "-algorithm",
+      "RSA",
+      "-pkeyopt",
+      "rsa_keygen_bits:2048",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tenant-owner.pem"
+    ],
+    [
+      "openssl",
+      "pkcs8",
+      "-topk8",
+      "-nocrypt",
+      "-in",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tenant-owner.pem",
+      "-outform",
+      "DER",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tenant-owner.der"
+    ],
+    [
+      "openssl",
+      "pkey",
+      "-in",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tenant-owner.pem",
+      "-pubout",
+      "-outform",
+      "DER",
+      "-out",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/tenant-owner-public.der"
+    ],
+    [
+      "docker",
+      "ps",
+      "--format",
+      "{{.Ports}}"
+    ],
+    [
+      "docker",
+      "create",
+      "--cidfile",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/oidc.cid",
+      "--name",
+      "fixtures-7c7d2fe69985eeb313947f45-oidc",
+      "--label",
+      "hexalith.supported-reads=fixtures-7c7d2fe69985eeb313947f45",
+      "-p",
+      "127.0.0.1:30003:8443",
+      "-v",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/browser-realm.json:/opt/keycloak/data/import/fixture.json:ro",
+      "-v",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.pem:/opt/keycloak/conf/server.crt:ro",
+      "-v",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/certificate.key:/opt/keycloak/conf/server.key:ro",
+      "quay.io/keycloak/keycloak:26.6",
+      "start-dev",
+      "--import-realm",
+      "--http-enabled=false",
+      "--https-certificate-file=/opt/keycloak/conf/server.crt",
+      "--https-certificate-key-file=/opt/keycloak/conf/server.key",
+      "--hostname=https://127.0.0.1:30003"
+    ],
+    [
+      "docker",
+      "start",
+      "77ec464fc91c2ab50c9605e60936373f263d71d1bc27431fa885d857cd0f12b9"
+    ],
+    [
+      "docker",
+      "inspect",
+      "--format",
+      "{{.Image}}",
+      "77ec464fc91c2ab50c9605e60936373f263d71d1bc27431fa885d857cd0f12b9"
+    ],
+    [
+      "docker",
+      "ps",
+      "--format",
+      "{{.Ports}}"
+    ],
+    [
+      "docker",
+      "create",
+      "--cidfile",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/redis.cid",
+      "--name",
+      "fixtures-7c7d2fe69985eeb313947f45-redishost",
+      "--label",
+      "hexalith.supported-reads=fixtures-7c7d2fe69985eeb313947f45",
+      "-p",
+      "127.0.0.1:13232:6379",
+      "redis:6"
+    ],
+    [
+      "docker",
+      "start",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab"
+    ],
+    [
+      "docker",
+      "port",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "6379/tcp"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--artifacts-path",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/artifacts"
+    ],
+    [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "--artifacts-path",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/artifacts"
+    ],
+    [
+      "dotnet",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*ProjectsRuntimeCatalogTests",
+      "-class",
+      "*ProjectsWorkerCatalogTests",
+      "-xml",
+      "/tmp/projects-live-fixtures-isolated-full-20261114-z/catalog-guards.xml"
+    ],
+    [
+      "aspire",
+      "start",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--isolated",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "live-fixture-authority",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-ui",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "dapr-sentry",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "dapr-placement-mtls",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "dapr-scheduler-mtls",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "conversations",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "folders",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "memories",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "live-fixtures",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "describe",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "dotnet",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "Hexalith.Projects.Integration.Tests.IsolatedLiveFixtureSeedTests.SeedOwnedCompatibilityFixture",
+      "-xml",
+      "/tmp/projects-live-fixtures-isolated-full-20261114-z/seed.xml"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "KEYS",
+      "*"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "local rows={} for _,key in ipairs(KEYS) do\n      local kind=redis.call('TYPE',key).ok local data=false\n      if kind=='hash' then data=redis.call('HGET',key,'data') elseif kind=='string' then data=redis.call('GET',key) end\n      table.insert(rows,{key=key,kind=kind,data=data}) end return cjson.encode(rows)",
+      "19",
+      "eventstore||ProjectionLifecycleActor||fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:conversation-start-setup||projection-lifecycle-epoch",
+      "eventstore||ProjectionLifecycleActor||fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:project-reads||projection-lifecycle-epoch",
+      "eventstore||ProjectionLifecycleActor||fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:project||projection-lifecycle-epoch",
+      "eventstore||ProjectionLifecycleActor||system:global-administrators:global-administrators:global-administrators||projection-lifecycle-epoch",
+      "eventstore||ProjectionLifecycleActor||system:tenants:fixtures-7c7d2fe69985eeb313947f45-tenant:tenants||projection-lifecycle-epoch",
+      "projection-activation:outbox:v1:02",
+      "projection-activation:outbox:v1:1c",
+      "projection-activation:outbox:v1:2a",
+      "projection-checkpoints-migrated:system:global-administrators:global-administrators:global-administrators",
+      "projection-checkpoints:fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:conversation-start-setup",
+      "projection-checkpoints:fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:project",
+      "projection-checkpoints:fixtures-7c7d2fe69985eeb313947f45-tenant:projects:fixtures-7c7d2fe69985eeb313947f45-warmup:project-reads",
+      "projection-checkpoints:system:global-administrators:global-administrators:global-administrators",
+      "projection-checkpoints:system:tenants:fixtures-7c7d2fe69985eeb313947f45-tenant:tenants",
+      "projection-delivery-reconciliation:system:global-administrators:global-administrators:global-administrators",
+      "projection-delivery-retry:lease:v2:f895321201ded91f67cdb4ced88bd780572ff02caec588856ac19511cf22a9fe",
+      "projection-delivery-retry:ledger:v2:0f",
+      "projection-delivery-retry:ledger:v2:2f",
+      "projection-delivery-writer-protocol"
+    ],
+    [
+      "npm",
+      "--prefix",
+      "tests/e2e",
+      "run",
+      "typecheck"
+    ],
+    [
+      "npm",
+      "--prefix",
+      "tests/e2e",
+      "test",
+      "--",
+      "--workers=2",
+      "--project=chromium",
+      "specs/live-apphost-startup.spec.ts",
+      "specs/projects-authentication.spec.ts",
+      "--reporter=list,junit,./reporters/zero-live-skip-reporter.ts",
+      "--output",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/smoke-output"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "HMGET",
+      "projects:projection-journal:fixtures-7c7d2fe69985eeb313947f45-tenant",
+      "data",
+      "version"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "HMGET",
+      "projects:projection-journal:fixtures-7c7d2fe69985eeb313947f45-tenant",
+      "data",
+      "version"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "KEYS",
+      "*fixtures-7c7d2fe69985eeb313947f45-tenant:projects:*:metadata"
+    ],
+    [
+      "npm",
+      "--prefix",
+      "tests/e2e",
+      "test",
+      "--",
+      "--workers=2",
+      "--project=chromium",
+      "--reporter=list,junit,./reporters/zero-live-skip-reporter.ts",
+      "--output",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/full-output"
+    ],
+    [
+      "aspire",
+      "otel",
+      "spans",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--trace-id",
+      "51a895fba8029f68137e00c86a43ccc3",
+      "--limit",
+      "2000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "otel",
+      "spans",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--trace-id",
+      "61267c438c75f728b709493d39533f92",
+      "--limit",
+      "2000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "otel",
+      "spans",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--trace-id",
+      "33b87f661670a35aa96a92cc62a0581a",
+      "--limit",
+      "2000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "otel",
+      "spans",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--trace-id",
+      "6079f71f8b8807cc1313bf66d6f7975a",
+      "--limit",
+      "2000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "otel",
+      "spans",
+      "projects-ui",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--limit",
+      "2000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "logs",
+      "projects-ui",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--tail",
+      "10000",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "npm",
+      "--prefix",
+      "tests/e2e",
+      "test",
+      "--",
+      "--workers=2",
+      "--project=chromium",
+      "specs/live-fixtures-lifecycle.spec.ts",
+      "--repeat-each",
+      "2",
+      "--reporter=list,junit,./reporters/zero-live-skip-reporter.ts",
+      "--output",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/repeat-output"
+    ],
+    [
+      "npm",
+      "--prefix",
+      "tests/e2e",
+      "test",
+      "--",
+      "--workers=2",
+      "--project=chromium",
+      "specs/live-fixtures-retry.spec.ts",
+      "--retries",
+      "1",
+      "--repeat-each",
+      "2",
+      "--reporter=list,junit,./reporters/zero-live-skip-reporter.ts",
+      "--output",
+      "/tmp/hexalith-job.hJWQe6mv/projects-live-fixtures-si6h9zq1/retry-output"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "HMGET",
+      "projects:projection-journal:fixtures-7c7d2fe69985eeb313947f45-tenant",
+      "data",
+      "version"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "HMGET",
+      "projects:projection-journal:fixtures-7c7d2fe69985eeb313947f45-tenant",
+      "data",
+      "version"
+    ],
+    [
+      "docker",
+      "exec",
+      "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "redis-cli",
+      "--raw",
+      "EVAL",
+      "return cjson.encode(redis.call(unpack(ARGV)))",
+      "0",
+      "KEYS",
+      "*fixtures-7c7d2fe69985eeb313947f45-tenant:projects:*:metadata"
+    ],
+    [
+      "aspire",
+      "stop",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "start",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--isolated",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "security",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-ui",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "600",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "describe",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "stop",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--non-interactive"
+    ]
+  ],
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "32e80ab615b69149bc898b65a17e5da29688cf4b15ead5e76f7557e9561c2bde",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "729f3f3038d57f1a85d5fc407aadcf5014a6f36bce1de54a16970d54a2b63a24",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "dapr-sentry",
+      "containerId": "b2b6e0965cf89c53914e26658ead39412eb1d18beebd9729202204908b58d335",
+      "removed": true,
+      "alreadyAbsent": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "fixtures-7c7d2fe69985eeb313947f45-redishost",
+      "containerId": "e183c6cdd94446e3d308ae4a8f41bb529e17de9d5e022510e2c90daab4febaab",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "fixtures-7c7d2fe69985eeb313947f45-oidc",
+      "containerId": "77ec464fc91c2ab50c9605e60936373f263d71d1bc27431fa885d857cd0f12b9",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "normal:security",
+      "containerId": "f8d44b823ec255d9fdf559d96823bc8e533b1d290bae96e735bbd3ce93eb7b1a",
+      "removed": true,
+      "absenceVerified": true
+    }
+  ],
+  "matrixCompleted": true,
+  "profileDisabled": false,
+  "sourceMode": "Debug",
+  "sharedBackendChanged": false,
+  "preexistingResources": {
+    "apphosts": {},
+    "containers": [
+      "220c43e17046",
+      "8d0788f8322f",
+      "a16f9ea0dd54",
+      "cb7c12622c18",
+      "fe6c35911851"
+    ],
+    "sidecars": {}
+  },
+  "sourceMappingHash": "986c2890b437163491c34394e623517275fb5a2d588b84604794e90aa9705995",
+  "resources": [
+    {
+      "name": "catalog-b9fb528409314ec8b0c631ed487cd36c-digest-fixture-v1",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "conversations",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "dapr-placement-mtls",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "dapr-scheduler-mtls",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "dapr-sentry",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore-app-api-token",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "folders",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-bootstrap-password",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-certificate-password",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-eventstore",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-owner-key",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-projects",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-receipt",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-tenant-owner-key",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-tenants",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "isolated-fixture-ui",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "live-fixture-authority",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "live-fixtures",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "memories",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-app-api-token",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-ui",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers-app-api-token",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants-app-api-token",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants",
+      "state": "Running",
+      "health": "Healthy"
+    }
+  ],
+  "runtimeProjectionConfiguration": {
+    "EventStore__Projections__DefaultRefreshIntervalMs": "0",
+    "EventStore__Projections__Domains__projects__RefreshIntervalMs": "0",
+    "EventStore__Projections__Domains__tenants__RefreshIntervalMs": "0",
+    "EventStore__Projections__Domains__global-administrators__RefreshIntervalMs": "0",
+    "EventStore__Projections__WorkersEnabled": "false"
+  },
+  "runtimeWorkerConcurrency": {
+    "pid": 2861160,
+    "startTicks": "5481216",
+    "appId": "projects-workers",
+    "appMaxConcurrency": 1
+  },
+  "testProcessCleanup": [
+    {
+      "groupId": 2873739,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 2878633,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 3085283,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 3088627,
+      "descendantsAbsent": true
+    }
+  ],
+  "phaseProcessResults": [
+    {
+      "name": "smoke",
+      "exitCode": 0
+    },
+    {
+      "name": "full",
+      "exitCode": 0
+    },
+    {
+      "name": "repeat",
+      "exitCode": 0
+    },
+    {
+      "name": "retry",
+      "exitCode": 0
+    }
+  ],
+  "phases": [
+    {
+      "name": "smoke",
+      "exitCode": 0,
+      "collected": 8,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "full",
+      "exitCode": 0,
+      "collected": 145,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "repeat",
+      "exitCode": 0,
+      "collected": 14,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "retry",
+      "exitCode": 0,
+      "collected": 2,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    }
+  ],
+  "persistedSmokeProjectCleanup": {
+    "projectCount": 2,
+    "createdEventCount": 2,
+    "archivedEventCount": 2,
+    "allArchived": true,
+    "watermark": 9,
+    "journalSha256": "467caa925b7d7bb24a13cf9ed3a239b47549cdf0e4ea06039421b617e491439e",
+    "versionSha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+    "projectIdentitySha256": [
+      "2b1b85f8040963906439c3df08c668a77ce6d65ae139ac98b4c3ea8c3cd07d73",
+      "9a6de59b648f98fa9cd63773a00cd69762879a37fe2dcf82385e966e523849ae"
+    ],
+    "independentProviderRereads": 2,
+    "sourceMetadataCount": 2,
+    "sourceMetadataKeySha256": [
+      "0ce95427e530fda4f770ee12109bfb042c8effadbd22fa4971084d19dadcbe3f",
+      "889979060ff2e263e9ad334ed8f661b20b361c530c6299929c00d39eaffe25fc"
+    ]
+  },
+  "retryIsolation": [
+    {
+      "retry": 1,
+      "repeatEachIndex": 1,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    },
+    {
+      "retry": 1,
+      "repeatEachIndex": 0,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    }
+  ],
+  "persistedProjectCleanup": {
+    "projectCount": 69,
+    "createdEventCount": 69,
+    "archivedEventCount": 69,
+    "allArchived": true,
+    "watermark": 250,
+    "journalSha256": "6bfd25bb56cc2db9da27d41afc16a44e7d2e6271bc4994430bca1b25abeb728a",
+    "versionSha256": "37c20f19f3272b5ccc3a5d80587eb9deb3f4afcf568c4280fb195568da8eb1a2",
+    "projectIdentitySha256": [
+      "00d09a2a2f7d45648dbe4984ac1cc35668b49f7d19dbe9572d8e14f68f7134d6",
+      "045f4f6eed5f804104dd39993cd0bb16178f87f62f579409574988b02e069914",
+      "10f6886cd84aeeb463a0636f5b272b274e1005105dccbc2bb56c37607d59341b",
+      "15bbe94121af87573c475409017e6b38ac8d2e8429d45576af043b41a41ff72c",
+      "18cc2ffe26657b3fddbca7449ce1a4d31cb9cb311e98c741749eeee8ff167297",
+      "1eb8bf418abc6fe91d4038731ae2505e03b828c43f53c68060766b7486828e59",
+      "1fb66247e1662744440afc73e04b929ae68b2042d52fe7dbcdceb2574394bd40",
+      "205060b6e022131b83aaf4f59423e11ab3e608b4f9c9f27d4eb67aa902849e35",
+      "244e46a2c9ef2f49dfd4a674c0efb7a72c21c6b4a8cced128d40e7590afd763a",
+      "25f98c82e23f5fd0db566174527f5b9808d9443fbe68d046b5ecb8c36710d469",
+      "27191f81df924d8e82f0ca4926a6ad9a8d065ff1d9091c3c6cbb4467a6127125",
+      "293730475695bfbb600cd0eab3babfc917ced381da607f261e5993f9da009b27",
+      "2b1b85f8040963906439c3df08c668a77ce6d65ae139ac98b4c3ea8c3cd07d73",
+      "2bec07bf257fb592a531110a539257f55625c2cad54924566bbf670015c83f0a",
+      "2ce0e983d41048cb608f48fb5ed6126dd6917a2a6525971b362d19f37f626b8c",
+      "3138b0379cf07b67f15cb965b1cfb47735a4b6ce804538de05c8aa116203ead1",
+      "323af721db92639bea13775eeb128a3fb3bdea7f9921798631ece30c14f0cc53",
+      "4513c1efa23f8e90b1b024818c8c669577760eb06ef4bc216dace0c3c44225e7",
+      "4882a99fe067dd461246614ef95f33589a0ad8d5a1e3e08f3e138333e2453348",
+      "4fb21d2dbf2b5fceb463d0904769ae205ff57b9bc52baacacd41f587dbdc569e",
+      "5ae5dfebfedd26e956c28e4cfe946f36cf3b5c714ad017d29743769132fd259e",
+      "5bb0288948be1d03e5f7613e90dd5efa59ff2de25ba627f806666075e614e5a0",
+      "5bc79118db40a2fa735290543180d245efd649bfd5b7cba30310e2ead06313fc",
+      "5f08e4f21e8d5ed8b9221732e19de17390c9e5e61a5ed3e761d410608a82726d",
+      "6e987a6b51b2de66410bb7192d176e0b52712121867d58b38a96220fd9bf883e",
+      "707064ea3b620b39f323ce1814212617c4a6c5fcb034647c140254ae65fdb874",
+      "7846cdfbe2395ac031e6a1cf95c7d516568a265f4870b6b2fe96470c517b5316",
+      "79737dd430fef7b3a15153d4865578092c17c432f0941728fc3047fd6a9a0349",
+      "81c06be371532645c6445f16991db286ebaf12b25da0aba96a76f25cc10b2faf",
+      "827c20c9fcbe6dd5330a39175ba324dae3ca9d71709ea78e3f07b99984c46fcd",
+      "847b94a467ba50d126b82cbf7731710a8cde40be87d3e9a0b9a53f683b272721",
+      "85de0d6a63b4daa6ff272459532a470b81033b818166cb2d2daf06544fa95ecd",
+      "870334383dd8dd98acaf72d6fddf6e6af6cac3d0f101ca56627909ef82c33d61",
+      "88c3a365c66b254e0769e53bc99637774bff22bdeba9df227945372fcc58ee91",
+      "88d69cd03f02d32189b5a203ceae48b22ff3d48547edbacf31261a269d868544",
+      "8918db49642a9992fc20f7ee5044bd607242cc0d5a59740d8280471bb0b19dbc",
+      "8b190ef32c2b554f88a59cceaaf51631966229e704ba84dcc2b619d6091fbca7",
+      "8d64938fd3ae7eb32f87a0dcdee714743867f6e73bbbefdabec3f2f72d52d426",
+      "8fcf7a14036c0f0d7608d28e70f2ce7da38c13abdc5d56e08e9ed45b64ac4630",
+      "9a6de59b648f98fa9cd63773a00cd69762879a37fe2dcf82385e966e523849ae",
+      "9f9868b6b60d0a417caef9651da196928b14277c8bb911dbd89b13d7cc1d833a",
+      "9f9ede08c154632af26c9ab4889b79a08095a8d3f33bace756b3f87fd1dcb276",
+      "a4db579e529c9885fe97fb9c55576d881e7b2bb59189f9398646c6d61ccef8c7",
+      "a7a848be831533f0e07825b4f61b8040fd7071859b5b115ce618f89e203d985c",
+      "ae1d9c0a1297d3e97fc65d2111f627c8e40dcaa6aab568c631780b90050a821b",
+      "b3ae50b91529f6677188a072905c8026d7435e6eced221a17a571e16b94230fa",
+      "b5b864ff5ad9cd8803840b598a94d9f6b7c939d23e13c5b0094d488f6fa4977c",
+      "b8955815517548584dae49afddde70e3c6284195538420050eab9536e9ca644d",
+      "b9b1b7f68634000fa513d8ba19f898e8971d336d4bf4c5cf1b031b6e00a10212",
+      "b9f198145f34f8aba457aa6667260ca5a4b538ffba67cac21913eede35ee3c11",
+      "beed2773715d4899fc5b123b41f27633ce91b3e497575917556a5c88c522ed43",
+      "bfafcacfc37416640eb1403f389f2047bb7db0ccfe6e961b5cf1246d1786cdd3",
+      "c84e0e3791a719705603f292f9ed8c05c1fc1659bcae003ff5584a23bad18c5f",
+      "ca1220f3ceea031ca7eb3c6119e4401ac4c1a2a16a651641344e8f24e66246d8",
+      "cd64fb6e40c917aacf1a8ba45e7d30172aa5cf199e27675fa662b7f98a0d315b",
+      "cdd58f8de6e5265d4f9fa0cc07d72178cf3634c3079783ebdbc2d38537d253be",
+      "d22c01fa2d8b54fef53390ba65d88128fa96f9a9f18bc342a3ab15855af9d128",
+      "d3bde474e285b918ce7dd2aaec9b638aafe9824ca7bebd231a0864b435b87598",
+      "e02549509cb139a26063e38fe808d8c5f04da50fff4eda0a157bda9382bf2949",
+      "e1f98ab8a09d4604ac44b489dd1038cd1f20d889549adc0f974af8d1ee0a30af",
+      "e49722f330628271b3e2cf5af6ebfb3f3fae6641be6d3cab57e19df28be4aacb",
+      "e78c231a2750828b9b066f1466dc41befbaa53427f9f6e699b6cfe7759fc25e0",
+      "e88ec8a397079df9c9c4d5c55545b9661c5a08e11f8ba87eec3142fe27b87f3a",
+      "e94bdb3cdca77181ba4f2501cfa1f6f46767d747163c2b562dd1dc130412e558",
+      "ed2e6fc24622c627f04f469e116c0c8ddc647c741a9ad6b6ec05bbd7758f6603",
+      "f2e0b180f3804b2274a65a09490c7670da15c9aa25a4b767de3ecbe70de9da6e",
+      "f4ca769699494c371917b1ce773e0e242138535c87d3713bc8f281d3ed4993ca",
+      "f668d7a58a1c99f63cb30561b128d27cf6b8bca3a7a6f4b9e0c675d80260d929",
+      "f72f52cc997d0df43a835151fee5126bc9d6479df87702140af66652fd16b188"
+    ],
+    "independentProviderRereads": 2,
+    "sourceMetadataCount": 70,
+    "sourceMetadataKeySha256": [
+      "0ce95427e530fda4f770ee12109bfb042c8effadbd22fa4971084d19dadcbe3f",
+      "10b79f0e60a79b0a6f9510334bdb64e857ca92419e7b1cfaebb1eadde7442c26",
+      "110978026ba340d8604bf6bc00ce81425b9265884216a39edeaff30fb7cb6da8",
+      "1136912a31aa49e68b2c1d771d873d180918c8e49de58395810a5e62c43ccdaf",
+      "1aa143f57490863d1fcb0c568b2239b2f3dd0fca19ba8ddac6ed124d4ffffa89",
+      "207807a35ae6c0e2777a8f14297f097ba90067cf45a36aec1a39bb9d0e707501",
+      "25d76c3d9b44bf167d4cd5e13f193c097174314cfd84dcacaedc6bade0621583",
+      "266b93e9ce22217969c90ea30fd096a2eb07bc5de0785b30215ebdc5c3aa6f43",
+      "2d9d19cf450cc0f3706e7e2446ac79d07805a1e9eeb583417e9e21f847198398",
+      "2f3c472f5265f0cf01220d2fdbc721134eee65788e8d06d7a08e0c4d264a59eb",
+      "30cd5a8e3b08eb94f0460d7a73cd13e3a6035d8fdf4b7820abaf892e0d1d210a",
+      "33eb0e1d57cb43f7ded2036aa27eb1df19ff1bff412fbc135a9dc9811f6498fd",
+      "36f0b56703357ab053f01859e5157759a1c6a22ff6aacd8a30b48158acef17bf",
+      "3b81846e5b06764f1cf0e066173655c5641b293af78390c6e17a0dd95488f114",
+      "4357b7f66e3b6865b296e285f8a458724b9993d8ebd5e6e8cae741e8d3308b9d",
+      "4452def66f55bb151c87493e6aa7d4d3af6bdba6fc8902179116bd574bb5174d",
+      "544fee6d05681c9d18b95eaf924f2e0c3d7f953b37fed05c55ff89c41f144fb0",
+      "56ba618e795da7c3d8ef2d8239e8bbbb4574a76fee953d20143c1960377878ba",
+      "5fb157ca2a8c58a5aa83a2c5cf2cf29ffaab33409ff1689d336889b7dc6b0157",
+      "6576e02f334033577fa8f26c7abf0e83154df33cfde528a58a54e09c8d7bf672",
+      "675519d839cac2278ae91f31dec78e6c060af0cf0a09249ec7cb1c4cc88e9264",
+      "692a4f37eeafc3d35839098af283a8eb9b5b941e505ed21a2584dfd3e0431986",
+      "6acff24e1a5e5ae0fd3c6b89f5a57498202a3bdb0c463eeff9dbe768e76bae26",
+      "78509d144714117c1e239de2ad6d3ff122eb4330816de9a3084d3858eb12a00d",
+      "78e46c35c705538876f0f5fa0cfcb78728d35c54a22d2e3de98eaef74ad81628",
+      "8274500c100038efd4a1e44732a02fc7fd0aa8f3c3598624ddb63e72b9284683",
+      "8761dae3c69d6309f84c6d4f2e7b83191a1c87dca7b9dfebb19ae5095a773558",
+      "889979060ff2e263e9ad334ed8f661b20b361c530c6299929c00d39eaffe25fc",
+      "897e27875ab6f7a44bf337b6fd15acb532a929122777699c3c3b43bf8925c501",
+      "89c6151f457a8005a24afcc9ba8f738f271aa013f30a5723571df72d02a6443c",
+      "8b51a581d0352ad100eb9039805a2e5bf665da4ebc8f3e964e1d0107e1c37663",
+      "8cc30cfeba6db2ee3b65314c8c83bed3b29d7c4459ccb4ccf194c2e48addb321",
+      "8f2222934f3e236c47c07f52982913c45724831297e9b99c929cb88bcf4687e6",
+      "8f6a424c250f61ebedf35ea20c80550e512ba6e3910035207e50e72e882e38dc",
+      "9229f9c488d7a85ae6127e221fa9e889d4a63e955703778e719b6042c844d180",
+      "98017236328eceaefe1a34b53de9ea494ccda271ff38cf1223ff0d0bdf5efd7c",
+      "98715614affd6b6528afd50e2ca0d52c583814b6cb98ac20d15df34c60309e50",
+      "9cd82f0a619d3641606063d49d8cc61880347f0d8efed495b40dae9aea86262d",
+      "a29c91e79c7fc0a8799f04747ee95789a1a1717e29647d5455376740ddb4fea2",
+      "a360c0e6e304f6da706790cceec6f79f70ccdf1fab8960ea5cbb48ef8b898407",
+      "a3899a9aa86d723098225244a51c8eefdc0fab0425754ea49e873177dd96d4b0",
+      "a597c3388fbea14b4555dcc3189387173770267c487e7a0cdeda62d56ef8ea0d",
+      "ad1a80abf948ecc7e107971877cbd915081757d07bb3d8c768d75f9cd26594fe",
+      "ad6c4785546f668f9452b2c0e764db90a34e1563aced0fd8f42693786048c8b1",
+      "b2d960e26c730e7d65a22af629bd3c4d4c80d3386e448d83fec8071274d3b850",
+      "bc399a5818c8d06c9e2954583359f7dc264f1509a641498b7ccd96dfb9cf88ea",
+      "bffe5b9cf9807b9dc3812165b1c398451bbd732c759c9f36cd5787b9f3324c87",
+      "c3a67e05992ed04da8a946c4989d21076234accf6424761a23d2884f58c92c03",
+      "c449d2dc4a5c27e2d8b3089e56f7c3c9c12168229f471cadfed1a7610de441a3",
+      "c6604da3e4b1a5c9f48cdb88afd89610d3aa317add99b5d368a53d3556380aa3",
+      "cdf24aba1a3929dc0305c9ad7685276bd0dd4594ed0d5e52f3e1ed045c9d29c6",
+      "ceaba1aaa32fc6167ac44dd09ef62c264d75925fe9e39e3d638ba2405629a177",
+      "cf16a3cfa3ae7cbd0865ca3ee07554173166681249f0f64d631958ed05b51e1e",
+      "d0159f93654cb757ac4dd9fef6d4551745725e5c1d19af7208411461a8c8ea78",
+      "d325a011f116d31360e238ede1cca319990bd2aba3acea614a4f6eae37591b9c",
+      "d5ab37b51f92e22799fe6ef4fa1f2c5abb9dc3f381070c6cd710d719701ee4c7",
+      "d609c00368399a92e42b424809576ed7f2a69092ab03e47b83764c89ed885ff5",
+      "d976df8532e32eb8ae7ed37adb3124ce31216d76e4d143fe77b06d7c0ee1d5f4",
+      "d9d67df09d84752a9e70a66c7f427eff5fb4d6925f946a449e0478b75654640b",
+      "e11ea41df6de8782bab7ba83f1ef54c7227532d5fba6b1745b0bc8fab3d9c5fe",
+      "e161b92a7982ea609133079b3d21fc77a6b83272d1a991c9380328e1d04f3180",
+      "e844f6da82bf647f47201edfe2b31ac2d70e90dc53e24440a1092f9cb5d30f00",
+      "e9070976463806f0e03b56c0cd2908eda87ee00f10bd2279e9ccd1f80a1651a3",
+      "ed76168c8d7104fce796f4d5590e0a81c234db20a69b1352b6830431071d6b13",
+      "f24cba20a397d8b1c5b51395ea8c9b6df83027057446e7b36dcda2a1d4bd3143",
+      "f44a7e04fd1adee66bc512cb81f014f3d0854cde5a98d7d84e2b876856e55f5b",
+      "f802099ba14542468391962bdbc65284bd9f1314c8a85533fc1d9b225a88e901",
+      "fbe46b477ccf6bd3c79da6b98a630420f2b8b422dd1edfd772775b2cf83620d9",
+      "fc9f8eeb4ff2adaf3aebcaf6b99eab898603fc5310e39e4d47fe5bc0ed10e81e",
+      "ff04e6f2fccb5f5a080f6e6b4a7d240d7a956c1d39de27d68f0b5fb4b0d97b43"
+    ]
+  },
+  "siblingCleanup": [
+    {
+      "phase": "smoke",
+      "role": "live-fixtures",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "smoke",
+      "role": "conversations",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "smoke",
+      "role": "folders",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "smoke",
+      "role": "memories",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "full",
+      "role": "live-fixtures",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "full",
+      "role": "conversations",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "full",
+      "role": "folders",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "full",
+      "role": "memories",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "repeat",
+      "role": "live-fixtures",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "repeat",
+      "role": "conversations",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "repeat",
+      "role": "folders",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "repeat",
+      "role": "memories",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "retry",
+      "role": "live-fixtures",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "retry",
+      "role": "conversations",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "retry",
+      "role": "folders",
+      "graphCount": 0,
+      "httpStatus": 200
+    },
+    {
+      "phase": "retry",
+      "role": "memories",
+      "graphCount": 0,
+      "httpStatus": 200
+    }
+  ],
+  "ownedSidecarsObservedBeforeStop": 4,
+  "ownedSidecarsAbsent": true,
+  "normalDisabledProjectsProcess": {
+    "pid": 3114389,
+    "startTicks": "5544826",
+    "fixtureSiblingBindings": []
+  },
+  "normalOwnedContainers": [
+    {
+      "name": "security",
+      "id": "f8d44b823ec255d9fdf559d96823bc8e533b1d290bae96e735bbd3ce93eb7b1a"
+    }
+  ],
+  "normalDisabledResources": [
+    {
+      "name": "eventstore",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore-workload-client-secret",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-ui",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-password",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-username",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "security",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants",
+      "state": "Running",
+      "health": "Healthy"
+    }
+  ],
+  "normalProfileDisabledRuntimeVerified": true,
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": true
+}

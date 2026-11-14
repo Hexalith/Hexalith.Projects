@@ -275,18 +275,32 @@ For Epic 5 browser verification, map `PROJECTS_UI_URL` to `BASE_URL`, `PROJECTS_
 and `SECURITY_URL` to `KEYCLOAK_URL`, then set `E2E_LIVE_APPHOST=1`. The complete command sequence and
 credential variables are documented in `tests/e2e/README.md`.
 
-For the repeatable live verification path, use `npm --prefix tests/e2e run test:live:managed`.
-The runner enables `Projects__E2E__LiveFixtures=1`, marks the exact AppHost as owned before
+For the repeatable live verification path, use `run-with-temp npm --prefix tests/e2e run test:live:managed`.
+The default runner owns fresh Redis and HTTPS Keycloak, private SQLite discovery, generic SDK catalog
+composition and Platform mTLS/workload trust. It creates authority through real authenticated Tenant
+commands only in that new backend. `Projects__IsolatedLiveFixtures__Enabled=true` selects this separate
+compatibility topology; the real-owner supported-read profile keeps its existing exclusion.
+Its gateway selects inline delivery and `EventStore__Projections__WorkersEnabled=false`, preserving
+request-path projections while suppressing background effects during fresh writer activation and
+fixture execution. This lane does not qualify background projection retries or production callback concurrency.
+Its private Projects worker sidecar uses `AppMaxConcurrency=1` for legacy journal callbacks, independently
+of the two actual browser workers. The launcher verifies both settings on their owned runtime processes.
+The runner enables `Projects__E2E__LiveFixtures=true`, marks the exact AppHost as owned before
 `aspire start`, waits for the core, sidecar, and fixture resources with an explicit bound
 (`E2E_RESOURCE_TIMEOUT_SECONDS`, default 600), captures `aspire describe` exactly once, exports all
 five dynamically assigned endpoints, runs the startup/session smoke and then the full two-worker
-Chromium lane with zero skips under distinct `<run>-smoke`/`<run>-full` identities, and stops only
+Chromium lane with zero skips under distinct phase identities, followed by repeat and real retry
+isolation probes. A retry deliberately follows a successful setup failure and must observe prior
+Project archival and sibling removal. The runner then starts the ordinary AppHost with every fixture
+profile disabled, checks the graph and actual Projects process environment, and stops only
 the exact Projects AppHost on every exit, including failures and interruptions. Local runs use the
 Platform-owned supported Debug/source preparation and returned mapping, including root-declared
 sibling paths. Source failures remain blockers; setting `CI=true` does not repair them. The separate
 CI package lane needs a released EventStore snapshot-limits/Client cohort and the Tenants recovery
-contract before its result can qualify; no package pin or gate is bypassed. Live artifacts are metadata-only: JUnit, the HTML
-report, and role/status cleanup attachments; traces, video, and screenshots are disabled.
+contract before its result can qualify; no package pin or gate is bypassed. `E2E_SHARED_APPHOST=1`
+selects the legacy shared lane, which needs its owner's existing enrollment and credentials.
+Live artifacts contain sanitized logs, JUnit/native XML and role/status cleanup diagnostics; browser
+sessions, private keys and raw Aspire descriptions remain in private custody and are removed.
 
 With the profile enabled, `conversations`, `folders`, and `memories` are internal role hosts that
 Projects reaches through service discovery, and only the `live-fixtures` control resource exposes an

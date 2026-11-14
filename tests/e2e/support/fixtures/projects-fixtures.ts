@@ -52,7 +52,7 @@ const ARCHIVE_CONVERGENCE_TIMEOUT = 30_000;
 /**
  * Create an active project with a caller-owned ProjectId and wait for read-model convergence
  * (command-async, no sleeps). The archive-to-convergence cleanup is registered in `ledger` as soon as
- * creation is accepted, so a convergence failure still archives the Project in reverse order.
+ * creation is requested, so a lost response or convergence failure still archives the Project in reverse order.
  */
 export async function seedActiveProject(
   deps: SeedProjectDeps,

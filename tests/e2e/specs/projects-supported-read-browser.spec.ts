@@ -152,7 +152,7 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
         return active === element || !!active && (element.contains(active) || !!element.shadowRoot?.contains(active));
       })).toBe(true);
     };
-    const traffic = observeBrowserTraffic(page);
+    const traffic = await observeBrowserTraffic(page);
     const telemetry: string[] = [];
     page.on('console', message => telemetry.push(message.text()));
     try {

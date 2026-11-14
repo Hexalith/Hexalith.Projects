@@ -8,9 +8,16 @@ set -Eeuo pipefail
 repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 apphost="$repository_root/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
 resource_timeout_seconds="${E2E_RESOURCE_TIMEOUT_SECONDS:-600}"
+# The local default owns a fresh backend and its complete private catalog/workload enrollment.
+# Scheduled CI retains its package-reference path; local shared compatibility is explicit.
+if test "${CI:-false}" != true && test "${E2E_SHARED_APPHOST:-0}" != 1 && test "${E2E_SUPPORTED_READS_ONLY:-0}" != 1; then
+    exec python3 "$repository_root/tools/qualification/run_live_project_fixtures.py" \
+        --timeout "$resource_timeout_seconds" \
+        --evidence "${E2E_LIVE_FIXTURE_EVIDENCE:-/tmp/projects-live-fixtures-evidence-$(date -u +%Y%m%d%H%M%S)-$$}"
+fi
 describe_file=$(mktemp)
 start_file=$(mktemp)
-source_workspace=$(mktemp -d /tmp/projects-live-fixtures-source-XXXXXXXX)
+source_workspace=$(mktemp -d "${TMPDIR:-/tmp}/projects-live-fixtures-source-XXXXXXXX")
 mapping_file="$source_workspace/preparation.json"
 browser_session_file="$repository_root/tests/e2e/.auth/projects-ui-browser-session.json"
 started=0

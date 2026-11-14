@@ -6,7 +6,7 @@ import {
   type FixtureCleanupResult,
 } from '../helpers/live-fixtures-api-client.js';
 
-/** One cleanup step, registered only after the resource it removes was requested. */
+/** One cleanup step, registered before requesting the resource so a lost response still compensates. */
 export interface CleanupStep {
   /** Metadata-only role label, for example `projects:primary`; never an identifier or payload. */
   role: string;

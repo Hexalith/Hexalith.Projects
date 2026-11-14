@@ -1,0 +1,1089 @@
+<testsuites id="" name="" tests="146" failures="0" skipped="0" errors="0" time="370.230486">
+<testsuite name="a11y-sanitization.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="2" failures="0" skipped="0" time="0.419" errors="0">
+<testcase name="axe failure attachments retain selectors and rule metadata without node HTML or protected values" classname="a11y-sanitization.spec.ts" time="0.415">
+</testcase>
+<testcase name="protected values and arbitrary credentials are removed from nested axe selectors" classname="a11y-sanitization.spec.ts" time="0.004">
+</testcase>
+</testsuite>
+<testsuite name="api-transport-budget.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="1" failures="0" skipped="0" time="0.181" errors="0">
+<testcase name="API transport budget contracts (no app required) › uses the API transport default and preserves an explicit shorter operation deadline" classname="api-transport-budget.spec.ts" time="0.181">
+</testcase>
+</testsuite>
+<testsuite name="browser-configuration.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="9" failures="0" skipped="0" time="0.696" errors="0">
+<testcase name="browser configuration: explicit override takes precedence over managed and system Chromium" classname="browser-configuration.spec.ts" time="0.111">
+</testcase>
+<testcase name="browser configuration: installed managed Chromium takes precedence over system Chrome" classname="browser-configuration.spec.ts" time="0.066">
+</testcase>
+<testcase name="browser configuration: system Chrome remains the fallback when managed Chromium is absent" classname="browser-configuration.spec.ts" time="0.07">
+</testcase>
+<testcase name="browser configuration: managed Chromium keeps the full matrix when no system browser exists" classname="browser-configuration.spec.ts" time="0.079">
+</testcase>
+<testcase name="browser configuration: CI keeps managed defaults and the full matrix despite a system browser" classname="browser-configuration.spec.ts" time="0.073">
+</testcase>
+<testcase name="browser configuration: CI still honors an explicit installed Chromium override" classname="browser-configuration.spec.ts" time="0.08">
+</testcase>
+<testcase name="browser configuration: the explicit matrix flag includes Firefox and WebKit on system-browser hosts" classname="browser-configuration.spec.ts" time="0.073">
+</testcase>
+<testcase name="browser configuration: an explicitly requested Firefox project enables the full matrix" classname="browser-configuration.spec.ts" time="0.071">
+</testcase>
+<testcase name="browser configuration: a missing override falls back to installed managed Chromium" classname="browser-configuration.spec.ts" time="0.073">
+</testcase>
+</testsuite>
+<testsuite name="browser-traffic-observer.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="7" failures="0" skipped="0" time="0.127" errors="0">
+<testcase name="browser traffic header observer contracts (no app required) › counts actual complete Authorization headers and detaches its request listener" classname="browser-traffic-observer.spec.ts" time="0.001">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › fails closed when a complete headers observation rejects without exposing its error" classname="browser-traffic-observer.spec.ts" time="0.003">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › bounds unresolved headers and never substitutes zero Authorization" classname="browser-traffic-observer.spec.ts" time="0.007">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › fails closed when unchanged request continuation fails" classname="browser-traffic-observer.spec.ts" time="0.001">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › bounds pending continuation without accepting complete headers alone" classname="browser-traffic-observer.spec.ts" time="0.006">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › preserves earlier route handlers and still observes complete raw headers" classname="browser-traffic-observer.spec.ts" time="0.108">
+</testcase>
+<testcase name="browser traffic header observer contracts (no app required) › rejects an empty observation and removes only its observer" classname="browser-traffic-observer.spec.ts" time="0.001">
+</testcase>
+</testsuite>
+<testsuite name="framework-smoke.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="7" failures="0" skipped="0" time="0.394" errors="0">
+<testcase name="framework self-check (no app required) › project factory yields a metadata-only create input with a required name" classname="framework-smoke.spec.ts" time="0.002">
+</testcase>
+<testcase name="framework self-check (no app required) › tenant factory yields distinct tenants for cross-tenant isolation tests" classname="framework-smoke.spec.ts" time="0.001">
+</testcase>
+<testcase name="framework self-check (no app required) › forbidden-setup factory carries content that must be rejected (FR-19 negatives)" classname="framework-smoke.spec.ts" time="0.001">
+</testcase>
+<testcase name="framework self-check (no app required) › axe a11y helper passes on an accessible document (validates WCAG 2.2 AA wiring)" classname="framework-smoke.spec.ts" time="0.39">
+</testcase>
+<testcase name="zero-live-skip reporter self-check (no app required) › fails a live run that skipped a collected case" classname="framework-smoke.spec.ts" time="0">
+<system-out>
+<![CDATA[[zero-live-skip] collected=2 skipped=1 status=passed
+]]>
+</system-out>
+<system-err>
+<![CDATA[[zero-live-skip] the live lane must collect cases and must not skip any of them.
+]]>
+</system-err>
+</testcase>
+<testcase name="zero-live-skip reporter self-check (no app required) › fails a live run that collected no cases" classname="framework-smoke.spec.ts" time="0">
+<system-out>
+<![CDATA[[zero-live-skip] collected=0 skipped=0 status=passed
+]]>
+</system-out>
+<system-err>
+<![CDATA[[zero-live-skip] the live lane must collect cases and must not skip any of them.
+]]>
+</system-err>
+</testcase>
+<testcase name="zero-live-skip reporter self-check (no app required) › accepts a clean live run" classname="framework-smoke.spec.ts" time="0">
+<system-out>
+<![CDATA[[zero-live-skip] collected=2 skipped=0 status=passed
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="live-apphost-startup.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="3" failures="0" skipped="0" time="0.566" errors="0">
+<testcase name="Live AppHost startup › serves the protected UI, Projects API, and profile-scoped fixture control resource" classname="live-apphost-startup.spec.ts" time="0.186">
+</testcase>
+<testcase name="Live AppHost startup › resolves every live endpoint to a distinct dynamically assigned origin" classname="live-apphost-startup.spec.ts" time="0.07">
+</testcase>
+<testcase name="Live AppHost startup › rejects anonymous browser and fixture-graph access before any session exists" classname="live-apphost-startup.spec.ts" time="0.31">
+</testcase>
+</testsuite>
+<testsuite name="live-fixture-identities.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="6" failures="0" skipped="0" time="0.031" errors="0">
+<testcase name="live fixture identity factory › is deterministic, bounded, and URL-safe" classname="live-fixture-identities.spec.ts" time="0.015">
+</testcase>
+<testcase name="live fixture identity factory › is disjoint across run, worker, retry, repeat, and scenario dimensions" classname="live-fixture-identities.spec.ts" time="0.001">
+</testcase>
+<testcase name="live fixture identity factory › does not confuse delimiter-bearing run and scenario boundaries" classname="live-fixture-identities.spec.ts" time="0.001">
+</testcase>
+<testcase name="live fixture identity factory › derives canonical operation-scoped request identities that never repeat" classname="live-fixture-identities.spec.ts" time="0.013">
+</testcase>
+<testcase name="live fixture identity factory › builds the symmetric wire graph with exactly the fixture DTO members" classname="live-fixture-identities.spec.ts" time="0.001">
+</testcase>
+<testcase name="live fixture identity factory › rejects duplicate attempt dimensions" classname="live-fixture-identities.spec.ts" time="0">
+</testcase>
+</testsuite>
+<testsuite name="live-fixtures-lifecycle.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="7" failures="0" skipped="0" time="0.764" errors="0">
+<testcase name="live fixture lifecycle › exposes the exact run-scoped graph seeded for this worker" classname="live-fixtures-lifecycle.spec.ts" time="0.132">
+</testcase>
+<testcase name="live fixture lifecycle › manual graph cleanup is reverse-ordered, typed, and isolated from the worker graph" classname="live-fixtures-lifecycle.spec.ts" time="0.159">
+</testcase>
+<testcase name="live fixture lifecycle › rejects unbounded or path-escaping graph metadata without echoing it" classname="live-fixtures-lifecycle.spec.ts" time="0.129">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › runs steps newest first and records thrown steps as role-only failures" classname="live-fixtures-lifecycle.spec.ts" time="0.081">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › preserves the primary failure and fails a passing test on incomplete cleanup" classname="live-fixtures-lifecycle.spec.ts" time="0.092">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › rethrows the original setup failure after reverse compensation" classname="live-fixtures-lifecycle.spec.ts" time="0.086">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › attachment storage failure preserves the exact primary setup failure" classname="live-fixtures-lifecycle.spec.ts" time="0.085">
+<system-err>
+<![CDATA[[live-cleanup] diagnostic attachment unavailable: failed-storage-setup; projects:primary:503.
+[live-cleanup] diagnostic attachment unavailable: failed-storage; folders:none.
+]]>
+</system-err>
+</testcase>
+</testsuite>
+<testsuite name="project-fixture-cleanup.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="3" failures="0" skipped="0" time="0.002" errors="0">
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation 503 without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0.001">
+</testcase>
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation 504 without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0.001">
+</testcase>
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation transport failure without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0">
+</testcase>
+</testsuite>
+<testsuite name="projects-accessibility.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="10" failures="0" skipped="0" time="47.352" errors="0">
+<testcase name="Operational console — WCAG 2.2 AA › project inventory has no WCAG 2.2 AA violations" classname="projects-accessibility.spec.ts" time="8.743">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-e4c1a6f9abcf36d010e220ae5b82de0cff6d67e5 to converge in the read model
+✅ Waiting for project project-e4c1a6f9abcf36d010e220ae5b82de0cff6d67e5 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Operational console — WCAG 2.2 AA › project detail has no WCAG 2.2 AA violations" classname="projects-accessibility.spec.ts" time="8.565">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-8393f1e6246222215d2d2abeb2983936d7ddd5a8 to converge in the read model
+✅ Waiting for project project-8393f1e6246222215d2d2abeb2983936d7ddd5a8 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Operational console — WCAG 2.2 AA › reference health has no WCAG 2.2 AA violations" classname="projects-accessibility.spec.ts" time="9.164">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-5b8d1f6afac714721d8151a45c84575086b02705 to converge in the read model
+✅ Waiting for project project-5b8d1f6afac714721d8151a45c84575086b02705 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Operational console — WCAG 2.2 AA › resolution trace has no WCAG 2.2 AA violations" classname="projects-accessibility.spec.ts" time="8.933">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-a9dcd7e2a54bd2f4604ee6698d873d8d7d624424 to converge in the read model
+✅ Waiting for project project-a9dcd7e2a54bd2f4604ee6698d873d8d7d624424 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Operational console — WCAG 2.2 AA › audit timeline has no WCAG 2.2 AA violations" classname="projects-accessibility.spec.ts" time="9.44">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-860bc058e3655952c80a10a1546e36fc34580ffe to converge in the read model
+✅ Waiting for project project-860bc058e3655952c80a10a1546e36fc34580ffe to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Operational console WCAG and responsive fixture contracts (no app required) › preserves accessible critical metadata at mobile" classname="projects-accessibility.spec.ts" time="0.562">
+</testcase>
+<testcase name="Operational console WCAG and responsive fixture contracts (no app required) › preserves accessible critical metadata at tablet" classname="projects-accessibility.spec.ts" time="0.548">
+</testcase>
+<testcase name="Operational console WCAG and responsive fixture contracts (no app required) › preserves accessible critical metadata at desktop" classname="projects-accessibility.spec.ts" time="0.527">
+</testcase>
+<testcase name="Operational console WCAG and responsive fixture contracts (no app required) › preserves accessible critical metadata at wide" classname="projects-accessibility.spec.ts" time="0.573">
+</testcase>
+<testcase name="Operational console WCAG and responsive fixture contracts (no app required) › supports keyboard-only traversal through filters, tabs, audit, and maintenance controls" classname="projects-accessibility.spec.ts" time="0.297">
+</testcase>
+</testsuite>
+<testsuite name="projects-audit.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="2" failures="0" skipped="0" time="17.809" errors="0">
+<testcase name="Projects audit timeline › operator diagnostics audit timeline is metadata-only with no leaked payloads (FR-21 / NFR-2)" classname="projects-audit.spec.ts" time="9.496">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-29c04d1319bcf5e338b599b89efebe15ea64f12f to converge in the read model
+✅ Waiting for project project-29c04d1319bcf5e338b599b89efebe15ea64f12f to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects audit timeline › audit timeline renders as a screen-reader-readable list and safe export (UX-DR16/18)" classname="projects-audit.spec.ts" time="8.313">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-1254beb3ca6d26e2389d7175f735f32188483176 to converge in the read model
+✅ Waiting for project project-1254beb3ca6d26e2389d7175f735f32188483176 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-authentication.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="10.271" errors="0">
+<testcase name="Projects browser authentication › persists an HttpOnly server session across reload without browser-readable tokens" classname="projects-authentication.spec.ts" time="0.379">
+</testcase>
+<testcase name="Projects browser authentication › challenges a missing session through the real Keycloak authorization-code flow" classname="projects-authentication.spec.ts" time="0.793">
+</testcase>
+<testcase name="Projects browser authentication › challenges again through Keycloak when the server-session cookie is invalidated" classname="projects-authentication.spec.ts" time="0.541">
+</testcase>
+<testcase name="Projects browser authentication › renders protected Project data through server-side token relay only" classname="projects-authentication.spec.ts" time="8.47">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-27afb0988daa392210a299c712bffcb91055359b to converge in the read model
+✅ Waiting for project project-27afb0988daa392210a299c712bffcb91055359b to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects browser authentication › keeps the Projects API closed to anonymous callers" classname="projects-authentication.spec.ts" time="0.088">
+</testcase>
+</testsuite>
+<testsuite name="projects-console-shell.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="71.245" errors="0">
+<testcase name="Projects console shell shared rendering › renders the Project Diagnostic Header with lifecycle badge, copyable ids, and shell navigation selectors" classname="projects-console-shell.spec.ts" time="8.298">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-93e1813be6dcd96429992a982c516df01830a2cf to converge in the read model
+✅ Waiting for project project-93e1813be6dcd96429992a982c516df01830a2cf to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects console shell shared rendering › renders real fixture references and safe-denial states without blank tables" classname="projects-console-shell.spec.ts" time="11.608">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-540fbeb3a9247c29b914e28880c329edf7726d3d to converge in the read model
+✅ Waiting for project project-540fbeb3a9247c29b914e28880c329edf7726d3d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects console shell shared rendering › renders an unlinked Project, unavailable evidence, and denied access as explicit states without blank tables" classname="projects-console-shell.spec.ts" time="19.368">
+<system-out>
+<![CDATA[Polling: Waiting for project project-secondary-19008642809b0eb834eacf4c8adfc6c303334046 to converge in the read model
+✅ Waiting for project project-secondary-19008642809b0eb834eacf4c8adfc6c303334046 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for project project-degraded-382975204419b31a017cab0a9da9b0579bd3c346 to converge in the read model
+✅ Waiting for project project-degraded-382975204419b31a017cab0a9da9b0579bd3c346 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:console-degraded before archive cleanup
+✅ Waiting for projects:console-degraded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:console-degraded archive convergence
+✅ Waiting for projects:console-degraded archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:console-empty before archive cleanup
+✅ Waiting for projects:console-empty before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:console-empty archive convergence
+✅ Waiting for projects:console-empty archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects console shell shared rendering › renders loading, error, success, warning, and fail-closed feedback from live outcomes" classname="projects-console-shell.spec.ts" time="20.933">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-ad00dfc483a61a3c370e9193e343003f24a87e09 to converge in the read model
+✅ Waiting for project project-ad00dfc483a61a3c370e9193e343003f24a87e09 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for project project-degraded-8565e2ed1b533f7ef8bd0fb24e072c1b14a23954 to converge in the read model
+✅ Waiting for project project-degraded-8565e2ed1b533f7ef8bd0fb24e072c1b14a23954 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:console-feedback before archive cleanup
+✅ Waiting for projects:console-feedback before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:console-feedback archive convergence
+✅ Waiting for projects:console-feedback archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects console shell shared rendering › renders a successful detail without echoing protected payload markers" classname="projects-console-shell.spec.ts" time="11.038">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-ec78d933530f451778f3909fce31246647620bfc to converge in the read model
+✅ Waiting for project project-ec78d933530f451778f3909fce31246647620bfc to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-file-reference.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="65.02" errors="0">
+<testcase name="Projects file references (link / unlink) › links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)" classname="projects-file-reference.spec.ts" time="12.818">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-ca1a22bb4d89ae96bbad3f91088056b5bd8fb8fb to converge in the read model
+✅ Waiting for project project-ca1a22bb4d89ae96bbad3f91088056b5bd8fb8fb to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the file reference to appear in the read model
+✅ Waiting for the file reference to appear in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects file references (link / unlink) › linking a file never satisfies, replaces, or auto-creates the single Project Folder (AC3)" classname="projects-file-reference.spec.ts" time="12.625">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-d5536db2aec6185346714262080edf710a75d7ff to converge in the read model
+✅ Waiting for project project-d5536db2aec6185346714262080edf710a75d7ff to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the file reference before asserting the folder lane is untouched
+✅ Waiting for the file reference before asserting the folder lane is untouched - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects file references (link / unlink) › unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)" classname="projects-file-reference.spec.ts" time="16.311">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-265274472894c515de63e321d17886310318d644 to converge in the read model
+✅ Waiting for project project-265274472894c515de63e321d17886310318d644 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the file reference to be linked before unlink
+✅ Waiting for the file reference to be linked before unlink - completed successfully after 1 iterations
+Polling: Waiting for the file reference to be removed from the read model
+✅ Waiting for the file reference to be removed from the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects file references (link / unlink) › denied/redacted Folders evidence fails closed as safe-denial and never leaks path or content (AC5)" classname="projects-file-reference.spec.ts" time="8.606">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-763f533782cd0b5771f262dd23b9438647d69c93 to converge in the read model
+✅ Waiting for project project-763f533782cd0b5771f262dd23b9438647d69c93 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects file references (link / unlink) › equivalent duplicate link with the same Idempotency-Key replays safely (AC8)" classname="projects-file-reference.spec.ts" time="14.66">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-a6f8c2e5f5d33052a126a844c422cc225e6f7f2e to converge in the read model
+✅ Waiting for project project-a6f8c2e5f5d33052a126a844c422cc225e6f7f2e to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for exactly one file reference after idempotent replay
+✅ Waiting for exactly one file reference after idempotent replay - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-inventory-detail.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="43.122" errors="0">
+<testcase name="Project inventory and detail views (Story 5.4) › lists metadata-only project inventory rows with eventual freshness and no tenantId on the wire" classname="projects-inventory-detail.spec.ts" time="8.36">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-fd8bf84b41e8f18714d5d58f4104956fd9ac1bb5 to converge in the read model
+✅ Waiting for project project-fd8bf84b41e8f18714d5d58f4104956fd9ac1bb5 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project inventory and detail views (Story 5.4) › rejects inventory query idempotency and non-eventual freshness without echoing row metadata" classname="projects-inventory-detail.spec.ts" time="8.535">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-1430e15bd0d402eaab7fe8e39958468d90ed4f08 to converge in the read model
+✅ Waiting for project project-1430e15bd0d402eaab7fe8e39958468d90ed4f08 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project inventory and detail views (Story 5.4) › loads project detail through query semantics and safe failure mapping" classname="projects-inventory-detail.spec.ts" time="8.539">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-e6e10b2ce36a70a4f4f9b4733ed4e4faaf6f39b8 to converge in the read model
+✅ Waiting for project project-e6e10b2ce36a70a4f4f9b4733ed4e4faaf6f39b8 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project inventory and detail views (Story 5.4) › renders inventory filters, warnings filters, and row-to-detail navigation selectors" classname="projects-inventory-detail.spec.ts" time="8.875">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-09e34505d323869d0187b8486012083fdb7da314 to converge in the read model
+✅ Waiting for project project-09e34505d323869d0187b8486012083fdb7da314 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project inventory and detail views (Story 5.4) › renders read-only detail sections without future-story payload surfaces" classname="projects-inventory-detail.spec.ts" time="8.813">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-d1c8f8b8ec6bc8d82f76c3de89a75fed1574fb4a to converge in the read model
+✅ Waiting for project project-d1c8f8b8ec6bc8d82f76c3de89a75fed1574fb4a to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-lifecycle.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="28.293" errors="0">
+<testcase name="Projects lifecycle › creates a project (202) and converges in the read model as Active" classname="projects-lifecycle.spec.ts" time="8.717">
+<system-out>
+<![CDATA[Polling: Waiting for project project-37ee6b3decf9272dbc8fe3714bda25d002e90db4 to converge in the read model
+✅ Waiting for project project-37ee6b3decf9272dbc8fe3714bda25d002e90db4 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for project project-37ee6b3decf9272dbc8fe3714bda25d002e90db4 to converge in the read model
+✅ Waiting for project project-37ee6b3decf9272dbc8fe3714bda25d002e90db4 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:lifecycle before archive cleanup
+✅ Waiting for projects:lifecycle before archive cleanup - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects lifecycle › rejects forbidden setup naming the field without echoing the value (FR-19)" classname="projects-lifecycle.spec.ts" time="1.196">
+</testcase>
+<testcase name="Projects lifecycle › safe-denial: unauthorized == nonexistent → 404 (AR-16 / R13)" classname="projects-lifecycle.spec.ts" time="0.154">
+</testcase>
+<testcase name="Projects lifecycle › lists only the requesting tenant&apos;s active projects (FR-5)" classname="projects-lifecycle.spec.ts" time="9.004">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-7a8363b0038feb21261b5ab07752d24c5f005941 to converge in the read model
+✅ Waiting for project project-7a8363b0038feb21261b5ab07752d24c5f005941 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects lifecycle › opens a project in the console and renders metadata via data-testid" classname="projects-lifecycle.spec.ts" time="9.222">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-04c1941986da93e994d02020df845eec60e7b77a to converge in the read model
+✅ Waiting for project project-04c1941986da93e994d02020df845eec60e7b77a to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-maintenance.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="10" failures="0" skipped="0" time="48.703" errors="0">
+<testcase name="Projects maintenance (Story 5.9) › dry-run an archive shows the expected audit event before execution (UX-DR17/25)" classname="projects-maintenance.spec.ts" time="9.688">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-fdd48bf90698a03cad62b636240856d6572b9e72 to converge in the read model
+✅ Waiting for project project-fdd48bf90698a03cad62b636240856d6572b9e72 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects maintenance (Story 5.9) › confirmed archive flows through the five-state lifecycle to Confirmed (UX-DR21)" classname="projects-maintenance.spec.ts" time="9.563">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-b934be84b9ed099cd84b58904e1155ac564d5f7d to converge in the read model
+✅ Waiting for project project-b934be84b9ed099cd84b58904e1155ac564d5f7d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for project project-b934be84b9ed099cd84b58904e1155ac564d5f7d to converge in the read model
+✅ Waiting for project project-b934be84b9ed099cd84b58904e1155ac564d5f7d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects maintenance (Story 5.9) › restore preview and confirmation preserve metadata-only lifecycle semantics" classname="projects-maintenance.spec.ts" time="9.406">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-f791dd9cdac0aaccff570b4fe32bc2c1f62922ab to converge in the read model
+✅ Waiting for project project-f791dd9cdac0aaccff570b4fe32bc2c1f62922ab to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects maintenance (Story 5.9) › relink and unlink previews preserve sibling resources and block unsafe file relink inputs" classname="projects-maintenance.spec.ts" time="9.771">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-bf8a7139c0ceedc7ebc20a580cfb2b666bb3b33e to converge in the read model
+✅ Waiting for project project-bf8a7139c0ceedc7ebc20a580cfb2b666bb3b33e to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects maintenance (Story 5.9) › re-evaluate reloads diagnostics without persisting traces or candidate scores" classname="projects-maintenance.spec.ts" time="8.963">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-790adb9aee054ab9099a30da482e1ab93b6377d9 to converge in the read model
+✅ Waiting for project project-790adb9aee054ab9099a30da482e1ab93b6377d9 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects maintenance selector contract (no app required) › maintenance panel exposes Story 5.9 stable selectors and safe text" classname="projects-maintenance.spec.ts" time="0.16">
+</testcase>
+<testcase name="Projects maintenance selector contract (no app required) › dry-run and confirmation gate archive execution until explicit evidence exists" classname="projects-maintenance.spec.ts" time="0.295">
+</testcase>
+<testcase name="Projects maintenance selector contract (no app required) › blocked dry-runs show safe reason codes without enabling submit" classname="projects-maintenance.spec.ts" time="0.301">
+</testcase>
+<testcase name="Projects maintenance selector contract (no app required) › restore, unlink, and re-evaluate previews expose distinct audit and safety semantics" classname="projects-maintenance.spec.ts" time="0.288">
+</testcase>
+<testcase name="Projects maintenance selector contract (no app required) › maintenance panel remains operable in a mobile viewport" classname="projects-maintenance.spec.ts" time="0.268">
+</testcase>
+</testsuite>
+<testsuite name="projects-operator-read-access.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="4" failures="0" skipped="0" time="28.131" errors="0">
+<testcase name="Projects operator read access › returns metadata-only project diagnostics with bounded audit evidence (Story 5.2 AC1,3,5)" classname="projects-operator-read-access.spec.ts" time="9.768">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-e3d29e9a2e7783c6ae6ac1c33b51b6baba6b8717 to converge in the read model
+✅ Waiting for project project-e3d29e9a2e7783c6ae6ac1c33b51b6baba6b8717 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects operator read access › rejects query idempotency and non-eventual freshness after authorization (Story 5.2 AC2,7)" classname="projects-operator-read-access.spec.ts" time="9.623">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-3fcf5060294be2df351bae31a21e6450efbf7e79 to converge in the read model
+✅ Waiting for project project-3fcf5060294be2df351bae31a21e6450efbf7e79 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects operator read access › collapses malformed or unauthorized project reads to safe denial (Story 5.2 AC2)" classname="projects-operator-read-access.spec.ts" time="0.172">
+</testcase>
+<testcase name="Projects operator read access › does not disclose existence to unauthenticated operator probes (Story 5.2 AC1,2)" classname="projects-operator-read-access.spec.ts" time="8.568">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-9d5b30ff9784bc0923e2f09f553d789d70223515 to converge in the read model
+✅ Waiting for project project-9d5b30ff9784bc0923e2f09f553d789d70223515 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-proposal.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="6" failures="0" skipped="0" time="43.487" errors="0">
+<testcase name="Projects new-project proposal › previews a NoMatch proposal without creating or leaking sibling payload data (AC1,3,8)" classname="projects-proposal.spec.ts" time="0.207">
+</testcase>
+<testcase name="Projects new-project proposal › rejects preview idempotency, strong freshness, duplicate references, and unsafe metadata (AC3,8)" classname="projects-proposal.spec.ts" time="0.188">
+</testcase>
+<testcase name="Projects new-project proposal › returns a safe conflict when an existing Project now qualifies instead of proposing creation (AC1,3)" classname="projects-proposal.spec.ts" time="8.214">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-2ffaf9d35b90234fc124f95fa6b31e7c494f791c to converge in the read model
+✅ Waiting for project project-2ffaf9d35b90234fc124f95fa6b31e7c494f791c to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects new-project proposal › confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)" classname="projects-proposal.spec.ts" time="17.47">
+<system-out>
+<![CDATA[Polling: Waiting for the confirmed proposal Project to converge with its folder and file
+✅ Waiting for the confirmed proposal Project to converge with its folder and file - completed successfully after 1 iterations
+Polling: Waiting for projects:proposal before archive cleanup
+✅ Waiting for projects:proposal before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:proposal archive convergence
+✅ Waiting for projects:proposal archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects new-project proposal › same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)" classname="projects-proposal.spec.ts" time="17.208">
+<system-out>
+<![CDATA[Polling: Waiting for projects:proposal-retry before archive cleanup
+✅ Waiting for projects:proposal-retry before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:proposal-retry archive convergence
+✅ Waiting for projects:proposal-retry archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects new-project proposal › confirm validation fails closed for missing idempotency and mismatched file evidence (AC4,6,8)" classname="projects-proposal.spec.ts" time="0.2">
+</testcase>
+</testsuite>
+<testsuite name="projects-reference-health.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="6" failures="0" skipped="0" time="114.525" errors="0">
+<testcase name="Project reference health matrix (Story 5.5) › loads reference-health source reads with eventual freshness and no payload leakage" classname="projects-reference-health.spec.ts" time="21.013">
+<system-out>
+<![CDATA[Polling: Waiting for projects:referenced creation to be accepted
+✅ Waiting for projects:referenced creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-168e7e6592810e17ac97800f6cdac4f54f22d372 to converge in the read model
+✅ Waiting for project project-168e7e6592810e17ac97800f6cdac4f54f22d372 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project graph to converge
+✅ Waiting for the referenced Project graph to converge - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project conversation membership
+✅ Waiting for the referenced Project conversation membership - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced before archive cleanup
+✅ Waiting for projects:referenced before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced archive convergence
+✅ Waiting for projects:referenced archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project reference health matrix (Story 5.5) › rejects reference-health query idempotency and non-eventual freshness safely" classname="projects-reference-health.spec.ts" time="20.889">
+<system-out>
+<![CDATA[Polling: Waiting for projects:referenced creation to be accepted
+✅ Waiting for projects:referenced creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-12dca4dba8de41c57ee6c412031614a3cb925f91 to converge in the read model
+✅ Waiting for project project-12dca4dba8de41c57ee6c412031614a3cb925f91 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project graph to converge
+✅ Waiting for the referenced Project graph to converge - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project conversation membership
+✅ Waiting for the referenced Project conversation membership - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced before archive cleanup
+✅ Waiting for projects:referenced before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced archive convergence
+✅ Waiting for projects:referenced archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project reference health matrix (Story 5.5) › renders the full Reference Health Matrix with explicit headers and row selectors" classname="projects-reference-health.spec.ts" time="21.516">
+<system-out>
+<![CDATA[Polling: Waiting for projects:referenced creation to be accepted
+✅ Waiting for projects:referenced creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-f712c96b53d2cb666366fdc2ed9a52465489965f to converge in the read model
+✅ Waiting for project project-f712c96b53d2cb666366fdc2ed9a52465489965f to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project graph to converge
+✅ Waiting for the referenced Project graph to converge - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project conversation membership
+✅ Waiting for the referenced Project conversation membership - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced before archive cleanup
+✅ Waiting for projects:referenced before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced archive convergence
+✅ Waiting for projects:referenced archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project reference health matrix (Story 5.5) › surfaces fixture health states as visible text and keeps safe actions read-only" classname="projects-reference-health.spec.ts" time="21.507">
+<system-out>
+<![CDATA[Polling: Waiting for projects:referenced creation to be accepted
+✅ Waiting for projects:referenced creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-37bf9b5f1d1fdfcc8f5cd61803c7b79f24b73a2a to converge in the read model
+✅ Waiting for project project-37bf9b5f1d1fdfcc8f5cd61803c7b79f24b73a2a to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project graph to converge
+✅ Waiting for the referenced Project graph to converge - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project conversation membership
+✅ Waiting for the referenced Project conversation membership - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced before archive cleanup
+✅ Waiting for projects:referenced before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced archive convergence
+✅ Waiting for projects:referenced archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project reference health matrix (Story 5.5) › renders degraded sibling trust as Unauthorized, Stale, and Unavailable rows" classname="projects-reference-health.spec.ts" time="8.62">
+<system-out>
+<![CDATA[Polling: Waiting for project project-degraded-ffd221632ec17e7a02d72f6a1e95d350f79c63e3 to converge in the read model
+✅ Waiting for project project-degraded-ffd221632ec17e7a02d72f6a1e95d350f79c63e3 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:reference-health-degraded before archive cleanup
+✅ Waiting for projects:reference-health-degraded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:reference-health-degraded archive convergence
+✅ Waiting for projects:reference-health-degraded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project reference health matrix (Story 5.5) › renders Archived reference evaluations once the referenced Project is archived" classname="projects-reference-health.spec.ts" time="20.98">
+<system-out>
+<![CDATA[Polling: Waiting for projects:referenced creation to be accepted
+✅ Waiting for projects:referenced creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-902a8fac444c7943f677795740c2c238dab46e4d to converge in the read model
+✅ Waiting for project project-902a8fac444c7943f677795740c2c238dab46e4d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project graph to converge
+✅ Waiting for the referenced Project graph to converge - completed successfully after 1 iterations
+Polling: Waiting for the referenced Project conversation membership
+✅ Waiting for the referenced Project conversation membership - completed successfully after 1 iterations
+Polling: Waiting for project project-902a8fac444c7943f677795740c2c238dab46e4d to converge in the read model
+✅ Waiting for project project-902a8fac444c7943f677795740c2c238dab46e4d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:referenced before archive cleanup
+✅ Waiting for projects:referenced before archive cleanup - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-resolution-trace.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="5" failures="0" skipped="0" time="43.926" errors="0">
+<testcase name="Project resolution trace workbench (Story 5.6) › renders stable selectors and supports the keyboard path" classname="projects-resolution-trace.spec.ts" time="9.099">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-4fe47cbb3b98a2da380a9a719cc25475ccd79563 to converge in the read model
+✅ Waiting for project project-4fe47cbb3b98a2da380a9a719cc25475ccd79563 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project resolution trace workbench (Story 5.6) › runs conversation and attachment traces without leaking payload data" classname="projects-resolution-trace.spec.ts" time="24.98">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-aff037dfd82e9f9759c775a8419d315063f2f240 to converge in the read model
+✅ Waiting for project project-aff037dfd82e9f9759c775a8419d315063f2f240 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-9030fb407269ecd7923cf3bcfc4701d3bfb641b9 to converge in the read model
+✅ Waiting for project project-secondary-9030fb407269ecd7923cf3bcfc4701d3bfb641b9 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project resolution trace workbench (Story 5.6) › passes axe accessibility scan after a trace renders" classname="projects-resolution-trace.spec.ts" time="9.199">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-d4e456be16af29518610a580e10682a1e93d9c42 to converge in the read model
+✅ Waiting for project project-d4e456be16af29518610a580e10682a1e93d9c42 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Project resolution trace selector and accessibility contract (no app required) › supports keyboard traversal and metadata-only trace rendering" classname="projects-resolution-trace.spec.ts" time="0.183">
+</testcase>
+<testcase name="Project resolution trace selector and accessibility contract (no app required) › passes axe scan after a fixture trace renders" classname="projects-resolution-trace.spec.ts" time="0.465">
+</testcase>
+</testsuite>
+<testsuite name="projects-resolution.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="9" failures="0" skipped="0" time="149.636" errors="0">
+<testcase name="Projects resolution › folder attachment resolves to a single candidate without leaking tenant or path data (FR-13 / AC1,7)" classname="projects-resolution.spec.ts" time="25.498">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-5102e5a4e15bcacb5f19af9c16898db057b42c96 to converge in the read model
+✅ Waiting for project project-5102e5a4e15bcacb5f19af9c16898db057b42c96 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-b11b1394c848f7da2565e8346b05bb53c173a036 to converge in the read model
+✅ Waiting for project project-secondary-b11b1394c848f7da2565e8346b05bb53c173a036 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects resolution › unsupported file attachment returns legacy NoMatch without reading raw content (FR-13 / AC1,2)" classname="projects-resolution.spec.ts" time="0.162">
+</testcase>
+<testcase name="Projects resolution › mixed attachments suggest only the Folder candidate and never auto-attach (FR-13 / NFR-9)" classname="projects-resolution.spec.ts" time="24.026">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-a3d5f2ba78ca043930a71cb935d7c26f0e26e1a8 to converge in the read model
+✅ Waiting for project project-a3d5f2ba78ca043930a71cb935d7c26f0e26e1a8 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-854aa34df248d6af520caaa2556e4f01bde65093 to converge in the read model
+✅ Waiting for project project-secondary-854aa34df248d6af520caaa2556e4f01bde65093 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects resolution › attachment query rejects Idempotency-Key and strong freshness as validation errors (AC5)" classname="projects-resolution.spec.ts" time="0.161">
+</testcase>
+<testcase name="Projects resolution › missing or malformed attachment identifiers collapse to safe-denial 404 (AC6)" classname="projects-resolution.spec.ts" time="0.134">
+</testcase>
+<testcase name="Projects resolution › ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)" classname="projects-resolution.spec.ts" time="24.173">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-024ec5d161d4ba767643081fa2e67215ecab47a4 to converge in the read model
+✅ Waiting for project project-024ec5d161d4ba767643081fa2e67215ecab47a4 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-768a54c5cba56a798c9eb2e64b50a9bb201229dd to converge in the read model
+✅ Waiting for project project-secondary-768a54c5cba56a798c9eb2e64b50a9bb201229dd to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects resolution › confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)" classname="projects-resolution.spec.ts" time="27.971">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-a22947c280751c3c7e6af2d4ba2d4dd36644c162 to converge in the read model
+✅ Waiting for project project-a22947c280751c3c7e6af2d4ba2d4dd36644c162 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-07fa51d50ec55b35b21491a1790f29868d6f4032 to converge in the read model
+✅ Waiting for project project-secondary-07fa51d50ec55b35b21491a1790f29868d6f4032 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects resolution › confirmation mutation requires Idempotency-Key and rejects non-ambiguous evidence (FR-14 / AC3,7)" classname="projects-resolution.spec.ts" time="23.682">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-b08b271181f1fdbbb93d3b74827db619d17010db to converge in the read model
+✅ Waiting for project project-b08b271181f1fdbbb93d3b74827db619d17010db to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-901a5412d8b4569f202c28ff0c751c830c0a223d to converge in the read model
+✅ Waiting for project project-secondary-901a5412d8b4569f202c28ff0c751c830c0a223d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary archive convergence
+✅ Waiting for projects:resolution-primary archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects resolution › archived projects are excluded from resolution unless explicitly requested (E1)" classname="projects-resolution.spec.ts" time="23.829">
+<system-out>
+<![CDATA[Polling: Waiting for projects:resolution-primary creation to be accepted
+✅ Waiting for projects:resolution-primary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-47b33aab14e8df6d997e8e9cdae63e2f7ebf5a76 to converge in the read model
+✅ Waiting for project project-47b33aab14e8df6d997e8e9cdae63e2f7ebf5a76 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary creation to be accepted
+✅ Waiting for projects:resolution-secondary creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-secondary-4578cf60f674ee800e983cd0cfdd5481cedbf41d to converge in the read model
+✅ Waiting for project project-secondary-4578cf60f674ee800e983cd0cfdd5481cedbf41d to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for resolution Project reference metadata
+✅ Waiting for resolution Project reference metadata - completed successfully after 1 iterations
+Polling: Waiting for deterministic resolution evidence to converge
+✅ Waiting for deterministic resolution evidence to converge - completed successfully after 1 iterations
+Polling: Waiting for project project-47b33aab14e8df6d997e8e9cdae63e2f7ebf5a76 to converge in the read model
+✅ Waiting for project project-47b33aab14e8df6d997e8e9cdae63e2f7ebf5a76 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary before archive cleanup
+✅ Waiting for projects:resolution-secondary before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-secondary archive convergence
+✅ Waiting for projects:resolution-secondary archive convergence - completed successfully after 1 iterations
+Polling: Waiting for projects:resolution-primary before archive cleanup
+✅ Waiting for projects:resolution-primary before archive cleanup - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="projects-warnings-dashboard.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="7" failures="0" skipped="0" time="18.147" errors="0">
+<testcase name="Projects warnings queue and operational dashboard (Story 5.8) › loads warning dashboard metadata through bounded query enrichment only" classname="projects-warnings-dashboard.spec.ts" time="7.975">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-91023b91611615a4b7f98d03fda38e3bdcd9c869 to converge in the read model
+✅ Waiting for project project-91023b91611615a4b7f98d03fda38e3bdcd9c869 to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects warnings queue and operational dashboard (Story 5.8) › rejects warning dashboard query misuse without echoing project metadata" classname="projects-warnings-dashboard.spec.ts" time="7.281">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-a4756d131c30cd9d007c20ad0343896d7cea73cd to converge in the read model
+✅ Waiting for project project-a4756d131c30cd9d007c20ad0343896d7cea73cd to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects warnings queue and operational dashboard (Story 5.8) › renders dashboard tiles, queue rows, filters, and safe read-only drill-ins" classname="projects-warnings-dashboard.spec.ts" time="0.741">
+</testcase>
+<testcase name="Projects warnings queue and operational dashboard (Story 5.8) › warnings dashboard markup stays metadata-only and avoids payload leakage" classname="projects-warnings-dashboard.spec.ts" time="0.456">
+</testcase>
+<testcase name="Projects warnings queue and operational dashboard (Story 5.8) › warnings dashboard passes WCAG 2.2 AA axe scan" classname="projects-warnings-dashboard.spec.ts" time="0.934">
+</testcase>
+<testcase name="Projects warnings dashboard selector contract (no app required) › supports dashboard drill-in filters and read-only queue actions" classname="projects-warnings-dashboard.spec.ts" time="0.223">
+</testcase>
+<testcase name="Projects warnings dashboard selector contract (no app required) › keeps warning dashboard markup metadata-only and accessible" classname="projects-warnings-dashboard.spec.ts" time="0.537">
+</testcase>
+</testsuite>
+<testsuite name="tenant-access-readiness.spec.ts" timestamp="2026-11-14T13:53:54.492Z" hostname="chromium" tests="17" failures="0" skipped="0" time="0.4" errors="0">
+<testcase name="tenant access recovery helper contracts › requires compiled public catalog enrollment instead of healthy legacy resources" classname="tenant-access-readiness.spec.ts" time="0.003">
+</testcase>
+<testcase name="tenant access recovery helper contracts › derives current authority without selecting an arbitrary membership" classname="tenant-access-readiness.spec.ts" time="0.005">
+</testcase>
+<testcase name="tenant access recovery helper contracts › recovery uses platform scope on submission and status, and a conflict is polled" classname="tenant-access-readiness.spec.ts" time="0.003">
+</testcase>
+<testcase name="tenant access recovery helper contracts › ambiguous POST retries reuse one operation ID and remain within one deadline" classname="tenant-access-readiness.spec.ts" time="0.252">
+</testcase>
+<testcase name="tenant access recovery helper contracts › lost POST response with a completed status does not submit a second command" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › synchronous permission denial is resolved to terminal Rejected, never Completed" classname="tenant-access-readiness.spec.ts" time="0">
+</testcase>
+<testcase name="tenant access recovery helper contracts › anonymous admission fails immediately and does not poll a fabricated success" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal polling and submission attempts share a finite overall budget" classname="tenant-access-readiness.spec.ts" time="0.032">
+</testcase>
+<testcase name="tenant access recovery helper contracts › ready list HTTP 200 avoids source commands and uses the unchanged token" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › refreshes only existing authority and gives a later recovery a fresh ULID" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal Rejected cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal PublishFailed cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal TimedOut cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 400 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.031">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 404 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.031">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 503 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.031">
+</testcase>
+<testcase name="tenant access recovery helper contracts › initial readiness probe cannot start a recovery after consuming the deadline" classname="tenant-access-readiness.spec.ts" time="0.005">
+</testcase>
+</testsuite>
+</testsuites>

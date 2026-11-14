@@ -19,9 +19,10 @@ internal static class ProjectsWorkerDevelopmentCatalog
         ArgumentNullException.ThrowIfNull(builder);
         if (string.IsNullOrWhiteSpace(builder.Configuration["EventStore:RouteCatalog:DevelopmentBootstrap:Directory"])) return false;
 #if SUPPORTED_PROJECT_READ_SOURCE
-        if (!builder.Environment.IsDevelopment()
-            || !bool.TryParse(builder.Configuration["Projects:SupportedReads:Enabled"], out bool selected) || !selected)
-            throw new InvalidOperationException("Worker catalog bootstrap requires the explicit private Development supported-read profile.");
+        bool supportedReads = builder.Configuration.GetValue<bool>("Projects:SupportedReads:Enabled");
+        bool isolatedFixtures = builder.Configuration.GetValue<bool>("Projects:IsolatedLiveFixtures:Enabled");
+        if (!builder.Environment.IsDevelopment() || supportedReads == isolatedFixtures)
+            throw new InvalidOperationException("Worker catalog bootstrap requires exactly one explicit private Development profile.");
         builder.Services.AddEventStoreHttpHostSecurity();
         builder.Services.AddEventStoreDevelopmentRouteCatalogBootstrap(builder.Configuration, async (_, token) =>
         {

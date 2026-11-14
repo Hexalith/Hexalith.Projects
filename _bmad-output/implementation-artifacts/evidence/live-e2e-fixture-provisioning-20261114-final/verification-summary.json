@@ -1,0 +1,134 @@
+{
+  "sessionStartCommit": "91d998fb6ec56b886c641dc9e091820890c9c14b",
+  "preservedBaselineCommit": "311aa85c8e81c7c0b19d5c0004ddf36ceafd5651",
+  "preservedBaselineRevision": "1e9f847169c94e275d6c7277fdb5d2d040cefc87",
+  "limits": [
+    "Local Debug/source compatibility profile only; CI/package recovery cohort remains separate.",
+    "Inline projections, background projection workers suppressed, private callback concurrency one; no production retry/parallel-callback qualification.",
+    "Actual retry phase deliberately failed first attempts; two final retry successes are reported separately.",
+    "OTEL/circuit capture has explicit missing/truncation flags; no complete circuit census inferred.",
+    "Unrelated external Conversations validation-artifact deletions were preserved; no sibling source or gitlink changes made."
+  ],
+  "status": "done",
+  "review": {
+    "layers": 3,
+    "findings": 18,
+    "followThroughCorrections": 3,
+    "allPatched": true,
+    "deferred": 0
+  },
+  "liveCommand": [
+    "run-with-temp",
+    "python3",
+    "tools/qualification/run_live_project_fixtures.py",
+    "--timeout",
+    "600",
+    "--evidence",
+    "/tmp/projects-live-fixtures-reviewed-20261114-ab"
+  ],
+  "focusedCommand": [
+    "run-with-temp",
+    "python3",
+    "/tmp/projects-live-fixtures-reviewed-focused-20261114/execute.py"
+  ],
+  "liveResult": "passed",
+  "matrixCompleted": true,
+  "phases": [
+    {
+      "name": "smoke",
+      "exitCode": 0,
+      "collected": 8,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "full",
+      "exitCode": 0,
+      "collected": 146,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "repeat",
+      "exitCode": 0,
+      "collected": 14,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    },
+    {
+      "name": "retry",
+      "exitCode": 0,
+      "collected": 2,
+      "failures": 0,
+      "errors": 0,
+      "zeroSkips": true
+    }
+  ],
+  "archivedProjects": 69,
+  "archivedEvents": 69,
+  "journalEventCount": 246,
+  "sourceMetadataCount": 70,
+  "createdSourceProjectCount": 69,
+  "rejectionOnlyStreamCount": 1,
+  "sourceRejectionEventCount": 1,
+  "physicalRereads": 2,
+  "siblingObservations": 16,
+  "actualRetryReceipts": [
+    {
+      "retry": 1,
+      "repeatEachIndex": 0,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    },
+    {
+      "retry": 1,
+      "repeatEachIndex": 1,
+      "workerChanged": true,
+      "identifiersDisjoint": true,
+      "previousProjectArchived": true,
+      "previousSiblingGraphRemoved": true
+    }
+  ],
+  "normalProfileDisabledRuntimeVerified": true,
+  "ownedCleanupVerified": true,
+  "ownedSidecarsAbsent": true,
+  "ownedApplicationsAbsent": true,
+  "privateMaterialRemoved": true,
+  "preexistingResourcesPreserved": true,
+  "solutionBuildPassed": true,
+  "integration": {
+    "total": 125,
+    "passed": 125,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0
+  },
+  "catalogGuards": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0
+  },
+  "typescriptControls": {
+    "tests": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pythonControlCount": 198,
+  "sourceInputsStable": true,
+  "liveAndFocusedSourceManifestsIdentical": true,
+  "committed": false,
+  "historicalEvidence": [
+    "live",
+    "focused",
+    "post-live-formatting.json",
+    "reviewed-attempt-aa.json"
+  ]
+}

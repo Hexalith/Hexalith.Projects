@@ -51,6 +51,8 @@ public static class LiveFixtureApplication
                 : state.TryAdd(graph) ? Results.Ok(graph) : Results.Conflict());
         _ = app.MapDelete("/_fixtures/graphs/{graphId}", (string graphId) =>
             state.Remove(graphId) ? Results.NoContent() : Results.NotFound());
+        _ = app.MapGet("/_fixtures/runs/{runId}/observation", (string runId) =>
+            Results.Ok(new { graphCount = state.Graphs.Count(graph => string.Equals(graph.RunId, runId, StringComparison.Ordinal)) }));
 
         switch (role)
         {

@@ -342,7 +342,8 @@ def regression_test_command(lane: str, assembly: Path, evidence: Path) -> list[s
     command = ["dotnet", str(assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
     if lane == "Integration":
         command.extend(["-class-", "*SupportedProjectReadDistributedTests",
-                        "-class-", "*SupportedProjectBrowserSeedTests"])
+                        "-class-", "*SupportedProjectBrowserSeedTests",
+                        "-class-", "*IsolatedLiveFixtureSeedTests"])
     return command
 
 

@@ -1,0 +1,258 @@
+{
+  "commands": [
+    {
+      "name": "tool-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseSharedCompilation=false",
+        "--artifacts-path",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/tool-artifacts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "source-preparation",
+      "argv": [
+        "dotnet",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/tool-artifacts/bin/Hexalith.Builds.Module.Cli/debug/Hexalith.Builds.Module.Cli.dll",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/mapping",
+        "--output",
+        "json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "solution-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "Hexalith.Projects.slnx",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseSharedCompilation=false",
+        "-p:SupportedProjectReadDistributed=false",
+        "--artifacts-path",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/artifacts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "integration-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseSharedCompilation=false",
+        "-p:SupportedProjectReadDistributed=false",
+        "--artifacts-path",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/artifacts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "integration",
+      "argv": [
+        "dotnet",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+        "-xml",
+        "/tmp/projects-live-fixtures-reviewed-focused-20261114/integration.xml"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "server-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseSharedCompilation=false",
+        "-p:SupportedProjectReadDistributed=false",
+        "--artifacts-path",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/artifacts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "catalog-guards",
+      "argv": [
+        "dotnet",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*ProjectsRuntimeCatalogTests",
+        "-class",
+        "*ProjectsWorkerCatalogTests",
+        "-xml",
+        "/tmp/projects-live-fixtures-reviewed-focused-20261114/catalog-guards.xml"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "python-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_*project*launcher.py"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "typecheck",
+      "argv": [
+        "npm",
+        "--prefix",
+        "tests/e2e",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "typescript-controls",
+      "argv": [
+        "npm",
+        "--prefix",
+        "tests/e2e",
+        "test",
+        "--",
+        "--workers=2",
+        "--project=chromium",
+        "specs/tenant-access-readiness.spec.ts",
+        "specs/live-fixture-identities.spec.ts",
+        "specs/live-fixtures-lifecycle.spec.ts",
+        "specs/api-transport-budget.spec.ts",
+        "specs/project-fixture-cleanup.spec.ts",
+        "specs/browser-traffic-observer.spec.ts",
+        "--grep",
+        "helper contracts|identity factory|no app required|archive cleanup diagnostics contract|browser traffic header observer",
+        "--forbid-only",
+        "--reporter=list,junit",
+        "--output",
+        "/tmp/hexalith-job.R9VCv2w9/projects-fixtures-final-o28ybntx/controls"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "shell-syntax",
+      "argv": [
+        "bash",
+        "-n",
+        "tests/e2e/run-live-apphost.sh"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "testProcessCleanup": [
+    {
+      "groupId": 1151243,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1157693,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1171260,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1227405,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1235563,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1235626,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1238706,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1239111,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1241383,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1241749,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1242469,
+      "descendantsAbsent": true
+    },
+    {
+      "groupId": 1242525,
+      "descendantsAbsent": true
+    }
+  ],
+  "result": "passed",
+  "sourceManifestSha256": "0a87f1f6d99f7a162904f916b82bffdcd71030d5e58cbacb756ccdd409a2c43d",
+  "sourceMappingHash": "08caaccda588cccba87d11bdc30fea3413891f8ac839a7ef6ceea4b419e16aaa",
+  "solutionBuildPassed": true,
+  "integration": {
+    "total": 125,
+    "passed": 125,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0
+  },
+  "catalog-guards": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0
+  },
+  "typescript-controls": {
+    "tests": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pythonSyntaxPaths": [
+    "tools/qualification/run_live_project_fixtures.py",
+    "tools/qualification/supported_browser_reads.py",
+    "tests/tools/test_live_project_fixtures_launcher.py",
+    "tests/tools/test_supported_project_reads_launcher.py"
+  ],
+  "sourceInputsStable": true,
+  "privateMaterialRemoved": true
+}

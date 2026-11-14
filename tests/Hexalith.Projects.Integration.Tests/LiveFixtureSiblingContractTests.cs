@@ -5,7 +5,9 @@
 
 namespace Hexalith.Projects.Integration.Tests;
 
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -217,6 +219,7 @@ public sealed class LiveFixtureSiblingContractTests
             .ReadConversationMetadataAsync(new ConversationId(graph.UnavailableConversationId), tenantId, caller, CorrelationId, TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
         unavailable.ReferenceState.ShouldBe(ReferenceState.Unavailable);
+        ConversationsFixtureEndpoints.UnavailableReadDelay.ShouldBeLessThan(TimeSpan.FromSeconds(1));
         System.Diagnostics.Stopwatch.GetElapsedTime(started).ShouldBeGreaterThanOrEqualTo(ConversationsFixtureEndpoints.UnavailableReadDelay - TimeSpan.FromMilliseconds(100));
     }
 
@@ -262,6 +265,50 @@ public sealed class LiveFixtureSiblingContractTests
     // Mirrors the runner's identity shape: kind prefix plus a 40-character lowercase hex digest.
     private static string Id(string kind)
         => $"{kind}-{Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes($"sibling-contract|{kind}")))[..40]}";
+
+    /// <summary>Counts populated own-run graphs and excludes foreign runs through each role's real HTTP ingress.</summary>
+    /// <param name="role">The fixture role to exercise.</param>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Theory]
+    [InlineData("control")]
+    [InlineData("conversations")]
+    [InlineData("folders")]
+    [InlineData("memories")]
+    public async Task RoleShouldObserveOnlyItsRunBeforeAndAfterGraphDeletionAsync(string role)
+    {
+        LiveFixtureGraph graph = Graph();
+        LiveFixtureRoleHost host = await LiveFixtureRoleHost.StartAsync(role, graph, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        await using ConfiguredAsyncDisposable hostScope = host.ConfigureAwait(true);
+        using HttpClient client = new() { BaseAddress = host.BaseAddress };
+        LiveFixtureGraph second = graph with { GraphId = Id("second-graph") };
+        LiveFixtureGraph foreign = graph with { GraphId = Id("foreign-graph"), RunId = "foreign-run" };
+        foreach (LiveFixtureGraph added in new[] { second, foreign })
+        {
+            using HttpResponseMessage response = await client.PostAsJsonAsync("_fixtures/graphs", added, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            _ = response.EnsureSuccessStatusCode();
+        }
+
+        async Task<int> CountAsync(string run)
+        {
+            JsonElement observation = await client.GetFromJsonAsync<JsonElement>("_fixtures/runs/" + run + "/observation", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            return observation.GetProperty("graphCount").GetInt32();
+        }
+
+        (await CountAsync(graph.RunId).ConfigureAwait(true)).ShouldBe(2);
+        (await CountAsync(foreign.RunId).ConfigureAwait(true)).ShouldBe(1);
+        (await CountAsync("unknown-run").ConfigureAwait(true)).ShouldBe(0);
+        foreach (LiveFixtureGraph removed in new[] { graph, second })
+        {
+            using HttpResponseMessage response = await client.DeleteAsync("_fixtures/graphs/" + removed.GraphId, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            _ = response.EnsureSuccessStatusCode();
+        }
+
+        (await CountAsync(graph.RunId).ConfigureAwait(true)).ShouldBe(0);
+        (await CountAsync(foreign.RunId).ConfigureAwait(true)).ShouldBe(1);
+        using HttpResponseMessage deleted = await client.DeleteAsync("_fixtures/graphs/" + foreign.GraphId, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        _ = deleted.EnsureSuccessStatusCode();
+        (await CountAsync(foreign.RunId).ConfigureAwait(true)).ShouldBe(0);
+    }
 
     private static LiveFixtureGraph Graph()
         => new(

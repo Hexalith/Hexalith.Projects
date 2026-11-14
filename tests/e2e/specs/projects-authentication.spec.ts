@@ -5,6 +5,7 @@ import {
   assertServerOnlySession,
   browserSessionStoragePath,
   inspectBrowserSession,
+  observeBrowserTraffic as observeTraffic,
 } from '../support/auth/browser-session.js';
 import { expect, liveAppHostTest, test } from '../support/merged-fixtures.js';
 
@@ -32,13 +33,15 @@ test.describe('Projects browser authentication', () => {
     });
     try {
       const page = await context.newPage();
-      const browserTraffic = observeBrowserTraffic(page);
+      const browserTraffic = await observeBrowserTraffic(page);
       // Keycloak may redirect the authorize request to its login-actions form, so the code-flow
       // parameters are asserted on the authorize request in the redirect chain, not the landed page.
       const authorizeRequest = page.waitForRequest((request) =>
         new URL(request.url()).pathname.endsWith('/protocol/openid-connect/auth'));
 
-      await page.goto(requireEnv('BASE_URL'), { waitUntil: 'domcontentloaded' });
+      await test.step('Observe the anonymous authorization-code challenge', async () => {
+        await page.goto(requireEnv('BASE_URL'), { waitUntil: 'domcontentloaded' });
+      });
       const authorize = new URL((await authorizeRequest).url());
       expect(authorize.origin).toBe(new URL(requireEnv('KEYCLOAK_URL')).origin);
       expect(new URL(page.url()).origin).toBe(new URL(requireEnv('KEYCLOAK_URL')).origin);
@@ -61,10 +64,12 @@ test.describe('Projects browser authentication', () => {
       await page.reload({ waitUntil: 'domcontentloaded' });
       expect(new URL(page.url()).origin).toBe(new URL(requireEnv('BASE_URL')).origin);
 
-      const traffic = await browserTraffic.settle();
+      const traffic = await test.step('Read complete browser traffic headers', () => browserTraffic.settle());
       expect(traffic.authorizationHeaders).toBe(0);
       expect(traffic.tokenBearingUrls).toBe(0);
-      assertServerOnlySession(await inspectBrowserSession(page, context, requireEnv('BASE_URL')), 'projects-authentication');
+      await test.step('Inspect the authenticated browser session', async () => {
+        assertServerOnlySession(await inspectBrowserSession(page, context, requireEnv('BASE_URL')), 'projects-authentication');
+      });
     } finally {
       await context.close();
     }
@@ -80,7 +85,7 @@ test.describe('Projects browser authentication', () => {
       await context.addCookies(sessionCookies.map((cookie) => ({ ...cookie, value: 'invalidated-session' })));
 
       const page = await context.newPage();
-      const browserTraffic = observeBrowserTraffic(page);
+      const browserTraffic = await observeBrowserTraffic(page);
       const authorizeRequest = page.waitForRequest((request) =>
         new URL(request.url()).pathname.endsWith('/protocol/openid-connect/auth'));
 
@@ -123,7 +128,7 @@ test.describe('Projects browser authentication', () => {
   });
 
   liveAppHostTest('renders protected Project data through server-side token relay only', async ({ page, context, seededProject }) => {
-    const browserTraffic = observeBrowserTraffic(page);
+    const browserTraffic = await observeBrowserTraffic(page);
 
     await page.goto(`/projects/${seededProject.projectId}`);
     // The Projects API rejects anonymous calls, so rendering the seeded name proves the server relayed
@@ -159,27 +164,8 @@ interface BrowserTraffic {
  * `allHeaders()` because `headers()` omits security-related headers such as Authorization, which
  * would make the no-Authorization assertion pass vacuously.
  */
-function observeBrowserTraffic(page: Page): { settle: () => Promise<BrowserTraffic> } {
-  const apiOrigin = new URL(requireEnv('API_URL')).origin;
-  const traffic: BrowserTraffic = { apiOriginRequests: 0, authorizationHeaders: 0, tokenBearingUrls: 0 };
-  const pending: Promise<void>[] = [];
-  page.on('request', (request) => {
-    const url = new URL(request.url());
-    if (url.origin === apiOrigin) traffic.apiOriginRequests += 1;
-    if (/(?:^|[?#&])(?:access_token|id_token|refresh_token)=/.test(`${url.search}${url.hash}`)) traffic.tokenBearingUrls += 1;
-    pending.push(request.allHeaders().then(
-      (headers) => {
-        if (headers.authorization) traffic.authorizationHeaders += 1;
-      },
-      () => undefined,
-    ));
-  });
-  return {
-    settle: async () => {
-      await Promise.all(pending);
-      return traffic;
-    },
-  };
+function observeBrowserTraffic(page: Page): Promise<{ settle: () => Promise<BrowserTraffic> }> {
+  return observeTraffic(page, requireEnv('API_URL'));
 }
 
 function requireEnv(name: string): string {

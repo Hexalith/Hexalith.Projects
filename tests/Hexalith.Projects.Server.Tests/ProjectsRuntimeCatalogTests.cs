@@ -197,6 +197,41 @@ public sealed class ProjectsRuntimeCatalogTests
         builder.Services.ShouldNotContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
     }
 
+    /// <summary>Private receiver enrollment requires exactly one selected profile.</summary>
+    /// <param name="reads">Whether the real-owner read profile is selected.</param>
+    /// <param name="fixtures">Whether the separate compatibility profile is selected.</param>
+    /// <param name="accepted">Whether enrollment must be accepted.</param>
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(false, true, true)]
+    [InlineData(true, true, false)]
+    public void PrivateBootstrapRequiresExactlyOneProfile(bool reads, bool fixtures, bool accepted)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:Directory"] = Path.GetTempPath(),
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:HostId"] = "projects",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:CoordinatorHostId"] = "eventstore",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:AttemptId"] = "profile-selection",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:RequiredHostIds:0"] = "projects",
+            ["EventStore:RouteCatalog:DevelopmentBootstrap:RequiredHostIds:1"] = "eventstore",
+            ["Projects:SupportedReads:Enabled"] = reads.ToString(),
+            ["Projects:IsolatedLiveFixtures:Enabled"] = fixtures.ToString(),
+        });
+        if (accepted)
+        {
+            builder.AddProjectsDevelopmentCatalog().ShouldBeTrue();
+            builder.Services.ShouldContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
+        }
+        else
+        {
+            Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentCatalog());
+            builder.Services.ShouldNotContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
+        }
+    }
+
     private static IdempotencyIntentCommand Command(string payload) => new(ProjectsServerModule.CreateProjectCommandType,
         "tenant-one", "projects", "project-one", Encoding.UTF8.GetBytes(payload), null) { AuthenticatedSubject = "actor-one" };
 }

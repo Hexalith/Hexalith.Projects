@@ -2,7 +2,7 @@
 title: 'Live E2E fixture provisioning'
 type: 'feature'
 created: '2026-08-26'
-status: in-progress
+status: done
 baseline_commit: '311aa85c8e81c7c0b19d5c0004ddf36ceafd5651'
 baseline_revision: '1e9f847169c94e275d6c7277fdb5d2d040cefc87'
 review_loop_iteration: 0
@@ -48,7 +48,9 @@ Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an 
 - `src/Hexalith.Projects.AppHost/Program.cs` -- current EventStore, Tenants, Projects, workers, UI topology and E2E-profile composition point.
 - `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- production sibling client registrations that the E2E profile must satisfy without weakening defaults.
 - `tests/e2e/global-setup.ts` -- live credential validation/token warm-up and serialized tenant readiness gate.
-- `tests/e2e/playwright.config.ts` -- live environment contract and current single-worker restriction.
+- `tests/e2e/playwright.config.ts` -- live environment contract and two-worker execution.
+- `src/Hexalith.Projects.AppHost/IsolatedLiveE2EFixtureProfile.cs` and `tools/qualification/run_live_project_fixtures.py` -- private Debug/source catalog, authority, backend, runtime verification and exact owned cleanup.
+- `tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.LiveFixtures.cs` -- authenticated fresh source setup and unchanged writer-activation gates.
 - `tests/e2e/support/merged-fixtures.ts` -- composed tenant and seeded-Project fixtures consumed by specs.
 - `tests/e2e/support/fixtures/projects-fixtures.ts` -- Project create/convergence/archive lifecycle.
 - `tests/e2e/support/helpers/readiness.ts` -- bounded polling primitive.
@@ -59,14 +61,14 @@ Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an 
 ## Tasks & Acceptance
 
 **Execution:**
-- `tests/e2e/support/factories/live-fixture-identities.ts` and `tests/e2e/specs/live-fixture-identities.spec.ts` -- add a pure bounded identity factory and verify deterministic, collision-free run/worker/retry/repeat/scenario dimensions.
-- `tests/e2e/support/helpers/eventstore-api-client.ts`, `tests/e2e/support/helpers/tenant-access-readiness.ts`, and `tests/e2e/global-setup.ts` -- submit/poll authenticated tenant commands and gate live execution on the outer Projects authorization response.
-- `tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj` and its one-type-per-file C# sources -- implement metadata-only Conversations/Folders/Memories public contracts plus a run-scoped control API.
-- `src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj`, `src/Hexalith.Projects.AppHost/Program.cs`, `Hexalith.Projects.slnx`, and `tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs` -- compose and verify the sibling fixture roles only under the explicit E2E profile, fail closed otherwise.
-- `tests/e2e/support/helpers/live-fixtures-api-client.ts`, `tests/e2e/support/fixtures/live-fixtures.ts`, `tests/e2e/support/fixtures/projects-fixtures.ts`, and `tests/e2e/support/merged-fixtures.ts` -- seed the per-test fixture graph, expose its IDs/states, and clean in reverse order while waiting for Project archival.
-- `tests/e2e/specs/projects-file-reference.spec.ts`, `tests/e2e/specs/projects-resolution.spec.ts`, `tests/e2e/specs/projects-proposal.spec.ts`, `tests/e2e/specs/projects-resolution-trace.spec.ts`, `tests/e2e/specs/projects-reference-health.spec.ts`, and `tests/e2e/specs/projects-console-shell.spec.ts` -- replace fixed IDs and placeholder routes with fixture outputs and observable API/UI scenarios.
-- `tests/e2e/specs/live-fixtures-lifecycle.spec.ts` and `tests/e2e/playwright.config.ts` -- verify convergence, reverse cleanup/failure diagnostics, and enable two-worker live isolation.
-- `tests/e2e/.env.example`, `tests/e2e/README.md`, and `docs/runbooks/projects-topology.md` -- document dynamic EventStore/fixture endpoint discovery, explicit profile startup, and cleanup.
+- [x] `tests/e2e/support/factories/live-fixture-identities.ts` and `tests/e2e/specs/live-fixture-identities.spec.ts` -- add a pure bounded identity factory and verify deterministic, collision-free run/worker/retry/repeat/scenario dimensions.
+- [x] `tests/e2e/support/helpers/eventstore-api-client.ts`, `tests/e2e/support/helpers/tenant-access-readiness.ts`, and `tests/e2e/global-setup.ts` -- submit/poll authenticated tenant commands and gate live execution on the outer Projects authorization response.
+- [x] `tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj` and its one-type-per-file C# sources -- implement metadata-only Conversations/Folders/Memories public contracts plus a run-scoped control API.
+- [x] `src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj`, `src/Hexalith.Projects.AppHost/Program.cs`, `Hexalith.Projects.slnx`, and `tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs` -- compose and verify the sibling fixture roles only under the explicit E2E profile, fail closed otherwise.
+- [x] `tests/e2e/support/helpers/live-fixtures-api-client.ts`, `tests/e2e/support/fixtures/live-fixtures.ts`, `tests/e2e/support/fixtures/projects-fixtures.ts`, and `tests/e2e/support/merged-fixtures.ts` -- seed the per-test fixture graph, expose its IDs/states, and clean in reverse order while waiting for Project archival.
+- [x] `tests/e2e/specs/projects-file-reference.spec.ts`, `tests/e2e/specs/projects-resolution.spec.ts`, `tests/e2e/specs/projects-proposal.spec.ts`, `tests/e2e/specs/projects-resolution-trace.spec.ts`, `tests/e2e/specs/projects-reference-health.spec.ts`, and `tests/e2e/specs/projects-console-shell.spec.ts` -- replace fixed IDs and placeholder routes with fixture outputs and observable API/UI scenarios.
+- [x] `tests/e2e/specs/live-fixtures-lifecycle.spec.ts` and `tests/e2e/playwright.config.ts` -- verify convergence, reverse cleanup/failure diagnostics, and enable two-worker live isolation.
+- [x] `tests/e2e/.env.example`, `tests/e2e/README.md`, and `docs/runbooks/projects-topology.md` -- document dynamic EventStore/fixture endpoint discovery, explicit profile startup, and cleanup.
 
 **Acceptance Criteria:**
 - Given a clean supported AppHost and valid live credentials, when global setup completes, then the token tenant/principal is present and fresh in Projects authorization without manual database or projection edits.
@@ -81,10 +83,61 @@ Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an 
 - 2026-11-14: Implemented the separately authorized tenant-access recovery prerequisite across the root-declared EventStore, Tenants, and Projects sources. The supported contract and verification results are recorded below. Full fixture provisioning remains a subsequent build; this spec's existing status and baseline identifiers are preserved.
 - 2026-11-14: Resumed complete fixture provisioning from `7bcb375f60414062e64b5f066e2bd4924a385b7c`. Preserve all earlier history and baseline identifiers. Finish the original tasks using the supported recovery contract below; leave all changes uncommitted for review.
 - 2026-11-14: Implemented the recovery-only gate, deterministic request identities, cleanup hardening and remaining resolution/archive scenario fixes. Mapped Debug build, 110 integration tests and 30 two-worker TypeScript contracts passed. The managed live run failed before collection on authenticated catalog HTTP 503 after resources became healthy. Full live, persisted-state and profile-disabled runtime acceptance remain open; status and both original baselines are unchanged.
+- 2026-11-14: Completed the original implementation and acceptance matrix using a separate private Debug/source compatibility topology. Run `z` passed 145 full cases, 8 smoke cases, 14 repeat cases and two actual retry probes; physical rereads verified all 69 created Projects archived and all 16 sibling/control observations empty. Ordinary all-profile-disabled startup and exact owned cleanup passed. Preserved both original baselines and all earlier attempts; changes remain uncommitted pending workflow review. Final evidence and qualification boundaries are recorded below.
+- 2026-11-14: Completed all three independent review layers, patched all 18 findings and three follow-through corrections, and repeated full verification against identical stable source manifests. Reviewed run `ab` passed 146 full cases, all smoke/repeat/retry phases, complete source-event archival proof, ordinary profile-disabled startup and session-bound cleanup. Final mapped build and all focused checks passed. Marked done; no findings deferred and no Git staging, commit, push or dependency changes made.
 
 ## Review Triage Log
 
 - 2026-11-14 continuation inspection: corrected terminal rejection being masked by a later list 200; expired readiness budget starting another POST; malformed runner mapping validation and nonempty preparation workspace; cancelled/partially accepted setup escaping compensation; failed diagnostic attachments masking primary failures; fabricated cleanup 404 statuses; unsupported attachment ambiguity and vacuous archive assertions. Focused checks cover the helper/cleanup regressions. The new live assertions remain unexecuted because catalog enrollment blocked collection. The workflow has not advanced to final acceptance/review completion.
+
+### Independent review of the verified continuation — 2026-11-14
+
+All three layers completed before triage. The current implementation review covers
+the 33 continuation paths from `91d998fb6ec56b886c641dc9e091820890c9c14b`.
+The complete preserved-baseline diff was also captured and parsed: 18,279 file
+blocks / 9,868,591 lines, mostly previously committed work. Original baseline
+fields are unchanged. Historical workflow artifacts and unrelated external
+submodule changes are not new implementation work. No Git staging occurred.
+
+Each finding was classified before grouping. Verification-gap findings were
+accepted from that layer's executed searches/probes; other claims were checked
+against callers, SDK helpers and current code. The routes below require private
+implementation/test corrections without new public capabilities or changed intent.
+
+| ID | Verdict | Evidence and route |
+| --- | --- | --- |
+| BH-1 | medium | The new isolated seed Fact shares the distributed compilation symbol, while the existing supported-read regression selector excludes only its two older setup classes. Its normal regression run therefore collects an incompatible seed and fails. **patch** the exclusion and selector control. |
+| BH-2 | high | Persisted cleanup proves journal-to-source coverage only. An extra committed source Project can be omitted from the journal while `allArchived` still passes. **patch** reverse coverage using actual source metadata heads; distinguish uncommitted/empty metadata from created streams. |
+| BH-3 | high | Failure of both infrastructure capture and fallback Docker listing throws before `cleanup_resources`, skipping known owned cleanup and recovery recording. **patch** unconditional teardown and durable failure/recovery handling. |
+| BH-4 | high | Ordinary startup reuses first-session `ownedSidecarsAbsent` and cleanup receipts; a partial second start without recovered ownership can inherit an invalid absence proof. **patch** session-bound/reset observations and partial normal resource capture. |
+| BH-5 | medium | `GetValue<bool>` accepts missing `EnableKeycloak` as false, but the SDK security helper enables ordinary security unless the string is explicitly false. Later Program bindings can overwrite the intended private authority. **patch** explicit false admission and negative coverage. |
+| BH-6 | medium | The inherited `E2E_SUPPORTED_READ_APPHOST=1` is not cleared. It bypasses compatibility readiness and selects an incompatible real-owner journey after this launcher clears tenant/principal environment values. **patch** the incompatible browser-mode flags at the private boundary. |
+| BH-7 | medium | The line-based credential-header redactor consumes closing CDATA/XML markup when the header is the final element line. Valid retained XML can become unparsable. **patch** markup-preserving serialized-artifact redaction with XML cases. |
+| BH-8 | high | Local Playwright configuration permits `.only`, while nonempty matching JUnit/reporter counts alone cannot prove the full suite was collected. **patch** qualification commands with `--forbid-only` and a negative control. |
+| BH-9 | high | Existing cleanup independently reobserves AppHost/CLI, sidecars and containers, but not actual UI/server/authority/fixture application PIDs. Abnormal host exit can leave an application orphan without invalidating absence. **patch** immutable owned application-process capture/reobservation before private deletion. |
+| BH-10 | low | A newest catch-all `route.continue()` bypasses a valid previously installed page/context handler. That can change behavior for a caller composing the exported observer with routing utilities. **patch** unchanged route chaining and a coexistence control while preserving complete-header evidence. |
+| EC-1 | high | Confirmed the fallback census exception exits the outer finally before known cleanup runs. Same root cause as BH-3. **patch**. |
+| EC-2 | high | Normal container IDs are captured only after every readiness wait; an earlier failure lacks their absence evidence/recovery identity. Same session-lifecycle root cause as BH-4. **patch** partial-start capture and explicit unproven cleanup. |
+| EC-3 | medium | `cleanup_private_material` can return with retained material/failed deletion, but only the alternative branch writes persistent recovery identity. A wrapper can then remove the scratch path without that metadata. **patch** persistent identity for every unverified cleanup path. |
+| VG-1 | medium | New AppHost guards have no executable negative cases; the existing topology cases exercise the different supported-read profile. A shared-Redis/reused-registry admission regression would not be detected. **patch** isolated-profile validation cases. |
+| VG-2 | medium | Graph-count observers are checked only for post-cleanup zero. A permanently-zero observer could pass those checks despite populated run state. **patch** real HTTP populated/foreign-run/deleted observations. |
+| VG-3 | medium | New Python negative controls run in the retained manual check executor but are not invoked by the managed lane or normal CI entry points. Validator regressions can escape that entry point. **patch** control execution before private qualification. |
+| VG-4 | medium | Scheduled CI explicitly sets `CI=true` without a shared flag; new default dispatch selects Debug/source, which the repository CI guard rejects. **patch** preserve CI/package selection without changing pins or qualification gates. |
+| VG-5 | high | The layer's read-only probe reproduced success with an additional unprojected source metadata key. Same incomplete-inventory root cause as BH-2; nonempty committed heads must be checked in the reverse direction. **patch**. |
+| BH-2 follow-through | high | Parent revalidation reproduced `allArchived=true` for a two-event archived journal while the corresponding source head was three. Matching identity sets alone cannot prove current archival; a third committed event could restore the Project. **patch** require complete per-Project journal event coverage matching stable source heads, counting non-lifecycle events as well. |
+| BH-9 follow-through | medium | Source confirms the host executable/assembly is `Hexalith.Tenants` / `Hexalith.Tenants.dll`; `Hexalith.Tenants.Server` is its library. Graph-based capture covers observed processes, but the new orphan whitelist uses the library name and misses an uncaptured Tenants host. **patch** the exact executable name with an orphan-census control after the active stable-source run. |
+| BH-2 source-event follow-through | medium | Reviewed run `aa` passed smoke 8 / full 146 / repeat 14 / actual retries 2 but failed the stronger final inventory guard on a committed stream outside the journal. `ProjectsDomainProcessor` and `ProjectProjectionHandler` explicitly persist and skip `IRejectionEvent` records: a positive head alone does not prove creation, and rejection records can also occupy sequences within a created stream. **patch** independently observe bounded source event envelopes, prove rejection-only exclusions, and require complete created-Project event correspondence and archival; unknown, missing, mixed unprojected or unstable histories must fail closed. The failing run is not acceptance evidence. |
+
+Grouped patches: seed-selector compatibility (BH-1); complete source inventory
+(BH-2/VG-5); guaranteed fallback cleanup (BH-3/EC-1); per-session partial-start
+absence (BH-4/EC-2); explicit private security (BH-5); isolated-profile negative
+admission coverage (VG-1); incompatible mode isolation (BH-6);
+serialized redaction (BH-7); full collection (BH-8); application absence (BH-9);
+observer coexistence (BH-10); persistent recovery metadata (EC-3); populated
+graph-count coverage (VG-2); managed negative-control entry point (VG-3); and
+CI/package dispatch (VG-4). No intent gap, specification re-derivation, deferred
+ledger edit, dependency update or unrelated revert is authorized or required.
+
 ## Design Notes
 
 The test host is a runner-owned compatibility fixture, not a replacement sibling implementation. AppHost may launch role-specific instances under the sibling app identities only when the explicit live-fixture profile is enabled; seed/reset operations remain scoped by run identity and expose metadata required by Projects, never content payloads.
@@ -467,3 +520,161 @@ mapped-command wrapper and its selected preparation environment. It excludes
 tokens, passwords, private keys, browser session state and raw Aspire resource
 descriptions. Full live persisted state and disabled-profile startup remain
 unverified; this continuation does not complete the story.
+
+## Verified Fixture Provisioning — 2026-11-14
+
+**Outcome:** Implementation and acceptance verification passed; independent workflow
+review is next. The session began at `91d998fb6ec56b886c641dc9e091820890c9c14b`.
+Both original baseline identifiers and every earlier attempt above are preserved.
+All changes remain uncommitted.
+
+The default managed runner now owns fresh Redis, real HTTPS Keycloak, private
+discovery, generic SDK compiled catalog composition and Platform mTLS/workload
+authority. It enrolls actual EventStore, Tenants, Projects and worker executables
+and creates fresh source authority through authenticated commands. Shared
+tenants and their roles are untouched. The supported-read profile retains its
+real-owner exclusion; the explicitly selected shared compatibility lane retains
+its enrollment/package prerequisites.
+
+The private fixture lane uses supported inline delivery with background projection
+workers suppressed, and serializes its legacy journal callbacks with sidecar
+`AppMaxConcurrency=1`. Actual owned process observations verify those settings.
+Two real browser workers remain enabled. These settings establish deterministic
+fixture coverage, not production background-retry or parallel-callback qualification.
+API fixtures use a 30-second transport default independently of 15-second UI
+actions, preserve explicit shorter deadlines, and retain the 60-second test bound.
+Real successful confirmations at 15,069 and 15,393 ms demonstrate the inherited
+UI timeout issue; source child command statuses are `Completed`. No server deadline
+or application outcome assertion was weakened.
+
+**Exact executed entry points from the repository root:**
+
+```bash
+run-with-temp python3 tools/qualification/run_live_project_fixtures.py --timeout 600 --evidence /tmp/projects-live-fixtures-isolated-full-20261114-z
+run-with-temp python3 /tmp/projects-live-fixtures-final-focused-20261114-b/execute.py
+```
+
+The retained executor and command records contain the exact supported source
+preparation environment and individual commands. The final solution build uses
+that mapping and disposable Debug artifacts; it does not initialize nested
+submodules, update dependency pins, bypass a build gate or use CI/package mode.
+
+| Check | Final result |
+| --- | --- |
+| Complete Chromium matrix, two workers | **145 passed**, 0 failed/skipped; 8.5 minutes. |
+| Authenticated startup/session smoke | **8 passed**, 0 failed/skipped. |
+| Repeat isolation, two workers | **14 passed**, 0 failed/skipped. |
+| Actual retries with repeats | **2 final successes** after two deliberate first-attempt failures; both receipts prove changed worker/retry identities, previous Project archival and sibling removal. |
+| Physical persisted Project end-state | **69 created, 69 archived**, watermark 250; two stable provider rereads and exact per-Project source metadata coverage. |
+| Sibling/control end-state | **16 HTTP 200 observations**, each reporting zero remaining graphs across all four phases and roles. |
+| Ordinary startup, every fixture profile disabled | Actual resource graph and exact Projects process environment verified; no fixture ingress, sibling host or injected sibling binding. |
+| Exact owned cleanup | AppHosts, sidecars, private containers and ordinary Keycloak removed; immutable-ID absence and private-material removal verified; preexisting resources preserved. |
+| Final mapped Debug solution build | Exit 0, **0 warnings/errors**. |
+| Final individual integration / catalog guards | **110 / 20 passed**, 0 failed/skipped. |
+| Final helper contracts / Python controls | **37 / 170 passed**, 0 failed/skipped. |
+| TypeScript, shell/Python syntax, diff checks | Passed. |
+
+Phase totals are separate executions; smoke and helper cases overlap the full
+matrix. The retry phase intentionally exercises failures and reports its final
+successes separately from the zero-failure full collection.
+
+**Matrix audit:** First-run source authority, authenticated catalog readiness and
+outer list HTTP 200 ran in native setup/global setup. Existing-authority recovery,
+terminal rejection, bounded polling and unchanged-token postconditions ran in
+`tenant-access-readiness.spec.ts`; the earlier persisted recovery proof remains
+separately scoped above. Identity factory cases, full two-worker execution,
+repeats and actual retries cover disjointness. Lifecycle, cleanup-diagnostics and
+attachment-storage cases cover reverse compensation and preservation of primary
+failures; actual retry receipts additionally observe prior archival/removal.
+The actual ordinary startup covers disabled-profile isolation, alongside native
+topology and exclusive-profile guard cases. No covering case was skipped.
+
+Only the three new C# files changed after live verification, normalizing line
+endings to the repository-required CRLF. Byte-level fingerprints prove unchanged
+normalized source text. The complete mapped build/check refresh passed afterward.
+The runtime proof is bound to its retained live source manifest; the final check
+manifest and formatting delta make that distinction explicit.
+
+Earlier exploration exposed a legacy journal first-create race, unbounded browser
+header observations, fixture latency matching an application deadline, an
+unconfigured clipboard-denial expectation, an incorrect trace display label,
+inherited UI timeouts, Redis CLI version incompatibility and nested reporter
+self-probes. The final implementation/controls address those fixture/harness
+boundaries. Browser security observations use complete raw headers and continue
+every observed request unchanged; they never provision or mock API state.
+Retained diagnostics redact credential headers. OTEL/circuit capture limits and
+missing telemetry are explicit and never imply complete coverage. The earlier
+folder-timeout internal cause remains unobserved. Package/release and production
+retry/concurrency qualification remain outside this local fixture acceptance.
+
+Retained evidence: [verification summary](evidence/live-e2e-fixture-provisioning-20261114-final/verification-summary.json),
+[complete live receipts and commands](evidence/live-e2e-fixture-provisioning-20261114-final/live/run.json),
+[full matrix XML](evidence/live-e2e-fixture-provisioning-20261114-final/live/full.xml),
+[repeat XML](evidence/live-e2e-fixture-provisioning-20261114-final/live/repeat.xml),
+[actual retry XML](evidence/live-e2e-fixture-provisioning-20261114-final/live/retry.xml),
+[final mapped check records](evidence/live-e2e-fixture-provisioning-20261114-final/focused/summary.json),
+[exact mapped executor](evidence/live-e2e-fixture-provisioning-20261114-final/focused/execute.py),
+[formatting-only delta](evidence/live-e2e-fixture-provisioning-20261114-final/post-live-formatting.json),
+and [artifact fingerprints](evidence/live-e2e-fixture-provisioning-20261114-final/artifact-manifest.json).
+Source manifests, sanitized logs, native XML, writer-cutover receipts and bounded
+proposal timing/command observations are retained beside those files. No tokens,
+passwords, private keys, browser sessions or raw Aspire descriptions are retained.
+
+## Reviewed Completion — 2026-11-14
+
+**Outcome:** Done. This section and the updated verification summary supersede the
+pre-review results above. All 18 independent findings and three follow-through
+corrections in the triage log are patched and verified; nothing was deferred.
+Both original baseline identifiers and earlier attempts remain unchanged.
+The user's instruction to leave work uncommitted takes precedence over the
+workflow's default commit step; no staging, commit or push was performed.
+
+**Exact executed final entry points:**
+
+```bash
+run-with-temp python3 tools/qualification/run_live_project_fixtures.py --timeout 600 --evidence /tmp/projects-live-fixtures-reviewed-20261114-ab
+run-with-temp python3 /tmp/projects-live-fixtures-reviewed-focused-20261114/execute.py
+```
+
+| Check | Reviewed result |
+| --- | --- |
+| Full Chromium matrix, two workers | **146 passed**, 0 failed/skipped. |
+| Smoke / repeat / actual retries | **8 / 14 / 2 final successes**; retries follow two deliberate first-attempt failures and independently prove prior Project archival, sibling removal and disjoint identities. |
+| Complete physical source and journal proof | **69 created Projects, all archived**; 246 state events match source type/global position, with complete ordered source histories and stable bytes/versions across independent rereads. |
+| Additional committed source stream | Exactly **one `ProjectCreationRejected` event**, independently proven rejection-only; no created Project is excluded from archival coverage. All 70 source metadata heads are accounted for. |
+| Sibling/control cleanup | **16 HTTP 200 observations**, all graph counts zero. Native HTTP controls additionally observe populated, foreign-run and removed graphs. |
+| Ordinary startup with every fixture profile disabled | Actual resource graph and Projects process bindings verified; no fixture ingress or sibling injection. |
+| Owned teardown | Both sessions prove exact application, sidecar and container absence; private material removed and preexisting resources preserved. |
+| Mapped Debug solution build | Passed, **0 warnings/errors**. |
+| Individual integration / catalog checks | **125 / 20 passed**, 0 failed/skipped. |
+| TypeScript contracts / Python controls | **38 / 198 passed**, 0 failed/skipped. |
+| Typecheck, shell/Python syntax and diff checks | Passed. |
+
+The live and focused source manifests are identical, and each remained stable
+through its verification job. All child test groups exited and both disposable
+verification workspaces were removed. No implementation source changed afterward.
+
+Review fixes cover selector compatibility, explicit private-profile admission,
+inherited-mode isolation, complete source inventory, unconditional recovery,
+session-bound partial-start cleanup, exact Tenants orphan discovery, durable
+recovery identity, XML-preserving redaction, rejection of focused collections,
+route-handler coexistence, positive graph observations, managed negative controls,
+and preserved CI/package dispatch. Source proof rejects missing, unknown,
+malformed, gapped, mismatched or unstable histories; rejection events within a
+created stream are counted separately and cannot conceal missing state events.
+The failed reviewed attempt `aa` is retained as a failed qualification attempt,
+not passing acceptance evidence.
+
+The local Debug/source qualification boundaries above still apply: background
+projection workers remain suppressed and private journal callbacks serialized.
+This does not qualify production background retries, parallel callbacks or a
+released package cohort. Telemetry coverage remains explicitly bounded.
+
+Final evidence: [verification summary](evidence/live-e2e-fixture-provisioning-20261114-final/verification-summary.json),
+[reviewed live receipt](evidence/live-e2e-fixture-provisioning-20261114-final/reviewed-live/run.json),
+[full matrix XML](evidence/live-e2e-fixture-provisioning-20261114-final/reviewed-live/full.xml),
+[reviewed build and checks](evidence/live-e2e-fixture-provisioning-20261114-final/reviewed-focused/summary.json),
+[exact retained executor](evidence/live-e2e-fixture-provisioning-20261114-final/reviewed-focused/execute.py),
+[focused source-proof controls](evidence/live-e2e-fixture-provisioning-20261114-final/review-targeted/rejection-source-summary.json),
+[failed attempt receipt](evidence/live-e2e-fixture-provisioning-20261114-final/reviewed-attempt-aa.json),
+and [artifact fingerprints](evidence/live-e2e-fixture-provisioning-20261114-final/artifact-manifest.json).

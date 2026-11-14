@@ -1,0 +1,33 @@
+<testsuites id="" name="" tests="8" failures="0" skipped="0" errors="0" time="10.613958">
+<testsuite name="live-apphost-startup.spec.ts" timestamp="2026-11-14T12:03:04.562Z" hostname="chromium" tests="3" failures="0" skipped="0" time="0.783" errors="0">
+<testcase name="Live AppHost startup › serves the protected UI, Projects API, and profile-scoped fixture control resource" classname="live-apphost-startup.spec.ts" time="0.295">
+</testcase>
+<testcase name="Live AppHost startup › resolves every live endpoint to a distinct dynamically assigned origin" classname="live-apphost-startup.spec.ts" time="0.108">
+</testcase>
+<testcase name="Live AppHost startup › rejects anonymous browser and fixture-graph access before any session exists" classname="live-apphost-startup.spec.ts" time="0.38">
+</testcase>
+</testsuite>
+<testsuite name="projects-authentication.spec.ts" timestamp="2026-11-14T12:03:04.562Z" hostname="chromium" tests="5" failures="0" skipped="0" time="8.165" errors="0">
+<testcase name="Projects browser authentication › persists an HttpOnly server session across reload without browser-readable tokens" classname="projects-authentication.spec.ts" time="0.31">
+</testcase>
+<testcase name="Projects browser authentication › challenges a missing session through the real Keycloak authorization-code flow" classname="projects-authentication.spec.ts" time="0.914">
+</testcase>
+<testcase name="Projects browser authentication › challenges again through Keycloak when the server-session cookie is invalidated" classname="projects-authentication.spec.ts" time="0.69">
+</testcase>
+<testcase name="Projects browser authentication › renders protected Project data through server-side token relay only" classname="projects-authentication.spec.ts" time="6.118">
+<system-out>
+<![CDATA[Polling: Waiting for projects:seeded creation to be accepted
+✅ Waiting for projects:seeded creation to be accepted - completed successfully after 1 iterations
+Polling: Waiting for project project-17b239559ee51eb2f3cf8a3b8ab58cd69b1e25ad to converge in the read model
+✅ Waiting for project project-17b239559ee51eb2f3cf8a3b8ab58cd69b1e25ad to converge in the read model - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded before archive cleanup
+✅ Waiting for projects:seeded before archive cleanup - completed successfully after 1 iterations
+Polling: Waiting for projects:seeded archive convergence
+✅ Waiting for projects:seeded archive convergence - completed successfully after 1 iterations
+]]>
+</system-out>
+</testcase>
+<testcase name="Projects browser authentication › keeps the Projects API closed to anonymous callers" classname="projects-authentication.spec.ts" time="0.133">
+</testcase>
+</testsuite>
+</testsuites>

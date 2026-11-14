@@ -54,11 +54,11 @@ test.describe('live fixture lifecycle', () => {
     const ledger = new CleanupLedger();
     try {
       await setupWithReverseCleanup(testInfo, 'manual-live-fixture-cleanup', ledger, async () => {
-        await createLiveFixtureGraph(control, graph);
         ledger.register({
           role: 'live-fixtures:manual',
           run: async () => (await deleteLiveFixtureGraph(control, graph.graphId)).attempts,
         });
+        await createLiveFixtureGraph(control, graph);
       });
 
       const cleanup = await ledger.runReverse();

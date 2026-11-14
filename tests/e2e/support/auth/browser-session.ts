@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext, Page, Request, Route } from '@playwright/test';
 
 /**
  * Live Chromium storage state written by global setup: the UI-origin HttpOnly server-session cookies,
@@ -72,14 +72,68 @@ export function assertServerOnlySession(exposure: BrowserSessionExposure, source
   }
 }
 
-/** Observes only traffic counts; never records bearer values, request bodies or credential URLs. */
-export function observeBrowserTraffic(page: Page): { settle: () => Promise<{ authorizationHeaders: number; tokenBearingUrls: number }> } {
-  const counts = { authorizationHeaders: 0, tokenBearingUrls: 0 };
-  const pending: Promise<void>[] = [];
-  page.on('request', request => {
+/** Observes complete request headers without retaining their values; incomplete observations fail closed. */
+export async function observeBrowserTraffic(page: Page, apiUrl?: string, timeoutMs = 5_000): Promise<{
+  settle: () => Promise<{ apiOriginRequests: number; authorizationHeaders: number; tokenBearingUrls: number }>;
+}> {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('[browser-traffic] observation deadline must be positive.');
+  const apiOrigin = apiUrl ? new URL(apiUrl).origin : undefined;
+  const counts = { apiOriginRequests: 0, authorizationHeaders: 0, tokenBearingUrls: 0 };
+  const requests: Request[] = [];
+  const continuations: Array<{ complete: boolean; failed: boolean; promise: Promise<void> }> = [];
+  const continueUnchanged = (route: Route) => {
+    const continuation = { complete: false, failed: false, promise: Promise.resolve() };
+    continuation.promise = route.fallback().then(() => { continuation.complete = true; }, () => {
+      continuation.complete = true; continuation.failed = true;
+    });
+    continuations.push(continuation);
+    return continuation.promise;
+  };
+  // Chromium exposes complete raw headers at this supported request-paused seam even for
+  // pending fetches whose response has not arrived. Fall through earlier handlers unchanged;
+  // this observes security properties and never supplies fixture responses or state.
+  await page.route('**/*', continueUnchanged);
+  const observe = (request: Request) => {
     const url = new URL(request.url());
+    if (url.origin === apiOrigin) counts.apiOriginRequests++;
     if (/(?:^|[?#&])(?:access_token|id_token|refresh_token)=/.test(`${url.search}${url.hash}`)) counts.tokenBearingUrls++;
-    pending.push(request.allHeaders().then(headers => { if (headers.authorization) counts.authorizationHeaders++; }, () => undefined));
-  });
-  return { settle: async () => { await Promise.all(pending); return counts; } };
+    requests.push(request);
+  };
+  page.on('request', observe);
+  return { settle: async () => {
+    // Freeze the observed request set once the page is ready. A later SignalR request must not
+    // keep extending observation, and a missing headers response can never stand in for zero.
+    page.off('request', observe);
+    const observedContinuations = [...continuations];
+    await page.unroute('**/*', continueUnchanged);
+    if (!requests.length) throw new Error('[browser-traffic] no request headers were observed.');
+    // Read complete headers after navigation has settled, rather than starting protocol header
+    // requests while the authorization-code redirect chain is still replacing documents.
+    const pending = requests.map(request => {
+      const observation = { complete: false, failed: false, promise: Promise.resolve() };
+      observation.promise = request.allHeaders().then(headers => {
+        if (Object.keys(headers).some(key => key.toLowerCase() === 'authorization')) counts.authorizationHeaders++;
+        observation.complete = true;
+      }, () => { observation.failed = true; observation.complete = true; });
+      return observation;
+    });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        Promise.all([...pending, ...observedContinuations].map(item => item.promise)),
+        new Promise<void>(resolve => { timer = setTimeout(resolve, timeoutMs); }),
+      ]);
+      const unresolved = pending.filter(item => !item.complete).length;
+      const failed = pending.filter(item => item.failed).length;
+      const continuationFailures = observedContinuations.filter(item => item.failed).length;
+      const pendingContinuations = observedContinuations.filter(item => !item.complete).length;
+      if (unresolved || failed || continuationFailures || pendingContinuations) {
+        const types = requests.filter((_request, index) => !pending[index]?.complete).map(request => request.resourceType()).sort();
+        throw new Error(`[browser-traffic] incomplete header observations: unresolved=${unresolved}, failed=${failed}; continuationFailures=${continuationFailures}, pendingContinuations=${pendingContinuations}; resourceTypes=${types.join(',')}.`);
+      }
+      return counts;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  } };
 }

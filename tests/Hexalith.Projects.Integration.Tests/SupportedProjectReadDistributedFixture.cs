@@ -76,7 +76,9 @@ internal sealed partial class SupportedProjectReadDistributedFixture : IDisposab
         string? configuration = Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_CONFIG");
         string? endpoints = Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_ENDPOINTS");
         Assert.True(configuration is not null && endpoints is not null, "Run the managed supported-read launcher; missing owned resources cannot qualify.");
-        _configuration = JsonDocument.Parse(File.ReadAllBytes(configuration!)).RootElement.GetProperty("Projects").GetProperty("SupportedReads").Clone();
+        JsonElement profiles = JsonDocument.Parse(File.ReadAllBytes(configuration!)).RootElement.GetProperty("Projects");
+        _configuration = profiles.GetProperty(Environment.GetEnvironmentVariable("PROJECTS_ISOLATED_LIVE_FIXTURES") == "1"
+            ? "IsolatedLiveFixtures" : "SupportedReads").Clone();
         _endpoints = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllBytes(endpoints!))!;
         _userKey.ImportFromPem(File.ReadAllText(Setting("UserKeyPath")));
     }
@@ -1791,6 +1793,16 @@ internal sealed partial class SupportedProjectReadDistributedFixture : IDisposab
         var values = keys.Length == 0 ? new Dictionary<string, SupportedProjectReadStateSnapshot?>()
             : await ReadSeedDeliveryStatesAsync(keys, cancellation).ConfigureAwait(false);
         string[] reobserved = await KeysAsync().ConfigureAwait(false);
+        if (values.Values.Any(value => value is null) || !keys.SequenceEqual(reobserved, StringComparer.Ordinal))
+        {
+            await File.AppendAllTextAsync(Path.Combine(Evidence, "fresh-cutover-inventory-observations.jsonl"), JsonSerializer.Serialize(new
+            {
+                firstKeyCount = keys.Length, finalKeyCount = reobserved.Length,
+                missingKeySha256 = values.Where(pair => pair.Value is null).Select(pair => Digest(pair.Key)).ToArray(),
+                removedKeySha256 = keys.Except(reobserved, StringComparer.Ordinal).Select(Digest).ToArray(),
+                addedKeySha256 = reobserved.Except(keys, StringComparer.Ordinal).Select(Digest).ToArray(),
+            }, Json) + Environment.NewLine, cancellation).ConfigureAwait(false);
+        }
         Require(values.Values.All(value => value is not null) && keys.SequenceEqual(reobserved, StringComparer.Ordinal),
             "Fresh cutover delivery inventory changed or has missing state.");
         return values.ToDictionary(pair => pair.Key, pair => pair.Value!, StringComparer.Ordinal);

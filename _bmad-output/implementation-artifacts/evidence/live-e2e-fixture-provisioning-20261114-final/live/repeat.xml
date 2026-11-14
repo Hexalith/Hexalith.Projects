@@ -1,0 +1,44 @@
+<testsuites id="" name="" tests="14" failures="0" skipped="0" errors="0" time="4.669685">
+<testsuite name="live-fixtures-lifecycle.spec.ts" timestamp="2026-11-14T12:11:49.628Z" hostname="chromium" tests="7" failures="0" skipped="0" time="1.706" errors="0">
+<testcase name="live fixture lifecycle › exposes the exact run-scoped graph seeded for this worker" classname="live-fixtures-lifecycle.spec.ts" time="0.297">
+</testcase>
+<testcase name="live fixture lifecycle › manual graph cleanup is reverse-ordered, typed, and isolated from the worker graph" classname="live-fixtures-lifecycle.spec.ts" time="0.32">
+</testcase>
+<testcase name="live fixture lifecycle › rejects unbounded or path-escaping graph metadata without echoing it" classname="live-fixtures-lifecycle.spec.ts" time="0.284">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › runs steps newest first and records thrown steps as role-only failures" classname="live-fixtures-lifecycle.spec.ts" time="0.2">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › preserves the primary failure and fails a passing test on incomplete cleanup" classname="live-fixtures-lifecycle.spec.ts" time="0.202">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › rethrows the original setup failure after reverse compensation" classname="live-fixtures-lifecycle.spec.ts" time="0.204">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › attachment storage failure preserves the exact primary setup failure" classname="live-fixtures-lifecycle.spec.ts" time="0.199">
+<system-err>
+<![CDATA[[live-cleanup] diagnostic attachment unavailable: failed-storage-setup; projects:primary:503.
+[live-cleanup] diagnostic attachment unavailable: failed-storage; folders:none.
+]]>
+</system-err>
+</testcase>
+</testsuite>
+<testsuite name="live-fixtures-lifecycle.spec.ts" timestamp="2026-11-14T12:11:49.628Z" hostname="chromium" tests="7" failures="0" skipped="0" time="1.462" errors="0">
+<testcase name="live fixture lifecycle › exposes the exact run-scoped graph seeded for this worker" classname="live-fixtures-lifecycle.spec.ts" time="0.272">
+</testcase>
+<testcase name="live fixture lifecycle › manual graph cleanup is reverse-ordered, typed, and isolated from the worker graph" classname="live-fixtures-lifecycle.spec.ts" time="0.282">
+</testcase>
+<testcase name="live fixture lifecycle › rejects unbounded or path-escaping graph metadata without echoing it" classname="live-fixtures-lifecycle.spec.ts" time="0.225">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › runs steps newest first and records thrown steps as role-only failures" classname="live-fixtures-lifecycle.spec.ts" time="0.162">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › preserves the primary failure and fails a passing test on incomplete cleanup" classname="live-fixtures-lifecycle.spec.ts" time="0.171">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › rethrows the original setup failure after reverse compensation" classname="live-fixtures-lifecycle.spec.ts" time="0.175">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › attachment storage failure preserves the exact primary setup failure" classname="live-fixtures-lifecycle.spec.ts" time="0.175">
+<system-err>
+<![CDATA[[live-cleanup] diagnostic attachment unavailable: failed-storage-setup; projects:primary:503.
+[live-cleanup] diagnostic attachment unavailable: failed-storage; folders:none.
+]]>
+</system-err>
+</testcase>
+</testsuite>
+</testsuites>

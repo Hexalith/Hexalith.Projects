@@ -22,7 +22,9 @@ internal static class ConversationsFixtureEndpoints
     private const string TenantHeader = "X-Tenant-Id";
 
     /// <summary>Gets the bounded latency of the unavailable conversation read.</summary>
-    public static readonly TimeSpan UnavailableReadDelay = TimeSpan.FromSeconds(2);
+    // Leave room for authorization and query composition inside the real endpoint's two-second
+    // deadline while keeping a user-observable loading state before safe unavailable metadata.
+    public static readonly TimeSpan UnavailableReadDelay = TimeSpan.FromMilliseconds(500);
 
     private static readonly ConversationFixtureTrust Current = new("Current", "current", "No action required.");
     private static readonly ConversationFixtureTrust Stale = new("Stale", "stale_threshold_exceeded", "Retry after the read model catches up.");

@@ -988,7 +988,8 @@ class SupportedReadRestartDeadlineControls(unittest.TestCase):
         command = LAUNCHER.regression_test_command("Integration", assembly, evidence)
         self.assertEqual(command[:4], ["dotnet", str(assembly), "-xml", str(evidence / "integration.xml")])
         self.assertEqual(command[4:], ["-class-", "*SupportedProjectReadDistributedTests",
-                                       "-class-", "*SupportedProjectBrowserSeedTests"])
+                                       "-class-", "*SupportedProjectBrowserSeedTests",
+                                       "-class-", "*IsolatedLiveFixtureSeedTests"])
         server = LAUNCHER.regression_test_command("Server", Path("/owned/Server.dll"), evidence)
         self.assertEqual(server, ["dotnet", "/owned/Server.dll", "-xml", "/owned/evidence/server.xml"])
         with self.assertRaises(ValueError):
@@ -2489,6 +2490,32 @@ class BrowserReviewCorrectionsTests(unittest.TestCase):
                 path = Path(temporary) / name
                 self.browser.write_sanitized_output(path, raw, [*markers, "private-password"])
                 self.assertEqual(path.read_text(), sanitized)
+
+    def test_retained_playwright_failures_redact_confidential_cookie_and_authorization_headers(self):
+        raw = "Call log:\n  - cookie: session=private-session; chunk=private-chunk\n  - Authorization: Basic private-basic\nSet-Cookie: session=private-response\nstatus=503\n"
+        sanitized = self.browser.sanitize_output(raw, [])
+        for marker in ("private-session", "private-chunk", "private-basic", "private-response"):
+            self.assertNotIn(marker, sanitized)
+        self.assertIn("cookie: [redacted-header]", sanitized)
+        self.assertIn("status=503", sanitized)
+
+    def test_xml_redaction_preserves_final_line_markup_and_decodes_escaped_values(self):
+        for raw in ('<failure>Call log:\nCookie: private-cookie</failure>',
+                    '<failure><![CDATA[Call log:\nAuthorization: private-auth]]></failure>'):
+            with self.subTest(raw=raw):
+                sanitized = self.browser.sanitize_output(raw, [])
+                self.assertEqual(ET.fromstring(sanitized).tag, "failure")
+                self.assertNotIn("private-", sanitized)
+                self.assertIn("[redacted-header]", sanitized)
+                self.assertEqual(self.browser.sanitize_output(sanitized, []), sanitized)
+        marker = '<private>&"value'
+        raw = '<failure message="&lt;private&gt;&amp;&quot;value">&lt;private&gt;&amp;"value</failure>'
+        sanitized = self.browser.sanitize_output(raw, [marker])
+        document = ET.fromstring(sanitized)
+        self.assertEqual(document.attrib["message"], "[redacted]")
+        self.assertEqual(document.text, "[redacted]")
+        clean = '<?xml version="1.0"?>\n<failure message="safe"><![CDATA[unchanged]]></failure>'
+        self.assertEqual(self.browser.sanitize_output(clean, []), clean)
 
     def test_standard_keycloak_scopes_keep_real_identity_and_role_mappers(self):
         realm = json.loads((ROOT / "src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json").read_text())
