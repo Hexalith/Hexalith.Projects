@@ -38,6 +38,81 @@ def resources(*names):
     return [{"name": name, "id": container_id(name)} for name in names]
 
 
+class EvaluatedBuildOutputTests(unittest.TestCase):
+    def test_external_artifacts_are_resolved_in_the_selected_debug_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "src/Peer/Peer.csproj"
+            output = root / "disposable/bin/Peer/debug/Peer.dll"
+            assets = root / "disposable/obj/Peer/project.assets.json"
+            for path in (project, output, assets):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("{}")
+            run = Mock(return_value=json.dumps({"Properties": {"TargetPath": str(output), "ProjectAssetsFile": str(assets)}}))
+            self.assertEqual(LAUNCHER.project_build_paths(project, run), (output, assets))
+            run.assert_called_once_with(["dotnet", "msbuild", str(project), "-nologo", "-p:Configuration=Debug",
+                                        "-p:SupportedProjectReadDistributed=true", "-getProperty:TargetPath,ProjectAssetsFile"])
+
+    def test_missing_relative_or_mismatched_outputs_are_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project, target, assets = root / "Peer.csproj", root / "Peer.dll", root / "project.assets.json"
+            target.write_bytes(b"current")
+            assets.write_text("{}")
+            good = {"TargetPath": str(target), "ProjectAssetsFile": str(assets)}
+            for values in (None, {}, {**good, "TargetPath": "Peer.dll"}, {**good, "ProjectAssetsFile": "obj/project.assets.json"},
+                           {**good, "TargetPath": str(root / "Other.dll")}, {**good, "ProjectAssetsFile": str(root / "absent/project.assets.json")},
+                           {**good, "TargetPath": None}, {**good, "Unexpected": "field"}):
+                with self.subTest(values=values), self.assertRaises(RuntimeError):
+                    LAUNCHER.project_build_paths(project, lambda _: json.dumps({"Properties": values}))
+            target.unlink()
+            with self.assertRaises(RuntimeError):
+                LAUNCHER.project_build_paths(project, lambda _: json.dumps({"Properties": good}))
+
+    def test_source_proof_uses_evaluated_assets_and_binaries_despite_stale_default_outputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "references").mkdir()
+            probe = root / "src/Probe/Probe.csproj"
+            probe.parent.mkdir(parents=True)
+            probe.write_text("<Project />")
+            source = {"libraries": {"Probe/1.0.0": {"type": "project", "msbuildProject": str(probe)}}}
+            selected = {}
+            names = ["src/Hexalith.Projects.Server", "src/Hexalith.Projects.Workers", "src/Hexalith.Projects.AppHost",
+                     "tests/Hexalith.Projects.ReadAuthority", "references/Hexalith.EventStore/src/Hexalith.EventStore",
+                     "references/Hexalith.Tenants/src/Hexalith.Tenants", *("references/Hexalith.Folders/src/" + name
+                         for name in ("Hexalith.Folders", "Hexalith.Folders.Server", "Hexalith.Folders.Workers"))]
+            for name in names:
+                project = root / name
+                (project / "obj").mkdir(parents=True)
+                (project / (project.name + ".csproj")).write_text("<Project />")
+                (project / "obj/project.assets.json").write_text("stale-unreadable-assets")
+                output = root / "fresh" / project.name
+                output.mkdir(parents=True)
+                target, assets = output / (project.name + ".dll"), output / "project.assets.json"
+                target.write_bytes(b"fresh-native-assembly")
+                assets.write_text(json.dumps({**source, "project": {"restore": {"projectPath": str(project / (project.name + ".csproj"))}}}))
+                selected[project.name] = target, assets
+            resolver = lambda project, run: selected[project.stem]
+            with patch.object(LAUNCHER, "ROOT", root), patch.object(LAUNCHER, "project_build_paths", side_effect=resolver):
+                proof = LAUNCHER.verify_source_references(Mock())
+                self.assertEqual(set(proof), set(selected))
+                for name, value in proof.items():
+                    self.assertEqual(value["targetPath"], str(selected[name][0]))
+                    self.assertEqual(value["assetsSha256"], hashlib.sha256(selected[name][1].read_bytes()).hexdigest())
+                    self.assertEqual(value["runtimeFiles"], 1)
+                first = selected["Hexalith.Projects.Server"][1]
+                original = first.read_text()
+                first.write_text(selected["Hexalith.Projects.Workers"][1].read_text())
+                with self.assertRaisesRegex(RuntimeError, "owning source project"):
+                    LAUNCHER.verify_source_references(Mock())
+                changed = json.loads(original)
+                changed["libraries"]["Probe/1.0.0"]["type"] = "package"
+                first.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(RuntimeError, "package fallback"):
+                    LAUNCHER.verify_source_references(Mock())
+
+
 class TenantAccessRecoveryEvidenceTests(unittest.TestCase):
     def evidence(self):
         def operation(sequence, prior, version, identity):
@@ -863,7 +938,7 @@ class SupportedReadProjectsRestartControls(unittest.TestCase):
 
     def test_actual_server_identity_requires_namespace_private_storage_and_development(self):
         project = LAUNCHER.ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
-        binary = project.parent / "bin/Debug/net11.0/Hexalith.Projects.Server"
+        binary = Path(tempfile.gettempdir()) / "native-artifacts/bin/Hexalith.Projects.Server/debug/Hexalith.Projects.Server"
         resource = {"displayName": "projects", "resourceType": "Project", "name": "projects-owned",
                     "properties": {"project.path": str(project), "executable.pid": 201}}
         expected = {"NAMESPACE": "scope", "EventStore__DomainService__AppId": "projects", "XDG_DATA_HOME": "/private/data-projects",
@@ -878,6 +953,7 @@ class SupportedReadProjectsRestartControls(unittest.TestCase):
                     return b"dotnet\0run\0" if path.parts[2] == "201" else str(binary).encode()
                 return b"synthetic-binary"
             with self.subTest(changed=changed), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(LAUNCHER, "project_build_paths", return_value=(Path(str(binary) + ".dll"), project.parent / "obj/project.assets.json")))
                 stack.enter_context(patch.object(LAUNCHER, "process_start", return_value="100"))
                 stack.enter_context(patch.object(Path, "readlink", autospec=True, side_effect=lambda path: Path("/tools/dotnet") if path.parts[2] == "201" else binary))
                 stack.enter_context(patch.object(Path, "read_text", autospec=True, side_effect=lambda path: "301" if path.parts[2] == "201" else ""))
@@ -922,7 +998,8 @@ class SupportedReadProjectsRestartControls(unittest.TestCase):
                       {"resources": [{**resource, "properties": {"project.path": "/foreign/Server.csproj", "executable.pid": 201}}]}):
             with self.subTest(graph=graph), self.assertRaises(RuntimeError):
                 LAUNCHER.projects_process_identity({}, graph)
-        with patch.object(LAUNCHER, "process_start", return_value="100"), patch.object(Path, "readlink", side_effect=PermissionError()), self.assertRaises(PermissionError):
+        with patch.object(LAUNCHER, "project_build_paths", return_value=(project.parent / "bin/Peer.dll", project.parent / "obj/project.assets.json")), \
+                patch.object(LAUNCHER, "process_start", return_value="100"), patch.object(Path, "readlink", side_effect=PermissionError()), self.assertRaises(PermissionError):
             LAUNCHER.projects_process_identity({}, {"resources": [resource]})
 
 

@@ -9,9 +9,12 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
+using Hexalith.EventStore.Client.Projections;
+using Hexalith.EventStore.Testing.Fakes;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Infrastructure;
+using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Workers;
 using Hexalith.Tenants.Contracts.Events;
 
@@ -123,6 +126,13 @@ public sealed class WorkersSubscriptionHostingTests
 
             acknowledgement.RootElement.GetProperty("status").GetString().ShouldBe("SUCCESS");
             acknowledgement.RootElement.GetProperty("processingResult").GetString().ShouldBe("Processed");
+
+            ProjectTenantAccessProjection saved = (await new DaprProjectTenantAccessProjectionStore(
+                app.Services.GetRequiredService<IReadModelStore>())
+                .GetAsync("tenant-a", TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldNotBeNull();
+            saved.TenantId.ShouldBe("tenant-a");
+            saved.Watermark.ShouldBe(1);
+            saved.ProcessedMessages.Keys.ShouldContain("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
         }
         finally
         {
@@ -140,6 +150,7 @@ public sealed class WorkersSubscriptionHostingTests
 
         // Registered first: the Dapr infrastructure registrations are TryAdd, so the fake replaces the sidecar.
         builder.Services.AddSingleton<IProjectsStateStore>(stateStore);
+        builder.Services.AddSingleton<IReadModelStore, InMemoryReadModelStore>();
         builder.Services.AddProjectsTenantEventWorkers();
 
         WebApplication app = builder.Build();

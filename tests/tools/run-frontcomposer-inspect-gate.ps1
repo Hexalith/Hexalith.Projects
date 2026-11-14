@@ -35,10 +35,29 @@ if (-not (Test-Path $cliProject)) {
 }
 
 Write-Host 'frontcomposer-inspect-gate: building and inspecting deterministic Release output with the repo-local CLI.'
+$targetFramework = (& dotnet msbuild $contractsProject -nologo -p:Configuration=Release -getProperty:TargetFramework | Out-String).Trim()
+if ($LASTEXITCODE -ne 0 -or $targetFramework -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$') {
+    throw 'The Contracts target framework could not be resolved from MSBuild.'
+}
+
+# An earlier ordinary build can be up to date without retaining generator output.
+# Emit a fresh set for the exact framework before inspecting it.
+$generatedDirectory = Join-Path $contractsRoot "obj/Release/$targetFramework/generated/HexalithFrontComposer"
+if (Test-Path -LiteralPath $generatedDirectory) {
+    Remove-Item -LiteralPath $generatedDirectory -Recurse -Force
+}
+& dotnet build $contractsProject --configuration Release --framework $targetFramework --no-incremental -m:1 -warnaserror `
+    '-p:EmitCompilerGeneratedFiles=true' `
+    "-p:CompilerGeneratedFilesOutputPath=$generatedDirectory"
+if ($LASTEXITCODE -ne 0) {
+    throw 'The Release Contracts build failed before generated-output inspection.'
+}
+
 & dotnet run --project $cliProject --configuration Release -- `
     inspect `
     --project $contractsProject `
     --configuration Release `
+    --framework $targetFramework `
     --build `
     --fail-on-warning
 

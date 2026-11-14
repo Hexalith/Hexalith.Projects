@@ -857,11 +857,10 @@ def resource_endpoint(graph: dict, resource: str, name: str = "http") -> str:
     return matches[0]
 
 
-def projects_process_identity(owned: dict, graph: dict) -> dict:
+def projects_process_identity(owned: dict, graph: dict, *, run=execute) -> dict:
     """Bind the actual Debug server, not merely Aspire's dotnet run wrapper, to this fixture."""
     matches = [item for item in graph["resources"] if item.get("displayName") == "projects"]
     project = ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
-    binary = project.parent / "bin/Debug/net11.0/Hexalith.Projects.Server"
     if len(matches) != 1 or matches[0].get("resourceType") != "Project":
         raise RuntimeError("Projects resource identity is missing or ambiguous.")
     resource = matches[0]
@@ -872,6 +871,8 @@ def projects_process_identity(owned: dict, graph: dict) -> dict:
     wrapper_start = process_start(wrapper)
     if wrapper_start is None:
         raise RuntimeError("Projects resource launcher is absent.")
+    target, _ = project_build_paths(project, run)
+    binary = target.with_suffix("")
     pending, candidates, seen = [wrapper], [], set()
     while pending:
         pid = pending.pop()
@@ -896,7 +897,7 @@ def projects_process_identity(owned: dict, graph: dict) -> dict:
         raise RuntimeError("Projects server does not belong to this isolated Development fixture.")
     if process_start(wrapper) != wrapper_start or process_start(pid) != started:
         raise RuntimeError("Projects process identity changed during observation.")
-    mode = observe_runtime_modes(graph, owned, apps=("projects",))["projects"]
+    mode = observe_runtime_modes(graph, owned, apps=("projects",), run=run)["projects"]
     if (mode["pid"], mode["startTicks"], mode["wrapperPid"], mode["wrapperStartTicks"]) != (pid, started, wrapper, wrapper_start):
         raise RuntimeError("Projects process changed during runtime mode rebinding.")
     return {"runtimeMode": mode, "resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
@@ -941,7 +942,7 @@ def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observa
         if not owns_current_apphost(owned):
             raise RuntimeError("Projects restart requires the original owned AppHost session.")
     guard()
-    before = projects_process_identity(owned, resource_graph(run))
+    before = projects_process_identity(owned, resource_graph(run), run=run)
     observation["before"] = before
     observation["appHostPid"] = owned["appHostPid"]
     observation["appHostStartTicks"] = owned["appHostStartTicks"]
@@ -949,7 +950,7 @@ def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observa
     observation["stage"] = "stop"
     guard()
     # Re-observe immediately before mutation, refusing an independently replaced server.
-    if projects_process_identity(owned, resource_graph(run)) != before:
+    if projects_process_identity(owned, resource_graph(run), run=run) != before:
         raise RuntimeError("Projects process changed before the owned stop.")
     guard()
     run(["aspire", "resource", "projects", "stop", "--apphost", str(APPHOST), "--non-interactive"], timeout=60)
@@ -966,7 +967,7 @@ def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observa
     run(["aspire", "wait", "projects", "--apphost", str(APPHOST), "--timeout", "120", "--non-interactive"], timeout=135)
     guard()
     graph = resource_graph(run)
-    after = projects_process_identity(owned, graph)
+    after = projects_process_identity(owned, graph, run=run)
     observation["after"] = after
     if any((before[pid], before[start]) == (after[pid], after[start]) for pid, start in
            (("pid", "startTicks"), ("launcherPid", "launcherStartTicks"))):
@@ -979,7 +980,7 @@ def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observa
     guard()
     observation["discovery"] = refresh_owned_endpoints(owned, graph)
     guard()
-    if projects_process_identity(owned, resource_graph(run)) != after:
+    if projects_process_identity(owned, resource_graph(run), run=run) != after:
         raise RuntimeError("Projects process changed during endpoint rediscovery.")
     observation.update({"endpointsRediscovered": True, "completed": True, "stage": "completed"})
 
@@ -1220,7 +1221,23 @@ def safe_log_facts(raw: str) -> dict:
             "nativeStartupFacts": sorted(native)}
 
 
-def verify_source_references() -> dict:
+def project_build_paths(project: Path, run=execute) -> tuple[Path, Path]:
+    """Resolve the evaluated Debug assembly and assets in the same mapped build environment."""
+    result = json.loads(run(["dotnet", "msbuild", str(project), "-nologo", "-p:Configuration=Debug",
+                            "-p:SupportedProjectReadDistributed=true", "-getProperty:TargetPath,ProjectAssetsFile"]))
+    values = result.get("Properties") if isinstance(result, dict) else None
+    if (not isinstance(values, dict) or set(values) != {"TargetPath", "ProjectAssetsFile"}
+            or any(not isinstance(value, str) or not value or not Path(value).is_absolute()
+                   for value in values.values())):
+        raise RuntimeError("The evaluated Debug build paths are missing or invalid.")
+    target, assets = (Path(values[key]).resolve() for key in ("TargetPath", "ProjectAssetsFile"))
+    if (target.name != project.stem + ".dll" or assets.name != "project.assets.json"
+            or not target.is_file() or not assets.is_file()):
+        raise RuntimeError("The evaluated Debug assembly or assets are missing or inconsistent.")
+    return target, assets
+
+
+def verify_source_references(run=execute) -> dict:
     available = {path.stem for repository in [ROOT, *(ROOT / "references").iterdir()] if (repository / "src").is_dir()
                  for path in (repository / "src").rglob("*.csproj")}
     projects = [ROOT / "src/Hexalith.Projects.Server", ROOT / "src/Hexalith.Projects.Workers",
@@ -1229,14 +1246,18 @@ def verify_source_references() -> dict:
                 *(ROOT / ("references/Hexalith.Folders/src/" + name) for name in ("Hexalith.Folders", "Hexalith.Folders.Server", "Hexalith.Folders.Workers"))]
     observed = {}
     for project in projects:
-        assets = json.loads((project / "obj/project.assets.json").read_text())
+        target, assets_path = project_build_paths(project / (project.name + ".csproj"), run)
+        assets = json.loads(assets_path.read_text())
+        restore = assets.get("project", {}).get("restore", {})
+        owner = restore.get("projectPath")
+        if (not isinstance(owner, str) or not Path(owner).is_absolute()
+                or Path(owner).resolve() != (project / (project.name + ".csproj")).resolve()):
+            raise RuntimeError("Evaluated assets do not identify their owning source project: " + project.name)
         selected = {name.rsplit("/", 1)[0]: item["type"] for name, item in assets["libraries"].items()
                     if name.rsplit("/", 1)[0] in available}
         if not selected or any(kind != "project" for kind in selected.values()):
             raise RuntimeError("A live host contains a root-available Hexalith package fallback: " + project.name)
-        output = project / "bin/Debug/net11.0"
-        if not (output / (project.name + ".dll")).is_file():
-            raise RuntimeError("A live Debug output is missing: " + project.name)
+        output = target.parent
         runtime_files = {str(path.relative_to(output)): hashlib.sha256(path.read_bytes()).hexdigest()
                          for path in output.rglob("*") if path.is_file()
                          and (path.suffix == ".dll" or path.name.endswith((".deps.json", ".runtimeconfig.json")))}
@@ -1253,7 +1274,8 @@ def verify_source_references() -> dict:
                 raise RuntimeError("A source dependency coordinate is ambiguous.")
             source_projects[module] = str(path)
         observed[project.name] = {"rootAvailableReferences": len(selected), "allSourceProjects": True, "sourceProjects": source_projects,
-                                  "assetsSha256": hashlib.sha256((project / "obj/project.assets.json").read_bytes()).hexdigest(),
+                                  "targetPath": str(target), "assetsPath": str(assets_path),
+                                  "assetsSha256": hashlib.sha256(assets_path.read_bytes()).hexdigest(),
                                   "runtimeFiles": len(runtime_files),
                                   "runtimeFilesSha256": hashlib.sha256(json.dumps(runtime_files, sort_keys=True).encode()).hexdigest()}
     return observed
@@ -1772,7 +1794,7 @@ def source_dependency_graph(observations: dict) -> dict:
     return result
 
 
-def observe_runtime_modes(graph: dict, owned: dict, *, apps=None) -> dict:
+def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -> dict:
     """Read finite options only from each exact owned native server, preserving its process identity."""
     result = {}
     for app in (RUNTIME_PROJECTS if apps is None else apps):
@@ -1786,7 +1808,8 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None) -> dict:
         if type(wrapper) is not int or properties.get("project.path") != str(project) or process_start(wrapper) is None:
             raise RuntimeError("A native scenario peer is not its actual source project.")
         before = process_start(wrapper)
-        binary = project.parent / "bin/Debug/net11.0" / project.stem
+        target, _ = project_build_paths(project, run)
+        binary = target.with_suffix("")
         pending, candidates, seen = [wrapper], [], set()
         while pending:
             pid = pending.pop()
@@ -2597,7 +2620,7 @@ def _main() -> int:
         ownership_path = private / "apphost-session.json"
         ownership_path.write_text(json.dumps(owned_apphost))
         os.chmod(ownership_path, 0o600)
-        report["liveHostSourceReferences"] = verify_source_references()
+        report["liveHostSourceReferences"] = verify_source_references(run)
         report["nestedOwnerResiliencySha256"] = hashlib.sha256((private / "components/owner-resiliency.yaml").read_bytes()).hexdigest()
         report["projectsStateResiliencySha256"] = hashlib.sha256((private / "components-projects/projects-resiliency.yaml").read_bytes()).hexdigest()
         for resource in ("supported-read-authority", "tenants", "eventstore", "projects", "projects-workers", "folders", "folders-workers",
@@ -2613,7 +2636,7 @@ def _main() -> int:
         report["discovery"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
         infrastructure = json.loads(capture_path.read_text())
         report["runtimeConfigurationSha256"] = hashlib.sha256(json.dumps(graph, sort_keys=True).encode()).hexdigest()
-        report["runtimeModes"] = observe_runtime_modes(graph, owned_apphost)
+        report["runtimeModes"] = observe_runtime_modes(graph, owned_apphost, run=run)
         report["resourceStates"] = [{"name": r.get("displayName"), "state": r.get("state"), "health": r.get("healthStatus")}
                                     for r in graph["resources"] if not r.get("displayName", "").startswith("supported-reads-")]
         report["endpointNames"] = {r.get("displayName"): [url.get("name") for url in r.get("urls", [])]
@@ -2696,7 +2719,7 @@ def _main() -> int:
         report["testAssemblyUnchanged"] = True
         if source_manifest() != inputs:
             raise RuntimeError("Source inputs changed during verification; run again against stable sources.")
-        if verify_source_references() != report["liveHostSourceReferences"]:
+        if verify_source_references(run) != report["liveHostSourceReferences"]:
             raise RuntimeError("Live source-reference assets or runtime binaries changed during verification.")
         report["matrixCompleted"] = not args.browser and args.scenario != RECOVERY_SCENARIO
         report["browserMatrixCompleted"] = args.browser
