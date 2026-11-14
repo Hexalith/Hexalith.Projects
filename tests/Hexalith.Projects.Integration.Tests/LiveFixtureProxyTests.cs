@@ -85,6 +85,34 @@ public sealed class LiveFixtureProxyTests
         handler.Requests.ShouldBe(new[] { "POST conversations", "POST folders", "POST memories" });
     }
 
+    /// <summary>Verifies caller cancellation cannot prevent reverse compensation of requested roles.</summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task CancelledSeedShouldCompensateWithIndependentBoundedRequests()
+    {
+        using CancellationTokenSource cancelled = new();
+        FixtureRoleStubHandler handler = new((method, role) =>
+        {
+            if (method == HttpMethod.Post && role == "folders")
+            {
+                cancelled.Cancel();
+                throw new OperationCanceledException(cancelled.Token);
+            }
+
+            return method == HttpMethod.Post ? HttpStatusCode.OK : HttpStatusCode.NoContent;
+        });
+
+        FixtureSeedFailure? failure = await CreateProxy(handler)
+            .SeedAsync(Graph(), cancelled.Token)
+            .ConfigureAwait(true);
+
+        failure.ShouldNotBeNull();
+        failure.FailedRole.ShouldBe("folders");
+        failure.StatusCode.ShouldBeNull();
+        failure.Compensation.Succeeded.ShouldBeTrue();
+        handler.Requests.ShouldBe(new[] { "POST conversations", "POST folders", "DELETE folders", "DELETE conversations" });
+    }
+
     /// <summary>Verifies cleanup and seed-failure evidence serialize as role/status metadata only.</summary>
     [Fact]
     public void CleanupEvidenceShouldSerializeRoleAndStatusOnly()

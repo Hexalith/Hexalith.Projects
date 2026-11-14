@@ -49,7 +49,7 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
             FixtureCleanupResult compensation = await RemoveRolesAsync(
                 endpoints.Take(index + 1).Reverse(),
                 graph.GraphId,
-                cancellationToken)
+                CancellationToken.None)
                 .ConfigureAwait(false);
             return new FixtureSeedFailure(endpoint.Key, statusCode, compensation);
         }
@@ -72,6 +72,8 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
         string graphId,
         CancellationToken cancellationToken)
     {
+        using CancellationTokenSource cleanupDeadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cleanupDeadline.CancelAfter(TimeSpan.FromSeconds(15));
         List<FixtureCleanupAttempt> attempts = [];
         foreach (KeyValuePair<string, Uri> endpoint in endpoints)
         {
@@ -79,7 +81,7 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
                 HttpMethod.Delete,
                 new Uri(endpoint.Value, $"/_fixtures/graphs/{Uri.EscapeDataString(graphId)}"),
                 graph: null,
-                cancellationToken)
+                cleanupDeadline.Token)
                 .ConfigureAwait(false);
             attempts.Add(new FixtureCleanupAttempt(endpoint.Key, statusCode));
         }
@@ -93,6 +95,8 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
         LiveFixtureGraph? graph,
         CancellationToken cancellationToken)
     {
+        using CancellationTokenSource requestDeadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        requestDeadline.CancelAfter(TimeSpan.FromSeconds(5));
         using HttpRequestMessage request = new(method, requestUri);
         if (graph is not null)
         {
@@ -102,7 +106,7 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
         try
         {
             using HttpResponseMessage response = await _httpClient
-                .SendAsync(request, cancellationToken)
+                .SendAsync(request, requestDeadline.Token)
                 .ConfigureAwait(false);
             return (int)response.StatusCode;
         }
@@ -111,7 +115,7 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
             // Transport details can carry endpoints; only the absence of a status is reported.
             return null;
         }
-        catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException)
         {
             return null;
         }

@@ -52,6 +52,13 @@ test.describe('live fixture identity factory', () => {
     expect(() => assertDisjointLiveFixtureDimensions(variants)).not.toThrow();
   });
 
+  test('does not confuse delimiter-bearing run and scenario boundaries', () => {
+    const first = { ...base, runId: 'run', scenario: 'x|0|0|0|tail' };
+    const second = { ...base, runId: 'run|0|0|0|x', scenario: 'tail' };
+    expect(() => assertDisjointLiveFixtureDimensions([first, second])).not.toThrow();
+    expect(createLiveFixtureIdentities(first).graphId).not.toBe(createLiveFixtureIdentities(second).graphId);
+  });
+
   test('derives canonical operation-scoped request identities that never repeat', () => {
     const attempts = [base, { ...base, retry: 1 }, { ...base, workerIndex: 1 }].map((dimensions) =>
       createLiveFixtureIdentities(dimensions),

@@ -281,9 +281,11 @@ The runner enables `Projects__E2E__LiveFixtures=1`, marks the exact AppHost as o
 (`E2E_RESOURCE_TIMEOUT_SECONDS`, default 600), captures `aspire describe` exactly once, exports all
 five dynamically assigned endpoints, runs the startup/session smoke and then the full two-worker
 Chromium lane with zero skips under distinct `<run>-smoke`/`<run>-full` identities, and stops only
-the exact Projects AppHost on every exit, including failures and interruptions. The scheduled CI
-job runs it with `CI=true` so the AppHost builds in package-reference mode, and repeats the
-exact-AppHost stop in an `if: always()` step. Live artifacts are metadata-only: JUnit, the HTML
+the exact Projects AppHost on every exit, including failures and interruptions. Local runs use the
+Platform-owned supported Debug/source preparation and returned mapping, including root-declared
+sibling paths. Source failures remain blockers; setting `CI=true` does not repair them. The separate
+CI package lane needs a released EventStore snapshot-limits/Client cohort and the Tenants recovery
+contract before its result can qualify; no package pin or gate is bypassed. Live artifacts are metadata-only: JUnit, the HTML
 report, and role/status cleanup attachments; traces, video, and screenshots are disabled.
 
 With the profile enabled, `conversations`, `folders`, and `memories` are internal role hosts that
@@ -296,6 +298,16 @@ role by calling it through the Projects adapters and the referenced sibling clie
 not exist when the profile is disabled; the AppHost then keeps Projects on its normal sibling
 addresses and Keycloak-enforced authentication. Never publish or enable this profile outside the
 managed local/scheduled test lane.
+
+Before test collection, global setup requires the compiled public Tenants refresh contract in the
+authenticated routing catalog. It takes tenant/principal from the unchanged live token, submits
+`RefreshTenantAccess` in `platform:tenants` only when access recovery is needed, polls terminal
+`Completed`, then requires Projects list HTTP 200. Rejected commands, HTTP 400 and HTTP 503 do not
+qualify. The source human needs operation permission, `tenants:read`, and current TenantOwner or
+source-verified global-administrator authority. Recovery preserves status, membership and roles;
+missing Project list state remains a blocker. The default legacy topology's healthy resource state
+alone does not prove this enrollment. The supported read/browser launcher is a narrower separate
+proof with the compatibility profile disabled, not full fixture-matrix acceptance.
 
 The Projects UI authenticates through the confidential `hexalith-projects-ui` authorization-code
 client in the checked-in realm. The AppHost wires it with the EventStore Aspire

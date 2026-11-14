@@ -1,0 +1,75 @@
+<testsuites id="" name="" tests="30" failures="0" skipped="0" errors="0" time="1.680293">
+<testsuite name="live-fixture-identities.spec.ts" timestamp="2026-11-14T08:27:30.969Z" hostname="chromium" tests="6" failures="0" skipped="0" time="0.044" errors="0">
+<testcase name="live fixture identity factory › is deterministic, bounded, and URL-safe" classname="live-fixture-identities.spec.ts" time="0.021">
+</testcase>
+<testcase name="live fixture identity factory › is disjoint across run, worker, retry, repeat, and scenario dimensions" classname="live-fixture-identities.spec.ts" time="0.005">
+</testcase>
+<testcase name="live fixture identity factory › does not confuse delimiter-bearing run and scenario boundaries" classname="live-fixture-identities.spec.ts" time="0.001">
+</testcase>
+<testcase name="live fixture identity factory › derives canonical operation-scoped request identities that never repeat" classname="live-fixture-identities.spec.ts" time="0.012">
+</testcase>
+<testcase name="live fixture identity factory › builds the symmetric wire graph with exactly the fixture DTO members" classname="live-fixture-identities.spec.ts" time="0.002">
+</testcase>
+<testcase name="live fixture identity factory › rejects duplicate attempt dimensions" classname="live-fixture-identities.spec.ts" time="0.003">
+</testcase>
+</testsuite>
+<testsuite name="live-fixtures-lifecycle.spec.ts" timestamp="2026-11-14T08:27:30.969Z" hostname="chromium" tests="4" failures="0" skipped="0" time="0.785" errors="0">
+<testcase name="live cleanup evidence contract (no app required) › runs steps newest first and records thrown steps as role-only failures" classname="live-fixtures-lifecycle.spec.ts" time="0.229">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › preserves the primary failure and fails a passing test on incomplete cleanup" classname="live-fixtures-lifecycle.spec.ts" time="0.223">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › rethrows the original setup failure after reverse compensation" classname="live-fixtures-lifecycle.spec.ts" time="0.162">
+</testcase>
+<testcase name="live cleanup evidence contract (no app required) › attachment storage failure preserves the exact primary setup failure" classname="live-fixtures-lifecycle.spec.ts" time="0.171">
+<system-err>
+<![CDATA[[live-cleanup] diagnostic attachment unavailable: failed-storage-setup; projects:primary:503.
+[live-cleanup] diagnostic attachment unavailable: failed-storage; folders:none.
+]]>
+</system-err>
+</testcase>
+</testsuite>
+<testsuite name="project-fixture-cleanup.spec.ts" timestamp="2026-11-14T08:27:30.969Z" hostname="chromium" tests="3" failures="0" skipped="0" time="0.011" errors="0">
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation 503 without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0.006">
+</testcase>
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation 504 without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0.003">
+</testcase>
+<testcase name="Project archive cleanup diagnostics contract › records the actual final observation transport failure without fabricating a 404" classname="project-fixture-cleanup.spec.ts" time="0.002">
+</testcase>
+</testsuite>
+<testsuite name="tenant-access-readiness.spec.ts" timestamp="2026-11-14T08:27:30.969Z" hostname="chromium" tests="17" failures="0" skipped="0" time="0.403" errors="0">
+<testcase name="tenant access recovery helper contracts › requires compiled public catalog enrollment instead of healthy legacy resources" classname="tenant-access-readiness.spec.ts" time="0.006">
+</testcase>
+<testcase name="tenant access recovery helper contracts › derives current authority without selecting an arbitrary membership" classname="tenant-access-readiness.spec.ts" time="0.004">
+</testcase>
+<testcase name="tenant access recovery helper contracts › recovery uses platform scope on submission and status, and a conflict is polled" classname="tenant-access-readiness.spec.ts" time="0.002">
+</testcase>
+<testcase name="tenant access recovery helper contracts › ambiguous POST retries reuse one operation ID and remain within one deadline" classname="tenant-access-readiness.spec.ts" time="0.252">
+</testcase>
+<testcase name="tenant access recovery helper contracts › lost POST response with a completed status does not submit a second command" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › synchronous permission denial is resolved to terminal Rejected, never Completed" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › anonymous admission fails immediately and does not poll a fabricated success" classname="tenant-access-readiness.spec.ts" time="0.002">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal polling and submission attempts share a finite overall budget" classname="tenant-access-readiness.spec.ts" time="0.032">
+</testcase>
+<testcase name="tenant access recovery helper contracts › ready list HTTP 200 avoids source commands and uses the unchanged token" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › refreshes only existing authority and gives a later recovery a fresh ULID" classname="tenant-access-readiness.spec.ts" time="0.002">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal Rejected cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal PublishFailed cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › terminal TimedOut cannot be masked by a later list HTTP 200" classname="tenant-access-readiness.spec.ts" time="0.001">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 400 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.03">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 404 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.031">
+</testcase>
+<testcase name="tenant access recovery helper contracts › Completed recovery with Projects list 503 remains a blocker" classname="tenant-access-readiness.spec.ts" time="0.03">
+</testcase>
+<testcase name="tenant access recovery helper contracts › initial readiness probe cannot start a recovery after consuming the deadline" classname="tenant-access-readiness.spec.ts" time="0.006">
+</testcase>
+</testsuite>
+</testsuites>

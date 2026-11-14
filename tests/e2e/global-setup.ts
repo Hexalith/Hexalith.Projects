@@ -12,7 +12,7 @@ import {
   browserLoginCredentials,
   requestKeycloakAccessToken,
 } from './support/auth/keycloak-auth-provider.js';
-import { authorityFromAccessToken, ensureProjectsTenantAccess } from './support/helpers/tenant-access-readiness.js';
+import { assertTenantRecoveryEnrollment, authorityFromAccessToken, ensureProjectsTenantAccess } from './support/helpers/tenant-access-readiness.js';
 
 /**
  * Establishes token-derived tenant readiness once per Playwright invocation, then a real browser
@@ -41,6 +41,7 @@ async function globalSetup(config: FullConfig): Promise<void> {
     const eventStore = await request.newContext({ baseURL: requireEnv('EVENTSTORE_API_URL'), ignoreHTTPSErrors: true });
     const projects = await request.newContext({ baseURL: requireEnv('API_URL'), ignoreHTTPSErrors: true });
     try {
+      await assertTenantRecoveryEnrollment(eventStore, authToken);
       await ensureProjectsTenantAccess({
         eventStore,
         projects,

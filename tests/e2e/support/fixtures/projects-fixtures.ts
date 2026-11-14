@@ -1,4 +1,4 @@
-import type { ApiRequest, ProjectDetail } from '../helpers/projects-api-client.js';
+import type { ApiRequest, ProjectDetail, ProjectResolution } from '../helpers/projects-api-client.js';
 import {
   archiveProject,
   createProject,
@@ -7,7 +7,6 @@ import {
   linkProjectFileReference,
   linkProjectMemory,
   listProjectConversations,
-  resolveProjectFromAttachments,
   setProjectFolder,
 } from '../helpers/projects-api-client.js';
 import type { Recurse } from '../helpers/readiness.js';
@@ -61,11 +60,13 @@ export async function seedActiveProject(
   role: string,
   input: CreateProjectInput,
 ): Promise<ProjectDetail> {
-  const { apiRequest, authToken, recurse, tenantContext } = deps;
+  const { apiRequest, recurse, tenantContext } = deps;
   const projectId = input.projectId?.trim();
   if (!projectId) {
     throw new Error('[projects-fixtures] live project seed requires a caller-owned projectId.');
   }
+  // Even a lost create response can have committed; register cleanup before sending it.
+  ledger.register(projectArchiveStep(deps, projectId, role));
   const retryableCreationStatuses = new Set([404, 502, 503, 504]);
   const creation = await recurse(
     () => createProject(apiRequest, tenantContext.tenantId, input, requestOptions(deps, `${role}:create`)),
@@ -83,8 +84,7 @@ export async function seedActiveProject(
     );
   }
 
-  ledger.register(projectArchiveStep(deps, projectId, role));
-  return waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId, { authToken }, { lifecycle: 'active' });
+  return waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId, requestOptions(deps, `${role}:convergence`), { lifecycle: 'active' });
 }
 
 /**
@@ -98,14 +98,21 @@ export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, rol
     run: async (): Promise<FixtureCleanupAttempt[]> => {
       const tenantId = deps.tenantContext.tenantId;
       let observed: Awaited<ReturnType<typeof getProject>>;
+      let lastObservedStatus: number | null = null;
       try {
         observed = await deps.recurse(
-          () => getProject(deps.apiRequest, tenantId, projectId, { authToken: deps.authToken }),
+          async () => {
+            // Reset before the request: a transport failure has no HTTP response, even after a 503.
+            lastObservedStatus = null;
+            const response = await getProject(deps.apiRequest, tenantId, projectId, requestOptions(deps, `${role}:before-archive`));
+            lastObservedStatus = response.status;
+            return response;
+          },
           (response) => response.status === 200,
           { timeout: ARCHIVE_CONVERGENCE_TIMEOUT, interval: 1_000, log: `Waiting for ${role} before archive cleanup` },
         );
       } catch {
-        return [{ role, statusCode: 404, succeeded: false }];
+        return [{ role, statusCode: lastObservedStatus, succeeded: false }];
       }
       if (observed.body.lifecycleState === 'archived') {
         return [{ role, statusCode: 200, succeeded: true }];
@@ -114,7 +121,7 @@ export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, rol
       const archive = await archiveProject(deps.apiRequest, tenantId, projectId, requestOptions(deps, `${role}:archive`));
       try {
         await deps.recurse(
-          () => getProject(deps.apiRequest, tenantId, projectId, { authToken: deps.authToken }),
+          () => getProject(deps.apiRequest, tenantId, projectId, requestOptions(deps, `${role}:archive-convergence`)),
           (response) => response.status === 200 && response.body.lifecycleState === 'archived',
           { timeout: ARCHIVE_CONVERGENCE_TIMEOUT, interval: 1_000, log: `Waiting for ${role} archive convergence` },
         );
@@ -137,17 +144,17 @@ export async function createTrackedProject(
   projectId: string,
   label: string,
 ): Promise<ProjectDetail> {
+  liveCleanup.trackProject(projectId, label);
   const creation = await createProject(
     deps.apiRequest,
     deps.tenantContext.tenantId,
     createProjectInput({ projectId }),
     requestOptions(deps, `projects:${label}:create`),
   );
-  liveCleanup.trackProject(projectId, label);
   if (creation.status !== 202) {
     throw new Error(`[projects-fixtures] ${label} Project creation was not accepted (status ${creation.status}).`);
   }
-  return waitForProject(deps.recurse, deps.apiRequest, deps.tenantContext.tenantId, projectId, { authToken: deps.authToken }, { lifecycle: 'active' });
+  return waitForProject(deps.recurse, deps.apiRequest, deps.tenantContext.tenantId, projectId, requestOptions(deps, `${label}:convergence`), { lifecycle: 'active' });
 }
 
 /** Seeds one Project with the full profile-owned metadata graph through supported APIs only. */
@@ -209,7 +216,7 @@ export async function seedReferencedProject(
       deps.apiRequest,
       deps.tenantContext.tenantId,
       project.projectId,
-      { authToken: deps.authToken, freshness: 'eventually_consistent' },
+      { ...requestOptions(deps, 'referenced:metadata-convergence'), freshness: 'eventually_consistent' },
     ),
     ({ status, body }) => status === 200
       && [graph.folderId, graph.fileReferenceId, graph.memoryReferenceId]
@@ -221,7 +228,7 @@ export async function seedReferencedProject(
       deps.apiRequest,
       deps.tenantContext.tenantId,
       project.projectId,
-      { authToken: deps.authToken, freshness: 'eventually_consistent', pageSize: 100 },
+      { ...requestOptions(deps, 'referenced:conversation-convergence'), freshness: 'eventually_consistent', pageSize: 100 },
     ),
     ({ status, body }) => status === 200
       // The Projects wire form carries the Conversations-owned prefixed identity (`conv:{id}`).
@@ -277,13 +284,27 @@ export async function seedResolutionProjects(
     ),
   );
 
+  for (const [projectId, referenceId] of [[primary.projectId, graph.folderId], [secondary.projectId, graph.fileReferenceId]]) {
+    await deps.recurse(
+      () => getProjectOperatorDiagnostics(deps.apiRequest, deps.tenantContext.tenantId, projectId, requestOptions(deps, `resolution:${projectId}:metadata-convergence`)),
+      ({ status, body }) => status === 200 && body.references.some((reference) => reference.referenceId === referenceId),
+      { timeout: 30_000, interval: 1_000, log: 'Waiting for resolution Project reference metadata' },
+    );
+  }
+  // The legacy attachment adapter cannot map opaque File IDs. Ambiguity is instead the supported
+  // Conversations-owned label match against the two real, equally named Projects.
   await deps.recurse(
-    () => resolveProjectFromAttachments(
-      deps.apiRequest,
-      deps.tenantContext.tenantId,
-      { folderIds: [graph.folderId], fileIds: [graph.fileReferenceId] },
-      { authToken: deps.authToken, freshness: 'eventually_consistent' },
-    ),
+    () => deps.apiRequest<ProjectResolution>({
+      method: 'GET',
+      path: '/api/v1/projects/resolution/from-conversation',
+      params: { conversationId: graph.ambiguousConversationId },
+      headers: {
+        Authorization: `Bearer ${deps.authToken}`,
+        'X-Hexalith-Tenant-Id': deps.tenantContext.tenantId,
+        'X-Correlation-Id': createLiveRequestIdentity(graph, 'resolution-convergence').correlationId,
+      },
+      retryConfig: { maxRetries: 0 },
+    }),
     ({ status, body }) => status === 200
       && body.result === 'MultipleCandidates'
       && [primary.projectId, secondary.projectId]

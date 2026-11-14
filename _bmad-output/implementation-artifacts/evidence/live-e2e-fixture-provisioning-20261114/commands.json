@@ -1,0 +1,149 @@
+[
+  {
+    "command": "dotnet build Hexalith.Projects.slnx --no-restore",
+    "exit": 1,
+    "result": "Unprepared broad gate: 296 errors, including nested Conversations Builds import missing.",
+    "log": "/tmp/projects-live-fixtures-solution-build-20261114.log"
+  },
+  {
+    "command": "dotnet run --project references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace /tmp/projects-live-fixtures-source-20261114 --output json",
+    "exit": 0,
+    "log": "/tmp/projects-live-fixtures-source-20261114.json"
+  },
+  {
+    "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet restore tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+    "exit": 0,
+    "log": "/tmp/projects-live-fixtures-integration-restore-20261114.log"
+  },
+  {
+    "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-restore -m:1",
+    "exit": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "/tmp/projects-live-fixtures-integration-build-20261114-source-assets.log"
+  },
+  {
+    "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-build --no-restore",
+    "exit": 0,
+    "passed": 110,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/tmp/projects-live-fixtures-integration-test-20261114.log"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net11.0/Hexalith.Projects.Integration.Tests.dll -class '*LiveFixture*' -class '*AspireTopologyTests' -xml /tmp/projects-live-fixtures-focused-integration-20261114.xml",
+    "exit": 0,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/tmp/projects-live-fixtures-focused-integration-20261114.log",
+    "xml": "/tmp/projects-live-fixtures-focused-integration-20261114.xml"
+  },
+  {
+    "command": "npm --prefix tests/e2e run typecheck",
+    "exit": 0
+  },
+  {
+    "command": "npm --prefix tests/e2e test -- --workers=2 --project=chromium specs/tenant-access-readiness.spec.ts specs/live-fixture-identities.spec.ts specs/live-fixtures-lifecycle.spec.ts specs/project-fixture-cleanup.spec.ts --grep 'helper contracts|identity factory|no app required|archive cleanup diagnostics contract'",
+    "exit": 0,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/tmp/projects-live-fixtures-typescript-final-20261114.log"
+  },
+  {
+    "command": "bash -n tests/e2e/run-live-apphost.sh",
+    "exit": 0
+  },
+  {
+    "command": "git diff --check -- tests docs",
+    "exit": 0
+  },
+  {
+    "command": "E2E_RESOURCE_TIMEOUT_SECONDS=0 bash tests/e2e/run-live-apphost.sh (dummy required credentials supplied privately)",
+    "exit": 2,
+    "expected": true,
+    "log": "/tmp/projects-live-fixtures-zero-timeout-20261114.log"
+  },
+  {
+    "command": "Exact runner jq mapping expression on valid/control-character fixtures",
+    "result": "valid exit 0; newline path exit 1",
+    "log": "/tmp/projects-live-fixtures-runner-validation-20261114.json"
+  },
+  {
+    "command": "bash tests/e2e/run-live-apphost.sh (E2E_RESOURCE_TIMEOUT_SECONDS=90 E2E_RUN_ID=fixture-proof-20261114 and checked-in local realm human credentials supplied privately)",
+    "exit": 1,
+    "collected": 0,
+    "skipped": 0,
+    "result": "All required resources healthy after owned Folders restart; real-token routing catalog HTTP 503; enrollment prerequisite failed closed before recovery/browser collection.",
+    "log": "/tmp/projects-live-fixtures-managed-20261114-corrected.log"
+  },
+  {
+    "argv": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "type",
+      "*RefreshTenantAccess*",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.tenants.contracts/7.0.7/lib/net10.0/Hexalith.Tenants.Contracts.dll",
+      "--json",
+      "--compact"
+    ],
+    "exit": 1,
+    "evidence": "projects-live-fixtures-tenants-package-20261114.log.gz",
+    "assemblySha256": "680d324c2371838c40d6e9446476cbcb0b10074b860a8ee79114b054290c8624"
+  },
+  {
+    "argv": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "type",
+      "*ProjectionSnapshotLimits*",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.eventstore.client/4.2.0/lib/net10.0/Hexalith.EventStore.Client.dll",
+      "--json",
+      "--compact"
+    ],
+    "exit": 1,
+    "evidence": "projects-live-fixtures-eventstore-package-20261114.log.gz",
+    "assemblySha256": "5b184b6c7bc7e83251d4f48edfb6ee446a28ac4fae7c04c381c388ed8cb9cd92"
+  },
+  {
+    "argv": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "type",
+      "*RefreshTenantAccess*",
+      "--library",
+      "references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/bin/Debug/net11.0/Hexalith.Tenants.Contracts.dll",
+      "--json",
+      "--compact"
+    ],
+    "exit": 0,
+    "evidence": "projects-live-fixtures-tenants-source-20261114.log.gz",
+    "assemblySha256": "b0c9534dd1426130309fbe22ee79c9c5a2a2185943aa2df88202afd297c06d3f"
+  },
+  {
+    "argv": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "type",
+      "*ProjectionSnapshotLimits*",
+      "--library",
+      "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/bin/Debug/net11.0/Hexalith.EventStore.Client.dll",
+      "--json",
+      "--compact"
+    ],
+    "exit": 0,
+    "evidence": "projects-live-fixtures-eventstore-source-20261114.log.gz",
+    "assemblySha256": "ad56268e3f124106e4c8714247b894a37ff24256d90ab873f1b634476c5b4e00"
+  }
+]

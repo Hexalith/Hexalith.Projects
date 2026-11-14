@@ -45,13 +45,13 @@ export interface LiveFixtureIdentities extends LiveFixtureDimensions {
  */
 export function createLiveFixtureIdentities(dimensions: LiveFixtureDimensions): LiveFixtureIdentities {
   validateDimensions(dimensions);
-  const root = [
+  const root = JSON.stringify([
     dimensions.runId,
     dimensions.workerIndex,
     dimensions.retry,
     dimensions.repeatEachIndex,
     dimensions.scenario,
-  ].join('|');
+  ]);
   const id = (kind: string): string => boundedId(kind, `${root}|${kind}`);
 
   return {
@@ -116,7 +116,7 @@ export function assertDisjointLiveFixtureDimensions(dimensions: readonly LiveFix
   const seen = new Set<string>();
   for (const item of dimensions) {
     validateDimensions(item);
-    const key = `${item.runId}|${item.workerIndex}|${item.retry}|${item.repeatEachIndex}|${item.scenario}`;
+    const key = JSON.stringify([item.runId, item.workerIndex, item.retry, item.repeatEachIndex, item.scenario]);
     if (seen.has(key)) {
       throw new Error(`[live-fixture-identities] duplicate fixture dimensions: ${key}`);
     }

@@ -165,6 +165,19 @@ test.describe('live cleanup evidence contract (no app required)', () => {
     })).rejects.toBe(primary);
     expect(setup.attachments.map((attachment) => attachment.name)).toEqual(['resolution-projects-cleanup-setup.json']);
   });
+
+  test('attachment storage failure preserves the exact primary setup failure', async () => {
+    const ledger = new CleanupLedger();
+    const primary = new Error('original setup failure');
+    const info = {
+      status: 'failed', expectedStatus: 'passed',
+      attach: async () => { throw new Error('artifact disk unavailable'); },
+    } as unknown as TestInfo;
+    ledger.register({ role: 'projects:primary', run: async () => [{ role: 'projects:primary', statusCode: 503, succeeded: false }] });
+    await expect(setupWithReverseCleanup(info, 'failed-storage', ledger, async () => { throw primary; })).rejects.toBe(primary);
+    await expect(reportCleanup(info, 'failed-storage', { attempts: [{ role: 'folders', statusCode: null, succeeded: false }], succeeded: false }))
+      .resolves.toBeUndefined();
+  });
 });
 
 function fakeTestInfo(status: TestInfo['status']): { info: TestInfo; attachments: Array<{ name: string; body: string }> } {

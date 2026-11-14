@@ -1,0 +1,140 @@
+{
+  "complete": false,
+  "rootHead": "7bcb375f60414062e64b5f066e2bd4924a385b7c",
+  "changedPaths": [
+    "docs/runbooks/projects-topology.md",
+    "tests/Hexalith.Projects.E2E.Fixtures/FixtureProxy.cs",
+    "tests/Hexalith.Projects.Integration.Tests/LiveFixtureProxyTests.cs",
+    "tests/e2e/.env.example",
+    "tests/e2e/README.md",
+    "tests/e2e/global-setup.ts",
+    "tests/e2e/run-live-apphost.sh",
+    "tests/e2e/specs/live-fixture-identities.spec.ts",
+    "tests/e2e/specs/live-fixtures-lifecycle.spec.ts",
+    "tests/e2e/specs/projects-console-shell.spec.ts",
+    "tests/e2e/specs/projects-file-reference.spec.ts",
+    "tests/e2e/specs/projects-proposal.spec.ts",
+    "tests/e2e/specs/projects-reference-health.spec.ts",
+    "tests/e2e/specs/projects-resolution-trace.spec.ts",
+    "tests/e2e/specs/projects-resolution.spec.ts",
+    "tests/e2e/support/factories/live-fixture-identities.ts",
+    "tests/e2e/support/fixtures/cleanup-evidence.ts",
+    "tests/e2e/support/fixtures/live-fixtures.ts",
+    "tests/e2e/support/fixtures/projects-fixtures.ts",
+    "tests/e2e/support/helpers/eventstore-api-client.ts",
+    "tests/e2e/support/helpers/tenant-access-readiness.ts",
+    "tests/e2e/support/merged-fixtures.ts",
+    "tests/e2e/specs/project-fixture-cleanup.spec.ts",
+    "tests/e2e/specs/tenant-access-readiness.spec.ts"
+  ],
+  "checks": [
+    {
+      "command": "dotnet build Hexalith.Projects.slnx --no-restore",
+      "exit": 1,
+      "result": "Unprepared broad gate: 296 errors, including nested Conversations Builds import missing.",
+      "log": "/tmp/projects-live-fixtures-solution-build-20261114.log"
+    },
+    {
+      "command": "dotnet run --project references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace /tmp/projects-live-fixtures-source-20261114 --output json",
+      "exit": 0,
+      "log": "/tmp/projects-live-fixtures-source-20261114.json"
+    },
+    {
+      "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet restore tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "exit": 0,
+      "log": "/tmp/projects-live-fixtures-integration-restore-20261114.log"
+    },
+    {
+      "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-restore -m:1",
+      "exit": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log": "/tmp/projects-live-fixtures-integration-build-20261114-source-assets.log"
+    },
+    {
+      "command": "python3 /tmp/projects-live-fixtures-command-20261114.py dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-build --no-restore",
+      "exit": 0,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "log": "/tmp/projects-live-fixtures-integration-test-20261114.log"
+    },
+    {
+      "command": "dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net11.0/Hexalith.Projects.Integration.Tests.dll -class '*LiveFixture*' -class '*AspireTopologyTests' -xml /tmp/projects-live-fixtures-focused-integration-20261114.xml",
+      "exit": 0,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "log": "/tmp/projects-live-fixtures-focused-integration-20261114.log",
+      "xml": "/tmp/projects-live-fixtures-focused-integration-20261114.xml"
+    },
+    {
+      "command": "npm --prefix tests/e2e run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "npm --prefix tests/e2e test -- --workers=2 --project=chromium specs/tenant-access-readiness.spec.ts specs/live-fixture-identities.spec.ts specs/live-fixtures-lifecycle.spec.ts specs/project-fixture-cleanup.spec.ts --grep 'helper contracts|identity factory|no app required|archive cleanup diagnostics contract'",
+      "exit": 0,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "log": "/tmp/projects-live-fixtures-typescript-final-20261114.log"
+    },
+    {
+      "command": "bash -n tests/e2e/run-live-apphost.sh",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check -- tests docs",
+      "exit": 0
+    },
+    {
+      "command": "E2E_RESOURCE_TIMEOUT_SECONDS=0 bash tests/e2e/run-live-apphost.sh (dummy required credentials supplied privately)",
+      "exit": 2,
+      "expected": true,
+      "log": "/tmp/projects-live-fixtures-zero-timeout-20261114.log"
+    },
+    {
+      "command": "Exact runner jq mapping expression on valid/control-character fixtures",
+      "result": "valid exit 0; newline path exit 1",
+      "log": "/tmp/projects-live-fixtures-runner-validation-20261114.json"
+    },
+    {
+      "command": "bash tests/e2e/run-live-apphost.sh (E2E_RESOURCE_TIMEOUT_SECONDS=90 E2E_RUN_ID=fixture-proof-20261114 and checked-in local realm human credentials supplied privately)",
+      "exit": 1,
+      "collected": 0,
+      "skipped": 0,
+      "result": "All required resources healthy after owned Folders restart; real-token routing catalog HTTP 503; enrollment prerequisite failed closed before recovery/browser collection.",
+      "log": "/tmp/projects-live-fixtures-managed-20261114-corrected.log"
+    }
+  ],
+  "packageCompatibility": {
+    "EventStoreClientPin": "4.2.0",
+    "TenantsContractsPin": "7.0.7",
+    "publishedArtifacts": "Cached net10.0 DLLs do not contain ProjectionSnapshotLimits / RefreshTenantAccess; same selectors succeed against source-built net11.0 DLLs. No pins changed.",
+    "logs": [
+      "/tmp/projects-live-fixtures-tenants-package-20261114.log",
+      "/tmp/projects-live-fixtures-tenants-source-20261114.log",
+      "/tmp/projects-live-fixtures-eventstore-package-20261114.log",
+      "/tmp/projects-live-fixtures-eventstore-source-20261114.log"
+    ]
+  },
+  "runtimeBoundaries": {
+    "fullLiveMatrix": "unsatisfied",
+    "persistedEndState": "not established for new fixture graphs",
+    "profileDisabledRuntime": "not executed; structural coverage passed",
+    "actualFixtureCatalogEnrollment": "missing; authenticated HTTP503",
+    "sharedTenantMutations": false,
+    "apphostStopped": true,
+    "runnerTemporaryMappingAndSessionRemoved": true
+  },
+  "ownedOutputCleanup": "/tmp/projects-live-fixtures-owned-cleanup-20261114.json",
+  "foldersTransientStartupDiagnostic": "/tmp/projects-live-fixtures-folders-startup-20261114.json",
+  "untouched": [
+    "spec/control artifacts",
+    "dependency pins",
+    "sibling source",
+    "deferred-work ledger",
+    "shared tenant status/membership/roles"
+  ]
+}

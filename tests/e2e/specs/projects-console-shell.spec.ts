@@ -56,6 +56,7 @@ test.describe('Projects console shell shared rendering', () => {
   liveAppHostTest('renders real fixture references and safe-denial states without blank tables', async ({
     page,
     seededProject,
+    liveFixtureGraph,
   }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
@@ -64,7 +65,7 @@ test.describe('Projects console shell shared rendering', () => {
     await expect(detail.referenceHealthMatrix).toBeVisible();
     await expect(detail.referenceKindCells.filter({ hasText: 'conversation' }).first()).toBeVisible();
 
-    await page.goto('/projects/not-a-canonical-project-id');
+    await page.goto(`/projects/${liveFixtureGraph.proposalRetryProjectId}`);
     await expect(page.getByTestId('project-feedback-fail-closed')).toBeVisible();
   });
 
@@ -158,8 +159,8 @@ test.describe('Projects console shell shared rendering', () => {
       await denied.close();
     }
 
-    // Fail-closed: a non-canonical Project identity is safely denied.
-    await page.goto('/projects/not-a-canonical-project-id');
+    // Fail-closed: the graph owns this canonical identity, but no Project was created for it.
+    await page.goto(`/projects/${liveFixtureGraph.proposalRetryProjectId}`);
     await expect(page.getByTestId('project-feedback-fail-closed')).toBeVisible();
   });
 

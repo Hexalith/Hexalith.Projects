@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 
 import type { APIRequestContext } from '@playwright/test';
 
@@ -9,31 +9,61 @@ export interface LiveTokenAuthority {
   principalId: string;
 }
 
-/** Derives the authoritative Projects tenant and caller principal from the real access token. */
-export function authorityFromAccessToken(accessToken: string, configuredTenant?: string): LiveTokenAuthority {
-  const claims = decodeJwtClaims(accessToken);
-  const principalId = typeof claims.sub === 'string' ? claims.sub.trim() : '';
-  const tenantClaims = collectTenantClaims(claims);
-  const hint = configuredTenant?.trim();
-  const tenantId = hint && tenantClaims.includes(hint)
-    ? hint
-    : tenantClaims.find((value) => value !== '*' && value !== 'system') ?? tenantClaims[0] ?? '';
-  if (!principalId || !tenantId) {
-    throw new Error('[tenant-readiness] the live token must contain sub and an authoritative tenant claim.');
+/** Requires actual public enrollment of the compiled Tenants access-recovery contract. */
+export async function assertTenantRecoveryEnrollment(eventStore: APIRequestContext, authToken: string): Promise<void> {
+  let enrolled = false;
+  let status = 504;
+  try {
+    const response = await eventStore.get('/api/v1/routing/catalog', {
+      headers: { Authorization: `Bearer ${authToken}`, 'X-Hexalith-Scope': 'platform:tenants' },
+      failOnStatusCode: false,
+      timeout: 5_000,
+    });
+    status = response.status();
+    if (status === 200) {
+      const body = await response.json() as { schemaVersion?: unknown; operations?: Array<Record<string, unknown>> };
+      enrolled = body.schemaVersion === 3 && Array.isArray(body.operations) && body.operations.some((operation) =>
+        operation.kind === 'command' && operation.domain === 'tenants' && operation.messageType === 'refresh-tenant-access');
+    }
+  } catch { /* No response payload, endpoint or token is retained. */ }
+  if (!enrolled) {
+    throw new Error(`[tenant-readiness] compiled tenants:refresh-access catalog enrollment is required (catalog HTTP ${status}); healthy legacy resources or an older package cohort do not establish recovery support.`);
   }
-  if (hint && !tenantClaims.includes(hint)) {
-    throw new Error(`[tenant-readiness] configured TEST_TENANT_ID '${hint}' is not present in the live token.`);
+}
+
+/** Derives a single concrete tenant and principal from the live token, rejecting ambiguous authority. */
+export function authorityFromAccessToken(accessToken: string, configuredTenant?: string): LiveTokenAuthority {
+  let claims: Record<string, unknown>;
+  try {
+    const part = accessToken.split('.')[1];
+    if (!part) throw new Error();
+    claims = JSON.parse(Buffer.from(part, 'base64url').toString('utf8')) as Record<string, unknown>;
+    if (!claims || typeof claims !== 'object' || Array.isArray(claims)) throw new Error();
+  } catch {
+    throw new Error('[tenant-readiness] access token claims could not be decoded.');
+  }
+  const principalId = typeof claims.sub === 'string' ? claims.sub.trim() : '';
+  const current = collectClaims(claims, ['eventstore:current-tenant', 'current_tenant', 'tenantId', 'tenant_id', 'tenant']);
+  const memberships = collectClaims(claims, ['eventstore:tenant', 'tenants']);
+  const hint = configuredTenant?.trim();
+  const candidates = current.length ? current : memberships;
+  if (!principalId || candidates.length !== 1 || !isConcreteTenant(candidates[0])) {
+    throw new Error('[tenant-readiness] the live token must contain sub and one concrete authoritative tenant.');
+  }
+  const tenantId = candidates[0];
+  if (hint && hint !== tenantId) {
+    throw new Error('[tenant-readiness] configured TEST_TENANT_ID does not match the live token current tenant.');
+  }
+  if (memberships.length && !memberships.includes(tenantId) && !memberships.includes('*')) {
+    throw new Error('[tenant-readiness] current tenant is absent from the live token membership claims.');
   }
   return { tenantId, principalId };
 }
 
 /**
- * Serial readiness gate used once by Playwright global setup. Tenant command rejections (for example
- * an already-existing tenant or membership) are tolerated only when the outer Projects authorization
- * response then converges: the list read passes authorization (HTTP 200, or `read_model_unavailable`
- * for a tenant with no projected Project yet) and an intentionally invalid create returns HTTP 400
- * from body validation, which the API evaluates only after authorization. Nothing is written to a
- * projection directly.
+ * Serial global-setup gate, before workers start. Republishes existing authority without changing
+ * lifecycle, membership, roles or metadata. Only Projects list HTTP 200 with the unchanged token
+ * establishes readiness. Missing Project journals remain blockers.
  */
 export async function ensureProjectsTenantAccess(options: {
   eventStore: APIRequestContext;
@@ -43,169 +73,101 @@ export async function ensureProjectsTenantAccess(options: {
   runId: string;
   timeoutMs?: number;
 }): Promise<void> {
+  const authority = authorityFromAccessToken(options.authToken, options.authority.tenantId);
+  if (authority.principalId !== options.authority.principalId) {
+    throw new Error('[tenant-readiness] recovery principal does not match the live token.');
+  }
   const timeoutMs = options.timeoutMs ?? 45_000;
-  const initial = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-  if (isProjectsAccessReady(initial)) return;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('[tenant-readiness] readiness deadline must be positive.');
+  const deadline = Date.now() + timeoutMs;
+  const correlationId = freshUlid();
+  let last = await probe();
+  if (last.listStatus === 200) return;
+  if (Date.now() >= deadline) {
+    throw new Error(`[tenant-readiness] readiness deadline expired before recovery; lastProjects=${JSON.stringify(last)}`);
+  }
 
-  const results: TerminalCommandResult[] = [];
-  for (const [commandType, payload] of [
-    [
-      'CreateTenant',
-      {
-        TenantId: options.authority.tenantId,
-        Name: `Projects E2E ${options.authority.tenantId}`.slice(0, 128),
-        Description: 'Tenant provisioned through the supported live E2E readiness gate.',
-      },
-    ],
-    [
-      'UpdateTenant',
-      {
-        TenantId: options.authority.tenantId,
-        Name: `Projects E2E ${options.authority.tenantId}`.slice(0, 128),
-        Description: 'Tenant refreshed through the supported live E2E readiness gate.',
-      },
-    ],
-    [
-      'AddUserToTenant',
-      { TenantId: options.authority.tenantId, UserId: options.authority.principalId, Role: 'TenantOwner' },
-    ],
-  ] as const) {
-    const stem = stableRequestId(options.runId, commandType, options.authority.tenantId, options.authority.principalId);
+  // Fresh for each later recovery; POST retries retain this exact operation ID.
+  let result: TerminalCommandResult;
+  try {
+    result = await submitAndWaitForTenantCommand(options.eventStore, options.authToken, {
+      messageId: freshUlid(),
+      tenantId: authority.tenantId,
+      commandType: 'RefreshTenantAccess',
+      payload: { TenantId: authority.tenantId },
+      correlationId,
+    }, Math.max(1, deadline - Date.now()));
+  } catch (error) {
+    throw new Error(`${error instanceof Error ? error.message : '[tenant-readiness] recovery failed.'} lastProjects=${JSON.stringify(last)}`);
+  }
+  if (result.status.status !== 'Completed') {
+    throw new Error(`[tenant-readiness] recovery did not complete successfully; command=${JSON.stringify(result)}; lastProjects=${JSON.stringify(last)}`);
+  }
+
+  while (Date.now() < deadline) {
+    last = await probe();
+    if (last.listStatus === 200) return;
+    const remaining = deadline - Date.now();
+    if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, Math.min(250, remaining)));
+  }
+  throw new Error(
+    `[tenant-readiness] Projects list did not reach HTTP 200 within ${timeoutMs}ms; ` +
+      `command=${JSON.stringify(result)}; lastProjects=${JSON.stringify(last)}`,
+  );
+
+  async function probe(): Promise<{ listStatus: number; listCategory: string | null }> {
+    if (Date.now() >= deadline) return { listStatus: 504, listCategory: null };
     try {
-      results.push(
-        await submitAndWaitForTenantCommand(options.eventStore, options.authToken, {
-          messageId: `message-${stem}`,
-          tenantId: options.authority.tenantId,
-          commandType,
-          payload,
-          correlationId: `correlation-${stem}`,
-        }, timeoutMs),
-      );
-    } catch (error) {
-      // Keep the diagnostic metadata-only: the command error already carries statuses only.
-      throw new Error(
-        `${error instanceof Error ? error.message : '[tenant-readiness] tenant command failed.'} ` +
-          `initialProjects=${JSON.stringify(initial)}; ` +
-          `completed=${JSON.stringify(results.map((item) => ({ status: item.status.status, statusCode: item.status.statusCode })))}`,
-      );
+      const response = await options.projects.get('/api/v1/projects', {
+        headers: {
+          Authorization: `Bearer ${options.authToken}`,
+          'X-Hexalith-Tenant-Id': authority.tenantId,
+          'X-Correlation-Id': correlationId,
+        },
+        failOnStatusCode: false,
+        timeout: Math.max(1, Math.min(5_000, deadline - Date.now())),
+      });
+      let listCategory: string | null = null;
+      if (response.status() === 503) {
+        try {
+          const body = await response.json() as { category?: unknown };
+          if (body.category === 'read_model_unavailable') listCategory = body.category;
+        } catch { /* A malformed problem body is still unavailable. */ }
+      }
+      return { listStatus: response.status(), listCategory };
+    } catch {
+      return { listStatus: 504, listCategory: null };
     }
   }
-
-  const deadline = Date.now() + timeoutMs;
-  let last = initial;
-  while (Date.now() < deadline) {
-    last = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-    if (isProjectsAccessReady(last)) return;
-    await pollDelay(500);
-  }
-
-  throw new Error(
-    `[tenant-readiness] Projects tenant access did not converge within ${timeoutMs}ms; ` +
-      `commands=${JSON.stringify(results.map((item) => ({ status: item.status.status, statusCode: item.status.statusCode })))}; ` +
-      `lastProjects=${JSON.stringify(last)}`,
-  );
 }
 
-function decodeJwtClaims(accessToken: string): Record<string, unknown> {
-  const part = accessToken.split('.')[1];
-  if (!part) throw new Error('[tenant-readiness] access token is not a JWT.');
-  try {
-    return JSON.parse(Buffer.from(part, 'base64url').toString('utf8')) as Record<string, unknown>;
-  } catch {
-    throw new Error('[tenant-readiness] access token claims could not be decoded.');
-  }
-}
-
-function collectTenantClaims(claims: Record<string, unknown>): string[] {
+function collectClaims(claims: Record<string, unknown>, names: string[]): string[] {
   const values: string[] = [];
-  for (const name of ['eventstore:current-tenant', 'tenantId', 'tenant_id', 'tenant', 'eventstore:tenant', 'tenants']) {
+  for (const name of names) {
     const claim = claims[name];
-    if (typeof claim === 'string') values.push(claim);
-    if (Array.isArray(claim)) {
-      for (const item of claim) {
-        if (typeof item === 'string') values.push(item);
-        else if (item && typeof item === 'object') {
-          const candidate = (item as Record<string, unknown>).tenantId ?? (item as Record<string, unknown>).id;
-          if (typeof candidate === 'string') values.push(candidate);
-        }
+    for (const item of Array.isArray(claim) ? claim : [claim]) {
+      if (typeof item === 'string') values.push(item.trim());
+      else if (item && typeof item === 'object') {
+        const candidate = (item as Record<string, unknown>).tenantId ?? (item as Record<string, unknown>).id;
+        if (typeof candidate === 'string') values.push(candidate.trim());
       }
     }
   }
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+  return [...new Set(values.filter(Boolean))];
 }
 
-interface ProjectsAccessProbe {
-  /** List read status; anything but 200 or an empty-journal 503 means read access is not ready. */
-  listStatus: number;
-  /** Problem category of a 503 list read; `null` for other statuses and transport failures. */
-  listCategory: string | null;
-  /** Invalid-create status; 400 proves mutation authorization passed before body validation. */
-  createStatus: number;
+function isConcreteTenant(value: string): boolean {
+  return value !== '*' && value !== 'system' && !value.startsWith('platform:');
 }
 
-function isProjectsAccessReady(probe: ProjectsAccessProbe): boolean {
-  // Unauthorized list reads are a safe-denial 404. A tenant with no projected Project has no list
-  // journal yet, and the API reports that as `read_model_unavailable` only after authorization
-  // passed; the first seeded Project creates the journal.
-  const listAuthorized = probe.listStatus === 200
-    || (probe.listStatus === 503 && probe.listCategory === 'read_model_unavailable');
-  return listAuthorized && probe.createStatus === 400;
-}
-
-async function projectsAccessProbe(
-  projects: APIRequestContext,
-  authToken: string,
-  tenantId: string,
-  runId: string,
-): Promise<ProjectsAccessProbe> {
-  const headers = {
-    Authorization: `Bearer ${authToken}`,
-    'X-Hexalith-Tenant-Id': tenantId,
-    'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
-  };
-  let listCategory: string | null = null;
-  const listStatus = await safeStatus(async () => {
-    const response = await projects.get('/api/v1/projects', {
-      headers,
-      failOnStatusCode: false,
-      timeout: 5_000,
-    });
-    if (response.status() === 503) listCategory = await problemCategory(response);
-    return response;
-  });
-  const createStatus = await safeStatus(() => projects.post('/api/v1/projects', {
-    headers: { ...headers, 'Idempotency-Key': stableRequestId(runId, tenantId, 'authorization-probe') },
-    data: {},
-    failOnStatusCode: false,
-    timeout: 5_000,
-  }));
-  return { listStatus, listCategory, createStatus };
-}
-
-/** Reads only the problem category; the rest of the body is never retained. */
-async function problemCategory(response: { json(): Promise<unknown> }): Promise<string | null> {
-  try {
-    const category = ((await response.json()) as { category?: unknown }).category;
-    return typeof category === 'string' ? category : null;
-  } catch {
-    return null;
+/** Canonical ULID: 48-bit timestamp and fresh 80-bit randomness, without changing dependency pins. */
+function freshUlid(): string {
+  let value = (BigInt(Date.now()) << 80n) | BigInt(`0x${randomBytes(10).toString('hex')}`);
+  const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  let encoded = '';
+  for (let index = 0; index < 26; index++) {
+    encoded = alphabet[Number(value & 31n)] + encoded;
+    value >>= 5n;
   }
-}
-
-async function safeStatus(send: () => Promise<{ status(): number }>): Promise<number> {
-  try {
-    return (await send()).status();
-  } catch {
-    // A cold authorization/projection dependency may not answer before the per-attempt bound.
-    // Collapse transport details (which can contain credentials) into a retryable safe status.
-    return 503;
-  }
-}
-
-function stableRequestId(...parts: string[]): string {
-  return createHash('sha256').update(parts.join('|'), 'utf8').digest('hex').slice(0, 32);
-}
-
-function pollDelay(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  return encoded;
 }

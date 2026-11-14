@@ -1,21 +1,16 @@
 import type { APIRequestContext } from '@playwright/test';
 
-export type TenantCommandType = 'CreateTenant' | 'UpdateTenant' | 'AddUserToTenant';
-
 export interface TenantCommandSubmission {
   messageId: string;
   tenantId: string;
-  commandType: TenantCommandType;
-  payload: Record<string, unknown>;
+  commandType: 'RefreshTenantAccess';
+  payload: { TenantId: string };
   correlationId: string;
 }
 
 export interface EventStoreCommandStatus {
-  messageId?: string;
-  correlationId?: string;
   status?: string;
   statusCode?: number;
-  failureReason?: string;
   rejectionEventType?: string;
 }
 
@@ -26,88 +21,98 @@ export interface TerminalCommandResult {
 
 const TERMINAL_STATUSES = new Set(['Completed', 'Rejected', 'PublishFailed', 'TimedOut']);
 const TRANSIENT_SUBMISSION_STATUSES = new Set([502, 503, 504]);
-// The first command after AppHost start activates the tenant aggregate actor, which takes several
-// seconds; aborting it early and resubmitting never lets activation finish.
-const SUBMISSION_ATTEMPT_TIMEOUT_MS = 30_000;
 
-/** Submits through EventStore's supported authenticated command API and waits for a terminal outcome. */
+/**
+ * Recovers source authority through the compiled Tenants command. One deadline covers submission
+ * retries and terminal polling. Conflict and synchronous rejection require observing the original
+ * operation's status; neither establishes source publication by itself.
+ */
 export async function submitAndWaitForTenantCommand(
   eventStore: APIRequestContext,
   authToken: string,
   command: TenantCommandSubmission,
   timeoutMs = 30_000,
+  maxSubmissionAttempts = 4,
 ): Promise<TerminalCommandResult> {
-  const submissionDeadline = Date.now() + timeoutMs;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || !Number.isSafeInteger(maxSubmissionAttempts) || maxSubmissionAttempts < 1) {
+    throw new Error('[tenant-readiness] command deadline and attempt bound must be positive.');
+  }
+  if (command.payload.TenantId !== command.tenantId) {
+    throw new Error('[tenant-readiness] recovery payload must match the authenticated tenant target.');
+  }
+  const deadline = Date.now() + timeoutMs;
+  const headers = {
+    Authorization: `Bearer ${authToken}`,
+    'X-Hexalith-Scope': 'platform:tenants',
+    'X-Correlation-Id': command.correlationId,
+  };
   let submissionStatus = 0;
-  while (Date.now() < submissionDeadline) {
+  let last: EventStoreCommandStatus = {};
+
+  // A lost response may have committed: observe it before retrying the same operation ID.
+  for (let attempt = 0; attempt < maxSubmissionAttempts && Date.now() < deadline; attempt++) {
     try {
       const response = await eventStore.post('/api/v1/commands', {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'X-Correlation-Id': command.correlationId,
-        },
+        headers,
         data: {
           messageId: command.messageId,
-          tenant: 'system',
+          tenant: 'platform:tenants',
           domain: 'tenants',
           aggregateId: command.tenantId,
           commandType: command.commandType,
           payload: command.payload,
           correlationId: command.correlationId,
         },
-        timeout: Math.max(1_000, Math.min(SUBMISSION_ATTEMPT_TIMEOUT_MS, submissionDeadline - Date.now())),
+        failOnStatusCode: false,
+        timeout: Math.max(1, Math.min(30_000, deadline - Date.now())),
       });
       submissionStatus = response.status();
     } catch {
-      // A timed-out POST may still have been accepted. Retry the same deterministic message id
-      // and suppress transport details because request diagnostics can contain credentials.
+      // Transport error text may contain credentials; retain only a safe status category.
       submissionStatus = 504;
     }
-    if (submissionStatus === 202) break;
-    if (submissionStatus === 409) {
-      return {
-        submissionStatus,
-        status: { status: 'Conflict', statusCode: submissionStatus },
-      };
-    }
+    if ([202, 409, 422].includes(submissionStatus)) break;
     if (!TRANSIENT_SUBMISSION_STATUSES.has(submissionStatus)) {
-      throw new Error(`[tenant-readiness] ${command.commandType} submission failed (${submissionStatus}).`);
+      throw new Error(`[tenant-readiness] RefreshTenantAccess submission failed (${submissionStatus}).`);
     }
-    await pollDelay(500);
-  }
-  if (submissionStatus !== 202) {
-    throw new Error(
-      `[tenant-readiness] ${command.commandType} submission stayed unavailable (${submissionStatus}) for ${timeoutMs}ms.`,
-    );
+    last = await observeStatus();
+    if (last.status && TERMINAL_STATUSES.has(last.status)) return { submissionStatus, status: last };
+    await boundedDelay();
   }
 
-  const deadline = Date.now() + timeoutMs;
-  let last: EventStoreCommandStatus = {};
+  // Exhausted ambiguous submissions can still be observed under the original deadline.
   while (Date.now() < deadline) {
+    last = await observeStatus();
+    if (last.status && TERMINAL_STATUSES.has(last.status)) return { submissionStatus, status: last };
+    await boundedDelay();
+  }
+  throw new Error(
+    `[tenant-readiness] RefreshTenantAccess did not reach a terminal state within ${timeoutMs}ms; ` +
+      `submissionStatus=${submissionStatus}; last=${JSON.stringify(last)}`,
+  );
+
+  async function observeStatus(): Promise<EventStoreCommandStatus> {
+    if (Date.now() >= deadline) return last;
     try {
-      const statusResponse = await eventStore.get(`/api/v1/commands/status/${encodeURIComponent(command.messageId)}`, {
-        headers: { Authorization: `Bearer ${authToken}`, 'X-Correlation-Id': command.correlationId },
-        timeout: 5_000,
+      const response = await eventStore.get(`/api/v1/commands/status/${encodeURIComponent(command.messageId)}`, {
+        headers,
+        failOnStatusCode: false,
+        timeout: Math.max(1, Math.min(5_000, deadline - Date.now())),
       });
-      if (statusResponse.status() === 200) {
-        last = (await statusResponse.json()) as EventStoreCommandStatus;
-        if (last.status && TERMINAL_STATUSES.has(last.status)) {
-          return { submissionStatus, status: last };
-        }
-      } else {
-        last = { statusCode: statusResponse.status() };
-      }
+      if (response.status() !== 200) return { statusCode: response.status() };
+      const body = await response.json() as EventStoreCommandStatus;
+      return {
+        status: typeof body.status === 'string' && TERMINAL_STATUSES.has(body.status) ? body.status : undefined,
+        statusCode: 200,
+        rejectionEventType: body.rejectionEventType === 'InsufficientPermissionsRejection' ? body.rejectionEventType : undefined,
+      };
     } catch {
-      last = { statusCode: 504 };
+      return { statusCode: 504 };
     }
-    await pollDelay(250);
   }
 
-  throw new Error(
-    `[tenant-readiness] ${command.commandType} did not reach a terminal state within ${timeoutMs}ms; last=${JSON.stringify(last)}`,
-  );
-}
-
-function pollDelay(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  async function boundedDelay(): Promise<void> {
+    const remaining = deadline - Date.now();
+    if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, Math.min(250, remaining)));
+  }
 }

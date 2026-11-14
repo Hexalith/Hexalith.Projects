@@ -59,16 +59,22 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await expect(detail.resolutionTraceCandidates.first()).toBeVisible();
     await expect(detail.resolutionTraceReasons.first()).toBeVisible();
 
+    await detail.resolutionTraceConversationId.fill(liveFixtureGraph.ambiguousConversationId);
+    await detail.resolutionTraceRun.click();
+    await expect(detail.resolutionTraceOutcome).toContainText('MultipleCandidates');
+    await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.primary.projectId);
+    await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.secondary.projectId);
+
     await detail.resolutionTraceMode.selectOption('attachments');
     await detail.resolutionTraceFolderId.fill(liveFixtureGraph.folderId);
     await detail.resolutionTraceFileId.fill(liveFixtureGraph.fileReferenceId);
     await detail.resolutionTraceRun.click();
     await expect(detail.resolutionTraceCandidateComparison).toBeVisible();
-    // The fixture graph seeds the folder on the primary and the file on the secondary Project, so the
-    // combined attachment trace is deterministically ambiguous and names both fixture Projects.
-    await expect(detail.resolutionTraceOutcome).toContainText('MultipleCandidates');
+    // The supported Folder mapping suggests the primary. Opaque legacy File references cannot be
+    // mapped into owner File identity and never imply a second candidate.
+    await expect(detail.resolutionTraceOutcome).toContainText('SingleCandidate');
     await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.primary.projectId);
-    await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.secondary.projectId);
+    await expect(detail.resolutionTraceCandidates.filter({ hasText: resolutionProjects.secondary.projectId })).toHaveCount(0);
 
     const bodyText = await page.locator('body').innerText();
     for (const marker of FORBIDDEN_TRACE_MARKERS) {

@@ -1,6 +1,7 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders, mutationHeaders } from '../support/helpers/correlation.js';
-import { confirmProjectResolution, resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
+import { archiveProject, confirmProjectResolution, resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
+import { waitForProject } from '../support/helpers/readiness.js';
 
 /**
  * F5 critical journey — resolution → confirm (FR-12/13/14; E1 / R10).
@@ -143,12 +144,12 @@ test.describe('Projects resolution', () => {
     expect(malformed.status).toBe(404);
   });
 
-  liveAppHostTest('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext, liveFixtureGraph, resolutionProjects }) => {
+  liveAppHostTest('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ requestIdentity, apiRequest, authToken, tenantContext, liveFixtureGraph, resolutionProjects }) => {
     const { status, body } = await apiRequest<{ result: string; candidates: unknown[] }>({
       method: 'GET',
       path: '/api/v1/projects/resolution/from-conversation',
       params: { conversationId: liveFixtureGraph.ambiguousConversationId },
-      headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
+      headers: { ...queryHeaders({ authToken, ...requestIdentity('projects-resolution-request-1') }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
     });
     expect(status).toBe(200);
     expect(body.result).toBe('MultipleCandidates');
@@ -224,13 +225,24 @@ test.describe('Projects resolution', () => {
     expect(notAmbiguous.status).toBe(400);
   });
 
-  liveAppHostTest('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext, liveFixtureGraph }) => {
-    const { body } = await apiRequest<{ candidates: Array<{ lifecycle: string }> }>({
-      method: 'GET',
-      path: '/api/v1/projects/resolution/from-conversation',
-      params: { conversationId: liveFixtureGraph.conversationId, includeArchived: false },
-      headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-    });
-    expect(body.candidates.every((c) => c.lifecycle !== 'archived')).toBe(true);
+  liveAppHostTest('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, requestIdentity, recurse, tenantContext, liveFixtureGraph, resolutionProjects }) => {
+    const archivedId = resolutionProjects.primary.projectId;
+    const archived = await archiveProject(apiRequest, tenantContext.tenantId, archivedId, { authToken, ...requestIdentity('archive-resolution-candidate') });
+    expect(archived.status).toBe(202);
+    await waitForProject(recurse, apiRequest, tenantContext.tenantId, archivedId, { authToken, ...requestIdentity('projects-resolution-request-2') }, { lifecycle: 'archived' });
+
+    for (const includeArchived of [false, true]) {
+      const result = await apiRequest<{ candidates: Array<{ projectId: string }> }>({
+        method: 'GET',
+        path: '/api/v1/projects/resolution/from-conversation',
+        params: { conversationId: liveFixtureGraph.ambiguousConversationId, includeArchived },
+        headers: { ...queryHeaders({ authToken, ...requestIdentity(`archived-resolution-${includeArchived}`) }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
+      });
+      expect(result.status).toBe(200);
+      const ids = result.body.candidates.map((candidate) => candidate.projectId);
+      expect(ids).toContain(resolutionProjects.secondary.projectId);
+      if (includeArchived) expect(ids).toContain(archivedId);
+      else expect(ids).not.toContain(archivedId);
+    }
   });
 });

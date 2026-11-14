@@ -73,15 +73,20 @@ export async function setupWithReverseCleanup<T>(
 }
 
 async function attachCleanup(testInfo: TestInfo, name: string, result: FixtureCleanupResult): Promise<void> {
-  await testInfo.attach(`${name}.json`, {
-    body: JSON.stringify(
-      {
-        attempts: result.attempts.map(({ role, statusCode, succeeded }) => ({ role, statusCode, succeeded })),
-        succeeded: result.succeeded,
-      },
-      null,
-      2,
-    ),
-    contentType: 'application/json',
-  });
+  try {
+    await testInfo.attach(`${name}.json`, {
+      body: JSON.stringify(
+        {
+          attempts: result.attempts.map(({ role, statusCode, succeeded }) => ({ role, statusCode, succeeded })),
+          succeeded: result.succeeded,
+        },
+        null,
+        2,
+      ),
+      contentType: 'application/json',
+    });
+  } catch {
+    // Artifact storage can fail too; preserve the primary error and keep role/status evidence.
+    console.error(`[live-cleanup] diagnostic attachment unavailable: ${name}; ${summarizeCleanup(result)}.`);
+  }
 }

@@ -12,7 +12,7 @@ the running Aspire resource graph plus a real local Keycloak user and projected 
 ## Prerequisites
 
 - **Node.js ≥ 24** (`.nvmrc` → `nvm use`). The Playwright/utils stack requires it.
-- Aspire CLI `13.6.0`, .NET SDK `10.0.402`, `jq`, Dapr CLI `1.18.0`, Dapr runtime `1.18.2`, and a Docker-compatible runtime for the live lane.
+- Aspire CLI matching the repository-pinned AppHost SDK, .NET SDK pinned in the root `global.json` (`11.0.100`), `jq`, Dapr CLI `1.18.0`, Dapr runtime `1.18.2`, and a Docker-compatible runtime for the live lane.
 
 ## Setup
 
@@ -81,17 +81,66 @@ is generated unless explicitly supplied; the smoke and full phases run as `<run>
 Every `aspire wait` is bounded by `E2E_RESOURCE_TIMEOUT_SECONDS` (default `600`). The runner marks
 the AppHost as owned before `aspire start`, so a partial start, a failed phase, or an interruption
 still ends with `aspire stop --apphost <exact AppHost>`; it never uses `aspire stop --all`. It also
-exports `HexalithCommonsRoot` to the root-declared Commons checkout for sibling source builds. When a
-root-declared sibling checkout is not buildable in local Debug source mode, run the lane with
-`CI=true` to build the AppHost in package-reference mode, exactly as the scheduled job does.
+prepares local Debug/source builds with the Platform-owned `hexalith-module prepare-build` command
+used by `tools/qualification/run_supported_project_reads.py`. It consumes the returned mapping and
+root-declared sibling checkouts; it never initializes nested submodules or changes package pins.
+A source mapping or compilation failure blocks local execution. `CI=true` selects the separate
+package lane and is not a workaround for a local source failure. The released package cohort must
+contain the supported snapshot limits and Tenants recovery contract before that lane can qualify.
 
-Global setup runs once per Playwright invocation. It requires both outer Projects authorization
-responses to converge — the list read passes authorization (`200`, or `503` with category
-`read_model_unavailable` while the tenant has no projected Project yet) and an intentionally invalid
-create returns `400` from validation that runs only after authorization — before any fixture resolves.
-When the token's tenant or membership is missing, it submits `CreateTenant`, `UpdateTenant`, and
-`AddUserToTenant` through the authenticated EventStore command API and polls each to a terminal
-status; it never writes a projection directly.
+Global setup runs once, before the two workers start, and derives the concrete current tenant and
+principal from the live token. Ambiguous, reserved, mismatched or missing authority fails closed.
+It checks authenticated `GET /api/v1/routing/catalog` for the compiled public
+`refresh-tenant-access` command, then requires authenticated `GET /api/v1/projects` HTTP **200**.
+A healthy legacy AppHost, HTTP 400, a safe denial and HTTP 503 `read_model_unavailable` do not
+satisfy readiness. A missing Projects list read model remains a prerequisite failure.
+
+For existing source authority that needs recovery, setup sends only `RefreshTenantAccess` to
+`POST /api/v1/commands` under `X-Hexalith-Scope: platform:tenants`, with the token tenant as target.
+The human must have `tenants:refresh-access`, `tenants:read`, and source-verified TenantOwner or
+global-administrator authority. Setup never creates or renames the shared tenant, adds/promotes
+members, enables it, or writes a projection. A disabled tenant retains its denial.
+One fresh ULID identifies each recovery; up to four POST attempts reuse it after ambiguous failures.
+HTTP 409 and synchronous HTTP 422 are resolved through authenticated command-status polling.
+Only terminal `Completed` followed by list HTTP 200 with the unchanged token succeeds. Submission,
+status and convergence share one 45-second deadline. Diagnostics retain only statuses/categories.
+
+The ordinary live profile still needs actual compiled catalog/workload enrollment. If the catalog
+check fails, stop and resolve that hosting prerequisite rather than bypassing it. The existing
+`E2E_SUPPORTED_READS_ONLY=1` runner proves its separately scoped actual-owner read/browser matrix;
+it disables compatibility fixture hosts and does not establish this full fixture matrix.
+
+Cleanup registers every requested graph/Project before its POST, compensates already-requested
+resources newest first, and waits for Project archival before removing sibling metadata. Cancelled
+sibling seeds use independent cleanup requests bounded to five seconds per role and fifteen seconds
+overall. Failed cleanup attaches role/status JSON. An attachment-storage failure reports the same
+metadata to stderr and preserves the original setup/test failure.
+
+### Verification recorded on 2026-11-14
+
+The mapped Debug integration build passed with zero warnings/errors; its individual test project
+passed 110 tests with zero skips. The fixture/topology subset passed 46 of those tests, including
+structural profile-disabled isolation. From the repository root, typecheck and this two-worker
+contract command passed 30 tests with zero skips:
+
+```bash
+npm --prefix tests/e2e run typecheck
+npm --prefix tests/e2e test -- --workers=2 --project=chromium specs/tenant-access-readiness.spec.ts specs/live-fixture-identities.spec.ts specs/live-fixtures-lifecycle.spec.ts specs/project-fixture-cleanup.spec.ts --grep 'helper contracts|identity factory|no app required|archive cleanup diagnostics contract'
+```
+
+From the repository root, with existing realm credentials exported privately:
+
+```bash
+E2E_RESOURCE_TIMEOUT_SECONDS=90 E2E_RUN_ID=fixture-proof-20261114 bash tests/e2e/run-live-apphost.sh
+```
+
+That managed attempt reached healthy required resources, then failed closed on authenticated
+routing catalog HTTP 503 before collection (`collected=0 skipped=0 status=failed`). Full live
+fixture HTTP/UI/persisted-state results and actual profile-disabled AppHost startup remain
+unverified. Cached pinned Tenants.Contracts 7.0.7 and EventStore.Client 4.2.0 lack the required
+recovery/snapshot-limit types; mapped Debug source assemblies contain them. Pins and gates remain
+unchanged. See the [original spec's continuation evidence](../../_bmad-output/implementation-artifacts/spec-live-e2e-fixture-provisioning.md#fixture-provisioning-continuation--2026-11-14)
+for exact mapped restore/build/test and package-inspection commands, native XML and the live failure log.
 
 ## Authentication (real Keycloak / OIDC)
 

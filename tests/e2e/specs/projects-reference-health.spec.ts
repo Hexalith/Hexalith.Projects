@@ -279,7 +279,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       ...requestIdentity('reference-health-archive'),
     });
     expect(archived.status).toBe(202);
-    await waitForProject(recurse, apiRequest, tenantContext.tenantId, referencedProject.projectId, { authToken }, { lifecycle: 'archived' });
+    await waitForProject(recurse, apiRequest, tenantContext.tenantId, referencedProject.projectId, { authToken, ...requestIdentity('projects-reference-health-request-1') }, { lifecycle: 'archived' });
 
     const detail = new ProjectDetailPage(page);
     await detail.goto(referencedProject.projectId);

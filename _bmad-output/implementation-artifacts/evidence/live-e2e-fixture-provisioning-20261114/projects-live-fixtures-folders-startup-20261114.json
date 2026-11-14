@@ -1,0 +1,174 @@
+{
+  "logs": [
+    {
+      "resourceName": "folders",
+      "content": "[sys] Starting process...: Cmd = /home/administrator/.dotnet/dotnet, Args = [\"run\", \"--project\", \"/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj\", \"--configuration\", \"Debug\", \"--no-launch-profile\"]",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "MSBUILD : error MSB1025: An internal failure occurred while running MSBuild.",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "System.IO.IOException: No space left on device",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.IO.Directory.CreateTempSubdirectoryCore(String prefix)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.IO.Directory.CreateTempSubdirectory(String prefix)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.CreateFolderUnderTemp()",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.<>c.<CreateTempFileDirectoryLazy>b__115_0()",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "--- End of stack trace from previous location ---",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.Lazy`1.CreateValue()",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.GetCacheDirectory()",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.ClearCacheDirectory()",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildApp.BuildProject(String projectFile, String[] targets, String toolsVersion, Dictionary`2 globalProperties, Dictionary`2 restoreProperties, ILogger[] loggers, LoggerVerbosity verbosity, DistributedLoggerRecord[] distributedLoggerRecords, Int32 cpuCount, Boolean multiThreaded, Boolean enableNodeReuse, TextWriter preprocessWriter, TextWriter targetsWriter, Boolean detailedSummary, ISet`1 warningsAsErrors, ISet`1 warningsNotAsErrors, ISet`1 warningsAsMessages, Boolean enableRestore, ProfilerLogger profilerLogger, Boolean enableProfiler, Boolean interactive, ProjectIsolationMode isolateProjects, GraphBuildOptions graphBuildOptions, Boolean lowPriority, Boolean question, Boolean isTaskAndTargetItemLoggingRequired, Boolean isBuildCheckEnabled, String[] inputResultsCaches, String outputResultsCache, Boolean saveProjectResult, BuildResult& result, String[] commandLine)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildApp.Execute(String[] commandLine, CommandLineSwitches preGatheredSwitchesFromAutoResponseFile, CommandLineSwitches preGatheredSwitchesNotFromAutoResponseFile)",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "Unhandled exception: System.IO.IOException: No space left on device",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.IO.Directory.CreateTempSubdirectoryCore(String prefix)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.IO.Directory.CreateTempSubdirectory(String prefix)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.CreateFolderUnderTemp()",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.<>c.<CreateTempFileDirectoryLazy>b__115_0()",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "--- End of stack trace from previous location ---",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at System.Lazy`1.CreateValue()",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.GetCacheDirectory()",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.Framework.FileUtilities.ClearCacheDirectory()",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildApp.BuildProject(String projectFile, String[] targets, String toolsVersion, Dictionary`2 globalProperties, Dictionary`2 restoreProperties, ILogger[] loggers, LoggerVerbosity verbosity, DistributedLoggerRecord[] distributedLoggerRecords, Int32 cpuCount, Boolean multiThreaded, Boolean enableNodeReuse, TextWriter preprocessWriter, TextWriter targetsWriter, Boolean detailedSummary, ISet`1 warningsAsErrors, ISet`1 warningsNotAsErrors, ISet`1 warningsAsMessages, Boolean enableRestore, ProfilerLogger profilerLogger, Boolean enableProfiler, Boolean interactive, ProjectIsolationMode isolateProjects, GraphBuildOptions graphBuildOptions, Boolean lowPriority, Boolean question, Boolean isTaskAndTargetItemLoggingRequired, Boolean isBuildCheckEnabled, String[] inputResultsCaches, String outputResultsCache, Boolean saveProjectResult, BuildResult& result, String[] commandLine)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildApp.Execute(String[] commandLine, CommandLineSwitches preGatheredSwitchesFromAutoResponseFile, CommandLineSwitches preGatheredSwitchesNotFromAutoResponseFile)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildClientApp.Execute(String[] commandLineArgs, String msbuildLocation, Boolean multiThreaded, Boolean shutdownServerAfterBuild, CancellationToken cancellationToken)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.Build.CommandLine.MSBuildApp.Main(String[] args)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "   at Microsoft.DotNet.Cli.Utils.MSBuildForwardingAppWithoutLogging.ExecuteInProc(String[] arguments)",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "",
+      "isError": true
+    },
+    {
+      "resourceName": "folders",
+      "content": "\u001B[39;49m",
+      "isError": false
+    },
+    {
+      "resourceName": "folders",
+      "content": "The build failed. Fix the build errors and run again.",
+      "isError": true
+    }
+  ]
+}

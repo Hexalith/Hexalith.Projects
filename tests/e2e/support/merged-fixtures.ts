@@ -88,19 +88,25 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
   },
 
   liveFixtureGraph: async ({ liveFixtureIdentities }, use, testInfo) => {
-    const { graph, cleanup } = await provisionLiveFixtureGraph(liveFixtureIdentities);
-    await use(graph);
-    // Sibling roles are removed after every dependent Project fixture has been archived.
-    await reportCleanup(testInfo, 'live-fixture-cleanup', await cleanup());
+    const { graph, cleanup } = await provisionLiveFixtureGraph(liveFixtureIdentities, testInfo);
+    try {
+      await use(graph);
+    } finally {
+      // Sibling roles are removed after every dependent Project fixture has been archived.
+      await reportCleanup(testInfo, 'live-fixture-cleanup', await cleanup());
+    }
   },
 
   liveCleanup: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
     const ledger = new CleanupLedger();
     const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
-    await use({
-      trackProject: (projectId, label) => ledger.register(projectArchiveStep(deps, projectId, `projects:${label}`)),
-    });
-    await reportCleanup(testInfo, 'live-project-cleanup', await ledger.runReverse());
+    try {
+      await use({
+        trackProject: (projectId, label) => ledger.register(projectArchiveStep(deps, projectId, `projects:${label}`)),
+      });
+    } finally {
+      await reportCleanup(testInfo, 'live-project-cleanup', await ledger.runReverse());
+    }
   },
 
   seededProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
@@ -108,8 +114,11 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
     const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
     const project = await setupWithReverseCleanup(testInfo, 'seeded-project-cleanup', ledger, () =>
       seedActiveProject(deps, ledger, 'projects:seeded', createProjectInput({ projectId: liveFixtureGraph.projectId })));
-    await use(project);
-    await reportCleanup(testInfo, 'seeded-project-cleanup', await ledger.runReverse());
+    try {
+      await use(project);
+    } finally {
+      await reportCleanup(testInfo, 'seeded-project-cleanup', await ledger.runReverse());
+    }
   },
 
   referencedProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
@@ -117,8 +126,11 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
     const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
     const project = await setupWithReverseCleanup(testInfo, 'referenced-project-cleanup', ledger, () =>
       seedReferencedProject(deps, ledger, liveFixtureGraph));
-    await use(project);
-    await reportCleanup(testInfo, 'referenced-project-cleanup', await ledger.runReverse());
+    try {
+      await use(project);
+    } finally {
+      await reportCleanup(testInfo, 'referenced-project-cleanup', await ledger.runReverse());
+    }
   },
 
   resolutionProjects: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
@@ -126,8 +138,11 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
     const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
     const projects = await setupWithReverseCleanup(testInfo, 'resolution-projects-cleanup', ledger, () =>
       seedResolutionProjects(deps, ledger, liveFixtureGraph));
-    await use(projects);
-    await reportCleanup(testInfo, 'resolution-projects-cleanup', await ledger.runReverse());
+    try {
+      await use(projects);
+    } finally {
+      await reportCleanup(testInfo, 'resolution-projects-cleanup', await ledger.runReverse());
+    }
   },
 });
 

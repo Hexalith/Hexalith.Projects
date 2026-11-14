@@ -214,7 +214,7 @@ test.describe('Projects new-project proposal', () => {
         apiRequest,
         tenantContext.tenantId,
         liveFixtureGraph.proposalProjectId,
-        { authToken, freshness: 'eventually_consistent' },
+        { authToken, freshness: 'eventually_consistent', ...requestIdentity('projects-proposal-request-1') },
       ),
       ({ status: diagnosticsStatus, body: diagnostics }) => diagnosticsStatus === 200
         && diagnostics.lifecycleState === 'active'

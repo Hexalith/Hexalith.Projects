@@ -79,12 +79,32 @@ Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an 
 - 2026-10-06: Resumed build and captured the current full baseline commit. Implementation halted under the existing tenant-contract Block If condition; no source or sibling changes were made. Live acceptance remains unsatisfied.
 - 2026-11-14: Rechecked the tenant-contract prerequisite against the current workspace. The Block If condition still applies; no implementation changes were made. Recorded focused passes and the current solution-build failures below. Status and existing baseline identifiers are preserved.
 - 2026-11-14: Implemented the separately authorized tenant-access recovery prerequisite across the root-declared EventStore, Tenants, and Projects sources. The supported contract and verification results are recorded below. Full fixture provisioning remains a subsequent build; this spec's existing status and baseline identifiers are preserved.
+- 2026-11-14: Resumed complete fixture provisioning from `7bcb375f60414062e64b5f066e2bd4924a385b7c`. Preserve all earlier history and baseline identifiers. Finish the original tasks using the supported recovery contract below; leave all changes uncommitted for review.
+- 2026-11-14: Implemented the recovery-only gate, deterministic request identities, cleanup hardening and remaining resolution/archive scenario fixes. Mapped Debug build, 110 integration tests and 30 two-worker TypeScript contracts passed. The managed live run failed before collection on authenticated catalog HTTP 503 after resources became healthy. Full live, persisted-state and profile-disabled runtime acceptance remain open; status and both original baselines are unchanged.
 
 ## Review Triage Log
 
+- 2026-11-14 continuation inspection: corrected terminal rejection being masked by a later list 200; expired readiness budget starting another POST; malformed runner mapping validation and nonempty preparation workspace; cancelled/partially accepted setup escaping compensation; failed diagnostic attachments masking primary failures; fabricated cleanup 404 statuses; unsupported attachment ambiguity and vacuous archive assertions. Focused checks cover the helper/cleanup regressions. The new live assertions remain unexecuted because catalog enrollment blocked collection. The workflow has not advanced to final acceptance/review completion.
 ## Design Notes
 
 The test host is a runner-owned compatibility fixture, not a replacement sibling implementation. AppHost may launch role-specific instances under the sibling app identities only when the explicit live-fixture profile is enabled; seed/reset operations remain scoped by run identity and expose metadata required by Projects, never content payloads.
+
+For this continuation, inspect and reuse supported Debug/source preparation in
+`tools/qualification/run_supported_project_reads.py`,
+`tools/qualification/supported_browser_reads.py`, and `tests/e2e/run-live-apphost.sh`.
+Verify actual catalog enrollment and package compatibility; retain package-cohort
+blockers without weakening gates or updating dependency pins. Verify the complete
+live matrix with two workers and zero skips, profile-disabled isolation, persisted
+end-state, and HTTP/UI results. Missing runtime prerequisites are blockers, never
+passing evidence. Recovery must derive tenant/principal from the live token, use
+one operation ID for retries and fresh IDs for later recovery, poll terminal
+command status, then require Projects list HTTP 200 with that same token. Preserve
+tenant lifecycle, membership, and roles. Cleanup must run in reverse order, await
+Project archival convergence, and attach diagnostics without masking an original
+setup/test failure. Update runner documentation and this original spec with exact
+commands and evidence. Do not write projections, initialize nested submodules,
+change shared-tenant authority, edit the deferred-work ledger, change host limits,
+stop unrelated workloads, stage, commit, or push changes.
 
 ## Verification
 
@@ -314,3 +334,136 @@ rerun `f` exposed the diagnostic freshness setting and timed out before recovery
 Only task-created temporary build outputs were removed to recover disk space.
 Final rerun `g` passed against stable corrected source. Full fixture tasks and
 their live matrix remain pending.
+
+## Fixture Provisioning Continuation — 2026-11-14
+
+**Outcome:** Implementation advanced; completion is blocked. Changes remain
+uncommitted on `main`, starting from
+`7bcb375f60414062e64b5f066e2bd4924a385b7c`. All earlier attempts, the separate
+recovery proof, `baseline_commit` and `baseline_revision` are preserved. No live
+matrix or new fixture persisted end-state is claimed by the passing focused runs.
+
+### Implementation audit
+
+- [x] Pure fixture identities cover all run/worker/retry/repeat/scenario dimensions,
+  including delimiter-bearing inputs; operation identities are deterministic in
+  the target live specs and shared Project setup/convergence/cleanup calls.
+- [x] Global setup checks actual authenticated compiled catalog enrollment before
+  workers start. Recovery uses only token-derived `RefreshTenantAccess` through
+  `platform:tenants`, one operation ULID across at most four submission attempts,
+  a fresh ULID for later recovery, terminal `Completed`, and unchanged-token
+  Projects list HTTP 200 within one 45-second deadline. It preserves shared-tenant
+  lifecycle, membership, roles and metadata. Rejected commands and HTTP 400/503
+  cannot satisfy readiness.
+- [x] Retained the existing metadata-only sibling hosts and explicit-profile
+  composition. Native fixture/topology coverage, including disabled-profile
+  structure, passed; all enabled-profile resources reached healthy state.
+- [x] Registered graph/Project compensation before POST, ran pending cleanup newest
+  first, retained archive-to-convergence checks, bounded independent sibling
+  compensation to five seconds per role/fifteen seconds overall, preserved primary
+  failures when attachment storage fails, and recorded actual cleanup response
+  status or null transport status.
+- [x] Replaced remaining fixed absence routes and default request identities in
+  target scenarios. Resolution setup now observes reference metadata and supported
+  conversation ambiguity; trace expectations preserve the current legacy File
+  limitation. Archive coverage now creates and archives an actual candidate and
+  checks exact-ID exclusion/inclusion. These HTTP/UI scenarios require live rerun.
+- [x] Runner prepares Platform-selected local Debug/source assets, validates the
+  seven returned environment keys without evaluating shell text, rejects zero
+  timeouts, and removes only its owned temporary mapping/session. README, topology
+  runbook and environment example describe recovery, authority, enrollment,
+  package-cohort limits and cleanup.
+- [ ] Execute the complete live matrix with two workers, nonempty collection and
+  zero skips, including actual retry/repeat isolation and persisted Project archive
+  and sibling cleanup state, plus HTTP/UI outcomes.
+- [ ] Start the actual AppHost with the profile disabled and verify no fixture
+  ingress or sibling binding. Structural tests alone do not complete this runtime
+  acceptance criterion.
+
+### Commands and retained evidence
+
+Commands below ran from the repository root. Exact command records, four
+`dotnet-inspect` argv/assembly fingerprints and results are in
+[commands.json](evidence/live-e2e-fixture-provisioning-20261114/commands.json).
+The mapped-command wrapper consumed the preparation JSON's environment and
+explicit root-declared sibling paths; its exact executed source and preparation
+output are retained beside the results. The managed runner performs fresh
+preparation automatically; its local path never falls back to CI/package mode.
+
+```bash
+dotnet run --project references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace /tmp/projects-live-fixtures-source-20261114 --output json
+python3 /tmp/projects-live-fixtures-command-20261114.py dotnet restore tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj
+python3 /tmp/projects-live-fixtures-command-20261114.py dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-restore -m:1
+python3 /tmp/projects-live-fixtures-command-20261114.py dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-build --no-restore
+dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net11.0/Hexalith.Projects.Integration.Tests.dll -class '*LiveFixture*' -class '*AspireTopologyTests' -xml /tmp/projects-live-fixtures-focused-integration-20261114.xml
+npm --prefix tests/e2e run typecheck
+npm --prefix tests/e2e test -- --workers=2 --project=chromium specs/tenant-access-readiness.spec.ts specs/live-fixture-identities.spec.ts specs/live-fixtures-lifecycle.spec.ts specs/project-fixture-cleanup.spec.ts --grep 'helper contracts|identity factory|no app required|archive cleanup diagnostics contract'
+bash -n tests/e2e/run-live-apphost.sh
+git diff --check -- tests docs
+```
+
+| Check | Actual result |
+| --- | --- |
+| Supported source preparation | Exit 0; Debug mapping hash `1ac96a961301fe7b3f9b663890dd983fa239e199d294c97e067ea8c563043835`. |
+| Mapped integration restore/build | Exit 0; build had zero warnings/errors. Initial missing RuntimeIdentityProbe assets and stale Commons package/source assets were resolved by supported restores, with no pin/gate changes. |
+| Individual mapped integration test project | Exit 0; 110 passed, 0 failed/skipped. |
+| Native focused fixture/topology classes | Exit 0; 46 passed, 0 failed/skipped; subset of the integration suite, not an additional 46 unique cases. |
+| Final two-worker TypeScript contracts | Exit 0; 30 passed, 0 failed/skipped. This filtered helper/factory/cleanup lane does not establish the full live matrix. |
+| TypeScript typecheck, shell syntax, diff checks | Exit 0. |
+| Runner mapping expression | Valid seven-key Debug environment accepted; newline-bearing path rejected. |
+| `E2E_RESOURCE_TIMEOUT_SECONDS=0 bash tests/e2e/run-live-apphost.sh` with required dummy credentials supplied privately | Expected exit 2 before startup. |
+| Unprepared `dotnet build Hexalith.Projects.slnx --no-restore` | Exit 1; 296 errors, including MSB4019 for unavailable Conversations nested Builds props and mismatched source/package types. No nested submodule was initialized. This broad gate remains failed separately from the mapped focused pass. |
+
+### Definitive live attempt and remaining prerequisites
+
+With the existing local realm credentials supplied privately in the environment:
+
+```bash
+E2E_RESOURCE_TIMEOUT_SECONDS=90 E2E_RUN_ID=fixture-proof-20261114 bash tests/e2e/run-live-apphost.sh
+```
+
+The runner prepared Debug/source assets and started the exact AppHost. A transient
+fixture Folders startup failure reported MSB1025 / `System.IO.IOException: No space
+left on device`. Only continuation-created copied build outputs were removed, with
+an exact retained deletion manifest; no pre-existing artifacts, host limits or
+unrelated workloads were changed. Once space recovered, restarting only the owned
+Folders resource allowed all fourteen required resources to become healthy.
+
+Smoke global setup obtained a real Keycloak token, then authenticated
+`GET /api/v1/routing/catalog` returned **HTTP 503**. The compiled
+`tenants:refresh-access` enrollment prerequisite failed closed. Exit was **1**;
+the zero-live-skip reporter recorded **collected=0, skipped=0, status=failed**.
+Zero skipped with zero collected is not passing evidence. Recovery and shared
+membership/status/role mutations were never attempted. The runner stopped its
+exact AppHost and removed its temporary mapping and browser session; an independent
+`aspire ps --format Json --non-interactive` returned `[]` afterward.
+
+The ordinary compatibility fixture profile still needs supported compiled catalog
+and workload enrollment. The separate supported-read topology explicitly excludes
+this compatibility fixture profile; its prior successful recovery proof is not a
+replacement for this matrix. No projection, tenant authority or gate was changed
+to hide that boundary. Earlier runner mapping-validation/workspace failures were
+fixed and are not counted as runtime acceptance.
+
+Package inspection independently found the pinned cached **Tenants.Contracts
+7.0.7 / net10.0** lacks `RefreshTenantAccess`, and **EventStore.Client 4.2.0 /
+net10.0** lacks `ProjectionSnapshotLimits` (each inspection exited 1, type not
+found). Identical selectors against mapped Debug/net11.0 source assemblies exited
+0. This establishes incompatibility of those pinned cached artifacts, without
+claiming anything about newer remote releases. The coordinated recovery package
+cohort remains required before package-mode qualification; dependency pins and
+package gates are unchanged.
+
+Retained evidence:
+[summary and fingerprints](evidence/live-e2e-fixture-provisioning-20261114/verification-summary.json),
+[source inputs](evidence/live-e2e-fixture-provisioning-20261114/source-inputs.json),
+[native fixture/topology XML](evidence/live-e2e-fixture-provisioning-20261114/projects-live-fixtures-focused-integration-20261114.xml),
+[30-case TypeScript XML](evidence/live-e2e-fixture-provisioning-20261114/typescript-contracts.xml),
+[managed live failure log](evidence/live-e2e-fixture-provisioning-20261114/projects-live-fixtures-managed-20261114-corrected.log.gz),
+[Folders startup diagnostic](evidence/live-e2e-fixture-provisioning-20261114/projects-live-fixtures-folders-startup-20261114.json),
+and [owned output cleanup manifest](evidence/live-e2e-fixture-provisioning-20261114/projects-live-fixtures-owned-cleanup-20261114.json).
+The directory also retains compressed build/test/package-inspection output, the
+mapped-command wrapper and its selected preparation environment. It excludes
+tokens, passwords, private keys, browser session state and raw Aspire resource
+descriptions. Full live persisted state and disabled-profile startup remain
+unverified; this continuation does not complete the story.

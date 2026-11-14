@@ -16,6 +16,7 @@ import {
   type FixtureCleanupResult,
   type LiveFixtureGraph,
 } from '../helpers/live-fixtures-api-client.js';
+import { CleanupLedger, setupWithReverseCleanup } from './cleanup-evidence.js';
 
 export interface LiveFixtureFixtures {
   liveFixtureIdentities: LiveFixtureIdentities;
@@ -69,30 +70,41 @@ export function requestIdentityFactory(identities: LiveFixtureIdentities): (oper
 /** Seeds the sibling compatibility host using metadata only. */
 export async function provisionLiveFixtureGraph(
   identities: LiveFixtureIdentities,
+  testInfo: TestInfo,
 ): Promise<{ graph: LiveFixtureGraph; cleanup: () => Promise<FixtureCleanupResult> }> {
-  const fixtureRequest = await request.newContext({
-    baseURL: requireLiveEnv('FIXTURE_API_URL'),
-    ignoreHTTPSErrors: true,
-  });
   const graph = toLiveFixtureGraph(identities, {
     tenantId: requireLiveEnv('TEST_TENANT_ID'),
     principalId: requireLiveEnv('TEST_PRINCIPAL_ID'),
   });
+  const fixtureRequest = await request.newContext({
+    baseURL: requireLiveEnv('FIXTURE_API_URL'),
+    ignoreHTTPSErrors: true,
+  });
 
+  const ledger = new CleanupLedger();
+  // The control POST may commit before a transport failure; every requested graph is compensated.
+  ledger.register({
+    role: 'live-fixtures',
+    run: async () => (await deleteLiveFixtureGraph(fixtureRequest, graph.graphId)).attempts,
+  });
   try {
-    const provisioned = await createLiveFixtureGraph(fixtureRequest, graph);
+    const provisioned = await setupWithReverseCleanup(testInfo, 'live-fixture-cleanup', ledger, () =>
+      createLiveFixtureGraph(fixtureRequest, graph));
     return {
       graph: provisioned,
       cleanup: async () => {
+        const result = await ledger.runReverse();
         try {
-          return await deleteLiveFixtureGraph(fixtureRequest, provisioned.graphId);
-        } finally {
           await fixtureRequest.dispose();
+        } catch {
+          result.attempts.push({ role: 'live-fixtures:context', statusCode: null, succeeded: false });
+          result.succeeded = false;
         }
+        return result;
       },
     };
   } catch (error) {
-    await fixtureRequest.dispose();
+    try { await fixtureRequest.dispose(); } catch { /* Preserve the original setup failure. */ }
     throw error;
   }
 }
