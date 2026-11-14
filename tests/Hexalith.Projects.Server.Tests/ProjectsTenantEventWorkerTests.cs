@@ -9,6 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Subscriptions;
+using Hexalith.EventStore.Client.Projections;
+using Hexalith.EventStore.Testing.Fakes;
+using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Workers;
@@ -56,6 +59,7 @@ public sealed class ProjectsTenantEventWorkerTests
         provider.GetRequiredService<IOptions<EventStoreDomainEventsOptions>>().Value.TopicName.ShouldBe(ProjectsWorkersModule.TenantEventsTopicName);
         provider.GetRequiredService<IOptions<EventStoreDomainEventsOptions>>().Value.SubscriptionRoute.ShouldBe(ProjectsWorkersModule.TenantEventsRoute);
 
+        provider.GetServices<IEventStoreDomainEventHandler<TenantAccessRefreshed>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
         provider.GetServices<IEventStoreDomainEventHandler<TenantCreated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
         provider.GetServices<IEventStoreDomainEventHandler<TenantUpdated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
         provider.GetServices<IEventStoreDomainEventHandler<TenantDisabled>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
@@ -92,6 +96,132 @@ public sealed class ProjectsTenantEventWorkerTests
         projection.RemovedConfigurationKeys.ShouldContain("projects.create.enabled");
         projection.ProcessedMessages.Values.Select(static evidence => evidence.PayloadFingerprint).ShouldNotContain("secret-value");
     }
+
+    [Theory]
+    [InlineData(TenantStatus.Active)]
+    [InlineData(TenantStatus.Disabled)]
+    public async Task WorkerRefreshProjectsExactBoundedSnapshotWithoutConfigurationValues(TenantStatus status)
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectsTenantEventHandler subject = CreateWorkerHandler(store);
+        TenantAccessRefreshed snapshot = new("tenant-a", status,
+            new Dictionary<string, TenantRole> { ["owner"] = TenantRole.TenantOwner, ["reader"] = TenantRole.TenantReader },
+            ["projects.allowed", "billing.secret"]);
+        await subject.HandleAsync(snapshot, Context(50, "system") with { AggregateId = "tenant-a" }, TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection saved = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        saved.Enabled.ShouldBe(status == TenantStatus.Active);
+        saved.Principals["reader"].Role.ShouldBe("TenantReader");
+        saved.ConfigurationKeys.ShouldBe(["projects.allowed"]);
+        saved.SnapshotWatermark.ShouldBe(50);
+        saved.ProcessedMessages.Values.ShouldHaveSingleItem().PayloadFingerprint.Length.ShouldBe(64);
+    }
+
+    [Theory]
+    [InlineData("status")]
+    [InlineData("membership")]
+    [InlineData("role")]
+    [InlineData("configuration")]
+    public async Task RealRefreshPayloadConflictsPersistAndDenyAccess(string change)
+    {
+        InMemoryReadModelStore backend = new();
+        DaprProjectTenantAccessProjectionStore store = new(backend);
+        ProjectsTenantEventHandler subject = CreateWorkerHandler(store);
+        TenantAccessRefreshed original = RefreshPayload();
+        EventStoreDomainEventContext context = Context(50, "system") with { AggregateId = "tenant-a" };
+        await subject.HandleAsync(original, context, TestContext.Current.CancellationToken);
+        TenantAccessRefreshed divergent = change switch
+        {
+            "status" => original with { Status = TenantStatus.Disabled },
+            "membership" => original with { Members = new Dictionary<string, TenantRole>(original.Members) { ["intruder"] = TenantRole.TenantReader } },
+            "role" => original with { Members = new Dictionary<string, TenantRole>(original.Members) { ["reader"] = TenantRole.TenantOwner } },
+            _ => original with { ConfigurationKeys = ["projects.allowed", "projects.changed"] },
+        };
+        await subject.HandleAsync(divergent, context, TestContext.Current.CancellationToken);
+
+        ProjectTenantAccessProjection saved = (await new DaprProjectTenantAccessProjectionStore(backend)
+            .GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        saved.ReplayConflict.ShouldBeTrue();
+        saved.Enabled.ShouldBeTrue();
+        saved.Principals.ShouldNotContainKey("intruder");
+        saved.Principals["reader"].Role.ShouldBe("TenantReader");
+        saved.ConfigurationKeys.SetEquals(original.ConfigurationKeys).ShouldBeTrue();
+        saved.Watermark.ShouldBe(50);
+        TenantAccessAuthorizer authorizer = new(new DaprProjectTenantAccessProjectionStore(backend), new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions());
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "owner", "tenant-a"), TestContext.Current.CancellationToken))
+            .Outcome.ShouldBe(TenantAccessOutcome.ReplayConflict);
+    }
+
+    [Fact]
+    public async Task EquivalentRefreshCollectionOrderingKeepsFingerprintAndLogicalVersionStable()
+    {
+        InMemoryReadModelStore backend = new();
+        ProjectsTenantEventHandler subject = CreateWorkerHandler(new DaprProjectTenantAccessProjectionStore(backend));
+        TenantAccessRefreshed original = RefreshPayload();
+        EventStoreDomainEventContext context = Context(50, "system") with { AggregateId = "tenant-a" };
+        await subject.HandleAsync(original, context, TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection before = (await new DaprProjectTenantAccessProjectionStore(backend)
+            .GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        TenantAccessRefreshed reordered = original with
+        {
+            Members = original.Members.Reverse().ToDictionary(member => member.Key, member => member.Value, StringComparer.Ordinal),
+            ConfigurationKeys = original.ConfigurationKeys.Reverse().ToArray(),
+        };
+        await subject.HandleAsync(reordered, context, TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection after = (await new DaprProjectTenantAccessProjectionStore(backend)
+            .GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        after.Version.ShouldBe(before.Version);
+        after.ProcessedMessages.ShouldHaveSingleItem().Value.PayloadFingerprint.ShouldBe(before.ProcessedMessages.Single().Value.PayloadFingerprint);
+        after.ReplayConflict.ShouldBeFalse();
+        after.MalformedEvidence.ShouldBeFalse();
+        TenantAccessAuthorizer authorizer = new(new DaprProjectTenantAccessProjectionStore(backend), new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions());
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "owner", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("oversized-entries")]
+    [InlineData("oversized-bytes")]
+    [InlineData("unknown-status")]
+    [InlineData("invalid-role")]
+    [InlineData("repeated-configuration-key")]
+    public async Task MalformedRefreshPayloadCannotPersistPartialValidAccess(string shape)
+    {
+        InMemoryReadModelStore backend = new();
+        ProjectsTenantEventHandler subject = CreateWorkerHandler(new DaprProjectTenantAccessProjectionStore(backend));
+        TenantAccessRefreshed valid = RefreshPayload();
+        TenantAccessRefreshed invalid = shape switch
+        {
+            "oversized-entries" => valid with { Members = Enumerable.Range(0, ProjectionSnapshotLimits.Default.MaxEntries + 1)
+                .ToDictionary(index => "reader-" + index, _ => TenantRole.TenantReader, StringComparer.Ordinal) },
+            "oversized-bytes" => valid with { Members = new Dictionary<string, TenantRole> { [new string('中', ProjectionSnapshotLimits.Default.MaxSerializedBytes)] = TenantRole.TenantReader } },
+            "unknown-status" => valid with { Status = (TenantStatus)999 },
+            "invalid-role" => valid with { Members = new Dictionary<string, TenantRole>(valid.Members) { ["reader"] = (TenantRole)999 } },
+            _ => valid with { ConfigurationKeys = ["projects.allowed", "projects.allowed"] },
+        };
+        Exception? failure = await Record.ExceptionAsync(() => subject.HandleAsync(invalid,
+            Context(50, "system") with { AggregateId = "tenant-a" }, TestContext.Current.CancellationToken));
+        if (shape is "oversized-entries" or "oversized-bytes") failure.ShouldBeOfType<ProjectionSnapshotLimitExceededException>();
+        else if (shape == "unknown-status") failure.ShouldBeOfType<InvalidOperationException>();
+        else failure.ShouldBeNull();
+
+        ProjectTenantAccessProjection? saved = await new DaprProjectTenantAccessProjectionStore(backend)
+            .GetAsync("tenant-a", TestContext.Current.CancellationToken);
+        if (saved is not null)
+        {
+            saved.Enabled.ShouldBeFalse();
+            saved.Principals.ShouldBeEmpty();
+            saved.ConfigurationKeys.ShouldBeEmpty();
+            saved.Watermark.ShouldBe(0);
+            saved.SnapshotWatermark.ShouldBe(0);
+            saved.MalformedEvidence.ShouldBeTrue();
+        }
+
+        TenantAccessAuthorizer authorizer = new(new DaprProjectTenantAccessProjectionStore(backend), new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions());
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "owner", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeFalse();
+    }
+
+    private static TenantAccessRefreshed RefreshPayload()
+        => new("tenant-a", TenantStatus.Active, new Dictionary<string, TenantRole>
+            { ["owner"] = TenantRole.TenantOwner, ["reader"] = TenantRole.TenantReader }, ["projects.allowed", "projects.second"]);
 
     [Fact]
     public async Task ProjectionWriterOptionShouldDisableTheNonOwningHostBeforeMutation()

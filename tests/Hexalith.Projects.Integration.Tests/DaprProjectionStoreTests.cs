@@ -34,7 +34,7 @@ public sealed class DaprProjectionStoreTests
     public async Task TenantAccessStoreShouldPersistDetachedProjectionWithOptimisticConcurrency()
     {
         FakeProjectsStateStore state = new();
-        DaprProjectTenantAccessProjectionStore store = new(state);
+        DaprProjectTenantAccessProjectionStore store = new(new ProjectsStateReadModelTestAdapter(state));
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
 
         ProjectTenantAccessProjection projection = new() { TenantId = "tenant-a", Enabled = true };

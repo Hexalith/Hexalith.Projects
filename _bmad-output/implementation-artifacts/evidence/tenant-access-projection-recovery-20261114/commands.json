@@ -1,0 +1,496 @@
+{
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "source_mapping_environment_file": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout",
+  "source_mapping_environment_json_path": "buildPreparation.environment",
+  "projects": {
+    "eventstore-client": {
+      "build": [
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal"
+      ],
+      "test": [
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net11.0/Hexalith.EventStore.Client.Tests.dll",
+        "-class",
+        "*ProjectionSnapshotLimitsTests",
+        "-xml",
+        "/tmp/tenant-recovery-eventstore-client.xml"
+      ]
+    },
+    "projects-core": {
+      "build": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal"
+      ],
+      "test": [
+        "dotnet",
+        "tests/Hexalith.Projects.Tests/bin/Debug/net11.0/Hexalith.Projects.Tests.dll",
+        "-class",
+        "*ProjectTenantAccessHandlerTests",
+        "-class",
+        "*TenantAccessAuthorizerTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-projects-core.xml"
+      ]
+    },
+    "projects-server-final": {
+      "build": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal",
+        "--no-restore",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-p:BuildProjectReferences=false"
+      ],
+      "test": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net11.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*TenantAccessRecoveryPersistenceTests",
+        "-class",
+        "*ProjectsTenantEventWorkerTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-projects-server-final.xml"
+      ]
+    },
+    "tenants-server-final": {
+      "build": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal",
+        "--no-restore",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-p:BuildProjectReferences=false"
+      ],
+      "test": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net11.0/Hexalith.Tenants.Server.Tests.dll",
+        "-class",
+        "*TenantAccessRecoveryTests",
+        "-class",
+        "*TenantAccessRecoveryProjectionTests",
+        "-class",
+        "*TenantSubmitCommandValidatorTests",
+        "-class",
+        "*TenantCatalogParityTests",
+        "-class",
+        "*TenantsGlobalAdministratorVerifierTests",
+        "-class",
+        "*EventContractReferenceDocumentationTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-tenants-server-final.xml"
+      ]
+    },
+    "tenants-client-final": {
+      "build": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Client.Tests/Hexalith.Tenants.Client.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal",
+        "--no-restore",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-p:BuildProjectReferences=false"
+      ],
+      "test": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Client.Tests/bin/Debug/net11.0/Hexalith.Tenants.Client.Tests.dll",
+        "-class",
+        "*TenantProjectionEventHandlerTests",
+        "-class",
+        "*TenantDurableProjectionRegistrationTests",
+        "-class",
+        "*TenantServiceCollectionExtensionsTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-tenants-client-final.xml"
+      ]
+    },
+    "tenants-contracts-final": {
+      "build": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/Hexalith.Tenants.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-v:minimal",
+        "--no-restore",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-p:BuildProjectReferences=false"
+      ],
+      "test": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/bin/Debug/net11.0/Hexalith.Tenants.Contracts.Tests.dll",
+        "-class",
+        "*TenantCatalogTests",
+        "-class",
+        "*EventSerializationTests",
+        "-class",
+        "*McpCliDecorationTests",
+        "-class",
+        "*NamingConventionTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-tenants-contracts-final.xml"
+      ]
+    }
+  },
+  "full_suite_commands": [
+    [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/bin/Debug/net11.0/Hexalith.Tenants.Contracts.Tests.dll",
+      "-result-xml",
+      "/tmp/tenant-recovery-tenants-contracts-final-full.xml"
+    ],
+    [
+      "dotnet",
+      "references/Hexalith.Tenants/tests/Hexalith.Tenants.Client.Tests/bin/Debug/net11.0/Hexalith.Tenants.Client.Tests.dll",
+      "-result-xml",
+      "/tmp/tenant-recovery-tenants-client-final-full.xml"
+    ]
+  ],
+  "separate_build_blocker": {
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:HexalithEventStoreVersion=5.0.1",
+      "-p:BuildProjectReferences=false",
+      "-v:minimal"
+    ],
+    "result": "HXW005: Source Hexalith.Commons duplicates restored package Hexalith.Commons.Http/3.0.0 under the original mapping; final distributed restore/mapping owned by parent."
+  },
+  "live-recovery": {
+    "command": [
+      "python3",
+      "tools/qualification/run_supported_project_reads.py",
+      "--scenario",
+      "tenant-access-recovery",
+      "--timeout",
+      "600",
+      "--evidence",
+      "/tmp/tenant-access-recovery-live-20261114-g"
+    ],
+    "exitCode": 0,
+    "passed": 1,
+    "nativeTestCommand": [
+      "dotnet",
+      "/tmp/supported-project-reads-private-wled0v7q/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.TenantAccessRecoveryUsesActualPersistedOwnersAsync",
+      "-xml",
+      "/tmp/tenant-access-recovery-live-20261114-g/distributed.xml"
+    ],
+    "sourceMappingEnvironment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/supported-project-reads-private-wled0v7q/source-mapping/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/supported-project-reads-private-wled0v7q/source-mapping/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/supported-project-reads-private-wled0v7q/source-mapping/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/supported-project-reads-private-wled0v7q/source-mapping/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/supported-project-reads-private-wled0v7q/source-mapping/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "75e6f4552110569ed26201c6dfe64f377c67a013529ae62a572f9c9da041b592",
+      "Configuration": "Debug"
+    }
+  },
+  "launcher-controls": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py"
+    ],
+    "exitCode": 0,
+    "passed": 150
+  },
+  "final-parent-validation": [
+    {
+      "name": "eventstore-client-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "eventstore-client-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/bin/Debug/net11.0/Hexalith.EventStore.Client.Tests.dll",
+        "-class",
+        "*ProjectionSnapshotLimitsTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/eventstore-client.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "projects-core-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "projects-core-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Tests/bin/Debug/net11.0/Hexalith.Projects.Tests.dll",
+        "-class",
+        "*ProjectTenantAccessHandlerTests",
+        "-class",
+        "*TenantAccessAuthorizerTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/projects-core.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "projects-server-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "projects-server-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net11.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*TenantAccessRecoveryPersistenceTests",
+        "-class",
+        "*ProjectsTenantEventWorkerTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/projects-server.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-server-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-server-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Server.Tests/bin/Debug/net11.0/Hexalith.Tenants.Server.Tests.dll",
+        "-class",
+        "*TenantAccessRecoveryTests",
+        "-class",
+        "*TenantAccessRecoveryProjectionTests",
+        "-class",
+        "*TenantSubmitCommandValidatorTests",
+        "-class",
+        "*TenantCatalogParityTests",
+        "-class",
+        "*TenantsGlobalAdministratorVerifierTests",
+        "-class",
+        "*EventContractReferenceDocumentationTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/tenants-server.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-client-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Client.Tests/Hexalith.Tenants.Client.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-client-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Client.Tests/bin/Debug/net11.0/Hexalith.Tenants.Client.Tests.dll",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/tenants-client.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-contracts-build",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "build",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/Hexalith.Tenants.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreVersion=5.0.1",
+        "-v:minimal"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "tenants-contracts-test",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "dotnet",
+        "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/bin/Debug/net11.0/Hexalith.Tenants.Contracts.Tests.dll",
+        "-class",
+        "*TenantCatalogTests",
+        "-class",
+        "*EventSerializationTests",
+        "-class",
+        "*McpCliDecorationTests",
+        "-class",
+        "*NamingConventionTests",
+        "-result-xml",
+        "/tmp/tenant-recovery-final-verification/tenants-contracts.xml"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    },
+    {
+      "name": "launcher-controls",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_supported_project_reads_launcher.py"
+      ],
+      "environmentSource": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment"
+    }
+  ],
+  "final-integration-controls": {
+    "build": {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:SupportedProjectReadDistributed=true",
+        "--artifacts-path",
+        "/tmp/tenant-recovery-diagnostic-budget-e4xjekqm/artifacts",
+        "-v:minimal"
+      ],
+      "mapping": "/tmp/tenant-recovery-build-r8gpmnt3/prepare.stdout:buildPreparation.environment",
+      "environment": {
+        "UseHexalithProjectReferences": "true",
+        "UseNuGetDeps": "false",
+        "EnablePrivateCatalogInvocationProof": "true",
+        "EnablePrivateOwnerSourceReadProof": "true",
+        "HexalithBuildsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+        "HexalithTenantsBasePath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src",
+        "HexalithEventStoreRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "HexalithTenantsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+        "HexalithFoldersRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+        "HexalithCommonsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+        "HexalithConversationsRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+        "HexalithMemoriesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+        "HexalithFrontComposerRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+        "HexalithPartiesRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+        "HexalithMcpCliRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli"
+      }
+    },
+    "test": [
+      "dotnet",
+      "/tmp/tenant-recovery-diagnostic-budget-e4xjekqm/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+      "-method",
+      "*RecoveryProjectionDeadlineRejectsLateSuccessfulStateRead",
+      "-method",
+      "*RecoveryProjectionAcceptsMatchingSnapshotBeforeDeadline",
+      "-method",
+      "*RecoveryFreshnessIsScopedToItsExistingPrivateProfile",
+      "-result-xml",
+      "/tmp/tenant-recovery-final-verification/integration-controls.xml"
+    ],
+    "exitCode": 0,
+    "passed": 5,
+    "temporaryBuildArtifactsRemovedAfterVerification": true
+  }
+}

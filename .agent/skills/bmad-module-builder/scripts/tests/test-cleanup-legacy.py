@@ -915,6 +915,8 @@ elif mode == "marker":
     os.stat = lambda *a, **kw: inject(real_stat, *a, **kw)
     os.lstat = lambda *a, **kw: inject(real_lstat, *a, **kw)
 else:
+    # Path.lstat delegates to os.stat(follow_symlinks=False) on Python 3.13.
+    os.stat = lambda *a, **kw: inject(real_stat, *a, **kw) if kw.get("follow_symlinks") is False else real_stat(*a, **kw)
     os.lstat = lambda *a, **kw: inject(real_lstat, *a, **kw)
 sys.argv = [script, "--bmad-dir", bmad_dir, "--module-code", "bmb"]
 try:

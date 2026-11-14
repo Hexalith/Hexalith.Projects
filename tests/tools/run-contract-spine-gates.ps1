@@ -23,12 +23,10 @@ try {
     $projects = @(
         @{
             Path     = 'tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj'
-            Assembly = 'tests/Hexalith.Projects.Contracts.Tests/bin/Release/net10.0/Hexalith.Projects.Contracts.Tests.dll'
             Class    = 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests'
         },
         @{
             Path     = 'tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj'
-            Assembly = 'tests/Hexalith.Projects.Client.Tests/bin/Release/net10.0/Hexalith.Projects.Client.Tests.dll'
             Class    = 'Hexalith.Projects.Client.Tests.ClientGenerationTests'
         }
     )
@@ -38,7 +36,11 @@ try {
         dotnet build $project.Path --configuration Release @restoreArgs -warnaserror
         $projectExitCode = $LASTEXITCODE
         if ($projectExitCode -eq 0) {
-            $testOutput = @(& dotnet $project.Assembly -class $project.Class 2>&1)
+            $testAssembly = (& dotnet msbuild $project.Path -nologo -p:Configuration=Release -getProperty:TargetPath | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($testAssembly) -or -not (Test-Path $testAssembly -PathType Leaf)) {
+                throw "The freshly built assembly for '$($project.Path)' could not be resolved from MSBuild TargetPath."
+            }
+            $testOutput = @(& dotnet $testAssembly -class $project.Class 2>&1)
             $projectExitCode = $LASTEXITCODE
             $testOutput | ForEach-Object { Write-Host $_ }
             if ($projectExitCode -eq 0 -and ($testOutput -join "`n") -notmatch 'Total:\s*[1-9][0-9]*\b') {

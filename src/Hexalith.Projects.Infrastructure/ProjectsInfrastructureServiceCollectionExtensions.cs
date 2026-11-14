@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Infrastructure;
 
 using Hexalith.Projects.Projections.TenantAccess;
+using Hexalith.EventStore.Client.Registration;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -25,6 +26,7 @@ public static class ProjectsInfrastructureServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddDaprClient();
+        services.AddEventStoreReadModelStore();
         services.AddOptions<ProjectsStateStoreOptions>().BindConfiguration(ProjectsStateStoreOptions.SectionName);
         services.TryAddSingleton(static sp => sp.GetRequiredService<IOptions<ProjectsStateStoreOptions>>().Value);
         services.TryAddSingleton<IProjectsStateStore, DaprProjectsStateStore>();

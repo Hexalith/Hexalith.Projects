@@ -177,6 +177,7 @@ public static class ProjectsWorkersModule
     {
         services.TryAddSingleton<ProjectsTenantEventHandler>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantCreated>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantAccessRefreshed>, ProjectsTenantEventHandler>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantUpdated>, ProjectsTenantEventHandler>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantDisabled>, ProjectsTenantEventHandler>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantEnabled>, ProjectsTenantEventHandler>());

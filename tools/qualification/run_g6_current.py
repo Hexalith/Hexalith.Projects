@@ -60,7 +60,7 @@ def conversations_source_mapping(run: historical.Qualification, scratch: Path) -
                    BUILDS)
     if code != 0:
         raise RuntimeError(f"Conversations source mapper build failed (exit {code})")
-    assembly = MODULE_CLI.parent / "bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
+    assembly = MODULE_CLI.parent / "bin/Release/net11.0/Hexalith.Builds.Module.Cli.dll"
     command = ["dotnet", str(assembly), "prepare-build",
                "--manifest", "module/hexalith.module-manifest.v2.json", "--mode", "source",
                "--workspace", str(scratch / "conversations-source-mapping"), "--output", "json"]
@@ -234,8 +234,8 @@ def main(arguments: list[str] | None = None) -> int:
         support_project = "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj"
         live_build = run.run("fresh EventStore qualifier build", ["dotnet", "build", live_project, *build], EVENTSTORE)
         support_build = run.run("fresh EventStore support build", ["dotnet", "build", support_project, *build], EVENTSTORE)
-        live_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll"
-        support_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll"
+        live_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net11.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll"
+        support_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net11.0/Hexalith.EventStore.Server.Tests.dll"
         historical.run_fixture_controls(run, live_build, live_dll)
         if live_build == 0:
             run.run("real PostgreSQL two-sidecar stop/restart qualifier", ["dotnet", str(live_dll),

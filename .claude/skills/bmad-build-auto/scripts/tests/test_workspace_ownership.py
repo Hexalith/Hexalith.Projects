@@ -238,6 +238,7 @@ def run_git(
         env=hermetic_env(repo, extra_env),
         input=stdin,
         capture_output=True,
+        umask=0o022,
     )
     if check and result.returncode != 0:
         raise RuntimeError(
@@ -1239,6 +1240,15 @@ def test_matrix_shared_repair_reversal() -> None:
         assert file_bytes(repo, b"src/app.txt") == preimage
 
 
+def test_shared_repair_reversal_ignores_caller_umask() -> None:
+    for mask in (0o002, 0o077):
+        previous = os.umask(mask)
+        try:
+            test_matrix_shared_repair_reversal()
+        finally:
+            os.umask(previous)
+
+
 def test_matrix_exclusive_isolated_reversal() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
@@ -2017,6 +2027,7 @@ TESTS = [
     test_matrix_worktree_or_path_set_drift,
     test_matrix_authorized_repair,
     test_matrix_shared_repair_reversal,
+    test_shared_repair_reversal_ignores_caller_umask,
     test_matrix_exclusive_isolated_reversal,
     test_matrix_interrupted_resume,
     test_matrix_dirty_follow_up_entry,

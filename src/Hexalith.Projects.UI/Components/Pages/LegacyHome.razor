@@ -29,7 +29,7 @@
                     <button type="button"
                             class="project-operational-dashboard__tile"
                             data-testid="project-dashboard-tile"
-                            aria-label="@($"{tile.Label}: {tile.Value}")"
+                            aria-label="@($"{tile.Value} {tile.Label}")"
                             @onclick="() => ApplyDashboardFilterAsync(tile.Filter)">
                         <span>@tile.Value</span>
                         <strong>@tile.Label</strong>

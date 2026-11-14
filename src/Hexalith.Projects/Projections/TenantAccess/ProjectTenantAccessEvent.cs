@@ -19,4 +19,5 @@ public sealed record ProjectTenantAccessEvent(
     string? Role = null,
     string? PreviousRole = null,
     string? ConfigurationKey = null,
-    string PayloadFingerprint = "");
+    string PayloadFingerprint = "",
+    ProjectTenantAccessSnapshot? Snapshot = null);

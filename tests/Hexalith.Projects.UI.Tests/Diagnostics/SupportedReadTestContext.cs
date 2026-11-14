@@ -23,6 +23,7 @@ internal sealed class SupportedReadTestContext
         SetTenant("tenant-a");
         Queries = new(Client, [Authority], [Authentication]);
     }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0013", Justification = "This call configures an NSubstitute return value; it does not read or cache live authentication state.")]
     public void SetTenant(string tenant)
     {
         TenantContextSnapshot snapshot = new(tenant, "user-1", true, "test-correlation");

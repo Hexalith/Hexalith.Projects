@@ -32,6 +32,7 @@
     <PackageReference Include="Hexalith.Conversations.Contracts" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <PackageReference Include="Microsoft.Extensions.Validation" />
     <PackageReference Include="Hexalith.EventStore.Contracts" />
     <PackageReference Include="Hexalith.FrontComposer.Contracts" />
     <PackageReference Include="Hexalith.FrontComposer.Shell" />
@@ -44,6 +45,15 @@
     <PackageReference Include="Fluxor.Blazor.Web" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
   </ItemGroup>
+  <!-- Preserve the catalog's stable validation floor in the published dependency graph.
+       Console consumers acquire ASP.NET through this package after restore, so they cannot
+       prune its preview transitive validation dependency using a direct framework reference. -->
+  <Target Name="PreserveStableValidationDependency" AfterTargets="AddPrunePackageReferences"
+          Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <ItemGroup>
+      <PrunePackageReference Remove="Microsoft.Extensions.Validation" />
+    </ItemGroup>
+  </Target>
   <Target Name="FlattenFrontComposerGeneratedFiles" AfterTargets="CoreCompile" Condition="'$(EmitCompilerGeneratedFiles)' == 'true'">
     <ItemGroup>
       <_FrontComposerGeneratedFiles Include="$(CompilerGeneratedFilesOutputPath)\Hexalith.FrontComposer.SourceTools\Hexalith.FrontComposer.SourceTools.FrontComposerGenerator\*.g.cs" />

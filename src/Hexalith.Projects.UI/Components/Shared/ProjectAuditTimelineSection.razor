@@ -47,7 +47,7 @@
                             <time datetime="@FormatIso(item.OccurredAt)">@FormatDisplay(item.OccurredAt)</time>
                             <button type="button"
                                     data-testid="audit-timeline-copy"
-                                    aria-label="@($"Copy occurred timestamp for audit event {DisplayValue(item.AuditEventId)}")"
+                                    aria-label="@($"Copy timestamp for audit event {DisplayValue(item.AuditEventId)}")"
                                     @onclick="() => CopyTextAsync(FormatIso(item.OccurredAt))">
                                 Copy timestamp
                             </button>
@@ -109,7 +109,7 @@
                                         data-testid="audit-timeline-copy"
                                         aria-label="@($"Copy audit event ID {DisplayValue(item.AuditEventId)}")"
                                         @onclick="() => CopyTextAsync(item.AuditEventId)">
-                                    Copy audit ID
+                                    Copy audit event ID
                                 </button>
                             </dd>
                         </div>

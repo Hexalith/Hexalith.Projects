@@ -7,6 +7,8 @@ namespace Hexalith.Projects.Projections.TenantAccess;
 
 using System;
 using System.Security.Cryptography;
+using System.Linq;
+using System.Text.Json;
 using System.Text;
 
 using Microsoft.Extensions.Logging;
@@ -30,7 +32,8 @@ public sealed class ProjectsTenantAccessEventMapper(ILogger<ProjectsTenantAccess
         string? role = null,
         string? previousRole = null,
         string? configurationKey = null,
-        string?[]? fingerprintParts = null)
+        string?[]? fingerprintParts = null,
+        ProjectTenantAccessSnapshot? snapshot = null)
     {
         string projectionTenantId = eventTenantId;
 
@@ -61,7 +64,20 @@ public sealed class ProjectsTenantAccessEventMapper(ILogger<ProjectsTenantAccess
             role,
             previousRole,
             configurationKey,
-            FingerprintHash(fingerprintParts));
+            snapshot is null ? FingerprintHash(fingerprintParts) : SnapshotFingerprint(snapshot),
+            snapshot);
+    }
+
+    private static string SnapshotFingerprint(ProjectTenantAccessSnapshot snapshot)
+    {
+        // JSON arrays provide unambiguous field boundaries even for identifiers containing separators.
+        var canonical = new
+        {
+            snapshot.Enabled,
+            Principals = snapshot.Principals.OrderBy(principal => principal.PrincipalId, StringComparer.Ordinal).ToArray(),
+            ConfigurationKeys = snapshot.ConfigurationKeys.Order(StringComparer.Ordinal).ToArray(),
+        };
+        return Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(canonical))).ToLowerInvariant();
     }
 
     private static string FingerprintHash(string?[]? parts)

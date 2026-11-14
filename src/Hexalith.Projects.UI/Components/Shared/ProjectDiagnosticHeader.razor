@@ -73,5 +73,14 @@
     }
 
     private async Task CopyAsync(string value)
-        => await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", value).ConfigureAwait(true);
+    {
+        try
+        {
+            await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", value).ConfigureAwait(true);
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException)
+        {
+            // A closed browser circuit no longer has a clipboard target.
+        }
+    }
 }

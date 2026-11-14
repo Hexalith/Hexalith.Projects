@@ -52,7 +52,10 @@ try {
     dotnet build $clientTests --configuration Release -m:1 -warnaserror
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {
-        $testAssembly = Join-Path $repositoryRoot 'tests/Hexalith.Projects.Client.Tests/bin/Release/net10.0/Hexalith.Projects.Client.Tests.dll'
+        $testAssembly = (& dotnet msbuild $clientTests -nologo -p:Configuration=Release -getProperty:TargetPath | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($testAssembly) -or -not (Test-Path $testAssembly -PathType Leaf)) {
+            throw 'The freshly built Client.Tests assembly could not be resolved from MSBuild TargetPath.'
+        }
         $testOutput = @(& dotnet $testAssembly -class 'Hexalith.Projects.Client.Tests.ClientGenerationTests' 2>&1)
         $exitCode = $LASTEXITCODE
         $testOutput | ForEach-Object { Write-Host $_ }

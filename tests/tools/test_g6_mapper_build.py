@@ -38,7 +38,7 @@ class MapperBuildBoundaryTests(unittest.TestCase):
                     print("MSBuild output must remain outside the mapping JSON")
                     print("retained compiler diagnostic", file=sys.stderr)
                     if os.environ["BUILD_FAILURE"] == "1": sys.exit(17)
-                    output = cwd / "src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
+                    output = cwd / "src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net11.0/Hexalith.Builds.Module.Cli.dll"
                     output.parent.mkdir(parents=True)
                     output.write_text("synthetic executable marker")
                 else:
@@ -99,7 +99,7 @@ class LiveRunnerMapperBuildBoundaryTests(MapperBuildBoundaryTests):
             cli = builds / "src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj"
             cli.parent.mkdir(parents=True)
             cli.write_text("<Project />")
-            assembly = cli.parent / "bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
+            assembly = cli.parent / "bin/Release/net11.0/Hexalith.Builds.Module.Cli.dll"
             assembly.parent.mkdir(parents=True)
             assembly.write_text("stale marker; must never execute after a compiler failure")
             tools = root / "tools"

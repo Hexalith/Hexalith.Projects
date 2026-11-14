@@ -38,6 +38,77 @@ def resources(*names):
     return [{"name": name, "id": container_id(name)} for name in names]
 
 
+class TenantAccessRecoveryEvidenceTests(unittest.TestCase):
+    def evidence(self):
+        def operation(sequence, prior, version, identity):
+            return dict(sourceEventSequence=sequence, sourceWatermark=sequence, projectionWatermark=sequence,
+                        snapshotWatermark=sequence, priorProjectionVersion=prior, projectionVersion=version,
+                        snapshotEventCount=1, terminalStatus="Completed", operationSha256=identity * 64,
+                        sourceEventMessageSha256=identity * 64)
+        first, second = operation(4, 2, 3, "A"), operation(5, 3, 4, "B")
+        return dict(authenticatedRecovery=True, unauthorizedRejected=True, anonymousRejected=True,
+                    concurrentRetries=True, exactMembershipAndStatusPreserved=True, persistedProjectionVerified=True,
+                    sameTokenUsed=True, realOidc=True, anonymousHttpStatus=401, unauthorizedHttpStatus=422,
+                    projectsListHttpStatus=200, snapshotEventCount=1, configurationKeysPreserved=True,
+                    staleProjectionObserved=True, freshOperationVerified=True, preRecoveryProjectsListHttpStatus=404,
+                    preRecoveryProjectionAgeSeconds=91.5, freshnessBudgetSeconds=90,
+                    retryCount=8, sourceWatermark=5, projectionWatermark=5, snapshotWatermark=5,
+                    previousProjectionVersion=2, projectionVersion=4, firstRecovery=first, secondRecovery=second)
+
+    def test_recovery_requires_authentication_concurrency_persistence_and_outer_200(self):
+        LAUNCHER.require_tenant_access_recovery(self.evidence())
+        for field, replacement in (("projectsListHttpStatus", 503), ("snapshotEventCount", 8),
+                                   ("retryCount", 1), ("sourceWatermark", 6),
+                                   ("authenticatedRecovery", False), ("unauthorizedRejected", False),
+                                   ("persistedProjectionVerified", False), ("sameTokenUsed", False),
+                                   ("realOidc", False), ("unauthorizedHttpStatus", 500), ("anonymousHttpStatus", 200),
+                                   ("staleProjectionObserved", False), ("freshOperationVerified", False),
+                                   ("preRecoveryProjectsListHttpStatus", 200), ("preRecoveryProjectionAgeSeconds", 90),
+                                   ("freshnessBudgetSeconds", 0), ("preRecoveryProjectionAgeSeconds", float("inf")),
+                                   ("freshnessBudgetSeconds", float("nan"))):
+            with self.subTest(field=field):
+                evidence = self.evidence()
+                evidence[field] = replacement
+                with self.assertRaises(RuntimeError): LAUNCHER.require_tenant_access_recovery(evidence)
+
+    def test_matching_watermarks_must_all_be_positive_integers(self):
+        for invalid in (0, -1, True, "5", None):
+            with self.subTest(invalid=invalid):
+                evidence = self.evidence()
+                for field in ("sourceWatermark", "projectionWatermark", "snapshotWatermark"):
+                    evidence[field] = invalid
+                for field in ("sourceEventSequence", "sourceWatermark", "projectionWatermark", "snapshotWatermark"):
+                    evidence["secondRecovery"][field] = invalid
+                with self.assertRaises(RuntimeError): LAUNCHER.require_tenant_access_recovery(evidence)
+
+    def test_each_operation_must_bind_positive_event_and_persisted_version_metadata(self):
+        for operation in ("firstRecovery", "secondRecovery"):
+            for field in ("sourceEventSequence", "sourceWatermark", "projectionWatermark", "snapshotWatermark",
+                          "priorProjectionVersion", "projectionVersion"):
+                for invalid in (0, -1, True, "4", None):
+                    with self.subTest(operation=operation, field=field, invalid=invalid):
+                        evidence = self.evidence()
+                        evidence[operation][field] = invalid
+                        with self.assertRaises(RuntimeError): LAUNCHER.require_tenant_access_recovery(evidence)
+
+    def test_versions_events_and_operation_identities_must_advance_without_reset(self):
+        mutations = [
+            ("projectionVersion", 2), ("previousProjectionVersion", 0),
+            ("firstRecovery.sourceEventSequence", 3), ("firstRecovery.projectionVersion", 2),
+            ("secondRecovery.priorProjectionVersion", 2), ("secondRecovery.sourceWatermark", 4),
+            ("secondRecovery.operationSha256", "A" * 64), ("secondRecovery.sourceEventMessageSha256", "A" * 64),
+            ("secondRecovery.terminalStatus", "Accepted"), ("secondRecovery.snapshotEventCount", 2),
+            ("secondRecovery.operationSha256", "not-bound"), ("firstRecovery", None),
+        ]
+        for field, value in mutations:
+            with self.subTest(field=field):
+                evidence = self.evidence()
+                parts = field.split(".")
+                target = evidence if len(parts) == 1 else evidence[parts[0]]
+                target[parts[-1]] = value
+                with self.assertRaises(RuntimeError): LAUNCHER.require_tenant_access_recovery(evidence)
+
+
 class OwnerSourceReadCustodyTests(unittest.TestCase):
     def test_fresh_owner_source_custody_is_private_and_cannot_be_reused(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -104,6 +175,26 @@ class NativeConsoleEvidenceTests(unittest.TestCase):
                     test.find("output").text = "Actual real-owner denial observations: " + json.dumps(value)
                     tree.write(path)
                     with self.assertRaises((RuntimeError, ValueError)): LAUNCHER.real_owner_request_windows(path)
+
+    def test_schema3_escaped_output_preserves_all_native_observation_controls(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "server.xml"
+            for mutation in ("valid", "unknown-schema", "broken-escape", "trailing-json", "missing-window"):
+                with self.subTest(mutation=mutation):
+                    value = self.write_native(path)
+                    tree = ET.parse(path)
+                    tree.getroot().set("schema-version", "99" if mutation == "unknown-schema" else "3")
+                    if mutation == "missing-window": value["RequestWindows"].pop()
+                    payload = json.dumps(json.dumps(value))[1:-1]
+                    if mutation == "broken-escape": payload += "\\q"
+                    if mutation == "trailing-json": payload += json.dumps("{}")[1:-1]
+                    tree.getroot().find("test/output").text = "Actual real-owner denial observations: " + payload
+                    tree.write(path)
+                    if mutation == "valid":
+                        self.assertEqual(LAUNCHER.real_owner_request_windows(path), self.windows())
+                    else:
+                        with self.assertRaises((RuntimeError, ValueError)):
+                            LAUNCHER.real_owner_request_windows(path)
 
     def test_console_coverage_refuses_empty_unbound_untimed_or_saturated_snapshots(self):
         began = LAUNCHER.utc_time("2026-11-03T19:59:40Z")
@@ -200,6 +291,33 @@ class NativeConsoleEvidenceTests(unittest.TestCase):
                 self.assertEqual(facts["coverageVerified"], mode == "success")
                 self.assertFalse(facts["privacyEqualityAccepted"])
                 self.assertNotIn("synthetic-private", json.dumps(facts))
+
+
+class SupportedReadPrivateCreationTests(unittest.TestCase):
+    def test_launcher_and_children_create_private_files_and_restore_the_callers_umask(self):
+        for caller_umask in (0o002, 0o077):
+            with self.subTest(caller_umask=oct(caller_umask)), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                original = os.umask(caller_umask)
+                try:
+                    def launch():
+                        (directory / "evidence.json").write_text("{}", encoding="utf-8")
+                        (directory / "artifacts").mkdir()
+                        subprocess.run([sys.executable, "-c", "from pathlib import Path; import sys; Path(sys.argv[1]).write_text('<assemblies/>')",
+                                        str(directory / "native.xml")], check=True)
+                        return 0
+                    with patch.object(LAUNCHER, "_main", side_effect=launch):
+                        self.assertEqual(LAUNCHER.main(), 0)
+                    self.assertEqual(os.umask(caller_umask), caller_umask)
+                    self.assertEqual((directory / "evidence.json").stat().st_mode & 0o777, 0o600)
+                    self.assertEqual((directory / "native.xml").stat().st_mode & 0o777, 0o600)
+                    self.assertEqual((directory / "artifacts").stat().st_mode & 0o777, 0o700)
+                    with patch.object(LAUNCHER, "_main", side_effect=RuntimeError("owned failure")):
+                        with self.assertRaisesRegex(RuntimeError, "owned failure"):
+                            LAUNCHER.main()
+                    self.assertEqual(os.umask(caller_umask), caller_umask)
+                finally:
+                    os.umask(original)
 
 
 class SupportedReadLauncherCleanupTests(unittest.TestCase):
@@ -745,7 +863,7 @@ class SupportedReadProjectsRestartControls(unittest.TestCase):
 
     def test_actual_server_identity_requires_namespace_private_storage_and_development(self):
         project = LAUNCHER.ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
-        binary = project.parent / "bin/Debug/net10.0/Hexalith.Projects.Server"
+        binary = project.parent / "bin/Debug/net11.0/Hexalith.Projects.Server"
         resource = {"displayName": "projects", "resourceType": "Project", "name": "projects-owned",
                     "properties": {"project.path": str(project), "executable.pid": 201}}
         expected = {"NAMESPACE": "scope", "EventStore__DomainService__AppId": "projects", "XDG_DATA_HOME": "/private/data-projects",
@@ -863,6 +981,18 @@ class SupportedReadRestartDeadlineControls(unittest.TestCase):
             self.assertEqual(refreshed["STORY61_DAPR_HTTP_ENDPOINT"], "http://localhost:3333")
             self.assertEqual(refreshed["STORY61_DAPR_GRPC_ENDPOINT"], "http://localhost:4444")
             self.assertEqual(refreshed["preserved"], "value")
+
+
+    def test_regressions_do_not_reseed_an_already_initialized_store(self):
+        assembly, evidence = Path("/owned/Integration.dll"), Path("/owned/evidence")
+        command = LAUNCHER.regression_test_command("Integration", assembly, evidence)
+        self.assertEqual(command[:4], ["dotnet", str(assembly), "-xml", str(evidence / "integration.xml")])
+        self.assertEqual(command[4:], ["-class-", "*SupportedProjectReadDistributedTests",
+                                       "-class-", "*SupportedProjectBrowserSeedTests"])
+        server = LAUNCHER.regression_test_command("Server", Path("/owned/Server.dll"), evidence)
+        self.assertEqual(server, ["dotnet", "/owned/Server.dll", "-xml", "/owned/evidence/server.xml"])
+        with self.assertRaises(ValueError):
+            LAUNCHER.regression_test_command("unknown", assembly, evidence)
 
 
 class SupportedReadLauncherReviewControls(unittest.TestCase):
@@ -1800,6 +1930,8 @@ class SupportedReadScenarioGroupTests(unittest.TestCase):
             if regressions:
                 for lane in ["integration", "server"]:
                     ET.ElementTree(self.native(scenario, 2)).write(directory / (lane + ".xml"))
+        for path in directory.iterdir():
+            path.chmod(0o600)
         return directory
 
     def test_v2_groups_keep_exact_actual_ledgers_without_borrowed_flags(self):
@@ -1941,6 +2073,20 @@ class SupportedReadScenarioGroupTests(unittest.TestCase):
                 elif mode == "no-regressions": changed[-1]["fullRegressionsCompleted"] = False
                 else: changed[1]["native"] = [{"passed": "1"}]
                 with self.subTest(mode=mode), self.assertRaises(RuntimeError): LAUNCHER.require_aggregate_scenarios(changed, True)
+
+    def test_group_evidence_files_reject_group_and_world_write(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory);frozen = {"source": "a" * 64};group = self.write_group(root, "duplicate", frozen)
+            LAUNCHER.read_qualified_scenario(group, "duplicate", frozen, False)
+            for path in group.iterdir():
+                for mode in (0o620, 0o602):
+                    with self.subTest(file=path.name, mode=oct(mode)):
+                        try:
+                            path.chmod(mode)
+                            with self.assertRaisesRegex(RuntimeError, "writable by another owner"):
+                                LAUNCHER.read_qualified_scenario(group, "duplicate", frozen, False)
+                        finally:
+                            path.chmod(0o600)
 
     def test_group_files_cannot_be_replaced_after_native_completion(self):
         with tempfile.TemporaryDirectory() as directory:

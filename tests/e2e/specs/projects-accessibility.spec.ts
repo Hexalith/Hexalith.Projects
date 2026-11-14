@@ -118,7 +118,9 @@ base.describe('Operational console WCAG and responsive fixture contracts (no app
     await page.keyboard.press('Tab');
     await expect(page.getByTestId('project-resolution-trace-run')).toBeFocused();
     await page.keyboard.press('Tab');
-    await expect(page.getByTestId('audit-timeline-copy')).toBeFocused();
+    await expect(page.getByTestId('audit-timeline-copy').nth(0)).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByTestId('audit-timeline-copy').nth(1)).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(page.getByTestId('safe-diagnostic-export-copy')).toBeFocused();
     await page.keyboard.press('Tab');
@@ -228,7 +230,8 @@ function operationalConsoleFixture(): string {
             <code data-testid="audit-timeline-correlation-id">corr-001-long-value-that-wraps</code>
           </li>
         </ol>
-        <button data-testid="audit-timeline-copy" type="button" aria-label="Copy audit identifier audit-001">Copy audit id</button>
+        <button data-testid="audit-timeline-copy" type="button" aria-label="Copy timestamp for audit event audit-001">Copy timestamp</button>
+        <button data-testid="audit-timeline-copy" type="button" aria-label="Copy audit event ID audit-001">Copy audit event ID</button>
       </section>
       <section data-testid="safe-diagnostic-export" aria-labelledby="export-heading">
         <h2 id="export-heading">Safe diagnostic export</h2>

@@ -96,7 +96,7 @@ def prepare_oidc(root, private, isolation, owned, run, free_port, password):
     template = next(user for user in realm['users'] if user['username'] == 'admin-user')
     permissions = ['command:submit', 'query:read', 'replay:read', 'read_metadata', 'projects:read', 'projects:list',
                    'projects:inspect_descriptive_metadata', 'create_folder', 'manage_folder_access', 'manage_organization_acl',
-                   'tenants:create', 'tenants:add-user', 'tenants:read', 'global-administrators:read']
+                   'tenants:create', 'tenants:add-user', 'tenants:refresh-access', 'tenants:read', 'global-administrators:read']
     # Retain the native fixture's exact authority vocabulary rather than broadening a production role.
     permissions += ['admin:reconcile-global-administrators-delivery', 'global-administrators:bootstrap']
     realm['users'] = []

@@ -175,7 +175,7 @@ base.describe('Projects warnings dashboard selector contract (no app required)',
     await warnings.warningReferenceTypeFilter.selectOption('');
     await expect(visibleWarningRows).toHaveCount(2);
 
-    await page.getByRole('button', { name: 'Stale: 1' }).click();
+    await page.getByRole('button', { name: '1 Stale' }).click();
     await expect(warnings.warningStateFilter).toHaveValue('Stale');
     await expect(visibleWarningRows).toHaveCount(1);
     await expect(visibleWarningRows.first()).toContainText('memory-001');
@@ -252,9 +252,9 @@ function warningsDashboardFixture(): string {
     <main>
       <section data-testid="project-warnings-dashboard" aria-labelledby="project-warnings-dashboard-heading">
         <h1 id="project-warnings-dashboard-heading">Operational dashboard</h1>
-        <button type="button" data-testid="project-dashboard-tile" aria-label="Warning projects: 2">2 Warning projects</button>
-        <button type="button" data-testid="project-dashboard-tile" aria-label="Stale: 1" onclick="applyDashboardState('Stale')">1 Stale</button>
-        <button type="button" data-testid="project-dashboard-tile" aria-label="Conflicts: 1" onclick="applyDashboardState('Conflict')">1 Conflicts</button>
+        <button type="button" data-testid="project-dashboard-tile" aria-label="2 Warning projects">2 Warning projects</button>
+        <button type="button" data-testid="project-dashboard-tile" aria-label="1 Stale" onclick="applyDashboardState('Stale')">1 Stale</button>
+        <button type="button" data-testid="project-dashboard-tile" aria-label="1 Conflicts" onclick="applyDashboardState('Conflict')">1 Conflicts</button>
       </section>
       <form aria-label="Project warning filters">
         <label data-testid="project-warning-filter-lifecycle">Lifecycle

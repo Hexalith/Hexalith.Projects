@@ -115,23 +115,159 @@ public sealed class ProjectTenantAccessHandlerTests
         (await store.GetAsync("tenant-c", cancellationToken)).ShouldNotBeNull().MalformedEvidence.ShouldBeTrue();
     }
 
-    [Fact]
-    public async Task ConcurrencyConflictShouldRetryWithinConfiguredAttempts()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RefreshRestoresMissingProjectionWithExactStatusRolesAndKeys(bool enabled)
     {
-        FlakySaveStore store = new(new TenantAccessConcurrencyException("tenant-a", 0, 1));
-        ProjectTenantAccessHandler handler = new(
-            store,
-            new FixedUtcClock(EventTimestamp.AddMinutes(1)),
-            new TenantAccessOptions { ConcurrencyRetryAttempts = 2 });
-        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        ProjectTenantAccessEvent refresh = Refresh("recovery", 50, enabled);
+        await handler.HandleAsync(refresh, TestContext.Current.CancellationToken);
 
-        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.TenantCreated, "tenant-a", "01J00000000000000000000080", 1), cancellationToken);
-
-        ProjectTenantAccessProjection? projection = await store.GetAsync("tenant-a", cancellationToken);
-        projection.ShouldNotBeNull();
-        projection.Enabled.ShouldBeTrue();
-        store.SaveAttempts.ShouldBe(2);
+        ProjectTenantAccessProjection projection = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        projection.Enabled.ShouldBe(enabled);
+        projection.Principals.Keys.ShouldBe(["owner", "reader"]);
+        projection.Principals["owner"].Role.ShouldBe("TenantOwner");
+        projection.Principals["reader"].Role.ShouldBe("TenantReader");
+        projection.ConfigurationKeys.ShouldBe(["projects.allowed"]);
+        projection.Watermark.ShouldBe(50);
+        projection.SnapshotWatermark.ShouldBe(50);
+        projection.LastEventTimestamp.ShouldBe(EventTimestamp);
+        projection.ProcessedMessages["recovery"].PayloadFingerprint.ShouldBe(refresh.PayloadFingerprint);
+        TenantAccessAuthorizer authorizer = new(store, new FixedUtcClock(EventTimestamp.AddMinutes(1)), new TenantAccessOptions());
+        TenantAccessAuthorizationResult authorization = await authorizer.AuthorizeMutationAsync(new("tenant-a", "owner", "tenant-a"), TestContext.Current.CancellationToken);
+        authorization.Outcome.ShouldBe(enabled ? TenantAccessOutcome.Allowed : TenantAccessOutcome.DisabledTenant);
     }
+
+    [Fact]
+    public async Task RefreshIgnoresUnrelatedWhitespaceConfigurationKeysAcceptedByTenants()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        ProjectTenantAccessEvent refresh = new ProjectsTenantAccessEventMapper().Map(
+            ProjectTenantAccessEventKind.TenantAccessRefreshed, "tenant-a", "system", "recovery-whitespace", 50,
+            EventTimestamp, "correlation", snapshot: new(true, [new("owner", "TenantOwner")], ["projects.allowed", " ", "\t"]));
+
+        await handler.HandleAsync(refresh, TestContext.Current.CancellationToken);
+
+        ProjectTenantAccessProjection projection = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        projection.MalformedEvidence.ShouldBeFalse();
+        projection.ConfigurationKeys.ShouldBe(["projects.allowed"]);
+        projection.Principals["owner"].Role.ShouldBe("TenantOwner");
+        projection.Watermark.ShouldBe(50);
+    }
+
+    [Fact]
+    public async Task RefreshReplacesStaleRolesObsoletePrincipalsTombstonesAndConflictFlags()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessProjection stale = new() { TenantId = "tenant-a", Enabled = true, Watermark = 10,
+            LastEventTimestamp = EventTimestamp.AddDays(-1), MalformedEvidence = true, ReplayConflict = true };
+        stale.Principals["obsolete"] = new("obsolete", "TenantOwner");
+        stale.Principals["reader"] = new("reader", "TenantOwner");
+        stale.ConfigurationKeys.Add("projects.obsolete");
+        stale.RemovedConfigurationKeys.Add("projects.allowed");
+        await store.SaveAsync(stale, TestContext.Current.CancellationToken);
+        await CreateHandler(store, EventTimestamp.AddMinutes(1)).HandleAsync(Refresh("fresh-recovery", 50, true), TestContext.Current.CancellationToken);
+
+        ProjectTenantAccessProjection projection = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        projection.Principals.ShouldNotContainKey("obsolete");
+        projection.Principals["reader"].Role.ShouldBe("TenantReader");
+        projection.ConfigurationKeys.ShouldBe(["projects.allowed"]);
+        projection.RemovedConfigurationKeys.ShouldBeEmpty();
+        projection.MalformedEvidence.ShouldBeFalse();
+        projection.ReplayConflict.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task DelayedRefreshNeverOverwritesLaterRevocationAndFreshOperationRepairsOvertakenRecovery()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.UserRemovedFromTenant, "tenant-a", "revoke", 51, principalId: "reader"), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Refresh("overtaken", 50, true), TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection incomplete = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        incomplete.MalformedEvidence.ShouldBeTrue();
+        incomplete.Watermark.ShouldBe(51);
+        incomplete.Principals.ShouldNotContainKey("reader");
+
+        ProjectTenantAccessEvent next = new ProjectsTenantAccessEventMapper().Map(ProjectTenantAccessEventKind.TenantAccessRefreshed,
+            "tenant-a", "system", "later-operation", 52, EventTimestamp, "correlation", snapshot: new(true, [new("owner", "TenantOwner")], []));
+        await handler.HandleAsync(next, TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Refresh("overtaken", 50, true), TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection recovered = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        recovered.Watermark.ShouldBe(52);
+        recovered.MalformedEvidence.ShouldBeFalse();
+        recovered.Principals.Keys.ShouldBe(["owner"]);
+    }
+
+    [Fact]
+    public async Task DuplicateAndConflictingSnapshotsCannotRegrantAfterDisableOrRemoval()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        ProjectTenantAccessEvent refresh = Refresh("recovery", 50, true);
+        await handler.HandleAsync(refresh, TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.UserRemovedFromTenant, "tenant-a", "remove", 51, principalId: "reader"), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.TenantDisabled, "tenant-a", "disable", 52), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(refresh, TestContext.Current.CancellationToken);
+        await handler.HandleAsync(refresh with { PayloadFingerprint = "divergent" }, TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection projection = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        projection.Enabled.ShouldBeFalse();
+        projection.Principals.ShouldNotContainKey("reader");
+        projection.Watermark.ShouldBe(52);
+        projection.ReplayConflict.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ForwardGapAndUnseenLateRemovalDenyUntilAFreshCompleteSnapshot()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        TenantAccessAuthorizer authorizer = new(store, new FixedUtcClock(EventTimestamp.AddMinutes(1)), new TenantAccessOptions());
+        await handler.HandleAsync(Refresh("snapshot-50", 50, true), TestContext.Current.CancellationToken);
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "reader", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeTrue();
+
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.TenantUpdated, "tenant-a", "unrelated-52", 52), TestContext.Current.CancellationToken);
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "reader", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeFalse();
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.UserRemovedFromTenant, "tenant-a", "removal-51", 51, principalId: "reader"), TestContext.Current.CancellationToken);
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "reader", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeFalse();
+        ProjectTenantAccessProjection incomplete = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        incomplete.Watermark.ShouldBe(52);
+        incomplete.MalformedEvidence.ShouldBeTrue();
+
+        ProjectTenantAccessEvent complete = new ProjectsTenantAccessEventMapper().Map(ProjectTenantAccessEventKind.TenantAccessRefreshed,
+            "tenant-a", "system", "snapshot-53", 53, EventTimestamp, "correlation", snapshot: new(true, [new("owner", "TenantOwner")], []));
+        await handler.HandleAsync(complete, TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection recovered = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        recovered.SnapshotWatermark.ShouldBe(53);
+        recovered.MalformedEvidence.ShouldBeFalse();
+        recovered.Principals.Keys.ShouldBe(["owner"]);
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "owner", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeTrue();
+        (await authorizer.AuthorizeMutationAsync(new("tenant-a", "reader", "tenant-a"), TestContext.Current.CancellationToken)).IsAllowed.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task DeltasAlreadyCoveredByTheSnapshotCannotPoisonOrChangeItsEvidence()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessHandler handler = CreateHandler(store, EventTimestamp.AddMinutes(1));
+        await handler.HandleAsync(Refresh("snapshot", 50, true), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.UserRemovedFromTenant, "tenant-a", "old-removal", 49, principalId: "owner"), TestContext.Current.CancellationToken);
+        await handler.HandleAsync(Event(ProjectTenantAccessEventKind.TenantDisabled, "tenant-a", "covered", 50), TestContext.Current.CancellationToken);
+        ProjectTenantAccessProjection projection = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        projection.Enabled.ShouldBeTrue();
+        projection.Principals.ShouldContainKey("owner");
+        projection.MalformedEvidence.ShouldBeFalse();
+        projection.ReplayConflict.ShouldBeFalse();
+        projection.Version.ShouldBe(1);
+    }
+
+    private static ProjectTenantAccessEvent Refresh(string messageId, long sequence, bool enabled)
+        => new ProjectsTenantAccessEventMapper().Map(ProjectTenantAccessEventKind.TenantAccessRefreshed,
+            "tenant-a", "system", messageId, sequence, EventTimestamp, "correlation",
+            snapshot: new(enabled, [new("owner", "TenantOwner"), new("reader", "TenantReader")], ["projects.allowed", "billing.plan"]));
 
     private static ProjectTenantAccessHandler CreateHandler(IProjectTenantAccessProjectionStore store, DateTimeOffset now)
         => new(store, new FixedUtcClock(now), new TenantAccessOptions());
@@ -158,26 +294,4 @@ public sealed class ProjectTenantAccessHandlerTests
             ConfigurationKey: configurationKey,
             PayloadFingerprint: payloadFingerprint ?? tenantId);
 
-    private sealed class FlakySaveStore(Exception firstSaveException) : IProjectTenantAccessProjectionStore
-    {
-        private readonly InMemoryProjectTenantAccessProjectionStore _inner = new();
-        private bool _failed;
-
-        public int SaveAttempts { get; private set; }
-
-        public Task<ProjectTenantAccessProjection?> GetAsync(string tenantId, CancellationToken cancellationToken = default)
-            => _inner.GetAsync(tenantId, cancellationToken);
-
-        public Task SaveAsync(ProjectTenantAccessProjection projection, CancellationToken cancellationToken = default)
-        {
-            SaveAttempts++;
-            if (!_failed)
-            {
-                _failed = true;
-                throw firstSaveException;
-            }
-
-            return _inner.SaveAsync(projection, cancellationToken);
-        }
-    }
 }

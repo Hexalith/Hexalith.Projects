@@ -27,6 +27,28 @@ public sealed class InMemoryProjectTenantAccessProjectionStore : IProjectTenantA
     }
 
     /// <inheritdoc/>
+    public Task UpdateAsync(string tenantId, Func<ProjectTenantAccessProjection, bool> update, int maxAttempts,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
+        ArgumentNullException.ThrowIfNull(update);
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxAttempts, 1);
+        cancellationToken.ThrowIfCancellationRequested();
+        lock (_saveLock)
+        {
+            ProjectTenantAccessProjection next = _projections.TryGetValue(tenantId, out ProjectTenantAccessProjection? current)
+                ? current.Clone() : new() { TenantId = tenantId };
+            if (update(next))
+            {
+                next.Version++;
+                _projections[tenantId] = next.Clone();
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
     public Task SaveAsync(ProjectTenantAccessProjection projection, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(projection);

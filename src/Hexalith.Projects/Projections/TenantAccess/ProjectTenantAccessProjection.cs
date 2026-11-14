@@ -34,6 +34,9 @@ public sealed class ProjectTenantAccessProjection
     /// <summary>Gets or sets the highest applied Tenants event sequence.</summary>
     public long Watermark { get; set; }
 
+    /// <summary>Gets or sets the latest complete snapshot sequence, used to detect overtaken recoveries.</summary>
+    public long SnapshotWatermark { get; set; }
+
     /// <summary>Gets or sets the display-safe projection watermark.</summary>
     public string ProjectionWatermark { get; set; } = string.Empty;
 
@@ -61,6 +64,7 @@ public sealed class ProjectTenantAccessProjection
             RemovedConfigurationKeys = new HashSet<string>(RemovedConfigurationKeys, StringComparer.Ordinal),
             ProcessedMessages = new Dictionary<string, ProjectTenantEventEvidence>(ProcessedMessages, StringComparer.Ordinal),
             Watermark = Watermark,
+            SnapshotWatermark = SnapshotWatermark,
             ProjectionWatermark = ProjectionWatermark,
             LastEventTimestamp = LastEventTimestamp,
             ReplayConflict = ReplayConflict,

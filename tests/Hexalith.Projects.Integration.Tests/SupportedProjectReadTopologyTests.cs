@@ -109,6 +109,30 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         Should.Throw<InvalidOperationException>(() => SupportedProjectReadFixtureProfile.Validate(new ConfigurationBuilder().AddInMemoryCollection(inputs).Build()));
     }
 
+    /// <summary>Only the recovery scenario narrows freshness; ordinary supported-read scenarios retain their existing budgets.</summary>
+    [Theory]
+    [InlineData("main", false)]
+    [InlineData("full-replay", false)]
+    [InlineData("tenant-access-recovery", true)]
+    public async Task RecoveryFreshnessIsScopedToItsExistingPrivateProfile(string scenario, bool recovery)
+    {
+        IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder();
+        Dictionary<string, string?> inputs = ValidInputs();
+        inputs["Projects:SupportedReads:Scenario"] = scenario;
+        builder.Configuration.AddInMemoryCollection(inputs);
+        string fixture = Path.Combine(TestRepositoryRoot.Find(), "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
+        var projects = builder.AddProject("projects", fixture)
+            .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", "7.00:00:00")
+            .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", "7.00:00:00");
+        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddProject("eventstore", fixture), builder.AddProject("tenants", fixture),
+            projects, builder.AddProject("projects-workers", fixture), Path.Combine(TestRepositoryRoot.Find(), "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+        IReadOnlyDictionary<string, object> environment = await EnvironmentAsync(projects.Resource, builder.ExecutionContext);
+        environment["Projects__TenantAccess__MutationFreshnessBudget"].ShouldBe(recovery
+            ? SupportedProjectReadFixtureProfile.TenantAccessRecoveryFreshnessBudget : "7.00:00:00");
+        environment["Projects__TenantAccess__DiagnosticStalenessBudget"].ShouldBe(recovery
+            ? SupportedProjectReadFixtureProfile.TenantAccessRecoveryFreshnessBudget : "7.00:00:00");
+    }
+
     /// <summary>Uses real Folder projects and preserves bound trust, command/project grants and secret parameters.</summary>
     [Fact]
     public async Task EnabledProfileComposesRealOwnersAndDistinctTrustAsync()

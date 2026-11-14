@@ -12,6 +12,16 @@ using Xunit;
 /// <param name="output">The native per-test output that binds the runtime provider and executing assembly.</param>
 public sealed class SupportedProjectReadDistributedTests(ITestOutputHelper output)
 {
+    /// <summary>Proves authenticated recovery and its persisted end-state using the same real OIDC token.</summary>
+    [Fact]
+    public async Task TenantAccessRecoveryUsesActualPersistedOwnersAsync()
+    {
+        using SupportedProjectReadDistributedFixture fixture = new();
+        WriteNativeBinding(fixture, "tenant-access-recovery");
+        await fixture.SeedAsync();
+        await fixture.VerifyTenantAccessRecoveryAsync();
+    }
+
     /// <summary>Proves duplicate delivery against one freshly seeded owned runtime.</summary>
     [Fact]
     public async Task DuplicateDeliveryUsesActualPersistedOwnersAsync()

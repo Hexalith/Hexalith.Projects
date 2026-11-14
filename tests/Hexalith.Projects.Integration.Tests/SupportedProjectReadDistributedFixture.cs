@@ -32,7 +32,7 @@ using Shouldly;
 using Xunit;
 
 /// <summary>Calls only the launched topology; missing resources are qualification failures.</summary>
-internal sealed class SupportedProjectReadDistributedFixture : IDisposable
+internal sealed partial class SupportedProjectReadDistributedFixture : IDisposable
 {
     private readonly Dictionary<(string Tenant, string Project), ProjectionDispatchRequest> _seedRequests = [];
     private readonly Dictionary<(string Tenant, string Project), StreamReadPage> _seedStreams = [];
@@ -247,7 +247,8 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             // Wait for the platform's metadata publisher, never substitute the gateway registry.
             await WaitForStateAsync("admin:query-types:" + domain).ConfigureAwait(false);
         }
-        if (_configuration.TryGetProperty("Browser", out JsonElement browser))
+        if (_configuration.TryGetProperty("Browser", out JsonElement browser)
+            && Setting("Scenario") != "tenant-access-recovery")
         {
             _browserReadToken = await FreshBrowserReadCredentialAsync(browser).ConfigureAwait(false);
             await WaitForBrowserAdvisoryReadinessAsync(_browserReadToken).ConfigureAwait(false);

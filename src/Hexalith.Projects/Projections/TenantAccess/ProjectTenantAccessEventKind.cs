@@ -20,4 +20,5 @@ public enum ProjectTenantAccessEventKind
     UserRoleChanged,
     TenantConfigurationSet,
     TenantConfigurationRemoved,
+    TenantAccessRefreshed,
 }

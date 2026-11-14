@@ -21,6 +21,42 @@ using Xunit;
 /// <summary>Focused controls for the distributed fixture's independent evidence checks.</summary>
 public sealed class SupportedProjectReadEvidenceTests
 {
+    /// <summary>A state read receives the private deadline and cannot return successful convergence after cancellation.</summary>
+    [Fact]
+    public async Task RecoveryProjectionDeadlineRejectsLateSuccessfulStateRead()
+    {
+        CancellationToken outer = TestContext.Current.CancellationToken;
+        bool receivedPrivateDeadline = false;
+        async Task<ProjectTenantAccessProjection> ReadAsync(CancellationToken cancellation)
+        {
+            receivedPrivateDeadline = cancellation.CanBeCanceled && cancellation != outer;
+            TaskCompletionSource<ProjectTenantAccessProjection> completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            using CancellationTokenRegistration registration = cancellation.Register(() => completion.TrySetResult(new()
+                { TenantId = "tenant", Watermark = 4, SnapshotWatermark = 4, Version = 3 }));
+            return await completion.Task.ConfigureAwait(false);
+        }
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => SupportedProjectReadDistributedFixture.ObserveRecoveryProjectionAsync(
+            ReadAsync, 4, TimeSpan.FromMilliseconds(20), outer));
+        Assert.True(receivedPrivateDeadline);
+    }
+
+    /// <summary>A matching complete snapshot can converge before its deadline without waiting for expiration.</summary>
+    [Fact]
+    public async Task RecoveryProjectionAcceptsMatchingSnapshotBeforeDeadline()
+    {
+        ProjectTenantAccessProjection projection = new() { TenantId = "tenant", Watermark = 4, SnapshotWatermark = 4, Version = 3 };
+        int reads = 0;
+        ProjectTenantAccessProjection observed = await SupportedProjectReadDistributedFixture.ObserveRecoveryProjectionAsync(cancellation =>
+        {
+            cancellation.ThrowIfCancellationRequested();
+            reads++;
+            return Task.FromResult(projection);
+        }, 4, TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        Assert.Same(projection, observed);
+        Assert.Equal(1, reads);
+    }
+
     /// <summary>Administrator credentials retain only canonical public grants and finite provisioning permissions.</summary>
     [Fact]
     public void PublicFixtureAdministratorGrantsExcludeHistoricalStorage()
@@ -595,7 +631,7 @@ public sealed class SupportedProjectReadEvidenceTests
         DateTimeOffset now = DateTimeOffset.UtcNow;
         using DaprClient client = new DaprClientBuilder().Build();
         SupportedProjectReadCapturingStateStore capture = new(client.JsonSerializerOptions);
-        DaprProjectTenantAccessProjectionStore store = new(capture);
+        DaprProjectTenantAccessProjectionStore store = new(new ProjectsStateReadModelTestAdapter(capture));
         ProjectTenantAccessHandler handler = new(store, new FixedUtcClock(now), new TenantAccessOptions());
         await handler.HandleAsync(new(ProjectTenantAccessEventKind.TenantCreated, "tenant", "created", 1, now,
             "correlation"), TestContext.Current.CancellationToken);

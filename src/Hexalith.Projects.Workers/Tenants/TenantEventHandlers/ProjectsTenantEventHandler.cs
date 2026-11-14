@@ -6,10 +6,13 @@
 namespace Hexalith.Projects.Workers.Tenants.TenantEventHandlers;
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Subscriptions;
+using Hexalith.EventStore.Client.Projections;
+using Hexalith.Tenants.Contracts.Enums;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Tenants.Contracts.Events;
 
@@ -23,6 +26,7 @@ public sealed class ProjectsTenantEventHandler(
     IOptions<ProjectTenantEventOptions> options,
     ILogger<ProjectsTenantEventHandler>? logger = null) :
     IEventStoreDomainEventHandler<TenantCreated>,
+    IEventStoreDomainEventHandler<TenantAccessRefreshed>,
     IEventStoreDomainEventHandler<TenantUpdated>,
     IEventStoreDomainEventHandler<TenantDisabled>,
     IEventStoreDomainEventHandler<TenantEnabled>,
@@ -32,6 +36,32 @@ public sealed class ProjectsTenantEventHandler(
     IEventStoreDomainEventHandler<TenantConfigurationSet>,
     IEventStoreDomainEventHandler<TenantConfigurationRemoved>
 {
+    /// <inheritdoc/>
+    public Task HandleAsync(TenantAccessRefreshed @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(@event);
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(@event.Members);
+        ArgumentNullException.ThrowIfNull(@event.ConfigurationKeys);
+        ProjectionSnapshotLimits.Default.Validate(@event, (long)@event.Members.Count + @event.ConfigurationKeys.Count);
+        if (@event.Status is not (TenantStatus.Active or TenantStatus.Disabled))
+        {
+            throw new InvalidOperationException("Tenant access refresh has no recognized lifecycle status.");
+        }
+
+        return HandleAsync(mapper.Map(
+            ProjectTenantAccessEventKind.TenantAccessRefreshed,
+            @event.TenantId,
+            context.TenantId,
+            context.MessageId,
+            context.SequenceNumber,
+            context.Timestamp,
+            context.CorrelationId,
+            snapshot: new ProjectTenantAccessSnapshot(@event.Status == TenantStatus.Active,
+                @event.Members.Select(member => new ProjectTenantPrincipalEvidence(member.Key, member.Value.ToString())).ToArray(),
+                @event.ConfigurationKeys)), cancellationToken);
+    }
+
     /// <inheritdoc/>
     public Task HandleAsync(TenantCreated @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {

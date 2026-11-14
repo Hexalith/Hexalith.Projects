@@ -26,6 +26,8 @@ public static class SupportedProjectReadFixtureProfile
     public const string EnabledConfigurationKey = "Projects:SupportedReads:Enabled";
     /// <summary>The private, launcher-owned configuration file.</summary>
     public const string ConfigurationFileKey = "Projects:SupportedReads:ConfigurationFile";
+    /// <summary>The recovery scenario's bounded tenant-access freshness policy, with cold-seed headroom.</summary>
+    public const string TenantAccessRecoveryFreshnessBudget = "00:01:30";
     private const string Prefix = "Projects:SupportedReads:";
 
     /// <summary>Returns whether the profile was explicitly selected.</summary>
@@ -245,6 +247,11 @@ public static class SupportedProjectReadFixtureProfile
         _ = eventStore.WithEnvironment("Authentication__HumanAuthorityReceipt__SigningKey", receipt);
         _ = projects.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", ownerKey)
             .WithEnvironment("EventStore__OwnerQueries__OperationTimeout", "00:00:03");
+        if (configuration[Prefix + "Scenario"] == "tenant-access-recovery")
+        {
+            _ = projects.WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", TenantAccessRecoveryFreshnessBudget)
+                .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", TenantAccessRecoveryFreshnessBudget);
+        }
         ConfigureClient(eventStore, "eventstore", eventStoreSecret);
         ConfigureClient(projects, "projects", projectsSecret);
         int ordinal = 0;

@@ -320,7 +320,14 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='audit-timeline-correlation-id']").TextContent.ShouldContain("corr-001");
         cut.Find("[data-testid='audit-timeline-task-id']").TextContent.ShouldContain("task-001");
         cut.Find("[data-testid='audit-timeline-event-id']").TextContent.ShouldContain("audit-001");
-        cut.FindAll("[data-testid='audit-timeline-copy']").Count.ShouldBeGreaterThanOrEqualTo(3);
+        var auditCopyButtons = cut.FindAll("[data-testid='audit-timeline-copy']");
+        auditCopyButtons.Count.ShouldBeGreaterThanOrEqualTo(3);
+        auditCopyButtons.ShouldContain(button => button.TextContent.Trim() == "Copy timestamp");
+        auditCopyButtons.ShouldContain(button => button.TextContent.Trim() == "Copy audit event ID");
+        foreach (var button in auditCopyButtons)
+        {
+            button.GetAttribute("aria-label").ShouldNotBeNull().ShouldContain(button.TextContent.Trim());
+        }
         cut.Find("[data-testid='safe-diagnostic-export-guarantee']").TextContent.ShouldContain("Payload-bearing data is excluded");
         cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldNotContain("token");
         cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldNotContain("score");

@@ -219,7 +219,7 @@ jobs:
           mapping_json="${mapping_diagnostics}/conversations.json"
           mapping_env="${mapping_diagnostics}/conversations.env"
           mapping_builds_root="${PWD}/references/Hexalith.Builds"
-          mapping_assembly="${mapping_builds_root}/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll"
+          mapping_assembly="${mapping_builds_root}/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net11.0/Hexalith.Builds.Module.Cli.dll"
           rm -rf "$mapping_workspace"
           mapping_status=0
           (

@@ -122,7 +122,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
     private static Assembly Load(ProjectResource project, string artifact)
     {
         string directory = Path.GetDirectoryName(project.GetProjectMetadata().ProjectPath)!;
-        string path = Path.Combine(directory, "bin", "Debug", "net10.0", artifact);
+        string path = Path.Combine(directory, "bin", "Debug", "net11.0", artifact);
         if (!File.Exists(path)) throw new InvalidOperationException("Build the selected Debug/source owner before composing its catalog: " + path);
         Assembly loaded = Assembly.LoadFrom(path);
         if (!SHA256.HashData(File.ReadAllBytes(loaded.Location)).AsSpan().SequenceEqual(SHA256.HashData(File.ReadAllBytes(path))))

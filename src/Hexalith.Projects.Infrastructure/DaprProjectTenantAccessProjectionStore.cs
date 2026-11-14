@@ -6,25 +6,26 @@
 namespace Hexalith.Projects.Infrastructure;
 
 using Hexalith.Projects.Projections.TenantAccess;
+using Hexalith.EventStore.Client.Projections;
 
 /// <summary>
 /// Dapr state-backed tenant-access projection store.
 /// </summary>
 public sealed class DaprProjectTenantAccessProjectionStore(
-    IProjectsStateStore stateStore,
+    IReadModelStore stateStore,
     ProjectsStateStoreOptions? options = null) : IProjectTenantAccessProjectionStore
 {
     private const string KeyPrefix = "projects:tenant-access:";
 
     private readonly ProjectsStateStoreOptions _options = options ?? ProjectsStateStoreOptions.Default;
-    private readonly IProjectsStateStore _stateStore = stateStore ?? throw new ArgumentNullException(nameof(stateStore));
+    private readonly IReadModelStore _stateStore = stateStore ?? throw new ArgumentNullException(nameof(stateStore));
 
     /// <inheritdoc/>
     public async Task<ProjectTenantAccessProjection?> GetAsync(string tenantId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        ProjectsStateEntry<TenantAccessProjectionDocument> entry = await _stateStore
+        ReadModelEntry<TenantAccessProjectionDocument> entry = await _stateStore
             .GetAsync<TenantAccessProjectionDocument>(_options.StateStoreName, Key(tenantId), cancellationToken)
             .ConfigureAwait(false);
 
@@ -44,34 +45,38 @@ public sealed class DaprProjectTenantAccessProjectionStore(
         ArgumentNullException.ThrowIfNull(projection);
         ArgumentException.ThrowIfNullOrWhiteSpace(projection.TenantId);
 
-        string key = Key(projection.TenantId);
-        ProjectsStateEntry<TenantAccessProjectionDocument> entry = await _stateStore
-            .GetAsync<TenantAccessProjectionDocument>(_options.StateStoreName, key, cancellationToken)
-            .ConfigureAwait(false);
+        _ = await ReadModelWritePolicy.UpdateAsync<TenantAccessProjectionDocument>(
+            _stateStore, _options.StateStoreName, Key(projection.TenantId), current =>
+            {
+                long currentVersion = current?.Version ?? 0L;
+                if (projection.Version != currentVersion)
+                {
+                    throw new TenantAccessConcurrencyException(projection.TenantId, projection.Version, currentVersion);
+                }
 
-        long currentVersion = entry.Value?.Version ?? 0L;
-        if (projection.Version != currentVersion)
-        {
-            throw new TenantAccessConcurrencyException(projection.TenantId, projection.Version, currentVersion);
-        }
+                ProjectTenantAccessProjection next = projection.Clone();
+                next.Version = currentVersion + 1L;
+                return new(next, next.Version);
+            }, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 
-        ProjectTenantAccessProjection snapshot = projection.Clone();
-        snapshot.Version = currentVersion + 1L;
-        TenantAccessProjectionDocument document = new(snapshot, snapshot.Version);
-        bool saved = await _stateStore
-            .TrySaveAsync(_options.StateStoreName, key, document, entry.ETag, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (!saved)
-        {
-            throw new TenantAccessConcurrencyException(projection.TenantId, projection.Version, currentVersion + 1L);
-        }
+    /// <inheritdoc/>
+    public async Task UpdateAsync(string tenantId, Func<ProjectTenantAccessProjection, bool> update, int maxAttempts,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
+        ArgumentNullException.ThrowIfNull(update);
+        _ = await ReadModelWritePolicy.UpdateAsync<TenantAccessProjectionDocument>(
+            _stateStore, _options.StateStoreName, Key(tenantId), current =>
+            {
+                ProjectTenantAccessProjection next = current?.Projection?.Clone() ?? new() { TenantId = tenantId };
+                long version = current?.Version ?? 0L;
+                next.Version = update(next) ? version + 1L : version;
+                return new(next, next.Version);
+            }, maxAttempts: maxAttempts, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     private static string Key(string tenantId)
         => KeyPrefix + tenantId.Trim();
 
-    private sealed record TenantAccessProjectionDocument(
-        ProjectTenantAccessProjection Projection,
-        long Version);
 }

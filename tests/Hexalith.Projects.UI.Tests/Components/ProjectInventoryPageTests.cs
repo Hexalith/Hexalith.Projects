@@ -74,9 +74,9 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
 
         cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
         var dashboardTiles = cut.FindAll("[data-testid='project-dashboard-tile']");
-        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Warning projects: 2");
-        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Conflicts: 1");
-        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Diagnostic unavailable: 1");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "2 Warning projects");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "1 Conflicts");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "1 Diagnostic unavailable");
 
         var healthy = cut.FindAll("[data-testid='project-warning-row']")
             .Single(row => row.TextContent.Contains("folder-001", StringComparison.Ordinal));

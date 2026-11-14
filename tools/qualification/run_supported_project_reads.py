@@ -10,6 +10,7 @@ import hashlib
 import http.server
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -334,6 +335,17 @@ def regression_environment(env: dict, endpoints_path: Path) -> dict:
     return result
 
 
+def regression_test_command(lane: str, assembly: Path, evidence: Path) -> list[str]:
+    """Run application regressions after seeding; setup executes in its dedicated browser lane."""
+    if lane not in {"Integration", "Server"}:
+        raise ValueError("Unknown regression lane.")
+    command = ["dotnet", str(assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
+    if lane == "Integration":
+        command.extend(["-class-", "*SupportedProjectReadDistributedTests",
+                        "-class-", "*SupportedProjectBrowserSeedTests"])
+    return command
+
+
 def free_port() -> int:
     with socket.socket() as listener:
         listener.bind(("127.0.0.1", 0))
@@ -373,7 +385,11 @@ def utc_time(value: str) -> datetime.datetime:
 def real_owner_request_windows(path: Path) -> list[dict]:
     """Bind the existing fifteen observations to the actual passing native method and UTC interval."""
     name = "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures"
-    tests = [test for test in ET.parse(path).getroot().iter("test") if test.get("name") == name]
+    root = ET.parse(path).getroot()
+    schema = root.get("schema-version")
+    if schema not in {None, "1", "2", "3"}:
+        raise RuntimeError("The native XML schema is unsupported.")
+    tests = [test for test in root.iter("test") if test.get("name") == name]
     if len(tests) != 1 or tests[0].get("result") != "Pass":
         raise RuntimeError("The passing real-owner native method is missing or ambiguous.")
     test = tests[0]
@@ -381,7 +397,16 @@ def real_owner_request_windows(path: Path) -> list[dict]:
     rows = [line[len(marker):] for line in (test.findtext("output") or "").splitlines() if line.startswith(marker)]
     if len(rows) != 1:
         raise RuntimeError("The real-owner observation output is missing or ambiguous.")
-    value = json.loads(rows[0])
+    try:
+        value = json.loads(rows[0])
+    except json.JSONDecodeError:
+        if schema != "3":
+            raise
+        # Current xUnit schema-3 reports escape quotes/backslashes in captured text.
+        # Decode exactly one string layer, then require the complete original JSON object.
+        value = json.loads(json.loads('"' + rows[0] + '"'))
+    if not isinstance(value, dict):
+        raise RuntimeError("The real-owner observations are not an object.")
     expected = {value.get(kind + "Trace"): kind for kind in ("Denied", "Absent", "ForeignOnly")}
     samples = value.get("BoundedInterleavedTimingSamples")
     if (len(expected) != 3 or not isinstance(samples, list) or len(samples) != 12
@@ -835,7 +860,7 @@ def projects_process_identity(owned: dict, graph: dict) -> dict:
     """Bind the actual Debug server, not merely Aspire's dotnet run wrapper, to this fixture."""
     matches = [item for item in graph["resources"] if item.get("displayName") == "projects"]
     project = ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
-    binary = project.parent / "bin/Debug/net10.0/Hexalith.Projects.Server"
+    binary = project.parent / "bin/Debug/net11.0/Hexalith.Projects.Server"
     if len(matches) != 1 or matches[0].get("resourceType") != "Project":
         raise RuntimeError("Projects resource identity is missing or ambiguous.")
     resource = matches[0]
@@ -1208,7 +1233,7 @@ def verify_source_references() -> dict:
                     if name.rsplit("/", 1)[0] in available}
         if not selected or any(kind != "project" for kind in selected.values()):
             raise RuntimeError("A live host contains a root-available Hexalith package fallback: " + project.name)
-        output = project / "bin/Debug/net10.0"
+        output = project / "bin/Debug/net11.0"
         if not (output / (project.name + ".dll")).is_file():
             raise RuntimeError("A live Debug output is missing: " + project.name)
         runtime_files = {str(path.relative_to(output)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -1279,10 +1304,12 @@ MATRIX_CASES = (
 
 SCENARIO_GROUPS = ("duplicate", "full-replay", "main")
 SCENARIO_CASES = {"duplicate": MATRIX_CASES[:1], "full-replay": MATRIX_CASES[1:2], "main": MATRIX_CASES[2:]}
+RECOVERY_SCENARIO = "tenant-access-recovery"
 SCENARIO_METHODS = {
     "duplicate": "DuplicateDeliveryUsesActualPersistedOwnersAsync",
     "full-replay": "FullReplayUsesActualPersistedOwnersAsync",
     "main": "MainReadsUseActualPersistedOwnersAsync",
+    RECOVERY_SCENARIO: "TenantAccessRecoveryUsesActualPersistedOwnersAsync",
 }
 SCENARIO_TEST_TYPE = "Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests"
 
@@ -1320,7 +1347,7 @@ def require_complete_native_results(assemblies) -> list[dict]:
 
 def require_native_scenario(assemblies, scenario: str, provider_isolation_sha: str, assembly_path: str, assembly_sha: str) -> list[dict]:
     """Bind a nonempty all-passing native XML result to its one exact selected method."""
-    if scenario not in SCENARIO_GROUPS:
+    if scenario not in (*SCENARIO_GROUPS, RECOVERY_SCENARIO):
         raise RuntimeError("Unknown native qualification scenario.")
     if (not isinstance(provider_isolation_sha, str) or not re.fullmatch(r"[0-9A-F]{64}", provider_isolation_sha)
             or not isinstance(assembly_path, str) or not Path(assembly_path).is_absolute()
@@ -1338,6 +1365,53 @@ def require_native_scenario(assemblies, scenario: str, provider_isolation_sha: s
     if markers != [marker]:
         raise RuntimeError("Native scenario output belongs to another provider, assembly or invocation.")
     return results
+
+
+def require_tenant_access_recovery(evidence: dict) -> None:
+    """Require two metadata-bound recoveries after actual stale denial, with positive advancing state."""
+    expected = {"authenticatedRecovery", "unauthorizedRejected", "anonymousRejected", "concurrentRetries",
+                "exactMembershipAndStatusPreserved", "persistedProjectionVerified", "sameTokenUsed",
+                "staleProjectionObserved", "freshOperationVerified", "configurationKeysPreserved"}
+
+    def positive(value):
+        return type(value) is int and value > 0
+
+    if (not isinstance(evidence, dict) or any(evidence.get(field) is not True for field in expected)
+            or evidence.get("anonymousHttpStatus") != 401 or evidence.get("unauthorizedHttpStatus") not in (202, 403, 422)
+            or evidence.get("projectsListHttpStatus") != 200 or evidence.get("snapshotEventCount") != 1
+            or evidence.get("retryCount") != 8 or evidence.get("realOidc") is not True
+            or evidence.get("preRecoveryProjectsListHttpStatus") != 404
+            or any(not positive(evidence.get(field)) for field in ("sourceWatermark", "projectionWatermark", "snapshotWatermark",
+                                                                  "previousProjectionVersion", "projectionVersion"))
+            or evidence["sourceWatermark"] != evidence["projectionWatermark"]
+            or evidence["sourceWatermark"] != evidence["snapshotWatermark"]
+            or evidence["projectionVersion"] <= evidence["previousProjectionVersion"]):
+        raise RuntimeError("The focused authenticated tenant-access recovery proof is incomplete.")
+    age, budget = evidence.get("preRecoveryProjectionAgeSeconds"), evidence.get("freshnessBudgetSeconds")
+    if (type(age) not in (int, float) or type(budget) not in (int, float)
+            or not math.isfinite(age) or not math.isfinite(budget) or budget <= 0 or age <= budget):
+        raise RuntimeError("Recovery does not prove an actually stale pre-recovery denial.")
+    first, second = evidence.get("firstRecovery"), evidence.get("secondRecovery")
+    for operation in (first, second):
+        if (not isinstance(operation, dict)
+                or any(not positive(operation.get(field)) for field in ("sourceEventSequence", "sourceWatermark", "projectionWatermark",
+                                                                        "snapshotWatermark", "priorProjectionVersion", "projectionVersion"))
+                or operation.get("snapshotEventCount") != 1 or operation.get("terminalStatus") != "Completed"
+                or operation["sourceEventSequence"] != operation["sourceWatermark"]
+                or operation["projectionWatermark"] != operation["sourceWatermark"]
+                or operation["snapshotWatermark"] != operation["sourceWatermark"]
+                or operation["projectionVersion"] <= operation["priorProjectionVersion"]
+                or any(not isinstance(operation.get(field), str) or not re.fullmatch(r"[0-9A-F]{64}", operation[field])
+                       for field in ("operationSha256", "sourceEventMessageSha256"))):
+            raise RuntimeError("Recovery metadata does not bind one committed event to a newer persisted snapshot.")
+    if (first["priorProjectionVersion"] != evidence["previousProjectionVersion"]
+            or second["priorProjectionVersion"] != first["projectionVersion"]
+            or second["projectionVersion"] != evidence["projectionVersion"]
+            or second["sourceWatermark"] != evidence["sourceWatermark"]
+            or second["sourceWatermark"] != first["sourceWatermark"] + 1
+            or second["operationSha256"] == first["operationSha256"]
+            or second["sourceEventMessageSha256"] == first["sourceEventMessageSha256"]):
+        raise RuntimeError("The later recovery does not prove a fresh operation without resetting persisted state.")
 
 
 def require_provider_observer_control(evidence: dict) -> None:
@@ -1711,7 +1785,7 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None) -> dict:
         if type(wrapper) is not int or properties.get("project.path") != str(project) or process_start(wrapper) is None:
             raise RuntimeError("A native scenario peer is not its actual source project.")
         before = process_start(wrapper)
-        binary = project.parent / "bin/Debug/net10.0" / project.stem
+        binary = project.parent / "bin/Debug/net11.0" / project.stem
         pending, candidates, seen = [wrapper], [], set()
         while pending:
             pid = pending.pop()
@@ -2258,18 +2332,20 @@ def issuer_server(directory: Path, issuer: str, bootstrap_password: str) -> tupl
     return server, thread
 
 
-def main() -> int:
+def _main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evidence", type=Path, help="New directory for sanitized evidence (must not exist).")
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--artifacts", type=Path, help="Private reusable Debug artifacts for iterative triage; omitted for fresh final verification.")
     parser.add_argument("--browser", action="store_true", help="Verify actual OIDC browser reads in the owned actual-owner topology.")
     parser.add_argument("--regressions", action="store_true", help="Also run the complete Projects Integration and Server test projects before teardown.")
-    parser.add_argument("--scenario", choices=SCENARIO_GROUPS, help=argparse.SUPPRESS)
+    parser.add_argument("--scenario", choices=(*SCENARIO_GROUPS, RECOVERY_SCENARIO), help=argparse.SUPPRESS)
     parser.add_argument("--resource-action", choices=("stop", "start", "restart"), help=argparse.SUPPRESS)
     parser.add_argument("--resource", choices=("folders", "projects"), default="folders", help=argparse.SUPPRESS)
     parser.add_argument("--ownership", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.scenario == RECOVERY_SCENARIO and (args.browser or args.regressions):
+        parser.error("The focused tenant-access recovery scenario cannot claim browser or complete regression qualification.")
     if args.browser and args.regressions:
         parser.error("--browser and --regressions cannot be combined; run native regressions separately.")
     if args.browser:
@@ -2441,7 +2517,7 @@ def main() -> int:
         user_issuer = f"https://127.0.0.1:{free_port()}/users"
         bootstrap_password = secrets.token_hex(32)
         browser = None
-        if args.browser:
+        if args.browser or args.scenario == RECOVERY_SCENARIO:
             from supported_browser_reads import prepare_oidc
             browser = prepare_oidc(ROOT, private, isolation, owned, run, free_port, bootstrap_password)
             user_issuer = browser["Authority"]
@@ -2574,41 +2650,46 @@ def main() -> int:
             report["tests"] = require_native_scenario(assemblies, args.scenario, report["providerIsolationSha256"], str(assembly), report["testAssemblySha256"])
             if result.returncode:
                 raise RuntimeError("Distributed assertions failed; inspect distributed.xml and the sanitized test log.")
-            matrix = json.loads((evidence / "matrix.json").read_text())
-            require_scenario_matrix(matrix, args.scenario, report["providerIsolationSha256"])
-            observer_control = json.loads((evidence / "provider-observer-control.json").read_text())
-            require_provider_observer_control(observer_control)
-            report["providerObserverControl"] = {key: observer_control[key] for key in ("verified", "domainKeyCount", "controlKeyCount", "binaryAndEscapingBoundariesExact")}
-            if args.scenario == "main":
-                report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
-                if not report["projectsRestart"].get("completed"):
-                    raise RuntimeError("The main scenario did not complete its exact owned Projects restart.")
-            else:
-                replay = json.loads((evidence / "projection-replay.json").read_text())
-                report["projectionReplay"] = require_distributed_replay_evidence(matrix, replay, args.scenario)
-            report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
-            if args.regressions and args.scenario != "main":
-                raise RuntimeError("Complete regressions run only under the main scenario's owned runtime.")
-            if args.regressions:
-                regression_env = regression_environment(env, private / "endpoints.json")
-                report["regressions"] = {}
-                for lane in ("Integration", "Server"):
-                    if lane == "Server":
-                        server_project = ROOT / "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
-                        run(["dotnet", "build", str(server_project), "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
-                    lane_assembly = next((artifacts / ("bin/Hexalith.Projects." + lane + ".Tests")).glob("debug*/Hexalith.Projects." + lane + ".Tests.dll"))
-                    regression_command = ["dotnet", str(lane_assembly), "-xml", str(evidence / (lane.lower() + ".xml"))]
-                    if lane == "Integration":
-                        regression_command.extend(["-class-", "*SupportedProjectReadDistributedTests"])
-                    report["commands"].append(regression_command)
-                    regression = run_test_process(regression_command, env=regression_env, timeout=args.timeout,
-                                                  cleanup=report.setdefault("testProcessCleanup", []))
-                    (evidence / (lane.lower() + ".log")).write_text(regression.stdout)
-                    lane_results = ET.parse(evidence / (lane.lower() + ".xml")).getroot().findall("assembly")
-                    report["regressions"][lane] = require_complete_native_results(lane_results)
-                    if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
-                        raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
-                capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
+            if args.scenario == RECOVERY_SCENARIO:
+                recovery = json.loads((evidence / "tenant-access-recovery.json").read_text())
+                require_tenant_access_recovery(recovery)
+                report["tenantAccessRecovery"] = recovery
+            if args.scenario == RECOVERY_SCENARIO:
+                report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
+            matrix = None if args.scenario == RECOVERY_SCENARIO else json.loads((evidence / "matrix.json").read_text())
+            if args.scenario != RECOVERY_SCENARIO:
+                require_scenario_matrix(matrix, args.scenario, report["providerIsolationSha256"])
+                observer_control = json.loads((evidence / "provider-observer-control.json").read_text())
+                require_provider_observer_control(observer_control)
+                report["providerObserverControl"] = {key: observer_control[key] for key in ("verified", "domainKeyCount", "controlKeyCount", "binaryAndEscapingBoundariesExact")}
+                if args.scenario == "main":
+                    report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
+                    if not report["projectsRestart"].get("completed"):
+                        raise RuntimeError("The main scenario did not complete its exact owned Projects restart.")
+                else:
+                    replay = json.loads((evidence / "projection-replay.json").read_text())
+                    report["projectionReplay"] = require_distributed_replay_evidence(matrix, replay, args.scenario)
+                report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
+                if args.regressions and args.scenario != "main":
+                    raise RuntimeError("Complete regressions run only under the main scenario's owned runtime.")
+                if args.regressions:
+                    regression_env = regression_environment(env, private / "endpoints.json")
+                    report["regressions"] = {}
+                    for lane in ("Integration", "Server"):
+                        if lane == "Server":
+                            server_project = ROOT / "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj"
+                            run(["dotnet", "build", str(server_project), "-c", "Debug", "-m:1", "--artifacts-path", str(artifacts)])
+                        lane_assembly = next((artifacts / ("bin/Hexalith.Projects." + lane + ".Tests")).glob("debug*/Hexalith.Projects." + lane + ".Tests.dll"))
+                        regression_command = regression_test_command(lane, lane_assembly, evidence)
+                        report["commands"].append(regression_command)
+                        regression = run_test_process(regression_command, env=regression_env, timeout=args.timeout,
+                                                      cleanup=report.setdefault("testProcessCleanup", []))
+                        (evidence / (lane.lower() + ".log")).write_text(regression.stdout)
+                        lane_results = ET.parse(evidence / (lane.lower() + ".xml")).getroot().findall("assembly")
+                        report["regressions"][lane] = require_complete_native_results(lane_results)
+                        if regression.returncode or not lane_results or any(int(a.attrib.get("failed", "0")) or int(a.attrib.get("skipped", "0")) for a in lane_results):
+                            raise RuntimeError("The complete " + lane + " regression project did not pass without skips.")
+                    capture_native_console(owned_apphost, discovery_configuration, discovery_registry, env, evidence, report)
         if hashlib.sha256(assembly.read_bytes()).hexdigest() != report["testAssemblySha256"]:
             raise RuntimeError("The selected native test assembly changed during verification.")
         report["testAssemblyUnchanged"] = True
@@ -2616,7 +2697,7 @@ def main() -> int:
             raise RuntimeError("Source inputs changed during verification; run again against stable sources.")
         if verify_source_references() != report["liveHostSourceReferences"]:
             raise RuntimeError("Live source-reference assets or runtime binaries changed during verification.")
-        report["matrixCompleted"] = not args.browser
+        report["matrixCompleted"] = not args.browser and args.scenario != RECOVERY_SCENARIO
         report["browserMatrixCompleted"] = args.browser
         report["result"] = "passed"
     except BaseException as failure:
@@ -2697,6 +2778,15 @@ def main() -> int:
             signal.signal(signal.SIGTERM, previous_sigterm)
     print(f"Supported Project reads: {report['result']}; evidence: {evidence}")
     return 0 if report["result"] == "passed" else 1
+
+
+def main() -> int:
+    """Create owner-private evidence and child-process outputs without changing the caller's mode."""
+    previous_umask = os.umask(0o077)
+    try:
+        return _main()
+    finally:
+        os.umask(previous_umask)
 
 
 if __name__ == "__main__":

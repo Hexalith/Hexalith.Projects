@@ -5,8 +5,10 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import re
 import subprocess
+import sys
 import tempfile
 import unittest
 from contextlib import contextmanager
@@ -16,7 +18,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOLS = ROOT / "references/Hexalith.Builds/Tools"
-SPEC = importlib.util.spec_from_file_location("g6_deferred_fixture", TOOLS / "test_runtime_toolchain_v2.py")
+SPEC = importlib.util.spec_from_file_location("g6_deferred_fixture", Path(__file__).with_name("fixtures") / "g6/historical_v2_fixture.py")
 assert SPEC is not None and SPEC.loader is not None
 FIXTURE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(FIXTURE)
@@ -76,9 +78,37 @@ def edit_artifact(workspace: Path, packet: dict, kind: str, edit) -> None:
 
 
 class DeferredG6ContractTests(unittest.TestCase):
+    def test_retained_fixture_writes_named_decisions_as_utf8_under_ascii_locale(self) -> None:
+        helpers = Path(__file__).with_name("fixtures") / "g6"
+        environment = dict(os.environ, LC_ALL="C", PYTHONUTF8="0", PYTHONCOERCECLOCALE="0")
+        for filename, writer in (("historical_v1_fixture.py", "write_json"), ("historical_v2_fixture.py", "write")):
+            with self.subTest(helper=filename), tempfile.TemporaryDirectory() as temporary:
+                destination = Path(temporary) / "decision.json"
+                code = ("import runpy,sys; from pathlib import Path; "
+                        "helpers=runpy.run_path(sys.argv[1]); "
+                        "helpers[sys.argv[2]](Path(sys.argv[3]), {'approvedBy': chr(233)})")
+                result = subprocess.run([sys.executable, "-c", code, str(helpers / filename), writer, str(destination)],
+                                        env=environment, capture_output=True)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual({"approvedBy": chr(233)}, json.loads(destination.read_text(encoding="utf-8")))
+
+    def test_retained_source_controls_ignore_inherited_git_configuration_and_routing(self) -> None:
+        environment = {"GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_0": "commit.gpgsign", "GIT_CONFIG_VALUE_0": "true",
+                       "GIT_CONFIG_KEY_1": "gpg.program", "GIT_CONFIG_VALUE_1": "/nonexistent/fixture-signing-tool"}
+        with tempfile.TemporaryDirectory() as temporary:
+            unrelated = Path(temporary)
+            FIXTURE.fixture_git(unrelated, "init", "-q")
+            environment.update(GIT_DIR=str(unrelated / ".git"), GIT_WORK_TREE=str(unrelated),
+                               GIT_INDEX_FILE=str(unrelated / "foreign-index"))
+            before = {str(path.relative_to(unrelated)): path.read_bytes() for path in unrelated.rglob("*") if path.is_file()}
+            with patch.dict(os.environ, environment):
+                self.assertEqual(5, FIXTURE.run_source_controls())
+            after = {str(path.relative_to(unrelated)): path.read_bytes() for path in unrelated.rglob("*") if path.is_file()}
+            self.assertEqual(before, after)
+
     def test_historical_catalog_rejects_drift_in_every_independent_coordinate(self) -> None:
         specification = importlib.util.spec_from_file_location(
-            "historical_catalog_fixture", TOOLS / "test-runtime-toolchain-evidence-validator.py")
+            "historical_catalog_fixture", Path(__file__).with_name("fixtures") / "g6/historical_v1_fixture.py")
         assert specification is not None and specification.loader is not None
         fixture = importlib.util.module_from_spec(specification)
         specification.loader.exec_module(fixture)
@@ -151,7 +181,7 @@ class DeferredG6ContractTests(unittest.TestCase):
             return result
 
         with patch.object(CURRENT, "validate_packet", side_effect=observe):
-            self.assertGreater(FIXTURE.run_controls(), 0)
+            self.assertEqual(103, FIXTURE.run_controls())
         self.assertEqual({True, False}, observed, "both real positive fixture modes must run")
 
     def check_candidate_obligations(self, workspace, check) -> None:

@@ -29,7 +29,7 @@ def render_consumer_project(package: ManifestPackage, version: str) -> str:
     project = ET.Element("Project", {"Sdk": "Microsoft.NET.Sdk"})
     properties = ET.SubElement(project, "PropertyGroup")
     ET.SubElement(properties, "OutputType").text = "Exe"
-    ET.SubElement(properties, "TargetFramework").text = "net10.0"
+    ET.SubElement(properties, "TargetFramework").text = "net11.0"
     ET.SubElement(properties, "ImplicitUsings").text = "enable"
     ET.SubElement(properties, "Nullable").text = "enable"
     dependencies = ET.SubElement(project, "ItemGroup")
@@ -104,7 +104,7 @@ def run_consumer(
     project.write_text(render_consumer_project(package, version), encoding="utf-8")
     (consumer / "Program.cs").write_text(package.probe, encoding="utf-8")
     config = workspace / "NuGet.Config"
-    completed_environment = dict(os.environ)
+    completed_environment = {key: value for key, value in os.environ.items() if key.casefold() != "artifactspath"}
     completed_environment["NUGET_PACKAGES"] = str(consumer / ".packages")
     subprocess.run(
         ["dotnet", "restore", str(project), "--configfile", str(config), "/nr:false"],
