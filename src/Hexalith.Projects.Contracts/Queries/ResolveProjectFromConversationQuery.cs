@@ -10,8 +10,10 @@ using Hexalith.McpCli.Abstractions;
 [HexalithQuery("Trace unselected advisory Project candidates from an authorized committed Conversation. Coverage and freshness are explicit; suggestions never authorize selection, context or confirmation.",
     Name = "trace-conversation", Domain = "projects", WireType = QueryType, AggregateId = "projects",
     Example = """{"conversationId":"conversation-a"}""")]
-public sealed record ResolveProjectFromConversationQuery([property: Description("Exact opaque Conversation owner identifier; authority comes from the credential."), JsonPropertyName("conversationId"), HexalithIdentifier]
-    string ConversationId, [property: Description("Include authorized Archived candidates; defaults to false."), JsonPropertyName("includeArchived")]
+public sealed record ResolveProjectFromConversationQuery(
+    [property: Description("Exact opaque Conversation owner identifier; authority comes from the credential."), JsonPropertyName("conversationId"), HexalithIdentifier]
+    string ConversationId,
+    [property: Description("Include authorized Archived candidates; defaults to false."), JsonPropertyName("includeArchived")]
     bool IncludeArchived = false)
 {
     /// <summary>The supported query discriminator.</summary>

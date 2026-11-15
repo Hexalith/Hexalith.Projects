@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 /// <summary>Preserves the Conversations-owned conv: wire prefix without importing its Contracts.</summary>
-public sealed class ProjectConversationIdJsonConverter : JsonConverter<string>
+internal sealed class ProjectConversationIdJsonConverter : JsonConverter<string>
 {
     /// <inheritdoc/>
     public override bool HandleNull => true;

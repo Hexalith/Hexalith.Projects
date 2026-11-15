@@ -43,9 +43,10 @@ public sealed class ProjectConversationItemWireTests
     [InlineData("\"conv: \"")]
     public void MalformedWireIdentifiersAreRejected(string wire)
     {
-        var options = new JsonSerializerOptions();
-        options.Converters.Add(new ProjectConversationIdJsonConverter());
-        Should.Throw<JsonException>(() => JsonSerializer.Deserialize<string>(wire, options));
+        ProjectConversationItem item = new(new("project-a"), "conversation-a", "Open", null,
+            ProjectConversationTrustSignal.Current, null, null);
+        string json = JsonSerializer.Serialize(item).Replace("\"conv:conversation-a\"", wire, StringComparison.Ordinal);
+        Should.Throw<JsonException>(() => JsonSerializer.Deserialize<ProjectConversationItem>(json));
     }
 
     [Theory]

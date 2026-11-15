@@ -1383,6 +1383,8 @@ status: open
   summary: Diagnose the intermittent `ProposeNewProjectEndpointTests.Confirm_SeparatorFingerprintsDoNotCollideAndUnsafeVariantsAreRejected(field: "description")` failure (404 instead of 202 at `tests/Hexalith.Projects.Server.Tests/Queries/ProposeNewProjectEndpointTests.cs:587`).
   evidence: During the Story 6.8 post-review verification, a full Server.Tests run on a fresh in-memory `daprd` failed this one case (1 of 1407; `evidence/story-6-8-ui-contracts-split/tests/Hexalith.Projects.Server.Tests.intermittent-failure.{log,xml}`). The same patched tree passed 1407/1407 in three other full runs and 77/77 three times as an isolated class. Story 6.8 changes neither the test nor any Server code, and Server does not reference UI.Contracts. To settle it, reproduce under repeated full-assembly runs at baseline `6bea95a3` and trace which confirm-path guard returns the safe 404 (proposal lookup, fingerprint or timing).
 
+## Deferred from: code review of spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md (2026-11-15)
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Confirm the Projects inventory signer's owning-maintainer capacity before DW-82 release/main integration.
   evidence: Review B1 is unverified medium: §E8 records session approval for four local targets and explicitly no external owner sign-off; the machine artifact uses owning-maintainer authority. Establish authentic module-owner capacity before release use; current local feature verification grants no release readiness.
@@ -1394,8 +1396,6 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Add the Projects native service, committed routes and signed read grants before activating its plan on McpCli main under DW-82.
   evidence: Review V1: LiveVectorTests.cs:15 enumerates all plans-current JSON, but AppHost Program.cs:96/appsettings and NativeFixtureIdentity.cs:22 have only EventStore/Tenants/Parties. The Projects plan cannot pass the default isolated native lane. §E11 explicitly defers McpCli main CI integration; publication and this topology prerequisite must both pass before integration.
-
-## Deferred from: code review of spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md (2026-11-15)
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Apply the 6.6 D8 missing-credential amendment to the official Story 6.6 acceptance criterion.

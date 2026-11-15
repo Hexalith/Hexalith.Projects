@@ -1,9 +1,9 @@
 namespace Hexalith.Projects.Contracts.Queries;
 
 using System.ComponentModel;
-using Hexalith.McpCli.Abstractions;
-
 using System.Text.Json.Serialization;
+
+using Hexalith.McpCli.Abstractions;
 
 /// <summary>Lists authorized Projects; authority comes exclusively from the authenticated envelope.</summary>
 /// <param name="LifecycleState">Optional Active or Archived lifecycle filter.</param>

@@ -1,9 +1,9 @@
 namespace Hexalith.Projects.Contracts.Queries;
 
 using System.ComponentModel;
-using Hexalith.McpCli.Abstractions;
-
 using System.Text.Json.Serialization;
+
+using Hexalith.McpCli.Abstractions;
 
 /// <summary>Opens one Project bound to the envelope target, without paging.</summary>
 /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
@@ -12,8 +12,10 @@ using System.Text.Json.Serialization;
 [HexalithQuery("Read Project detail, lifecycle and reference health. Supply the Project identifier through --aggregate-id. Safe metadata is the default; descriptive metadata requires separate permission and a durable audit.",
     Name = "describe", Domain = "projects", WireType = QueryType,
     Example = """{}""")]
-public sealed record GetProjectQuery([property: Description("Request descriptive fields; permission and durable inspection audit are required."), JsonPropertyName("inspectDescriptiveMetadata")]
-    bool InspectDescriptiveMetadata = false, [property: Description("Request separately authorized Administrator inspection of an unbound Active Project."), JsonPropertyName("inspectQuarantined")]
+public sealed record GetProjectQuery(
+    [property: Description("Request descriptive fields; permission and durable inspection audit are required."), JsonPropertyName("inspectDescriptiveMetadata")]
+    bool InspectDescriptiveMetadata = false,
+    [property: Description("Request separately authorized Administrator inspection of an unbound Active Project."), JsonPropertyName("inspectQuarantined")]
     bool InspectQuarantined = false)
 {
     /// <summary>Preserves the original constructor signature for existing consumers.</summary>
