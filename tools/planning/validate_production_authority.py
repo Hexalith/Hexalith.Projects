@@ -29,6 +29,11 @@ STORY_6_4_KEY = "6-4-resolve-projects-with-transient-current-explanations"
 # User-approved advisory scope reset, 2026-10-21: ordinary story progress is allowed.
 # This exception grants no P1R, other-story or production-release acceptance.
 STORY_6_4_STATUSES = {"blocked", "backlog", "ready-for-dev", "in-progress", "review", "done"}
+STORY_6_6_KEY = "6-6-inspect-projects-through-an-authenticated-cli-read-surface"
+STORY_6_8_KEY = "6-8-split-hexalith-projects-ui-contracts-from-contracts"
+# Approved 2026-11-15 scheduling exception (D1/D2): 6.8 may progress; 6.6 may leave backlog
+# only after 6.8 and DW-55 are done. Grants no readiness, P1R, 6.7, Epic 7/8 or release acceptance.
+SCHEDULED_STORY_STATUSES = {"backlog", "blocked", "ready-for-dev", "in-progress", "review", "done"}
 ACCEPTANCE_SCHEMA = "hexalith.projects.p1r-acceptance.v1"
 ACCEPTANCE_RECORD_RELATIVE_PATH = Path(
     "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
@@ -77,9 +82,7 @@ EPIC6_DEVELOPMENT_STATUSES = {
     "epic-6": "in-progress",
     "6-2-retrieve-conversation-start-setup-with-admission-truth": "done",
     "6-3-retrieve-assembled-project-context-through-supported-read-models": "done",
-    "6-6-inspect-projects-through-an-authenticated-cli-read-surface": "backlog",
     "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback": "backlog",
-    "6-8-split-hexalith-projects-ui-contracts-from-contracts": "backlog",
     "epic-6-retrospective": "optional",
 }
 TRANSITIVE_EPIC_STATUSES = {
@@ -285,8 +288,14 @@ def _validate_scheduling(
     if advisory_status not in STORY_6_4_STATUSES:
         raise GuardViolation("Story 6.4 advisory status is missing or invalid")
     expected[STORY_6_4_KEY] = advisory_status
+    for key, story in ((STORY_6_8_KEY, "6.8"), (STORY_6_6_KEY, "6.6")):
+        status = production.get(key)
+        if status not in SCHEDULED_STORY_STATUSES:
+            raise GuardViolation(f"Story {story} scheduled status is missing or invalid")
+        expected[key] = status
     if deferred_work is not None:
         _validate_read_dependencies(sprint, deferred_work)
+        _validate_cli_read_dependencies(sprint, deferred_work)
     if production != expected:
         raise GuardViolation("Epic 6-8 development statuses exceed the open boundary")
 
@@ -544,6 +553,18 @@ def _validate_read_dependencies(sprint: dict[str, Any], deferred_work: str) -> N
             raise GuardViolation("Story 6.5 / DW-1 requires done Story " + ", ".join(missing))
     if web_advances and dw1_status != "done":
         raise GuardViolation("Story 6.5 progression requires DW-1 done")
+
+
+def _validate_cli_read_dependencies(sprint: dict[str, Any], deferred_work: str) -> None:
+    """Keep the CLI read surface behind the landed Contracts split (2026-11-15 D1)."""
+
+    development = sprint["development_status"]
+    if development[STORY_6_6_KEY] == "backlog":
+        return
+    if development[STORY_6_8_KEY] != "done":
+        raise GuardViolation("Story 6.6 progression requires done Story 6.8")
+    if _deferred_status(deferred_work, 55) != "done":
+        raise GuardViolation("Story 6.6 progression requires DW-55 done")
 
 
 def _validate_closure_boundary(

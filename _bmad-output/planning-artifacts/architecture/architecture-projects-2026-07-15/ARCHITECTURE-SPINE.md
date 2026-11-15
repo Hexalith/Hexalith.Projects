@@ -29,7 +29,7 @@ companions: []
 
 # Architecture Spine — Hexalith.Projects
 
-**Approved McpCli course correction (2026-09-27):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
+**McpCli course correction (drafted 2026-09-27; approved 2026-11-15 by [sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](../../sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md) §E9):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
 
 
 ## Approved Story 6.4 advisory exception — 2026-10-21
@@ -363,7 +363,7 @@ The approved 2026-10-02 G-6 applicability change narrows only the runtime/toolch
 | Select association target (`selection.mint`) | Denied | Allowed (Chatbot in v1) | Denied | Denied |
 | Create Project (`project.create`) | Allowed (no prior Project authority; created Folder names actor sole manager) | Allowed | Denied | Denied |
 | Update Setup (`project-setup.update`) | Denied | Allowed | Denied | Denied |
-| Archive or restore (rebind prior Folder) | Denied | Allowed | Allowed (Web; CLI after A-7; MCP after A-7 + gate) | Allowed (same surfaces) |
+| Archive or restore (rebind prior Folder) | Denied | Allowed | Allowed (Web only; McpCli CLI/MCP refuse it under AD-29) | Allowed (same surfaces) |
 | Restore with replacement or same-name Folder | Denied | Denied when Folder missing | Denied | Allowed under FR-8 |
 | Add Conversation/File/Memory link or initially set Folder | Denied | Allowed (Selection Evidence or confirmed inference) | Denied | Denied |
 | Move / unlink | Denied | Allowed | Denied | Allowed |
@@ -372,7 +372,7 @@ The approved 2026-10-02 G-6 applicability change narrows only the runtime/toolch
 | Reconcile `NeedsAttention` | Denied | Denied | Denied | Allowed (task-control; original bindings only) |
 | Safe Diagnostic Export | Denied | Denied | Separately authorized | Separately authorized |
 
-MCP follows AD-29: read and task control until the consequential-MCP gate; the gate never admits autonomous confirmation.
+McpCli (CLI and MCP heads) follows AD-29: read and task control only. A-7 and Story 8.11 never enable confirmation-required actions on McpCli; they stay on the confidential interactive Web and Chatbot UI, and autonomous confirmation is never admitted (approved 2026-11-15, sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md §E5).
 
 ### AD-34 — [ADOPTED] Accessible completion is a release invariant
 

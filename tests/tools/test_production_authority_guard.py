@@ -89,13 +89,19 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         # Keep historical open/accepted fixtures independent of active feature progress.
         index = GUARD._load_yaml_text(cls.sprint, "feature fixture")
         lines = cls.sprint.splitlines(keepends=True)
-        for key in (GUARD.STORY_6_1_KEY, GUARD.STORY_6_5_KEY):
+        baselines = {
+            GUARD.STORY_6_1_KEY: "blocked",
+            GUARD.STORY_6_5_KEY: "blocked",
+            GUARD.STORY_6_6_KEY: "backlog",
+            GUARD.STORY_6_8_KEY: "backlog",
+        }
+        for key, baseline in baselines.items():
             current = f"  {key}: {index['development_status'][key]}"
             matches = [number for number, line in enumerate(lines) if line.startswith(current)]
             if len(matches) != 1:
                 raise AssertionError(f"expected one fixture status line: {key}")
-            # Drop any trailing closure comment so fixtures see the bare historical line.
-            lines[matches[0]] = f"  {key}: blocked\n"
+            # Drop any trailing closure comment so fixtures see the bare baseline line.
+            lines[matches[0]] = f"  {key}: {baseline}\n"
         cls.sprint = "".join(lines)
         cls.accepted_revalidation_status = GUARD._load_yaml_text(
             cls.sprint, "fixture"
@@ -120,6 +126,8 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         deferred = GUARD.DEFAULT_DEFERRED_WORK.read_text(encoding="utf-8")
         deferred_sections = (
             "### DW-1: Deliver and accept Story 6.5 supported-read prerequisites",
+            "### DW-55: Create the standalone Hexalith.Projects.UI.Contracts split story "
+            "and land it before Stories 6.6, 8.4 and 8.5.",
             "### DW-35: Accept the selected P1R baseline through the minimal gate.",
             "### DW-68: Keep the P1R coordinate qualification open until "
             "the minimal record is accepted.",
@@ -666,18 +674,21 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     )
 
     def test_unauthorized_closure_fails_closed(self) -> None:
-        sprint = self.replace_once(
-            self.accepted_sprint(),
-            "  6-6-inspect-projects-through-an-authenticated-cli-read-surface: backlog",
-            "  6-6-inspect-projects-through-an-authenticated-cli-read-surface: ready-for-dev",
-        )
-        with self.assertRaisesRegex(GUARD.GuardViolation, "open boundary"):
-            self.validate_boundary(
-                sprint=sprint,
-                deferred=self.accepted_deferred(),
-                p0=self.accepted_p0(),
-                record=self.acceptance_record(),
-            )
+        story_6_7 = "  6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback"
+        for status in ("blocked", "ready-for-dev", "in-progress", "review", "done"):
+            with self.subTest(status=status):
+                sprint = self.replace_once(
+                    self.accepted_sprint(),
+                    f"{story_6_7}: backlog",
+                    f"{story_6_7}: {status}",
+                )
+                with self.assertRaisesRegex(GUARD.GuardViolation, "open boundary"):
+                    self.validate_boundary(
+                        sprint=sprint,
+                        deferred=self.accepted_deferred(),
+                        p0=self.accepted_p0(),
+                        record=self.acceptance_record(),
+                    )
 
     def test_approved_advisory_story_can_progress_without_opening_other_gates(self) -> None:
         sprint = GUARD.yaml.safe_load(self.sprint)
@@ -921,6 +932,56 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         snapshot["deferred"], "### DW-1:", "status: open", "status: done\n" + extra)
                     with self.assertRaisesRegex(GUARD.GuardViolation, "DW-1 must contain exactly one status field"):
                         self.validate_boundary(**snapshot)
+
+    def test_contracts_split_story_can_progress_without_opening_other_gates(self) -> None:
+        approved_statuses = ("backlog", "blocked", "ready-for-dev", "in-progress", "review", "done")
+        self.assertEqual(set(approved_statuses), GUARD.SCHEDULED_STORY_STATUSES)
+        story_6_7 = "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback"
+        for accepted in (False, True):
+            for status in approved_statuses:
+                with self.subTest(accepted=accepted, status=status):
+                    snapshot = self.feature_snapshot(accepted)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_8_KEY, status)
+                    self.assertEqual((6, 7, 8), self.validate_boundary(**snapshot))
+                    index = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
+                    development = index["development_status"]
+                    self.assertEqual("backlog", development[GUARD.STORY_6_6_KEY])
+                    self.assertEqual("backlog", development[story_6_7])
+                    self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
+
+    def test_cli_progression_requires_done_split_and_done_dw55(self) -> None:
+        for accepted in (False, True):
+            for status in ("blocked", "ready-for-dev", "in-progress", "review", "done"):
+                with self.subTest(accepted=accepted, status=status):
+                    snapshot = self.feature_snapshot(accepted)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_6_KEY, status)
+                    for split_status in ("backlog", "review"):
+                        snapshot["sprint"] = self.set_story(
+                            snapshot["sprint"], GUARD.STORY_6_8_KEY, split_status)
+                        with self.assertRaisesRegex(GUARD.GuardViolation, "requires done Story 6.8"):
+                            self.validate_boundary(**snapshot)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_8_KEY, "done")
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "requires DW-55 done"):
+                        self.validate_boundary(**snapshot)
+                    snapshot["deferred"] = self.replace_after(
+                        snapshot["deferred"], "### DW-55:", "status: open", "status: done")
+                    self.assertEqual((6, 7, 8), self.validate_boundary(**snapshot))
+
+    def test_scheduled_story_keys_and_statuses_fail_closed(self) -> None:
+        for key in (GUARD.STORY_6_6_KEY, GUARD.STORY_6_8_KEY):
+            line = f"  {key}: backlog"
+            candidates = [
+                self.replace_once(self.sprint, line + "\n", ""),
+                self.replace_once(self.sprint, line, line.replace(key, key + "-renamed")),
+                self.replace_once(self.sprint, line, line + "\n" + line),
+            ]
+            candidates.extend(self.replace_once(self.sprint, line, f"  {key}: {status}")
+                              for status in ("released", "accepted", "ready", "null"))
+            for candidate in candidates:
+                with self.subTest(key=key, candidate=candidate[-100:]):
+                    error = "duplicate YAML key" if candidate.count(line) == 2 else "scheduled status|must be a string"
+                    with self.assertRaisesRegex(GUARD.GuardViolation, error):
+                        self.validate_boundary(sprint=candidate)
 
     def test_active_repository_index_passes(self) -> None:
         self.assertEqual((6, 7, 8), GUARD.validate_index())

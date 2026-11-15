@@ -7,7 +7,7 @@ updated: 2026-09-08
 
 # PRD: Hexalith.Projects
 
-**Approved McpCli course correction (2026-09-27):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
+**McpCli course correction (drafted 2026-09-27; approved 2026-11-15 by [sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](../../sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md) §E9):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
 
 
 ## 0. Document Purpose

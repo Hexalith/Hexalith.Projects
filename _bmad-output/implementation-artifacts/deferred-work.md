@@ -473,7 +473,7 @@ decision: 2026-08-26 Break v1 in place — Normalize current v1 wire enums and g
 ### DW-55: Create the standalone Hexalith.Projects.UI.Contracts split story and land it before Stories 6.6, 8.4 and 8.5.
 
 origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
-location: src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj:22-33
+location: src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj:13-47 (corrected 2026-11-15 from :22-33)
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: high
 reason: AC6 was removed from Story 6.2 on 2026-08-26 because it is packaging hygiene with no runtime admission consequence and Story 6.2 already carries multiple-goals and oversized warnings. The coupling is structural rather than file placement: src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs:10,25,29 decorates a domain/wire enum with [ProjectionBadge] from Hexalith.FrontComposer.Contracts.Attributes, so the split requires stripping UI attributes off domain enums and re-expressing badge mapping in the UI layer. Acceptance gate already exists at tests/tools/run-package-dependency-gate.ps1. Must land before Stories 6.6, 8.4 and 8.5 or the CLI and MCP surfaces inherit Blazor/Fluxor transitively through the supported contracts. Story creation requires tools/planning/validate_production_authority.py --story-id and a sprint-status.yaml entry; neither may be performed by Story 6.2.
@@ -753,6 +753,34 @@ origin: observed while closing Story 6.5 by sprint-change-proposal-2026-11-15-cl
 location: CI run 43654669161 at eaa95558, job "G-6 current runtime qualification"; references/Hexalith.McpCli
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-close-story-6-5.md
 reason: Restore fails with NU1202: Hexalith.Commons.UniqueIds 3.0.0 supports only net11.0, while references/Hexalith.McpCli (gitlink a92a2969db6903b8c6cca7e437446167e135ec9d) still targets net10.0. ci / build-and-test, the generated-artifact gates and the P1R replay pass on the same run. Owner: Hexalith.McpCli (target framework) with Projects build hygiene. Not a story gate.
+status: done
+closed: 2026-11-15 by sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md (E10). G-6 current runtime qualification passed on main at b756d01a (CI run 43692737105) with references/Hexalith.McpCli at 63df6d2b (net11.0, Directory.Build.props:33); NU1202 no longer occurs. The later G-6 failure at fc58cefd is a separate regression tracked by DW-83.
+
+### DW-82: Publish the decorated Hexalith.Projects.Contracts and integrate the McpCli Projects enrollment.
+
+origin: routed out of Story 6.6 by sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md (E8, E11)
+location: references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj:24-31; references/Hexalith.McpCli/tools/dependency-policy.json; references/Hexalith.AI.Tools/hexalith-mcpcli-migration-instructions.md (Projects inventory row)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md
+reason: McpCli enrolls Contracts only as restored NuGet packages (Build/ModuleAssemblyManifest.targets matches NuGetPackageId), and its CI restores only published packages. Story 6.6 is therefore validated against a locally packed Hexalith.Projects.Contracts at a recorded McpCli candidate revision. Publishing the slim, decorated package needs green Projects release CI (see DW-83). After the McpCli enrollment and projects-migration-inventory-v2 land on McpCli main, the AI.Tools migration plan must re-pin the Projects row to v2 under a new plan_version and inventory_revision. Owner: Hexalith.Projects release maintainer with the Hexalith.McpCli and Hexalith.AI.Tools maintainers. Consumers: Stories 8.4, 8.5 and 8.7. Not a Story 6.6 gate.
+removal_condition: McpCli main CI passes with Hexalith.Projects.Contracts enrolled at a published version, and the AI.Tools migration plan links projects-migration-inventory-v2 at that McpCli revision.
+status: open
+
+### DW-83: Restore green Projects main CI after the 2026-11-15 submodule pointer moves.
+
+origin: observed while preparing sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md (E10, E11)
+location: main CI runs 43692737105 (b756d01a), 43694739240 and 43697046014 (fc58cefd); job "ci / build-and-test" step "Validate package consumer references"; job "G-6 current runtime qualification" step "Restore effective G-6 package graphs"; tools/release-packages.json
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md
+reason: Two regressions follow the root pointer moves recorded on 2026-11-15. (1) Since b756d01a, build-and-test fails package creation: "Package Hexalith.Projects dependency graph differs from the manifest; missing=[], unexpected=[], wrong_versions=['Hexalith.FrontComposer.Contracts', 'Hexalith.FrontComposer.Contracts.UI', 'Hexalith.FrontComposer.Shell']". The committed references/Hexalith.Builds pointers 99f7c860 (b756d01a) and 7cd0c17a (fc58cefd) select HexalithFrontComposerVersion 6.0.0 (Props/Directory.Packages.props:155), while tools/release-packages.json still pins 5.0.0; at eaa95558 the Builds pin selected 5.0.0 and build-and-test passed. As a knock-on, Tier 1 reports no Microsoft.Testing.Platform failure count. (2) At fc58cefd, G-6 exits 2 while Hexalith.Builds.Module.Cli prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source runs for references/Hexalith.Conversations, with empty stderr. G-6 passed at b756d01a; the Conversations pointer is unchanged (c34dc3c1), and the Builds pointer moved 99f7c860 -> 7cd0c17a. The cause is not yet diagnosed; the run's G-6 output artifact holds the mapping JSON. Story 6.8 rewrites the Contracts manifest entry and must not mask (1); if its regeneration clears all FrontComposer drift, record that here. Owner: Projects build hygiene with the Builds Module CLI maintainers. Not a story gate.
+removal_condition: ci / build-and-test and G-6 current runtime qualification both pass on main at a recorded commit.
+status: open
+
+### DW-84: Reconcile Epic 8 and UX confirmation wording with AD-29.
+
+origin: routed by sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md (E5, E11)
+location: _bmad-output/planning-artifacts/epics.md Stories 8.4 and 8.5; _bmad-output/planning-artifacts/ux-design-specification.md:716 (Journey 4) and :948-956 (CLI navigation)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md
+reason: The amended AD-33 and UX-DR19 state that McpCli never confirms: A-7 and Story 8.11 cannot enable confirmation-required actions on McpCli (AD-29, Platform AD-14). Stories 8.4 and 8.5 still say "CLI after A-7" and "MCP after A-7 + 8.11", Journey 4 still shows an MCP confirmation gate, and the UX CLI navigation list predates the McpCli operation names in UX-DR19. Recheck the PRD §9 A-7 revisit clause at the same time. Owner: Product Owner with Solution Architect. Not an Epic 6 gate.
+removal_condition: Stories 8.4 and 8.5 and the UX spec are specified against the amended AD-33 and UX-DR19.
 status: open
 
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
@@ -838,6 +866,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Record approval provenance for the 2026-09-27 "Approved McpCli course correction" notes in the Spine, PRD, and epics, and reconcile Spine line 342 with AD-29 (unverified, would be medium).
   evidence: Commit `b42beb3` added the notes but no `sprint-change-proposal-2026-09-27*` exists; settle by locating the approval record and comparing AD-29 with line 342 (review BH-29/EC-24).
+  status: resolved
+  resolution: 2026-11-15; sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md; §E9 records the approval of record (the PRD, Spine and epics notes now read "drafted 2026-09-27; approved 2026-11-15"), and §E5 reconciles Spine :375 (formerly :342) with AD-29 through the amended AD-33 archive/restore row and MCP footnote.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Confirm whether `prepare-oq8-v5-candidate.py` reports `workingTreeDirty=false` while reading ROOT selector inputs from a dirty worktree (unverified, would be medium).
   evidence: Story 4.15 helper change swept into EventStore `1cc6b44b`; settle by running with `--for-v5-activation` against a dirty selector and inspecting the output (review EC-18).
