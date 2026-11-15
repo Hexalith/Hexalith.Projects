@@ -88,11 +88,15 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         )
         # Keep historical open/accepted fixtures independent of active feature progress.
         index = GUARD._load_yaml_text(cls.sprint, "feature fixture")
-        cls.sprint = cls.sprint.replace(
-            f"  {GUARD.STORY_6_1_KEY}: {index['development_status'][GUARD.STORY_6_1_KEY]}",
-            f"  {GUARD.STORY_6_1_KEY}: blocked",
-            1,
-        )
+        lines = cls.sprint.splitlines(keepends=True)
+        for key in (GUARD.STORY_6_1_KEY, GUARD.STORY_6_5_KEY):
+            current = f"  {key}: {index['development_status'][key]}"
+            matches = [number for number, line in enumerate(lines) if line.startswith(current)]
+            if len(matches) != 1:
+                raise AssertionError(f"expected one fixture status line: {key}")
+            # Drop any trailing closure comment so fixtures see the bare historical line.
+            lines[matches[0]] = f"  {key}: blocked\n"
+        cls.sprint = "".join(lines)
         cls.accepted_revalidation_status = GUARD._load_yaml_text(
             cls.sprint, "fixture"
         )["p1r_current_revalidation"]["status"]

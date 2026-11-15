@@ -738,6 +738,23 @@ reason: Projects' locked semantic-release 25.0.9 -> @semantic-release/npm 13.2.0
 removal_condition: A supported upstream refresh removes the affected bundled version (all three high advisories are fixed at undici 6.29.1 or later); a fresh root npm audit no longer reports these IDs on this chain, registry signatures verify, and the existing release-tooling checks pass. Record the verified lock version and audit result before closing.
 status: open
 
+### DW-80: Bring the live multiple-Folder advisory read inside the 2 s interactive timeout.
+
+origin: moved out of Story 6.5 by sprint-change-proposal-2026-11-15-close-story-6-5.md
+location: src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs shared 2 s deadline; EventStore gateway route-catalog observation; Folders owner authorization
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-close-story-6-5.md
+reason: In the managed Debug/source topology, the supported Folder advisory makes four sequential delegated Folder authorization waves (initial inputs, discovery, final inputs, final candidates) of about 0.5 s each, all sharing the NFR-7 2 s interactive timeout. Single-Folder is borderline; multiple-Folder has returned HTTP 200 with a null result, incomplete coverage and zero candidates in every attempt since 2026-11-07 (latest 0/27 at 6bed1ee4). During readiness the gateway uses about 1.17 CPU-s per wall second and reads about 9.2 GB from page cache per 10 s, which is consistent with fresh Development route-catalog image reads (an inference, not a per-call measurement). Release/package behavior is unmeasured. Evidence: _bmad-output/implementation-artifacts/evidence/story-6-5-acceptance-20261115/. Do not relax the authority-observation order, privacy floor or deadline without a separate decision; the positive single/multiple Folder assertions in tests/e2e and the managed launcher stay unchanged as the acceptance probe. Owner: Hexalith.EventStore (gateway route-catalog observation cost) with Hexalith.Folders (owner authorization fan-out). Consumer: Story 8.9 (NFR-5/NFR-7). Not a Story 6.5 gate.
+removal_condition: The unchanged `E2E_SUPPORTED_READS_ONLY=1 ... npm --prefix tests/e2e run test:live:managed` passes positive SINGLE and MULTIPLE readiness, the native seed and the authenticated browser case at a recorded commit.
+status: open
+
+### DW-81: Restore G-6 current runtime qualification after the .NET 11 move.
+
+origin: observed while closing Story 6.5 by sprint-change-proposal-2026-11-15-close-story-6-5.md
+location: CI run 43654669161 at eaa95558, job "G-6 current runtime qualification"; references/Hexalith.McpCli
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-close-story-6-5.md
+reason: Restore fails with NU1202: Hexalith.Commons.UniqueIds 3.0.0 supports only net11.0, while references/Hexalith.McpCli (gitlink a92a2969db6903b8c6cca7e437446167e135ec9d) still targets net10.0. ci / build-and-test, the generated-artifact gates and the P1R replay pass on the same run. Owner: Hexalith.McpCli (target framework) with Projects build hygiene. Not a story gate.
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.

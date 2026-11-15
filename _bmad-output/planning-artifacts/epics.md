@@ -1493,6 +1493,7 @@ So that **operators get authorized, metadata-only Project truth (FR-22) with WCA
 **Given** keyboard/screen-reader/200%-zoom/320px navigation, **When** operator read journeys run, **Then** automated axe + authenticated manual evidence records WCAG 2.2 AA conformance (blocking on unresolved critical/serious).
 
 - **Verification:** individual Debug UI/Integration projects and authenticated Playwright/axe journeys in the 6.5 spec, with actual XML/browser reports. **Evidence:** `evidence/epic6/6.5-web-read-surface.{trx,json}` + a11y report. **Estimate:** L. **Completion boundary:** authenticated read-only operator Web surface with a11y evidence; maintenance actions are Epic 8.
+- **Closure (2026-11-15):** done on its own acceptance criteria by sprint-change-proposal-2026-11-15-close-story-6-5.md; live multiple-Folder advisory latency is DW-80 (consumer Story 8.9).
 
 ### Story 6.6: Inspect Projects through an authenticated CLI read surface
 
