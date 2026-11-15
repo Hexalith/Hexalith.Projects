@@ -1,0 +1,89 @@
+{
+  "status": "incomplete-required-halt",
+  "projectsBaselineRevision": "ce71717a965eb21454b3e13068b9072404dac5f5",
+  "mcpcliBaselineRevision": "23072f04f423eea3f30456fe5af13d2d382624fe",
+  "sourceState": "Uncommitted implementation over these exact baseline revisions; no commit, push, publication or gitlink movement performed.",
+  "candidate": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/candidate/Hexalith.Projects.Contracts.2.0.0-story66.1.nupkg",
+    "version": "2.0.0-story66.1",
+    "sha256": "c4f3a68ace2d295ccd816042bc6878e50301383be48c3c3dd1005000b169d09d"
+  },
+  "tests": {
+    "contracts": {
+      "total": 207,
+      "passed": 207,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/contracts.xml"
+    },
+    "conversationWire": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/conversation-wire.xml"
+    },
+    "gatewayMatrix": {
+      "total": 10,
+      "passed": 9,
+      "failed": 1,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/gateway-matrix.xml"
+    },
+    "mcpcliEnrolledCoverage": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/mcpcli-enrolled.xml"
+    },
+    "mcpcliManifest": {
+      "total": 373,
+      "passed": 373,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/mcpcli-manifest-tests-final.log"
+    }
+  },
+  "mcpcliProjectsArtifactVerification": {
+    "status": "passed",
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/mcpcli-enrolled/Hexalith.Projects.Contracts/verification.json"
+  },
+  "allModuleReplay": {
+    "status": "interrupted-on-required-halt",
+    "command": "python3 tools/conformance-vectors/v1/check_enrolled.py --local --output /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/mcpcli-enrolled",
+    "exitCode": 130,
+    "receipt": "Top-level enrolled.json remains pending; not accepted as a pass."
+  },
+  "blocker": {
+    "httpStatus": 500,
+    "requestProjectionType": "projects",
+    "committedProjectionType": null,
+    "declaration": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureRouteCatalog.cs:88",
+    "guard": "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs:315",
+    "expected": "HTTP 200 with equal Web payload",
+    "result": "First attribute-derived list request returned HTTP 500. The committed route has null ProjectionType; the exact selector guard rejects explicit projects. This is the spec Design Notes HALT condition. Gateway/McpCli routing was left unchanged."
+  },
+  "packageGate": {
+    "status": "failed-disposable-workspace-incomplete",
+    "command": "/home/administrator/.dotnet/tools/pwsh tests/tools/run-package-dependency-gate.ps1 -PackageDirectory /tmp/hexalith-job.TP7qJXT4/feed",
+    "workingDirectory": "/tmp/hexalith-job.TP7qJXT4/projects",
+    "exitCode": 1,
+    "result": "CSC error CS2001: Source files '/./DaprSelfHostedMtls.cs' and '/./DaprSelfHostedMtlsSubscriber.cs' could not be found in the copied package-mode workspace (Integration.Tests). The workspace omitted Platform's linked files; this does not establish a repository package-graph failure.",
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/package-dependency-gate-final.log"
+  },
+  "unrun": [
+    "Remaining Gateway matrix rows after the first explicit-projection list request",
+    "Full Server.Tests execution",
+    "UI.Tests Debug build and native run",
+    "A successful complete package dependency gate",
+    "Complete all-module McpCli replay",
+    "Native combined acceptance TRX; not produced for the incomplete story"
+  ],
+  "cleanup": {
+    "ownedDapr": "terminated and reaped",
+    "sourceJob": "exited; TMPDIR removed",
+    "mcpcliJob": "interrupted and exited; TMPDIR removed",
+    "packageGateJobs": "finished with failures; TMPDIRs removed"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/mcpcli-enrolled/Hexalith.Projects.Contracts/inputs-o9_by7vr/vectors/2/trace-attachments.vector.json",
+  "documents": [
+    {
+      "error": {
+        "code": "gateway_error",
+        "status": 503,
+        "detail": "scripted Gateway failure"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "tenant-a",
+        "domain": "projects",
+        "aggregateId": "projects",
+        "queryType": "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1",
+        "payload": {
+          "attachments": [
+            {
+              "referenceId": "folder-a",
+              "referenceKind": "folder"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

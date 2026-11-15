@@ -1,5 +1,8 @@
 namespace Hexalith.Projects.Contracts.Queries;
 
+using System.ComponentModel;
+using Hexalith.McpCli.Abstractions;
+
 using System.Text.Json.Serialization;
 
 /// <summary>Lists authorized Projects; authority comes exclusively from the authenticated envelope.</summary>
@@ -9,11 +12,19 @@ using System.Text.Json.Serialization;
 /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
 /// <param name="IncludeQuarantined">When true, returns only the separately audited Administrator quarantine inventory of unbound Active Projects; ordinary Projects are excluded.</param>
 [method: JsonConstructor]
+[HexalithQuery("List authorized Projects with one snapshot. Use payload paging: default 50, maximum 200; continue with the opaque cursor and unchanged filters and authority. Descriptive metadata requires a separate permission and durable audit.",
+    Name = "list", Domain = "projects", WireType = QueryType, AggregateId = "projects",
+    Example = """{"pageSize":50}""")]
 public sealed record ListProjectsQuery(
+    [property: Description("Optional Active or Archived filter; omitted includes both."), JsonPropertyName("lifecycleState")]
     string? LifecycleState = null,
+    [property: Description("Opaque continuation for the same filters, tenant, actor and page size; omitted starts a new snapshot."), JsonPropertyName("cursor")]
     string? Cursor = null,
+    [property: Description("Payload page size from 1 through 200; defaults to 50."), JsonPropertyName("pageSize")]
     int PageSize = 50,
+    [property: Description("Request descriptive metadata; permission and durable inspection audit are required."), JsonPropertyName("inspectDescriptiveMetadata")]
     bool InspectDescriptiveMetadata = false,
+    [property: Description("Request only the separately authorized and audited Administrator quarantine inventory."), JsonPropertyName("includeQuarantined")]
     bool IncludeQuarantined = false)
 {
     /// <summary>Preserves the original constructor signature for existing consumers.</summary>

@@ -1,0 +1,57 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+The '-trx' switch has been deprecated in favor of '-result-trx' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.McpCli.Cli.Tests
+  Discovered:  Hexalith.McpCli.Cli.Tests
+  Starting:    Hexalith.McpCli.Cli.Tests
+    Hexalith.McpCli.Cli.Tests.ConfigCommandTests.ExecutableHostBuildingVerbsIgnoreAdminStateAsync [FAIL]
+      Shouldly.ShouldAssertException : document.GetProperty("modules").EnumerateArray().Select(module => module.GetProperty("name").GetString())
+          should be
+      ["parties", "tenants"]
+          but was (case sensitive comparison)
+      ["parties", "projects", "tenants"]
+          difference
+      ["parties", *"projects"*, *"tenants"*]
+      Stack Trace:
+        tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs(2510,0): at Hexalith.McpCli.Cli.Tests.ConfigCommandTests.ExecutableHostBuildingVerbsIgnoreAdminStateAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs(2516,0): at Hexalith.McpCli.Cli.Tests.ConfigCommandTests.ExecutableHostBuildingVerbsIgnoreAdminStateAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.McpCli.Cli.Tests.CliOutputContractTests.WindowsReadOnlyExistingOutputPreventsProfileMutationAsync [SKIP]
+      Windows file attributes are required for this fixture.
+    Hexalith.McpCli.Cli.Tests.CliOutputContractTests.WindowsInaccessibleExistingOutputPreventsProfileMutationAsync [SKIP]
+      Windows ACLs are required for this fixture.
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:45139/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:45139/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 1.6332ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 1.6926ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:41303/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:41303/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 0.6505ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 0.7093ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:42585/api/v1/queries
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:42585/api/v1/queries
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 1.2602ms - 200
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 1.3225ms - 200
+  Finished:    Hexalith.McpCli.Cli.Tests (ID = 'd8de88bf9ee2c101e8a2007851bf8fe3a615221be32ae3b0ce3cf0d2d0711cdb')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.McpCli.Cli.Tests  Total: 625, Errors: 0, Failed: 1, Skipped: 2, Not Run: 0, Time: 42.699s

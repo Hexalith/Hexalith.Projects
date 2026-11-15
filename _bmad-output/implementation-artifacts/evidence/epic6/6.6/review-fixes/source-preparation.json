@@ -1,0 +1,47 @@
+{
+  "status": "prepared",
+  "outcome": {
+    "exitCode": "Success",
+    "phase": "None",
+    "category": "None",
+    "ruleId": null
+  },
+  "diagnostics": [
+    {
+      "ruleId": "HXW011",
+      "phase": "Prerequisite",
+      "category": "None",
+      "message": "Platform identity f6f85032598865b9123f16364448bfd02c0ff5b0 has no local v<SemVer> release tag.",
+      "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "hint": "Fetch Platform tags, then retry.",
+      "source": null,
+      "location": null,
+      "row": null
+    },
+    {
+      "ruleId": "HXW010",
+      "phase": "Prerequisite",
+      "category": "None",
+      "message": "Tool version 1.0.0-20261115122502 is outside Platform range [4.44.3, 5.0.0-0) at '/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+      "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+      "hint": null,
+      "source": null,
+      "location": null,
+      "row": null
+    }
+  ],
+  "buildPreparation": {
+    "workspace": "/tmp/hexalith-job.JV27t428/prepared",
+    "mode": "source",
+    "mappingHash": "2e79918151bf48ebfb0a2936b684c6a0b772844992847b597f309c254b871700",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/hexalith-job.JV27t428/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/hexalith-job.JV27t428/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/hexalith-job.JV27t428/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/hexalith-job.JV27t428/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/hexalith-job.JV27t428/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "2e79918151bf48ebfb0a2936b684c6a0b772844992847b597f309c254b871700",
+      "Configuration": "Debug"
+    }
+  }
+}

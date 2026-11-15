@@ -411,3 +411,8 @@ _bmad/render/
 # Retain the credential-bearing failed-run artifacts locally; publish sanitized receipts only.
 /_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-64/main/server.xml
 /_bmad-output/implementation-artifacts/evidence/story-6-1-transport-20261102/live-64/main/server.log
+
+# Retain only Story 6.6 package archives and native verification logs.
+!/_bmad-output/implementation-artifacts/evidence/epic6/6.6/**/artifacts/
+!/_bmad-output/implementation-artifacts/evidence/epic6/6.6/**/*.nupkg
+!/_bmad-output/implementation-artifacts/evidence/epic6/6.6/**/*.log

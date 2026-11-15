@@ -1,0 +1,344 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.Projects.Contracts.Tests
+  Discovered:  Hexalith.Projects.Contracts.Tests
+  Starting:    Hexalith.Projects.Contracts.Tests
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_IsOpenApi31WithSharedEnvelope [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(36,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_IsOpenApi31WithSharedEnvelope()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_FileReferenceOperations_AreCommandAsyncMutations [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1199,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.LinkFileReferenceMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(745,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_FileReferenceOperations_AreCommandAsyncMutations()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_MemoryReferenceSchemas_AreClosedCamelCaseAndMetadataOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(847,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_MemoryReferenceSchemas_AreClosedCamelCaseAndMetadataOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SeedMutation_IsCommandAsync202WithRequiredIdempotencyKeyAndSafeDenial [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1163,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.SeedMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(175,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SeedMutation_IsCommandAsync202WithRequiredIdempotencyKeyAndSafeDenial()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectOperatorDiagnostics_IsMetadataOnlyEventuallyConsistentQuery [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1172,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.ProjectOperatorDiagnosticsQuery()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(319,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectOperatorDiagnostics_IsMetadataOnlyEventuallyConsistentQuery()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectConversationRead_IsEventualQueryWithoutIdempotency [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1175,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.ProjectConversationListQuery()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(460,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectConversationRead_IsEventualQueryWithoutIdempotency()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SetProjectFolder_IsCommandAsyncMutation [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1196,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.SetProjectFolderMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(683,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SetProjectFolder_IsCommandAsyncMutation()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(910,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_NewProjectProposalSchemas_AreClosedMetadataOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(645,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_NewProjectProposalSchemas_AreClosedMetadataOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_NewProjectProposalOperations_ArePreviewAndCommandAsyncConfirm [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1187,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.NewProjectProposalPreview()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(606,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_NewProjectProposalOperations_ArePreviewAndCommandAsyncConfirm()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_GetProject_IsExpandedOpenProjectQuery [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1169,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.SeedQuery()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(242,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_GetProject_IsExpandedOpenProjectQuery()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_UsesCamelCaseAndIsoDateTimeAndOpaqueProjectIds [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(934,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_UsesCamelCaseAndIsoDateTimeAndOpaqueProjectIds()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_UpdateSetupAndArchive_AreCommandAsyncMutations [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(429,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_UpdateSetupAndArchive_AreCommandAsyncMutations()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ConversationAssignmentOperations_AreCommandAsyncMutations [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1178,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.LinkProjectConversationMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(491,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ConversationAssignmentOperations_AreCommandAsyncMutations()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_AcceptedCommand_IsClosedEnvelopeForCommandAsync [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(153,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_AcceptedCommand_IsClosedEnvelopeForCommandAsync()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SetProjectFolderSchema_IsClosedMetadataOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(726,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_SetProjectFolderSchema_IsClosedMetadataOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectReferenceSummary_IncludesFileReferenceKind [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(903,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProjectReferenceSummary_IncludesFileReferenceKind()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ListProjects_IsTenantScopedLifecycleFilterableQuery [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1166,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.ListQuery()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(276,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ListProjects_IsTenantScopedLifecycleFilterableQuery()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_MemoryReferenceOperations_AreCommandAsyncMutations [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1205,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.LinkMemoryMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(796,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_MemoryReferenceOperations_AreCommandAsyncMutations()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_FileReferenceSchemas_AreClosedCamelCaseAndMetadataOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(875,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_FileReferenceSchemas_AreClosedCamelCaseAndMetadataOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ReusesSharedVocabularyForLifecycleAndErrorCategories [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(978,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ReusesSharedVocabularyForLifecycleAndErrorCategories()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_QueryReads_CarryFreshnessAndRejectIdempotencyKey [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1169,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.SeedQuery()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(210,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_QueryReads_CarryFreshnessAndRejectIdempotencyKey()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProblemDetails_CarriesRfc9457AndHexalithExtensions [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(117,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ProblemDetails_CarriesRfc9457AndHexalithExtensions()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ExamplesContainNoForbiddenPayloadOrSecretsOrLocalPaths [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1002,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ExamplesContainNoForbiddenPayloadOrSecretsOrLocalPaths()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_CreateProject_IsTheRealCommandAsyncMutation [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1163,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.SeedMutation()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(389,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_CreateProject_IsTheRealCommandAsyncMutation()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+    Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ConversationAssignmentSchemas_AreClosedCamelCaseAndServerActorOnly [FAIL]
+      System.TypeInitializationException : The type initializer for 'Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests' threw an exception.
+      ---- System.InvalidOperationException : Could not locate repository root.
+      Stack Trace:
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1157,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Schemas()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(547,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.Spine_ConversationAssignmentSchemas_AreClosedCamelCaseAndServerActorOnly()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+        ----- Inner Stack Trace -----
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(1307,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests.FindRepositoryRoot()
+        tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs(30,0): at Hexalith.Projects.Contracts.Tests.OpenApi.OpenApiContractSpineTests..cctor()
+           at System.Runtime.CompilerServices.InitHelpers.CallClassConstructor(Void* cctor, Void* instantiatingArg, Exception* pException)
+        
+  Finished:    Hexalith.Projects.Contracts.Tests (ID = '5ddd012c3ee5d56ca86dc84a6aac324cccc94276c4ef750d08a3315a2455cbc0')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Contracts.Tests  Total: 207, Errors: 0, Failed: 26, Skipped: 0, Not Run: 0, Time: 0.222s

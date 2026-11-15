@@ -3,7 +3,8 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <!-- Story 1.17: consume the released PD10 v2 Client/Contracts pair together. -->
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <!-- Consume the .NET 11 SDK snapshot limits and tenant access recovery contracts. -->
+    <!-- Pin the Contracts decoration package used by Story 6.6. -->
+    <HexalithMcpCliVersion Condition="'$(HexalithMcpCliVersion)' == ''">2.0.1</HexalithMcpCliVersion>
     <!-- Story 1.17: consume the published 5.1.1 native source scanner package family. -->
     <HexalithEventStoreVersion Condition="'$(HexalithEventStoreVersion)' == ''">5.1.1</HexalithEventStoreVersion>
     <HexalithTenantsVersion Condition="'$(HexalithTenantsVersion)' == ''">8.0.0</HexalithTenantsVersion>

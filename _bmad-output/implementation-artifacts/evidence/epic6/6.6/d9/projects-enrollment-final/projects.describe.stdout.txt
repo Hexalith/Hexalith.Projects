@@ -1,0 +1,40 @@
+{
+  "name": "projects.describe",
+  "kind": "read",
+  "description": "Read Project detail, lifecycle and reference health. Supply the Project identifier through --aggregate-id. Safe metadata is the default; descriptive metadata requires separate permission and a durable audit.",
+  "schema": {
+    "type": [
+      "object",
+      "null"
+    ],
+    "properties": {
+      "inspectDescriptiveMetadata": {
+        "type": "boolean",
+        "default": false,
+        "description": "Request descriptive fields; permission and durable inspection audit are required."
+      },
+      "inspectQuarantined": {
+        "type": "boolean",
+        "default": false,
+        "description": "Request separately authorized Administrator inspection of an unbound Active Project."
+      }
+    },
+    "additionalProperties": false
+  },
+  "example": {},
+  "envelope": {
+    "aggregateIdRequired": true,
+    "idempotencyKeyRequired": false,
+    "arguments": [
+      "tenant",
+      "aggregateId",
+      "entityId",
+      "pageSize",
+      "offset",
+      "cursor"
+    ]
+  },
+  "lintFindings": [],
+  "submittable": false,
+  "reason": "configuration_invalid"
+}

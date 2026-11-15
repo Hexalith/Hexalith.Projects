@@ -1,0 +1,38 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+The '-trx' switch has been deprecated in favor of '-result-trx' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.McpCli.Cli.Tests
+  Discovered:  Hexalith.McpCli.Cli.Tests
+  Starting:    Hexalith.McpCli.Cli.Tests
+    Hexalith.McpCli.Cli.Tests.CliOutputContractTests.WindowsReadOnlyExistingOutputPreventsProfileMutationAsync [SKIP]
+      Windows file attributes are required for this fixture.
+    Hexalith.McpCli.Cli.Tests.CliOutputContractTests.WindowsInaccessibleExistingOutputPreventsProfileMutationAsync [SKIP]
+      Windows ACLs are required for this fixture.
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:43529/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:43529/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 2.2496ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 2.3367ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:36183/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:36183/api/v1/commands
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 0.6689ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 0.7323ms - 202
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[100]
+      Start processing HTTP request POST http://127.0.0.1:36475/api/v1/queries
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[100]
+      Sending HTTP request POST http://127.0.0.1:36475/api/v1/queries
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.ClientHandler[101]
+      Received HTTP response headers after 1.1724ms - 200
+info: System.Net.Http.HttpClient.IEventStoreGatewayClient.LogicalHandler[101]
+      End processing HTTP request after 1.2331ms - 200
+  Finished:    Hexalith.McpCli.Cli.Tests (ID = 'd8de88bf9ee2c101e8a2007851bf8fe3a615221be32ae3b0ce3cf0d2d0711cdb')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.McpCli.Cli.Tests  Total: 625, Errors: 0, Failed: 0, Skipped: 2, Not Run: 0, Time: 40.551s

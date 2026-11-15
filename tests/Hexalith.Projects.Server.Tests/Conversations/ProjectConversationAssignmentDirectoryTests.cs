@@ -304,7 +304,7 @@ public sealed class ProjectConversationAssignmentDirectoryTests
         ProjectConversationsPage sourceAfterLink = await readDirectory
             .ListForProjectAsync(SourceProject, Tenant, Caller, new PageRequest(), TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
-        targetAfterLink.Items.Single().ConversationId.ShouldBe(Conversation);
+        targetAfterLink.Items.Single().ConversationId.ShouldBe(Conversation.Value);
         sourceAfterLink.Items.ShouldBeEmpty();
 
         await assignmentDirectory
@@ -318,7 +318,7 @@ public sealed class ProjectConversationAssignmentDirectoryTests
             .ListForProjectAsync(SourceProject, Tenant, Caller, new PageRequest(), TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
         targetAfterMove.Items.ShouldBeEmpty();
-        sourceAfterMove.Items.Single().ConversationId.ShouldBe(Conversation);
+        sourceAfterMove.Items.Single().ConversationId.ShouldBe(Conversation.Value);
 
         await assignmentDirectory
             .UnlinkAsync(SourceProject, Conversation, Tenant, Caller, Metadata, TestContext.Current.CancellationToken)

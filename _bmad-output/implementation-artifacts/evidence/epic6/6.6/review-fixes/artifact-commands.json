@@ -1,0 +1,53 @@
+[
+  {
+    "lane": "projects-artifact",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+    "command": [
+      "/usr/bin/python3",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/verify_artifact.py",
+      "--artifact",
+      "/tmp/hexalith-job.9dzkXKjA/feed/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
+      "--output",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/projects-artifact",
+      "--inventory",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/inventory-coverage/v1/projects-approved.json",
+      "--accepted-lint",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/inventory-coverage/v1/projects-accepted-lint.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json"
+    ],
+    "exitCode": 0
+  },
+  {
+    "lane": "enrollment-build",
+    "cwd": "/tmp/hexalith-job.9dzkXKjA/mcpcli",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.McpCli.Core.Tests/Hexalith.McpCli.Core.Tests.csproj",
+      "-c",
+      "Release",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "--disable-build-servers"
+    ],
+    "exitCode": 0
+  },
+  {
+    "lane": "enrollment-focused",
+    "cwd": "/tmp/hexalith-job.9dzkXKjA/mcpcli",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.9dzkXKjA/mcpcli/tests/Hexalith.McpCli.Core.Tests/bin/Release/net11.0/Hexalith.McpCli.Core.Tests.dll",
+      "-class",
+      "Hexalith.McpCli.Core.Tests.EnrolledModuleCoverageTests",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/enrollment-focused.xml",
+      "-trx",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/enrollment-focused.trx"
+    ],
+    "exitCode": 0
+  }
+]

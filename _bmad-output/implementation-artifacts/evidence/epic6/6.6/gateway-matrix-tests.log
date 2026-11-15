@@ -1,0 +1,84 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.Projects.Server.Tests
+  Discovered:  Hexalith.Projects.Server.Tests
+  Starting:    Hexalith.Projects.Server.Tests
+    Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures [FAIL]
+      Shouldly.ShouldAssertException : response.StatusCode
+          should be
+      HttpStatusCode.OK
+          but was
+      HttpStatusCode.InternalServerError
+      
+      Additional Info:
+          {"type":"https://tools.ietf.org/html/rfc9110#section-15.6.1","title":"Internal Server Error","status":500,"traceId":"00-17aade95ab67f04c25a18e7149dc9cb8-85971964aeb55be9-02"}
+      Stack Trace:
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs(129,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.<>c__DisplayClass30_0.<<EqualGatewayReadsAsync>g__SubmitAsync|0>d.MoveNext()
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+           at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs(134,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.EqualGatewayReadsAsync(HttpClient client, String tenant, Object input, HttpStatusCode expected, String project)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+           at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs(39,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.VerifyMcpCliReadMatrixAsync(HttpClient client, WebApplication projects, GatewayFixtureLocalRoutes transport, GatewayFixtureOwnerHeads heads, String tenant, Func`1 storeBytes)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(284,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+      Output:
+        Actual symmetric fixture transport responses=projects:admin/operational-index-metadata:200,projects:project/v2:200,projects:project/v2:200,projects:project/v2:200,conversations:query:200,eventstore:api/v1/queries/owner-authority/workload:200,folders:query:200,folders:query:200,eventstore:api/v1/queries/owner-authority/workload:200,eventstore:api/v1/queries/owner-authority/workload:200,conversations:query:200,eventstore:api/v1/queries/owner-authority/workload:200,folders:query:200,eventstore:api/v1/queries/owner-authority/workload:200,folders:query:200,eventstore:api/v1/queries/owner-authority/workload:200,projects:query:200
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:41227
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /tmp/hexalith-job.6fjrI2Pz/build/bin/Hexalith.Projects.Server.Tests/debug
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:45093
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /tmp/hexalith-job.6fjrI2Pz/build/bin/Hexalith.Projects.Server.Tests/debug
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:45093/query - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /query'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'QueryResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /query'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:45093/query - 200 - application/json;+charset=utf-8 15.8325ms
+{"EventId":14,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Now listening on: http://127.0.0.1:38305","State":{"address":"http://127.0.0.1:38305","{OriginalFormat}":"Now listening on: {address}"}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Application started. Press Ctrl\u002BC to shut down.","State":{"{OriginalFormat}":"Application started. Press Ctrl\u002BC to shut down."}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Hosting environment: Production","State":{"EnvName":"Production","{OriginalFormat}":"Hosting environment: {EnvName}"}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Content root path: /tmp/hexalith-job.6fjrI2Pz/build/bin/Hexalith.Projects.Server.Tests/debug","State":{"ContentRoot":"/tmp/hexalith-job.6fjrI2Pz/build/bin/Hexalith.Projects.Server.Tests/debug","{OriginalFormat}":"Content root path: {ContentRoot}"}}
+  Finished:    Hexalith.Projects.Server.Tests (ID = 'cb5fe01e8db966f058972d352e1eed19edd77ac348fb5be540bc0beb6c5a79ce')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Server.Tests  Total: 10, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 3.103s

@@ -1,0 +1,84 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/mcpcli-enrolled/Hexalith.Tenants.Contracts/inputs-67323_23/vectors/13/update-tenant.vector.json",
+  "documents": [
+    {
+      "operation": "tenants.create-tenant",
+      "messageId": "01M7G1WV09TPAV1NN374Z582AM",
+      "correlationId": "01M7G1WV09TPAV1NN374Z582AM",
+      "tenant": "platform:tenants",
+      "aggregateId": "vector-update",
+      "status": "accepted"
+    },
+    {
+      "operation": "tenants.update-tenant",
+      "messageId": "01M7G1WVFZ5BC70B6M1ZG1XW9Y",
+      "correlationId": "01M7G1WVFZ5BC70B6M1ZG1XW9Y",
+      "tenant": "platform:tenants",
+      "aggregateId": "vector-update",
+      "status": "accepted"
+    },
+    {
+      "operation": "tenants.get-tenant",
+      "tenant": "vector-update",
+      "document": {
+        "tenantId": "vector-update",
+        "name": "Vector Update Renamed",
+        "description": null,
+        "status": "Active",
+        "members": [],
+        "configuration": {},
+        "createdAt": "2026-10-19T08:00:00+00:00"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7G1WV09TPAV1NN374Z582AM",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-update",
+        "commandType": "create-tenant",
+        "payload": {
+          "Description": "Description cleared by the update",
+          "Name": "Vector Update Original",
+          "TenantId": "vector-update"
+        },
+        "correlationId": "01M7G1WV09TPAV1NN374Z582AM"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7G1WVFZ5BC70B6M1ZG1XW9Y",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-update",
+        "commandType": "update-tenant",
+        "payload": {
+          "Description": null,
+          "Name": "Vector Update Renamed",
+          "TenantId": "vector-update"
+        },
+        "correlationId": "01M7G1WVFZ5BC70B6M1ZG1XW9Y"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "vector-update",
+        "domain": "tenants",
+        "aggregateId": "vector-update",
+        "queryType": "get-tenant",
+        "projectionType": "tenants",
+        "payload": {
+          "TenantId": "vector-update"
+        }
+      }
+    }
+  ]
+}

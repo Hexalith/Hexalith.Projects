@@ -32,3 +32,7 @@ tests/tools/test_run_g6_ci_gate.py whitespace=cr-at-eol
 tests/tools/test_run_g6_current.py whitespace=cr-at-eol
 
 tools/qualification/run_g6_current.py whitespace=cr-at-eol
+
+# Preserve Story 6.6 native receipts and hash-bound artifact verification inputs byte for byte.
+_bmad-output/implementation-artifacts/evidence/epic6/6.6/** -text -whitespace
+_bmad-output/implementation-artifacts/evidence/epic6/6.6-cli-read-surface.trx -text -whitespace

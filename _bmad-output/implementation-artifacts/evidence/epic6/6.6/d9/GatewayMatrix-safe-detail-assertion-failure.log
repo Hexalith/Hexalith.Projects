@@ -1,0 +1,87 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+The '-trx' switch has been deprecated in favor of '-result-trx' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.Projects.Server.Tests
+  Discovered:  Hexalith.Projects.Server.Tests
+  Starting:    Hexalith.Projects.Server.Tests
+    Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures [FAIL]
+      Shouldly.ShouldAssertException : absent["detail"]!.GetValue<string>()
+          should be
+      "safe-denial"
+          but was
+      "The requested resource was not found."
+          difference
+      Difference     |  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |        
+                     | \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/       
+      Index          | 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17   18   19   20   ...  
+      Expected Value | s    a    f    e    -    d    e    n    i    a    l                                                      ...  
+      Actual Value   | T    h    e    \s   r    e    q    u    e    s    t    e    d    \s   r    e    s    o    u    r    c    ...  
+      Expected Code  | 115  97   102  101  45   100  101  110  105  97   108                                                    ...  
+      Actual Code    | 84   104  101  32   114  101  113  117  101  115  116  101  100  32   114  101  115  111  117  114  99   ...  
+      
+      Difference     |       |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   
+                     |      \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  \|/  
+      Index          | ...  16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35   36   
+      Expected Value | ...                                                                                                           
+      Actual Value   | ...  s    o    u    r    c    e    \s   w    a    s    \s   n    o    t    \s   f    o    u    n    d    .    
+      Expected Code  | ...                                                                                                           
+      Actual Code    | ...  115  111  117  114  99   101  32   119  97   115  32   110  111  116  32   102  111  117  110  100  46   
+      Stack Trace:
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs(59,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.VerifyMcpCliReadMatrixAsync(HttpClient client, WebApplication projects, GatewayFixtureLocalRoutes transport, GatewayFixtureOwnerHeads heads, String tenant, Func`1 storeBytes)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(284,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs(408,0): at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+      Output:
+        Actual symmetric fixture transport responses=projects:admin/operational-index-metadata:200,projects:project/v2:200,projects:project/v2:200,projects:project/v2:200,conversations:query:200,eventstore:api/v1/queries/owner-authority/workload:200,folders:query:200,folders:query:200,eventstore:api/v1/queries/owner-authority/workload:200,eventstore:api/v1/queries/owner-authority/workload:200,conversations:query:200,eventstore:api/v1/queries/owner-authority/workload:200,folders:query:200,folders:query:200,eventstore:api/v1/queries/owner-authority/workload:200,eventstore:api/v1/queries/owner-authority/workload:200,projects:query:200
+{"EventId":14,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Now listening on: http://127.0.0.1:46683","State":{"address":"http://127.0.0.1:46683","{OriginalFormat}":"Now listening on: {address}"}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Application started. Press Ctrl\u002BC to shut down.","State":{"{OriginalFormat}":"Application started. Press Ctrl\u002BC to shut down."}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Hosting environment: Production","State":{"EnvName":"Production","{OriginalFormat}":"Hosting environment: {EnvName}"}}
+{"EventId":0,"LogLevel":"Information","Category":"Microsoft.Hosting.Lifetime","Message":"Content root path: /tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Server.Tests/debug","State":{"ContentRoot":"/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Server.Tests/debug","{OriginalFormat}":"Content root path: {ContentRoot}"}}
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:42925
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Server.Tests/debug
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:46589
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Server.Tests/debug
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46589/query - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /query'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'QueryResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /query'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:46589/query - 200 - application/json;+charset=utf-8 11.4755ms
+  Finished:    Hexalith.Projects.Server.Tests (ID = 'b8dcb113a8cdaee8bb4324aa7bd421b36b2974039c91e744e2d540f12d5b81c3')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Server.Tests  Total: 10, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 3.740s

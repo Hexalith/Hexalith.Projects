@@ -1,0 +1,76 @@
+{
+  "formatVersion": 1,
+  "package": {
+    "id": "Hexalith.Projects.Contracts",
+    "version": "2.0.0-story66.1"
+  },
+  "operation": "projects.trace-attachments",
+  "kind": "query",
+  "prerequisites": [],
+  "invocation": {
+    "operation": "projects.trace-attachments",
+    "kind": "query",
+    "payload": {
+      "attachments": [
+        {
+          "referenceKind": "folder",
+          "referenceId": "folder-a"
+        }
+      ]
+    },
+    "envelope": {
+      "tenant": "tenant-a"
+    },
+    "expectedGateway": {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "tenant-a",
+        "domain": "projects",
+        "aggregateId": "projects",
+        "queryType": "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1",
+        "projectionType": "projects",
+        "payload": {
+          "attachments": [
+            {
+              "referenceKind": "folder",
+              "referenceId": "folder-a"
+            }
+          ]
+        }
+      },
+      "maskGenerated": []
+    },
+    "scriptedResponse": {
+      "statusCode": 200,
+      "body": {
+        "success": true,
+        "payload": {
+          "candidates": [],
+          "incomplete": true,
+          "result": null,
+          "unsupportedInputKinds": []
+        }
+      },
+      "echoRequestFields": []
+    },
+    "assertions": [
+      {
+        "path": "/operation",
+        "operator": "equals",
+        "value": "projects.trace-attachments"
+      },
+      {
+        "path": "/document",
+        "operator": "equals",
+        "value": {
+          "candidates": [],
+          "incomplete": true,
+          "result": null,
+          "unsupportedInputKinds": []
+        }
+      }
+    ]
+  },
+  "postconditions": []
+}

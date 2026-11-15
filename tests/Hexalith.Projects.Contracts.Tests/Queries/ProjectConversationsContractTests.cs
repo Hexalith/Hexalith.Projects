@@ -5,7 +5,6 @@
 
 namespace Hexalith.Projects.Contracts.Tests.Queries;
 
-using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Queries;
 
@@ -17,10 +16,10 @@ using Xunit;
 public sealed class ProjectConversationsContractTests
 {
     [Fact]
-    public void ProjectConversationItemShouldCarryTypedConversationReferenceWithoutUpstreamProjection()
+    public void ProjectConversationItemShouldCarryOpaqueConversationReferenceWithoutUpstreamProjection()
     {
         ProjectId projectId = new("project-001");
-        ConversationId conversationId = new("conversation-001");
+        string conversationId = "conversation-001";
 
         ProjectConversationItem item = new(
             projectId,

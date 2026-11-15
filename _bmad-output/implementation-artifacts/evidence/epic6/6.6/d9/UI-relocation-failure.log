@@ -1,0 +1,47 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+The '-trx' switch has been deprecated in favor of '-result-trx' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.Projects.UI.Tests
+  Discovered:  Hexalith.Projects.UI.Tests
+  Starting:    Hexalith.Projects.UI.Tests
+    Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.NavigationRemountCannotOverwriteAnotherConsumersContinuation [FAIL]
+      System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/src/Hexalith.Projects.UI/Program.cs'.
+      Stack Trace:
+           at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+           at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+           at System.IO.File.ReadAllText(String path, Encoding encoding)
+        tests/Hexalith.Projects.UI.Tests/Diagnostics/SupportedProjectReadSourceTests.cs(170,0): at Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.NavigationRemountCannotOverwriteAnotherConsumersContinuation()
+        --- End of stack trace from previous location ---
+    Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.ProgramShouldComposeSecurityHelperAndProtectInteractiveEndpoints [FAIL]
+      System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/src/Hexalith.Projects.UI/Program.cs'.
+      Stack Trace:
+           at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+           at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+           at System.IO.File.ReadAllText(String path, Encoding encoding)
+        tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs(300,0): at Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.ReadProjectFile(String[] segments)
+        tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs(50,0): at Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.ProgramShouldComposeSecurityHelperAndProtectInteractiveEndpoints()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+    Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.RoutesShouldProtectInteractiveRenderingAndChallengeAnonymousUsers [FAIL]
+      System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/src/Hexalith.Projects.UI/Components/Routes.razor'.
+      Stack Trace:
+           at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+           at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+           at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+           at System.IO.File.ReadAllText(String path, Encoding encoding)
+        tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs(300,0): at Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.ReadProjectFile(String[] segments)
+        tests/Hexalith.Projects.UI.Tests/Authentication/ProjectsUiAuthenticationCompositionTests.cs(65,0): at Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.RoutesShouldProtectInteractiveRenderingAndChallengeAnonymousUsers()
+           at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+           at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Finished:    Hexalith.Projects.UI.Tests (ID = 'c44a6a91d14c906f4cbd55b6de7ef09381d95d49fc350a83ebb5199a47992d15')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.UI.Tests  Total: 277, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 1.420s

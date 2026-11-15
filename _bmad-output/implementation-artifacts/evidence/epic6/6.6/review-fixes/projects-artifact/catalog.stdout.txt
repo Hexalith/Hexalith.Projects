@@ -1,0 +1,221 @@
+{
+  "modules": [
+    {
+      "name": "projects",
+      "description": "Read authorized Project inventory, detail, reference health and advisory resolution traces. Reads grant no mutation or diagnostic export authority.",
+      "identifierKind": "string",
+      "fixedTenant": null,
+      "wireTypeConvention": "explicit",
+      "operations": [
+        {
+          "name": "projects.describe",
+          "kind": "query",
+          "description": "Read Project detail, lifecycle and reference health. Supply the Project identifier through --aggregate-id. Safe metadata is the default; descriptive metadata requires separate permission and a durable audit.",
+          "example": "{}",
+          "platformScope": null,
+          "schemaDocument": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "inspectDescriptiveMetadata": {
+                "type": "boolean",
+                "default": false,
+                "description": "Request descriptive fields; permission and durable inspection audit are required."
+              },
+              "inspectQuarantined": {
+                "type": "boolean",
+                "default": false,
+                "description": "Request separately authorized Administrator inspection of an unbound Active Project."
+              }
+            },
+            "additionalProperties": false
+          },
+          "lintFindings": [],
+          "routing": {
+            "domain": "projects",
+            "wireType": "Hexalith.Projects.Queries.GetProject.v1",
+            "projectionType": null,
+            "projectionActorType": null
+          },
+          "aggregateIdConstant": null,
+          "aggregateIdRequired": true,
+          "idempotencyKeyRequired": false,
+          "envelopeFilledProperties": []
+        },
+        {
+          "name": "projects.list",
+          "kind": "query",
+          "description": "List authorized Projects with one snapshot. Use payload paging: default 50, maximum 200; continue with the opaque cursor and unchanged filters and authority. Descriptive metadata requires a separate permission and durable audit.",
+          "example": "{\u0022pageSize\u0022:50}",
+          "platformScope": null,
+          "schemaDocument": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "lifecycleState": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null,
+                "description": "Optional Active or Archived filter; omitted includes both."
+              },
+              "cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null,
+                "description": "Opaque continuation for the same filters, tenant, actor and page size; omitted starts a new snapshot."
+              },
+              "pageSize": {
+                "type": "integer",
+                "default": 50,
+                "description": "Payload page size from 1 through 200; defaults to 50."
+              },
+              "inspectDescriptiveMetadata": {
+                "type": "boolean",
+                "default": false,
+                "description": "Request descriptive metadata; permission and durable inspection audit are required."
+              },
+              "includeQuarantined": {
+                "type": "boolean",
+                "default": false,
+                "description": "Request only the separately authorized and audited Administrator quarantine inventory."
+              }
+            },
+            "additionalProperties": false
+          },
+          "lintFindings": [
+            {
+              "code": "payload_paging_member",
+              "severity": "warning",
+              "message": "Move paging member Cursor to the query envelope argument.",
+              "property": "/properties/cursor"
+            },
+            {
+              "code": "payload_paging_member",
+              "severity": "warning",
+              "message": "Move paging member PageSize to the query envelope argument.",
+              "property": "/properties/pageSize"
+            }
+          ],
+          "routing": {
+            "domain": "projects",
+            "wireType": "Hexalith.Projects.Queries.ListProjects.v1",
+            "projectionType": null,
+            "projectionActorType": null
+          },
+          "aggregateIdConstant": "projects",
+          "aggregateIdRequired": false,
+          "idempotencyKeyRequired": false,
+          "envelopeFilledProperties": []
+        },
+        {
+          "name": "projects.trace-attachments",
+          "kind": "query",
+          "description": "Trace unselected advisory Project candidates from at most 32 opaque owner references, counted before deduplication. File mapping is unsupported. Coverage and freshness never grant selection or confirmation authority.",
+          "example": "{\u0022attachments\u0022:[{\u0022referenceKind\u0022:\u0022folder\u0022,\u0022referenceId\u0022:\u0022folder-a\u0022}]}",
+          "platformScope": null,
+          "schemaDocument": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "referenceKind": {
+                      "type": "string",
+                      "description": "Owner kind: folder or file; file mapping is unsupported."
+                    },
+                    "referenceId": {
+                      "type": "string",
+                      "description": "Exact opaque owner identifier, never a path."
+                    }
+                  },
+                  "required": [
+                    "referenceKind",
+                    "referenceId"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "At most 32 opaque folder or file owner references, counted before deduplication; file mapping is unsupported."
+              },
+              "includeArchived": {
+                "type": "boolean",
+                "default": false,
+                "description": "Include authorized Archived candidates; defaults to false."
+              }
+            },
+            "required": [
+              "attachments"
+            ],
+            "additionalProperties": false
+          },
+          "lintFindings": [],
+          "routing": {
+            "domain": "projects",
+            "wireType": "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1",
+            "projectionType": null,
+            "projectionActorType": null
+          },
+          "aggregateIdConstant": "projects",
+          "aggregateIdRequired": false,
+          "idempotencyKeyRequired": false,
+          "envelopeFilledProperties": []
+        },
+        {
+          "name": "projects.trace-conversation",
+          "kind": "query",
+          "description": "Trace unselected advisory Project candidates from an authorized committed Conversation. Coverage and freshness are explicit; suggestions never authorize selection, context or confirmation.",
+          "example": "{\u0022conversationId\u0022:\u0022conversation-a\u0022}",
+          "platformScope": null,
+          "schemaDocument": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "conversationId": {
+                "type": "string",
+                "description": "Exact opaque Conversation owner identifier; authority comes from the credential."
+              },
+              "includeArchived": {
+                "type": "boolean",
+                "default": false,
+                "description": "Include authorized Archived candidates; defaults to false."
+              }
+            },
+            "required": [
+              "conversationId"
+            ],
+            "additionalProperties": false
+          },
+          "lintFindings": [],
+          "routing": {
+            "domain": "projects",
+            "wireType": "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1",
+            "projectionType": null,
+            "projectionActorType": null
+          },
+          "aggregateIdConstant": "projects",
+          "aggregateIdRequired": false,
+          "idempotencyKeyRequired": false,
+          "envelopeFilledProperties": []
+        }
+      ]
+    }
+  ],
+  "diagnostics": []
+}

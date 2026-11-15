@@ -54,13 +54,13 @@ internal static class ProjectContextConversationEvidenceMapper
         List<ProjectContextConversationEvidence> evidence = new(page.Items.Count);
         foreach (ProjectConversationItem item in page.Items)
         {
-            if (item is null || item.ConversationId is null || string.IsNullOrWhiteSpace(item.ConversationId.Value))
+            if (item is null || item.ConversationId is null || string.IsNullOrWhiteSpace(item.ConversationId))
             {
                 continue;
             }
 
             evidence.Add(new ProjectContextConversationEvidence(
-                ConversationId: item.ConversationId.Value,
+                ConversationId: item.ConversationId,
                 DisplayLabel: item.DisplayLabel,
                 TrustSignal: item.TrustSignal,
                 LastCheckedAt: now));

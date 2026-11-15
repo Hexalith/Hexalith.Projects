@@ -1,0 +1,276 @@
+{
+  "status": "verified-local-reviewed",
+  "storyStatus": "done",
+  "projectsBaselineRevision": "ce71717a965eb21454b3e13068b9072404dac5f5",
+  "mcpcliBaselineRevision": "23072f04f423eea3f30456fe5af13d2d382624fe",
+  "sourceState": "Uncommitted implementation over the two exact baseline revisions; source-manifest.json binds the implementation files. No commit, publication, push, gitlink move or production routing cutover occurred.",
+  "sourceManifest": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/source-manifest.json",
+  "sourceManifestSha256": "ba5483374a69b21ef432af09652f4cbde346d432b80a9882358f2712c196b7cc",
+  "candidate": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/candidate/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
+    "version": "2.0.0-story66.2",
+    "sha256": "fe781666899e84f7dfbdd51ae86f7a616d007472271d808cc8dfee3a13a32342"
+  },
+  "tests": {
+    "Contracts-final": {
+      "total": 207,
+      "passed": 207,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Contracts-final.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Contracts-final.trx",
+      "xmlSha256": "5757f0a0e08e129c7ffa5a2b1efdfc06f485a153fdfb49fd6bd4f805db338157",
+      "assembly": "/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll"
+    },
+    "Server-final": {
+      "total": 1417,
+      "passed": 1417,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.trx",
+      "xmlSha256": "8872fab684247fb645306ddfef98b5d27b6f86fb9e8eda5c123fa89388f3e2e4",
+      "assembly": "/tmp/hexalith-job.JV27t428/build/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+    },
+    "UI-final": {
+      "total": 277,
+      "passed": 277,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/UI-final.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/UI-final.trx",
+      "xmlSha256": "9e7b48b5889e11481a002a6d85b4b81186b4e6d20d031c70002a5eca7de804d4",
+      "assembly": "/tmp/hexalith-job.WUQDA6ef/runtime/tests/Hexalith.Projects.UI.Tests/bin/Debug/net11.0/Hexalith.Projects.UI.Tests.dll"
+    },
+    "Projects": {
+      "total": 691,
+      "passed": 691,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Projects.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Projects.trx",
+      "xmlSha256": "c4e42f7ced957ed3f930d29a3c8b84bff72713338c4d04a6acfe2043c8df9ef9",
+      "assembly": "/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll"
+    },
+    "McpCli-Abstractions": {
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Abstractions.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Abstractions.trx",
+      "xmlSha256": "96b8dc55539abbc6eb04588c0d06e8def4da1a6108c8437d64ed5f37a55735c3",
+      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Abstractions.Tests/bin/Release/net11.0/Hexalith.McpCli.Abstractions.Tests.dll"
+    },
+    "McpCli-Core-final": {
+      "total": 920,
+      "passed": 916,
+      "failed": 0,
+      "skipped": 4,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Core-final.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Core-final.trx",
+      "xmlSha256": "39508c3c7814c40a134ec84487b5810088fa906a5ec36fe711a7200e84a13e7b",
+      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Core.Tests/bin/Release/net11.0/Hexalith.McpCli.Core.Tests.dll"
+    },
+    "McpCli-Cli-final": {
+      "total": 625,
+      "passed": 623,
+      "failed": 0,
+      "skipped": 2,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Cli-final.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Cli-final.trx",
+      "xmlSha256": "87410fec7be71d4261f8c3eb9ca00e14bbcd908ddb94bf176eddf49332160795",
+      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Cli.Tests/bin/Release/net11.0/Hexalith.McpCli.Cli.Tests.dll"
+    },
+    "McpCli-Mcp": {
+      "total": 94,
+      "passed": 94,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Mcp.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Mcp.trx",
+      "xmlSha256": "743a3480f2bce1e1588841ae6573f5ba9fb6f6b41f3a512ac265b229f3856bd8",
+      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Mcp.Tests/bin/Release/net11.0/Hexalith.McpCli.Mcp.Tests.dll"
+    }
+  },
+  "nativeTotals": {
+    "total": 4251,
+    "passed": 4245,
+    "failed": 0,
+    "skipped": 6
+  },
+  "additionalManifestMtpRun": {
+    "total": 373,
+    "passed": 373,
+    "failed": 0,
+    "skipped": 0,
+    "command": "dotnet test tests/Hexalith.McpCli.Manifest.Tests --no-build --configuration Release",
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Manifest-tests.log"
+  },
+  "totalUniqueDotnetTests": {
+    "total": 4624,
+    "passed": 4618,
+    "failed": 0,
+    "skipped": 6
+  },
+  "supplementarySubsetRuns": {
+    "gateway": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/gateway-focused-owner-denial.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/gateway-focused-owner-denial.trx",
+      "xmlSha256": "17e4eff51cad9137aaf78c34ed9050b1a79e655ca81d7822093ec800c1338e94",
+      "assembly": "/tmp/hexalith-job.JV27t428/build/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+    },
+    "refreshedEnrollment": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/enrollment-focused.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/enrollment-focused.trx",
+      "xmlSha256": "1490569c019f14158c650e5d683e9e04659e674071eb0ec46eb6a072272fe8d8",
+      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Core.Tests/bin/Release/net11.0/Hexalith.McpCli.Core.Tests.dll"
+    }
+  },
+  "combinedNativeTrx": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6-cli-read-surface.trx",
+    "sha256": "ec59fba136316cdda0307865ab5ea152a27ef63b1a36936014b3c75563ffdd62",
+    "scope": "Eight complete native suites. Supplementary Gateway/enrollment subsets are not counted twice. The 373-test Manifest MTP run is recorded separately."
+  },
+  "expectedSkips": [
+    "Three Core Windows ACL cases on Linux",
+    "One Core benchmark child-only case",
+    "Two CLI Windows ACL cases on Linux"
+  ],
+  "mcpcliCombinedReplay": {
+    "status": "local-only",
+    "productionReplayResult": "passed",
+    "packageCount": 3,
+    "operationCount": 26,
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/mcpcli-enrolled/enrolled.json",
+    "note": "The combined runtime/vector replay is unchanged by the subsequent decision-row ID/approval-reference clarification. The refreshed Projects enrollment receipt below supersedes its Projects inventory metadata."
+  },
+  "projectsEnrollment": {
+    "status": "passed",
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/projects-artifact/verification.json",
+    "inventorySha256": "18f9366ed6e9ab4c35cb1db02270ccdf1ad9e6f6a6470ecf0c3c8994e75112e8",
+    "decisionRowIds": [
+      "T01",
+      "T02",
+      "T03",
+      "T04"
+    ],
+    "approvalReference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only",
+    "approvalScope": "Jerome session approval under \u00a7E8 only; no external owning-maintainer sign-off is asserted. All 46 legacy Markdown rows remain defer / exclude.",
+    "shapes": [
+      {
+        "module": "projects",
+        "shape": "kind=query;identifierKind=string;wireTypeConvention=explicit;tenantSource=public;aggregateIdSource=constant;projectionSelector=none;idempotencyKey=optional",
+        "operations": [
+          "projects.list",
+          "projects.trace-attachments",
+          "projects.trace-conversation"
+        ],
+        "vectors": [
+          "projects.list",
+          "projects.trace-attachments",
+          "projects.trace-conversation"
+        ]
+      },
+      {
+        "module": "projects",
+        "shape": "kind=query;identifierKind=string;wireTypeConvention=explicit;tenantSource=public;aggregateIdSource=none;projectionSelector=none;idempotencyKey=optional",
+        "operations": [
+          "projects.describe"
+        ],
+        "vectors": [
+          "projects.describe"
+        ]
+      }
+    ]
+  },
+  "strictDiscovery": {
+    "exitCode": 0,
+    "operations": [
+      "projects.describe",
+      "projects.list",
+      "projects.trace-attachments",
+      "projects.trace-conversation"
+    ],
+    "output": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-operations-strict.json"
+  },
+  "packageGate": {
+    "exitCode": 0,
+    "packages": 5,
+    "isolatedConsumers": 5,
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/package-dependency-gate-final.log",
+    "graphs": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/package-graphs.json",
+    "contractsClosure": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/contracts-package-closure.json"
+  },
+  "sampleValidation": {
+    "command": "bash tools/conformance-vectors/v1/run-sample-validation.sh Release",
+    "exitCode": 0,
+    "pythonTests": 186,
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/sample-validation.log"
+  },
+  "sampleLoopback": {
+    "command": "bash tools/conformance-vectors/v1/run-sample-loopback.sh",
+    "exitCode": 0,
+    "pythonTests": 186,
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/sample-loopback-final.log",
+    "environment": "Task-owned RestoreSources includes the unreleased Projects candidate feed and nuget.org; the sample script adds its own synthetic feed. Production restore/build repeated successfully afterward."
+  },
+  "gatewayEvidence": {
+    "projectionSelectors": "Both omitted by Contracts and generic McpCli; Gateway admission unchanged.",
+    "projectParity": "Exact Project payload equality includes lifecycle/reference states, reason codes, warnings, asOf and lastVerifiedAt.",
+    "servedAt": "Non-null Gateway delivery timestamps are separately bounded to each request window; per-call transport servedAt is excluded from equality.",
+    "safe404": "Raw response bodies compare byte-for-byte after replacing only per-call correlationId; canonical safe Gateway detail is The requested resource was not found.",
+    "persistence": "Projects, Folder and Conversation stores observed; raw persisted bytes and ETags remain equal and owner writes remain empty around every read.",
+    "missingCredential": "401 for all four operations; no Projects/owner dispatch occurred.",
+    "webOracle": "Independent established Web fixture constructors, compared with attribute-derived CLI requests.",
+    "inspectionAudits": "Each successful descriptive detail/list request reads back its durable Inspection audit with expected ProjectCount and FieldClass.",
+    "paging": "Page-size-1 continuations compared semantically across independently protected opaque cursors; changed page size is rejected."
+  },
+  "historicalEvidence": "6.6/pre-d9-summary.json and the original failed native receipts remain retained. D9 also retains fixture/assertion/output-layout failures separately from final green results.",
+  "limitations": [
+    "Local feature verification does not publish the candidate or land McpCli main enrollment (DW-82).",
+    "No production routing cutover, live release qualification or external approval is asserted.",
+    "Before DW-82 main integration, qualify Projects native topology/routes/grants and a discriminating live vector; the current plan is not accepted as live proof.",
+    "Owning-maintainer authenticity requires confirmation before release use; no external owner sign-off is asserted."
+  ],
+  "cleanup": {
+    "ownedDapr": "terminated and reaped",
+    "temporarySourceAndPackageWorkspaces": "removed by run-with-temp",
+    "mcpcliTemporaryWorkspace": "removed after verification",
+    "runningOwnedChildren": 0,
+    "reviewWorkspace": "removed after parent full Server verification; review-fixes/verification.json confirms cleanup"
+  },
+  "commands": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/commands.json",
+  "sprintStatus": "review",
+  "review": {
+    "layers": 3,
+    "edgeFindings": 0,
+    "individualFindings": 11,
+    "patchedFindings": [
+      "B2",
+      "B3",
+      "B5",
+      "B6",
+      "B7",
+      "B8",
+      "B9",
+      "B10"
+    ],
+    "deferredFindings": [
+      "B1",
+      "B4",
+      "V1"
+    ],
+    "patchReceipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/verification.json",
+    "parentFullServer": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full-command.json",
+    "note": "DW-82 retains owning-maintainer authenticity, native topology/grants, and live-vector qualification before McpCli main integration. Local feature acceptance is not release/main acceptance."
+  }
+}

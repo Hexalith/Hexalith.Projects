@@ -907,7 +907,7 @@ public sealed class RefreshProjectContextTests
 
             ProjectConversationItem item = new(
                 projectId,
-                new ConversationId(ConversationIdValue),
+                ConversationIdValue,
                 "active",
                 "Context conversation",
                 ProjectConversationTrustSignal.Current,

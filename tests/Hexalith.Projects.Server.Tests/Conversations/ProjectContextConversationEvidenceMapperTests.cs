@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 using Hexalith.Projects.Context;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Queries;
@@ -137,7 +136,7 @@ public sealed class ProjectContextConversationEvidenceMapperTests
         ProjectConversationTrustSignal trust = ProjectConversationTrustSignal.Current)
         => new(
             Project,
-            new ConversationId(conversationId),
+            conversationId,
             "active",
             displayLabel,
             trust,

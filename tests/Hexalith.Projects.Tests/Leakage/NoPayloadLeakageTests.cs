@@ -23,7 +23,6 @@ using Shouldly;
 
 using Xunit;
 
-using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 
 /// <summary>
 /// FS-2 <c>NoPayloadLeakage</c> harness tests (AC 4): the reusable
@@ -838,7 +837,7 @@ public sealed class NoPayloadLeakageTests
             [
                 new ProjectConversationItem(
                     projectId,
-                    new ConversationId("01HZ9K8YQ3W6V2N4R7T5P0X1AC"),
+                    "01HZ9K8YQ3W6V2N4R7T5P0X1AC",
                     "Open",
                     "Synthetic conversation reference",
                     ProjectConversationTrustSignal.Current,

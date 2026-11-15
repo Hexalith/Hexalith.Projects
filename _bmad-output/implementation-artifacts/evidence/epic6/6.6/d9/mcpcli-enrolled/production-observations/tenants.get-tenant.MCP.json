@@ -1,0 +1,116 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/mcpcli-enrolled/Hexalith.Tenants.Contracts/inputs-67323_23/vectors/7/get-tenant.vector.json",
+  "documents": [
+    {
+      "operation": "tenants.create-tenant",
+      "messageId": "01M7G1V7HVC41PDPPA9N91PV38",
+      "correlationId": "01M7G1V7HVC41PDPPA9N91PV38",
+      "tenant": "platform:tenants",
+      "aggregateId": "vector-read",
+      "status": "accepted"
+    },
+    {
+      "operation": "tenants.add-user-to-tenant",
+      "messageId": "01M7G1V812CZFJB0FZAT7GBDRM",
+      "correlationId": "01M7G1V812CZFJB0FZAT7GBDRM",
+      "tenant": "platform:tenants",
+      "aggregateId": "vector-read",
+      "status": "accepted"
+    },
+    {
+      "operation": "tenants.set-tenant-configuration",
+      "messageId": "01M7G1V8FX4RF6YK8D2SMZKVH2",
+      "correlationId": "01M7G1V8FX4RF6YK8D2SMZKVH2",
+      "tenant": "platform:tenants",
+      "aggregateId": "vector-read",
+      "status": "accepted"
+    },
+    {
+      "operation": "tenants.get-tenant",
+      "tenant": "vector-read",
+      "document": {
+        "tenantId": "vector-read",
+        "name": "Vector Read",
+        "description": "Read by the McpCli v1 vector",
+        "status": "Active",
+        "members": [
+          {
+            "userId": "vector-reader@example.com",
+            "role": "TenantReader"
+          }
+        ],
+        "configuration": {
+          "locale": "fr-FR"
+        },
+        "createdAt": "2026-10-19T08:00:00+00:00"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7G1V7HVC41PDPPA9N91PV38",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-read",
+        "commandType": "create-tenant",
+        "payload": {
+          "Description": "Read by the McpCli v1 vector",
+          "Name": "Vector Read",
+          "TenantId": "vector-read"
+        },
+        "correlationId": "01M7G1V7HVC41PDPPA9N91PV38"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7G1V812CZFJB0FZAT7GBDRM",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-read",
+        "commandType": "add-user-to-tenant",
+        "payload": {
+          "Role": "TenantReader",
+          "TenantId": "vector-read",
+          "UserId": "vector-reader@example.com"
+        },
+        "correlationId": "01M7G1V812CZFJB0FZAT7GBDRM"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7G1V8FX4RF6YK8D2SMZKVH2",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-read",
+        "commandType": "set-tenant-configuration",
+        "payload": {
+          "Key": "locale",
+          "TenantId": "vector-read",
+          "Value": "fr-FR"
+        },
+        "correlationId": "01M7G1V8FX4RF6YK8D2SMZKVH2"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "vector-read",
+        "domain": "tenants",
+        "aggregateId": "vector-read",
+        "queryType": "get-tenant",
+        "projectionType": "tenants",
+        "payload": {
+          "TenantId": "vector-read"
+        }
+      }
+    }
+  ]
+}

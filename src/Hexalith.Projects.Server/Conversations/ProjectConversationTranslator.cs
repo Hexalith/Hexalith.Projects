@@ -67,7 +67,7 @@ internal static class ProjectConversationTranslator
 
         return new ProjectConversationItem(
             requestedProjectId,
-            summary.ConversationId,
+            summary.ConversationId.Value,
             summary.LifecycleState,
             summary.Label,
             Worst(freshnessSignal, hydrationSignal),

@@ -190,6 +190,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         var tenantProjection = new ProjectTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
             ProjectionWatermark = tenant + ":1", LastEventTimestamp = now };
         tenantProjection.Principals["actor-1"] = new("actor-1", "TenantOwner");
+        tenantProjection.Principals["actor-without-conversation-access"] = new("actor-without-conversation-access", "TenantOwner");
         await projects.Services.GetRequiredService<IProjectTenantAccessProjectionStore>().SaveAsync(tenantProjection, TestContext.Current.CancellationToken);
         var folderTenant = new FolderTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
             ProjectionWatermark = tenant + ":1", LastEventTimestamp = now };
@@ -281,6 +282,39 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         folderSuggestions.Candidates.Single().ProjectId.ShouldBe("project-b"); folderSuggestions.Candidates.Single().Score.ShouldBe(45);
         var files = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestAttachments(new ProjectAdvisoryAttachment("file", "opaque-file")));
         files.Incomplete.ShouldBeTrue(); files.Result.ShouldBeNull(); files.UnsupportedInputKinds.ShouldBe(["file"]);
+        ProjectMcpCliReadStore folderStore = folders.Services.GetRequiredService<ProjectMcpCliReadStore>();
+        ProjectMcpCliReadStore conversationStore = conversations.Services.GetRequiredService<ProjectMcpCliReadStore>();
+        ProjectMcpCliReadStore projectStore = projects.Services.GetRequiredService<ProjectMcpCliReadStore>();
+        var capturedKeys = new[] { folderStore, conversationStore, projectStore }.SelectMany(store => store.Reads.Keys)
+            .Concat(observedKeys.Select(key => (Store: "statestore", Key: key)))
+            .Concat(new[]
+            {
+                (Store: "statestore", Key: ProjectReadModelKeys.Detail(tenant, "missing")),
+                (Store: "statestore", Key: ProjectReadModelKeys.Detail(tenant, foreignOnlyProject)),
+                (Store: "statestore", Key: metadataKey[..metadataKey.LastIndexOf(':')] + ":" + Convert.ToHexStringLower(SHA256.HashData("missing"u8))),
+            }).Distinct().OrderBy(item => item.Store, StringComparer.Ordinal).ThenBy(item => item.Key, StringComparer.Ordinal).ToArray();
+        async Task<byte[][]> ObservePersistedAsync()
+        {
+            List<byte[]> values = [];
+            foreach (var (store, key) in capturedKeys)
+            {
+                using HttpResponseMessage response = await stateClient.GetAsync("/v1.0/state/" + Uri.EscapeDataString(store) + "/" + Uri.EscapeDataString(key), TestContext.Current.CancellationToken).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                values.Add(await response.Content.ReadAsByteArrayAsync(TestContext.Current.CancellationToken).ConfigureAwait(false));
+                values.Add(Encoding.UTF8.GetBytes(response.Headers.TryGetValues("ETag", out var etags) ? string.Join("\0", etags) : "<absent>"));
+            }
+            return values.ToArray();
+        }
+        SubmitQueryRequest WebRequest(object input, string project) => input switch
+        {
+            ListProjectsQuery query => List(query),
+            GetProjectQuery query => Open(query, project),
+            ResolveProjectFromConversationQuery query => SuggestConversation(query.ConversationId),
+            ResolveProjectFromAttachmentsQuery query => SuggestAttachments(query.Attachments.ToArray()),
+            _ => throw new InvalidOperationException("Unsupported Web fixture query."),
+        };
+        await VerifyMcpCliReadMatrixAsync(client, projects, [folderStore, conversationStore], transport, heads, tenant,
+            ObservePersistedAsync, WebRequest).ConfigureAwait(true);
         byte[][] afterAdvisory = await StoreBytesAsync();
         for (int i = 0; i < observedKeys.Length; i++) afterAdvisory[i].ShouldBe(beforeAdvisory[i]);
         string absentConversation = await StatusAsync(client, SuggestConversation("missing"), HttpStatusCode.NotFound);
@@ -438,6 +472,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         var builder = Builder("projects", http, grpc, routes, observer);
         builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
         builder.Services.AddProjectsServer(); builder.Services.AddProjectsServerRuntimeInfrastructure();
+        builder.Services.AddSingleton<ProjectMcpCliReadStore>(sp => new(sp.GetRequiredService<DaprReadModelStore>()));
+        builder.Services.RemoveAll<IReadModelStore>();
+        builder.Services.AddSingleton<IReadModelStore>(sp => sp.GetRequiredService<ProjectMcpCliReadStore>());
         builder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(now.AddSeconds(1)));
         builder.Services.AddSingleton<TimeProvider>(new ProjectReadTestClock(now.AddSeconds(1)));
         WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapProjectsServerEndpoints();
@@ -451,6 +488,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         var builder = Builder("folders", http, grpc, routes, observer);
         builder.Services.AddFoldersProductionAuthentication(builder.Configuration, builder.Environment);
         builder.Services.AddFoldersServer(); builder.Services.AddEventStoreReadModelStore();
+        builder.Services.AddSingleton<ProjectMcpCliReadStore>(sp => new(sp.GetRequiredService<DaprReadModelStore>()));
+        builder.Services.RemoveAll<IReadModelStore>();
+        builder.Services.AddSingleton<IReadModelStore>(sp => sp.GetRequiredService<ProjectMcpCliReadStore>());
         GatewayFixtureCatalogComposition.AddFolderReceiver(builder, tenant, includeAdvisoryQueries: true);
         // Unused command services require a repository to compose; owner reads below use only persisted ACL projections.
         builder.Services.AddSingleton<IFolderRepository, InMemoryFolderRepository>();
@@ -475,6 +515,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
     {
         var builder = Builder("conversations", http, grpc, routes, observer);
         builder.Services.AddEventStoreReadModelStore();
+        builder.Services.AddSingleton<ProjectMcpCliReadStore>(sp => new(sp.GetRequiredService<DaprReadModelStore>()));
+        builder.Services.RemoveAll<IReadModelStore>();
+        builder.Services.AddSingleton<IReadModelStore>(sp => sp.GetRequiredService<ProjectMcpCliReadStore>());
         builder.Services.AddSingleton<GatewayFixtureConversationTenants>();
         builder.Services.AddSingleton<ITenantProjectionStore>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
         builder.Services.AddSingleton<IConversationTenantProjectionSignal>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
@@ -537,7 +580,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddHttpClient(DaprDomainQueryInvoker.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
             .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
-        builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
+        builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<AuthorizationExceptionHandler>(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
         WebApplication app = builder.Build();
         if (denialObserver is not null)
         {
@@ -550,11 +593,11 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         return app;
     }
 
-    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true)
+    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true, string? projectRole = null, string actorId = "actor-1")
     {
-        List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", projectUser ? "chatbot" : "operator-web"),
+        List<Claim> claims = [new("sub", actorId), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", projectUser ? "chatbot" : "operator-web"),
             new("client_id", "issuing-client"), new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
-            new("projects:role", projectUser ? "ProjectUser" : "TenantOperator"), new("eventstore:permission", "query:read"),
+            new("projects:role", projectRole ?? (projectUser ? "ProjectUser" : "TenantOperator")), new("eventstore:permission", "query:read"),
             new("eventstore:permission", "read_metadata"), new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ReadProjectAction),
             new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ListProjectsAction)];
         if (includeSurface) claims.Add(new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"));

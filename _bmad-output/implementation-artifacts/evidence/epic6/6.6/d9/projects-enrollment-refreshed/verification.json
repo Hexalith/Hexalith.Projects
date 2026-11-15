@@ -1,0 +1,538 @@
+{
+  "result": "passed",
+  "checks": [
+    {
+      "label": "restore",
+      "command": [
+        "dotnet",
+        "restore",
+        "host/ArtifactHost.csproj",
+        "-p:HexalithEventStoreVersion=5.1.0",
+        "-p:HexalithCommonsVersion=3.0.0",
+        "-p:RestoreAdditionalProjectSources=/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/artifacts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "build",
+      "command": [
+        "dotnet",
+        "build",
+        "host/ArtifactHost.csproj",
+        "--no-restore",
+        "-c",
+        "Release",
+        "-m:1",
+        "-warnaserror",
+        "-p:HexalithEventStoreVersion=5.1.0",
+        "-p:HexalithCommonsVersion=3.0.0"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "catalog",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "--full-catalog"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "operations-projects",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "operations",
+        "projects",
+        "--strict"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "modules",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "modules",
+        "--strict"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "projects.describe",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "describe",
+        "projects.describe",
+        "--lint",
+        "--strict"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "projects.list",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "describe",
+        "projects.list",
+        "--lint",
+        "--strict"
+      ],
+      "exitCode": 1
+    },
+    {
+      "label": "projects.trace-attachments",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "describe",
+        "projects.trace-attachments",
+        "--lint",
+        "--strict"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "projects.trace-conversation",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "describe",
+        "projects.trace-conversation",
+        "--lint",
+        "--strict"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "manifest-catalog",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "--manifest-catalog"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "inventory",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "--inventory",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inventory.input.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "replay",
+      "command": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/run_loopback.py",
+        "--host",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/bin/Release/net11.0/ArtifactHost.dll",
+        "--assets",
+        "/tmp/hexalith-job.ZIqBv07N/mcpcli-artifact-ff9lssei/host/obj/project.assets.json",
+        "--artifact",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/artifacts/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
+        "--expected-package-id",
+        "Hexalith.Projects.Contracts",
+        "--expected-package-version",
+        "2.0.0-story66.2",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/vectors/0/describe.vector.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/vectors/1/list.vector.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/vectors/2/trace-attachments.vector.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-enrollment-refreshed/inputs-elnncdob/vectors/3/trace-conversation.vector.json"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "reported": [],
+  "approvalInputs": {
+    "inventory": {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/inventory-coverage/v1/projects-approved.json",
+      "sha256": "18f9366ed6e9ab4c35cb1db02270ccdf1ad9e6f6a6470ecf0c3c8994e75112e8",
+      "retainedInput": "inventory.input.json"
+    },
+    "acceptedLint": {
+      "path": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/inventory-coverage/v1/projects-accepted-lint.json",
+      "sha256": "ed264428ae0e13945e3d6907736fc5fedf88a4797970b6de28d91b929d44d267",
+      "retainedInput": "acceptedLint.input.json"
+    }
+  },
+  "evidenceLimit": "Scripted Gateway replay proves head routing and result parity; it does not prove live authorization or domain effects.",
+  "packageId": "Hexalith.Projects.Contracts",
+  "version": "2.0.0-story66.2",
+  "artifactHash": "sha512-PKb+5xhE6fJK9xsb7qsYSpee4pT/aNV2rdLjkU7BYcqq7bhibad3YTBV0EyaBTZ1agWGl430FpkeC3ylJWanUQ==",
+  "vectors": {
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json": "bcd9acfd63e2ffbe6b67c060015858ea62c9f4358d0eeaee82a42249292433f3",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json": "13187234609c2847426ba69fc6d9936de56c301f65f18deef18f10955292efac",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json": "f259746c2356b4c30b4bf0bc285c6cdee5e78d250fedefcb3002f861a6ab61fd",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json": "36f9e5e46fa51445ac538b7300d1a1f70a1bbb1d3937bbb62946858300fb5ade"
+  },
+  "artifactSource": "/tmp/hexalith-job.ZIqBv07N/feed/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
+  "retainedInputs": {
+    "artifact": "inputs-elnncdob/artifacts/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
+    "vectors": {
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json": "inputs-elnncdob/vectors/0/describe.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json": "inputs-elnncdob/vectors/1/list.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json": "inputs-elnncdob/vectors/2/trace-attachments.vector.json",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json": "inputs-elnncdob/vectors/3/trace-conversation.vector.json"
+    }
+  },
+  "artifactDependencies": {
+    "Hexalith.EventStore.Contracts": "5.1.0",
+    "Hexalith.McpCli.Abstractions": "2.0.1",
+    "ByteAether.Ulid": "1.4.2",
+    "Hexalith.Commons.UniqueIds": "3.0.0"
+  },
+  "candidateDependencyOverrides": [
+    "-p:HexalithEventStoreVersion=5.1.0",
+    "-p:HexalithCommonsVersion=3.0.0"
+  ],
+  "resolvedPackages": [
+    {
+      "id": "ByteAether.Ulid",
+      "version": "1.4.2",
+      "artifactHash": "sha512-co/oTuLRRaVSDYItAKTL6yWaYo3hE9pg5aPlzDQu3RS+PsHyJLUEDG9AJ61vodH3xkxfv8wGLGVEAiuegA61gQ==",
+      "assetsHash": "sha512-LCOjm7QFSdM2X779Db2K+i3pPei4f8PJEcY1wGehkdgYNmpQaP5uF7U8aZMMBWeYe+zV2Ues9j/nFpW4Pw10wQ==",
+      "cacheContentHash": "sha512-LCOjm7QFSdM2X779Db2K+i3pPei4f8PJEcY1wGehkdgYNmpQaP5uF7U8aZMMBWeYe+zV2Ues9j/nFpW4Pw10wQ=="
+    },
+    {
+      "id": "Dapr.Client",
+      "version": "1.19.1",
+      "artifactHash": "sha512-G3+O9FxBDsg2SVMsrtpptflqmxeoRkexhJ9j4K8beceJhCnxsd8/qAY7TujZgo+dEOHeia4nr9gT9YEIJEIqVw==",
+      "assetsHash": "sha512-BKlO8CdoNm8AnlHV03V46a99kKEy2yPM+g4fG0yyZLJda0vrzJER+eiGpSwePTGiYksTQr8Q7KEsdnJ+TKbLpQ==",
+      "cacheContentHash": "sha512-BKlO8CdoNm8AnlHV03V46a99kKEy2yPM+g4fG0yyZLJda0vrzJER+eiGpSwePTGiYksTQr8Q7KEsdnJ+TKbLpQ=="
+    },
+    {
+      "id": "Dapr.Common",
+      "version": "1.19.1",
+      "artifactHash": "sha512-MzlJ8RshkD3+zuWJQAoWPxcdBu9RPs151Pq1+XkIlc3tz7R+JWdR/GMCozS4xA+KK5tjxNkxtY5qX7R3dgkIDw==",
+      "assetsHash": "sha512-WUwB4KQH6PGRLD4JMsWnyQSFbgLIxCAX2Q9schp6zMJVP0TnofsRUGRbySNq93xOSHOmOhAKSsghkULc/BQ4Eg==",
+      "cacheContentHash": "sha512-WUwB4KQH6PGRLD4JMsWnyQSFbgLIxCAX2Q9schp6zMJVP0TnofsRUGRbySNq93xOSHOmOhAKSsghkULc/BQ4Eg=="
+    },
+    {
+      "id": "Dapr.Protos",
+      "version": "1.19.1",
+      "artifactHash": "sha512-btoX62GZof7wmlvCV+k518Ud/5UhvanS1KXehdwWjMCI/0CZn8TXTywTtCmdKpYPoth5mryxXMlm6eGYWpXHKQ==",
+      "assetsHash": "sha512-9k/o+DcnPKRSmBam3karEUQGn5Wrf8GL5ikYyOyCdT+bftqwQJPHTmI6QsnK+6AEeghLKFETrorNPt2L/xSv5w==",
+      "cacheContentHash": "sha512-9k/o+DcnPKRSmBam3karEUQGn5Wrf8GL5ikYyOyCdT+bftqwQJPHTmI6QsnK+6AEeghLKFETrorNPt2L/xSv5w=="
+    },
+    {
+      "id": "Google.Api.CommonProtos",
+      "version": "2.17.0",
+      "artifactHash": "sha512-mUwshnp8viumz1TqnQu0MN0D7n9F+v3j0gZ0IWGJvElwj0ZpbOnOetdr8Twn2aaRjoHaAI0dr+kCLNxdJtFXRw==",
+      "assetsHash": "sha512-elfQPknFr495hm7vdy6ZlgyQh6yzZq9TU7sS35L/Fj/fqjM/mUGau9gVJLhvQEtUlPjtR80hpn/m9HvBMyCXIw==",
+      "cacheContentHash": "sha512-elfQPknFr495hm7vdy6ZlgyQh6yzZq9TU7sS35L/Fj/fqjM/mUGau9gVJLhvQEtUlPjtR80hpn/m9HvBMyCXIw=="
+    },
+    {
+      "id": "Google.Protobuf",
+      "version": "3.36.2",
+      "artifactHash": "sha512-EmqX4khA/D63NGBn4GYxc6wJjrCeJqx6dbk6rFBudIR987jsq5r1YGRWRrLwyy7qDu4y1/5To/pdDbWwEgekpA==",
+      "assetsHash": "sha512-Ci1q1iJg74qAE5riTA2FbMS0wPbpruPQI/JQ9DrAsRo2VsSxgt1e/pmxGxgrci+pXJEgrSYg2vPl8rrStZkclQ==",
+      "cacheContentHash": "sha512-Ci1q1iJg74qAE5riTA2FbMS0wPbpruPQI/JQ9DrAsRo2VsSxgt1e/pmxGxgrci+pXJEgrSYg2vPl8rrStZkclQ=="
+    },
+    {
+      "id": "Grpc.Core.Api",
+      "version": "2.85.0",
+      "artifactHash": "sha512-cST3EWMGNmsEqHFPIRwSrhgd1B3bEvUlWss8IpjcjqQV1I8oN6fGZj75KdqFkuU0zdv8RZWDBaA9A8yYIN3KGQ==",
+      "assetsHash": "sha512-cpYu/nw/QhwHcRZMJbYD8lEllKrdwYMiDS4U3oH61nhYPUMNkcCcef4ulv11svHvTBThYV+ju332N9bCrfe7cQ==",
+      "cacheContentHash": "sha512-cpYu/nw/QhwHcRZMJbYD8lEllKrdwYMiDS4U3oH61nhYPUMNkcCcef4ulv11svHvTBThYV+ju332N9bCrfe7cQ=="
+    },
+    {
+      "id": "Grpc.Net.Client",
+      "version": "2.85.0",
+      "artifactHash": "sha512-zd7xqwdlzYTC0WBM/Z6v4nTsKJue3pMfJm0gI142qWfTsU92hPfcHxHFmefnhwV4dwx3RwLO1sBqUziE5kZ6FA==",
+      "assetsHash": "sha512-BPMA5mb96ihVQfXTuIUpC1aie2I0ODBD6QCc0UXYS5zQMK6sJW5yck8NZ2ffvGHfOanWyn2Yg0tJbYY3nV+zIw==",
+      "cacheContentHash": "sha512-BPMA5mb96ihVQfXTuIUpC1aie2I0ODBD6QCc0UXYS5zQMK6sJW5yck8NZ2ffvGHfOanWyn2Yg0tJbYY3nV+zIw=="
+    },
+    {
+      "id": "Grpc.Net.Common",
+      "version": "2.85.0",
+      "artifactHash": "sha512-a8enZ9ir46urJhoy7MDuGe6bfUlEnP/1lEtkWvPBq6JPq/Rrg3w7uExC89qGpaZ9sU24jefUzUQTAk7qmUqypQ==",
+      "assetsHash": "sha512-e+RczhQVHb5MacI1oMTLMK6InZLH22POZcE4gsy5SnolsElLaqhSwEhqm+cF0m4Q1JGmlhjf1nbnKh7sBbjJVg==",
+      "cacheContentHash": "sha512-e+RczhQVHb5MacI1oMTLMK6InZLH22POZcE4gsy5SnolsElLaqhSwEhqm+cF0m4Q1JGmlhjf1nbnKh7sBbjJVg=="
+    },
+    {
+      "id": "Grpc.Reflection",
+      "version": "2.85.0",
+      "artifactHash": "sha512-d4b4teYSBpYUEziQrjxcv7ZyGui8DtOCHd0nucH8jmsh2ul2lmYKZLIX8Rng1NkzuSBneS1+A8StUGpmeTrkFQ==",
+      "assetsHash": "sha512-JTRlQ/0kHpUxYVnjh8x/g42pategBhJl2wEOXTpxMAW0AKfGS9eGKJol+2LR/NdcH/8R5kZaVgp4D2Yzyp9K4A==",
+      "cacheContentHash": "sha512-JTRlQ/0kHpUxYVnjh8x/g42pategBhJl2wEOXTpxMAW0AKfGS9eGKJol+2LR/NdcH/8R5kZaVgp4D2Yzyp9K4A=="
+    },
+    {
+      "id": "Hexalith.Commons.UniqueIds",
+      "version": "3.0.0",
+      "artifactHash": "sha512-QRbiE4j6K4+4BiDFaVI4rkHpo2waE1RMCbdTKXA8IOTPKDhaWJUkBRhqHu98mEZzPWKVC8N3NJMA3pgdU9bYjQ==",
+      "assetsHash": "sha512-e5zUykKr3qY5rZlJ0OewaoHd7Hl8IounTOjCF6pFj5SOt3PvGxYAtG4XwNi55UCrDbRaFgzxuCH0mAziHSOr9w==",
+      "cacheContentHash": "sha512-e5zUykKr3qY5rZlJ0OewaoHd7Hl8IounTOjCF6pFj5SOt3PvGxYAtG4XwNi55UCrDbRaFgzxuCH0mAziHSOr9w=="
+    },
+    {
+      "id": "Hexalith.EventStore.Client",
+      "version": "5.1.0",
+      "artifactHash": "sha512-Xu/JEncp+ynma4VfUNjbUn5gFehiT6+liH+nKilcuKGxTXyZogdzkcKO9/yFOjLAbyS4ZKXE2kvpeCXRqLGSWQ==",
+      "assetsHash": "sha512-muFX57xIuJgc7qjEE5BsWdogrfmkU8yBKGb3AZTXTu4oCcrsVe9CM/w3KR6ekuc/r0h+ZgxOZT+235Bbwbf1Aw==",
+      "cacheContentHash": "sha512-muFX57xIuJgc7qjEE5BsWdogrfmkU8yBKGb3AZTXTu4oCcrsVe9CM/w3KR6ekuc/r0h+ZgxOZT+235Bbwbf1Aw=="
+    },
+    {
+      "id": "Hexalith.EventStore.Contracts",
+      "version": "5.1.0",
+      "artifactHash": "sha512-dJO7Waaas3NA+EItVCQSdCMjPCr2mFCDi6WD/Ox+wuy7sfinubMrYztkqI65IgkIDCGJX8ofBveY2y4O2dcwaQ==",
+      "assetsHash": "sha512-0AqqPARa5lLzS/TDRF5qlOF7sr1poT1JMAfgsM99DdmeKE7tqI6o8nSNOSW48qq6eqzsZmWN8rAm6IeZ6VKkIQ==",
+      "cacheContentHash": "sha512-0AqqPARa5lLzS/TDRF5qlOF7sr1poT1JMAfgsM99DdmeKE7tqI6o8nSNOSW48qq6eqzsZmWN8rAm6IeZ6VKkIQ=="
+    },
+    {
+      "id": "Hexalith.Projects.Contracts",
+      "version": "2.0.0-story66.2",
+      "artifactHash": "sha512-PKb+5xhE6fJK9xsb7qsYSpee4pT/aNV2rdLjkU7BYcqq7bhibad3YTBV0EyaBTZ1agWGl430FpkeC3ylJWanUQ==",
+      "assetsHash": "sha512-PKb+5xhE6fJK9xsb7qsYSpee4pT/aNV2rdLjkU7BYcqq7bhibad3YTBV0EyaBTZ1agWGl430FpkeC3ylJWanUQ==",
+      "cacheContentHash": "sha512-PKb+5xhE6fJK9xsb7qsYSpee4pT/aNV2rdLjkU7BYcqq7bhibad3YTBV0EyaBTZ1agWGl430FpkeC3ylJWanUQ=="
+    },
+    {
+      "id": "Humanizer.Core",
+      "version": "3.0.10",
+      "artifactHash": "sha512-86jRQVvMLU7xxsdHrK87TSqu5kL0lg4EiRjvTBglkrtLw242dMON4vTrFbGKr2CRjqbThBuIpodF2MWbCFKZYA==",
+      "assetsHash": "sha512-yZIhtw8sYuvsONzQbZxWpR60tMWYHXoo0DL6nyOqSFiU5POjBTSEyWFpTQtJEZuy+oqiYTXKXY/Mjx7KnqIQFw==",
+      "cacheContentHash": "sha512-yZIhtw8sYuvsONzQbZxWpR60tMWYHXoo0DL6nyOqSFiU5POjBTSEyWFpTQtJEZuy+oqiYTXKXY/Mjx7KnqIQFw=="
+    },
+    {
+      "id": "Json.More.Net",
+      "version": "3.1.0",
+      "artifactHash": "sha512-g/JaLvW5+22AW3CtTKi9e8HXWKZvyvq2gHokyF5LS+KMSLZQFR+GocO1a5Nx9Yq69XotM4FP0AB2/txC8XNrcw==",
+      "assetsHash": "sha512-7qGdCuzlojAC0u1a3aPoVyZTEmwnQaEThsTpeeMfMVjj3OmSzXwfY4mHvx8tDJbqr4xB1pMqh9PkjV/Dl7kHzA==",
+      "cacheContentHash": "sha512-7qGdCuzlojAC0u1a3aPoVyZTEmwnQaEThsTpeeMfMVjj3OmSzXwfY4mHvx8tDJbqr4xB1pMqh9PkjV/Dl7kHzA=="
+    },
+    {
+      "id": "JsonPointer.Net",
+      "version": "7.1.0",
+      "artifactHash": "sha512-QrOdAQaVtDnoEvije1rq9LR2gH8PEGKBTVC0OIItBYpSCg2NZOlQSNFgZE3AzV1//bWycFSHsfO1T1x9faXQgw==",
+      "assetsHash": "sha512-wht0EXfuazcdA0CuTaCuzk7Mpv7jOyj+BEdTDMX/FfyGVuoeB/ecnIqPA+IOr9GCcQpdvNt5NmRQ8KJzPBWgQQ==",
+      "cacheContentHash": "sha512-wht0EXfuazcdA0CuTaCuzk7Mpv7jOyj+BEdTDMX/FfyGVuoeB/ecnIqPA+IOr9GCcQpdvNt5NmRQ8KJzPBWgQQ=="
+    },
+    {
+      "id": "JsonSchema.Net",
+      "version": "9.7.0",
+      "artifactHash": "sha512-9mbby+mq9HW0vHmi9riwdsYkJtsUtlyEcp3LerMOxyywlla2sojb3P905uatFaZtfUpmP+UJRDRQ59IY9bRn1Q==",
+      "assetsHash": "sha512-uzAiT0JPDQcco/+HUxDvAHfq6rnAGgfWvoPKJxwe9M+OBa22lh2AEA/ni0DSVDWy/38cDhFUd7Ea3EQd2NO+fw==",
+      "cacheContentHash": "sha512-uzAiT0JPDQcco/+HUxDvAHfq6rnAGgfWvoPKJxwe9M+OBa22lh2AEA/ni0DSVDWy/38cDhFUd7Ea3EQd2NO+fw=="
+    },
+    {
+      "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+      "version": "11.0.0",
+      "artifactHash": "sha512-E4BroL++LzI+5ANwWTbTF+A702jeJg2TVrqS9b52j0u/Xr+kz2Eb4+H4rMYaeCAblE6Cm16z6d0ComzZx4P/jg==",
+      "assetsHash": "sha512-FfqcYp1Y76iSwDxNik8ihG5qFEz6upOjmwE5XS86isTBSDSLQWSqTTfjwhFvDbGCw5BFItOGicBub1I86kl8zQ==",
+      "cacheContentHash": "sha512-FfqcYp1Y76iSwDxNik8ihG5qFEz6upOjmwE5XS86isTBSDSLQWSqTTfjwhFvDbGCw5BFItOGicBub1I86kl8zQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.AI.Abstractions",
+      "version": "11.0.0",
+      "artifactHash": "sha512-gSQR7DbikEew3sT4LRik3UPr6eCuO03NVlPWoHdB90zOHnZ4HRdrM9DFH66dMsx43UoWYzwPVzHXVpxJjHEvsQ==",
+      "assetsHash": "sha512-UYZTudmTrGykWIRzcO/TKauTx/+L/h4MYpUBODCG7aIybRVkv2y6uhVwG6UHRS6uTzRqg0K8IJprC9/QhMZGsw==",
+      "cacheContentHash": "sha512-UYZTudmTrGykWIRzcO/TKauTx/+L/h4MYpUBODCG7aIybRVkv2y6uhVwG6UHRS6uTzRqg0K8IJprC9/QhMZGsw=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.Binder",
+      "version": "11.0.0",
+      "artifactHash": "sha512-fzQzZ5idTHaOvIm7g/xq6g9ijtWA2Gg0a6WH5GHfX8jo1c51D9HmFMc2nG8dUBTdRvBcL+UFkUuA8BCmkGHHAg==",
+      "assetsHash": "sha512-3eoaKF4Stat1PSN+KFwqmy04sM9DwGuHM1o1lHwuNFM/TqwQ+PCIvaQHS4lcT3kJl5rwvDK4w/rIlR0wc024eQ==",
+      "cacheContentHash": "sha512-3eoaKF4Stat1PSN+KFwqmy04sM9DwGuHM1o1lHwuNFM/TqwQ+PCIvaQHS4lcT3kJl5rwvDK4w/rIlR0wc024eQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.CommandLine",
+      "version": "11.0.0",
+      "artifactHash": "sha512-nnA7+ozAoDlP62POBMV4Pk36/pz2qr9goTflLYfxZbUPBPhj4Dk69vzNgenVRtIHzt9NyL2b0anv33nowgyskQ==",
+      "assetsHash": "sha512-CQiIl05oA1jGjuPTWzJ8TDydEUJHk0L6FmiWfCDfsAul3N3F2esPqh2ukwkdGCwkh7i+3st3HfpHQoGxbd8bJQ==",
+      "cacheContentHash": "sha512-CQiIl05oA1jGjuPTWzJ8TDydEUJHk0L6FmiWfCDfsAul3N3F2esPqh2ukwkdGCwkh7i+3st3HfpHQoGxbd8bJQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.EnvironmentVariables",
+      "version": "11.0.0",
+      "artifactHash": "sha512-BxLQb7+xvjQPa3HquOQCsoAEL7MfdGnWObV/SdCiLVSfJIEosCVSWfbsFvz9r2vP/+ToQ4cC8w/zxLxgW72HCQ==",
+      "assetsHash": "sha512-Cctea20Fzc9Rc1zx6QYhvu9NJJHv8mUGUmWEtKkA0Tz4JQKReSKugVYi/sHuxXG1IndFSybG6cWC06DvGgs+mA==",
+      "cacheContentHash": "sha512-Cctea20Fzc9Rc1zx6QYhvu9NJJHv8mUGUmWEtKkA0Tz4JQKReSKugVYi/sHuxXG1IndFSybG6cWC06DvGgs+mA=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.FileExtensions",
+      "version": "11.0.0",
+      "artifactHash": "sha512-USiKGFLfskjVVDzfe3NP8i7FzuLSusw7+R0bUIno/PBn0ws58u0gM2/1rpvPGCmZ7Ei9D6X+ebww/HHiGnLe3Q==",
+      "assetsHash": "sha512-ViBZDt2Y7TfVIxiWG5HKfP1KHTzsxn7a31ikZSg/1mdOfGyGAPj278v63NOU+n4UqvaOR43t9MOCUfadSohjQA==",
+      "cacheContentHash": "sha512-ViBZDt2Y7TfVIxiWG5HKfP1KHTzsxn7a31ikZSg/1mdOfGyGAPj278v63NOU+n4UqvaOR43t9MOCUfadSohjQA=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.Json",
+      "version": "11.0.0",
+      "artifactHash": "sha512-ojVhXUCHyyjK9Bas4y5UrQObVQxBrN4PI7tu7IyOJDzxA/jBHx/yrcnKAfHUxiRDWasYu5rxWlLCR9bN4bb0GA==",
+      "assetsHash": "sha512-WsNcEnVlq43lXBHAXtQg1b7job819SUf9BPtJrq44vhthL9Ijl2mkRBx5L3hIU1p2AN+wiRg47yhYj+vQxEgeQ==",
+      "cacheContentHash": "sha512-WsNcEnVlq43lXBHAXtQg1b7job819SUf9BPtJrq44vhthL9Ijl2mkRBx5L3hIU1p2AN+wiRg47yhYj+vQxEgeQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration.UserSecrets",
+      "version": "11.0.0",
+      "artifactHash": "sha512-k3vhJOs9ZlMN1W/AbFSl16zXCM385YXc9FVex1PfR6R0q3114e3EMQlyKByCuSYVIZcj1zY0ku5sJitDr/Okqw==",
+      "assetsHash": "sha512-O+nOpNgplvFmnaHrehoyRkL0x/IuXLDjo1kzp2hmU4Vbxl2MEunOx2mYY5k1CH9wYVQAz0F466P756IBtHzEcQ==",
+      "cacheContentHash": "sha512-O+nOpNgplvFmnaHrehoyRkL0x/IuXLDjo1kzp2hmU4Vbxl2MEunOx2mYY5k1CH9wYVQAz0F466P756IBtHzEcQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Configuration",
+      "version": "11.0.0",
+      "artifactHash": "sha512-tz414I3ANlwNsFY2ZZV8aMTu6Aqp2GideeUpiZmReDaGQ5+kjh9gYKpHoKCJpg+7PJqsdbe/Ps7ZeNMD4gMzNA==",
+      "assetsHash": "sha512-VQS/GkFU9oLQmXZv0AR/zluF0YAbEAoUQ5aYMqcRc2TWeKa6m2AjInAOnDhCcoWI5a6LQUCzTcl8B3DZZaPZLg==",
+      "cacheContentHash": "sha512-VQS/GkFU9oLQmXZv0AR/zluF0YAbEAoUQ5aYMqcRc2TWeKa6m2AjInAOnDhCcoWI5a6LQUCzTcl8B3DZZaPZLg=="
+    },
+    {
+      "id": "Microsoft.Extensions.DependencyInjection",
+      "version": "11.0.0",
+      "artifactHash": "sha512-POnQFmviiXwv/l49wGveiTLyQzAmkV+1MuViidTSxFCBRvAOZ0y13XO1R158fSp7BwuQ0hr/8c9cxDnUbEjaqg==",
+      "assetsHash": "sha512-KygQMITBDDPXw7+AAgdwQvVAaTXuDsc1iCAuvhO73ERxKX+d92cdbgZmpoYF7DIUq2hfs/yO2KD87uIreRy3MA==",
+      "cacheContentHash": "sha512-KygQMITBDDPXw7+AAgdwQvVAaTXuDsc1iCAuvhO73ERxKX+d92cdbgZmpoYF7DIUq2hfs/yO2KD87uIreRy3MA=="
+    },
+    {
+      "id": "Microsoft.Extensions.Diagnostics",
+      "version": "11.0.0",
+      "artifactHash": "sha512-NSZAUdg3chuz7GiXAu3O8sA/goFYBaqHQWT+jD90kKD6E77g/3UnGz+u/JUVCIjuSFMJ7u/MxdOYsl44QZ2JEQ==",
+      "assetsHash": "sha512-tX8piU+KbYHXIf5F70leczIWwtTkPKhyjRqjbo6D2uTA1PwrhcMD+Ls7rzqSMkx1U3osyrD4/kCrZeF13Lkgnw==",
+      "cacheContentHash": "sha512-tX8piU+KbYHXIf5F70leczIWwtTkPKhyjRqjbo6D2uTA1PwrhcMD+Ls7rzqSMkx1U3osyrD4/kCrZeF13Lkgnw=="
+    },
+    {
+      "id": "Microsoft.Extensions.FileProviders.Physical",
+      "version": "11.0.0",
+      "artifactHash": "sha512-YQrr9FzxZZ1c8SsOGVJ7fyCPNwKvZLr7nfEwNnbN/FvizQ50GzfPRJ36mOlaogHcP+pAn9xnXtV3oRb5mY1MjQ==",
+      "assetsHash": "sha512-lHezhjI8zoTpltXwNy6QMr4/6lIhbXsAYZnCrgRDNNzMHCKvh+x95mkBVXLMzs8axrw7J5Cy21K8lM5YHCfgAw==",
+      "cacheContentHash": "sha512-lHezhjI8zoTpltXwNy6QMr4/6lIhbXsAYZnCrgRDNNzMHCKvh+x95mkBVXLMzs8axrw7J5Cy21K8lM5YHCfgAw=="
+    },
+    {
+      "id": "Microsoft.Extensions.FileSystemGlobbing",
+      "version": "11.0.0",
+      "artifactHash": "sha512-NehbQ9zetvJyA/j45JYC+fKxfREA0ro8EYor/55iEm7y4RS5SZBwTBwR0jwBkOKg3dz49hqHmVCVrBX6eASyNA==",
+      "assetsHash": "sha512-Ycwu/y22NK/ZyJpaFRJc4FB88mjOnsttk2AVHaKgEeShq0vodXZ4FJErpMM2Jju3r3t/2VYWrcHuIxj3ZT/aow==",
+      "cacheContentHash": "sha512-Ycwu/y22NK/ZyJpaFRJc4FB88mjOnsttk2AVHaKgEeShq0vodXZ4FJErpMM2Jju3r3t/2VYWrcHuIxj3ZT/aow=="
+    },
+    {
+      "id": "Microsoft.Extensions.Hosting",
+      "version": "11.0.0",
+      "artifactHash": "sha512-NNoiZmAOXgypPGZ/LPZVwv6TJGElN7C0vUyCzCQvnJQ1kKHo2y5GHvlFdIp9PmPiTQ64qG6QTHbiJ+AleG+uxg==",
+      "assetsHash": "sha512-LdeOXnM83/KIGJjS+P4UgbCMLyVC3iFPy00PsbKXxmHATRjSoV4u7V2iWjYVVpUXOYHaM32gARi56/buUqnhCQ==",
+      "cacheContentHash": "sha512-LdeOXnM83/KIGJjS+P4UgbCMLyVC3iFPy00PsbKXxmHATRjSoV4u7V2iWjYVVpUXOYHaM32gARi56/buUqnhCQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Http",
+      "version": "11.0.0",
+      "artifactHash": "sha512-1uOerFV6HpeHou7fHfyMQiKKycwXDwvFqAid76Xzr+R3FNKvsrxIXRfvJFMFl6vQbrl9Pvw+RrDkEZMJy6L07A==",
+      "assetsHash": "sha512-Pa5xJYtE5weFzv8sRwei1yvqCc05PareJABDtUSigzyj0xmrnG7ZU5VBy0hf5tgh7HN3/psGiOQouw5PLaQD8w==",
+      "cacheContentHash": "sha512-Pa5xJYtE5weFzv8sRwei1yvqCc05PareJABDtUSigzyj0xmrnG7ZU5VBy0hf5tgh7HN3/psGiOQouw5PLaQD8w=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Configuration",
+      "version": "11.0.0",
+      "artifactHash": "sha512-x+WHL+2520JbSUwuLfG7SDweLZQwox4/qj2IS5guFA1ce0tV8PYeeVLNod3Qb+5EsgNGj8PojF30P6VguQlKTw==",
+      "assetsHash": "sha512-zI04chEUw5Z14Jtfq4gWq/D3nnvWTqu1RMhdEMQb+gyRmMMNmeaBGL6kKvSNJ/C+lbsvhThKzYBjzdmhGn4rHg==",
+      "cacheContentHash": "sha512-zI04chEUw5Z14Jtfq4gWq/D3nnvWTqu1RMhdEMQb+gyRmMMNmeaBGL6kKvSNJ/C+lbsvhThKzYBjzdmhGn4rHg=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Console",
+      "version": "11.0.0",
+      "artifactHash": "sha512-7Qvy3svSBhK6QeWPgNr9k12/vC7u9IGMUVxdSnRRCDTsHd4mm347a5lh1gm+UMczwW6yDImjQpgFV4bNst7omA==",
+      "assetsHash": "sha512-V4f0ON4Sg7j70MYeVb5hZn7Szmn0va2OfTgCqWdHkDoxaf9IyKNlKSCAEfGOS7ualCp+q7WbA6C2++svrzPziQ==",
+      "cacheContentHash": "sha512-V4f0ON4Sg7j70MYeVb5hZn7Szmn0va2OfTgCqWdHkDoxaf9IyKNlKSCAEfGOS7ualCp+q7WbA6C2++svrzPziQ=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.Debug",
+      "version": "11.0.0",
+      "artifactHash": "sha512-z85NafZRAIgdEPywS8R61zh9I8zheZxjPzjnUBxDoTZKYWCwBrY7v7XY1NrJAvU1WMGNnhTY1bEvfQ2O0sl7Lw==",
+      "assetsHash": "sha512-HPSW9js0C8PZUVG9Vl6mZXQyNIF/YDov99OwpTYHzTjIIa57QFRRoQW3sKCzVEGaIAEz++mErAF6IgVlf+Cw0g==",
+      "cacheContentHash": "sha512-HPSW9js0C8PZUVG9Vl6mZXQyNIF/YDov99OwpTYHzTjIIa57QFRRoQW3sKCzVEGaIAEz++mErAF6IgVlf+Cw0g=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.EventLog",
+      "version": "11.0.0",
+      "artifactHash": "sha512-4ewsIyT0KVcCvjvhy+EgWiFcsJ24afFCm3IJWzT12CO9TPFuQZw9tQyofyfD54TY4Sw25guci3QNkT8qgrM6rA==",
+      "assetsHash": "sha512-SV2ntogzRxqDLxkYZMdfpRGMTn+yp7LsJjrlTx2lQLYRp2OZstkkfR6RqfKKXGIcbLwbUSoDjLpwdyXEH/uK7Q==",
+      "cacheContentHash": "sha512-SV2ntogzRxqDLxkYZMdfpRGMTn+yp7LsJjrlTx2lQLYRp2OZstkkfR6RqfKKXGIcbLwbUSoDjLpwdyXEH/uK7Q=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging.EventSource",
+      "version": "11.0.0",
+      "artifactHash": "sha512-NTAvufcXpjsH+DM6Gon024+IwE/LVbk1LSWDWB7/3ve76yt8uKah5zpdcKT4M5xtwU5tgtvKytTT8Eb6tij1Og==",
+      "assetsHash": "sha512-rA2de438tUBJkZ44nVTmZxQYpt4NQ/wGkQJzA593IBYRVc2yNRCN0GoIdnXWW/MkKzoxYsGxHuASHnAUy5JL/g==",
+      "cacheContentHash": "sha512-rA2de438tUBJkZ44nVTmZxQYpt4NQ/wGkQJzA593IBYRVc2yNRCN0GoIdnXWW/MkKzoxYsGxHuASHnAUy5JL/g=="
+    },
+    {
+      "id": "Microsoft.Extensions.Logging",
+      "version": "11.0.0",
+      "artifactHash": "sha512-Q+nHF6Bi9YD5tkA3yLj1Pipj0RVMMGN+3+CGPICg1AqQFcN31QgZsK3SRLWPmB39eNN9f0w6EoViVGBjXAGVXQ==",
+      "assetsHash": "sha512-zsse8MOgo0bj2KAEsSkg9WtNAfZbHbTlGeqfhy5PGozomM3zQM0XzumSQzQ0451IWNSJWLqYaSIQEpCi2j1sCA==",
+      "cacheContentHash": "sha512-zsse8MOgo0bj2KAEsSkg9WtNAfZbHbTlGeqfhy5PGozomM3zQM0XzumSQzQ0451IWNSJWLqYaSIQEpCi2j1sCA=="
+    },
+    {
+      "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+      "version": "11.0.0",
+      "artifactHash": "sha512-mKXJ7fcDiMpzm24hPDuD2Qz05vAZo8Yosk7Yv50MIyJBRt0DVoGc6asGJM12on2skKqSCweml9oN+scHaTLeOA==",
+      "assetsHash": "sha512-s4JrxDPwxk8pE6LFVj+M5TrDHxOVIoCnQBy5lexs5uAYeggPYwAc/pSDNgVuZN14pCmZGCInygI/2ylCdLYShw==",
+      "cacheContentHash": "sha512-s4JrxDPwxk8pE6LFVj+M5TrDHxOVIoCnQBy5lexs5uAYeggPYwAc/pSDNgVuZN14pCmZGCInygI/2ylCdLYShw=="
+    },
+    {
+      "id": "ModelContextProtocol.Core",
+      "version": "2.4.0",
+      "artifactHash": "sha512-4oAFOSvXEyxkMeR04Gc0YyQc+B2TzFW9fPVjgHLwS2JodKT5hzx0C53ODEFttGOl267a1NykA6BpbM6WaE/9/w==",
+      "assetsHash": "sha512-q98pZMlcxhsh0LpGXcT2ow7sGNveCPhDlJT3zJ7Cz5nNyPmPkm8P57dUIUpzv1w6qWbdSZcR/Z+RbZtNYjEmXQ==",
+      "cacheContentHash": "sha512-q98pZMlcxhsh0LpGXcT2ow7sGNveCPhDlJT3zJ7Cz5nNyPmPkm8P57dUIUpzv1w6qWbdSZcR/Z+RbZtNYjEmXQ=="
+    },
+    {
+      "id": "ModelContextProtocol",
+      "version": "2.4.0",
+      "artifactHash": "sha512-I/Ai98RcT2kPffrcDR6n8tqj9VtwgI+QiTxh8811eZjoubq6rgS+/XVuWgXjGlBgBufbUaqzLG/QpEChdzjWHg==",
+      "assetsHash": "sha512-3oMhK5W0G3H8+1SbMosV7meE6sKQfmzLKSNtjQ3dGZ+IJU5RomKTs/bKWHFyOJQNMWk//+iClQJfcMpHnwCFsg==",
+      "cacheContentHash": "sha512-3oMhK5W0G3H8+1SbMosV7meE6sKQfmzLKSNtjQ3dGZ+IJU5RomKTs/bKWHFyOJQNMWk//+iClQJfcMpHnwCFsg=="
+    },
+    {
+      "id": "System.CommandLine",
+      "version": "3.0.0",
+      "artifactHash": "sha512-gzqt67DXjRr2IboF+afbeZvt+JGxTRific+JooU0ZIqro+dxYORCy/P5nSW7B3wb5chYsEv+XprE/sYVBTgTVA==",
+      "assetsHash": "sha512-swNpSTl0iYJeBuvYYfaY+VxzZ5YC8wklwkqDCNOq2aTQqJzjauJfh/O3Zw93nwxspWrxvZTjT45f8VPR0ParEA==",
+      "cacheContentHash": "sha512-swNpSTl0iYJeBuvYYfaY+VxzZ5YC8wklwkqDCNOq2aTQqJzjauJfh/O3Zw93nwxspWrxvZTjT45f8VPR0ParEA=="
+    },
+    {
+      "id": "System.Diagnostics.EventLog",
+      "version": "11.0.0",
+      "artifactHash": "sha512-Y/FV22q2yK93ggwpc2RhaBzhufjSmQl+/2IdrcIYZy5R4EA1igTwNtM0xcEC738Lo/T6qOlik5gwAO4HfOZOXw==",
+      "assetsHash": "sha512-lKore9DXE1q8o6ss6/M7++xBpn2FMS0axaAypBspYLqY5OT1ZRPLzFGwF18l61aXfXTPpwkx5tYh4zMUHoAv/g==",
+      "cacheContentHash": "sha512-lKore9DXE1q8o6ss6/M7++xBpn2FMS0axaAypBspYLqY5OT1ZRPLzFGwF18l61aXfXTPpwkx5tYh4zMUHoAv/g=="
+    }
+  ],
+  "operations": [
+    "projects.describe",
+    "projects.list",
+    "projects.trace-attachments",
+    "projects.trace-conversation"
+  ],
+  "acceptedLint": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli/tools/inventory-coverage/v1/projects-accepted-lint.json",
+  "shapes": [
+    {
+      "module": "projects",
+      "shape": "kind=query;identifierKind=string;wireTypeConvention=explicit;tenantSource=public;aggregateIdSource=constant;projectionSelector=none;idempotencyKey=optional",
+      "operations": [
+        "projects.list",
+        "projects.trace-attachments",
+        "projects.trace-conversation"
+      ],
+      "vectors": [
+        "projects.list",
+        "projects.trace-attachments",
+        "projects.trace-conversation"
+      ]
+    },
+    {
+      "module": "projects",
+      "shape": "kind=query;identifierKind=string;wireTypeConvention=explicit;tenantSource=public;aggregateIdSource=none;projectionSelector=none;idempotencyKey=optional",
+      "operations": [
+        "projects.describe"
+      ],
+      "vectors": [
+        "projects.describe"
+      ]
+    }
+  ]
+}

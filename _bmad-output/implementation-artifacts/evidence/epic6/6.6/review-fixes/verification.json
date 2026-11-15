@@ -1,0 +1,86 @@
+{
+  "scope": "Seven Story 6.6 review fixes only; full verification delegated to parent. No production code change in this review pass.",
+  "result": "passed",
+  "retainedEvidence": {
+    "existingFiles": 85,
+    "changedBytes": [],
+    "stillIgnored": [],
+    "sha256Receipt": "retained-evidence-hashes.json"
+  },
+  "focusedGateway": {
+    "counts": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "xml": "gateway-focused-owner-denial.xml",
+    "trx": "gateway-focused-owner-denial.trx",
+    "build": "server-rebuild-owner-denial.log"
+  },
+  "enrollment": {
+    "counts": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    },
+    "xml": "enrollment-focused.xml",
+    "trx": "enrollment-focused.trx"
+  },
+  "projectsArtifact": {
+    "result": "passed",
+    "operations": [
+      "projects.describe",
+      "projects.list",
+      "projects.trace-attachments",
+      "projects.trace-conversation"
+    ],
+    "receipt": "projects-artifact/verification.json"
+  },
+  "historicalFocusedFailures": [
+    {
+      "xml": "gateway-focused.xml",
+      "reason": "Test observer lacked IReadModelStore.GetCompactedAsync delegation; added transparent delegation."
+    },
+    {
+      "xml": "gateway-focused-final.xml",
+      "reason": "Fixture lacked the production AuthorizationExceptionHandler; registered it to retain actual HTTP 403 for a tenant not granted by credentials."
+    }
+  ],
+  "assertions": [
+    "Independent preexisting Web fixture request constructors versus attribute-derived CLI requests; exact Project payload and snapshot timestamps, bounded per-call servedAt.",
+    "Exact durable Inspection records for descriptive detail/list, including ProjectCount and FieldClass.",
+    "Complete canonical 404 bytes apart from per-call correlationId for detail, absent/owner-denied Conversation and role-denied list/attachment; tenant mismatch remains 403.",
+    "Page-size-1 CLI/Web cursor continuations, semantic opaque-cursor comparison and changed-page-size rejection.",
+    "Exact raw state and ETags plus no owner writes around each read; Folder and Conversation observers include compacted reads; deliberate fixture setup is outside measured read deltas."
+  ],
+  "sourceSha256": {
+    ".gitignore": "3364e3018ed0111244a5bd5015bffbb0a70d85ee23b8cbdf7f7989a661d13212",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs": "59103483f7191f1a1a11a258b8349dd8368814abea8e5a65abd2a7ab9bd3e1e9",
+    "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs": "3389dafc19ae9fb0be5564c63da5a096f01037ed928e0a02735d67b742585610",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectMcpCliReadStore.cs": "ab0f06737cd88770b631e1959be28d8b56c83fa5444c5da04dcf211f143d82a0",
+    "references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json": "c8e0f49bc1080004b2f90d92e0cfa21d0aa797a242f582f632f4679a1e37d34f",
+    "references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json": "dd44ac729ca3128fc4977376b0ffa333a5701092f9289b0670f2131b2a45cba6",
+    "references/Hexalith.McpCli/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/approval.json": "fa019597bf8f7df7ef31e3b5fdbb388988bf1aa31b23a49c89ee5dc3001f3310",
+    "references/Hexalith.McpCli/tools/live-topology/plans-current/projects.list.json": "a2e9a528fe003fe2644fa9be83921fc71a900f72471aaa6580a56ccdea61f675"
+  },
+  "commands": [
+    "commands.json",
+    "artifact-commands.json"
+  ],
+  "disposableWorkspace": "Owned Dapr process terminated and reaped; held run-with-temp workspace removed after parent full Server verification.",
+  "parentFullServer": {
+    "xml": "server-parent-full.xml",
+    "trx": "server-parent-full.trx",
+    "counts": {
+      "total": 1417,
+      "passed": 1417,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0
+    }
+  }
+}

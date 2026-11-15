@@ -1,0 +1,70 @@
+{
+  "name": "projects.trace-attachments",
+  "kind": "read",
+  "description": "Trace unselected advisory Project candidates from at most 32 opaque owner references, counted before deduplication. File mapping is unsupported. Coverage and freshness never grant selection or confirmation authority.",
+  "schema": {
+    "type": [
+      "object",
+      "null"
+    ],
+    "properties": {
+      "attachments": {
+        "type": "array",
+        "items": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "referenceKind": {
+              "type": "string",
+              "description": "Owner kind: folder or file; file mapping is unsupported."
+            },
+            "referenceId": {
+              "type": "string",
+              "description": "Exact opaque owner identifier, never a path."
+            }
+          },
+          "required": [
+            "referenceKind",
+            "referenceId"
+          ],
+          "additionalProperties": false
+        },
+        "description": "At most 32 opaque folder or file owner references, counted before deduplication; file mapping is unsupported."
+      },
+      "includeArchived": {
+        "type": "boolean",
+        "default": false,
+        "description": "Include authorized Archived candidates; defaults to false."
+      }
+    },
+    "required": [
+      "attachments"
+    ],
+    "additionalProperties": false
+  },
+  "example": {
+    "attachments": [
+      {
+        "referenceKind": "folder",
+        "referenceId": "folder-a"
+      }
+    ]
+  },
+  "envelope": {
+    "aggregateIdRequired": false,
+    "idempotencyKeyRequired": false,
+    "arguments": [
+      "tenant",
+      "aggregateId",
+      "entityId",
+      "pageSize",
+      "offset",
+      "cursor"
+    ]
+  },
+  "lintFindings": [],
+  "submittable": false,
+  "reason": "configuration_invalid"
+}

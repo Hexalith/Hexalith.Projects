@@ -143,7 +143,7 @@ public sealed class LiveFixtureSiblingContractTests
             .ListForProjectAsync(ProjectId(graph), tenantId, caller, new PageRequest(25), TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
         page.TrustSignal.ShouldBe(ProjectConversationTrustSignal.Current);
-        page.Items.ShouldHaveSingleItem().ConversationId.Value.ShouldBe(graph.ExistingConversationId);
+        page.Items.ShouldHaveSingleItem().ConversationId.ShouldBe(graph.ExistingConversationId);
 
         ConversationsProjectConversationResolutionDirectory resolution = new(client);
         ConversationResolutionMetadata existing = await resolution
@@ -196,7 +196,7 @@ public sealed class LiveFixtureSiblingContractTests
             .ListForProjectAsync(new ProjectId(graph.DegradedProjectId), tenantId, caller, new PageRequest(25), TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
         page.Items
-            .Select(static item => (item.ConversationId.Value, item.TrustSignal))
+            .Select(static item => (item.ConversationId, item.TrustSignal))
             .ShouldBe(
                 new[]
                 {

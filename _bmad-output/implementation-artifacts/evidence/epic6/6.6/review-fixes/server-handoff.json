@@ -1,0 +1,25 @@
+{
+  "tmpdir": "/tmp/hexalith-job.JV27t428",
+  "assembly": "/tmp/hexalith-job.JV27t428/build/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+  "environment": {
+    "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:33133",
+    "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:58339"
+  },
+  "daprdCommand": [
+    "/home/administrator/.dapr/bin/daprd",
+    "--app-id",
+    "story66-review-3743426",
+    "--resources-path",
+    "/tmp/hexalith-job.JV27t428/dapr-resources",
+    "--dapr-http-port",
+    "33133",
+    "--dapr-grpc-port",
+    "58339",
+    "--metrics-port",
+    "46171",
+    "--dapr-internal-grpc-port",
+    "57291",
+    "--log-level",
+    "warn"
+  ]
+}

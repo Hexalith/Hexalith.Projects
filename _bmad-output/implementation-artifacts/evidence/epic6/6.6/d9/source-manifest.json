@@ -1,0 +1,290 @@
+{
+  "scope": "Changed implementation, configuration, tests and enrollment artifacts; planning/evidence excluded. Dirty working trees over the full baseline revisions recorded in ../../6.6-cli-read-surface.json.",
+  "files": [
+    {
+      "repository": "McpCli",
+      "path": "Directory.Build.props",
+      "sha256": "f01c95e21fee01e0816d3d1119165556ff8e693009a8092cdccbaced87ff16bc"
+    },
+    {
+      "repository": "McpCli",
+      "path": "README.md",
+      "sha256": "64332a39b3e079286292b5960361e7897bdc33665e1f640f25f216a0427a6f8f"
+    },
+    {
+      "repository": "McpCli",
+      "path": "src/Hexalith.McpCli.Abstractions/HexalithQueryAttribute.cs",
+      "sha256": "b09a000063139c1f931051311726bdb0681d9a8eb3d5e7e143702b9148931cec"
+    },
+    {
+      "repository": "McpCli",
+      "path": "src/Hexalith.McpCli.Core/Catalog/RoutingResolver.cs",
+      "sha256": "a58385d8eb7d2295529085be20de8f8d0384fc6a1833f53e33d293333b7a28ba"
+    },
+    {
+      "repository": "McpCli",
+      "path": "src/Hexalith.McpCli/Hexalith.McpCli.csproj",
+      "sha256": "80cfd7f3ff23534bff30d9cb161c2968011c4f322ee7db59efbde54941e569e5"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs",
+      "sha256": "ed5d47c775fb6fe4dc78b62c28840e25cc3d4c3fa7c5d0b3ef0a0561fc3e7281"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/Hexalith.McpCli.Cli.Tests/DiscoveryCommandTests.cs",
+      "sha256": "fc877dfd79902a3821f4d83dc5b6848acd116c21b600715f77582165cf293afe"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/Hexalith.McpCli.Core.Tests/CatalogTests.cs",
+      "sha256": "3a202a834857c019545bfcd02176e8428ad76cafdca0ea52a13871c481fdc5ee"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/Hexalith.McpCli.Core.Tests/OperationExecutorTests.cs",
+      "sha256": "5dda3cc258a8a93b8b54326ab9265f03b9e0c7c7c7409e5586f6e8c2cd52cfd2"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/Hexalith.McpCli.Core.Tests/OperationShapeTests.cs",
+      "sha256": "9db378634f32ada81cfb779a436ba1232602101853881058828c97760502b5da"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/fixtures/Catalog.Invalid.Contracts/MissingProjectionQuery.cs",
+      "sha256": "0cf707e7c43791608b15360be69e58f12f110fb16c21f2c3792d44ce914a6475"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/fixtures/Catalog.Invalid.Contracts/WhitespaceProjectionQuery.cs",
+      "sha256": "ab1fa1ba16de87e3c5cb432fc568cd65c17e9933c72e94d60dae855b678ad287"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tests/fixtures/Catalog.Routing.Contracts/ComputedStatusQuery.cs",
+      "sha256": "7977c308f14df86a8e4a94717d3d9a02d57f07945dcce2e03f6d5c9ee615cdef"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/README.md",
+      "sha256": "33b97600c9cac117889c90aa74ad3e9029bf9ef3e8178d12d73fc78416e99178"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/approval.json",
+      "sha256": "fa019597bf8f7df7ef31e3b5fdbb388988bf1aa31b23a49c89ee5dc3001f3310"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json",
+      "sha256": "c8e0f49bc1080004b2f90d92e0cfa21d0aa797a242f582f632f4679a1e37d34f"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json",
+      "sha256": "dd44ac729ca3128fc4977376b0ffa333a5701092f9289b0670f2131b2a45cba6"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json",
+      "sha256": "f259746c2356b4c30b4bf0bc285c6cdee5e78d250fedefcb3002f861a6ab61fd"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json",
+      "sha256": "36f9e5e46fa51445ac538b7300d1a1f70a1bbb1d3937bbb62946858300fb5ade"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/schema.json",
+      "sha256": "cdfbb1c5dc9fa8965ba046fc5c9a52767a589335f1a59046818c69449b3027fe"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/test_validate.py",
+      "sha256": "d0e8b842ee8508984dcfd9a14471367316fa668bc81db5460276851472337981"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/conformance-vectors/v1/validate.py",
+      "sha256": "24b0e046322ef75f873f8550d21c8fd4af8817c4e41ef8246dc742ea617a0860"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/dependency-policy.json",
+      "sha256": "1bfd785822ffbe97fb8c3ee9e8cebf80689d238956c0ddd697db2ede5566eb72"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/inventory-coverage/v1/projects-accepted-lint.json",
+      "sha256": "ed264428ae0e13945e3d6907736fc5fedf88a4797970b6de28d91b929d44d267"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/inventory-coverage/v1/projects-approved.json",
+      "sha256": "18f9366ed6e9ab4c35cb1db02270ccdf1ad9e6f6a6470ecf0c3c8994e75112e8"
+    },
+    {
+      "repository": "McpCli",
+      "path": "tools/live-topology/plans-current/projects.list.json",
+      "sha256": "a2e9a528fe003fe2644fa9be83921fc71a900f72471aaa6580a56ccdea61f675"
+    },
+    {
+      "repository": "Projects",
+      "path": ".gitattributes",
+      "sha256": "158620e9b45b7f4077fbf47f78a943e7134f97c56adb39b0463150b2af45077d"
+    },
+    {
+      "repository": "Projects",
+      "path": ".gitignore",
+      "sha256": "3364e3018ed0111244a5bd5015bffbb0a70d85ee23b8cbdf7f7989a661d13212"
+    },
+    {
+      "repository": "Projects",
+      "path": "Directory.Build.props",
+      "sha256": "22fea9a8cfdd5ced9e340ce71eb0f7e645d444ca36e636efe518d9e51b2b6e96"
+    },
+    {
+      "repository": "Projects",
+      "path": "Directory.Packages.props",
+      "sha256": "4d45ed4c642b2270448d26d596384c56c6725f9b14327988246ffd79e197c17b"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+      "sha256": "38bf0a5ebebd73e1c503cd2f9954f458f331db1fb7be008e007797f4c191e20c"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/ProjectsMcpCliModule.cs",
+      "sha256": "cc8bdde2c09a202564cc2c6811a02ecbdb769ee96ea8051b3c9aa30dbe24fb00"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs",
+      "sha256": "7197dee0c33ed912381c81b8e471a93b041edbe4e422157df6e98ac5c175c386"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs",
+      "sha256": "8595ae38b7a1da45fc7c796dacaac1979e827aca4d830f73693273f081bef32f"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ProjectAdvisoryAttachment.cs",
+      "sha256": "4156176b39f255c2ca669e110a2667499881319a7d464f54591bbdbd639aacb8"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ProjectConversationIdJsonConverter.cs",
+      "sha256": "b94d2f3f3cb1fc7f8fb295e6a226ee219b71f95dadec7af9fd6014f4cd49f29f"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ProjectConversationItem.cs",
+      "sha256": "1b740dc0f00c36c2eab5b844657ab879cff1ade9365115284ae192a8c3633aec"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromAttachmentsQuery.cs",
+      "sha256": "b5d7907573355bc6ba2f61e5c91c0e7d791679f4a2754fc7a2a9169317bfa8d9"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromConversationQuery.cs",
+      "sha256": "86a8f1b09a3a53a1556e63c883660de82ce65964dfeebbc380516321c1e50666"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Server/Conversations/ProjectContextConversationEvidenceMapper.cs",
+      "sha256": "f7df6d21e1ba942c0755fea88bcbdc8ea1e8a3dcd74e33f25f6abacde868b587"
+    },
+    {
+      "repository": "Projects",
+      "path": "src/Hexalith.Projects.Server/Conversations/ProjectConversationTranslator.cs",
+      "sha256": "a8a4c0314dd3e936bbf341d7c7ed044dabd98a4e9b699a637809879c80210564"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "sha256": "fcaf632fc0a2067b6c1f90935773d26e6ab9077a1e81efa5f696cb13a29e615f"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectConversationsContractTests.cs",
+      "sha256": "e83f350ffe5e4b2f13e368868141f269e667da58402baa41d6189a24ad50ebf5"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectMcpCliDecorationTests.cs",
+      "sha256": "764f8ea97a371d1aec822d8296c3a8b7f7ca785ba013ed674a2a94fdd65f7255"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Integration.Tests/LiveFixtureSiblingContractTests.cs",
+      "sha256": "ec4f3e86760c6c1de06fa0036e5cee36523766ede8f0bc66f04d8edc8ff2c07d"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Conversations/ProjectContextConversationEvidenceMapperTests.cs",
+      "sha256": "5a6438a3d921057fce29b035eb650eb5415261a19b530a8ff37ed71000e6acd9"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationAssignmentDirectoryTests.cs",
+      "sha256": "b8408533a8faa0cb4f39dd7da113b53a7116a3f5fe9b82ba68b520d25c2a9b1c"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationItemWireTests.cs",
+      "sha256": "d9884c874b9e3978580debcefd3bb1f97b5cd46be0904070ca258ad070e81ce6"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationTranslatorTests.cs",
+      "sha256": "0ba8b10b794cf6235903da82462f747b5262e4b77ccac5c17c28ee0bce350e09"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextExplanationTests.cs",
+      "sha256": "10acc715ff06b60ca259701c7e794ca5d4ed43e4a2bc774f10111d30f5ca141f"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextTests.cs",
+      "sha256": "209cd9ad26e6447e82384f41f017aff450e0382e784cd600236b4eea12e92b89"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectMcpCliReadStore.cs",
+      "sha256": "ab0f06737cd88770b631e1959be28d8b56c83fa5444c5da04dcf211f143d82a0"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/RefreshProjectContextTests.cs",
+      "sha256": "c893712f27ca2b51392db65c0b53c9e03c02967cdde821df9d74743a4a1a345d"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.McpCli.cs",
+      "sha256": "3389dafc19ae9fb0be5564c63da5a096f01037ed928e0a02735d67b742585610"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "sha256": "59103483f7191f1a1a11a258b8349dd8368814abea8e5a65abd2a7ab9bd3e1e9"
+    },
+    {
+      "repository": "Projects",
+      "path": "tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs",
+      "sha256": "2baae6c65630008fb15519452965b24f325157f73e7afcbbfc63f18369cc4b89"
+    },
+    {
+      "repository": "Projects",
+      "path": "tools/release-packages.json",
+      "sha256": "79e99470722e71958eebf7ae601f69f75baf9056ad2b5a62cb3b9219176b158f"
+    }
+  ]
+}

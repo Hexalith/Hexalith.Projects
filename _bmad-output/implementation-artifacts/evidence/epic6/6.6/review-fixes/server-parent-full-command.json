@@ -1,0 +1,16 @@
+{
+  "command": [
+    "dotnet",
+    "/tmp/hexalith-job.JV27t428/build/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+    "-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.xml",
+    "-trx",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.trx"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:33133",
+    "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:58339"
+  },
+  "exitCode": 0
+}

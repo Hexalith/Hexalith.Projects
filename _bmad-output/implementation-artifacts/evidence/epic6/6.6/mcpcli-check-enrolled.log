@@ -1,0 +1,35 @@
+Verified Hexalith.Projects.Contracts@2.0.0-story66.1: 4 operations; complete vector replay passed.
+Traceback (most recent call last):
+  File "/tmp/hexalith-job.HZMJ8Psx/mcpcli/tools/conformance-vectors/v1/check_enrolled.py", line 242, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/tmp/hexalith-job.HZMJ8Psx/mcpcli/tools/conformance-vectors/v1/check_enrolled.py", line 203, in main
+    results.append(verify(repo, artifact, vectors, args.output.resolve() / package_id,
+                   ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          inventory, accepted_lint=accepted if accepted.exists() else None,
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          align_candidate_dependencies=False, expected_inventory_hash=inventory_hash,
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          expected_vector_hashes=vector_hashes))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/hexalith-job.HZMJ8Psx/mcpcli/tools/conformance-vectors/v1/verify_artifact.py", line 294, in verify
+    run([sys.executable, repo / 'tools/conformance-vectors/v1/run_loopback.py', '--host', command[1],
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         '--assets', host / 'obj/project.assets.json', '--artifact', artifact,
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         '--expected-package-id', package_id, '--expected-package-version', version, *vectors], repo, env, 'replay')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/hexalith-job.HZMJ8Psx/mcpcli/tools/conformance-vectors/v1/verify_artifact.py", line 146, in run
+    result = subprocess.run(list(map(str, command)), cwd=cwd, env=env, capture_output=True, text=True)
+  File "/usr/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2153, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.14/selectors.py", line 398, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt
+Enrolled replay interrupted for required Story 6.6 Gateway halt.

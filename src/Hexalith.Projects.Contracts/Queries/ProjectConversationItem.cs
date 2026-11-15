@@ -7,14 +7,14 @@ namespace Hexalith.Projects.Contracts.Queries;
 
 using System;
 
-using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
+using System.Text.Json.Serialization;
 using Hexalith.Projects.Contracts.Identifiers;
 
 /// <summary>
 /// Projects-shaped, metadata-only conversation reference for a project.
 /// </summary>
 /// <param name="ProjectId">The owning project identifier.</param>
-/// <param name="ConversationId">The Conversations-owned reference identity.</param>
+/// <param name="ConversationId">The Projects-owned opaque Conversation reference identity.</param>
 /// <param name="LifecycleStatus">The safe lifecycle/status token from the conversation summary.</param>
 /// <param name="DisplayLabel">An optional safe display label.</param>
 /// <param name="TrustSignal">The Projects-owned trust signal for this item.</param>
@@ -22,7 +22,7 @@ using Hexalith.Projects.Contracts.Identifiers;
 /// <param name="ProjectSafeStatus">The optional safe project hydration status supplied by Conversations.</param>
 public sealed record ProjectConversationItem(
     ProjectId ProjectId,
-    ConversationId ConversationId,
+    string ConversationId,
     string LifecycleStatus,
     string? DisplayLabel,
     ProjectConversationTrustSignal TrustSignal,
@@ -35,9 +35,10 @@ public sealed record ProjectConversationItem(
     public ProjectId ProjectId { get; } = ProjectId ?? throw new ArgumentNullException(nameof(ProjectId));
 
     /// <summary>
-    /// Gets the Conversations-owned reference identity.
+    /// Gets the Projects-owned opaque Conversation reference identity.
     /// </summary>
-    public ConversationId ConversationId { get; } = ConversationId ?? throw new ArgumentNullException(nameof(ConversationId));
+    [JsonConverter(typeof(ProjectConversationIdJsonConverter))]
+    public string ConversationId { get; } = ValidateRequired(ConversationId, nameof(ConversationId));
 
     /// <summary>
     /// Gets the safe lifecycle/status token.

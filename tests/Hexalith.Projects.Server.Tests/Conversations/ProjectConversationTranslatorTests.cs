@@ -53,7 +53,7 @@ public sealed class ProjectConversationTranslatorTests
 
         ProjectConversationItem item = page.Items.Single();
         item.ProjectId.ShouldBe(Project);
-        item.ConversationId.ShouldBe(new ConversationId("conversation-001"));
+        item.ConversationId.ShouldBe("conversation-001");
         item.TrustSignal.ShouldBe(expected);
         item.ProjectSafeLabel.ShouldBe("Project project-001");
         item.ProjectSafeStatus.ShouldBe("resolved");
