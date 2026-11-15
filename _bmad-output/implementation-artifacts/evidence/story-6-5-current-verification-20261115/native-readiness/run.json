@@ -1,0 +1,109 @@
+{
+  "revision": "eaa95558dfcd1aed9816a9506f650cfa512bf45f",
+  "commands": [
+    {
+      "label": "source-preparation",
+      "argv": [
+        "dotnet",
+        "run",
+        "--project",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+        "--artifacts-path",
+        "/tmp/hexalith-job.JpPagsH5/story65-native/tool-artifacts",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/hexalith-job.JpPagsH5/story65-native/mapping",
+        "--output",
+        "json"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "elapsedSeconds": 43.72777438163757,
+      "logSha256": "f5b3cb1cb945fec7196768adb782ce0849ea91fcf12dbc8697689915ea612cff"
+    },
+    {
+      "label": "integration-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--artifacts-path",
+        "/tmp/hexalith-job.JpPagsH5/story65-native/projects-source-view/.build/artifacts",
+        "-p:SupportedProjectReadDistributed=true"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests",
+      "exitCode": 0,
+      "elapsedSeconds": 154.26136183738708,
+      "logSha256": "87619f45afc1a5782b9f2dc0835bb740e0dcbbd5915a4ea2d5bd4cb6df8da8ee"
+    },
+    {
+      "label": "integration-tests",
+      "argv": [
+        "dotnet",
+        "/tmp/hexalith-job.JpPagsH5/story65-native/projects-source-view/.build/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+        "-class",
+        "Hexalith.Projects.Integration.Tests.AspireTopologyTests",
+        "-class",
+        "Hexalith.Projects.Integration.Tests.PersistedReadObserverBindingTests",
+        "-class",
+        "Hexalith.Projects.Integration.Tests.SupportedProjectAdvisoryReadinessTests",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-current-verification-20261115/native-readiness/integration.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "elapsedSeconds": 0.9146449565887451,
+      "logSha256": "b0f8cf69a374643d29cc34125563196af6389a54c8c39ee124b068864cfd8fb4"
+    }
+  ],
+  "lanes": {
+    "integration": {
+      "assemblySha256": "4506b4df7b001c1747d7004d25c93ad20cd743be76ae5e0562e0c04d623a8747",
+      "counts": {
+        "total": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      },
+      "selectors": [
+        "-class",
+        "Hexalith.Projects.Integration.Tests.AspireTopologyTests",
+        "-class",
+        "Hexalith.Projects.Integration.Tests.PersistedReadObserverBindingTests",
+        "-class",
+        "Hexalith.Projects.Integration.Tests.SupportedProjectAdvisoryReadinessTests"
+      ]
+    }
+  },
+  "complete": true,
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/hexalith-job.JpPagsH5/story65-native/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/hexalith-job.JpPagsH5/story65-native/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/hexalith-job.JpPagsH5/story65-native/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/hexalith-job.JpPagsH5/story65-native/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/hexalith-job.JpPagsH5/story65-native/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "1d91a0b940a734529e49f63c49552f52a336d15e77071a986122374d408643d9",
+    "Configuration": "Debug"
+  },
+  "sourceViews": {
+    "projects": {
+      "view": "/tmp/hexalith-job.JpPagsH5/story65-native/projects-source-view",
+      "source": "/home/administrator/projects/hexalith/projects"
+    },
+    "owner": {
+      "view": "/tmp/hexalith-job.JpPagsH5/story65-native/owner-source-view",
+      "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore"
+    }
+  }
+}

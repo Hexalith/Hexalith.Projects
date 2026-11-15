@@ -1,0 +1,75 @@
+{
+  "revision": "eaa95558dfcd1aed9816a9506f650cfa512bf45f",
+  "commands": [
+    {
+      "label": "source-preparation",
+      "argv": [
+        "dotnet",
+        "run",
+        "--project",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+        "--artifacts-path",
+        "/tmp/hexalith-job.swaHJPt8/story65-native/tool-artifacts",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/hexalith-job.swaHJPt8/story65-native/mapping",
+        "--output",
+        "json"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "elapsedSeconds": 36.642234325408936,
+      "logSha256": "19e74c86d591dd0855aa65e277c184b3f4512bf5ea7018cfc29cd08905fba4af"
+    },
+    {
+      "label": "ui-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "--configuration",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "--disable-build-servers",
+        "--artifacts-path",
+        "/tmp/hexalith-job.swaHJPt8/story65-native/artifacts"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests",
+      "exitCode": 0,
+      "elapsedSeconds": 50.81578850746155,
+      "logSha256": "f7e0bcc65cdc04fff99ec752d5360219675ec382442215b55d6c7eea5744cc75"
+    },
+    {
+      "label": "ui-tests",
+      "argv": [
+        "dotnet",
+        "/tmp/hexalith-job.swaHJPt8/story65-native/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+        "-class",
+        "Hexalith.Projects.UI.Tests.*",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/story-6-5-current-verification-20261115/native/ui.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 1,
+      "elapsedSeconds": 1.6568431854248047,
+      "logSha256": "6efedb4550e85598b6e9b38860695d954e67d840090de22caa51bd6cdaab76ef"
+    }
+  ],
+  "lanes": {},
+  "complete": false,
+  "mappingEnvironment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/hexalith-job.swaHJPt8/story65-native/mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/hexalith-job.swaHJPt8/story65-native/mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/hexalith-job.swaHJPt8/story65-native/mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/hexalith-job.swaHJPt8/story65-native/mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/hexalith-job.swaHJPt8/story65-native/mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "7693c0157cd21259db3568f89eb5d6bf10553423cd96ba8aab659ab941ec529c",
+    "Configuration": "Debug"
+  },
+  "failure": "ui-tests failed; inspect its retained log"
+}

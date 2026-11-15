@@ -1,0 +1,125 @@
+{
+  "originalResult": "failed",
+  "originalCleanupAccepted": false,
+  "originalPrivateMaterialRemoved": false,
+  "outerDisposableWorkspaceAbsent": true,
+  "privateDirectoryAbsent": true,
+  "originalFailureRetained": true,
+  "scope": "Post-exit observations supplement the failed original cleanup report; they do not accept it or the feature.",
+  "exactContainers": [
+    {
+      "resource": "dapr-sentry",
+      "containerId": "982d025cc9649c91a3c4262d612b2a9124de023f55e75cf9dfd00494852f88e0",
+      "absent": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "b438b7d06f67c6a7e229334adf03a3ed588d374c1e767d34a0d620a6a5f50593",
+      "absent": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "6004b6237112f5a6386c72892de99272eadb7827c630bdfd54232e158cc5d655",
+      "absent": true
+    },
+    {
+      "resource": "reads-ad60b14dd05d15d90e60d514-redishost",
+      "containerId": "f8c71a8c2445f3e713688336e30a3ca307d1c03d7389b7e453c92bf7383e7360",
+      "absent": true
+    },
+    {
+      "resource": "reads-ad60b14dd05d15d90e60d514-oidc",
+      "containerId": "1ac959911e526bdafb41783b26873921064003555be3bf930ec8d67f5aa5c1e1",
+      "absent": true
+    }
+  ],
+  "allFiveExactContainersAbsent": true,
+  "runtimeIdentities": [
+    {
+      "role": "eventstore",
+      "kind": "wrapper",
+      "pid": 461647,
+      "recordedStartTicks": "9717097",
+      "pidAbsent": true
+    },
+    {
+      "role": "eventstore",
+      "kind": "runtime",
+      "pid": 462142,
+      "recordedStartTicks": "9717168",
+      "pidAbsent": true
+    },
+    {
+      "role": "tenants",
+      "kind": "wrapper",
+      "pid": 461351,
+      "recordedStartTicks": "9717037",
+      "pidAbsent": true
+    },
+    {
+      "role": "tenants",
+      "kind": "runtime",
+      "pid": 461672,
+      "recordedStartTicks": "9717099",
+      "pidAbsent": true
+    },
+    {
+      "role": "projects",
+      "kind": "wrapper",
+      "pid": 461823,
+      "recordedStartTicks": "9717120",
+      "pidAbsent": true
+    },
+    {
+      "role": "projects",
+      "kind": "runtime",
+      "pid": 462327,
+      "recordedStartTicks": "9717193",
+      "pidAbsent": true
+    },
+    {
+      "role": "projects-workers",
+      "kind": "wrapper",
+      "pid": 462001,
+      "recordedStartTicks": "9717143",
+      "pidAbsent": true
+    },
+    {
+      "role": "projects-workers",
+      "kind": "runtime",
+      "pid": 462611,
+      "recordedStartTicks": "9717215",
+      "pidAbsent": true
+    },
+    {
+      "role": "folders",
+      "kind": "wrapper",
+      "pid": 462189,
+      "recordedStartTicks": "9717173",
+      "pidAbsent": true
+    },
+    {
+      "role": "folders",
+      "kind": "runtime",
+      "pid": 462937,
+      "recordedStartTicks": "9717255",
+      "pidAbsent": true
+    },
+    {
+      "role": "folders-workers",
+      "kind": "wrapper",
+      "pid": 462405,
+      "recordedStartTicks": "9717197",
+      "pidAbsent": true
+    },
+    {
+      "role": "folders-workers",
+      "kind": "runtime",
+      "pid": 463058,
+      "recordedStartTicks": "9717275",
+      "pidAbsent": true
+    }
+  ],
+  "allRecordedRuntimePidsAbsent": true,
+  "preexistingContainerIdsStillPresent": true
+}

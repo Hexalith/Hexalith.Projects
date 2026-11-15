@@ -1123,6 +1123,80 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
                 self.assertEqual(report["cleanup"][0].get("absenceVerified", False), accepted)
                 self.assertEqual(report["result"], "passed" if accepted else "failed")
 
+    def test_concurrent_owned_removal_waits_for_exact_absence_without_retrying_removal(self):
+        identity = container_id("concurrent-removal")
+        calls = []
+        failure = RuntimeError("private Docker diagnostic")
+        failure.command_output = "Error response from daemon: removal of container " + identity + " is already in progress\n"
+        def execute(command, **_kwargs):
+            calls.append(command)
+            if command[:3] == ["docker", "inspect", "--format"]:
+                return json.dumps({"id": identity, "owner": "scope"})
+            if command[:2] == ["docker", "rm"]:
+                raise failure
+            self.fail("Unexpected cleanup command")
+        report = {"result": "passed", "cleanup": []}
+        with patch.object(LAUNCHER, "execute", side_effect=execute), patch.object(LAUNCHER, "container_listing", side_effect=[
+                {identity: {"owned"}}, {identity: {"owned"}}, {}]), patch.object(LAUNCHER.time, "sleep"):
+            LAUNCHER.cleanup_resources(None, [{"name": "owned", "id": identity}], "scope", None, report)
+        self.assertEqual(report["result"], "passed")
+        self.assertTrue(report["cleanup"][0]["removalAlreadyInProgress"])
+        self.assertTrue(report["cleanup"][0]["absenceVerified"])
+        self.assertEqual(len([command for command in calls if command[:2] == ["docker", "rm"]]), 1)
+
+    def test_in_progress_error_requires_exact_identity_and_successful_owner_checks(self):
+        identity = container_id("concurrent-removal")
+        outputs = ["Error response from daemon: removal of container " + value + " is already in progress" + suffix
+            for value, suffix in ((identity, ""), (identity[:12], ""), (container_id("foreign"), ""),
+                                  (identity, "\npermission denied"), (identity, " extra"))]
+        for owner in ("scope", "foreign"):
+            for output in outputs:
+                failure = RuntimeError("private Docker diagnostic")
+                failure.command_output = output
+                removed = []
+                def execute(command, **_kwargs):
+                    if command[:3] == ["docker", "inspect", "--format"]:
+                        return json.dumps({"id": identity, "owner": owner})
+                    if command[:2] == ["docker", "rm"]:
+                        removed.append(command[-1])
+                        raise failure
+                    self.fail("Unexpected cleanup command")
+                report = {"result": "passed", "cleanup": []}
+                with self.subTest(owner=owner, output=output), patch.object(LAUNCHER, "execute", side_effect=execute), patch.object(
+                        LAUNCHER, "container_listing", side_effect=[{identity: {"owned"}}, {}]):
+                    LAUNCHER.cleanup_resources(None, [{"name": "owned", "id": identity}], "scope", None, report)
+                accepted = owner == "scope" and output == outputs[0]
+                self.assertEqual(report["result"], "passed" if accepted else "failed")
+                self.assertEqual(report["cleanup"][0].get("absenceVerified", False), accepted)
+                self.assertEqual(removed, [identity] if owner == "scope" else [])
+
+    def test_owned_in_progress_removal_still_fails_when_absence_is_unproven(self):
+        identity = container_id("concurrent-removal")
+        for observation in ({identity: {"owned"}}, RuntimeError("listing unavailable")):
+            failure = RuntimeError("private Docker diagnostic")
+            failure.command_output = "Error response from daemon: removal of container " + identity + " is already in progress"
+            def execute(command, **_kwargs):
+                if command[:3] == ["docker", "inspect", "--format"]:
+                    return json.dumps({"id": identity, "owner": "scope"})
+                if command[:2] == ["docker", "rm"]:
+                    raise failure
+                self.fail("Unexpected cleanup command")
+            def listing():
+                nonlocal first
+                if first:
+                    first = False
+                    return {identity: {"owned"}}
+                if isinstance(observation, Exception):
+                    raise observation
+                return observation
+            first = True
+            report = {"result": "passed", "cleanup": []}
+            with self.subTest(observation=observation), patch.object(LAUNCHER, "execute", side_effect=execute), patch.object(
+                    LAUNCHER, "container_listing", side_effect=listing):
+                LAUNCHER.cleanup_resources(None, [{"name": "owned", "id": identity}], "scope", None, report, container_wait_seconds=.01)
+            self.assertEqual(report["result"], "failed")
+            self.assertNotIn("absenceVerified", report["cleanup"][0])
+
     def test_partial_creation_recovers_immutable_cidfile(self):
         identity = container_id("creation")
         with tempfile.TemporaryDirectory() as directory:

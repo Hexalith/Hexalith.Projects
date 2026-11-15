@@ -1,0 +1,46 @@
+{
+  "originalResult": "failed",
+  "originalCleanupAccepted": true,
+  "originalPrivateMaterialRemoved": true,
+  "originalPreexistingResourcesPreserved": false,
+  "originalExternalObservationsChanged": {
+    "apphosts": [],
+    "containers": [
+      "fc35ea859492"
+    ],
+    "sidecars": []
+  },
+  "sourceManifestExact": true,
+  "sourceInputs": 17765,
+  "allFiveExactContainersAbsent": true,
+  "ownedNamespaceHasNoContainers": true,
+  "exactContainers": [
+    {
+      "resource": "dapr-sentry",
+      "containerId": "2e424a75de04cb134383c19a20cd0be34a6ed92d4cb9663b53ec659554fce2b6",
+      "absent": true
+    },
+    {
+      "resource": "dapr-placement-mtls",
+      "containerId": "e68bceb8053cfd5302480a28500f0020e31aa223cfff19261bb7575625ad64e7",
+      "absent": true
+    },
+    {
+      "resource": "dapr-scheduler-mtls",
+      "containerId": "c5d5c73a15c540125903f64265bc0690596cb13c86d22b5410351c40630eeb20",
+      "absent": true
+    },
+    {
+      "resource": "reads-ed6ed5139ef24adf43386b4f-redishost",
+      "containerId": "853b4c4c522ac9cbf98eb54ae581d68bf5bea54772dba1f3445bb3465d59d1e1",
+      "absent": true
+    },
+    {
+      "resource": "reads-ed6ed5139ef24adf43386b4f-oidc",
+      "containerId": "8f5837d5b0242c69e3d5334e5d2a77d73d4f1523aa4af90eba085d33073f275d",
+      "absent": true
+    }
+  ],
+  "recordedRuntimePidsAbsent": true,
+  "nativeSeedProcessGroupsAbsent": true
+}

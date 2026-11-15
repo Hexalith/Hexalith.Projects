@@ -1042,7 +1042,25 @@ def wait_for_owned_sidecar_absence(isolation: str, before: dict, *, seconds: flo
         return remaining, False
 
 
-def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: str, run, report: dict, *, sidecar_wait_seconds: float = 10) -> None:
+def wait_for_container_absence(container_id: str, *, seconds: float = 10) -> bool:
+    """Await only fresh exact-ID absence while Docker completes an already authorized removal."""
+    deadline = time.monotonic() + seconds
+    try:
+        with restart_budget(seconds):
+            while True:
+                if container_id not in container_listing():
+                    return True
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    return False
+                time.sleep(min(.1, remaining))
+    except BaseException:
+        # A deadline, malformed listing or observation failure never proves absence.
+        return False
+
+
+def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: str, run, report: dict, *,
+                      sidecar_wait_seconds: float = 10, container_wait_seconds: float = 10) -> None:
     """Attempt every owned cleanup, verifying immutable IDs and fresh process absence."""
     if owned_apphost:
         before, remaining = {}, {}
@@ -1069,6 +1087,7 @@ def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: 
             report["result"] = "failed"
     for resource in reversed(owned):
         name, container_id = resource["name"], resource.get("id")
+        removal_authorized = False
         try:
             if container_id is None and resource.get("cidfile"):
                 try:
@@ -1095,24 +1114,26 @@ def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: 
                 if (len(current) != 1 or current[0].get("Id") != container_id or current[0].get("Image") != resource["imageId"]
                         or current[0].get("HostConfig", {}).get("PortBindings") != resource["portConfiguration"]):
                     raise RuntimeError("Canonical container identity changed; refusing removal.")
+            removal_authorized = True
             execute(["docker", "rm", "-f", "-v", container_id])
-            if container_id in container_listing():
-                raise RuntimeError("Owned container remains after removal")
+            if not wait_for_container_absence(container_id, seconds=container_wait_seconds):
+                raise RuntimeError("Owned container absence is not proven after removal")
             report["cleanup"].append({"resource": name, "containerId": container_id, "removed": True, "absenceVerified": True})
         except BaseException as failure:
-            # Aspire may finish removing an exact captured container between listing and
-            # inspection/removal. Only Docker's exact missing-ID response plus a fresh
-            # successful complete listing can prove that race; all other failures retain recovery.
+            # Aspire may remove an exact captured container concurrently. An exact missing-ID
+            # response, or an exact in-progress response after all removal ownership checks,
+            # permits bounded observation only. Never retry removal or infer absence from an error.
             missing = (isinstance(container_id, str) and re.fullmatch(r"[0-9a-f]{64}", container_id)
                 and re.fullmatch(r"(?:\[\]\s*)?(?:Error(?: response from daemon)?: No such (?:object|container): |error: no such object: )"
                                  + re.escape(container_id) + r"\s*", getattr(failure, "command_output", "").strip()))
-            try:
-                absent = bool(missing) and container_id not in container_listing()
-            except BaseException:
-                absent = False
+            in_progress = (removal_authorized and isinstance(failure, RuntimeError)
+                and re.fullmatch(r"Error response from daemon: removal of container " + re.escape(container_id)
+                                 + r" is already in progress\s*", getattr(failure, "command_output", "").strip()))
+            absent = bool(missing or in_progress) and wait_for_container_absence(container_id, seconds=container_wait_seconds)
             if absent:
                 report["cleanup"].append({"resource": name, "containerId": container_id, "removed": True,
-                                          "alreadyAbsent": True, "absenceVerified": True, "disappearedDuringCleanup": True})
+                                          "alreadyAbsent": True, "absenceVerified": True, "disappearedDuringCleanup": True,
+                                          **({"removalAlreadyInProgress": True} if in_progress else {})})
             else:
                 report["cleanup"].append({"resource": name, "removed": False})
                 report["result"] = "failed"

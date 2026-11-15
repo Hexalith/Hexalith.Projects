@@ -1,0 +1,160 @@
+{
+  "lanes": {
+    "ui": {
+      "xml": "native-retry/ui.xml",
+      "sha256": "8e1efe454a9c6dfd958c786ea7d0903ee6873ebc0c830a744ef6da154280d90b",
+      "counts": {
+        "total": 211,
+        "passed": 211,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      }
+    },
+    "server": {
+      "xml": "native-retry/server.xml",
+      "sha256": "c883207817672f690f28c98d82f2ad71df595d03b0df6d3428347ad164852996",
+      "counts": {
+        "total": 324,
+        "passed": 324,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      }
+    },
+    "contracts": {
+      "xml": "native-retry/contracts.xml",
+      "sha256": "66081ba7292eabf94424ef01d92b0ee8511d50c83c56e99954a0879e0e556f77",
+      "counts": {
+        "total": 46,
+        "passed": 46,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      }
+    },
+    "integration": {
+      "xml": "native-readiness/integration.xml",
+      "sha256": "7a1790fade9a5bd2159292bdbc87cd193bcf9c2b6bb4d6ace656ed0aa515ffc5",
+      "counts": {
+        "total": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      }
+    },
+    "owner": {
+      "xml": "native-retry/owner.xml",
+      "sha256": "79512d5e03c995d7faf5d8424e52fcf162d62bf5e76f2a8b595a56afca31dcb8",
+      "counts": {
+        "total": 460,
+        "passed": 460,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      }
+    }
+  },
+  "uniqueTotal": 1086,
+  "allPassedWithoutOmissions": true,
+  "matrix": {
+    "allFiveRowsCoveredAndPassed": true,
+    "executedCoveringCases": 12,
+    "rows": [
+      {
+        "row": 1,
+        "given": "Anonymous/missing authority",
+        "when": "Supported route loads",
+        "then": "Challenge or fail closed before protected queries",
+        "coveringTests": [
+          {
+            "name": "Hexalith.Projects.UI.Tests.Authentication.ProjectsUiAuthenticationCompositionTests.RoutesShouldProtectInteractiveRenderingAndChallengeAnonymousUsers",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.MissingServerAuthenticationFailsBeforeGatewayIncludingAuthDisabledStartup",
+            "result": "Pass"
+          }
+        ]
+      },
+      {
+        "row": 2,
+        "given": "Authorized page and degraded row",
+        "when": "Inventory renders",
+        "then": "Preserve page enumeration and each row snapshot independently",
+        "coveringTests": [
+          {
+            "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.InventoryRendersIndependentEnumerationAndRowEvidenceWithoutInventedDatesOrWarnings",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.InventoryPreservesIndependentPageAndDegradedRowEvidenceWithoutDiagnosticFanout",
+            "result": "Pass"
+          }
+        ]
+      },
+      {
+        "row": 3,
+        "given": "Open/context/start observations differ",
+        "when": "Detail renders",
+        "then": "Separate states, times, versions, omissions and recovery; no combined admission",
+        "coveringTests": [
+          {
+            "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.DetailLabelsThreeIndependentStatesAndVersionsAndOffersNoUnsupportedControls",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DetailPreservesThreeStatesVersionsAndConversationStartComponentType",
+            "result": "Pass"
+          }
+        ]
+      },
+      {
+        "row": 4,
+        "given": "Absent/denied/foreign/unverifiable target",
+        "when": "Open requested",
+        "then": "Identical generic safe absence without protected metadata",
+        "coveringTests": [
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 401)",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 403)",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 404)",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(status: 503)",
+            "result": "Pass"
+          }
+        ]
+      },
+      {
+        "row": 5,
+        "given": "Incomplete advisory or unsupported File",
+        "when": "Suggestions render",
+        "then": "Explicit coverage limits; no exhaustive NoMatch, selection or admission claim",
+        "coveringTests": [
+          {
+            "name": "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests.EmptyIncompleteAdvisoryHasNoExhaustiveMatchOrSelectionClaim",
+            "result": "Pass"
+          },
+          {
+            "name": "Hexalith.Projects.UI.Tests.Diagnostics.SupportedProjectReadSourceTests.AdvisoryPreservesNullIncompleteFileCoverageAndComputationTime",
+            "result": "Pass"
+          }
+        ]
+      }
+    ]
+  }
+}
