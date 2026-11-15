@@ -1,0 +1,39 @@
+{
+ "scope": "run live-oidc-port-repair, final ~60 s of MULTIPLE readiness (27 sequential attempts); private /proc counters only, numeric, role names only",
+ "method": "per-PID utime+stime deltas from /proc/<pid>/stat at 1 s cadence for this checkout's service processes; system busy from /proc/stat",
+ "window": {
+  "wallSeconds": 60.4,
+  "cpuSecondsPerWallSecond": {
+   "eventstore": 1.165,
+   "daprd:eventstore": 0.449,
+   "folders": 0.241,
+   "projects": 0.077,
+   "daprd:projects": 0.055,
+   "read-authority": 0.051,
+   "tenants": 0.024,
+   "seed-test": 0.012,
+   "projects-workers": 0.007,
+   "folders-workers": 0.007
+  },
+  "serviceCpuPerWallSecond": 2.088,
+  "systemBusyFraction": 0.495,
+  "meanLoad": 7.82
+ },
+ "gatewayTenSecondSample": {
+  "utimeTicks": 857,
+  "stimeTicks": 208,
+  "clockTicksPerSecond": 100,
+  "rcharBytes": 9205305392,
+  "storageReadBytes": 0
+ },
+ "foldersTenSecondSample": {
+  "utimeTicks": 146,
+  "stimeTicks": 72,
+  "clockTicksPerSecond": 100
+ },
+ "limits": [
+  "rchar counts read-syscall input served from page cache; attributing it to the mandated fresh image reads is a source-based inference, not a per-call measurement",
+  "CPU seconds are not per-request costs and do not identify individual awaits, locks or the expiring stage",
+  "the host was shared with other agent workloads (mean 1-minute load 7.8 on 14 CPUs, about 50% busy), so absolute values are environment-dependent"
+ ]
+}

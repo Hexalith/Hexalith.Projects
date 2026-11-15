@@ -2578,6 +2578,132 @@ class BrowserReceiptControls(unittest.TestCase):
             self.assertFalse(evidence.exists())
 
 
+class OidcPublishedPortControls(unittest.TestCase):
+    """Only Docker's exact refused-port response replaces the exact unstarted owned OIDC container."""
+
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("supported_browser_reads", ROOT / "tools/qualification/supported_browser_reads.py")
+        self.browser = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.browser)
+
+    @staticmethod
+    def refused(port, created):
+        return ("Error response from daemon: ports are not available: exposing port TCP 127.0.0.1:" + str(port)
+                + " -> 127.0.0.1:0: /forwards/expose returned unexpected status: 500\nfailed to start containers: " + created)
+
+    def docker(self, starts, *, owner="isolation", running=False):
+        """Fake Docker: creation writes the cidfile; each start consumes the next scripted output."""
+        state = {"commands": [], "containers": set(), "created": 0}
+        def run(command, **_):
+            state["commands"].append(list(command))
+            verb = command[1]
+            if verb == "create":
+                state["created"] += 1
+                created = format(state["created"], "064x")
+                cidfile = Path(command[command.index("--cidfile") + 1])
+                if cidfile.exists(): raise RuntimeError("cidfile exists")
+                cidfile.write_text(created)
+                state["containers"].add(created)
+                return created + "\n"
+            if verb == "start":
+                outcome = starts.pop(0)
+                if outcome is None: return command[2] + "\n"
+                failure = RuntimeError("Command failed (1): docker start " + command[2])
+                failure.command_output = outcome(command[2]) if callable(outcome) else outcome
+                raise failure
+            if verb == "inspect":
+                return json.dumps({"id": command[-1], "owner": owner, "running": running})
+            if verb == "rm":
+                state["containers"].discard(command[-1])
+                return command[-1] + "\n"
+            if verb == "ps":
+                return "".join(item + "\n" for item in sorted(state["containers"]))
+            raise AssertionError(command)
+        return run, state
+
+    def start(self, private, run, ports, **options):
+        resource = {"name": "isolation-oidc", "id": None, "cidfile": str(private / "oidc.cid")}
+        allocated = iter(ports)
+        result = self.browser.start_owned_oidc(private, "isolation", resource, private / "browser-realm.json", run, lambda: next(allocated), **options)
+        return resource, result
+
+    def test_exact_refused_port_replaces_only_the_unstarted_owned_container(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            run, state = self.docker([lambda created: self.refused(50213, created), None])
+            resource, (created, origin) = self.start(private, run, [50213, 46501])
+            first, second = format(1, "064x"), format(2, "064x")
+            self.assertEqual((created, origin, resource["id"]), (second, "https://127.0.0.1:46501", second))
+            self.assertEqual((private / "oidc.cid").read_text(), second)
+            self.assertEqual(state["containers"], {second})
+            verbs = [command[1] for command in state["commands"]]
+            self.assertEqual(verbs, ["create", "start", "inspect", "rm", "ps", "create", "start"])
+            self.assertEqual(state["commands"][3], ["docker", "rm", "-v", first])
+            self.assertIn("127.0.0.1:50213:8443", state["commands"][0]); self.assertIn("--hostname=https://127.0.0.1:50213", state["commands"][0])
+            self.assertIn("127.0.0.1:46501:8443", state["commands"][5]); self.assertIn("--hostname=https://127.0.0.1:46501", state["commands"][5])
+
+    def test_linux_engine_allocated_port_response_is_also_exact(self):
+        refusal = ("Error response from daemon: driver failed programming external connectivity on endpoint isolation-oidc (abc): "
+                   "Bind for 127.0.0.1:40001 failed: port is already allocated")
+        for port, expected in ((40001, True), (40002, False)):
+            failure = RuntimeError("Command failed (1): docker start"); failure.command_output = refusal
+            self.assertIs(self.browser.unavailable_oidc_port(failure, port), expected)
+
+    def test_other_start_failures_and_other_ports_never_replace_a_container(self):
+        cases = {
+            "unrelated": "Error response from daemon: invalid mount config",
+            "other-port": lambda created: self.refused(50214, created),
+            "empty": "",
+            "suffix-only": lambda created: "prefix " + self.refused(50213, created),
+        }
+        for kind, outcome in cases.items():
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                private = Path(temporary)
+                run, state = self.docker([outcome])
+                resource = {"name": "isolation-oidc", "id": None, "cidfile": str(private / "oidc.cid")}
+                with self.assertRaises(RuntimeError):
+                    self.browser.start_owned_oidc(private, "isolation", resource, private / "realm.json", run, lambda: 50213)
+                self.assertEqual([command[1] for command in state["commands"]], ["create", "start"])
+                # The failed container remains owned and identified for the ordinary exact cleanup.
+                self.assertEqual(resource["id"], format(1, "064x")); self.assertEqual(state["containers"], {format(1, "064x")})
+
+    def test_foreign_or_running_refused_container_is_never_removed(self):
+        for options in ({"owner": "foreign"}, {"running": True}):
+            with self.subTest(options=options), tempfile.TemporaryDirectory() as temporary:
+                private = Path(temporary)
+                run, state = self.docker([lambda created: self.refused(50213, created), None], **options)
+                with self.assertRaises(RuntimeError):
+                    self.start(private, run, [50213, 46501])
+                self.assertNotIn("rm", [command[1] for command in state["commands"]])
+                self.assertEqual(state["containers"], {format(1, "064x")})
+
+    def test_refused_ports_are_bounded_and_the_last_container_stays_owned(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            ports = [50201, 50202, 50203]
+            run, state = self.docker([lambda created, port=port: self.refused(port, created) for port in ports])
+            resource = {"name": "isolation-oidc", "id": None, "cidfile": str(private / "oidc.cid")}
+            allocated = iter(ports)
+            with self.assertRaises(RuntimeError):
+                self.browser.start_owned_oidc(private, "isolation", resource, private / "realm.json", run, lambda: next(allocated), attempts=3)
+            self.assertEqual([command[1] for command in state["commands"]].count("create"), 3)
+            self.assertEqual([command[1] for command in state["commands"]].count("rm"), 2)
+            self.assertEqual(resource["id"], format(3, "064x")); self.assertEqual(state["containers"], {format(3, "064x")})
+
+    def test_unproven_absence_after_removal_refuses_without_new_creation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            private = Path(temporary)
+            run, state = self.docker([lambda created: self.refused(50213, created), None])
+            def persistent(command, **options):
+                output = run(command, **options)
+                if command[1] == "rm": state["containers"].add(command[-1])
+                return output
+            with self.assertRaises(RuntimeError):
+                self.start(private, persistent, [50213, 46501])
+            self.assertEqual([command[1] for command in state["commands"]].count("create"), 1)
+            self.assertTrue((private / "oidc.cid").exists())
+
+
 class BrowserReviewCorrectionsTests(unittest.TestCase):
     def setUp(self):
         spec = importlib.util.spec_from_file_location("supported_browser_reads", ROOT / "tools/qualification/supported_browser_reads.py")

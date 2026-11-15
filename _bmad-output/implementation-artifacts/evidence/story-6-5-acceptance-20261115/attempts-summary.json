@@ -1,0 +1,81 @@
+{
+ "rootRevision": "6bed1ee4f3d58ea0bb4d57ae9663c20d97a710ec",
+ "command": "E2E_SUPPORTED_READS_ONLY=1 E2E_SUPPORTED_EVIDENCE=<packet>/<attempt> run-with-temp npm --prefix tests/e2e run test:live:managed",
+ "attempts": [
+  {
+   "directory": "live",
+   "note": "source preparation failed: pwsh (a .NET global tool) was not on this session's PATH; Hexalith.Builds.Tooling write-platform-version-catalog.ps1 exited 127",
+   "result": "failed",
+   "failure": "Command failed (1): dotnet run --project",
+   "launcherControlsPassed": 158,
+   "cleanupEntries": 0,
+   "allCleanupRemoved": true,
+   "preexistingResourcesPreserved": true,
+   "privateMaterialRemoved": true,
+   "ownedSidecarsAbsent": null,
+   "browserCases": 0
+  },
+  {
+   "directory": "live-retry",
+   "note": "owned OIDC docker start refused: host port inside a Windows-excluded range (Docker Desktop 'ports are not available')",
+   "result": "failed",
+   "failure": "Command failed (1): docker start 58098697fc0a504c780cd73ffea0842152a61d6346dd590cb168764011e4b121",
+   "launcherControlsPassed": 158,
+   "cleanupEntries": 1,
+   "allCleanupRemoved": true,
+   "preexistingResourcesPreserved": true,
+   "privateMaterialRemoved": true,
+   "ownedSidecarsAbsent": null,
+   "browserCases": 0
+  },
+  {
+   "directory": "live-retry-2",
+   "note": "full topology; advisory readiness timed out",
+   "result": "failed",
+   "failure": "The native browser seed did not execute its exact passing case without errors or skips.",
+   "launcherControlsPassed": 158,
+   "cleanupEntries": 6,
+   "allCleanupRemoved": true,
+   "preexistingResourcesPreserved": true,
+   "privateMaterialRemoved": true,
+   "ownedSidecarsAbsent": true,
+   "browserCases": 0,
+   "single": {
+    "attempts": 30,
+    "verifiedPositiveAttempts": [],
+    "allHttp200": true,
+    "elapsedMillisecondsMin": 2434.2,
+    "elapsedMillisecondsMax": 2696.6
+   }
+  },
+  {
+   "directory": "live-oidc-port-repair",
+   "note": "full topology with the OIDC published-port repair; advisory readiness timed out",
+   "result": "failed",
+   "failure": "The native browser seed did not execute its exact passing case without errors or skips.",
+   "launcherControlsPassed": 164,
+   "cleanupEntries": 6,
+   "allCleanupRemoved": true,
+   "preexistingResourcesPreserved": true,
+   "privateMaterialRemoved": true,
+   "ownedSidecarsAbsent": true,
+   "browserCases": 0,
+   "single": {
+    "attempts": 6,
+    "verifiedPositiveAttempts": [
+     6
+    ],
+    "allHttp200": true,
+    "elapsedMillisecondsMin": 2426.1,
+    "elapsedMillisecondsMax": 2625.3
+   },
+   "multiple": {
+    "attempts": 27,
+    "verifiedPositiveAttempts": [],
+    "allHttp200": true,
+    "elapsedMillisecondsMin": 2405.3,
+    "elapsedMillisecondsMax": 2762.1
+   }
+  }
+ ]
+}

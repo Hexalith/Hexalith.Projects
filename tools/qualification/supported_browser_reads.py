@@ -24,6 +24,8 @@ PROTECTED_FIXTURE_MARKERS = (
     'Legacy project legacy-b', 'Restricted legacy description', 'Restricted legacy setup reference',
 )
 JWT_PATTERN = re.compile(r'eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}')
+# A free Linux port may still be unpublishable by Docker Desktop; each refused port is replaced, finitely.
+OIDC_PORT_ATTEMPTS = 5
 
 
 def sanitize_output(value, protected):
@@ -94,6 +96,66 @@ def wait_for_oidc(authority, context, *, seconds=120, clock=time.monotonic, slee
         sleep(0.25)
 
 
+def unavailable_oidc_port(failure, port):
+    """Recognize only the daemon's exact refusal to publish this requested loopback port.
+
+    Docker Desktop on WSL cannot expose host ports inside Windows-excluded ranges, which a free
+    Linux port can fall into; the Linux engine reports a concurrently allocated port instead.
+    """
+    output = getattr(failure, 'command_output', None)
+    if not isinstance(failure, RuntimeError) or not isinstance(output, str) or type(port) is not int:
+        return False
+    published = re.escape(f'127.0.0.1:{port}')
+    return re.match(r'Error response from daemon: (?:ports are not available: exposing port TCP ' + published + r' -> '
+                    r'|driver failed programming external connectivity on endpoint [^\n]*: Bind for ' + published
+                    + r' failed: port is already allocated)', output.strip()) is not None
+
+
+def discard_unstarted_oidc(run, created, isolation, resource):
+    """Remove only the exact, owned, never-running container whose port was refused, proving absence."""
+    observed = json.loads(run(['docker', 'inspect', '--format', '{"id":{{json .Id}},"owner":{{json (index .Config.Labels '
+                               '"hexalith.supported-reads")}},"running":{{json .State.Running}}}', created]))
+    if observed != {'id': created, 'owner': isolation, 'running': False}:
+        raise RuntimeError('OIDC container ownership is unproven.')
+    run(['docker', 'rm', '-v', created])
+    if created in run(['docker', 'ps', '--all', '--no-trunc', '--format', '{{.ID}}']).split():
+        raise RuntimeError('Owned OIDC container absence is not proven after removal.')
+    os.remove(resource['cidfile'])
+    resource['id'] = None
+
+
+def start_owned_oidc(private, isolation, resource, realm_path, run, free_port, *, attempts=OIDC_PORT_ATTEMPTS):
+    """Create and start the owned HTTPS OIDC container; only an exact refused port selects a new port."""
+    for attempt in range(1, attempts + 1):
+        port = free_port()
+        origin = f'https://127.0.0.1:{port}'
+        previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT})
+        try:
+            created = run(['docker', 'create', '--cidfile', resource['cidfile'], '--name', resource['name'], '--label',
+                           'hexalith.supported-reads=' + isolation, '-p', f'127.0.0.1:{port}:8443',
+                           '-v', str(realm_path) + ':/opt/keycloak/data/import/fixture.json:ro',
+                           '-v', str(private / 'certificate.pem') + ':/opt/keycloak/conf/server.crt:ro',
+                           '-v', str(private / 'certificate.key') + ':/opt/keycloak/conf/server.key:ro',
+                           'quay.io/keycloak/keycloak:26.6', 'start-dev', '--import-realm', '--http-enabled=false',
+                           '--https-certificate-file=/opt/keycloak/conf/server.crt', '--https-certificate-key-file=/opt/keycloak/conf/server.key',
+                           '--hostname=' + origin]).strip()
+        finally:
+            try:
+                if Path(resource['cidfile']).exists(): resource['id'] = Path(resource['cidfile']).read_text().strip()
+            finally:
+                signal.pthread_sigmask(signal.SIG_SETMASK, previous)
+        if len(created) != 64 or created != resource['id']:
+            raise RuntimeError('OIDC container ownership is unproven.')
+        try:
+            run(['docker', 'start', created])
+            return created, origin
+        except RuntimeError as failure:
+            if attempt == attempts or not unavailable_oidc_port(failure, port):
+                raise
+        discard_unstarted_oidc(run, created, isolation, resource)
+    raise RuntimeError('Owned HTTPS OIDC container start failed.')
+
+
 def prepare_oidc(root, private, isolation, owned, run, free_port, password, *, extra_permissions=()):
     """Own an HTTPS Keycloak before AppHost startup; leave all existing private guards intact."""
     realm = json.loads((root / 'src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json').read_text())
@@ -133,30 +195,11 @@ def prepare_oidc(root, private, isolation, owned, run, free_port, password, *, e
     realm_path = private / 'browser-realm.json'
     realm_path.write_text(json.dumps(realm))
     os.chmod(realm_path, 0o600)
-    port = free_port()
-    origin = f'https://127.0.0.1:{port}'
-    authority = origin + '/realms/hexalith'
     name = isolation + '-oidc'
     resource = {'name': name, 'id': None, 'cidfile': str(private / 'oidc.cid')}
     owned.append(resource)
-    previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGTERM, signal.SIGINT})
-    try:
-        created = run(['docker', 'create', '--cidfile', resource['cidfile'], '--name', name, '--label',
-                       'hexalith.supported-reads=' + isolation, '-p', f'127.0.0.1:{port}:8443',
-                       '-v', str(realm_path) + ':/opt/keycloak/data/import/fixture.json:ro',
-                       '-v', str(private / 'certificate.pem') + ':/opt/keycloak/conf/server.crt:ro',
-                       '-v', str(private / 'certificate.key') + ':/opt/keycloak/conf/server.key:ro',
-                       'quay.io/keycloak/keycloak:26.6', 'start-dev', '--import-realm', '--http-enabled=false',
-                       '--https-certificate-file=/opt/keycloak/conf/server.crt', '--https-certificate-key-file=/opt/keycloak/conf/server.key',
-                       '--hostname=' + origin]).strip()
-    finally:
-        try:
-            if Path(resource['cidfile']).exists(): resource['id'] = Path(resource['cidfile']).read_text().strip()
-        finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, previous)
-    if len(created) != 64 or created != resource['id']:
-        raise RuntimeError('OIDC container ownership is unproven.')
-    run(['docker', 'start', created])
+    created, origin = start_owned_oidc(private, isolation, resource, realm_path, run, free_port)
+    authority = origin + '/realms/hexalith'
     context = ssl.create_default_context(cafile=str(private / 'certificate.pem'))
     wait_for_oidc(authority, context)
     tokens = {}
