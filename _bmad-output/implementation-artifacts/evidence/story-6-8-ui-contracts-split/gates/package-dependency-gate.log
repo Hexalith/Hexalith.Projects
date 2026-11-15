@@ -1,0 +1,153 @@
+package-dependency-gate: dotnet restore /home/administrator/projects/hexalith/projects/Hexalith.Projects.CI.slnx -p:Configuration=Release -p:UseHexalithProjectReferences=false /m:1 /nr:false
+  Determining projects to restore...
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/Generation/Hexalith.Projects.Client.Generation.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/Hexalith.Tenants.Contracts.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects/Hexalith.Projects.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Aspire/Hexalith.Projects.Aspire.csproj (in 271 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/Generation/Shared/Hexalith.Projects.Client.Generation.Shared.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Cli/Hexalith.Projects.Cli.csproj (in 259 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Hexalith.EventStore.Client.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj (in 259 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Abstractions/Hexalith.EventStore.Admin.Abstractions.csproj (in 259 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj (in 261 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Mcp.Tests/Hexalith.Projects.Mcp.Tests.csproj (in 269 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj (in 258 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.ServiceDefaults/Hexalith.Projects.ServiceDefaults.csproj (in 6 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj (in 261 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj (in 271 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Mcp/Hexalith.Projects.Mcp.csproj (in 11 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.UI.Contracts/Hexalith.Projects.UI.Contracts.csproj (in 9 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj (in 5 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Cli.Tests/Hexalith.Projects.Cli.Tests.csproj (in 14 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Testing/Hexalith.Projects.Testing.csproj (in 9 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj (in 3 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Infrastructure/Hexalith.Projects.Infrastructure.csproj (in 15 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj (in 20 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj (in 24 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj (in 29 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj (in 69 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj (in 82 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj (in 69 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj (in 63 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Hexalith.Tenants.Server.csproj (in 75 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj (in 13 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj (in 93 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj (in 16 ms).
+  Restored /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj (in 17 ms).
+  Restored /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj (in 100 ms).
+  1 of 36 projects are up-to-date for restore.
+package-dependency-gate: dotnet build /home/administrator/projects/hexalith/projects/Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror -p:UseHexalithProjectReferences=false /m:1 /nr:false
+  Hexalith.Projects.Contracts -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Contracts/bin/Release/net11.0/Hexalith.Projects.Contracts.dll
+  Hexalith.Projects -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects/bin/Release/net11.0/Hexalith.Projects.dll
+  Hexalith.Projects.Infrastructure -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Infrastructure/bin/Release/net11.0/Hexalith.Projects.Infrastructure.dll
+  Hexalith.Projects.ServiceDefaults -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.ServiceDefaults/bin/Release/net11.0/Hexalith.Projects.ServiceDefaults.dll
+  Hexalith.Projects.Server -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Server/bin/Release/net11.0/Hexalith.Projects.Server.dll
+  Hexalith.Projects.UI.Contracts -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.UI.Contracts/bin/Release/net11.0/Hexalith.Projects.UI.Contracts.dll
+  Hexalith.Projects.Client -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/bin/Release/net11.0/Hexalith.Projects.Client.dll
+  Hexalith.Projects.UI -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.UI/bin/Release/net11.0/Hexalith.Projects.UI.dll
+  Hexalith.Projects.Workers -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/bin/Release/net11.0/Hexalith.Projects.Workers.dll
+  Hexalith.EventStore.Contracts -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net11.0/Hexalith.EventStore.Contracts.dll
+  Hexalith.EventStore.Admin.Abstractions -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Abstractions/bin/Debug/net11.0/Hexalith.EventStore.Admin.Abstractions.dll
+  Hexalith.EventStore.Client -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/bin/Debug/net11.0/Hexalith.EventStore.Client.dll
+  Hexalith.EventStore.ServiceDefaults -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/bin/Debug/net11.0/Hexalith.EventStore.ServiceDefaults.dll
+  Hexalith.EventStore.DomainService -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/bin/Debug/net11.0/Hexalith.EventStore.DomainService.dll
+  Hexalith.EventStore.Server -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/bin/Debug/net11.0/Hexalith.EventStore.Server.dll
+  Hexalith.EventStore.Gateway -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/bin/Debug/net11.0/Hexalith.EventStore.Gateway.dll
+  Hexalith.EventStore -> /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/bin/Debug/net11.0/Hexalith.EventStore.dll
+  Hexalith.Tenants.Contracts -> /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/bin/Debug/net11.0/Hexalith.Tenants.Contracts.dll
+  Hexalith.Tenants.Server -> /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/bin/Debug/net11.0/Hexalith.Tenants.Server.dll
+  Hexalith.Tenants -> /home/administrator/projects/hexalith/projects/references/Hexalith.Tenants/src/Hexalith.Tenants/bin/Debug/net11.0/Hexalith.Tenants.dll
+  Hexalith.Projects.Aspire -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Aspire/bin/Release/net11.0/Hexalith.Projects.Aspire.dll
+  Hexalith.Projects.E2E.Fixtures -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.E2E.Fixtures/bin/Debug/net11.0/Hexalith.Projects.E2E.Fixtures.dll
+  Hexalith.Projects.AppHost -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/bin/Release/net11.0/Hexalith.Projects.AppHost.dll
+  Hexalith.Projects.Cli -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Cli/bin/Release/net11.0/Hexalith.Projects.Cli.dll
+  Hexalith.Projects.Client.Generation.Shared -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/Generation/Shared/bin/Release/net11.0/Hexalith.Projects.Client.Generation.Shared.dll
+  Hexalith.Projects.Client.Generation -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Client/Generation/bin/Release/net11.0/Hexalith.Projects.Client.Generation.dll
+  Hexalith.Projects.Mcp -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Mcp/bin/Release/net11.0/Hexalith.Projects.Mcp.dll
+  Hexalith.Projects.Testing -> /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Testing/bin/Release/net11.0/Hexalith.Projects.Testing.dll
+  Hexalith.Projects.Cli.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Cli.Tests/bin/Release/net11.0/Hexalith.Projects.Cli.Tests.dll
+  Hexalith.Projects.Client.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Client.Tests/bin/Release/net11.0/Hexalith.Projects.Client.Tests.dll
+  Hexalith.Projects.Contracts.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests/bin/Release/net11.0/Hexalith.Projects.Contracts.Tests.dll
+  Hexalith.Projects.Integration.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/bin/Release/net11.0/Hexalith.Projects.Integration.Tests.dll
+  Hexalith.Projects.Mcp.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Mcp.Tests/bin/Release/net11.0/Hexalith.Projects.Mcp.Tests.dll
+  Hexalith.Projects.Server.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Release/net11.0/Hexalith.Projects.Server.Tests.dll
+  Hexalith.Projects.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Tests/bin/Release/net11.0/Hexalith.Projects.Tests.dll
+  Hexalith.Projects.UI.Tests -> /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.UI.Tests/bin/Release/net11.0/Hexalith.Projects.UI.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:15.19
+package-dependency-gate: python3 /home/administrator/projects/hexalith/projects/scripts/pack-release-packages.py /tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun 91.92.93-ci.1
+Packing Hexalith.Projects.Contracts from src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun/Hexalith.Projects.Contracts.91.92.93-ci.1.nupkg'.
+Packing Hexalith.Projects from src/Hexalith.Projects/Hexalith.Projects.csproj
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun/Hexalith.Projects.91.92.93-ci.1.nupkg'.
+Packing Hexalith.Projects.Client from src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun/Hexalith.Projects.Client.91.92.93-ci.1.nupkg'.
+Packing Hexalith.Projects.Testing from src/Hexalith.Projects.Testing/Hexalith.Projects.Testing.csproj
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun/Hexalith.Projects.Testing.91.92.93-ci.1.nupkg'.
+Packing Hexalith.Projects.ServiceDefaults from src/Hexalith.Projects.ServiceDefaults/Hexalith.Projects.ServiceDefaults.csproj
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun/Hexalith.Projects.ServiceDefaults.91.92.93-ci.1.nupkg'.
+Packed and validated 5 release candidates at version 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e.
+package-dependency-gate: python3 /home/administrator/projects/hexalith/projects/scripts/validate-nuget-packages.py /tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun --expected-version 91.92.93-ci.1
+Verified Hexalith.Projects.Contracts 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e
+Verified Hexalith.Projects 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e
+Verified Hexalith.Projects.Client 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e
+Verified Hexalith.Projects.Testing 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e
+Verified Hexalith.Projects.ServiceDefaults 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e
+Validated 5 packages at version 91.92.93-ci.1 from 6bea95a379b6ab38d6ad71792da743072164ce3e.
+package-dependency-gate: python3 /home/administrator/projects/hexalith/projects/scripts/validate-consumer-package-references.py /tmp/claude-1000/-home-administrator-projects-hexalith-projects/52da104d-9c8e-4d3e-9e68-c478a1cb7a55/scratchpad/packages-rerun
+  Determining projects to restore...
+  Restored /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Contracts/Consumer.csproj (in 795 ms).
+  Consumer -> /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Contracts/bin/Release/net11.0/Consumer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.43
+  Determining projects to restore...
+  Restored /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects/Consumer.csproj (in 507 ms).
+  Consumer -> /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects/bin/Release/net11.0/Consumer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.40
+  Determining projects to restore...
+  Restored /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Client/Consumer.csproj (in 474 ms).
+  Consumer -> /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Client/bin/Release/net11.0/Consumer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.38
+  Determining projects to restore...
+  Restored /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Testing/Consumer.csproj (in 362 ms).
+  Consumer -> /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.Testing/bin/Release/net11.0/Consumer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.38
+  Determining projects to restore...
+  Restored /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.ServiceDefaults/Consumer.csproj (in 880 ms).
+  Consumer -> /tmp/hexalith-projects-consumers-x7gwaln6/Hexalith.Projects.ServiceDefaults/bin/Release/net11.0/Consumer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.54
+Consumer compiled real API from Hexalith.Projects.Contracts 91.92.93-ci.1.
+Consumer compiled real API from Hexalith.Projects 91.92.93-ci.1.
+Consumer compiled real API from Hexalith.Projects.Client 91.92.93-ci.1.
+Consumer compiled real API from Hexalith.Projects.Testing 91.92.93-ci.1.
+Consumer compiled real API from Hexalith.Projects.ServiceDefaults 91.92.93-ci.1.
+Validated 5 isolated package consumers.
+package-dependency-gate: PASSED — manifest inventory, exact metadata and dependency graph, provenance, compile assets, and five real API consumers validated.

@@ -20,6 +20,11 @@ _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-
 _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/projects-test-fixture-proposal.patch -text -whitespace
 _bmad-output/implementation-artifacts/evidence/story-6-5-prerequisite-readiness-20261105/repair/apphost-startup.txt -text -whitespace
 
+# Preserve raw Story 6.8 generator comparison, dotnet list and native test log output.
+_bmad-output/implementation-artifacts/evidence/story-6-8-ui-contracts-split/generated/*.patch -text -whitespace
+_bmad-output/implementation-artifacts/evidence/story-6-8-ui-contracts-split/package-mode/*.txt -text -whitespace
+_bmad-output/implementation-artifacts/evidence/story-6-8-ui-contracts-split/tests/*.log -text -whitespace
+
 tests/tools/run_g6_ci_gate.py whitespace=cr-at-eol
 
 tests/tools/test_run_g6_ci_gate.py whitespace=cr-at-eol

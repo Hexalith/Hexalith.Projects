@@ -279,7 +279,7 @@ class ReleasePackageToolTests(unittest.TestCase):
             ET.SubElement(
                 group,  # type: ignore[arg-type]
                 "dependency",
-                {"id": "fluxor", "version": "6.11.0", "exclude": "Build,Analyzers"},
+                {"id": "hexalith.eventstore.contracts", "version": "5.1.0", "exclude": "Build,Analyzers"},
             )
 
         rewrite_candidate(self.candidate("Hexalith.Projects.Contracts"), duplicate)
@@ -555,6 +555,82 @@ exit 0
         failed_commands = command_log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(1, len(failed_commands))
         self.assertIn("validate-nuget-packages.py", failed_commands[0])
+
+    def test_wrapper_rejects_frontcomposer_reference_in_contracts(self) -> None:
+        sandbox = self.directory / "repository"
+        contracts = Path("src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj")
+        for relative in (
+            Path("tests/tools/run-package-dependency-gate.ps1"),
+            contracts,
+            Path("src/Hexalith.Projects.UI.Contracts/Hexalith.Projects.UI.Contracts.csproj"),
+        ):
+            target = sandbox / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPOSITORY_ROOT / relative, target)
+        binary_directory = self.directory / "bin"
+        binary_directory.mkdir()
+        command_log = self.directory / "commands.log"
+        for command in ("dotnet", "python3"):
+            path = binary_directory / command
+            path.write_text(
+                "#!/bin/sh\nprintf '%s|%s\\n' \"$(basename \"$0\")\" \"$*\" >> \"$COMMAND_LOG\"\nexit 0\n",
+                encoding="utf-8",
+            )
+            path.chmod(0o755)
+        environment = dict(os.environ)
+        environment["PATH"] = f"{binary_directory}{os.pathsep}{environment['PATH']}"
+        environment["COMMAND_LOG"] = str(command_log)
+        dotnet_host = shutil.which("dotnet")
+        self.assertIsNotNone(dotnet_host)
+        pwsh_assembly = subprocess.run(
+            ["pwsh", "-NoProfile", "-Command", "[System.Reflection.Assembly]::GetEntryAssembly().Location"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        original = (REPOSITORY_ROOT / contracts).read_text(encoding="utf-8")
+        self.assertNotIn("Hexalith.FrontComposer", original)
+        package_mode_marker = """  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">\n"""
+        source_mode_marker = """  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">\n"""
+        injections = {
+            "package": (
+                package_mode_marker,
+                '    <PackageReference Include="Hexalith.FrontComposer.Contracts" />\n',
+            ),
+            "source": (
+                source_mode_marker,
+                "    <ProjectReference Include=\"$(HexalithFrontComposerRoot)\\src\\Hexalith.FrontComposer.Shell"
+                "\\Hexalith.FrontComposer.Shell.csproj\" />\n",
+            ),
+        }
+        for mode, (marker, reference) in injections.items():
+            with self.subTest(mode=mode):
+                self.assertEqual(1, original.count(marker))
+                (sandbox / contracts).write_text(original.replace(marker, marker + reference), encoding="utf-8")
+                command_log.write_text("", encoding="utf-8")
+                result = subprocess.run(
+                    [
+                        dotnet_host,
+                        pwsh_assembly,
+                        "-NoProfile",
+                        "-File",
+                        str(sandbox / "tests" / "tools" / "run-package-dependency-gate.ps1"),
+                        "-Version",
+                        VERSION,
+                        "-PackageDirectory",
+                        str(self.directory),
+                        "-SkipPack",
+                    ],
+                    cwd=sandbox,
+                    env=environment,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertNotEqual(0, result.returncode, result.stdout)
+                self.assertIn("must not reference Hexalith.FrontComposer", result.stdout + result.stderr)
+                self.assertNotIn("PASSED", result.stdout)
+                self.assertEqual("", command_log.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

@@ -39,13 +39,24 @@ function Invoke-Dotnet {
     }
 }
 
-# SourceTools is a build-time analyzer only: it must remain package-mode-only,
-# private, and absent from every published dependency graph.
+# AD-16: the packable Contracts project must not reference FrontComposer in either
+# reference mode, so CLI and MCP consumers never inherit Blazor through it.
 $contractsProjectPath = Join-Path $repositoryRoot 'src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj'
 [xml] $contractsProject = Get-Content -Path $contractsProjectPath -Raw
-$sourceToolsReferences = @($contractsProject.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq 'Hexalith.FrontComposer.SourceTools' })
+$frontComposerItems = @($contractsProject.SelectNodes('//*[local-name()="ItemGroup"]/*') | Where-Object {
+    $_.GetAttribute('Include') -match 'Hexalith\.FrontComposer\.' -or $_.GetAttribute('Update') -match 'Hexalith\.FrontComposer\.'
+})
+if ($frontComposerItems.Count -ne 0) {
+    throw "Projects.Contracts must not reference Hexalith.FrontComposer.*; UI-only references belong to Projects.UI.Contracts: $(@($frontComposerItems | ForEach-Object { $_.LocalName + ' ' + $_.GetAttribute('Include') + $_.GetAttribute('Update') }) -join ', ')"
+}
+
+# SourceTools is a build-time analyzer only: it must remain package-mode-only,
+# private, and absent from every published dependency graph.
+$uiContractsProjectPath = Join-Path $repositoryRoot 'src/Hexalith.Projects.UI.Contracts/Hexalith.Projects.UI.Contracts.csproj'
+[xml] $uiContractsProject = Get-Content -Path $uiContractsProjectPath -Raw
+$sourceToolsReferences = @($uiContractsProject.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq 'Hexalith.FrontComposer.SourceTools' })
 if ($sourceToolsReferences.Count -ne 1) {
-    throw 'Projects.Contracts must declare exactly one package-mode Hexalith.FrontComposer.SourceTools analyzer reference.'
+    throw 'Projects.UI.Contracts must declare exactly one package-mode Hexalith.FrontComposer.SourceTools analyzer reference.'
 }
 
 $sourceToolsReference = $sourceToolsReferences[0]

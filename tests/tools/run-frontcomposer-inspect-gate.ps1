@@ -11,8 +11,9 @@ if ([string]::IsNullOrWhiteSpace($env:HexalithCommonsRoot)) {
     $env:HexalithCommonsRoot = $rootCommons
 }
 
-# Detect FrontComposer inputs: any [Projection]/[Command] attributes inside src/Hexalith.Projects.Contracts.
-$contractsRoot = Join-Path $repositoryRoot 'src/Hexalith.Projects.Contracts'
+# Detect FrontComposer inputs: any [Projection]/[Command] attributes inside src/Hexalith.Projects.UI.Contracts,
+# the non-packable project that owns the FrontComposer descriptors and runs the generator (AD-16).
+$contractsRoot = Join-Path $repositoryRoot 'src/Hexalith.Projects.UI.Contracts'
 $annotatedContracts = @()
 if (Test-Path $contractsRoot) {
     $annotatedContracts = Get-ChildItem -Path $contractsRoot -Recurse -Filter '*.cs' -File -ErrorAction SilentlyContinue |
@@ -20,13 +21,13 @@ if (Test-Path $contractsRoot) {
 }
 
 if (-not $annotatedContracts -or $annotatedContracts.Count -eq 0) {
-    Write-Host 'frontcomposer-inspect-gate: SKIPPED (clean) — no [Projection]/[Command] contracts present yet. Story 1.3 authors the OpenAPI spine, not FrontComposer annotations (those land in Epic 5).'
-    exit 0
+    Write-Error "frontcomposer-inspect-gate: FAILED — no [Projection]/[Command] files found under $contractsRoot. src/Hexalith.Projects.UI.Contracts is the required annotated FrontComposer input; a missing or empty project would silently disable this gate."
+    exit 1
 }
 
 Write-Host "frontcomposer-inspect-gate: inputs detected ($($annotatedContracts.Count) annotated contract file(s)) — running real gate."
 
-$contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.Contracts.csproj'
+$contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.UI.Contracts.csproj'
 $cliProject = Join-Path $repositoryRoot 'references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
 
 if (-not (Test-Path $cliProject)) {
@@ -37,7 +38,7 @@ if (-not (Test-Path $cliProject)) {
 Write-Host 'frontcomposer-inspect-gate: building and inspecting deterministic Release output with the repo-local CLI.'
 $targetFramework = (& dotnet msbuild $contractsProject -nologo -p:Configuration=Release -getProperty:TargetFramework | Out-String).Trim()
 if ($LASTEXITCODE -ne 0 -or $targetFramework -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$') {
-    throw 'The Contracts target framework could not be resolved from MSBuild.'
+    throw 'The UI.Contracts target framework could not be resolved from MSBuild.'
 }
 
 # An earlier ordinary build can be up to date without retaining generator output.
@@ -50,7 +51,7 @@ if (Test-Path -LiteralPath $generatedDirectory) {
     '-p:EmitCompilerGeneratedFiles=true' `
     "-p:CompilerGeneratedFilesOutputPath=$generatedDirectory"
 if ($LASTEXITCODE -ne 0) {
-    throw 'The Release Contracts build failed before generated-output inspection.'
+    throw 'The Release UI.Contracts build failed before generated-output inspection.'
 }
 
 & dotnet run --project $cliProject --configuration Release -- `

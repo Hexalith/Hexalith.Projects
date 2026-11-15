@@ -7,8 +7,6 @@ namespace Hexalith.Projects.Contracts.Ui;
 
 using System.Text.Json.Serialization;
 
-using Hexalith.FrontComposer.Contracts.Attributes;
-
 /// <summary>
 /// Inclusion / reference state of a sibling reference (conversation, folder, file, memory) within a
 /// Project (AR-18, UX-DR5). Part of the single shared vocabulary — never introduce parallel enums or
@@ -16,53 +14,42 @@ using Hexalith.FrontComposer.Contracts.Attributes;
 /// </summary>
 /// <remarks>
 /// Name-based JSON is mandatory (see <see cref="JsonStringEnumConverter{TEnum}"/>): the wire shape is the
-/// enum member NAME, never the integer ordinal (NFR-6 schema tolerance). Each member carries a
-/// <see cref="ProjectionBadgeAttribute"/> mapping it to a severity slot for FrontComposer rendering.
+/// enum member NAME, never the integer ordinal (NFR-6 schema tolerance). Badge severity slots are
+/// presentation metadata owned by the UI-only <c>ProjectVocabularyDescriptors</c> table.
 /// </remarks>
 [JsonConverter(typeof(JsonStringEnumConverter<ReferenceState>))]
 public enum ReferenceState
 {
     /// <summary>The reference is queued or awaiting upstream confirmation.</summary>
-    [ProjectionBadge(BadgeSlot.Warning)]
     Pending,
 
     /// <summary>The reference is included in the project context.</summary>
-    [ProjectionBadge(BadgeSlot.Success)]
     Included,
 
     /// <summary>The reference is explicitly excluded from the project context.</summary>
-    [ProjectionBadge(BadgeSlot.Neutral)]
     Excluded,
 
     /// <summary>Access to the referenced resource was denied (fail-closed authorization).</summary>
-    [ProjectionBadge(BadgeSlot.Danger)]
     Unauthorized,
 
     /// <summary>The referenced resource is currently unavailable (upstream context unreachable).</summary>
-    [ProjectionBadge(BadgeSlot.Danger)]
     Unavailable,
 
     /// <summary>The reference is stale relative to the current upstream state.</summary>
-    [ProjectionBadge(BadgeSlot.Warning)]
     Stale,
 
     /// <summary>The reference points at an archived resource.</summary>
-    [ProjectionBadge(BadgeSlot.Warning)]
     Archived,
 
     /// <summary>The reference is ambiguous and could resolve to multiple candidates.</summary>
-    [ProjectionBadge(BadgeSlot.Warning)]
     Ambiguous,
 
     /// <summary>The reference belongs to a different tenant than the owning project.</summary>
-    [ProjectionBadge(BadgeSlot.Danger)]
     TenantMismatch,
 
     /// <summary>The reference conflicts with another reference or the current project state.</summary>
-    [ProjectionBadge(BadgeSlot.Danger)]
     Conflict,
 
     /// <summary>The reference is structurally invalid (malformed identifier or owner context).</summary>
-    [ProjectionBadge(BadgeSlot.Danger)]
     InvalidReference,
 }
