@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Hexalith.Projects.Contracts.Tests.Ui;
+namespace Hexalith.Projects.UI.Tests.Contracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;

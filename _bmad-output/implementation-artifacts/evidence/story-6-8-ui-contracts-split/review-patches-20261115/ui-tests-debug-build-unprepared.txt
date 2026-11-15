@@ -1,0 +1,15 @@
+Command: dotnet build tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --configuration Debug --artifacts-path /tmp/hexalith-job.Ajn5whyl/artifacts -p:UseHexalithProjectReferences=true -m:1
+  Determining projects to restore...
+  Skipping project "/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj" because it was not found.
+  Skipping project "/src/libraries/Hexalith.Commons.Serialization/Hexalith.Commons.Serialization.csproj" because it was not found.
+  Skipping project "/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj" because it was not found.
+  Skipping project "/src/libraries/Hexalith.Commons.Serialization/Hexalith.Commons.Serialization.csproj" because it was not found.
+/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/Directory.Build.props(8,5): error : Conversations requires the Platform tool-selected source mapping; validation does not resolve dependency mappings. [/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Hexalith.Conversations.Contracts.csproj]
+
+Build FAILED.
+
+/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/Directory.Build.props(8,5): error : Conversations requires the Platform tool-selected source mapping; validation does not resolve dependency mappings. [/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Hexalith.Conversations.Contracts.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.38

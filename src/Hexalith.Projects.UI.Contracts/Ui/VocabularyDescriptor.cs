@@ -15,7 +15,7 @@ using Hexalith.FrontComposer.Contracts.Attributes;
 /// <param name="Code">The stable wire code — the enum member name (never the integer ordinal).</param>
 /// <param name="DisplayLabel">The human-readable display label.</param>
 /// <param name="AccessibleName">The accessible name announced by assistive technology.</param>
-/// <param name="Severity">The badge severity slot mapped from the member's <see cref="ProjectionBadgeAttribute"/>.</param>
+/// <param name="Severity">The badge severity slot declared for the member in <see cref="ProjectVocabularyDescriptors"/>.</param>
 public sealed record VocabularyDescriptor(
     string Code,
     string DisplayLabel,

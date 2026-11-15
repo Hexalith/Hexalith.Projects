@@ -6,7 +6,6 @@
 namespace Hexalith.Projects.Contracts.Ui;
 
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 using Hexalith.FrontComposer.Contracts.Attributes;
 
@@ -125,67 +124,4 @@ public partial class ProjectMaintenanceActionProjection
     [ProjectionFieldGroup("Audit")]
     [Display(Name = "Audit event ID")]
     public string? AuditEventId { get; set; }
-}
-
-/// <summary>Shared action names for Web now and MCP/CLI parity later.</summary>
-public static class ProjectMaintenanceActions
-{
-    public const string Archive = "archive";
-    public const string Restore = "restore";
-    public const string Relink = "relink";
-    public const string Unlink = "unlink";
-    public const string Reevaluate = "reevaluate";
-}
-
-/// <summary>Shared maintenance panel states.</summary>
-public static class ProjectMaintenancePanelStates
-{
-    public const string Preview = "Preview";
-    public const string DryRunRequired = "DryRunRequired";
-    public const string DryRunPassed = "DryRunPassed";
-    public const string DryRunBlocked = "DryRunBlocked";
-    public const string ConfirmationRequired = "ConfirmationRequired";
-    public const string Executing = "Executing";
-    public const string Succeeded = "Succeeded";
-    public const string Failed = "Failed";
-}
-
-/// <summary>Shared maintenance panel states for FrontComposer status filtering.</summary>
-[JsonConverter(typeof(JsonStringEnumConverter<ProjectMaintenancePanelState>))]
-public enum ProjectMaintenancePanelState
-{
-    [ProjectionBadge(BadgeSlot.Info)]
-    Preview,
-
-    [ProjectionBadge(BadgeSlot.Warning)]
-    DryRunRequired,
-
-    [ProjectionBadge(BadgeSlot.Success)]
-    DryRunPassed,
-
-    [ProjectionBadge(BadgeSlot.Danger)]
-    DryRunBlocked,
-
-    [ProjectionBadge(BadgeSlot.Warning)]
-    ConfirmationRequired,
-
-    [ProjectionBadge(BadgeSlot.Info)]
-    Executing,
-
-    [ProjectionBadge(BadgeSlot.Success)]
-    Succeeded,
-
-    [ProjectionBadge(BadgeSlot.Danger)]
-    Failed,
-}
-
-/// <summary>Shared command lifecycle states for command-async maintenance actions.</summary>
-public static class ProjectMaintenanceCommandLifecycleStates
-{
-    public const string Idle = "Idle";
-    public const string Submitting = "Submitting";
-    public const string Acknowledged = "Acknowledged(202)";
-    public const string Syncing = "Syncing";
-    public const string Confirmed = "Confirmed";
-    public const string Rejected = "Rejected";
 }

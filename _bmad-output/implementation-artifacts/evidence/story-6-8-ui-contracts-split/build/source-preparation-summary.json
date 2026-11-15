@@ -1,0 +1,28 @@
+{
+  "status": "prepared",
+  "outcome": {
+    "exitCode": "Success",
+    "phase": "None",
+    "category": "None",
+    "ruleId": null
+  },
+  "diagnostics": [
+    {
+      "ruleId": "HXW011",
+      "message": "Platform identity f6f85032598865b9123f16364448bfd02c0ff5b0 has no local v<SemVer> release tag."
+    },
+    {
+      "ruleId": "HXW010",
+      "message": "Tool version 1.0.0-20261115122502 is outside Platform range [4.44.3, 5.0.0-0) at '/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json'."
+    }
+  ],
+  "environmentKeys": [
+    "AfterMicrosoftNETSdkTargets",
+    "Configuration",
+    "CustomAfterDirectoryBuildTargets",
+    "CustomAfterMicrosoftCommonProps",
+    "CustomBeforeDirectoryBuildProps",
+    "CustomBeforeDirectoryBuildTargets",
+    "HEXALITH_SOURCE_MAPPING_HASH"
+  ]
+}

@@ -394,7 +394,7 @@ rows:
     primary_story: "6.5 / 6.6"
     supporting_stories: ["8.1", "8.3", "8.4", "8.5"]
     entry_gates: [Epic-6-gate, G-3, G-5]
-    environment: "6.5: existing controlled Development FrontComposer server-authenticated current-Tenant/per-circuit credential composition, individual Debug/source UI and topology tests and managed live-browser route; 6.6: unchanged deterministic persisted-boundary fixture on the G-4 platform composition runner. Release qualification unchanged."
+    environment: "6.5: existing controlled Development FrontComposer server-authenticated current-Tenant/per-circuit credential composition, individual Debug/source UI and topology tests and managed live-browser route; 6.6 (E1 lane extended 2026-11-15): individual Debug/source Projects test projects with native xUnit XML plus McpCli's own Release/package enrollment gates against a locally packed Hexalith.Projects.Contracts; no common runner. Release qualification unchanged."
     fixture: epic6/read-surfaces
     verification_command: |
       mkdir -p evidence/epic6
@@ -407,7 +407,7 @@ rows:
     estimate: L
     status: blocked-external
     blocker: "G-3 FrontComposer adapters + G-5 identity; the Story 8.3 maintenance contribution additionally requires accepted immutable 8.3-P1/P2/P3 packages"
-    notes: "6.5 remains blocked behind accepted 6.1-6.4, usable FrontComposer authentication/current-Tenant/per-circuit relay and DW-1 done. Its G-3/G-5 feature contribution requires the actual usable authentication/authority capability, not common-runner publication or live production enrollment. Future verification retains nonempty native evidence/epic6/6.5-ui.xml and evidence/epic6/6.5-topology.xml plus actual tests/e2e/test-results/junit.xml and tests/e2e/playwright-report/index.html through the existing managed browser route; no new receipts or execution are claimed here. The separate 6.6 command remains dotnet tool run hexalith-module test --profile cli-reads --filter Story=6.6; its CLI gates/evidence and full deployed release qualification remain unchanged. This row combines FR-22 contributions, not an instruction to wait for CLI before completing 6.5. Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency. Story 8.3 consumes evidence/epic8/8.3-p1-foundation-manifest.json, evidence/epic8/8.3-p2-lifecycle-manifest.json, and evidence/epic8/8.3-p3-association-manifest.json; those component packages do not substitute for full authenticated NFR-9 release evidence."
+    notes: "6.5 remains blocked behind accepted 6.1-6.4, usable FrontComposer authentication/current-Tenant/per-circuit relay and DW-1 done. Its G-3/G-5 feature contribution requires the actual usable authentication/authority capability, not common-runner publication or live production enrollment. Future verification retains nonempty native evidence/epic6/6.5-ui.xml and evidence/epic6/6.5-topology.xml plus actual tests/e2e/test-results/junit.xml and tests/e2e/playwright-report/index.html through the existing managed browser route; no new receipts or execution are claimed here. Story 6.6 runs on the individual Debug test-project lane (E1 extended by sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md) with native xUnit XML and evidence/epic6/6.6-cli-read-surface.{trx,json}, and leaves backlog only after Story 6.8 and DW-55 are done; full deployed release qualification remains unchanged. This row combines FR-22 contributions, not an instruction to wait for CLI before completing 6.5. Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency. Story 8.3 consumes evidence/epic8/8.3-p1-foundation-manifest.json, evidence/epic8/8.3-p2-lifecycle-manifest.json, and evidence/epic8/8.3-p3-association-manifest.json; those component packages do not substitute for full authenticated NFR-9 release evidence."
   - key: fr-23
     category: fr
     ids: [FR-23]
@@ -673,7 +673,7 @@ rows:
     binding: inferred
     entry_gates: [Epic-6-gate, G-3, G-5]
     fixture: epic6/read-surfaces
-    verification_command: "dotnet tool run hexalith-module test --profile web-reads,cli-reads --filter Story=6.5|6.6&Trait=identity"
+    verification_command: "6.5: authentication composition cases in the accepted native UI lane (evidence/epic6/6.5-ui.xml); 6.6: credential/identity cases on the individual Debug test-project lane recorded in evidence/epic6/6.6-cli-read-surface.{trx,json}, plus McpCli credential and enrollment gates in that repository"
     evidence_artifact: evidence/epic6/authenticated-consumers.trx
     estimate: M
     status: blocked-external

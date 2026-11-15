@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Client\Hexalith.EventStore.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+    <ProjectReference Include="..\Hexalith.Projects.UI.Contracts\Hexalith.Projects.UI.Contracts.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Client\Hexalith.Projects.Client.csproj" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Shell\Hexalith.FrontComposer.Shell.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />

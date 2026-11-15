@@ -56,10 +56,12 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 # Hexalith.Projects - Epic Breakdown
 
-**Approved McpCli course correction (2026-09-27).** Stories 5.10, 6.6, 8.4, and 8.5 are reconciled to `Hexalith.McpCli` as the shared CLI/MCP target. Only agent-eligible Projects operations enter the shared heads; they deny Selection Evidence and human-confirmation actions under Platform AD-14. Completed proprietary adapter evidence remains historical; McpCli Epic 5 owns inventory, conformance, and retirement.
+**McpCli course correction (drafted 2026-09-27; approved 2026-11-15 by [sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md) §E9).** Stories 5.10, 6.6, 8.4, and 8.5 are reconciled to `Hexalith.McpCli` as the shared CLI/MCP target. Only agent-eligible Projects operations enter the shared heads; they deny Selection Evidence and human-confirmation actions under Platform AD-14. Completed proprietary adapter evidence remains historical; McpCli Epic 5 owns inventory, conformance, and retirement.
 
 
 **Approved entry correction — 2026-11-02.** Jerome approved E1–E7 of [the November 1 proposal](sprint-change-proposal-2026-11-01.md). Story 6.1 uses usable supported SDK reads and a fail-closed authenticated Tenant/original actor/workload/delegation/Folder authority path, followed by focused spec readiness and recorded feature evidence. Story 6.5 additionally requires accepted 6.1–6.4 contracts/handlers, usable FrontComposer server authentication/current-Tenant/per-circuit credentials and DW-1 done. Publication, package/rollback qualification, production enrollment, P4 and global READY are not feature entry gates. Historical NOT_READY and current P1R usability false remain; P4 is superseded, not accepted. No feature completion is inferred. 6.7 owns exhaustive equivalence and reversible routing; Epic 7 retains writer safety and Epic 8 retains qualification/release acceptance.
+
+**Approved scheduling correction — 2026-11-15.** Jerome approved [sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md). Story 6.8 may be scheduled now. Story 6.6 leaves backlog only after 6.8 and DW-55 are done, and the production-authority guard enforces this. Story 6.6 targets `Hexalith.McpCli` with four decorated Projects queries and runs on the extended E1 individual Debug test-project lane. 6.7 stays in backlog; historical NOT_READY and every release obligation remain.
 
 ## Overview
 
@@ -224,7 +226,7 @@ _Source: UX Design Specification + FrontComposer web-UX research. The UX scope i
 
 **CLI surface**
 
-- **UX-DR19 — CLI command structure:** Scriptable, stable command grouping mirroring the model — read-only `list`/`describe`/`inspect`/`trace-resolution`(`trace`)/`validate-references`(`validate`)/`audit`/`refresh-context`; preview `dry-run`/`preview`; mutating `archive`/`restore`/`move`/`replace-folder`/`unlink` (explicit target + confirmation semantics). A retained `reevaluate` compatibility alias is read-only and maps exactly to `RefreshContext`. Machine-readable JSON output, stable exit codes, redaction-safe, no reliance on color for meaning. CLI confirmation-required actions are enabled only after the accepted A-7 interactive-session claim; otherwise safe denial.
+- **UX-DR19 — CLI command structure:** Scriptable, stable command grouping mirroring the model — read-only `list`/`describe`/`inspect`/`trace-resolution`(`trace`)/`validate-references`(`validate`)/`audit`/`refresh-context`; preview `dry-run`/`preview`; mutating `archive`/`restore`/`move`/`replace-folder`/`unlink` (explicit target + confirmation semantics). A retained `reevaluate` compatibility alias is read-only and maps exactly to `RefreshContext`. Machine-readable JSON output, stable exit codes, redaction-safe, no reliance on color for meaning. On `Hexalith.McpCli` (approved 2026-11-15), the read-only group is exposed as `projects.list`; `projects.describe`, which covers `describe`, `inspect` and `validate`/`validate-references` through its reference states; and `projects.trace-conversation` and `projects.trace-attachments`, which cover `trace`/`trace-resolution`. `audit` is absent until Story 8.1. `refresh-context`, preview and mutating commands belong to Story 8.4. McpCli refuses confirmation-required and UI-only actions (Platform AD-14, AD-29), and neither A-7 nor Story 8.11 enables them on McpCli. Confirmation stays on the confidential interactive Web and Chatbot UI.
 
 **MCP surface**
 
@@ -1370,9 +1372,9 @@ ledger records their operational statuses.
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
 Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — each story's
-actual prior read/authority inputs under the approved 6.1/6.5 exception, never unrelated Epic 7/8 qualification; **compatibility/rollback** — legacy read route retained and reversible
+actual prior read/authority inputs under the approved 6.1/6.5/6.6 exceptions, never unrelated Epic 7/8 qualification; **compatibility/rollback** — legacy read route retained and reversible
 until Story 6.7 cutover, no event-history rewrite; **fixture** — deterministic authorized-Tenant
-persisted-boundary fixture using existing individual test projects/distributed Development composition for 6.1/6.5; common-runner rollout remains separate; **release disposition** — read evidence contributes to
+persisted-boundary fixture using existing individual test projects/distributed Development composition for 6.1/6.5/6.6 (6.6 added 2026-11-15); common-runner rollout remains separate; **release disposition** — read evidence contributes to
 NFR-11 but no story here is a release gate._
 
 **Story 6.1 executable critical path:**
@@ -1498,23 +1500,51 @@ So that **operators get authorized, metadata-only Project truth (FR-22) with WCA
 ### Story 6.6: Inspect Projects through an authenticated CLI read surface
 
 As a **Tenant Operator or automation caller**,
-I want **scriptable, authenticated read-only CLI commands (`list`/`describe`/`inspect`/`trace`/`validate`) with deterministic machine output**,
-So that **operators and pipelines get authorized, metadata-only Project truth (FR-22) with stable exit codes and no color-dependent meaning**.
+I want **authenticated read-only `Hexalith.McpCli` operations over the supported Projects reads, with deterministic JSON output**,
+So that **operators and pipelines get authorized, metadata-only Project truth (FR-22) through the shared Hexalith CLI, with stable exit codes and no color-dependent meaning**.
 
-- **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR19; evidence row `fr-22-cli`.
-- **Prerequisite:** Story 6.8 (Hexalith.Projects.UI.Contracts split) must land first, or this CLI surface inherits Blazor/Fluxor transitively through `Hexalith.Projects.Contracts`.
+- **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-16, AD-19, AD-20, AD-29, AD-33; UX-DR19; evidence rows `fr-22`, `finding-client-001`.
+- **Host (approved 2026-11-15, D3):** `Hexalith.McpCli` enrolls `Hexalith.Projects.Contracts` (`HexalithContracts="true"`) and submits the decorated Contracts queries through the EventStore Gateway, the same route the 6.5 Web surface uses. `Hexalith.Projects.Cli` and the Projects MCP plug-in stay frozen and unchanged; their inventory rows stay `defer / exclude`. No module-specific McpCli adapter is added.
+- **Operations (D5), named through `[HexalithQuery(Name=…)]`:**
+  - `projects.list` → `ListProjectsQuery`.
+  - `projects.describe` → `GetProjectQuery`. It is the `describe`/`inspect` read. Descriptive fields appear only when authorized, and its reference states also cover `validate`/`validate-references`.
+  - `projects.trace-conversation` → `ResolveProjectFromConversationQuery`.
+  - `projects.trace-attachments` → `ResolveProjectFromAttachmentsQuery` (at most 32 attachments). Together with `trace-conversation` it is the `trace`/`trace-resolution` read.
+  - The Conversation-start setup and context queries are not enrolled. There is no audit operation until Story 8.1.
+- **Prerequisite:** Story 6.8 done and DW-55 done. The production-authority guard enforces both ([sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md)).
 
 **Acceptance Criteria:**
 
-**Given** an authenticated CLI invocation with platform-provided identity, **When** a read command runs, **Then** output is deterministic machine-readable JSON, Tenant-scoped, authorization-filtered, Safe Metadata by default, with stable exit codes and no reliance on color. Project name, Setup bodies, titles, paths, and Preview bodies appear only under descriptive-metadata inspection authorization and are audited. Confirmation-required CLI actions are enabled only after the accepted A-7 interactive-session claim; otherwise safe denial. CLI is not gated on Story 8.11.
+**Given** an McpCli invocation with a platform credential, **When** an enrolled Projects read runs, **Then**:
+- Tenant and actor come from the credential, and the Gateway authorizes the call.
+- Output is deterministic JSON, Tenant-scoped, authorization-filtered and Safe Metadata by default. No meaning depends on color, terminal width or prose.
+- Project name, Setup bodies, titles, paths and Preview bodies appear only under `projects:inspect_descriptive_metadata` and are recorded by the server's existing durable inspection audit. An audit write failure denies the disclosure.
+- A missing credential fails before any query is sent.
+- McpCli refuses every confirmation-required and UI-only action (Platform AD-14, AD-29). A-7 and Story 8.11 never enable confirmation on McpCli.
+- The CLI is not gated on Story 8.11.
 
-**Given** a denied/nonexistent target or stale read model, **When** a read command runs, **Then** it fails closed with a safe reason code and a non-zero stable exit code, indistinguishable denial/absence, no payload echo.
+**Given** a denied, absent or cross-Tenant target, **When** any enrolled read runs, **Then** McpCli returns one identical safe `404` error with no payload or remote detail, and exits `2`.
 
-**Given** identical facts, **When** compared to the Web surface (6.5), **Then** lifecycle/reference states, reason codes, timestamps, and warnings are semantically equivalent (parity).
+**Given** an authorized read whose model is stale or unavailable, **When** the Gateway answers `200` with `responseState` `Partial` or `Unavailable`, **Then** McpCli exits `0`, and the JSON reports the snapshot, components, freshness and reason codes truthfully. McpCli exit codes are unchanged: `0` for a result, `2` for an error (D6).
 
-**Given** Story 8.1 audit capability is not yet accepted, **When** an `audit` command is invoked, **Then** the command is absent or returns one stable unsupported-capability result and does not query or imply audit data.
+**Given** identical facts, **When** McpCli and the 6.5 Web surface read the same Project, **Then** lifecycle and reference states, reason codes, `asOf`/`lastVerifiedAt` timestamps and warnings are semantically equal (parity).
 
-- **Verification:** `dotnet tool run hexalith-module test --profile cli-reads --filter Story=6.6`. **Evidence:** `evidence/epic6/6.6-cli-read-surface.{trx,json}`. **Estimate:** M. **Completion boundary:** authenticated read-only CLI with parity + stable contract; mutating CLI is Epic 8.
+**Given** Story 8.1 is not accepted, **When** a caller looks for an audit read, **Then** the McpCli catalog has no Projects audit operation and no query is sent.
+
+**Given** the McpCli build with Projects enrolled, **When** `dotnet list package --include-transitive` runs, **Then** no FrontComposer, Fluxor, Fluent UI, Blazor or `Microsoft.AspNetCore.App` dependency comes in through `Hexalith.Projects.Contracts`.
+
+**Given** any enrolled read, **When** persisted state is compared before and after, **Then** no domain event or read-model write occurred apart from the inspection audit.
+
+- **Verification (E1 lane, extended 2026-11-15):**
+  - Projects side: the individual Debug test projects named in the 6.6 spec, each built with `-m:1 -p:NuGetAudit=false --disable-build-servers` and run as a built xUnit assembly with native XML.
+  - McpCli side: that repository's own Release/package enrollment gates, against a locally packed `Hexalith.Projects.Contracts` restored with an isolated `NUGET_PACKAGES`.
+- **Evidence:** `evidence/epic6/6.6-cli-read-surface.{trx,json}`, with totals and the tested Projects and McpCli revisions.
+- **Estimate:** M.
+- **Completion boundary:**
+  - Delivered: four authenticated read-only McpCli operations with Web parity and a dependency-light Contracts closure.
+  - DW-82: publishing the decorated Contracts package and integrating the McpCli enrollment on McpCli main.
+  - Story 8.4: the mutating CLI, option validation and `refresh-context`.
+  - Story 8.5: MCP agent flows.
 
 ### Story 6.7: Cut over supported reads while preserving compatibility and rollback
 
@@ -1544,15 +1574,17 @@ So that **`Hexalith.Projects.Contracts` stops leaking Blazor/Fluxor/FrontCompose
 
 **Acceptance Criteria:**
 
-**Given** the current `src/Hexalith.Projects.Contracts/Ui/` types (including `ProjectContextFreshness` and its `[ProjectionBadge]` decoration) and the `Hexalith.Projects.Contracts.csproj:22-33` FrontComposer/Fluxor/Fluent UI/ASP.NET Core references, **When** the split completes, **Then** those types and references move to a new non-packable `Hexalith.Projects.UI.Contracts` project that depends inward on `Hexalith.Projects.Contracts` only, and `Hexalith.Projects.Contracts.csproj` no longer references FrontComposer Shell, FrontComposer SourceTools, `Microsoft.AspNetCore.App`, Fluxor, or Fluent UI.
+**Given** the current `src/Hexalith.Projects.Contracts/Ui/` types (including `ProjectContextFreshness` and its `[ProjectionBadge]` decoration) and the `Hexalith.Projects.Contracts.csproj:13-47` FrontComposer Contracts/Shell/SourceTools, `Microsoft.AspNetCore.App`, Fluxor and Fluent UI references, **When** the split completes, **Then** those references, the FrontComposer projection/descriptor types and the badge mapping move to a new non-packable `Hexalith.Projects.UI.Contracts` project that depends inward on `Hexalith.Projects.Contracts` only. Every type that Contracts commands, events, models or queries reference (for example `ReferenceState`, `ProjectLifecycle`, `ProjectReasonCode`) stays in Contracts, with its FrontComposer attributes removed and its namespace and wire names unchanged. `Hexalith.Projects.Contracts.csproj` no longer references FrontComposer Contracts, Shell or SourceTools, `Microsoft.AspNetCore.App`, Fluxor, or Fluent UI.
 
 **Given** existing consumers of the moved types (Story 3.5/6.5 FrontComposer code, generated descriptors), **When** the split lands, **Then** every reference is repointed to `Hexalith.Projects.UI.Contracts` with no behavior change, no redefinition of operations/vocabulary/security (AD-16), and a green build/test run.
 
 **Given** a CLI- or MCP-only consumer of `Hexalith.Projects.Contracts` (as Stories 6.6/8.4/8.5 will be), **When** it references the package, **Then** it pulls no Blazor/Fluxor/FrontComposer/ASP.NET Core transitive dependency.
 
+**Given** the split, **When** it lands, **Then** `tools/release-packages.json:22-55` lists the slim Contracts graph (no `Microsoft.AspNetCore.App` framework reference, and no FrontComposer, Fluxor, Fluent UI or ASP.NET Core dependencies), together with every other package entry whose graph changes. `tests/tools/run-package-dependency-gate.ps1:44-56` stops requiring Contracts to declare the FrontComposer SourceTools analyzer. It instead fails if Contracts references FrontComposer, and it applies the analyzer rule to UI.Contracts if that project keeps the generator.
+
 **Given** the split is complete, **When** Stories 6.6, 8.4, or 8.5 begin, **Then** this story's completion is a satisfied prior-only dependency for each.
 
-- **Verification:** `dotnet build Hexalith.Projects.slnx --configuration Debug` (zero warnings/errors); `dotnet list src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj package --include-transitive` shows no Blazor/Fluxor/FrontComposer/AspNetCore.App reference; existing Contracts/Projects/Server test suites pass unchanged. **Evidence:** build + dependency-listing output attached to the story; no new `evidence/epic6/` artifact required (packaging-only, no runtime admission behavior). **Estimate:** S. **Completion boundary:** `Hexalith.Projects.Contracts` is dependency-light per AD-16; `Hexalith.Projects.UI.Contracts` exists and is consumed; no runtime/behavior change.
+- **Verification:** `dotnet build Hexalith.Projects.slnx --configuration Debug` (zero warnings/errors). Then `pwsh tests/tools/run-package-dependency-gate.ps1`, which restores and packs in package mode; use an isolated `NUGET_PACKAGES`. After a package-mode restore (`-p:UseHexalithProjectReferences=false`), `dotnet list src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj package --include-transitive` shows no Blazor/Fluxor/FrontComposer/AspNetCore.App reference. The existing Contracts, Projects, Server and UI test projects pass unchanged, each run individually. **Evidence:** build, gate and dependency-listing output attached to the story; no new `evidence/epic6/` artifact required (packaging-only, no runtime admission behavior). **Estimate:** S. **Completion boundary:** `Hexalith.Projects.Contracts` is dependency-light per AD-16; `Hexalith.Projects.UI.Contracts` exists and is consumed; no runtime/behavior change. `Hexalith.Projects.Client.csproj:6` keeps its own `Microsoft.AspNetCore.App` framework reference: AD-16's rule names Contracts, and McpCli consumes only Contracts, so any decision on the Client graph belongs to Story 8.7 (AD-24). Closing 6.8 sets DW-55 to `status: done` (one canonical value, with the date on a separate `closed:` line), which the production-authority guard requires before 6.6 leaves backlog. Main `build-and-test` is red when this story starts (DW-83). The done rule allows a recorded local run, but 6.8 must not hide DW-83; if its manifest regeneration clears all of the FrontComposer drift, record that against DW-83 when 6.8 closes.
 
 ---
 

@@ -1,0 +1,198 @@
+{
+  "Hexalith.Projects": {
+    "archive": "Hexalith.Projects.91.92.93-ci.1.nupkg",
+    "sha256": "19d55ae18dce2d40378b8ec87fa6304cf8e55c5bc265f19a38efedffcc5eeb87",
+    "frameworkReferences": [],
+    "dependencies": [
+      [
+        "Hexalith.Projects.Contracts",
+        "[91.92.93-ci.1]"
+      ],
+      [
+        "Microsoft.Extensions.Options.ConfigurationExtensions",
+        "11.0.0"
+      ],
+      [
+        "ByteAether.Ulid",
+        "1.4.2"
+      ],
+      [
+        "Hexalith.Commons.Serialization",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Commons.UniqueIds",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Conversations.Contracts",
+        "2.0.0"
+      ],
+      [
+        "Hexalith.EventStore.Contracts",
+        "5.1.0"
+      ],
+      [
+        "Microsoft.Extensions.Configuration",
+        "11.0.0"
+      ],
+      [
+        "Microsoft.Extensions.Configuration.Binder",
+        "11.0.0"
+      ]
+    ]
+  },
+  "Hexalith.Projects.Client": {
+    "archive": "Hexalith.Projects.Client.91.92.93-ci.1.nupkg",
+    "sha256": "16324f07360f3a407fa5e8f3aef2c6bec38ce7f78c79e94710502e8a6835036c",
+    "frameworkReferences": [
+      "Microsoft.AspNetCore.App"
+    ],
+    "dependencies": [
+      [
+        "Hexalith.Projects.Contracts",
+        "[91.92.93-ci.1]"
+      ],
+      [
+        "Newtonsoft.Json",
+        "13.0.4"
+      ],
+      [
+        "ByteAether.Ulid",
+        "1.4.2"
+      ],
+      [
+        "Hexalith.Commons.Serialization",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Commons.UniqueIds",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Conversations.Contracts",
+        "2.0.0"
+      ],
+      [
+        "Hexalith.EventStore.Contracts",
+        "5.1.0"
+      ]
+    ]
+  },
+  "Hexalith.Projects.Contracts": {
+    "archive": "Hexalith.Projects.Contracts.91.92.93-ci.1.nupkg",
+    "sha256": "c34dda1930df1b660d58a5f62fbf98ef08ebcb34bc8aeb854553b473ec8c86c4",
+    "frameworkReferences": [],
+    "dependencies": [
+      [
+        "Hexalith.Conversations.Contracts",
+        "2.0.0"
+      ],
+      [
+        "Hexalith.EventStore.Contracts",
+        "5.1.0"
+      ],
+      [
+        "ByteAether.Ulid",
+        "1.4.2"
+      ],
+      [
+        "Hexalith.Commons.Serialization",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Commons.UniqueIds",
+        "3.0.0"
+      ]
+    ]
+  },
+  "Hexalith.Projects.ServiceDefaults": {
+    "archive": "Hexalith.Projects.ServiceDefaults.91.92.93-ci.1.nupkg",
+    "sha256": "cb076030e6caba3866abaaea855ccf0d7eb63aeb1b780eb0160880e386ecbd86",
+    "frameworkReferences": [
+      "Microsoft.AspNetCore.App"
+    ],
+    "dependencies": [
+      [
+        "Microsoft.Extensions.Http.Resilience",
+        "11.0.0"
+      ],
+      [
+        "Microsoft.Extensions.ServiceDiscovery",
+        "11.0.0"
+      ],
+      [
+        "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+        "1.21.0"
+      ],
+      [
+        "OpenTelemetry.Extensions.Hosting",
+        "1.21.0"
+      ],
+      [
+        "OpenTelemetry.Instrumentation.AspNetCore",
+        "1.21.0"
+      ],
+      [
+        "OpenTelemetry.Instrumentation.Http",
+        "1.21.0"
+      ],
+      [
+        "OpenTelemetry.Instrumentation.Runtime",
+        "1.21.0"
+      ],
+      [
+        "OpenTelemetry",
+        "1.21.0"
+      ]
+    ]
+  },
+  "Hexalith.Projects.Testing": {
+    "archive": "Hexalith.Projects.Testing.91.92.93-ci.1.nupkg",
+    "sha256": "c51775861a9b3dee46fa867679474bddefd1d7e826cc970ede828fcc422b3b8f",
+    "frameworkReferences": [],
+    "dependencies": [
+      [
+        "Hexalith.Projects.Contracts",
+        "[91.92.93-ci.1]"
+      ],
+      [
+        "Hexalith.Projects",
+        "[91.92.93-ci.1]"
+      ],
+      [
+        "ByteAether.Ulid",
+        "1.4.2"
+      ],
+      [
+        "Hexalith.Commons.Serialization",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Commons.UniqueIds",
+        "3.0.0"
+      ],
+      [
+        "Hexalith.Conversations.Contracts",
+        "2.0.0"
+      ],
+      [
+        "Hexalith.EventStore.Contracts",
+        "5.1.0"
+      ],
+      [
+        "Microsoft.Extensions.Configuration",
+        "11.0.0"
+      ],
+      [
+        "Microsoft.Extensions.Configuration.Binder",
+        "11.0.0"
+      ],
+      [
+        "Microsoft.Extensions.Options.ConfigurationExtensions",
+        "11.0.0"
+      ]
+    ]
+  },
+  "_forbiddenDependencyPrefixesPresent": []
+}
