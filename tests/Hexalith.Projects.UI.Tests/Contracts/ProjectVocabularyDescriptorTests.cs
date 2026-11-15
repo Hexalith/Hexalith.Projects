@@ -185,9 +185,4 @@ public sealed class ProjectVocabularyDescriptorTests
             seen.Add(descriptor.Code).ShouldBeTrue($"Duplicate vocabulary code '{descriptor.Code}'.");
         }
     }
-
-    private enum UnbadgedEnum
-    {
-        Member,
-    }
 }

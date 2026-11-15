@@ -182,10 +182,17 @@ boundaries.
   `auditLimit` (default 25, max 100). Later Web/MCP/CLI adapters must reuse this DTO shape rather
   than composing raw projection rows directly.
 
+The FrontComposer presentation descriptors below live in the non-packable
+`src/Hexalith.Projects.UI.Contracts/Hexalith.Projects.UI.Contracts.csproj` project. Their namespace
+remains `Hexalith.Projects.Contracts.Ui`. Shared DTOs and wire enums stay in the dependency-light
+`Hexalith.Projects.Contracts` package, which CLI/MCP consumers use without referencing UI.Contracts.
+The UI.Contracts project owns generation; retained generated output lives under
+`src/Hexalith.Projects.UI.Contracts/obj/{Config}/{TFM}/generated/HexalithFrontComposer/`.
+
 ## `ProjectOperatorDiagnosticShellProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectOperatorDiagnosticShellProjection`.
-- **Owner:** Story 5.3 FrontComposer shell/navigation seed in Contracts. It is a generated UI/MCP/CLI
+- **Owner:** Story 5.3 FrontComposer shell/navigation seed in UI.Contracts. It is a generated UI/MCP/CLI
   descriptor input, not a persisted runtime projection and not the Story 5.4 inventory/detail view.
 - **Source data:** thin metadata-only wrapper over
   `Hexalith.Projects.Contracts.Models.ProjectOperatorDiagnostic` from Story 5.2. It reuses the shared
@@ -205,7 +212,7 @@ boundaries.
 ## `ProjectInventoryRowProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectInventoryRowProjection`.
-- **Owner:** Story 5.4 FrontComposer inventory descriptor/wrapper in Contracts. It is not a persisted
+- **Owner:** Story 5.4 FrontComposer inventory descriptor/wrapper in UI.Contracts. It is not a persisted
   runtime projection.
 - **Source data:** thin metadata-only wrapper over the existing `ListProjects` response shape:
   project id, name, lifecycle, created/updated timestamps, and freshness. No backend field was added
@@ -224,7 +231,7 @@ boundaries.
 ## `ProjectDetailInspectorProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectDetailInspectorProjection`.
-- **Owner:** Story 5.4 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+- **Owner:** Story 5.4 FrontComposer DetailRecord descriptor/wrapper in UI.Contracts. It is not a
   persisted runtime projection.
 - **Source data:** thin metadata-only wrapper over `ProjectOperatorDiagnostic`, itself composed from
   the generated `GetProject` detail DTO plus bounded operator diagnostic evidence when available.
@@ -243,7 +250,7 @@ boundaries.
 ## `ProjectReferenceHealthRowProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectReferenceHealthRowProjection`.
-- **Owner:** Story 5.5 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+- **Owner:** Story 5.5 FrontComposer DetailRecord descriptor/wrapper in UI.Contracts. It is not a
   persisted runtime projection and does not add a conversation lane to
   `ProjectReferenceIndexProjection`.
 - **Source data:** metadata-only merge of existing `ProjectOperatorReferenceSummary` rows,
@@ -282,7 +289,7 @@ boundaries.
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectResolutionTraceProjection` with row descriptors
   `ProjectResolutionTraceCandidateProjection` and `ProjectResolutionTraceExclusionProjection`.
-- **Owner:** Story 5.6 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+- **Owner:** Story 5.6 FrontComposer DetailRecord descriptor/wrapper in UI.Contracts. It is not a
   persisted runtime projection, trace store, audit event source, export model, or trace-history row.
 - **Contract version:** `projects.resolution-trace.ui.v1`.
 - **Source data:** existing generated query clients only:
@@ -316,7 +323,7 @@ boundaries.
 ## `ProjectAuditTimelineRowProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectAuditTimelineRowProjection`.
-- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not the
+- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in UI.Contracts. It is not the
   persisted `ProjectAuditTimelineProjection`; it is a UI/parity wrapper over public operator
   diagnostic rows.
 - **Contract version:** `projects.audit-timeline-row.ui.v1`.
@@ -339,7 +346,7 @@ boundaries.
 ## `ProjectSafeDiagnosticExportProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectSafeDiagnosticExportProjection`.
-- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is a Web/export
+- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in UI.Contracts. It is a Web/export
   descriptor, not a persisted projection, audit event, Dapr state entry, maintenance action, or CLI/MCP
   implementation.
 - **Contract version:** `projects.safe-diagnostic-export.v1`.
@@ -362,7 +369,7 @@ boundaries.
 ## `ProjectWarningQueueItemProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectWarningQueueItemProjection`.
-- **Owner:** Story 5.8 FrontComposer ActionQueue descriptor/wrapper in Contracts. It is not a
+- **Owner:** Story 5.8 FrontComposer ActionQueue descriptor/wrapper in UI.Contracts. It is not a
   persisted warning projection, maintenance state, audit event, or duplicate operator inventory model.
 - **Contract version:** `projects.warning-queue-item.ui.v1`.
 - **Source data:** the ordinal-first 25 project ids from one complete visible tenant-scoped
@@ -392,7 +399,7 @@ boundaries.
 ## `ProjectOperationalDashboardProjection`
 
 - **Type:** `Hexalith.Projects.Contracts.Ui.ProjectOperationalDashboardProjection`.
-- **Owner:** Story 5.8 FrontComposer StatusOverview descriptor/wrapper in Contracts. It is not a
+- **Owner:** Story 5.8 FrontComposer StatusOverview descriptor/wrapper in UI.Contracts. It is not a
   persisted analytics projection or runtime dashboard aggregate.
 - **Contract version:** `projects.operational-dashboard.ui.v1`.
 - **Source data:** aggregate counts over one complete visible project snapshot and
