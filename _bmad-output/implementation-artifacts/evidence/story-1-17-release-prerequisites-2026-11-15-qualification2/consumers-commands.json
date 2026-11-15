@@ -1,0 +1,113 @@
+[
+  {
+    "argv": [
+      "dotnet",
+      "restore",
+      "Hexalith.Projects.CI.slnx",
+      "-p:Configuration=Release",
+      "-p:UseHexalithProjectReferences=false",
+      "-m:1",
+      "--disable-build-servers",
+      "--configfile",
+      "/tmp/hexalith-job.xU5npI6s/NuGet.Config"
+    ],
+    "cwd": "/tmp/hexalith-job.xU5npI6s/folders/references/Hexalith.Projects",
+    "elapsed_seconds": 3.33,
+    "environment": {
+      "DOTNET_CLI_HOME": "/tmp/hexalith-job.xU5npI6s/dotnet-home",
+      "NUGET_HTTP_CACHE_PATH": "/tmp/hexalith-job.xU5npI6s/http-cache",
+      "NUGET_PACKAGES": "/tmp/hexalith-job.xU5npI6s/packages"
+    },
+    "exit_code": 0,
+    "label": "complete-release-restore",
+    "log": "complete-release-restore.log",
+    "log_sha256": "179a3ea50bd73b7e6fac3ecaf006c20995b59d6fdc80b8a4d29cd3c0347f4148",
+    "started_utc": "2026-11-15T11:37:28Z"
+  },
+  {
+    "argv": [
+      "dotnet",
+      "build",
+      "Hexalith.Projects.CI.slnx",
+      "--configuration",
+      "Release",
+      "-p:UseHexalithProjectReferences=false",
+      "-m:1",
+      "-warnaserror",
+      "--disable-build-servers",
+      "--no-restore"
+    ],
+    "cwd": "/tmp/hexalith-job.xU5npI6s/folders/references/Hexalith.Projects",
+    "elapsed_seconds": 66.25,
+    "environment": {
+      "DOTNET_CLI_HOME": "/tmp/hexalith-job.xU5npI6s/dotnet-home",
+      "NUGET_HTTP_CACHE_PATH": "/tmp/hexalith-job.xU5npI6s/http-cache",
+      "NUGET_PACKAGES": "/tmp/hexalith-job.xU5npI6s/packages"
+    },
+    "exit_code": 1,
+    "label": "complete-release-build",
+    "log": "complete-release-build.log",
+    "log_sha256": "5522493c04280b011e45d2787b4c32194aa281cdd5428dd411059ba2938e2e43",
+    "started_utc": "2026-11-15T11:37:31Z"
+  },
+  {
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Release",
+      "-p:UseHexalithProjectReferences=false",
+      "-m:1",
+      "-warnaserror",
+      "--disable-build-servers",
+      "--no-restore"
+    ],
+    "cwd": "/tmp/hexalith-job.xU5npI6s/folders/references/Hexalith.Projects",
+    "elapsed_seconds": 2.18,
+    "environment": {
+      "DOTNET_CLI_HOME": "/tmp/hexalith-job.xU5npI6s/dotnet-home",
+      "NUGET_HTTP_CACHE_PATH": "/tmp/hexalith-job.xU5npI6s/http-cache",
+      "NUGET_PACKAGES": "/tmp/hexalith-job.xU5npI6s/packages"
+    },
+    "exit_code": 0,
+    "label": "server-focused-build",
+    "log": "server-focused-build.log",
+    "log_sha256": "1bd9697e8457c4f9fb63050c5ce011f740088f344f7665a725b2b05b184092a4",
+    "started_utc": "2026-11-15T11:38:38Z"
+  },
+  {
+    "argv": [
+      "dotnet",
+      "/tmp/hexalith-job.xU5npI6s/folders/references/Hexalith.Projects/tests/Hexalith.Projects.Server.Tests/bin/Release/net11.0/Hexalith.Projects.Server.Tests.dll",
+      "-noLogo",
+      "-noColor",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectFolderDirectoryTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectFileReferenceDirectoryTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.DelegatedProjectDirectoryRegistrationTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Conversations.*",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Folders.*",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/folders/references/Hexalith.Projects/_bmad-output/implementation-artifacts/evidence/story-1-17-release-prerequisites-2026-11-15-qualification2/conversations-folders-adapters.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.xU5npI6s/folders/references/Hexalith.Projects",
+    "elapsed_seconds": 2.54,
+    "environment": {
+      "DOTNET_CLI_HOME": "/tmp/hexalith-job.xU5npI6s/dotnet-home",
+      "NUGET_HTTP_CACHE_PATH": "/tmp/hexalith-job.xU5npI6s/http-cache",
+      "NUGET_PACKAGES": "/tmp/hexalith-job.xU5npI6s/packages"
+    },
+    "exit_code": 0,
+    "label": "conversations-folders-adapters",
+    "log": "conversations-folders-adapters.log",
+    "log_sha256": "369f5ea6238101de620896cd084e2f935b0f74790c061c5d2ec1b4e7c4c129d1",
+    "started_utc": "2026-11-15T11:38:40Z"
+  }
+]
