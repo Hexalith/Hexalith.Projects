@@ -1,0 +1,89 @@
+{
+  "status": "passed-with-retained-package-mode-blocker",
+  "reviewer": "parent agent",
+  "diffFileSha256": "d60f917ae9c3680ffe3d083bf7bdbb4db192ff7b7fb19f3cae559d098ad8a173",
+  "tasks": "All ten feature tasks and seven pass-4 patch items verified against source and receipts.",
+  "matrix": {
+    "authorized list": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "descriptive grant and audit-failure denial": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "identical denied absent foreign 404": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "missing credential 401 before dispatch": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "Partial and Unavailable snapshots": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+    "audit operation absent": "Hexalith.Projects.Contracts.Tests.Queries.ProjectMcpCliDecorationTests.OnlyFourSupportedQueriesAreEnrolledWithExistingWebRouting"
+  },
+  "matrixEvidence": "Existing Server-final/Contracts-final native receipts; revision-equivalence.json records exact story-path scope and EventStore version exception.",
+  "retainedSuites": [
+    {
+      "suite": "Contracts-final",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Contracts.xml",
+      "total": 207,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "Server-final",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Server.xml",
+      "total": 1417,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "UI-final",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/UI-final.xml",
+      "total": 277,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "Projects",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Projects.xml",
+      "total": 691,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "McpCli-Abstractions",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Abstractions.xml",
+      "total": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "McpCli-Core-final",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Core.xml",
+      "total": 921,
+      "failed": 0,
+      "skipped": 4
+    },
+    {
+      "suite": "McpCli-Cli-final",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Cli.xml",
+      "total": 625,
+      "failed": 0,
+      "skipped": 2
+    },
+    {
+      "suite": "McpCli-Mcp",
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Mcp.xml",
+      "total": 94,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "supplementalAdmission": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+  },
+  "supplementalReleaseTools": {
+    "total": 20,
+    "passed": 20
+  },
+  "limitations": [
+    "No fresh full-suite or Release/package-mode pass asserted.",
+    "Supplemental package build remains blocked by NU1109, as recorded in verification.json.",
+    "DW-82 publication and native live qualifications remain deferred."
+  ],
+  "historicalEvidence": "Original aggregate, candidate package and McpCli patch hashes verified; no historical receipt edited."
+}

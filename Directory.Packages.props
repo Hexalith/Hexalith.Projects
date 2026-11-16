@@ -7,6 +7,7 @@
     <HexalithMcpCliVersion Condition="'$(HexalithMcpCliVersion)' == ''">2.0.1</HexalithMcpCliVersion>
     <!-- Story 1.17: consume the published 5.1.1 native source scanner package family. -->
     <HexalithEventStoreVersion Condition="'$(HexalithEventStoreVersion)' == ''">5.1.1</HexalithEventStoreVersion>
+    <!-- Consume the .NET 11 SDK snapshot limits and tenant access recovery contracts. -->
     <HexalithTenantsVersion Condition="'$(HexalithTenantsVersion)' == ''">8.0.0</HexalithTenantsVersion>
     <!-- Define paths of the Hexalith packages props. -->
     <Hexalith1BuildPackageProps>$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/Directory.Packages.props</Hexalith1BuildPackageProps>

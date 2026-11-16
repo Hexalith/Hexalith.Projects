@@ -1,0 +1,94 @@
+{
+  "status": "review-pass4-patches-verified-with-package-lane-blocker",
+  "createdUtc": "2026-11-16T08:29:13.708634+00:00",
+  "projectsRevision": "bf9f98969efa036fd60700c627e712b4375e654a",
+  "mcpcliRevision": "ab92da41988c4d423c05ea3f5ab401ed0db1fc32",
+  "workingTreeSha256": {
+    "Directory.Packages.props": "45240b8661d95aa24707da244d2e9c1567665437c06cdc055ef178048e2e375f",
+    "tests/tools/test_release_package_tools.py": "696243e2c759b93dfb4762f857bc86ba920e0ce292b1e2b297b0fa4cc299460f",
+    "tests/Hexalith.Projects.Server.Tests/Queries/ProjectMcpCliAdmissionTests.cs": "cd8a41c4a6dfbc79b9efa21c35b4115ad1af1e01f29f7802d3a15005b5d98da9",
+    "references/Hexalith.McpCli/README.md": "f46e37d1ae9fa8dca98e87e090a968ae6a24c5ad725a047e95a1a02aa4f847d3"
+  },
+  "sourceBuild": {
+    "result": "passed",
+    "configuration": "Debug",
+    "warnings": 0,
+    "errors": 0,
+    "commands": "source-commands.json",
+    "preparation": "source-preparation.json",
+    "log": "server-source-build.log",
+    "lane": "Approved D4 individual test-project lane; build-preparation environment used unchanged. NuGetAudit=false is the spec-authorized command."
+  },
+  "admissionTests": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "xml": "cli-admission-source.xml",
+    "trx": "cli-admission-source.trx",
+    "log": "cli-admission-source.log",
+    "cases": [
+      "Hexalith.Projects.Server.Tests.Queries.ProjectMcpCliAdmissionTests.DecoratedExamplePassesServerAdmission(queryType: typeof(Hexalith.Projects.Contracts.Queries.ListProjectsQuery))",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectMcpCliAdmissionTests.DecoratedExamplePassesServerAdmission(queryType: typeof(Hexalith.Projects.Contracts.Queries.GetProjectQuery))",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectMcpCliAdmissionTests.DecoratedExamplePassesServerAdmission(queryType: typeof(Hexalith.Projects.Contracts.Queries.ResolveProjectFromConversationQuery))",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectMcpCliAdmissionTests.DecoratedExamplePassesServerAdmission(queryType: typeof(Hexalith.Projects.Contracts.Queries.ResolveProjectFromAttachmentsQuery))"
+    ],
+    "ciCoverage": "The test file has no HEXALITH_SOURCE_FIXTURE condition and is included by the ordinary Server.Tests SDK compile glob."
+  },
+  "releasePackageTools": {
+    "result": "passed",
+    "total": 20,
+    "failed": 0,
+    "command": [
+      "run-with-temp",
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_release_package_tools.py"
+    ],
+    "log": "release-package-tools.log"
+  },
+  "revisionEquivalence": "revision-equivalence.json",
+  "packageBuild": {
+    "result": "blocked-before-compilation",
+    "configuration": "Release",
+    "log": "server-package-build.log",
+    "command": "run-with-temp bash -c 'dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Release -m:1 --disable-build-servers -p:UseHexalithProjectReferences=false --artifacts-path \"$TMPDIR/build\"'",
+    "exitCode": 1,
+    "reason": "NU1109: Hexalith.Folders.Client 2.0.0 requires Hexalith.McpCli.Abstractions >= 3.0.0; Projects centrally pins 2.0.1. Existing dependency drift is not changed under Story 6.6."
+  },
+  "productionAuthority": {
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "result": "PASS: production-authority index is [6, 7, 8]"
+  },
+  "cleanup": {
+    "temporaryRoot": "/tmp/hexalith-job.TM7JkTJE",
+    "temporaryRootRemoved": true,
+    "childJobs": "All build and test jobs finished before return; run-with-temp removed private build/preparation and patch-reproduction workspaces."
+  },
+  "limitations": [
+    "No fresh full-suite or complete package-mode qualification is claimed; prior immutable receipts remain revision-bound.",
+    "DW-82 retains package publication, signer authority, Projects native topology/grants and live scenario qualification.",
+    "McpCli main enrollment already exists; this run made no commits, pushes, publication or gitlink changes."
+  ],
+  "evidenceSha256": {
+    "cli-admission-source.log": "7aec50b5ca660e316a3dc716e6835030bb621be90f4b9aa9c1909e8e689bc8c8",
+    "cli-admission-source.trx": "4cb84b270e91cd35d3f9735137481b98ead596d3d02238bd8845e1634f766f98",
+    "cli-admission-source.xml": "9b3d68fe99114c734feca17e86494bdcb494d709fc34b7c57e8f24ed38ce9998",
+    "release-package-tools.log": "4d8dbaed0d23478f3bc294952bf44efa5faed709608b0c15898ee17494381ead",
+    "revision-equivalence.json": "07d348044755ab7e7b4a5d5fb6f55d8a3b0dc16afd9be210d28110773e5610ba",
+    "server-package-build.log": "c0d24c048024637ef6627483b40a3335967a1ec0ddf2bd6dd20460edb81d6976",
+    "server-source-build.log": "9e159800a160b3026e4a3afd20156bd0898ee2075a67c8ca1c240b0c6a677a7e",
+    "source-commands.json": "718762badf0d22c824411dcf443cd0c7e6cefee8cf5e0a807f77d7c040460ef9",
+    "source-preparation.json": "46cb29ae6d3a0bafdbb83083a8b723192767812d09db827919e0a51450867716",
+    "source-preparation.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

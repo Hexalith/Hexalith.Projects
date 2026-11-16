@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "specStatus": "done",
+  "sprintStoryStatus": "review",
+  "candidateCommand": [
+    "python3",
+    "/home/administrator/projects/hexalith/projects/tools/planning/validate_production_authority.py",
+    "--validate-index",
+    "--sprint-status",
+    "/tmp/hexalith-job.U0W7UQTK/candidate/_bmad-output/implementation-artifacts/sprint-status.yaml",
+    "--deferred-work",
+    "/tmp/hexalith-job.U0W7UQTK/candidate/_bmad-output/implementation-artifacts/deferred-work.md",
+    "--p0-artifact",
+    "/tmp/hexalith-job.U0W7UQTK/candidate/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md",
+    "--workspace-root",
+    "/tmp/hexalith-job.U0W7UQTK/candidate"
+  ],
+  "candidateResult": "PASS: production-authority index is [6, 7, 8]",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS: production-authority index is [6, 7, 8]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.6"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS: Story 6.6 is within production authority\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "references/Hexalith.McpCli",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "commit": "Not created: approved correction explicitly forbids commits.",
+  "publishedBundleSha256": {
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": "beb6f3c9f47fe60663f7a69c52278cf1935269a2123a0b53b6ee7164d095852f",
+    "_bmad-output/implementation-artifacts/deferred-work.md": "491cfafe1351783c1819e8bc7db76d4c8f7efc03246db9d7d7420424953e9d25",
+    "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md": "e39454e2eb8068e0add71c59fc79af6cf935f7861c43650a550951568343461d",
+    "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7"
+  }
+}

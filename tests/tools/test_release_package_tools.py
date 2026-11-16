@@ -212,14 +212,14 @@ class ReleasePackageToolTests(unittest.TestCase):
         contracts_manifest = next(
             item for item in manifest.packages if item.package_id.endswith("Contracts")
         )
-        external_version = contracts_manifest.dependencies["Hexalith.Conversations.Contracts"]
+        external_version = contracts_manifest.dependencies["Hexalith.EventStore.Contracts"]
         self.assertNotIn("{", external_version)
         write_candidates(self.directory, version=external_version)
         packages, version, _ = validate_packages(self.directory, external_version, SOURCE_SHA)
         contracts = next(item for item in packages if item.package_id.endswith("Contracts"))
         self.assertEqual(
             external_version,
-            contracts.dependencies["Hexalith.Conversations.Contracts"],
+            contracts.dependencies["Hexalith.EventStore.Contracts"],
         )
         self.assertEqual(external_version, version)
 

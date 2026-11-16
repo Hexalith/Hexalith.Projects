@@ -1,0 +1,99 @@
+{
+  "date": "2026-11-16",
+  "layers": 3,
+  "reviewerFindings": 14,
+  "parentFindings": 1,
+  "newVerificationGaps": 0,
+  "rows": [
+    {
+      "id": "R5-B1",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried pass-4 publication finding and DW-82 fix-forward decision. The unpublished .3 pin remains; README now describes NU1102 accurately. No publication is authorized by this feature run."
+    },
+    {
+      "id": "R5-B2",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried V1: default native discovery lacks Projects service, committed routes and grants. Existing DW-82 entry retains this requirement; no duplicate deferral."
+    },
+    {
+      "id": "R5-B3",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried B4: the offline list vector does not arrange a discriminating native fixture. DW-82 retains live qualification; no duplicate deferral."
+    },
+    {
+      "id": "R5-B4",
+      "verdict": "maybe-false",
+      "route": "defer (carried)",
+      "evidence": "Carried B1: session artifact approval does not establish external owning-maintainer capacity. Existing DW-82 signer-capacity requirement remains unverified; no release acceptance is asserted."
+    },
+    {
+      "id": "R5-B5",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried pass-4 EventStore graph drift: manifest 5.1.0 versus merged central pin 5.1.1. Existing 2026-11-16 deferred entry and DW-83 retain the correction; no duplicate deferral."
+    },
+    {
+      "id": "R5-B6",
+      "verdict": "false",
+      "route": "reject",
+      "evidence": "The cited aggregate explicitly records revision-bound historical package evidence. New review-pass4/verification.json states no fresh full-suite or package-mode pass; revision-equivalence.json discloses the EventStore pin exception. No current-source package compatibility claim is made."
+    },
+    {
+      "id": "R5-B7",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "List page/lifecycle/cursor restrictions are described in discovery and enforced by ProjectReadQueryExecutor before reads. A structural CLR schema allowing semantically invalid values can cost an extra safe 400; synchronizing semantic constraints requires additional schema annotations/generation rather than a direct correction, with no demonstrated valid-input failure."
+    },
+    {
+      "id": "R5-B8",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "Advisory raw count, null entries and owner kinds are checked by ProjectAdvisoryQueryExecutor.cs:85-88 before owner processing and documented by the declarations. Encoding every semantic constraint adds schema behavior; the demonstrated consequence is rejection of invalid input, with no unauthorized access or write."
+    },
+    {
+      "id": "R5-B9",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "Generic SchemaDeriver.cs:89 enforces object roots only for Commands, unchanged by 6.6; advisory Payload at :315-316 rejects non-object JSON. Tightening generic Query nullability changes shared schema behavior for a malformed-input optimization, so the low complexity-adding suggestion is rejected."
+    },
+    {
+      "id": "R5-B10",
+      "verdict": "low",
+      "route": "reject (spec edit)",
+      "evidence": "The remedy edits this build specification and is rejected by the review workflow. D4 explicitly records the approved historical lane; fresh receipt distinguishes the authorized Debug command from the audit-enabled failed Release attempt."
+    },
+    {
+      "id": "R5-E1",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried V1, same native Projects topology/routes/grants gap as R5-B2. Existing DW-82 route is preserved without another ledger entry."
+    },
+    {
+      "id": "R5-E2",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried B4, same unarranged live empty/Unavailable fixture as R5-B3. Existing DW-82 route is preserved without another ledger entry."
+    },
+    {
+      "id": "R5-E3",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Carried pass-4 EventStore package-manifest drift, same location and claim as R5-B5. Historical package evidence remains scoped to its recorded revision."
+    },
+    {
+      "id": "R5-V1",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "Other finding, carried V1: default native plan discovers Projects without a usable service/route/grant. Existing DW-82 prerequisite remains open; this is not a new verification gap."
+    },
+    {
+      "id": "R5-P1",
+      "verdict": "medium",
+      "route": "defer",
+      "evidence": "Fresh Release/package Server build stops before compilation with NU1109: Folders.Client 2.0.0 requires McpCli.Abstractions >=3.0.0 against Projects 2.0.1. Existing dependency cohort drift is independent of these test/documentation corrections; record it for package/release maintenance without changing pins under 6.6."
+    }
+  ]
+}
