@@ -2,7 +2,7 @@
 title: 'Cut over supported reads while preserving compatibility and rollback'
 type: 'feature'
 created: '2026-11-16'
-status: 'ready-for-dev'
+status: 'in-progress'
 route: 'dispatch'
 baseline_commit: 'c6541a305a420078b16dceaba47f36468022850b'
 review_loop_iteration: 0
