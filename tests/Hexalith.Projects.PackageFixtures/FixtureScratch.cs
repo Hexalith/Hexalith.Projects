@@ -62,6 +62,30 @@ internal sealed class FixtureScratch : IAsyncDisposable
         return id;
     }
 
+    internal async Task<int> OwnedPublishedPortAsync(string id, string containerPort, CancellationToken cancellationToken)
+    {
+        if (!_containers.Contains(id, StringComparer.Ordinal))
+            throw new InvalidOperationException("Published binding requires an exactly owned container.");
+        string ownership = await _docker(["inspect", "--format", "{{json .Config.Labels}}", id], cancellationToken).ConfigureAwait(false);
+        using JsonDocument labels = JsonDocument.Parse(ownership);
+        if (labels.RootElement.GetProperty("hexalith.projects-package-fixtures").GetString() != Isolation)
+            throw new InvalidOperationException("Published binding container ownership changed.");
+        string binding = await _docker(["inspect", "--format", "{{json .NetworkSettings.Ports}}", id], cancellationToken).ConfigureAwait(false);
+        return PublishedPort(binding, containerPort);
+    }
+
+    internal static int PublishedPort(string binding, string containerPort)
+    {
+        using JsonDocument document = JsonDocument.Parse(binding);
+        if (!document.RootElement.TryGetProperty(containerPort, out JsonElement ports)
+            || ports.ValueKind != JsonValueKind.Array || ports.GetArrayLength() != 1
+            || ports[0].GetProperty("HostIp").GetString() != "127.0.0.1"
+            || !int.TryParse(ports[0].GetProperty("HostPort").GetString(), System.Globalization.NumberStyles.None,
+                System.Globalization.CultureInfo.InvariantCulture, out int port) || port is < 1024 or > 65535)
+            throw new InvalidOperationException("Published binding must be one exact assigned loopback port.");
+        return port;
+    }
+
     public async ValueTask DisposeAsync()
     {
         List<Exception> failures = [];

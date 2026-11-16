@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 
 using Hexalith.Projects.PackageFixtures;
+using Hexalith.EventStore.Client.Gateway;
+using Hexalith.EventStore.Contracts.Streams;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -36,7 +38,9 @@ public sealed class PackageCredentialMatrixTests
                     string file = arguments[Array.IndexOf(arguments, "--cidfile") + 1];
                     await File.WriteAllTextAsync(file, id, cancellation).ConfigureAwait(true);
                     return id;
-                case "inspect": return JsonSerializer.Serialize(new Dictionary<string, string> { ["hexalith.projects-package-fixtures"] = isolation! });
+                case "inspect": return arguments.Contains("{{json .NetworkSettings.Ports}}", StringComparer.Ordinal)
+                    ? "{\"6379/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"43190\"}]}"
+                    : JsonSerializer.Serialize(new Dictionary<string, string> { ["hexalith.projects-package-fixtures"] = isolation! });
                 case "start": case "rm": case "ps": return string.Empty;
                 default: throw new InvalidOperationException("The offline credential preflight may not start a product backend.");
             }
@@ -89,6 +93,25 @@ public sealed class PackageCredentialMatrixTests
                     .AddInMemoryCollection(invalidProof.ToDictionary(pair => "Projects:PackageFixtures:" + pair.Key, pair => pair.Value)).Build();
                 Should.Throw<InvalidOperationException>(() => PackageHost.PackageActualOwnerComposition.Validate(refusedProof));
             }
+            string scanPrivate = settings.GetProperty("FolderScanPrivateKey").GetString()!;
+            string scanPublic = settings.GetProperty("FolderScanPublicKey").GetString()!;
+            string readPrivate = settings.GetProperty("FolderOwnerPrivateKey").GetString()!;
+            string readPublic = settings.GetProperty("FolderOwnerPublicKey").GetString()!;
+            scanPublic.ShouldNotBe(readPublic);
+            string workersPublic = settings.GetProperty("FolderWorkerScanPublicKey").GetString()!;
+            workersPublic.ShouldNotBe(scanPublic);
+            workersPublic.ShouldNotBe(readPublic);
+            StreamReadRequest scanRequest = new(inputs.Tenant, "folders", "synthetic-folder", ToSequence: 1) { RequireNativeProof = true };
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            string scanProof = BoundNativeSourceScanProof.Issue(scanRequest, "folders", scanPrivate, now);
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest, "folders", scanPublic, now).ShouldBeTrue();
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest, "folders", readPublic, now).ShouldBeFalse();
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest, "folders", workersPublic, now).ShouldBeFalse();
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest with { Tenant = inputs.ForeignTenant }, "folders", scanPublic, now).ShouldBeFalse();
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest with { Domain = "projects" }, "folders", scanPublic, now).ShouldBeFalse();
+            BoundNativeSourceScanProof.Verify(scanProof, scanRequest, "projects", scanPublic, now).ShouldBeFalse();
+            string readProof = BoundStreamReadProof.Issue(scanRequest, "folders", readPrivate, now);
+            BoundNativeSourceScanProof.Verify(readProof, scanRequest, "folders", scanPublic, now).ShouldBeFalse();
             Dictionary<string, string> browser = new()
             {
                 ["TenantToken"] = inputs.ReaderTokens["actor-1"], ["ForeignToken"] = inputs.ReaderTokens["foreign-actor"],

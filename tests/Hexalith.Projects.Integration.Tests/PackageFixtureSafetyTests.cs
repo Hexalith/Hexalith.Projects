@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 using Shouldly;
 
@@ -111,6 +112,41 @@ public sealed class PackageFixtureSafetyTests
             new PackageHostingStartup().Configure(web);
         });
         Should.Throw<InvalidOperationException>(() => builder.Build()).Message.ShouldContain("actual owner identity and proof key");
+    }
+
+    /// <summary>Private resource shutdown cancels a blocked hosted service before the orchestrator stop deadline.</summary>
+    [Fact]
+    public async Task PrivateOwnerShutdownBoundsItsGracefulDrain()
+    {
+        FixtureScratch scratch = new(true);
+        await using var cleanup = scratch.ConfigureAwait(true);
+        BlockingShutdownService blocker = new();
+        IHostBuilder builder = Host.CreateDefaultBuilder().UseEnvironment("Development").ConfigureWebHost(web =>
+        {
+            web.UseKestrel().UseUrls("http://127.0.0.1:0")
+                .UseSetting("HEXALITH_PACKAGE_STARTUP", "1").UseSetting("HEXALITH_PACKAGE_ROLE", "projects")
+                .UseSetting("HEXALITH_PACKAGE_DIRECTORY", scratch.Directory).UseSetting("DAPR_HTTP_ENDPOINT", "http://127.0.0.1:3500")
+                .Configure(_ => { });
+            new PackageHostingStartup().Configure(web);
+        }).ConfigureServices(services => services.AddSingleton<IHostedService>(blocker));
+        using IHost host = builder.Build();
+        await host.StartAsync(TestContext.Current.CancellationToken);
+        using CancellationTokenSource deadline = new(TimeSpan.FromSeconds(10));
+        var elapsed = System.Diagnostics.Stopwatch.StartNew();
+        await host.StopAsync(deadline.Token);
+        blocker.DrainCancelled.ShouldBeTrue();
+        elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(8));
+    }
+
+    private sealed class BlockingShutdownService : IHostedService
+    {
+        internal bool DrainCancelled { get; private set; }
+        public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            try { await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false); }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { DrainCancelled = true; }
+        }
     }
 
     /// <summary>IPC refuses traversal, linked input and oversized output, and its scratch is disposed on failure.</summary>

@@ -65,6 +65,10 @@ public sealed class PackageHostingStartup : IHostingStartup
                 services.Replace(ServiceDescriptor.Singleton<IOrganizationStreamSequenceReader, GatewayOrganizationStreamSequenceReader>());
             }
             else if (role != "projects") throw new InvalidOperationException("Unknown private package adapter role.");
+            // DCP's finite stop window must exceed the selected host's graceful drain.
+            // This private profile still requires the original process to exit before restart.
+            if (role is "projects" or "folders")
+                services.Configure<HostOptions>(options => options.ShutdownTimeout = TimeSpan.FromSeconds(5));
             PackageProcessReceipt.Write(directory, role);
         });
     }

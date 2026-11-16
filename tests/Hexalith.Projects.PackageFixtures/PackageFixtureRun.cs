@@ -1,17 +1,19 @@
 namespace Hexalith.Projects.PackageFixtures;
 
-using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+
+using Grpc.Net.Client;
+
+using Grpc.Core;
+
 using System.Security.Cryptography;
+
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
-
-using Grpc.Core;
-using Grpc.Net.Client;
-
-using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>Runs both real package-mode browser phases and always awaits AppHost and private-state teardown.</summary>
 internal static class PackageFixtureRun
@@ -31,122 +33,142 @@ internal static class PackageFixtureRun
         Environment.SetEnvironmentVariable("DOTNET_WATCH", "false");
         Type entryPoint = Assembly.LoadFrom(host).GetType("Program")
             ?? throw new InvalidOperationException("The prebuilt AppHost entry point is missing.");
+        string workspace = Path.Combine(root, "tests/e2e");
+        using (CancellationTokenSource staticCheck = new(TimeSpan.FromMinutes(2)))
+            await FixtureProcess.RunAsync("node", [Path.Combine(workspace, "node_modules/typescript/bin/tsc"), "--noEmit"],
+                workspace, staticCheck.Token, printOutput: true).ConfigureAwait(false);
         List<string> nativeCompleted = [];
-        foreach ((bool actualOwners, string scenario) in new[] { (true, "main"), (true, "duplicate"), (true, "full-replay"),
-            (true, "tenant-access-recovery"), (false, "compatibility"), (true, "browser") })
+        IReadOnlyList<string> failedPhases = await PackagePhaseSequence.RunAsync(new[]
         {
-            Console.WriteLine("[package-fixtures] phase=" + scenario);
-            FixtureScratch scratch = new(actualOwners);
-            await using var scratchCleanup = scratch.ConfigureAwait(false);
-            using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(45));
-            FixtureInputs inputs = new(scratch, root, actualOwners, scenario);
-            await using var inputCleanup = inputs.ConfigureAwait(false);
-            await inputs.PrepareAsync(timeout.Token).ConfigureAwait(false);
-            PackageApplicationFactory factory = new(entryPoint, ["--environment", "Development",
-                "--Logging:LogLevel:Default=Warning", "--Projects:PackageFixtures:Enabled=true", "--Projects:PackageFixtures:ConfigurationFile=" + scratch.File("configuration.json")], scratch.Directory);
-            await using var factoryCleanup = factory.ConfigureAwait(false);
-            DistributedApplication? application = null;
-            try
-            {
-                using (CancellationTokenSource startup = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token))
-                {
-                    startup.CancelAfter(TimeSpan.FromMinutes(5));
-                    await factory.StartAsync(startup.Token).ConfigureAwait(false);
-                    application = factory.Application ?? throw new InvalidOperationException("AppHost did not publish its built application.");
-                    string[] resources = actualOwners
-                        ? ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers", "browser-read-observer"]
-                        : ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "conversations", "folders", "memories", "live-fixtures"];
-                    foreach (string resource in resources)
-                        await application.ResourceNotifications.WaitForResourceHealthyAsync(resource, startup.Token).ConfigureAwait(false);
-                    await VerifyTelemetryAsync(factory, application, scratch, startup.Token).ConfigureAwait(false);
-                }
-                FixtureProductChecks checks = new(inputs, scratch, factory);
-                await checks.VerifyBootstrapAsync(timeout.Token).ConfigureAwait(false);
-                if (actualOwners && scenario != "browser")
-                {
-                    try
-                    {
-                        await PackageNativeRunner.InvokeAsync("RunAsync", root, inputs, scratch, factory, application, scenario, timeout.Token).ConfigureAwait(false);
-                        nativeCompleted.Add(scenario);
-                        Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=1 failed=0 skipped=0");
-                    }
-                    catch
-                    {
-                        Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=0 failed=1 skipped=0");
-                        throw;
-                    }
-                    continue;
-                }
-                if (!actualOwners)
-                {
-                    await PackageNativeRunner.InvokeAsync("InitializeAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
-                    await checks.SeedCompatibilityTenantAsync(timeout.Token).ConfigureAwait(false);
-                    await VerifyReadRecoveryAsync(root, factory, inputs, scratch, timeout.Token).ConfigureAwait(false);
-                }
-                if (actualOwners)
-                {
-                    await PackageNativeRunner.InvokeAsync("SeedAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
-                    await checks.RegisterObservationsAsync(timeout.Token).ConfigureAwait(false);
-                }
-                FixtureTelemetry? telemetry = actualOwners ? new FixtureTelemetry(application,
-                    ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers"]) : null;
-                if (telemetry is not null) await telemetry.BeginAsync(timeout.Token).ConfigureAwait(false);
-                Dictionary<string, string> browser = new()
-                {
-                    ["CI"] = "true", ["E2E_LIVE_APPHOST"] = "1", ["E2E_PACKAGE_FIXTURES"] = "1",
-                    ["E2E_SUPPORTED_READ_APPHOST"] = actualOwners ? "1" : "0",
-                    ["E2E_RUN_ID"] = scratch.Isolation, ["BASE_URL"] = factory.GetEndpoint("projects-ui", "http").ToString(),
-                    ["API_URL"] = factory.GetEndpoint("projects", "http").ToString(),
-                    ["EVENTSTORE_API_URL"] = factory.GetEndpoint("eventstore", "http").ToString(),
-                    ["FIXTURE_API_URL"] = factory.GetEndpoint(actualOwners ? "browser-read-observer" : "live-fixtures", "http").ToString(),
-                    ["KEYCLOAK_URL"] = new Uri(inputs.Authority).GetLeftPart(UriPartial.Authority),
-                    ["KEYCLOAK_CLIENT_ID"] = "supported-read-bootstrap", ["KEYCLOAK_REALM"] = "hexalith",
-                    ["TEST_USER_USERNAME"] = "actor-1", ["TEST_USER_PASSWORD"] = inputs.Password,
-                    ["E2E_FOREIGN_USERNAME"] = "foreign-actor", ["E2E_FOREIGN_PASSWORD"] = inputs.Password,
-                    ["TEST_TENANT_ID"] = inputs.Tenant, ["TEST_PRINCIPAL_ID"] = inputs.Subjects["actor-1"],
-                    ["E2E_BROWSER_SESSION_FILE"] = scratch.File("browser-session.json"),
-                    ["E2E_PACKAGE_OUTPUT"] = scratch.File("browser-output"),
-                    ["NODE_EXTRA_CA_CERTS"] = scratch.File("certificate.pem"),
-                    ["E2E_PROTECTED_FIXTURE_MARKERS"] = "[\"Synthetic project\",\"Synthetic descriptive metadata\",\"Restricted legacy\"]",
-                };
-                string workspace = Path.Combine(root, "tests/e2e");
-                await FixtureProcess.RunAsync("node", [Path.Combine(workspace, "node_modules/typescript/bin/tsc"), "--noEmit"],
-                    workspace, timeout.Token, browser, inputs.ProtectedValues, printOutput: true).ConfigureAwait(false);
-                if (actualOwners)
-                    await BrowserAsync("actual-owner", ["specs/projects-supported-read-browser.spec.ts"], ["--workers", "1"],
-                        workspace, browser, inputs, scratch, timeout.Token).ConfigureAwait(false);
-                else
-                {
-                    foreach ((string phase, string[] selectors, string[] extra) in new[]
-                    {
-                        ("smoke", new[] { "specs/live-apphost-startup.spec.ts", "specs/projects-authentication.spec.ts" }, Array.Empty<string>()),
-                        ("full", Array.Empty<string>(), Array.Empty<string>()),
-                        ("repeat", new[] { "specs/live-fixtures-lifecycle.spec.ts" }, new[] { "--repeat-each", "2" }),
-                        ("retry", new[] { "specs/live-fixtures-retry.spec.ts" }, new[] { "--retries", "1", "--repeat-each", "2" }),
-                    })
-                        await BrowserAsync(phase, selectors, extra, workspace, browser, inputs, scratch, timeout.Token).ConfigureAwait(false);
-                }
-                if (telemetry is not null) await telemetry.VerifyAsync(inputs.ProtectedValues, timeout.Token).ConfigureAwait(false);
-                await checks.VerifyDurableStateAsync(actualOwners, timeout.Token).ConfigureAwait(false);
-            }
-            catch
-            {
-                await FixtureDiagnostics.ResourcesAsync(application ?? factory.Application, inputs.ProtectedValues).ConfigureAwait(false);
-                throw;
-            }
-            finally
-            {
-                application ??= factory.Application;
-                if (application is not null)
-                {
-                    using CancellationTokenSource stop = new(TimeSpan.FromMinutes(2));
-                    await application.StopAsync(stop.Token).ConfigureAwait(false);
-                }
-            }
-        }
+            (true, "main"), (true, "duplicate"), (true, "full-replay"),
+            (true, "tenant-access-recovery"), (false, "compatibility"), (true, "browser"),
+        }, selected => RunPhaseAsync(root, entryPoint, selected.Item1, selected.Item2, nativeCompleted)).ConfigureAwait(false);
+        Console.WriteLine("[package-native] scenarios=4 passed=" + nativeCompleted.Count + " failed=" + (4 - nativeCompleted.Count) + " skipped=0");
+        if (failedPhases.Count != 0)
+            throw new InvalidOperationException("Package fixture phases failed: " + string.Join(",", failedPhases));
         if (!nativeCompleted.SequenceEqual(new[] { "main", "duplicate", "full-replay", "tenant-access-recovery" }))
             throw new InvalidOperationException("The required native product matrix did not execute completely.");
-        Console.WriteLine("[package-native] scenarios=4 passed=4 failed=0 skipped=0");
+    }
+
+    // A returned assertion category proves that every await-using scope has disposed.
+    // Stop/disposal/removal exceptions escape this method and prohibit later allocation.
+    private static async Task<string?> RunPhaseAsync(string root, Type entryPoint, bool actualOwners, string scenario,
+        List<string> nativeCompleted)
+    {
+        string? failureCategory = null;
+        string workspace = Path.Combine(root, "tests/e2e");
+
+        Console.WriteLine("[package-fixtures] phase=" + scenario);
+        FixtureScratch scratch = new(actualOwners);
+        await using var scratchCleanup = scratch.ConfigureAwait(false);
+        using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(45));
+        FixtureInputs inputs = new(scratch, root, actualOwners, scenario);
+        await using var inputCleanup = inputs.ConfigureAwait(false);
+        await inputs.PrepareAsync(timeout.Token).ConfigureAwait(false);
+        PackageApplicationFactory factory = new(entryPoint, ["--environment", "Development",
+            "--Logging:LogLevel:Default=Warning", "--Projects:PackageFixtures:Enabled=true", "--Projects:PackageFixtures:ConfigurationFile=" + scratch.File("configuration.json")], scratch.Directory);
+        await using var factoryCleanup = factory.ConfigureAwait(false);
+        DistributedApplication? application = null;
+        try
+        {
+            using (CancellationTokenSource startup = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token))
+            {
+                startup.CancelAfter(TimeSpan.FromMinutes(5));
+                await factory.StartAsync(startup.Token).ConfigureAwait(false);
+                application = factory.Application ?? throw new InvalidOperationException("AppHost did not publish its built application.");
+                string[] resources = actualOwners
+                    ? ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers", "browser-read-observer"]
+                    : ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "conversations", "folders", "memories", "live-fixtures"];
+                foreach (string resource in resources)
+                    await application.ResourceNotifications.WaitForResourceHealthyAsync(resource, startup.Token).ConfigureAwait(false);
+                await VerifyTelemetryAsync(factory, application, scratch, startup.Token).ConfigureAwait(false);            }
+            FixtureProductChecks checks = new(inputs, scratch, factory);
+            await checks.VerifyBootstrapAsync(timeout.Token).ConfigureAwait(false);
+            if (actualOwners && scenario != "browser")
+            {
+                try
+                {
+                    await PackageNativeRunner.InvokeAsync("RunAsync", root, inputs, scratch, factory, application, scenario, timeout.Token).ConfigureAwait(false);
+                    nativeCompleted.Add(scenario);
+                    Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=1 failed=0 skipped=0");
+                }
+                catch
+                {
+                    Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=0 failed=1 skipped=0");
+                    throw;
+                }
+                return null;
+            }
+            if (!actualOwners)
+            {
+                await PackageNativeRunner.InvokeAsync("InitializeAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
+                await checks.SeedCompatibilityTenantAsync(timeout.Token).ConfigureAwait(false);
+                await VerifyReadRecoveryAsync(root, factory, inputs, scratch, timeout.Token).ConfigureAwait(false);
+            }
+            if (actualOwners)
+            {
+                await PackageNativeRunner.InvokeAsync("SeedAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
+                await checks.RegisterObservationsAsync(timeout.Token).ConfigureAwait(false);
+            }
+            FixtureTelemetry? telemetry = actualOwners ? new FixtureTelemetry(application,
+                ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers"]) : null;
+            if (telemetry is not null) await telemetry.BeginAsync(timeout.Token).ConfigureAwait(false);
+            Dictionary<string, string> browser = new()
+            {
+                ["CI"] = "true", ["E2E_LIVE_APPHOST"] = "1", ["E2E_PACKAGE_FIXTURES"] = "1",
+                ["E2E_SUPPORTED_READ_APPHOST"] = actualOwners ? "1" : "0",
+                ["E2E_RUN_ID"] = scratch.Isolation, ["BASE_URL"] = factory.GetEndpoint("projects-ui", "http").ToString(),
+                ["API_URL"] = factory.GetEndpoint("projects", "http").ToString(),
+                ["EVENTSTORE_API_URL"] = factory.GetEndpoint("eventstore", "http").ToString(),
+                ["FIXTURE_API_URL"] = factory.GetEndpoint(actualOwners ? "browser-read-observer" : "live-fixtures", "http").ToString().TrimEnd('/'),
+                ["KEYCLOAK_URL"] = new Uri(inputs.Authority).GetLeftPart(UriPartial.Authority),
+                ["KEYCLOAK_CLIENT_ID"] = "supported-read-bootstrap", ["KEYCLOAK_REALM"] = "hexalith",
+                ["TEST_USER_USERNAME"] = "actor-1", ["TEST_USER_PASSWORD"] = inputs.Password,
+                ["E2E_FOREIGN_USERNAME"] = "foreign-actor", ["E2E_FOREIGN_PASSWORD"] = inputs.Password,
+                ["TEST_TENANT_ID"] = inputs.Tenant, ["TEST_PRINCIPAL_ID"] = inputs.Subjects["actor-1"],
+                ["E2E_BROWSER_SESSION_FILE"] = scratch.File("browser-session.json"),
+                ["E2E_PACKAGE_OUTPUT"] = scratch.File("browser-output"),
+                ["NODE_EXTRA_CA_CERTS"] = scratch.File("certificate.pem"),
+                ["E2E_PROTECTED_FIXTURE_MARKERS"] = "[\"Synthetic project\",\"Synthetic descriptive metadata\",\"Restricted legacy\"]",
+            };
+            if (actualOwners)
+                await BrowserAsync("actual-owner", ["specs/projects-supported-read-browser.spec.ts"], ["--workers", "1"],
+                    workspace, browser, inputs, scratch, timeout.Token).ConfigureAwait(false);
+            else
+            {
+                foreach ((string phase, string[] selectors, string[] extra) in new[]
+                {
+                    ("smoke", new[] { "specs/live-apphost-startup.spec.ts", "specs/projects-authentication.spec.ts" }, Array.Empty<string>()),
+                    ("full", Array.Empty<string>(), Array.Empty<string>()),
+                    ("repeat", new[] { "specs/live-fixtures-lifecycle.spec.ts" }, new[] { "--repeat-each", "2" }),
+                    ("retry", new[] { "specs/live-fixtures-retry.spec.ts" }, new[] { "--retries", "1", "--repeat-each", "2" }),
+                })
+                    await BrowserAsync(phase, selectors, extra, workspace, browser, inputs, scratch, timeout.Token).ConfigureAwait(false);
+            }
+            if (telemetry is not null) await telemetry.VerifyAsync(inputs.ProtectedValues, timeout.Token).ConfigureAwait(false);
+            await checks.VerifyDurableStateAsync(actualOwners, timeout.Token).ConfigureAwait(false);
+        }
+        catch (Exception failure)
+        {
+            foreach (string stage in (new System.Diagnostics.StackTrace(failure, true).GetFrames() ?? [])
+                .Select(frame => frame.GetMethod()).Where(method => method?.DeclaringType?.FullName?.StartsWith(
+                    "Hexalith.Projects.Integration.Tests.PackageRead", StringComparison.Ordinal) == true)
+                .Select(method => method!.DeclaringType!.FullName + "." + method.Name).Distinct(StringComparer.Ordinal).Take(8))
+                Console.Error.WriteLine("[package-native] failure-stage=" + stage);
+            await FixtureDiagnostics.ResourcesAsync(application ?? factory.Application, inputs.ProtectedValues).ConfigureAwait(false);
+            failureCategory = scenario + ":" + failure.GetType().Name;
+            Console.Error.WriteLine("[package-fixtures] phase-failed=" + scenario + " failure-type=" + failure.GetType().Name);
+        }
+        finally
+        {
+            application ??= factory.Application;
+            if (application is not null)
+            {
+                using CancellationTokenSource stop = new(TimeSpan.FromMinutes(2));
+                await application.StopAsync(stop.Token).ConfigureAwait(false);
+            }
+        }
+        return failureCategory;
     }
 
     private static async Task VerifyTelemetryAsync(PackageApplicationFactory factory, DistributedApplication application,

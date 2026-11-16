@@ -220,6 +220,8 @@ internal sealed class PackageIpcFiles
     [DllImport("libc", EntryPoint = "geteuid")]
     private static extern uint GetEffectiveUserId();
 
+    internal static uint EffectiveUserId => GetEffectiveUserId();
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:Use LibraryImportAttribute instead of DllImportAttribute", Justification = "Open only the verified Linux directory without unsafe code.")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     [DllImport("libc", EntryPoint = "open", SetLastError = true)]

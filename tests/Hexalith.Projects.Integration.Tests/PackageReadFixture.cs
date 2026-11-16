@@ -113,7 +113,7 @@ internal sealed partial class PackageReadFixture : IDisposable
     internal async Task InitializeWriterProtocolAsync()
     {
         StreamReadPage bootstrap = await AwaitHostedBootstrapAsync().ConfigureAwait(false);
-        await ActivateFreshDeliveryWriterProtocolAsync(bootstrap).ConfigureAwait(false);
+        await PrepareFreshWriterProtocolAsync(bootstrap).ConfigureAwait(false);
     }
 
     /// <summary>Requires the exact native method selected in this launcher's private configuration.</summary>
@@ -190,7 +190,7 @@ internal sealed partial class PackageReadFixture : IDisposable
         Require(!_seedAttempted, "Each owned fixture may seed its genuine commands only once.");
         _seedAttempted = true;
         StreamReadPage bootstrap = await AwaitHostedBootstrapAsync().ConfigureAwait(false);
-        await ActivateFreshDeliveryWriterProtocolAsync(bootstrap).ConfigureAwait(false);
+        await PrepareFreshWriterProtocolAsync(bootstrap).ConfigureAwait(false);
         foreach (string tenant in new[] { ForeignTenant, Tenant })
         {
             string actor = ActorFor(tenant);
@@ -293,6 +293,18 @@ internal sealed partial class PackageReadFixture : IDisposable
         {
             _browserReadToken = await FreshBrowserReadCredentialAsync(browser).ConfigureAwait(false);
             await WaitForBrowserAdvisoryReadinessAsync(_browserReadToken).ConfigureAwait(false);
+        }
+        if (_inputs.NativeCredentials)
+        {
+            foreach (string tenant in new[] { Tenant, ForeignTenant })
+                await PackageReadSetupReadiness.WaitAsync(async token =>
+                {
+                    using HttpResponseMessage response = await QueryAsync(tenant: tenant, tenantActor: true, cancellationToken: token).ConfigureAwait(false);
+                    SubmitQueryResponse? result = response.StatusCode == HttpStatusCode.OK
+                        ? await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, token).ConfigureAwait(false) : null;
+                    return (response.StatusCode, result is { Success: true } ? result.Payload.Deserialize<ProjectListPage>(Json) : null);
+                }, ["project-a", "project-b"], TimeSpan.FromSeconds(90), TimeSpan.FromSeconds(1), Cancellation).ConfigureAwait(false);
+            Console.WriteLine("[package-native] setup=expected-reads-complete");
         }
     }
 
@@ -425,6 +437,8 @@ internal sealed partial class PackageReadFixture : IDisposable
         Require(response.StatusCode == HttpStatusCode.OK, "Supported read returned HTTP " + (int)response.StatusCode + ".");
         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
         T value = result!.Payload.Deserialize<T>(Json)!;
+        if (value is ProjectListPage diagnostic)
+            Console.WriteLine("[package-native] read-admission=" + CreateCursorControlEvidence(diagnostic).GetRawText());
         if (value is ProjectListPage page)
             await AppendReadEvidenceAsync(_readEvidence, Path.Combine(Evidence, "list-admission-observations.jsonl"), JsonSerializer.Serialize(new
             {
@@ -1005,6 +1019,7 @@ internal sealed partial class PackageReadFixture : IDisposable
         var command = new SubmitCommandRequest(messageId, tenant, domain, aggregate, type, JsonSerializer.SerializeToElement(payload, Json), messageId,
             new Dictionary<string, string> { ["taskId"] = messageId });
         string token = HumanToken(actorTenant, chatbot: false, administrator: true);
+        Console.WriteLine("[package-native] seed-submitting domain=" + domain + " type=" + type);
         using HttpResponseMessage response = await SendHumanAsync("api/v1/commands", command, token).ConfigureAwait(false);
         if (response.StatusCode != HttpStatusCode.Accepted)
         {
@@ -1031,6 +1046,7 @@ internal sealed partial class PackageReadFixture : IDisposable
                 if (outcome == "Completed")
                 {
                     await File.AppendAllTextAsync(Path.Combine(Evidence, "seed-progress.log"), "Completed " + domain + " " + type + Environment.NewLine, Cancellation).ConfigureAwait(false);
+                    Console.WriteLine("[package-native] seed-completed domain=" + domain + " type=" + type);
                     return messageId;
                 }
                 Require(outcome is not ("Rejected" or "TimedOut" or "PublishFailed"), "Fixture command failed: " + type + " (" + outcome + "). "
@@ -1777,7 +1793,13 @@ internal sealed partial class PackageReadFixture : IDisposable
         finally { readiness.Stop(); }
     }
 
-    /// <summary>Initializes the brand-new disposable store through the real authenticated SDK maintenance protocol before any domain seed.</summary>
+    private async Task PrepareFreshWriterProtocolAsync(StreamReadPage bootstrap)
+    {
+        Console.WriteLine("[package-native] setup=hosted-bootstrap-source-complete");
+        await ActivateFreshDeliveryWriterProtocolAsync(bootstrap).ConfigureAwait(false);
+        Console.WriteLine("[package-native] setup=writer-protocol-active");
+    }
+
     private async Task ActivateFreshDeliveryWriterProtocolAsync(StreamReadPage bootstrap)
     {
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
@@ -1794,6 +1816,7 @@ internal sealed partial class PackageReadFixture : IDisposable
                 pair => (ReadOnlyMemory<byte>)pair.Value.Bytes, StringComparer.Ordinal), bootstrap, "global-administrators", PrimaryActor,
                 allowLegacy: true, dapr.JsonSerializerOptions);
         }, cancellation).ConfigureAwait(false);
+        Console.WriteLine("[package-native] setup=fresh-inventory-stable");
         string id = _endpoints["redis-container-id"];
         Require(System.Text.Encoding.UTF8.GetString(await RedisBytesAsync(cancellation, ["SAVE"]).ConfigureAwait(false)).Trim() == "OK", "The owned provider did not create a native cutover backup.");
         string checkedBackup = System.Text.Encoding.UTF8.GetString(await RunOwnedProcessAsync("docker",
@@ -1881,6 +1904,24 @@ internal sealed partial class PackageReadFixture : IDisposable
         string[] reobserved = await KeysAsync().ConfigureAwait(false);
         if (values.Values.Any(value => value is null) || !keys.SequenceEqual(reobserved, StringComparer.Ordinal))
         {
+            var after = reobserved.Length == 0 ? new Dictionary<string, PackageReadStateSnapshot?>()
+                : await ReadSeedDeliveryStatesAsync(reobserved, cancellation).ConfigureAwait(false);
+            static object Fingerprint(PackageReadStateSnapshot? value) => new
+            {
+                present = value is not null, versionSha256 = value is null ? null : Digest(value.ETag),
+                bytesSha256 = value is null ? null : Convert.ToHexString(SHA256.HashData(value.Bytes)), byteCount = value?.Bytes.Length ?? 0,
+            };
+            string[] changed = keys.Union(reobserved, StringComparer.Ordinal).Where(key =>
+                !values.TryGetValue(key, out var beforeValue) || beforeValue is null
+                || !after.TryGetValue(key, out var afterValue) || afterValue is null
+                || beforeValue.ETag != afterValue.ETag || !beforeValue.Bytes.AsSpan().SequenceEqual(afterValue.Bytes)).Order(StringComparer.Ordinal).ToArray();
+            Console.Error.WriteLine("[package-native] cutover-inventory-observation " + JsonSerializer.Serialize(new
+            {
+                observedAt = DateTimeOffset.UtcNow, firstKeyCount = keys.Length, finalKeyCount = reobserved.Length,
+                changedKeyCount = changed.Length, truncated = changed.Length > 16,
+                changed = changed.Take(16).Select(key => new { keySha256 = Digest(key),
+                    before = Fingerprint(values.GetValueOrDefault(key)), after = Fingerprint(after.GetValueOrDefault(key)) }).ToArray(),
+            }, Json));
             await File.AppendAllTextAsync(Path.Combine(Evidence, "fresh-cutover-inventory-observations.jsonl"), JsonSerializer.Serialize(new
             {
                 firstKeyCount = keys.Length, finalKeyCount = reobserved.Length,
@@ -1973,10 +2014,20 @@ internal sealed partial class PackageReadFixture : IDisposable
                 && ProjectionDeliveryCompletionObserver.IsComplete(source, scope.Projection, checkpoint.Bytes, prior.Bytes,
                     before[scope.Actor + "||projection-lifecycle"] is null && after[scope.Actor + "||projection-lifecycle"] is null,
                     current.Bytes, dapr.JsonSerializerOptions));
+        DateTimeOffset diagnosticsAt = DateTimeOffset.UtcNow.AddSeconds(15);
         while (true)
         {
             cancellation.ThrowIfCancellationRequested();
             var before = await ReadSeedDeliveryStatesAsync(keys, cancellation).ConfigureAwait(false);
+            if (DateTimeOffset.UtcNow >= diagnosticsAt)
+            {
+                foreach (var scope in scopes)
+                    Console.WriteLine("[package-native] seed-projection domain=" + domain + " projection=" + scope.Projection
+                        + " checkpointPresent=" + (before[scope.Checkpoint] is not null)
+                        + " epochPresent=" + (before[scope.Actor + "||projection-lifecycle-epoch"] is not null)
+                        + " lifecyclePresent=" + (before[scope.Actor + "||projection-lifecycle"] is not null));
+                diagnosticsAt = DateTimeOffset.UtcNow.AddSeconds(15);
+            }
             if (Complete(before, before))
             {
                 StreamReadPage currentSource = await StreamAsync(tenant, domain, aggregate, tenant, cancellation).ConfigureAwait(false);

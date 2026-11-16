@@ -106,6 +106,7 @@ public static class PackageCompatibilityComposition
         _ = authority.WithHttpHealthCheck(() => authority.GetEndpoint("http"), path: "/alive");
         ReferenceExpression issuer = ReferenceExpression.Create($"{authority.GetEndpoint("https")}/workload-authority");
         _ = authority.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+                .WithEnvironment("Logging__Console__FormatterName", "json")
             .WithEnvironment("Authentication__WorkloadAuthority__Enabled", "true")
             .WithEnvironment("Authentication__WorkloadAuthority__NonconformingDevelopmentFixture", "true")
             .WithEnvironment("Authentication__WorkloadAuthority__Issuer", issuer)
@@ -117,6 +118,7 @@ public static class PackageCompatibilityComposition
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+                .WithEnvironment("Logging__Console__FormatterName", "json")
                 .WithEnvironment("EventStore__DomainService__AppId", name)
                 .WithEnvironment("Authentication__Workload__Audience", name)
                 .WithEnvironment("Authentication__Workload__AllowedCallers__0", "eventstore")

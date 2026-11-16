@@ -156,6 +156,7 @@ public static class PackageActualOwnerComposition
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+                .WithEnvironment("Logging__Console__FormatterName", "json")
                 .WithEnvironment("EventStore__RouteCatalog__ScopedDecodeReuse", "true")
                 .WithEnvironment("EventStore__RouteCatalog__SerializeLocalLeaseRelease", "false")
                 .WithEnvironment("EventStore__RouteCatalog__RetainValidatedCatalogBytes", "true")
@@ -194,6 +195,7 @@ public static class PackageActualOwnerComposition
             }).WithEventStoreAppChannelToken(channel);
         }
         _ = authority.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+                .WithEnvironment("Logging__Console__FormatterName", "json")
             .WithEnvironment("Authentication__WorkloadAuthority__Enabled", "true")
             .WithEnvironment("Authentication__WorkloadAuthority__NonconformingDevelopmentFixture", "true")
             .WithEnvironment("Authentication__WorkloadAuthority__Issuer", issuer)
@@ -281,7 +283,7 @@ public static class PackageActualOwnerComposition
                 .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
                 .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
             _ = source.Resource.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", readKey)
-                .WithEnvironment("Authentication__NativeSourceScan__PrivateKey", scanKey);
+                .WithEnvironment("Authentication__NativeSourceScan__PrivateKey", scanKey).WaitFor(authority);
             _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__" + source.CallerIndex, source.Workload)
                 .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__" + source.Workload, Required(configuration, Prefix + source.ReadKey + "PublicKey"))
                 .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__" + source.Workload, "folders")

@@ -45,8 +45,26 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
         return ((IPEndPoint)listener.LocalEndpoint).Port;
     }
 
+    // The public hostname is handed off only after Docker atomically assigns and proves its owned loopback binding.
+    // Run under the host file owner's UID (with the image's supported writable group 0), so 0600 key files
+    // remain readable on both developer hosts and GitHub runners without depending on image UID 1000.
+    internal const string KeycloakStartupScript = """
+        for ((attempt=0;attempt<1200;attempt++)); do
+          if [[ -s /fixture-startup/hostname ]]; then
+            read -r origin < /fixture-startup/hostname
+            if [[ ! "$origin" =~ ^https://127[.]0[.]0[.]1:[1-9][0-9]{0,4}$ ]]; then exit 125; fi
+            port="${origin##*:}"
+            if ((port<1024 || port>65535)); then exit 125; fi
+            exec /opt/keycloak/bin/kc.sh start-dev --import-realm --http-enabled=false --https-certificate-file=/opt/keycloak/conf/server.crt --https-certificate-key-file=/opt/keycloak/conf/server.key --hostname="$origin"
+          fi
+          sleep 0.1
+        done
+        exit 124
+        """;
+
     internal async Task PrepareAsync(CancellationToken cancellationToken)
     {
+        if (!OperatingSystem.IsLinux()) throw new PlatformNotSupportedException("Private package inputs require Linux.");
         using RSA key = RSA.Create(2048);
         using RSA nativeUserKey = RSA.Create(2048);
         await scratch.WriteAsync("native-user.pem", nativeUserKey.ExportPkcs8PrivateKeyPem(), cancellationToken).ConfigureAwait(false);
@@ -106,18 +124,32 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
         }
         realm["users"] = users;
         await scratch.WriteAsync("realm.json", realm.ToJsonString(), cancellationToken).ConfigureAwait(false);
-        int oidcPort = Port();
-        string origin = "https://127.0.0.1:" + oidcPort;
-        Authority = origin + "/realms/hexalith";
+        string origin;
         if (NativeCredentials)
+        {
+            origin = "https://127.0.0.1:" + Port();
+            Authority = origin + "/realms/hexalith";
             _nativeAuthority = await PackageUserAuthority.StartAsync(origin, Authority, scratch.File("native-user.pem"), certificate,
                 Password, new Dictionary<string, string> { ["actor-1"] = Tenant, ["foreign-actor"] = ForeignTenant }, permissions, cancellationToken).ConfigureAwait(false);
-        else _ = await scratch.ContainerAsync("oidc", ["-p", $"127.0.0.1:{oidcPort}:8443", "-v",
-            scratch.File("realm.json") + ":/opt/keycloak/data/import/fixture.json:ro", "-v",
-            scratch.File("certificate.pem") + ":/opt/keycloak/conf/server.crt:ro", "-v",
-            scratch.File("certificate.key") + ":/opt/keycloak/conf/server.key:ro", "quay.io/keycloak/keycloak:26.6",
-            "start-dev", "--import-realm", "--http-enabled=false", "--https-certificate-file=/opt/keycloak/conf/server.crt",
-            "--https-certificate-key-file=/opt/keycloak/conf/server.key", "--hostname=" + origin], cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            string startup = scratch.File("oidc-startup");
+            Directory.CreateDirectory(startup, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
+                | UnixFileMode.GroupRead | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
+            string id = await scratch.ContainerAsync("oidc", ["-p", "127.0.0.1::8443", "--user",
+                PackageIpcFiles.EffectiveUserId.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":0",
+                "--entrypoint", "/bin/bash", "-v", startup + ":/fixture-startup:ro", "-v",
+                scratch.File("realm.json") + ":/opt/keycloak/data/import/fixture.json:ro", "-v",
+                scratch.File("certificate.pem") + ":/opt/keycloak/conf/server.crt:ro", "-v",
+                scratch.File("certificate.key") + ":/opt/keycloak/conf/server.key:ro", "quay.io/keycloak/keycloak:26.6",
+                "-c", KeycloakStartupScript.ReplaceLineEndings("\n")], cancellationToken).ConfigureAwait(false);
+            int oidcPort = await scratch.OwnedPublishedPortAsync(id, "8443/tcp", cancellationToken).ConfigureAwait(false);
+            origin = "https://127.0.0.1:" + oidcPort.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            await scratch.WriteAsync("oidc-startup/hostname.tmp", origin + "\n", cancellationToken).ConfigureAwait(false);
+            File.SetUnixFileMode(scratch.File("oidc-startup/hostname.tmp"), UnixFileMode.UserRead | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
+            File.Move(scratch.File("oidc-startup/hostname.tmp"), scratch.File("oidc-startup/hostname"));
+        }
         Authority = origin + "/realms/hexalith";
         using HttpClient http = CreateHttpClient();
         await AwaitOidcAsync(http, cancellationToken).ConfigureAwait(false);
@@ -140,9 +172,9 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
             using JsonDocument readerJson = JsonDocument.Parse(await readerResponse.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false));
             ReaderTokens.Add(username, readerJson.RootElement.GetProperty("access_token").GetString()!);
         }
-        int redisPort = Port();
-        RedisContainer = await scratch.ContainerAsync("redis", ["-p", $"127.0.0.1:{redisPort}:6379", "redis:6"], cancellationToken).ConfigureAwait(false);
-        Redis = "127.0.0.1:" + redisPort;
+        RedisContainer = await scratch.ContainerAsync("redis", ["-p", "127.0.0.1::6379", "redis:6"], cancellationToken).ConfigureAwait(false);
+        int redisPort = await scratch.OwnedPublishedPortAsync(RedisContainer, "6379/tcp", cancellationToken).ConfigureAwait(false);
+        Redis = "127.0.0.1:" + redisPort.ToString(System.Globalization.CultureInfo.InvariantCulture);
         await scratch.WriteAsync("discovery.json", JsonSerializer.Serialize(new { apiVersion = "dapr.io/v1alpha1", kind = "Configuration",
             metadata = new { name = scratch.Isolation }, spec = new { accessControl = new { defaultAction = "deny", trustDomain = "public" },
                 nameResolution = new { component = "sqlite", version = "v1", configuration = new { connectionString = scratch.File("discovery.sqlite") } } } }), cancellationToken).ConfigureAwait(false);
