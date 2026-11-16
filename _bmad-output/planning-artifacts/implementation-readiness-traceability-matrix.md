@@ -138,16 +138,16 @@ _Every row’s exact verification command and expected evidence artifact (full d
 | `nfr-7` | `dotnet tool run hexalith-module test --profile perf --filter Story=8.9&Trait=backpressure` | `evidence/epic8/8.9-backpressure.trx` | L |
 | `nfr-8` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.1&Trait=retention` | `evidence/epic8/8.1-retention.trx` | M |
 | `nfr-9` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P2,8.8-P3` | `evidence/epic8/8.8-accessibility-manifest.json` | S |
-| `nfr-10` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` | `evidence/epic6/6.7-read-cutover.json` | L |
+| `nfr-10` | 6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. | `evidence/epic6/6.7-read-cutover.json` | L |
 | `nfr-11` | `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `evidence/epic8/8.11-release-evidence.json` | S |
-| `finding-arch-001` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` | `evidence/epic6/6.7-read-cutover.json` | L |
-| `finding-arch-002` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=contracts` | `evidence/epic6/6.7-contracts.trx` | M |
+| `finding-arch-001` | 6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. | `evidence/epic6/6.7-read-cutover.json` | L |
+| `finding-arch-002` | 6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. Contract-boundary cases. | `evidence/epic6/6.7-contracts.trx` | M |
 | `finding-sec-001` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.6&Trait=admission` | `evidence/epic8/8.6-admission.trx` | M |
 | `finding-client-001` | 6.5: authentication composition cases in the accepted native UI lane (`evidence/epic6/6.5-ui.xml`); 6.6: credential/identity cases on the individual Debug test-project lane recorded in `evidence/epic6/6.6-cli-read-surface.{trx,json}`, plus McpCli credential and enrollment gates in that repository | `evidence/epic6/authenticated-consumers.trx` | M |
 | `finding-rel-001` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.12` | `evidence/epic7/7.12-confirm-proposed.trx` | L |
 | `finding-agent-001` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.11` | `evidence/epic7/7.11-confirm-ambiguous.trx` | L |
-| `finding-id-001` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=identity` | `evidence/epic6/6.7-ulid-identity.trx` | M |
-| `finding-api-001` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=openapi` | `evidence/epic6/6.7-openapi.trx` | M |
+| `finding-id-001` | 6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. ULID identity cases. | `evidence/epic6/6.7-ulid-identity.trx` | M |
+| `finding-api-001` | 6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. OpenAPI/runtime reconciliation cases. | `evidence/epic6/6.7-openapi.trx` | M |
 | `finding-test-001` | `dotnet tool run hexalith-module test --profile ci-gates --filter Story=8.1` | `evidence/epic8/8.1-persisted-boundary.trx` | L |
 | `finding-perf-001` | `dotnet tool run hexalith-module test --profile perf --filter Finding=PERF-001` | `evidence/epic8/8.9-perf-001.json` | M |
 | `finding-ops-001` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.6` | `evidence/epic8/8.6-health.trx` | M |

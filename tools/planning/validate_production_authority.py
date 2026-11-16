@@ -34,6 +34,9 @@ STORY_6_8_KEY = "6-8-split-hexalith-projects-ui-contracts-from-contracts"
 # Approved 2026-11-15 scheduling exception (D1/D2): 6.8 may progress; 6.6 may leave backlog
 # only after 6.8 and DW-55 are done. Grants no readiness, P1R, 6.7, Epic 7/8 or release acceptance.
 SCHEDULED_STORY_STATUSES = {"backlog", "blocked", "ready-for-dev", "in-progress", "review", "done"}
+STORY_6_7_KEY = "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback"
+# Approved 2026-11-16 unpin: 6.7 may progress like 6.8. Grants no readiness, P1R, Epic 7/8
+# or release acceptance.
 ACCEPTANCE_SCHEMA = "hexalith.projects.p1r-acceptance.v1"
 ACCEPTANCE_RECORD_RELATIVE_PATH = Path(
     "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
@@ -82,7 +85,6 @@ EPIC6_DEVELOPMENT_STATUSES = {
     "epic-6": "in-progress",
     "6-2-retrieve-conversation-start-setup-with-admission-truth": "done",
     "6-3-retrieve-assembled-project-context-through-supported-read-models": "done",
-    "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback": "backlog",
     "epic-6-retrospective": "optional",
 }
 TRANSITIVE_EPIC_STATUSES = {
@@ -288,7 +290,7 @@ def _validate_scheduling(
     if advisory_status not in STORY_6_4_STATUSES:
         raise GuardViolation("Story 6.4 advisory status is missing or invalid")
     expected[STORY_6_4_KEY] = advisory_status
-    for key, story in ((STORY_6_8_KEY, "6.8"), (STORY_6_6_KEY, "6.6")):
+    for key, story in ((STORY_6_8_KEY, "6.8"), (STORY_6_6_KEY, "6.6"), (STORY_6_7_KEY, "6.7")):
         status = production.get(key)
         if status not in SCHEDULED_STORY_STATUSES:
             raise GuardViolation(f"Story {story} scheduled status is missing or invalid")

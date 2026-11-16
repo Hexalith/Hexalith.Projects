@@ -63,6 +63,8 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 **Approved scheduling correction — 2026-11-15.** Jerome approved [sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md](sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md). Story 6.8 may be scheduled now. Story 6.6 leaves backlog only after 6.8 and DW-55 are done, and the production-authority guard enforces this. Story 6.6 targets `Hexalith.McpCli` with four decorated Projects queries and runs on the extended E1 individual Debug test-project lane. 6.7 stays in backlog; historical NOT_READY and every release obligation remain.
 
+**Approved 6.7 scheduling correction — 2026-11-16.** Jerome approved [sprint-change-proposal-2026-11-16-unpin-story-6-7.md](sprint-change-proposal-2026-11-16-unpin-story-6-7.md). Story 6.7 may be scheduled now and runs on the extended E1 individual Debug test-project lane; AD-25 still gates runtime retirement. Historical NOT_READY and every release obligation remain.
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
@@ -1372,9 +1374,9 @@ ledger records their operational statuses.
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
 Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — each story's
-actual prior read/authority inputs under the approved 6.1/6.5/6.6 exceptions, never unrelated Epic 7/8 qualification; **compatibility/rollback** — legacy read route retained and reversible
+actual prior read/authority inputs under the approved 6.1/6.5/6.6/6.7 exceptions, never unrelated Epic 7/8 qualification; **compatibility/rollback** — legacy read route retained and reversible
 until Story 6.7 cutover, no event-history rewrite; **fixture** — deterministic authorized-Tenant
-persisted-boundary fixture using existing individual test projects/distributed Development composition for 6.1/6.5/6.6 (6.6 added 2026-11-15); common-runner rollout remains separate; **release disposition** — read evidence contributes to
+persisted-boundary fixture using existing individual test projects/distributed Development composition for 6.1/6.5/6.6/6.7 (6.6 added 2026-11-15, 6.7 added 2026-11-16); common-runner rollout remains separate; **release disposition** — read evidence contributes to
 NFR-11 but no story here is a release gate._
 
 **Story 6.1 executable critical path:**
@@ -1552,7 +1554,7 @@ As a **Solution Architect / platform operator**,
 I want **to switch read routing from legacy to supported read models after a deterministic equivalence gate, keeping routing reversible and canonical contracts aligned**,
 So that **supported reads become authoritative without event-history rewrite, and the FR-19 canonical contract lands for Epic 7 (NFR-10)**.
 
-- **Traceability:** FR-19 (contract cutover support), FR-2/5/16/20 (routing); NFR-10; **AD-1 (DomainService runtime boundary — legacy runtime read plumbing retired here)**, AD-6, AD-16, AD-17, AD-18, AD-22, AD-24, AD-25, AD-31 (contract shape); findings ARCH-001/CLIENT-001/ID-001/API-001; evidence row `nfr-10-reads`.
+- **Traceability:** FR-19 (contract cutover support), FR-2/5/16/20 (routing); NFR-10; **AD-1 (DomainService runtime boundary — legacy runtime read plumbing retired here)**, AD-6, AD-16, AD-17, AD-18, AD-22, AD-24, AD-25, AD-31 (contract shape); findings ARCH-001/CLIENT-001/ID-001/API-001; evidence row `nfr-10`.
 
 **Acceptance Criteria:**
 
@@ -1562,7 +1564,7 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 **Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** routing rolls back deterministically and the blocker is recorded honestly.
 
-- **Verification:** `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` + `hexalith-evidence validate` row `nfr-10-reads`. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
+- **Verification (E1 lane, extended 2026-11-16):** the individual Debug Projects test projects named in the 6.7 spec, each built with `--configuration Debug -m:1 -p:NuGetAudit=false --disable-build-servers` and run as a built xUnit v3 assembly with native XML. No common runner; AD-25 still gates runtime retirement. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
 
 ### Story 6.8: Split Hexalith.Projects.UI.Contracts from the packable Contracts package
 

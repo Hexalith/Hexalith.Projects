@@ -94,6 +94,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             GUARD.STORY_6_5_KEY: "blocked",
             GUARD.STORY_6_6_KEY: "backlog",
             GUARD.STORY_6_8_KEY: "backlog",
+            GUARD.STORY_6_7_KEY: "backlog",
         }
         for key, baseline in baselines.items():
             current = f"  {key}: {index['development_status'][key]}"
@@ -674,13 +675,13 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     )
 
     def test_unauthorized_closure_fails_closed(self) -> None:
-        story_6_7 = "  6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback"
+        story_7_2 = "  7-2-update-project-setup-idempotently"
         for status in ("blocked", "ready-for-dev", "in-progress", "review", "done"):
             with self.subTest(status=status):
                 sprint = self.replace_once(
                     self.accepted_sprint(),
-                    f"{story_6_7}: backlog",
-                    f"{story_6_7}: {status}",
+                    f"{story_7_2}: backlog",
+                    f"{story_7_2}: {status}",
                 )
                 with self.assertRaisesRegex(GUARD.GuardViolation, "open boundary"):
                     self.validate_boundary(
@@ -967,8 +968,22 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         snapshot["deferred"], "### DW-55:", "status: open", "status: done")
                     self.assertEqual((6, 7, 8), self.validate_boundary(**snapshot))
 
+    def test_read_cutover_story_can_progress_without_opening_other_gates(self) -> None:
+        approved_statuses = ("backlog", "blocked", "ready-for-dev", "in-progress", "review", "done")
+        self.assertEqual(set(approved_statuses), GUARD.SCHEDULED_STORY_STATUSES)
+        story_7_1 = "7-1-activate-a-project-with-exactly-one-authorized-folder"
+        for accepted in (False, True):
+            for status in approved_statuses:
+                with self.subTest(accepted=accepted, status=status):
+                    snapshot = self.feature_snapshot(accepted)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_7_KEY, status)
+                    self.assertEqual((6, 7, 8), self.validate_boundary(**snapshot))
+                    index = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
+                    self.assertEqual("blocked", index["development_status"][story_7_1])
+                    self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
+
     def test_scheduled_story_keys_and_statuses_fail_closed(self) -> None:
-        for key in (GUARD.STORY_6_6_KEY, GUARD.STORY_6_8_KEY):
+        for key in (GUARD.STORY_6_6_KEY, GUARD.STORY_6_8_KEY, GUARD.STORY_6_7_KEY):
             line = f"  {key}: backlog"
             candidates = [
                 self.replace_once(self.sprint, line + "\n", ""),

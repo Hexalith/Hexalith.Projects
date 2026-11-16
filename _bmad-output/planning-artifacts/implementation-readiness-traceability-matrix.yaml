@@ -589,7 +589,7 @@ rows:
     supporting_stories: ["6.1", "7.15", "8.7"]
     entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P1R"]
     fixture: epic6/6.7-read-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
+    verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner."
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
     estimate: L
     status: blocked-external
@@ -626,7 +626,7 @@ rows:
     binding: inferred
     entry_gates: [Epic-6-gate, G-4]
     fixture: epic6/6.7-read-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
+    verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner."
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
     estimate: L
     status: blocked-external
@@ -642,7 +642,7 @@ rows:
     binding: explicit-source-old-numbering
     entry_gates: [Epic-6-gate]
     fixture: epic6/6.7-contract-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=contracts"
+    verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. Contract-boundary cases."
     evidence_artifact: evidence/epic6/6.7-contracts.trx
     estimate: M
     notes: "Readiness addendum §4.2 named OLD 'Story 6.2 (E-4/E-5)' for the Projects.UI.Contracts boundary; under the rebaseline that boundary work is Story 6.7 (contract cutover) + 8.7 (package graph). Confirm at de-placeholdering."
@@ -721,7 +721,7 @@ rows:
     binding: inferred
     entry_gates: [Epic-6-gate]
     fixture: epic6/6.7-contract-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=identity"
+    verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. ULID identity cases."
     evidence_artifact: evidence/epic6/6.7-ulid-identity.trx
     estimate: M
   - key: finding-api-001
@@ -735,7 +735,7 @@ rows:
     binding: inferred
     entry_gates: [Epic-6-gate]
     fixture: epic6/6.7-contract-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=openapi"
+    verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner. OpenAPI/runtime reconciliation cases."
     evidence_artifact: evidence/epic6/6.7-openapi.trx
     estimate: M
   - key: finding-test-001
