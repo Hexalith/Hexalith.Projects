@@ -37,7 +37,7 @@ internal static class PackageFixtureRun
             await using var inputCleanup = inputs.ConfigureAwait(false);
             await inputs.PrepareAsync(timeout.Token).ConfigureAwait(false);
             PackageApplicationFactory factory = new(entryPoint, ["--environment", "Development",
-                "--Logging:LogLevel:Default=Warning", "--Projects:PackageFixtures:Enabled=true", "--Projects:PackageFixtures:ConfigurationFile=" + scratch.File("configuration.json")]);
+                "--Logging:LogLevel:Default=Warning", "--Projects:PackageFixtures:Enabled=true", "--Projects:PackageFixtures:ConfigurationFile=" + scratch.File("configuration.json")], scratch.Directory);
             await using var factoryCleanup = factory.ConfigureAwait(false);
             DistributedApplication? application = null;
             try

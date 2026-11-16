@@ -22,6 +22,25 @@ using Xunit;
 /// <summary>Checks fixture refusal, bounded readiness and owned cleanup without a live backend.</summary>
 public sealed class PackageFixtureSafetyTests
 {
+    /// <summary>Transport diagnostics expose a finite status without raw private details.</summary>
+    [Theory]
+    [InlineData("Status(StatusCode=\"Unavailable\", Detail=\"private-token\")", "Unavailable")]
+    [InlineData("{\"StatusCode\":\"DeadlineExceeded\",\"Detail\":\"private-token\"}", "DeadlineExceeded")]
+    [InlineData("StatusCode=\"private-token\"", "")]
+    [InlineData("StatusCode=\"Unavailable-private-token\"", "")]
+    [InlineData("{\"Exception\":\"\\uD800\"}", "")]
+    public void GrpcDiagnosticsOnlyKeepClosedStatuses(string content, string expected)
+        => FixtureDiagnostics.GrpcStatus(content, ["private-token"]).ShouldBe(expected);
+
+    /// <summary>Structured exception logs are decoded before status extraction and protected collisions are suppressed.</summary>
+    [Fact]
+    public void GrpcDiagnosticsKeepProtectedValuesPrivate()
+    {
+        string content = JsonSerializer.Serialize(new { Exception = "Status(StatusCode=\"PermissionDenied\", Detail=\"private-token\")" });
+        FixtureDiagnostics.GrpcStatus(content, ["private-token"]).ShouldBe("PermissionDenied");
+        FixtureDiagnostics.GrpcStatus(content, ["PermissionDenied"]).ShouldBeEmpty();
+    }
+
     /// <summary>Failure stages keep owning method identities without exception data or source paths.</summary>
     [Fact]
     public async Task FailureStagesDoNotExposeExceptionData()

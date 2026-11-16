@@ -9,12 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 /// <summary>Captures the application through the published protected callback for health waits and teardown.</summary>
-internal sealed class PackageApplicationFactory(Type entryPoint, string[] arguments)
+internal sealed class PackageApplicationFactory(Type entryPoint, string[] arguments, string privateDirectory)
     : DistributedApplicationFactory(entryPoint, arguments)
 {
     private readonly string _browserToken = FixtureInputs.Secret();
     private readonly string _resourceKey = FixtureInputs.Secret();
     private readonly string _otlpKey = FixtureInputs.Secret();
+    private readonly string _dashboardKey = FixtureInputs.Secret();
 
     internal DistributedApplication? Application { get; private set; }
 
@@ -25,6 +26,8 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
         ["ASPNETCORE_URLS"] = string.Empty,
         ["ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL"] = string.Empty,
         ["ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL"] = string.Empty,
+        ["ASPIRE_DASHBOARD_DATA_DIRECTORY"] = Path.Combine(privateDirectory, "dashboard"),
+        ["ASPIRE_DASHBOARD_PERSISTENCE_MODE"] = "Run",
         ["ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL"] = "http://127.0.0.1:0",
         ["DcpPublisher:RandomizePorts"] = "true",
         ["ASPIRE_ALLOW_UNSECURED_TRANSPORT"] = "true",
@@ -35,7 +38,7 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
         ["AppHost:BrowserToken"] = _browserToken,
         ["AppHost:ResourceService:AuthMode"] = "ApiKey",
         ["AppHost:ResourceService:ApiKey"] = _resourceKey,
-        ["AppHost:DashboardApiKey"] = _resourceKey,
+        ["AppHost:DashboardApiKey"] = _dashboardKey,
         ["AppHost:OtlpApiKey"] = _otlpKey,
     };
 

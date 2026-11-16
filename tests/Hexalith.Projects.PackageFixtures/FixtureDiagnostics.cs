@@ -102,6 +102,27 @@ internal static class FixtureDiagnostics
         catch (InvalidOperationException) { return string.Empty; }
     }
 
+    /// <summary>Extracts only a closed transport status, never its details, trailers or credentials.</summary>
+    internal static string GrpcStatus(string content, IEnumerable<string> protectedValues)
+    {
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(content);
+            if (document.RootElement.ValueKind == JsonValueKind.Object
+                && document.RootElement.TryGetProperty("Exception", out JsonElement exception)
+                && exception.ValueKind == JsonValueKind.String)
+                content = exception.GetString()!;
+        }
+        catch (JsonException) { }
+        catch (InvalidOperationException) { return string.Empty; }
+        Match match = Regex.Match(content,
+            @"\bStatusCode[""']?\s*[:=]\s*[""']?(?<status>OK|Cancelled|Unknown|InvalidArgument|DeadlineExceeded|NotFound|AlreadyExists|PermissionDenied|ResourceExhausted|FailedPrecondition|Aborted|OutOfRange|Unimplemented|Internal|Unavailable|DataLoss|Unauthenticated)(?=[""'\s,)}\]]|$)");
+        if (!match.Success) return string.Empty;
+        string status = match.Groups["status"].Value;
+        return protectedValues.Any(value => !string.IsNullOrWhiteSpace(value) && status.Contains(value, StringComparison.Ordinal))
+            ? string.Empty : status;
+    }
+
     internal static async Task ResourcesAsync(DistributedApplication? application, IEnumerable<string> protectedValues)
     {
         if (application is null) return;
@@ -123,6 +144,9 @@ internal static class FixtureDiagnostics
                         string refusal = CatalogRefusal(line.Content, protectedValues);
                         if (refusal.Length > 0 && reported.Add("catalog:" + refusal))
                             Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " catalogReason=" + refusal);
+                        string status = GrpcStatus(line.Content, protectedValues);
+                        if (status.Length > 0 && reported.Add("grpc:" + status))
+                            Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " grpcStatus=" + status);
                         foreach (Match match in Regex.Matches(line.Content, @"\b[A-Za-z_][A-Za-z0-9_.]*Exception\b"))
                             if (reported.Add(match.Value))
                                 Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " exception=" + match.Value);
