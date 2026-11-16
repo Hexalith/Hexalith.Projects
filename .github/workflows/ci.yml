@@ -209,6 +209,21 @@ jobs:
       - name: Pull pinned G-6 PostgreSQL fixture image
         run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
 
+      - name: Resolve reviewed direct Platform revision
+        id: g6-platform
+        shell: bash
+        run: |
+          set -euo pipefail
+          platform_revision="$(git rev-parse HEAD:references/Hexalith.Platform)"
+          [[ "$platform_revision" =~ ^[0-9a-f]{40}$ ]]
+          printf 'revision=%s\n' "$platform_revision" >> "$GITHUB_OUTPUT"
+
+      - name: Acquire reviewed G-6 catalog
+        uses: ./.github/actions/prepare-g6-catalog
+        with:
+          platform-revision: ${{ steps.g6-platform.outputs.revision }}
+          diagnostics: ${{ env.G6_OUTPUT }}/source-mapping
+
       - name: Restore effective G-6 package graphs
         shell: bash
         run: |
