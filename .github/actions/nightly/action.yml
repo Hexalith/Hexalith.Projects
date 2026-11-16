@@ -1,0 +1,8 @@
+name: Projects package-mode browser and durable-state checks
+description: Run the prepared Release fixture driver and complete browser assertions with private cleanup.
+runs:
+  using: composite
+  steps:
+    - name: Run package fixture browser phases
+      shell: bash
+      run: npm --prefix tests/e2e run test:package

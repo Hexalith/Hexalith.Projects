@@ -4,6 +4,8 @@
          free of FrontComposer, ASP.NET Core, Fluxor and Fluent UI. -->
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);ASP0006</NoWarn>
+    <EmitCompilerGeneratedFiles Condition="'$(Configuration)' == 'Release' and '$(UseHexalithProjectReferences)' != 'true'">true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath Condition="'$(EmitCompilerGeneratedFiles)' == 'true'">$(BaseIntermediateOutputPath)$(Configuration)/$(TargetFramework)/generated/HexalithFrontComposer</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />

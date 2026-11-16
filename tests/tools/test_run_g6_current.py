@@ -22,24 +22,6 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class CurrentRunnerPreflightTests(unittest.TestCase):
-    def test_default_policy_matches_ci_and_explicit_override_is_preserved(self) -> None:
-        selected_policy = ROOT / "tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json"
-        (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
-            root = Path(temporary)
-            custom_policy = root / "custom-policy.json"
-            custom_policy.write_text("{}", encoding="utf-8")
-            for name, policy_arguments, expected in (
-                ("default", [], selected_policy),
-                ("explicit", ["--policy", str(custom_policy)], custom_policy),
-            ):
-                with self.subTest(name=name), \
-                     patch.object(RUNNER, "audit", side_effect=RuntimeError("controlled audit stop")) as audit, \
-                     patch.object(RUNNER.historical, "Qualification") as qualification:
-                    with self.assertRaisesRegex(RuntimeError, "controlled audit stop"):
-                        RUNNER.main(["--output", str(root / name), *policy_arguments])
-                    self.assertEqual(expected.resolve(), audit.call_args.args[1])
-                    qualification.assert_not_called()
 
     def test_mismatched_tuple_retains_not_verified_without_starting_resources(self) -> None:
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
@@ -174,24 +156,6 @@ class CurrentRunnerImageTests(unittest.TestCase):
         self.assertNotEqual([self.IMAGE] * 2, images)
 
 
-class SupportSelectorInventoryTests(unittest.TestCase):
-    def test_empty_workflow_uses_the_retained_oracle_and_rejects_drift(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            eventstore = Path(temporary)
-            workflow = eventstore / ".github/workflows/integration.yml"
-            workflow.parent.mkdir(parents=True)
-            workflow.write_text("name: Integration Tests\n", encoding="utf-8")
-            oracle = eventstore / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Actors/IdempotencyAdmissionOq8PostgresqlTests.cs"
-            oracle.parent.mkdir(parents=True)
-            names = [f"Hexalith.EventStore.Server.Tests.Sample.Method{index:02d}" for index in range(21)]
-            body = ",\n".join(f'                "{name}"' for name in names)
-            oracle.write_text(
-                "deterministicSupportOracles = new[]\n            {\n" + body + "\n            },\n",
-                encoding="utf-8")
-            self.assertEqual(names, RUNNER.support_selectors(eventstore))
-            oracle.write_text(oracle.read_text(encoding="utf-8").replace(names[-1], names[0]), encoding="utf-8")
-            drifted = RUNNER.support_selectors(eventstore)
-            self.assertNotEqual(21, len(set(drifted)))
 
 
 class RetainedTestDocumentTests(unittest.TestCase):

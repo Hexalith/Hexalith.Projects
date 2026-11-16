@@ -41,7 +41,7 @@ def load_consumer_module():
 
     spec = importlib.util.spec_from_file_location(
         "validate_consumers",
-        SCRIPTS / "validate-consumer-package-references.py",
+        SCRIPTS / "_consumer_packages.py",
     )
     if spec is None or spec.loader is None:
         raise AssertionError("Cannot load consumer validation tool")
@@ -516,15 +516,14 @@ exit 0
         self.assertEqual(0, non_skip.returncode, non_skip.stderr)
         non_skip_commands = command_log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(
-            5,
+            3,
             len(non_skip_commands),
             f"commands={non_skip_commands!r}\nstdout={non_skip.stdout}\nstderr={non_skip.stderr}",
         )
-        self.assertTrue(non_skip_commands[0].startswith("dotnet|restore "))
-        self.assertTrue(non_skip_commands[1].startswith("dotnet|build "))
-        self.assertIn("--configuration Release", non_skip_commands[1])
-        self.assertIn("-p:UseHexalithProjectReferences=false", non_skip_commands[0])
-        self.assertIn("pack-release-packages.py", non_skip_commands[2])
+        self.assertTrue(all(command.startswith("python3|") for command in non_skip_commands))
+        self.assertIn("pack-release-packages.py", non_skip_commands[0])
+        self.assertIn("validate-nuget-packages.py", non_skip_commands[1])
+        self.assertIn("validate-consumer-package-references.py", non_skip_commands[2])
         self.assertNotIn("--normalize-internal-ranges", "\n".join(non_skip_commands))
 
         command_log.write_text("", encoding="utf-8")

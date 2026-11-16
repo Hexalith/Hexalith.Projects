@@ -18,7 +18,8 @@
     "test:a11y": "playwright test specs/projects-accessibility.spec.ts --project=chromium",
     "install:browsers": "playwright install --with-deps",
     "report": "playwright show-report",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:package": "dotnet ../Hexalith.Projects.PackageFixtures/bin/Release/net11.0/Hexalith.Projects.PackageFixtures.dll --root ../.."
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

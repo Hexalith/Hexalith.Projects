@@ -1,7 +1,4 @@
-import { readFileSync } from 'node:fs';
-import { runInNewContext } from 'node:vm';
-
-import ts from 'typescript';
+import { createBrowserProjects } from '../support/helpers/browser-configuration.js';
 
 import { expect, test } from '../support/merged-fixtures.js';
 
@@ -14,14 +11,6 @@ type BrowserScenario = {
     projects: string[];
 };
 
-type BrowserConfiguration = {
-    projects: Array<{ name: string; use: { launchOptions?: { executablePath?: string } } }>;
-};
-
-const source = readFileSync(new URL('../playwright.config.ts', import.meta.url), 'utf8');
-const compiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-}).outputText;
 const allProjects = ['chromium', 'firefox', 'webkit'];
 const scenarios: BrowserScenario[] = [
     {
@@ -76,28 +65,13 @@ const scenarios: BrowserScenario[] = [
 
 for (const scenario of scenarios) {
     test(`browser configuration: ${scenario.name}`, () => {
-        const module = { exports: {} as { default?: BrowserConfiguration } };
-        runInNewContext(compiled, {
-            module,
-            exports: module.exports,
-            process: { env: scenario.env ?? {}, argv: ['node', 'playwright', 'test', ...(scenario.args ?? [])] },
-            require: (name: string): unknown => {
-                if (name === 'dotenv/config') return {};
-                if (name === 'node:fs') return { existsSync: (path: string) => scenario.files.includes(path) };
-                if (name === './support/auth/browser-session.js') return { browserSessionStoragePath: '/fixture/session.json' };
-                if (name === '@playwright/test') {
-                    return {
-                        chromium: { executablePath: () => '/managed/chromium' },
-                        defineConfig: (config: unknown) => config,
-                        devices: { 'Desktop Chrome': {}, 'Desktop Firefox': {}, 'Desktop Safari': {} },
-                    };
-                }
-                throw new Error(`Unexpected browser configuration dependency: ${name}`);
-            },
+        const projects = createBrowserProjects({
+            env: scenario.env ?? {}, args: ['node', 'playwright', 'test', ...(scenario.args ?? [])],
+            exists: path => scenario.files.includes(path), managedExecutablePath: () => '/managed/chromium',
+            devices: { 'Desktop Chrome': {}, 'Desktop Firefox': {}, 'Desktop Safari': {} },
         });
-        const projects = module.exports.default?.projects;
         expect(projects?.map((project) => project.name)).toEqual(scenario.projects);
-        expect(projects?.find((project) => project.name === 'chromium')?.use.launchOptions?.executablePath)
+        expect(projects?.find((project) => project.name === 'chromium')?.use?.launchOptions?.executablePath)
             .toBe(scenario.executable);
     });
 }

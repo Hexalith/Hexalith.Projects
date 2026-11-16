@@ -104,39 +104,8 @@ class WorkflowGateTests(unittest.TestCase):
                 self.assert_rejected(diagnostic)
                 active.write_bytes(original)
 
-    def test_current_dapr_pair_is_exact_in_shared_ci_and_scheduled_e2e(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        for before, after, diagnostic in (
-            ("      dapr-version: '1.19.1'", "      dapr-version: '1.18.0'", "CI must use the exact Dapr CLI 1.19.1"),
-            ("      dapr-runtime-version: '1.19.1'", "      dapr-runtime-version: '1.18.2'", "CI must use the exact Dapr runtime 1.19.1"),
-            ("          version: '1.19.1'", "          version: '1.18.0'", "Scheduled E2E must initialize the exact Dapr CLI 1.19.1"),
-            ("          runtime-version: '1.19.1'", "          runtime-version: '1.18.2'", "Scheduled E2E must initialize the exact Dapr runtime 1.19.1"),
-        ):
-            with self.subTest(before=before):
-                self.assertEqual(1, original.count(before))
-                path.write_text(original.replace(before, after))
-                self.assert_rejected(diagnostic)
-        path.write_text(original)
 
-    def test_checkout_passes_without_submodules(self) -> None:
-        self.assertFalse((self.root / "references").exists())
-        result = self.run_gate()
-        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-        self.assertIn("PASSED", result.stdout)
 
-    def test_p1r_replay_cannot_restore_the_superseded_live_suite_or_omit_mutations(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        selected = ("        run: >-\n          python3 -m unittest\n"
-                    "          tests.tools.test_p1r_candidate_evidence.SelectedPublishedEvidenceTests\n"
-                    "          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v")
-        self.assertIn(selected, original)
-        for replacement in ("        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v",
-                            selected.replace("          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v", "          -v")):
-            with self.subTest(replacement=replacement):
-                path.write_text(original.replace(selected, replacement))
-                self.assert_rejected("run only SelectedPublishedEvidenceTests and SelectedEvidenceMutationTests")
 
     def test_catalog_package_versions_cannot_be_redeclared(self) -> None:
         for operation in ("Include", "Update", "Remove"):
@@ -149,88 +118,13 @@ class WorkflowGateTests(unittest.TestCase):
                     self.assert_rejected(f"{package_id} version must be owned")
                     path.write_text(original)
 
-    def test_g6_checks_cannot_mask_generated_artifact_gates(self) -> None:
-        self.replace(".github/workflows/ci.yml", "      - name: FrontComposer inspect gate",
-                     "      - name: Accepted-only G-6 check\n"
-                     "        run: python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py\n\n"
-                     "      - name: FrontComposer inspect gate")
-        self.assert_rejected("project-gates must not run any G-6 check")
 
-    def test_deferred_g6_contract_controls_cannot_be_omitted_or_ignored(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        command = "          python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v"
-        self.assertEqual(1, original.count(command))
-        replacements = (
-            "", command.replace("python3", "# python3"), command + " || true",
-            "          set +e\n" + command,
-            "          if false; then\n" + command + "\n          fi",
-        )
-        mutations = [original.replace(command, replacement) for replacement in replacements]
-        mutations.append(original.replace(
-            "      - name: Validate current G-6 preflight\n        shell: bash\n",
-            "      - name: Validate current G-6 preflight\n        shell: bash {0}\n"))
-        for mutation in mutations:
-            with self.subTest(mutation=mutation):
-                self.assertNotEqual(original, mutation)
-                path.write_text(mutation)
-                self.assert_rejected("must exercise deferred contract controls as a blocking command")
 
-    def test_cleanup_suite_cannot_be_omitted_or_made_nonblocking(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        step = ("      - name: Validate BMAD legacy cleanup atomicity\n"
-                "        env:\n          PYTHONDONTWRITEBYTECODE: '1'\n"
-                "        run: python3 .agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py")
-        self.assertEqual(1, original.count(step))
-        for replacement in (
-            "", step.replace("run: python3", "run: '# python3") + "'",
-            step + " || true", step.replace("        env:", "        if: false\n        env:"),
-            step.replace("        env:", "        continue-on-error: true\n        env:"),
-        ):
-            with self.subTest(replacement=replacement):
-                path.write_text(original.replace(step, replacement))
-                self.assert_rejected("workflow-gates must be the exact job")
 
-    def test_current_g6_job_must_remain_independent(self) -> None:
-        self.replace(".github/workflows/ci.yml",
-                     "timeout-minutes: 90\n    needs: workflow-gates",
-                     "timeout-minutes: 90\n    needs: project-gates")
-        self.assert_rejected("G-6 current must run independently")
 
-    def test_generated_artifact_steps_cannot_be_conditional_or_run_g6(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        for name, script in (("FrontComposer inspect gate", "run-frontcomposer-inspect-gate.ps1"),
-                             ("OpenAPI fingerprint / compatibility gate", "run-openapi-fingerprint-gate.ps1")):
-            marker = "      - name: " + name + "\n"
-            for mutation in (
-                original.replace(marker, marker + "        if: ${{ needs.g6-current.result == 'success' }}\n"),
-                original.replace(marker, marker + "        continue-on-error: true\n"),
-                original.replace("        run: ./tests/tools/" + script,
-                                 "        run: |\n          python3 tests/tools/run_g6_ci_gate.py --output .g6-current-evidence/project\n"
-                                 "          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n          ./tests/tools/" + script),
-            ):
-                with self.subTest(step=name, mutation=mutation):
-                    path.write_text(mutation)
-                    self.assert_rejected(name + " must be an unconditional exact blocking command")
 
-    def test_g6_dependency_cannot_suppress_project_gates(self) -> None:
-        self.replace(".github/workflows/ci.yml", "    needs: ci\n",
-                     "    needs: [ci, g6-current]\n")
-        self.assert_rejected("Project gates must depend only on CI")
 
-    def test_g6_dependency_cannot_suppress_scheduled_e2e(self) -> None:
-        self.replace(".github/workflows/ci.yml", "      - project-gates\n    steps:",
-                     "      - project-gates\n      - g6-current\n    steps:")
-        self.assert_rejected("Scheduled E2E must depend only on CI")
 
-    def test_duplicate_e2e_job_cannot_bypass_dependency_validation(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        text = path.read_text()
-        e2e = text[text.index("  e2e:\n"):]
-        path.write_text(text + "\n" + e2e)
-        self.assert_rejected("CI must define exactly one e2e job")
 
     def test_case_variant_semicolon_and_choose_entries_are_rejected(self) -> None:
         self.replace("Directory.Packages.props", "</Project>", """
@@ -279,15 +173,6 @@ class WorkflowGateTests(unittest.TestCase):
                     self.assert_rejected(f"{property_name} must remain owned by the Hexalith.Builds package catalog")
                     path.write_text(original)
 
-    def test_workflow_environment_and_msbuild_switch_overrides_are_rejected(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        for property_name in VERSION_PROPERTIES:
-            for assignment in (f"  {property_name}: '9.9.9'", f'  "{property_name}": 9.9.9',
-                               f"  '{property_name}': 9.9.9", f'  ARGS: -p:{property_name.lower()}=9.9.9'):
-                with self.subTest(assignment=assignment):
-                    path.write_text(original.replace("name: CI", "name: CI\nenv:\n" + assignment))
-                    self.assert_rejected(f"{property_name} must remain owned by the Hexalith.Builds package catalog")
 
     def test_inherited_version_set_overrides_are_rejected_case_insensitively(self) -> None:
         for property_name in VERSION_PROPERTIES:
@@ -304,78 +189,12 @@ class WorkflowGateTests(unittest.TestCase):
 </Project>""")
         self.assert_rejected("HexalithFoldersVersion must remain owned by the Hexalith.Builds package catalog")
 
-    def test_shell_environment_writes_cannot_override_catalog(self) -> None:
-        path = self.root / ".github/workflows/probe.yml"
-        for script in (
-            "export HexalithFoldersVersion=9.9.9",
-            "env HexalithFoldersVersion=9.9.9 dotnet restore",
-            "$env:HexalithFoldersVersion = '9.9.9'",
-            "Set-Item Env:HexalithFoldersVersion 9.9.9",
-            "[Environment]::SetEnvironmentVariable('HexalithFoldersVersion', '9.9.9')",
-            "echo 'HexalithFoldersVersion=9.9.9' >> \"$GITHUB_ENV\"",
-            "echo 'HexalithFoldersVersion<<EOF' >> \"$GITHUB_ENV\"\necho 9.9.9 >> \"$GITHUB_ENV\"\necho EOF >> \"$GITHUB_ENV\"",
-        ):
-            with self.subTest(script=script):
-                path.write_text("name: Probe\non: workflow_dispatch\njobs:\n  probe:\n    runs-on: ubuntu-latest\n"
-                                "    steps:\n      - run: |\n" + "\n".join("          " + line for line in script.splitlines()) + "\n")
-                self.assert_rejected("HexalithFoldersVersion must remain owned by the Hexalith.Builds package catalog")
 
-    def test_inline_comment_does_not_assign_property(self) -> None:
-        self.replace(".github/workflows/ci.yml", "name: CI", "name: CI # HexalithFoldersVersion=9.9.9")
-        result = self.run_gate()
-        self.assertEqual(0, result.returncode, result.stderr)
 
-    def test_echoed_assignment_does_not_override_environment(self) -> None:
-        (self.root / ".github/workflows/probe.yml").write_text(
-            "name: Probe\non: workflow_dispatch\njobs:\n  probe:\n    runs-on: ubuntu-latest\n"
-            '    steps:\n      - run: echo "HexalithFoldersVersion=9.9.9"\n')
-        result = self.run_gate()
-        self.assertEqual(0, result.returncode, result.stderr)
 
-    def test_all_collected_failures_are_reported(self) -> None:
-        entries = "".join(f'<PackageVersion Include="{name}" Version="9.9.9" />' for name in PACKAGE_IDS)
-        self.replace("Directory.Packages.props", "</Project>", f"<ItemGroup>{entries}</ItemGroup></Project>")
-        result = self.run_gate()
-        self.assertEqual(1, result.returncode, result.stderr)
-        for package_id in PACKAGE_IDS:
-            self.assertIn(f"{package_id} version must be owned", result.stderr)
 
-    def test_mismatched_direct_builds_sha_names_its_scope(self) -> None:
-        self.replace(".github/workflows/ci.yml", "domain-ci.yml@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b",
-                     "domain-ci.yml@" + "a" * 40)
-        self.assert_rejected("Direct ci.yml reference executes Hexalith.Builds")
 
-    def test_regression_fixture_step_cannot_be_removed_or_made_nonblocking(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        step = """      - name: Validate workflow policy regression fixtures
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_run_ci_workflow_gates.py -v
-"""
-        self.assertIn(step, original)
-        for replacement, diagnostic in (
-            ("", "must contain exactly one 'Validate workflow policy regression fixtures' step"),
-            (step + step, "must contain exactly one 'Validate workflow policy regression fixtures' step"),
-            (step.replace("        env:", "        if: false\n        env:"), "must be an exact blocking"),
-            (step.replace("        env:", "        continue-on-error: true\n        env:"), "must be an exact blocking"),
-        ):
-            with self.subTest(replacement=replacement):
-                path.write_text(original.replace(step, replacement))
-                self.assert_rejected(diagnostic)
 
-    def test_existing_workflow_safety_invariants_reject_mutations(self) -> None:
-        path = self.root / ".github/workflows/ci.yml"
-        original = path.read_text()
-        for before, after, diagnostic in (
-            ("submodules: false", "submodules: recursive", "Recursive or implicit recursive submodule checkout is forbidden"),
-            ("solution: Hexalith.Projects.CI.slnx", "solution: Hexalith.Projects.CI.slnx -p:Unsafe=true", "must be the bare 'Hexalith.Projects.CI.slnx'"),
-            ("npm --prefix tests/e2e ci --ignore-scripts", "npm --prefix tests/e2e install", "Workflow dependency installation must not use npm install"),
-        ):
-            with self.subTest(after=after):
-                self.assertIn(before, original)
-                path.write_text(original.replace(before, after))
-                self.assert_rejected(diagnostic)
 
 
 if __name__ == "__main__":

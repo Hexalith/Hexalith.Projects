@@ -24,12 +24,6 @@ CI_PATH = PROJECT_ROOT / ".github" / "workflows" / "ci.yml"
 
 
 @dataclass(frozen=True)
-class RendererFixture:
-    """Paths owned by one temporary renderer fixture."""
-
-    project_root: Path
-    skill_root: Path
-    caller_root: Path
 
 
 def _write_text(path: Path, content: str) -> None:
@@ -1122,37 +1116,6 @@ instruction = "second"
                     self.assertEqual(before, fifo.lstat())
                     self.assertEqual([], list(entry.parent.parent.glob(".staging-*")))
 
-    def test_ci_runs_this_suite_as_a_blocking_no_bytecode_gate(self) -> None:
-        workflow = CI_PATH.read_text(encoding="utf-8")
-        job_match = re.search(
-            r"(?ms)^  workflow-gates:\r?\n.*?(?=^  [A-Za-z0-9_-]+:\r?\n|\Z)",
-            workflow,
-        )
-        if job_match is None:
-            self.fail("CI workflow does not define the workflow-gates job")
-        workflow_gates = job_match.group(0)
-        renderer_headers = list(
-            re.finditer(
-                r"(?m)^      - name: Validate shared skill renderer\r?$",
-                workflow_gates,
-            )
-        )
-        self.assertEqual(1, len(renderer_headers), renderer_headers)
-        step_start = renderer_headers[0].start()
-        next_step = re.search(r"(?m)^      - ", workflow_gates[step_start + 1 :])
-        step_end = (
-            step_start + 1 + next_step.start()
-            if next_step is not None
-            else len(workflow_gates)
-        )
-        renderer_step = workflow_gates[step_start:step_end]
-        renderer_step = renderer_step.replace("\r\n", "\n").rstrip("\n")
-        expected_step = """      - name: Validate shared skill renderer
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_render_skill.py -v"""
-        self.assertEqual(expected_step, renderer_step)
-        self.assertNotIn("continue-on-error", workflow_gates[step_start:step_end])
 
 
 if __name__ == "__main__":

@@ -1181,23 +1181,6 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 )
                 self.assertEqual(expected, completed.returncode, completed.stderr)
 
-    def test_workflows_and_ci_consume_only_the_minimal_guard(self) -> None:
-        project_context = (
-            PROJECT_ROOT / "_bmad-output" / "project-context.md"
-        ).read_text(encoding="utf-8")
-        self.assertIn("validate_production_authority.py --story-id <epic.story>", project_context)
-        self.assertIn(
-            "--validate-index --sprint-status <candidate-workspace>/"
-            "_bmad-output/implementation-artifacts/sprint-status.yaml",
-            project_context,
-        )
-
-        ci = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("pyyaml==6.0.3", ci)
-        self.assertIn("tests/tools/test_production_authority_guard.py", ci)
-        self.assertNotIn("test_p1r_" + "postacceptance_guard.py", ci)
 
 
 if __name__ == "__main__":

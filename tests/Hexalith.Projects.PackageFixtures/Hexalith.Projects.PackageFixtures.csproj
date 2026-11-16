@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hexalith.Projects.Integration.Tests" />
+    <ProjectReference Include="../Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj" />
+    <ProjectReference Include="../../src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj" />
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <PackageReference Include="Hexalith.Commons.UniqueIds" />
+    <PackageReference Include="Hexalith.EventStore.ServiceDefaults" />
+  </ItemGroup>
+</Project>
