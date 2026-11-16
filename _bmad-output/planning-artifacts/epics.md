@@ -65,6 +65,8 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 **Approved 6.7 scheduling correction — 2026-11-16.** Jerome approved [sprint-change-proposal-2026-11-16-unpin-story-6-7.md](sprint-change-proposal-2026-11-16-unpin-story-6-7.md). Story 6.7 may be scheduled now and runs on the extended E1 individual Debug test-project lane; AD-25 still gates runtime retirement. Historical NOT_READY and every release obligation remain.
 
+**Approved 6.7 cutover decisions — 2026-11-16.** Jerome selected "apply recommended" after the transport, comparison and hosting options discussion; [sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md](sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) records the decision. Use the existing Gateway and typed supported consumption, preserve v1 REST/client signatures, and switch primary Web entry routing through one explicit configuration choice. Finite conditional normalization never hides safety defects; explicit rollback requires a security-verified legacy path, otherwise the affected read is unavailable. DW-63 stays open and moves to Story 7.1 alongside writer integration; current query hosting remains for 6.7. No development/readiness/release status changes.
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
@@ -1562,7 +1564,7 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 **Given** legacy identifiers and historical events (incl. `ProjectFolderCreationPending`), **When** reads run post-cutover, **Then** they remain readable (foreign IDs opaque, no GUID-parse) and no history is rewritten and no unsafe dual writer is introduced.
 
-**Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** routing rolls back deterministically and the blocker is recorded honestly.
+**Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** activation is refused or an operator explicitly selects deterministic rollback to a security-verified legacy path; if no safe rollback path is available, the affected read is unavailable, and the blocker is recorded honestly.
 
 - **Verification (E1 lane, extended 2026-11-16):** the individual Debug Projects test projects named in the 6.7 spec, each built with `--configuration Debug -m:1 -p:NuGetAudit=false --disable-build-servers` and run as a built xUnit v3 assembly with native XML. No common runner; AD-25 still gates runtime retirement. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
 
@@ -1609,6 +1611,8 @@ create-only creation naming a sole or designated manager with no Tenant-default 
 Conversations Tenant-role recognition and prior-membership receipt; no degraded fallback per
 §9 A-3; identifier shape for the Safe-channel surrogate map — AD-18). Preserves immutable
 event history and single-writer cutover (Epic 6 read cutover complete; command cutover lands here).
+
+**SDK-host migration prerequisite — DW-63 (approved 2026-11-16).** Projects Owner (integration) and EventStore Owner (SDK capability) retain the open whole-host migration for `/process`, `/project` and `/query` as a prerequisite of Story 7.1 writer cutover. Require SDK route/catalog, authorization, projection and supported-read regression proof together with AD-17 historical replay, command equivalence, single-writer fencing and executable rollback. The [sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md](sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) removes DW-63 from 6.7; it grants no Epic 7 scheduling or runtime-retirement acceptance.
 
 **Shared durable-workflow invariants (apply to every Epic 7 story; each story adds its specifics).**
 
@@ -1678,7 +1682,7 @@ I want **an accepted creation request to activate through the proven Folder-firs
 So that **the Project becomes caller-visible and Active only after exactly one authorized Folder is bound and the authoritative read model confirms completion (FR-1, FR-19), with no observable folderless-Active interval**.
 
 - **Traceability:** FR-1, FR-19, FR-25 (when a Folder is supplied); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31, AD-33; UJ-2, UJ-3; findings REL-001, E-9; §9 A-2, A-3; canonical evidence rows `fr-1`, `fr-19`.
-- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback.
+- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. Open DW-63 must also be accepted before writer cutover, with SDK-host compatibility and AD-17 evidence as specified in the Epic 7 prerequisite above.
 - **Persona note:** A Tenant Project Administrator is **not** a creation persona.
 
 **Acceptance Criteria** (plus shared invariants 1–8):

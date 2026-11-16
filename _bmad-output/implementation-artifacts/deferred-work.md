@@ -565,7 +565,9 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: hexalith-state-instructions.md mandates a two-line host (AddEventStoreDomainService/UseEventStoreDomainService) that already maps /process, /replay-state, /query, /project, and more, with route-validation and duplicate-registration guards Hexalith.Projects.Server does not get by hand-rolling its own MapPost calls. This predates Story 6.2 (/process and /project were already hand-rolled); Story 6.2 added a hand-rolled /query following the same existing local pattern rather than introducing a new deviation. Deferred because migrating requires re-wiring the whole endpoint surface, not a Story-6.2-scoped fix.
 status: open
-gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+owner: Projects Owner (host integration) / EventStore Owner (SDK capability)
+gate: 7-1-activate-a-project-with-exactly-one-authorized-folder
+decision: 2026-11-16; Jerome selected "apply recommended" in the Story 6.7 bmad-build session. Move whole-host integration alongside the first Epic 7 writer slice; retain the current query composition in 6.7. SDK hosting need not change the writer, but this migration spans process/project/query. Require host-route/catalog, authorization, projection and supported-read regression proof, plus AD-17 replay/command-equivalence, fencing and rollback gates before writer cutover. DW-63 remains open; no Epic 7 scheduling or AD-25 retirement acceptance is granted. See _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md.
 
 ### DW-64: Concurrent Story 6.2 review, deferred-work ledger, and submodule updates were committed while the warning-scan bundle was running.
 origin: spec-deferred 026631391ace
