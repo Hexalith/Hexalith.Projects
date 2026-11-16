@@ -1430,3 +1430,37 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Preserve existing Open timeout/unavailable feedback in ProjectDetailSource.
   evidence: The baseline and current source replace any missing Open payload with safe_denial even when ProjectReadQueryClient supplied more precise safe feedback.
+
+## Deferred from: code review of spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md (2026-11-16)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Bind the read-cutover startup gate to the actual evidence identity and per-cell proof (extends the intrinsic-binding entry above).
+  evidence: Code review 2026-11-16 pass 1: `review-01/read-cutover-final.json` labels `sourceRevision` `981ceef1` (docs-only commit; the cutover source landed in `e8fe8141`, whose files match all 144 manifest hashes), so activation requires declaring a revision that contains none of the running code. All 77 cases and 7 legacy slices bind to the single matrix test `SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource`; `ProjectsReadRouteSelection.ValidateNativeReceipts` checks name membership only, and `ProjectReadCutoverGate.CanActivate` accepts `contractParity`/`identityCompatibility` flags without checking `contractParityProof`. Severity medium. Release/adoption obligation; not a 6.7 source gate.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Publish the EventStore and Conversations owner APIs that Story 6.7 consumes before Projects package-mode (CI/Release) builds.
+  evidence: `QueryResultContractAttribute` and `TypedGatewayQueryEmitter` exist only at untagged EventStore `0be0c922` (`git describe`: `v5.2.0-6-g0be0c9228`); cached 5.1.1 and 5.2.0 Contracts DLLs lack the type, and `Directory.Packages.props:9` pins 5.1.1. Projects.Contracts queries (`GetProjectQuery.cs:15` etc.), `ProjectsSupportedReadClient` and `ProjectsRuntimeCatalogDeclarations.QueryResultType` therefore cannot compile with `UseHexalithProjectReferences=false`. Server also needs the Conversations `f1a2b3da` APIs (`GetConversationQuery.NativeMembershipOnly`/`AdvisoryMetadataOnly`, `NativeMembershipPurpose`, `ConversationDetailResult.ReadPurpose`). Main CI run 43945387197 stopped earlier at the workflow-policy step, so the build job did not observe it. Severity high. Owners: EventStore and Conversations release maintainers with Projects release maintenance (DW-82/DW-83 cohort). Publication is outside the 6.7 scope.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Replace the hand-mirrored Folders v1 read DTOs with an owner-generated v1 read client.
+  evidence: `FoldersV1ProjectReadDirectory` plus `FoldersV1ReadLifecycle`/`FoldersV1ReadPermissions`/`FoldersV1ReadFreshness` hand-build `api/v1/folders/{id}/lifecycle-status` and `/effective-permissions` and hard-code owner vocabulary because the generated Folders client targets the non-routed v2 candidate. Any owner v1 change silently degrades Projects Folder evidence. Severity medium. Owner: Hexalith.Folders (generated v1 client or routed v2), then Projects adoption.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Confirm the CutoverMatrix callers independently prove what ReadCutoverComparator delegates (unverified, medium).
+  evidence: `ReadCutoverComparator.Compare` replaces cursor-evidence comparison with two caller-supplied `TransportCursorAssertions == true` flags, skips physical-address validation when both sides are null, and assumes D2 mappings are already applied; `IsApprovedUnavailablePair` relies on caller booleans for nondisclosure and D6 conditions. Settle in code review pass 2 (tests) by checking `SupportedProjectGatewayHttpTests.CutoverMatrix.cs` sets those flags only after independent scope/boundary/expiry and address assertions.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Test the Conversations owner refusal of ambiguous tenant/subject claims.
+  evidence: `references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Api/ConversationReadApi.cs:454-456` (commit `f1a2b3da`) now refuses conflicting `tid`/`tenant_id` or `NameIdentifier`/`sub` values and accepts `sub` alone; no Conversations or Projects test covers it. Severity medium. Owner: Hexalith.Conversations test suite.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Test the EventStore correlation-header restore after an exception handler clears headers.
+  evidence: `references/Hexalith.EventStore/src/Hexalith.EventStore/Middleware/CorrelationIdMiddleware.cs:32-35` (commit `0be0c922`) restores `X-Correlation-Id` via `Response.OnStarting`; `CorrelationIdMiddlewareTests` has no started-response or cleared-header case. Severity low. Owner: Hexalith.EventStore test suite.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Migrate or retire the in-repo Hexalith.Projects.Cli and Hexalith.Projects.Mcp v1 read consumers broken by the Story 6.7 cutover.
+  evidence: `ProjectsCliApplication` (`:96` list, `:121` describe, `:222` warning scan, `:532` re-evaluate), `ProjectsMcpResourceReader` (`:98`, `:248`, `:270`, `:398`, `:420`) and `ProjectsMcpCommandService.ReevaluateAsync` (`:211`) call the four-argument overloads, which now send `inspectDescriptiveMetadata=false` (safe 404) or no `conversationId` (503). Their tests mock `IClient` and still pass. Severity high. Decision 2026-11-16 (Jerome): document and defer. Reason: Obsolete per-module CLI/MCP surfaces superseded by McpCli; limited to safety/continuity fixes and retired under the McpCli migration plan.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Remove the 2N+1 unbounded authorization fan-out from the retained legacy list.
+  evidence: `ProjectsDomainServiceEndpoints.cs:1793-1821` calls `AuthorizeReadAsync` (Tenant-access authorization plus detail read) per row before and after the inspection audit, then `AuthorizeListAsync` again; the legacy list is unpaged. Suggested design: one fresh list-level Tenant authority with per-row detail/final checks, or a row cap failing Unavailable. Severity medium. Decision 2026-11-16 (Jerome): defer. Reason: Rollback-only legacy path; the per-row recheck preserves the E2 stale-authority guarantee; optimize before any production rollback drill.

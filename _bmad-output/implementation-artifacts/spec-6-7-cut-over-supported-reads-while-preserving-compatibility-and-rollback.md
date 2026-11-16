@@ -2,7 +2,7 @@
 title: 'Cut over supported reads while preserving compatibility and rollback'
 type: 'feature'
 created: '2026-11-16'
-status: 'done'
+status: 'in-progress'
 route: 'dispatch'
 baseline_commit: 'c6541a305a420078b16dceaba47f36468022850b'
 review_loop_iteration: 0
@@ -80,6 +80,85 @@ D2 mappings: JSON property order; lifecycle spelling to the same enum; folder fi
 - Given all seven delivered reads, when the gate runs, then every required case passes canonical output, key, exact watermark, cursor/scope and isolation checks; no missing/skipped cell passes.
 - Given a passing gate, when regression triggers explicit rollback, then a security-verified legacy path preserves domain bytes/history; otherwise reads become unavailable.
 - Given generated contracts, when compared with the live host and legacy consumers, then schemas, identity handling and compatibility fingerprints agree.
+
+### Review Findings
+
+Code review 2026-11-16, pass 1 of 2: production source, owner submodule commits (Conversations `f1a2b3da`, EventStore `0be0c922`), docs and generated client from sync commit `e8fe8141`. The test files (pass 2) are reviewed separately. Layers: Blind Hunter, Edge Case Hunter, Verification Gap, Acceptance Auditor. All four completed.
+
+- [x] [Review][Decision] In-repo CLI and MCP read consumers now fail against the retained server (high) — `ProjectsCliApplication` (list `:96`, describe `:121`, warning scan `:222`, re-evaluate `:532`), `ProjectsMcpResourceReader` (`:98`, `:248`, `:270`, `:398`, `:420`) and `ProjectsMcpCommandService.ReevaluateAsync` (`:211`) still call the four-argument overloads. Those overloads now send `inspectDescriptiveMetadata=false`, so list/describe always get a safe 404. Refresh has no `conversationId`, so it always gets a 503. CLI/MCP tests mock `IClient` and still pass. The docs' consumer table does not list these consumers. Options: (a) opt them into descriptive inspection, which requires the inspection permission and writes a durable audit per call, and add a Conversation input for refresh; (b) accept and document the break, since these are obsolete proprietary module surfaces superseded by McpCli; (c) defer with a DW entry. — resolved 2026-11-16: Jerome chose "Document + defer" → doc patch plus deferral below.
+- [x] [Review][Decision] Supported `asOf` changed from evidence time to the request clock (medium) — `ProjectContextQueryExecutor.cs:66,224` replaces `detail.UpdatedAt` / `LastEventTimestamp` with `TimeProvider.GetUtcNow()`. The Contracts XML docs (`ConversationStartAdmissionSnapshot.AsOf`, `ProjectContextAdmissionAssembler`) change from "persisted read-model observation instant / authoritative evidence cutoff" to "current computation instant". Conversation-start Setup `ObservedAt` copies that `asOf` with `Fresh` (`GetConversationStartSetupQueryHandler.cs:63`). Component observations keep their source times. This contract-semantics change appears only in the implementation notes and is not among the approved D1–D6 decisions. Keep it as is (and record the decision), or restore evidence-time `asOf`? — resolved 2026-11-16: Jerome chose "Keep + record" → record-the-decision patch below.
+- [x] [Review][Decision] Legacy list now performs 2N+1 unbounded authorization calls (medium) — `ProjectsDomainServiceEndpoints.cs:1793-1821` calls `AuthorizeReadAsync` (a Tenant-access authorization plus a detail read) for every row before the audit and again after it, then calls `AuthorizeListAsync` again. The legacy list has no paging, so latency grows linearly with Tenant size in rollback mode. This came from the E2 repair. Options: reuse one fresh list-level Tenant authority with per-row detail checks only; cap rows and fail Unavailable above the cap; or accept it as a rollback-only cost. — resolved 2026-11-16: Jerome chose "Defer with DW" → deferral below.
+- [x] [Review][Decision] Startup route selection drops to Unavailable without a reason or log (medium) — `ProjectsReadRouteSelection.cs:22-43` maps every failure to `Unavailable` with no reason: mode typo or wrong case, missing file, hash mismatch, duplicate property, missing cell, bad receipt. `EvidencePath` resolves against the process working directory. An operator performing an incident rollback cannot see why it was refused. Fixing this means adding a public refusal reason and a startup log, or documenting the diagnosis procedure. — resolved 2026-11-16: Jerome chose "Patch: reason + log" → patch below.
+- [ ] [Review][Patch] Record the in-repo CLI/MCP v1 consumer break in the cutover consumer table (decision 1) [docs/read-cutover.md:90] — list `Hexalith.Projects.Cli`/`Hexalith.Projects.Mcp` as obsolete surfaces that now receive safe 404 (list/describe) and 503 (refresh/re-evaluate), with the deferral reference.
+- [ ] [Review][Patch] Record the computation-time `asOf` decision (decision 2: keep) [docs/read-cutover.md:126] — state that snapshot `asOf` and Conversation-start Setup `ObservedAt` are the computation instant, component last-verified times carry source evidence age, and add a Spec Change Log entry.
+- [ ] [Review][Patch] Expose the route-selection refusal reason and log it once at startup (decision 4) [src/Hexalith.Projects.Client/ProjectsReadRouteSelection.cs:22] — additive reason on the selection, startup log in the UI host, and document EvidencePath resolution.
+- [ ] [Review][Patch] Folders v1 read DTOs reject additive owner fields (medium) [src/Hexalith.Projects.Server/Folders/FoldersV1ProjectReadDirectory.cs:24] — `UnmappedMemberHandling.Disallow` turns any additive owner field into Unavailable for every Folder read. That affects legacy open, attachment resolution and supported Folder visibility through the shared directory. It violates "serialization-tolerant"; the `JsonRequired` members already pin the v1 shape.
+- [ ] [Review][Patch] Approved unavailable-pair check does not assert "no included references" (medium) [src/Hexalith.Projects.Testing/Reads/ReadCutoverComparator.cs:64] — the context branch checks null Setup, Unavailable, at least 4 components and non-empty recovery. It never checks that references are absent or not included, which the D4 clarification explicitly requires.
+- [ ] [Review][Patch] Context authority check diverges from the shared read admission (low) [src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:74] — when `Projects:Authentication:Audience` is unset it falls back to a hard-coded `"hexalith-eventstore"`, whereas `ProjectReadQueryAdmission` fails closed. `ProjectContextQueryAuthority` is now dead code.
+- [ ] [Review][Patch] Legacy quarantine inspection ignores the plain `role` claim (low) [src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:2068] — `MayInspectLegacyQuarantine` accepts `IsInRole` or `projects:role` only, while the supported `HasRole` also accepts `role`. The two paths therefore decide quarantine inspection differently for the same administrator.
+- [ ] [Review][Patch] Final membership recheck runs before the denial check (low) [src/Hexalith.Projects.Server/Queries/GetProjectContextEndpoint.cs:105] — if the assembled outcome is Unauthorized/ProjectUnavailable and membership also fails, the response is 503 instead of the safe 404. The same ordering is in `GetProjectContextExplanationEndpoint.cs:105` and `RefreshProjectContextEndpoint.cs:190`.
+- [ ] [Review][Patch] Cursor allowance matches the Conversations route by exact path (low) [src/Hexalith.Projects.Server/Queries/ProjectQueryRequestPreamble.cs:54] — an ordinal `EndsWith("/conversations")` rejects a valid paged request that uses a trailing slash or different casing, both of which ASP.NET routing accepts.
+- [ ] [Review][Patch] Client normalizer leaves duplicated XML documentation (low) [src/Hexalith.Projects.Client/Generation/Program.cs:72] — removing the non-token overloads keeps their `///` blocks. These merge into the next member, giving duplicate `<summary>`, `<remarks>` and `<param>` elements on all six metadata operations in `Generated/HexalithProjectsClient.g.cs`.
+- [ ] [Review][Patch] Cutover docs contradict the final implementation (low) [docs/supported-project-reads.md:11]
+  - `docs/supported-project-reads.md:11` links the pre-review `approved-v3` packet instead of `review-01`.
+  - `docs/supported-project-reads.md:283` says stale evidence returns 503. Legacy and supported list/open both return 404.
+  - The `docs/read-cutover.md:210` heading still says "proposed; not implemented".
+  - The commit converted `docs/supported-project-reads.md` from CRLF to LF, so the whole 260-line file shows as changed.
+- [ ] [Review][Patch] Primary Web routing for `/`, `/projects`, `/projects/warnings` and layout navigation is untested (medium) [src/Hexalith.Projects.UI/Components/Pages/PrimaryHome.razor:1] — no test renders `PrimaryHome`, or `MainLayout` on a primary path in each mode. Reverting `MainLayout.razor:5-8` reintroduces legacy reads in Unavailable mode, and no test fails.
+- [ ] [Review][Patch] Safe Metadata sanitization of context labels is unasserted (medium) [src/Hexalith.Projects/Context/ProjectContextSafeMetadata.cs:9] — removing `Sanitize(...)` at the executor or the legacy context/explain/refresh endpoints fails no test.
+- [ ] [Review][Patch] Tightened context scope/audience rule is not pinned (medium) [src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:72] — there are no null-scope, null-audience or configured-audience cases, so restoring `MatchesPresented` passes every test.
+- [ ] [Review][Patch] Route-selection negative cases are untested (medium) [src/Hexalith.Projects.Client/ProjectsReadRouteSelection.cs:32] — wrong evidence or receipt hash, `../` receipt path, duplicate property, absent `nativeTestName`, and `contractParity`/`identityCompatibility` false are all uncovered.
+- [ ] [Review][Patch] Legacy rollback Conversation forwarding is checked only with `Arg.Any` (low) [src/Hexalith.Projects.UI/Diagnostics/LegacyProjectDetailSource.cs:113] — the same applies to `ProjectMaintenanceActionPanel.razor:389`.
+- [ ] [Review][Patch] Advisory-only owner read contract is unverified across the Conversations boundary (medium) [src/Hexalith.Projects.Server/Conversations/ConversationsProjectConversationResolutionDirectory.cs:50] — add a real-owner advisory case to `NativeConversationMembershipTransportTests`.
+- [ ] [Review][Patch] Resolve-from-conversation Unauthorized/Excluded metadata → safe 404 is unpinned (low) [src/Hexalith.Projects.Server/Queries/ResolveProjectFromConversationEndpoint.cs:119]
+- [ ] [Review][Patch] Exact DW-57 Conversation-start headers are only loosely asserted (low) [src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:111] — there is no exact watermark assertion and no `Stale` case outside the Dapr-gated matrix.
+- [ ] [Review][Patch] Explain handler result is not pinned to a null ProjectionType (low) [src/Hexalith.Projects.Server/Queries/ExplainContextSelectionQueryHandler.cs:50]
+- [ ] [Review][Patch] Folder v1 adapter accept/deny/archive/status mappings are untested (medium) [src/Hexalith.Projects.Server/Folders/FoldersV1ProjectReadDirectory.cs:60]
+- [ ] [Review][Patch] Paging and cursor refusal is verified only in the Dapr-gated matrix (medium) [src/Hexalith.Projects.Server/Queries/GetProjectContextQueryHandler.cs:48] — the same applies to `ProjectQueryRequestPreamble.cs:54`.
+- [x] [Review][Defer] In-repo CLI and MCP read consumers fail against the retained server (high) [src/Hexalith.Projects.Cli/ProjectsCliApplication.cs:96] — deferred: Obsolete per-module CLI/MCP surfaces superseded by McpCli; limited to safety/continuity fixes and retired under the McpCli migration plan.
+- [x] [Review][Defer] Legacy list 2N+1 unbounded authorization calls (medium) [src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:1793] — deferred: Rollback-only legacy path; the per-row recheck preserves the E2 stale-authority guarantee; optimize before any production rollback drill.
+- [x] [Review][Defer] Startup gate trusts self-declared evidence identity and cell flags (medium) [src/Hexalith.Projects.Client/ProjectReadCutoverGate.cs:30] — deferred: extends the existing B1 intrinsic-binding obligation. New facts:
+  - The final packet labels `sourceRevision` `981ceef1`, which contains none of the cutover source; the 144 manifest hashes match committed `e8fe8141`.
+  - All 77 cells and all 7 legacy slices bind to one matrix test.
+  - `contractParity`/`identityCompatibility` are flags, not checked against `contractParityProof`.
+- [x] [Review][Defer] Package-mode (CI/Release) builds depend on unreleased owner APIs (high) [src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs:15] — deferred: publication is out of scope for this story.
+  - `QueryResultContractAttribute` and the typed emitter exist only at untagged EventStore `0be0c922` (`v5.2.0-6`); no cached release, 5.1.1 or 5.2.0, contains them, and Projects pins 5.1.1.
+  - The new Conversations owner APIs (`NativeMembershipOnly`, `AdvisoryMetadataOnly`, `ReadPurpose`) exist only at `f1a2b3da`.
+  - The Contracts, Client and Server package builds cannot compile until both owners publish. No DW entry tracked this.
+- [x] [Review][Defer] Folders v1 read wire contract is hand-mirrored in Projects (medium) [src/Hexalith.Projects.Server/Folders/FoldersV1ProjectReadDirectory.cs:19] — deferred: the documented owner mismatch (the generated Folders client targets the non-routed v2 candidate). The fix belongs to the Folders owner.
+- [x] [Review][Defer] Comparator leaves D2 mappings and cursor/address proof to caller-supplied flags (medium, unverified) [src/Hexalith.Projects.Testing/Reads/ReadCutoverComparator.cs:31] — deferred, maybe-false: settle in pass 2 by confirming that the CutoverMatrix callers independently assert cursor scope/boundary and physical addresses before setting `TransportCursorAssertions`/`completeSupportedAssertions`.
+- [x] [Review][Defer] Conversations ambiguous tenant/subject claim refusal is untested (medium) [references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Api/ConversationReadApi.cs:454] — deferred: owner-repository test.
+- [x] [Review][Defer] EventStore correlation-header restore after error is untested (low) [references/Hexalith.EventStore/src/Hexalith.EventStore/Middleware/CorrelationIdMiddleware.cs:32] — deferred: owner-repository test.
+
+#### Rejected
+
+- `false` — Old v1 list/open overloads always fail: this is the approved amendment 4 behavior change ("calls without the required inspection authority fail safely"). Signatures are preserved.
+- `false` — Permanent conditions return retryable 503: these are the approved closed pairs (D4 clarification, D6, amendment 2).
+- Rejected (fix renegotiates the spec) — LegacyRollback is unusable for users without descriptive-inspection permission, and each page view writes a durable audit. This is a direct consequence of approved amendment 4.
+- `false` — Conversation-start 401/403 removed and Fresh/Stale header: these implement the recorded DW-59 ("Declare safe 404 only") and DW-57 decisions.
+- `false` — Paging checked after admission: validation deliberately follows authorization so invalid envelopes cannot distinguish denied callers.
+- `false` — Conversations `trustedDirectCall` with a null accessor: owner DI registers `IHttpContextAccessor`, so the two-argument constructor is used. The baseline handler had no caller verification, and `GetAsync` still authorizes `UserId`.
+- `false` — Stale advisory evidence reuses native freshness: `ConversationAdvisoryMetadataResult` carries only `Incomplete` (enforced), and the epic permits advisory lag.
+- `false` — Legacy open/list return 404 instead of 503 for stale authority: the matrix shows supported list/open also return 404. Only the doc sentence is wrong, and it is patched above.
+- `false` — Context preamble admits Included with a null FolderId: the inclusion policy records an invalid identifier and excludes the Folder (`ProjectContextInclusionPolicy.cs:307`), giving Unavailable.
+- `low` — Legacy open reports Included without an owner check for Included with a null FolderId: the projection sets Included only via `ProjectFolderSet` with an ID, so the state is not reachable.
+- `false` — Allowed outcome with empty permissions maps to Unavailable: contradictory owner evidence correctly fails closed.
+- `false` — Ambiguous `tid`/`tenant_id` or `sub` claims return hidden: failing closed on ambiguous identity is the intended hardening.
+- `false` — Audit reuse with a caller-supplied correlation ID: this is the documented `ProjectReadAudit` design (unchanged retries reuse one record).
+- `false` — Comparator throws on an Undefined JsonElement: a test helper that fails loudly on invalid input is correct.
+- `low` — Owner detail read refuses EntityId ≠ AggregateId: this is the same rule the existing owner advisory and resolution handlers use, and no caller sends a differing EntityId.
+- `false` — `/inspect/` pages stay reachable in Unavailable/LegacyRollback: D1 scopes the switch to primary entry points, and the docs' consumer table records `/inspect/` separately.
+- `false` — Normalizer reshapes code outside the fingerprints: the client regenerates from spine, nswag and `Program.cs` (now a target input) on every build, and the fingerprint scope is unchanged from baseline.
+- `low` — Owner adapters swallow exceptions without logging: they fail closed, and adding loggers changes constructors.
+- `low` — Folders v1 maps terminal states to Archived and accepts `["write"]` without `read`: the owner's permission hierarchy and state taxonomy are design choices this review could not establish.
+- `low` — Typed-query generator is non-incremental, plus namespace, heuristic and null-argument edge cases: the generator is PrivateAssets to Projects.Client, only Projects queries carry the attribute, and the rewrite is owner work.
+- `low` — Duplicated discriminator literals, a `GetTypes` scan and an unused `AddProjectsSupportedReads` registration: there is no divergence today.
+- `low` — `conversationId` is unvalidated in OpenAPI: the server fails closed, and the fix needs a spine edit and regeneration.
+- `low` — Pre-registered FoldersClient without a BaseAddress: this fails closed and needs a nonstandard host registration.
+- `low` — Evidence file grows after the length check: the file is an operator-owned startup input.
+- `low` — PascalCase `ConversationId` is ignored by the executor: generated bindings serialize with `JsonSerializerOptions.Web`, and the request fails closed.
+- `low` — Legacy list returns row-level stale 503 versus list-level 404: this is a race between checks and fails closed.
+- `false` — LegacyRollback detail drops Descriptive/Quarantined, and the quarantine switches are absent from OpenAPI: this is already rejected as prior triage item B7.
 
 ## Implementation Notes
 
