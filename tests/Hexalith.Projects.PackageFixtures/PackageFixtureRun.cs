@@ -1,11 +1,17 @@
 namespace Hexalith.Projects.PackageFixtures;
 
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
+
+using Grpc.Core;
+using Grpc.Net.Client;
+
+using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>Runs both real package-mode browser phases and always awaits AppHost and private-state teardown.</summary>
 internal static class PackageFixtureRun
@@ -47,12 +53,12 @@ internal static class PackageFixtureRun
                     startup.CancelAfter(TimeSpan.FromMinutes(5));
                     await factory.StartAsync(startup.Token).ConfigureAwait(false);
                     application = factory.Application ?? throw new InvalidOperationException("AppHost did not publish its built application.");
-                    await VerifyTelemetryAsync(factory, application, scratch, startup.Token).ConfigureAwait(false);
                     string[] resources = actualOwners
                         ? ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers", "browser-read-observer"]
                         : ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "conversations", "folders", "memories", "live-fixtures"];
                     foreach (string resource in resources)
                         await application.ResourceNotifications.WaitForResourceHealthyAsync(resource, startup.Token).ConfigureAwait(false);
+                    await VerifyTelemetryAsync(factory, application, scratch, startup.Token).ConfigureAwait(false);
                 }
                 FixtureProductChecks checks = new(inputs, scratch, factory);
                 await checks.VerifyBootstrapAsync(timeout.Token).ConfigureAwait(false);
@@ -171,9 +177,34 @@ internal static class PackageFixtureRun
         if (await ExportAsync(false).ConfigureAwait(false) is not (System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden)
             || await ExportAsync(true).ConfigureAwait(false) != System.Net.HttpStatusCode.OK)
             throw new InvalidOperationException("The actual telemetry receiver did not enforce its private export key.");
+        using GrpcChannel channel = GrpcChannel.ForAddress(endpoints[1]);
+        Marshaller<byte[]> bytes = Marshallers.Create<byte[]>(value => value, value => value);
+        Method<byte[], byte[]> export = new(MethodType.Unary, "opentelemetry.proto.collector.trace.v1.TraceService", "Export", bytes, bytes);
+        async Task<bool> ExportGrpcAsync(bool authenticate)
+        {
+            Metadata headers = [];
+            if (authenticate) headers.Add("x-otlp-api-key", key);
+            using AsyncUnaryCall<byte[]> call = channel.CreateCallInvoker().AsyncUnaryCall(export, host: null,
+                new CallOptions(headers, DateTime.UtcNow.AddSeconds(10), cancellation), []);
+            try { _ = await call.ResponseAsync.ConfigureAwait(false); return true; }
+            catch (RpcException error) when (error.StatusCode is StatusCode.Unauthenticated or StatusCode.PermissionDenied) { return false; }
+        }
+        if (await ExportGrpcAsync(false).ConfigureAwait(false) || !await ExportGrpcAsync(true).ConfigureAwait(false))
+            throw new InvalidOperationException("The actual gRPC telemetry receiver did not enforce its private export key.");
+        using JsonDocument process = JsonDocument.Parse(await File.ReadAllBytesAsync(scratch.File("projects-process.json"), cancellation).ConfigureAwait(false));
+        JsonElement workload = process.RootElement;
+        int selectedPort = workload.GetProperty("otlpProtocol").GetString() switch
+        {
+            "grpc" => endpoints[1].Port, "http/protobuf" => endpoints[2].Port, _ => -1,
+        };
+        string expectedKeyHash = Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(key)));
+        if (!workload.GetProperty("otlpLoopback").GetBoolean() || workload.GetProperty("otlpPort").GetInt32() != selectedPort
+            || workload.GetProperty("otlpApiKeySha256").GetString() != expectedKeyHash)
+            throw new InvalidOperationException("The actual Projects exporter is not bound to its authenticated allocated telemetry receiver.");
         await File.WriteAllTextAsync(scratch.File("telemetry-receiver.json"), JsonSerializer.Serialize(new
         {
             ownedLoopbackEndpointsVerified = true, unauthenticatedExportRefused = true, authenticatedExportAccepted = true,
+            unauthenticatedGrpcExportRefused = true, authenticatedGrpcExportAccepted = true, actualWorkloadExporterVerified = true,
             ports = endpoints.Select(endpoint => endpoint.Port).ToArray(),
         }), cancellation).ConfigureAwait(false);
     }

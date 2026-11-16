@@ -1,7 +1,10 @@
 namespace Hexalith.Projects.PackageFixtures;
 
+using System.Collections.Concurrent;
+
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Eventing;
 using Aspire.Hosting.Testing;
 
 using Microsoft.Extensions.Configuration;
@@ -16,6 +19,7 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
     private readonly string _resourceKey = FixtureInputs.Secret();
     private readonly string _otlpKey = FixtureInputs.Secret();
     private readonly string _dashboardKey = FixtureInputs.Secret();
+    private readonly ConcurrentDictionary<string, byte> _privateProfiles = new(StringComparer.Ordinal);
 
     internal DistributedApplication? Application { get; private set; }
 
@@ -65,6 +69,15 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
         applicationBuilder.Configuration.AddInMemoryCollection(TelemetrySettings);
         applicationBuilder.Services.Configure<ResourceNotificationServiceOptions>(
             options => options.DefaultWaitBehavior = WaitBehavior.StopOnResourceUnavailable);
+        applicationBuilder.Eventing.Subscribe<BeforeResourceStartedEvent>((resourceEvent, _) =>
+        {
+            if (resourceEvent.Resource is IResourceWithEnvironment resource
+                && (resource is ProjectResource || resource.Name == "aspire-dashboard")
+                && _privateProfiles.TryAdd(resource.Name, 0))
+                resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+                    context.EnvironmentVariables["LOCALAPPDATA"] = Path.Combine(privateDirectory, "profiles", resource.Name)));
+            return Task.CompletedTask;
+        });
     }
 
     /// <inheritdoc/>

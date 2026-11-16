@@ -936,6 +936,7 @@ internal sealed partial class PackageReadFixture : IDisposable
                 return prior.HasExited || prior.StartTime.ToUniversalTime().Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture) != receipt.GetProperty("startTicks").GetString();
             }
             catch (ArgumentException) { return true; }
+            catch (InvalidOperationException) { return true; } // The associated process exited while StartTime was being read.
         }
     }
 
