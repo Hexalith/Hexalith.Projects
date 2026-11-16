@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs';
 import { chromium, defineConfig, devices } from '@playwright/test';
 
 import { browserSessionStoragePath } from './support/auth/browser-session.js';
+import { createBrowserProjects } from './support/helpers/browser-configuration.js';
 
 /**
  * Cross-module E2E config for the Hexalith.Projects platform.
@@ -27,62 +28,22 @@ if (LIVE_APPHOST_ENABLED) {
   process.env.BASE_URL = BASE_URL;
   process.env.API_URL = API_URL;
   process.env.KEYCLOAK_URL = KEYCLOAK_URL;
-  requireLiveText('KEYCLOAK_CLIENT_ID');
-  requireLiveText('EVENTSTORE_API_URL');
-  requireLiveText('FIXTURE_API_URL');
-  requireLiveText('E2E_RUN_ID');
-  requireOneOf('TEST_USER_USERNAME', 'TEST_USER_EMAIL');
-  requireLiveText('TEST_USER_PASSWORD');
+  process.env.KEYCLOAK_CLIENT_ID = requireLiveText('KEYCLOAK_CLIENT_ID');
+  process.env.EVENTSTORE_API_URL = requireLiveText('EVENTSTORE_API_URL');
+  process.env.FIXTURE_API_URL = requireLiveText('FIXTURE_API_URL');
+  process.env.E2E_RUN_ID = requireLiveText('E2E_RUN_ID');
+  process.env.TEST_USER_USERNAME = requireOneOf('TEST_USER_USERNAME', 'TEST_USER_EMAIL');
+  process.env.TEST_USER_PASSWORD = requireLiveText('TEST_USER_PASSWORD');
 }
 const IS_CI = !!process.env.CI;
-const CHROMIUM_FALLBACK_EXECUTABLE_PATH = resolveExecutable([
-  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-  !IS_CI ? '/usr/bin/google-chrome' : undefined,
-  !IS_CI ? '/usr/bin/google-chrome-stable' : undefined,
-  !IS_CI ? '/usr/bin/chromium' : undefined,
-  !IS_CI ? '/usr/bin/chromium-browser' : undefined,
-]);
-const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
-  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
-  !IS_CI ? chromium.executablePath() : undefined,
-  CHROMIUM_FALLBACK_EXECUTABLE_PATH,
-]);
-// Live artifacts stay metadata-only: browser pixels can show the real login page and fixture data,
-// so the live lane keeps no video/screenshot, and traces are disabled because requests carry tokens.
+const PACKAGE_FIXTURES = process.env.E2E_PACKAGE_FIXTURES === '1';
+// Live requests and fixture data stay in private driver scratch.
 const VIDEO_MODE = LIVE_APPHOST_ENABLED || process.env.PLAYWRIGHT_DISABLE_VIDEO === '1' ? 'off' : 'retain-on-failure';
 const SCREENSHOT_MODE = LIVE_APPHOST_ENABLED ? 'off' : 'only-on-failure';
-const CHROMIUM_USE = CHROMIUM_EXECUTABLE_PATH
-  ? { ...devices['Desktop Chrome'], launchOptions: { executablePath: CHROMIUM_EXECUTABLE_PATH } }
-  : { ...devices['Desktop Chrome'] };
-const MANAGED_BROWSER_PROJECT_REQUESTED = projectRequested(['firefox', 'webkit']);
-const INCLUDE_MANAGED_BROWSER_PROJECTS =
-  IS_CI ||
-  MANAGED_BROWSER_PROJECT_REQUESTED ||
-  process.env.PLAYWRIGHT_INCLUDE_MANAGED_BROWSERS === '1' ||
-  !CHROMIUM_FALLBACK_EXECUTABLE_PATH;
-const BROWSER_PROJECTS = [
-  { name: 'chromium', use: CHROMIUM_USE },
-  ...(INCLUDE_MANAGED_BROWSER_PROJECTS
-    ? [
-        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-      ]
-    : []),
-];
-
-function resolveExecutable(candidates: Array<string | undefined>): string | undefined {
-  return candidates.find((candidate) => candidate && existsSync(candidate));
-}
-
-function projectRequested(projectNames: string[]): boolean {
-  return process.argv.some((argument, index, args) => {
-    if (argument === '--project') {
-      return projectNames.includes(args[index + 1]);
-    }
-
-    return projectNames.some((projectName) => argument === `--project=${projectName}`);
-  });
-}
+const BROWSER_PROJECTS = createBrowserProjects({
+  env: process.env, args: process.argv, exists: existsSync,
+  managedExecutablePath: () => chromium.executablePath(), devices,
+});
 
 function resolveHttpUrl(name: string, required: boolean, fallback: string): string {
   if (!required) {
@@ -123,7 +84,6 @@ function requireLiveText(name: string): string {
   if (!value) {
     throw new Error(`[playwright-config] ${name} must be set when E2E_LIVE_APPHOST=1.`);
   }
-  process.env[name] = value;
   return value;
 }
 
@@ -134,7 +94,6 @@ function requireOneOf(primaryName: string, legacyName: string): string {
       `[playwright-config] ${primaryName} must be set when E2E_LIVE_APPHOST=1 (${legacyName} is also accepted).`,
     );
   }
-  process.env[primaryName] = value;
   return value;
 }
 
@@ -150,8 +109,10 @@ export default defineConfig({
   },
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['junit', { outputFile: 'test-results/junit.xml' }],
+    ...(!PACKAGE_FIXTURES ? [
+      ['html', { outputFolder: 'playwright-report', open: 'never' }],
+      ['junit', { outputFile: 'test-results/junit.xml' }],
+    ] as const : []),
     ...(LIVE_APPHOST_ENABLED ? [['./reporters/zero-live-skip-reporter.ts']] as const : []),
   ],
   use: {
@@ -176,7 +137,7 @@ export default defineConfig({
   // Playwright-managed browsers can still run the no-AppHost fixture contracts
   // through system Chrome.
   projects: BROWSER_PROJECTS,
-  outputDir: 'test-results',
+  outputDir: PACKAGE_FIXTURES ? requireLiveText('E2E_PACKAGE_OUTPUT') : 'test-results',
   // Live global setup establishes supported tenant access and a real OIDC cookie session. Live mode
   // always runs two isolated workers and the zero-live-skip reporter fails empty or skipped runs.
   globalSetup: './global-setup.ts',

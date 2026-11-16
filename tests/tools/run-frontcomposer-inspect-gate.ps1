@@ -1,16 +1,10 @@
 #!/usr/bin/env pwsh
-# FrontComposer staleness gate (FS-7) for Hexalith.Projects. The gate builds and
-# inspects Release output so it does not depend on Debug artifacts from an earlier step.
+# Inspect retained generator output from the shared Release/package build.
 
 $ErrorActionPreference = 'Stop'
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repositoryRoot = (Resolve-Path (Join-Path $scriptRoot '..' '..')).Path
-$rootCommons = Join-Path $repositoryRoot 'references/Hexalith.Commons'
-if ([string]::IsNullOrWhiteSpace($env:HexalithCommonsRoot)) {
-    $env:HexalithCommonsRoot = $rootCommons
-}
-
 # Detect FrontComposer inputs: any [Projection]/[Command] attributes inside src/Hexalith.Projects.UI.Contracts,
 # the non-packable project that owns the FrontComposer descriptors and runs the generator (AD-16).
 $contractsRoot = Join-Path $repositoryRoot 'src/Hexalith.Projects.UI.Contracts'
@@ -28,45 +22,23 @@ if (-not $annotatedContracts -or $annotatedContracts.Count -eq 0) {
 Write-Host "frontcomposer-inspect-gate: inputs detected ($($annotatedContracts.Count) annotated contract file(s)) — running real gate."
 
 $contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.UI.Contracts.csproj'
-$cliProject = Join-Path $repositoryRoot 'references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
-
-if (-not (Test-Path $cliProject)) {
-    Write-Error "frontcomposer-inspect-gate: FAILED — repo-local FrontComposer CLI not found at $cliProject. Initialize only the root-declared Hexalith.FrontComposer submodule."
-    exit 1
+$generatedRoot = Join-Path $contractsRoot 'obj/Release'
+if (-not (Test-Path -LiteralPath $generatedRoot -PathType Container)) {
+    throw 'The shared Release build must retain FrontComposer generator output before inspection.'
 }
-
-Write-Host 'frontcomposer-inspect-gate: building and inspecting deterministic Release output with the repo-local CLI.'
-$targetFramework = (& dotnet msbuild $contractsProject -nologo -p:Configuration=Release -getProperty:TargetFramework | Out-String).Trim()
-if ($LASTEXITCODE -ne 0 -or $targetFramework -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$') {
-    throw 'The UI.Contracts target framework could not be resolved from MSBuild.'
+$generatedOutputs = @(Get-ChildItem -LiteralPath $generatedRoot -Recurse -Filter '*.g.cs' -File |
+    Where-Object { $_.FullName -match '[/\\]generated[/\\]HexalithFrontComposer[/\\]' })
+if ($generatedOutputs.Count -eq 0) {
+    throw 'The shared Release build retained no FrontComposer generator output.'
 }
-
-# An earlier ordinary build can be up to date without retaining generator output.
-# Emit a fresh set for the exact framework before inspecting it.
-$generatedDirectory = Join-Path $contractsRoot "obj/Release/$targetFramework/generated/HexalithFrontComposer"
-if (Test-Path -LiteralPath $generatedDirectory) {
-    Remove-Item -LiteralPath $generatedDirectory -Recurse -Force
+Push-Location $repositoryRoot
+try {
+    & dotnet tool run frontcomposer -- inspect --project $contractsProject --configuration Release --fail-on-warning
+    if ($LASTEXITCODE -ne 0) {
+        throw "FrontComposer generated-output inspection failed with exit code $LASTEXITCODE."
+    }
 }
-& dotnet build $contractsProject --configuration Release --framework $targetFramework --no-incremental -m:1 -warnaserror `
-    '-p:EmitCompilerGeneratedFiles=true' `
-    "-p:CompilerGeneratedFilesOutputPath=$generatedDirectory"
-if ($LASTEXITCODE -ne 0) {
-    throw 'The Release UI.Contracts build failed before generated-output inspection.'
+finally {
+    Pop-Location
 }
-
-& dotnet run --project $cliProject --configuration Release -- `
-    inspect `
-    --project $contractsProject `
-    --configuration Release `
-    --framework $targetFramework `
-    --build `
-    --fail-on-warning
-
-$exitCode = $LASTEXITCODE
-if ($exitCode -ne 0) {
-    Write-Error "frontcomposer-inspect-gate: FAILED — the Release build or 'frontcomposer inspect --fail-on-warning' failed. Regenerate the FrontComposer surfaces and commit the updated output."
-    exit $exitCode
-}
-
-Write-Host 'frontcomposer-inspect-gate: PASSED — frontcomposer inspect reported no warnings.'
-exit 0
+Write-Host 'frontcomposer-inspect-gate: PASSED — retained Release generator output has no warnings.'

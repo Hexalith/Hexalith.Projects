@@ -225,7 +225,7 @@ def load_manifest(path: Path = MANIFEST) -> ReleaseManifest:
 def evaluate_project_properties(project: Path) -> dict[str, str]:
     """Evaluate identity properties for a manifest project without building it."""
 
-    command = [
+    completed = subprocess.run([
         "dotnet",
         "msbuild",
         str(project),
@@ -233,8 +233,7 @@ def evaluate_project_properties(project: Path) -> dict[str, str]:
         "-getProperty:PackageId,AssemblyName,TargetFramework,IsPackable",
         "-p:Configuration=Release",
         "-p:UseHexalithProjectReferences=false",
-    ]
-    completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+    ], capture_output=True, text=True, check=False)
     if completed.returncode != 0:
         detail = completed.stderr.strip() or completed.stdout.strip()
         raise ValueError(f"Cannot evaluate {project.relative_to(ROOT)}: {detail}")
@@ -270,8 +269,7 @@ def current_source_sha() -> str:
     """Return the exact current repository commit used as package provenance."""
 
     completed = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=ROOT,
+        ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
         capture_output=True,
         text=True,
         check=False,

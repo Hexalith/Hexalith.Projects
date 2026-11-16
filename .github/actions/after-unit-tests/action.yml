@@ -1,0 +1,11 @@
+name: Projects generated output and package consumers
+description: Inspect existing Release generator output and validate candidate packages and five consumers.
+runs:
+  using: composite
+  steps:
+    - name: Inspect generated FrontComposer output
+      shell: bash
+      run: python3 scripts/check-frontcomposer-output.py
+    - name: Validate Release packages and consumers
+      shell: bash
+      run: python3 scripts/check-package-dependencies.py

@@ -1,6 +1,5 @@
 namespace Hexalith.Projects.E2E.Fixtures;
 
-using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -58,42 +57,19 @@ internal sealed class PersistedReadObserver(IConfiguration configuration)
         if (!Uri.TryCreate("tcp://" + address, UriKind.Absolute, out Uri? endpoint) || endpoint.Port <= 0 || endpoint.Port == 6379 || !endpoint.IsLoopback
             || !string.IsNullOrEmpty(endpoint.UserInfo) || !string.IsNullOrEmpty(endpoint.Query) || !string.IsNullOrEmpty(endpoint.Fragment))
             throw new InvalidOperationException("Fixture observer address is invalid.");
-        ProcessStartInfo start = new("redis-cli")
+        string serialized = await new RedisFixtureClient(address).ReadAsync(["EVAL", Script, "0", graph.TenantId], cancellationToken).ConfigureAwait(false);
+        using JsonDocument document = JsonDocument.Parse(serialized);
+        SortedDictionary<string, string> domain = new(StringComparer.Ordinal), audit = new(StringComparer.Ordinal);
+        foreach (JsonElement row in document.RootElement.EnumerateArray())
         {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
-        foreach (string argument in new[] { "--raw", "-h", endpoint.Host, "-p", endpoint.Port.ToString(System.Globalization.CultureInfo.InvariantCulture), "EVAL", Script, "0", graph.TenantId })
-            start.ArgumentList.Add(argument);
-        using Process process = Process.Start(start) ?? throw new InvalidOperationException("Fixture observer failed to start.");
-        try
-        {
-            Task<string> output = process.StandardOutput.ReadToEndAsync(cancellationToken);
-            Task<string> errors = process.StandardError.ReadToEndAsync(cancellationToken);
-            await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
-            string serialized = await output.ConfigureAwait(false);
-            _ = await errors.ConfigureAwait(false);
-            if (process.ExitCode != 0)
-                throw new InvalidOperationException("Fixture state observation failed.");
-            using JsonDocument document = JsonDocument.Parse(serialized);
-            SortedDictionary<string, string> domain = new(StringComparer.Ordinal), audit = new(StringComparer.Ordinal);
-            foreach (JsonElement row in document.RootElement.EnumerateArray())
-            {
-                string key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(row[0].GetString()!)));
-                SortedDictionary<string, string> destination = row[2].GetBoolean() ? audit : domain;
-                string fingerprint = row[1].GetString()!;
-                if (!destination.TryAdd(key, fingerprint) && destination[key] != fingerprint)
-                    throw new InvalidOperationException("Fixture state observation changed within its atomic boundary.");
-            }
-            if (domain.Count == 0)
-                throw new InvalidOperationException("Fixture state observation was empty.");
-            return new(domain, audit);
+            string key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(row[0].GetString()!)));
+            SortedDictionary<string, string> destination = row[2].GetBoolean() ? audit : domain;
+            string fingerprint = row[1].GetString()!;
+            if (!destination.TryAdd(key, fingerprint) && destination[key] != fingerprint)
+                throw new InvalidOperationException("Fixture state observation changed within its atomic boundary.");
         }
-        finally
-        {
-            if (!process.HasExited)
-                process.Kill(entireProcessTree: false);
-        }
+        if (domain.Count == 0)
+            throw new InvalidOperationException("Fixture state observation was empty.");
+        return new(domain, audit);
     }
 }

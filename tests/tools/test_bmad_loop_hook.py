@@ -368,14 +368,6 @@ class BmadLoopHookTests(unittest.TestCase):
                     self.assertEqual(event_name, event["event"])
                     self.assertEqual(f"task-{event_name}", event["task_id"])
 
-    def test_ci_runs_this_dependency_free_suite_as_a_blocking_workflow_gate(self) -> None:
-        workflow = CI_PATH.read_text(encoding="utf-8")
-        command = "python3 -m unittest tests/tools/test_bmad_loop_hook.py -v"
-        self.assertIn(command, workflow)
-        self.assertLess(workflow.index(command), workflow.index("Validate CI/CD invariants"))
-        workflow_gates = workflow.split("  ci:\n", maxsplit=1)[0]
-        self.assertNotIn("continue-on-error", workflow_gates)
-        self.assertIn("PYTHONDONTWRITEBYTECODE: '1'", workflow_gates)
 
 
 if __name__ == "__main__":

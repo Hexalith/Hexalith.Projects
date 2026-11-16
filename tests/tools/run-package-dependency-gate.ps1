@@ -12,13 +12,16 @@ $ErrorActionPreference = 'Stop'
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repositoryRoot = (Resolve-Path (Join-Path $scriptRoot '..' '..')).Path
 $solutionPath = Join-Path $repositoryRoot 'Hexalith.Projects.CI.slnx'
+$ownedPackageDirectory = $null
 if ([string]::IsNullOrWhiteSpace($PackageDirectory)) {
-    $PackageDirectory = Join-Path $repositoryRoot 'artifacts/ci-package-gate'
+    $ownedPackageDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('projects-package-' + [System.Guid]::NewGuid().ToString('N'))
+    $PackageDirectory = $ownedPackageDirectory
 }
 elseif (-not [System.IO.Path]::IsPathRooted($PackageDirectory)) {
     $PackageDirectory = Join-Path $repositoryRoot $PackageDirectory
 }
 
+try {
 function Invoke-PythonTool {
     param([string[]] $Arguments)
 
@@ -67,25 +70,6 @@ if ($sourceToolsReference.ParentNode.Condition -ne "'`$(UseHexalithProjectRefere
 }
 
 if (-not $SkipPack) {
-    Invoke-Dotnet @(
-        'restore',
-        $solutionPath,
-        '-p:Configuration=Release',
-        '-p:UseHexalithProjectReferences=false',
-        '/m:1',
-        '/nr:false'
-    )
-    Invoke-Dotnet @(
-        'build',
-        $solutionPath,
-        '--no-restore',
-        '--configuration',
-        'Release',
-        '-warnaserror',
-        '-p:UseHexalithProjectReferences=false',
-        '/m:1',
-        '/nr:false'
-    )
     Invoke-PythonTool @(
         (Join-Path $repositoryRoot 'scripts/pack-release-packages.py'),
         $PackageDirectory,
@@ -115,4 +99,10 @@ Invoke-PythonTool @(
 )
 
 Write-Host "package-dependency-gate: PASSED — manifest inventory, exact metadata and dependency graph, provenance, compile assets, and five real API consumers validated."
+}
+finally {
+    if ($ownedPackageDirectory -and (Test-Path -LiteralPath $ownedPackageDirectory)) {
+        Remove-Item -LiteralPath $ownedPackageDirectory -Recurse -Force
+    }
+}
 exit 0
