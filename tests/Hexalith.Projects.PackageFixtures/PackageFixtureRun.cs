@@ -153,7 +153,7 @@ internal static class PackageFixtureRun
         FixtureScratch scratch, CancellationToken cancellation)
     {
         // The login URL contains a credential; keep it private and retain only endpoint authorities.
-        Uri dashboard = new(await application.GetDashboardUrlAsync(cancellation).ConfigureAwait(false));
+        Uri dashboard = await application.GetDashboardUrlAsync(cancellation).ConfigureAwait(false);
         Uri[] endpoints = [dashboard, factory.GetEndpoint("aspire-dashboard", "otlp-grpc"), factory.GetEndpoint("aspire-dashboard", "otlp-http")];
         foreach (Uri endpoint in endpoints)
         {
