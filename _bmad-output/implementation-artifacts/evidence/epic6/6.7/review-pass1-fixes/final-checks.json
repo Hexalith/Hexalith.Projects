@@ -1,0 +1,121 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.7"
+      ],
+      "exitCode": 0,
+      "output": "PASS: Story 6.7 is within production authority\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "nativeResults": [
+    {
+      "path": "Domain-full-1.xml",
+      "sha256": "62a1c75852167305365fa4729a99c589ac5a8be6ecd81227d1deddf6e91ab674",
+      "passed": 693,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Contracts-full-1.xml",
+      "sha256": "8e9631d9fabfabfdac447f63836385fc808dcd0e38364bdb5d7bb7703a5e2a3b",
+      "passed": 207,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Client-full-2.xml",
+      "sha256": "ac15864de45ddc9953ba18f432fa7c421b5b61d40882f8f2704119a7f8318241",
+      "passed": 154,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "UI-full-2.xml",
+      "sha256": "f53dcf2f960f787f04e10a019dc3ff974908e7e1076fdb9f4b962f0353877f80",
+      "passed": 294,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Server-full-3.xml",
+      "sha256": "e512ed4fe03438f0017337a5df9155cf772a39c8181e9c3a80af9ec61aef3bf4",
+      "passed": 1529,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Rollback-full-3.xml",
+      "sha256": "d5b0835491dd017fb5beb176d158a2fff289d1ad537d33a50e467554905ef6f3",
+      "passed": 1,
+      "skipped": 0,
+      "notRun": 0
+    }
+  ],
+  "fullProjectsPassed": 2877,
+  "matrixPassed": 77,
+  "rollbackReadsPassed": 7,
+  "sourceFilesCompared": 22242,
+  "sourceManifestSha256": "f711e7edd38389d38f0410ac8f59185b144915f76b372cc33aee0062a3fa9c41",
+  "sourceCopyParity": true,
+  "startupLogOccurrences": 1,
+  "cleanup": {
+    "ownedPid": 307861,
+    "reaped": true,
+    "productionAcceptance": false,
+    "processAbsent": true,
+    "privateWorkspaceRemoved": true
+  },
+  "mappingDiagnostics": [
+    "HXW007",
+    "HXW009",
+    "HXW010",
+    "HXW011"
+  ],
+  "activationPacket": {
+    "path": "read-cutover-final-2.json",
+    "sha256": "0ab3fbc7f8975f5cc909f6f729fe18d6aec8ef61b16c9feab61e7673856ad874"
+  },
+  "rollbackProof": {
+    "path": "rollback-final-proof-2.json",
+    "sha256": "0bd71326555a695bb91299017e837a15be3a8c92cc0bfa8ccfbcb4a225094913"
+  },
+  "broadGateBlocker": {
+    "command": "dotnet Hexalith.Builds.Module.Cli.dll prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace <private>/prepared --output json",
+    "exitCode": 2,
+    "ruleId": "HXW003",
+    "cause": "Pre-existing initialized Conversations nested Builds dependency; original checkout preserved.",
+    "fallback": "Private source copy with nested dependencies excluded; supported source mapper then succeeded."
+  },
+  "historicalAttempts": [
+    "Server-compile-1: test referenced owner-internal key helper; fixture now seeds the documented storage address.",
+    "Server-full-1: incorrect new test audience configuration and two new assertion fixtures; corrected without weakening product behavior.",
+    "Client-full-1: nullable assertion in the new test; corrected.",
+    "Rollback-full-2: fixed domain computation clock was incorrectly reused for expiring protocol proofs. Fixture now supplies the real protocol clock to the existing SDK transport; deadlines and verifier unchanged."
+  ],
+  "qualification": "Debug source/project-reference verification; production binding, owner/package publication and external Chatbot adoption remain deferred.",
+  "deploymentPublicationOrGitMutation": false
+}

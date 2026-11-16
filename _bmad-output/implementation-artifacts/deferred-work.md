@@ -1464,3 +1464,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Remove the 2N+1 unbounded authorization fan-out from the retained legacy list.
   evidence: `ProjectsDomainServiceEndpoints.cs:1793-1821` calls `AuthorizeReadAsync` (Tenant-access authorization plus detail read) per row before and after the inspection audit, then `AuthorizeListAsync` again; the legacy list is unpaged. Suggested design: one fresh list-level Tenant authority with per-row detail/final checks, or a row cap failing Unavailable. Severity medium. Decision 2026-11-16 (Jerome): defer. Reason: Rollback-only legacy path; the per-row recheck preserves the E2 stale-authority guarantee; optimize before any production rollback drill.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Use a consistent authorized detail version for retained list/advisory discovery metadata.
+  evidence: R2-B2; Original-baseline list and Conversation resolver authorize detail separately but still emit discovery-row name/lifecycle. The current cutover retains that pre-existing behavior; reject or refresh inconsistent versions in follow-up.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Define retained versus supported advisory equivalence above the supported 200-Project discovery limit.
+  evidence: R2-B5; Both limits predate Story 6.7. The fixed 77-cell source matrix does not execute a 201-Project population; retain actual incomplete/retained outcomes and obtain any additional normalization decision rather than inventing an error-to-empty pair.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Remove the pre-existing dependency-audit suppression from the release-packaging helper.
+  evidence: R2-B7; scripts/_pack_release_packages.py already passes NuGetAudit=false in committed release-tooling work. The Story 6.7 Debug verification preserves audits; release-tooling repair must remove that override and retain actual audit failures.

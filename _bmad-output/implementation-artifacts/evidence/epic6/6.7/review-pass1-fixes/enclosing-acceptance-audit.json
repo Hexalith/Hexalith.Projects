@@ -1,0 +1,91 @@
+{
+  "kind": "Enclosing workflow independent tasks/acceptance and matrix audit",
+  "sourceFilesVerified": 22242,
+  "nativeSuiteCounts": {
+    "Domain-full-1.xml": 693,
+    "Contracts-full-1.xml": 207,
+    "Client-full-2.xml": 154,
+    "UI-full-2.xml": 290,
+    "Server-full-3.xml": 1523,
+    "Rollback-full-3.xml": 1
+  },
+  "matrixRows": [
+    {
+      "matrixRow": "Complete approved comparison",
+      "coveringScenarios": [
+        "complete",
+        "partial",
+        "cursor-scope-continuation-expiry"
+      ],
+      "executedCells": 21,
+      "nativeXml": "Server-full-3.xml",
+      "nativeTest": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource",
+      "passed": true
+    },
+    {
+      "matrixRow": "Missing case, mismatch or regression",
+      "coveringScenarios": [
+        "absent-denied",
+        "foreign-tenant",
+        "stale-authority",
+        "descriptive-audit",
+        "unavailable"
+      ],
+      "executedCells": 35,
+      "nativeXml": "Server-full-3.xml",
+      "nativeTest": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource",
+      "passed": true,
+      "rollbackRefusalProof": {
+        "supportedFromRealReceipt": "Supported",
+        "regressionRefusal": "Unavailable",
+        "immutableSelectionAfterRegression": "Supported",
+        "explicitRollbackFromRealReceipt": "LegacyRollback",
+        "incompleteLegacySecurityRefusal": "Unavailable"
+      }
+    },
+    {
+      "matrixRow": "Foreign/absent/denied target",
+      "coveringScenarios": [
+        "foreign-tenant",
+        "absent-denied"
+      ],
+      "executedCells": 14,
+      "nativeXml": "Server-full-3.xml",
+      "nativeTest": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource",
+      "passed": true
+    },
+    {
+      "matrixRow": "Historical/pending/folderless record",
+      "coveringScenarios": [
+        "historical-pending-folderless"
+      ],
+      "executedCells": 7,
+      "nativeXml": "Server-full-3.xml",
+      "nativeTest": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource",
+      "passed": true
+    },
+    {
+      "matrixRow": "Reads and rollback",
+      "coveringScenarios": [
+        "no-domain-writes"
+      ],
+      "executedCells": 7,
+      "nativeXml": "Server-full-3.xml",
+      "nativeTest": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource",
+      "passed": true,
+      "rollbackOperations": [
+        "list",
+        "open",
+        "conversation-start",
+        "context",
+        "explain",
+        "resolve-conversation",
+        "resolve-attachments"
+      ]
+    }
+  ],
+  "generatedParity": "Passing Client fingerprint and public compatibility tests plus Server host result-contract parity test verified in native XML.",
+  "sourceOnly": true,
+  "packagePublicationAndDeploymentClaimed": false,
+  "allFrozenMatrixRowsHaveExecutedPassingCoverage": true
+}

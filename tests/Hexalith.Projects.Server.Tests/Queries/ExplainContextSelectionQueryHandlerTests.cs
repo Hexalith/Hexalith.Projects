@@ -44,6 +44,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Context.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
         response.Evaluations.ShouldContain(item => item.ReferenceKind == "folder" && item.FailedCheck == null);
@@ -65,6 +66,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Context.Setup.ShouldNotBeNull();
         response.Context.Setup!.Goals.ShouldBe(setup.Goals);
@@ -90,6 +92,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Context.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
         response.Context.MemoryReferences.ShouldBeEmpty();
@@ -144,6 +147,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         QueryResult result = await handler.ExecuteAsync(query, TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
+        result.ProjectionType.ShouldBeNull();
         ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Context.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
     }

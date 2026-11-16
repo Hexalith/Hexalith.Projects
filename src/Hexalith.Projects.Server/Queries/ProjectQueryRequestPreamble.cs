@@ -52,7 +52,7 @@ public static partial class ProjectsDomainServiceEndpoints
         }
 
         if (httpContext.Request.Query.ContainsKey("cursor")
-            && !httpContext.Request.Path.Value!.EndsWith("/conversations", StringComparison.Ordinal))
+            && !httpContext.Request.Path.Value!.TrimEnd('/').EndsWith("/conversations", StringComparison.OrdinalIgnoreCase))
             return ValidationProblem(correlationId, taskId, "cursor");
 
         string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);

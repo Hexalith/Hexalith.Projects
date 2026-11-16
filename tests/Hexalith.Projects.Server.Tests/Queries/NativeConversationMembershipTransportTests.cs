@@ -1,3 +1,4 @@
+#if HEXALITH_SOURCE_FIXTURE
 namespace Hexalith.Projects.Server.Tests.Queries;
 
 using System.IdentityModel.Tokens.Jwt;
@@ -45,7 +46,16 @@ public sealed class NativeConversationMembershipTransportTests
         WebApplicationBuilder ownerBuilder = WebApplication.CreateSlimBuilder();
         ownerBuilder.Configuration["urls"] = "http://127.0.0.1:0";
         ownerBuilder.Services.AddDataProtection();
-        ownerBuilder.Services.AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelStore>(new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore());
+        var advisoryStore = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
+        var isolated = new ConversationResolutionMetadataReadModel(tenant, conversation,
+            new(conversation.Value, "advisory-project", "classified-scoring-label", "Open"), freshness,
+            "committed-advisory", new string('a', 64), true, ConversationResolutionScoringLabel.OwnerClassification)
+            { LabelPurpose = ConversationResolutionScoringLabel.SupportedPurpose };
+        string advisoryKey = "projection:conversations-resolution:"
+            + Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(tenant.Value))) + ":"
+            + Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(conversation.Value)));
+        await advisoryStore.SaveAsync("statestore", advisoryKey, isolated, TestContext.Current.CancellationToken);
+        ownerBuilder.Services.AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelStore>(advisoryStore);
         ownerBuilder.Services.AddSingleton<Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService>(access);
         ownerBuilder.Services.AddSingleton<IConversationProjectionReadStore>(store);
         ownerBuilder.Services.AddConversationQueries(_ => { });
@@ -94,6 +104,15 @@ public sealed class NativeConversationMembershipTransportTests
             bounded.Value.Details.ProjectHydration.ShouldBeNull();
             bounded.Value.ReadPurpose.ShouldBe(GetConversationQuery.NativeMembershipPurpose);
             var oldOwner = provider.GetRequiredService<Hexalith.Projects.Server.Conversations.IProjectConversationResolutionDirectory>();
+            var advisory = await oldOwner.ReadConversationMetadataAsync(conversation, tenant, new("actor-1"), "native-test", TestContext.Current.CancellationToken);
+            advisory.ReferenceState.ShouldBe(Hexalith.Projects.Contracts.Ui.ReferenceState.Included);
+            advisory.LinkedProjectId.ShouldBe("advisory-project"); advisory.SafeLabel.ShouldBe("classified-scoring-label");
+            var advisoryWire = await client.GetConversationAsync(query with { AdvisoryMetadataOnly = true }, TestContext.Current.CancellationToken);
+            advisoryWire.Value!.ReadPurpose.ShouldBe(ConversationResolutionScoringLabel.SupportedPurpose);
+            advisoryWire.Value.Details!.Messages.ShouldBeEmpty(); advisoryWire.Value.Details.Attributes.ShouldBeEmpty();
+            advisoryWire.Value.Details.ProjectHydration.ShouldBeNull();
+            JsonSerializer.Serialize(advisoryWire.Value).ShouldNotContain("private-");
+            (await directory.IsCurrentMemberAsync("tenant-a", "advisory-project", "bound-conversation", "actor-1", "native-test", TestContext.Current.CancellationToken)).ShouldBeFalse();
             var oldMetadata = await oldOwner.ReadConversationMetadataAsync(new("old-owner"), tenant, new("actor-1"), "native-test", TestContext.Current.CancellationToken);
             oldMetadata.ReferenceState.ShouldBe(Hexalith.Projects.Contracts.Ui.ReferenceState.Unavailable);
             oldMetadata.SafeLabel.ShouldBeNull(); oldMetadata.LinkedProjectId.ShouldBeNull();
@@ -110,3 +129,4 @@ public sealed class NativeConversationMembershipTransportTests
         finally { accessor.HttpContext = null; await owner.StopAsync(TestContext.Current.CancellationToken); }
     }
 }
+#endif

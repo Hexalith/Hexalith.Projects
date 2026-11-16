@@ -152,6 +152,49 @@ public sealed class ReadCutoverRoutingTests
         finally { Directory.Delete(directory, recursive: true); }
     }
 
+    [Theory]
+    [InlineData("evidence-hash", "evidence-hash-mismatch")]
+    [InlineData("receipt-hash", "native-receipts-rejected")]
+    [InlineData("receipt-traversal", "native-receipts-rejected")]
+    [InlineData("duplicate-property", "duplicate-evidence-property")]
+    [InlineData("missing-test-name", "native-receipts-rejected")]
+    [InlineData("contractParity", "supported-gate-rejected")]
+    [InlineData("identityCompatibility", "supported-gate-rejected")]
+    [InlineData("mode-case", "invalid-mode")]
+    [InlineData("missing-evidence", "evidence-file-missing")]
+    public void InvalidStartupEvidenceHasABoundedRefusalReason(string fault, string reason)
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "story67-refusal-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            byte[] xml = System.Text.Encoding.UTF8.GetBytes("<assemblies><assembly total=\"1\" passed=\"1\" failed=\"0\" skipped=\"0\" errors=\"0\" not-run=\"0\"><collection><test name=\"control\" result=\"Pass\" /></collection></assembly></assemblies>");
+            File.WriteAllBytes(Path.Combine(directory, "native.xml"), xml);
+            string hash = Convert.ToHexString(SHA256.HashData(xml));
+            JsonObject evidence = Evidence();
+            evidence["nativeReceipts"] = new JsonArray(new JsonObject { ["path"] = "native.xml", ["sha256"] = hash });
+            foreach (JsonNode? cell in (JsonArray)evidence["cases"]!) { cell!["nativeXmlHash"] = hash; cell["nativeTestName"] = "control"; }
+            if (fault == "receipt-hash") evidence["nativeReceipts"]![0]!["sha256"] = new string('c', 64);
+            if (fault == "receipt-traversal") evidence["nativeReceipts"]![0]!["path"] = "../native.xml";
+            if (fault == "missing-test-name") ((JsonObject)evidence["cases"]![0]!).Remove("nativeTestName");
+            if (fault is "contractParity" or "identityCompatibility") evidence[fault] = false;
+            string json = evidence.ToJsonString();
+            if (fault == "duplicate-property") json = json.Insert(1, "\"contractParity\":true,");
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
+            string path = Path.Combine(directory, "receipt.json");
+            File.WriteAllBytes(path, bytes);
+            var options = new ProjectsReadRoutingOptions { Mode = fault == "mode-case" ? "supported" : "Supported",
+                EvidencePath = path, EvidenceHash = fault == "evidence-hash" ? new string('c', 64) : Convert.ToHexString(SHA256.HashData(bytes)),
+                SourceRevision = Revision, ContractHash = Contract };
+            if (fault == "missing-evidence") File.Delete(path);
+            var selected = ProjectsReadRouteSelection.Create(options);
+            selected.Mode.ShouldBe("Unavailable");
+            selected.RefusalReason.ShouldBe(reason);
+            selected.RefusalReason!.ShouldNotContain(directory);
+        }
+        finally { Directory.Delete(directory, recursive: true); }
+    }
+
     private static bool Activate(JsonObject evidence)
     {
         using JsonDocument parsed = JsonDocument.Parse(evidence.ToJsonString());

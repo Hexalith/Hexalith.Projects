@@ -955,10 +955,45 @@ public sealed class GetProjectContextQueryHandlerTests
         result.ErrorMessage.ShouldBe("safe-denial");
     }
 
+    [Theory]
+    [InlineData("missing-scopes")]
+    [InlineData("missing-audience")]
+    [InlineData("missing-configured-audience")]
+    [InlineData("custom-audience")]
+    public async Task ExecuteAsync_RequiresReadScopeAndDeploymentAudience(string scenario)
+    {
+        string? expected = scenario == "missing-configured-audience" ? null : scenario == "custom-audience" ? "custom-projects" : "hexalith-eventstore";
+        string[] audience = scenario == "custom-audience" ? ["hexalith-projects", "custom-projects"] : ["hexalith-projects", "hexalith-eventstore"];
+        var handler = await CreateHandlerAsync(Detail(true), expectedAudience: expected, callbackAudience: audience,
+            configurePrincipal: principal =>
+            {
+                if (scenario is "missing-scopes" or "missing-audience")
+                {
+                    var identity = (System.Security.Claims.ClaimsIdentity)principal.Identity!;
+                    foreach (var claim in identity.FindAll(scenario == "missing-scopes" ? "scope" : "aud").ToArray()) identity.RemoveClaim(claim);
+                }
+            });
+        QueryEnvelope query = Query() with { Scopes = scenario == "missing-scopes" ? null : Query().Scopes,
+            Audience = scenario == "missing-audience" ? null : audience };
+        QueryResult result = await handler.ExecuteAsync(query, TestContext.Current.CancellationToken);
+        result.Success.ShouldBe(scenario == "custom-audience");
+        if (!result.Success) { result.ErrorMessage.ShouldBe("safe-denial"); result.PayloadBytes.ShouldBeNull(); }
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ContextPagingRefusesAnOtherwiseAuthorizedRead()
+    {
+        var handler = await CreateHandlerAsync(Detail(true));
+        QueryResult result = await handler.ExecuteAsync(Query() with { Paging = new QueryPagingOptions(PageSize: 10, Cursor: "cursor") }, TestContext.Current.CancellationToken);
+        result.Success.ShouldBeFalse(); result.ErrorMessage.ShouldBe(QueryAdapterFailureReason.InvalidEnvelope);
+    }
+
     private static async Task<GetProjectContextQueryHandler> CreateHandlerAsync(
         ProjectDetailItem detail,
         bool serializeDetail = true,
-        IReadOnlyList<string>? callbackAudience = null)
+        IReadOnlyList<string>? callbackAudience = null,
+        Action<System.Security.Claims.ClaimsPrincipal>? configurePrincipal = null,
+        string? expectedAudience = "hexalith-eventstore")
     {
         IReadModelStore store;
         if (serializeDetail)
@@ -982,7 +1017,7 @@ public sealed class GetProjectContextQueryHandlerTests
                 await SeedTenantAccessStoreAsync().ConfigureAwait(true),
                 new FixedUtcClock(ObservedAt.AddMinutes(1)),
                 new TenantAccessOptions()),
-            callbackAudience));
+            callbackAudience, configurePrincipal: configurePrincipal, expectedAudience: expectedAudience));
     }
 
     private static string ReadProjectsUiRealmAudience()

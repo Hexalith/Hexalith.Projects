@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Hexalith.EventStore.SignalR</id>
+    <version>5.2.0</version>
+    <authors>Hexalith Contributors</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/Hexalith/Hexalith.EventStore</projectUrl>
+    <description>SignalR client helper for real-time projection change notifications from the Hexalith event store</description>
+    <tags>eventsourcing dapr cqrs eventstore dotnet</tags>
+    <repository type="git" url="https://github.com/Hexalith/Hexalith.EventStore" commit="8b6d5bee5217b3f4bbd8fd689ad887aca863961b" />
+    <dependencies>
+      <group targetFramework="net11.0">
+        <dependency id="Hexalith.EventStore.Contracts" version="5.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.SignalR.Client" version="11.0.0" exclude="Build,Analyzers" />
+        <dependency id="ByteAether.Ulid" version="1.4.2" exclude="Build,Analyzers" />
+        <dependency id="Hexalith.Commons.UniqueIds" version="3.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.SignalR.Common" version="11.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="11.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

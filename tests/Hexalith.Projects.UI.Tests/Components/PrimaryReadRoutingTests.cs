@@ -63,6 +63,46 @@ public sealed class PrimaryReadRoutingTests : FrontComposerTestBase
         }
     }
 
+    [Theory]
+    [InlineData("Supported", "/")]
+    [InlineData("Supported", "/projects")]
+    [InlineData("Supported", "/projects/warnings")]
+    [InlineData("LegacyRollback", "/")]
+    [InlineData("LegacyRollback", "/projects")]
+    [InlineData("LegacyRollback", "/projects/warnings")]
+    [InlineData("Unavailable", "/")]
+    [InlineData("Unavailable", "/projects")]
+    [InlineData("Unavailable", "/projects/warnings")]
+    public void PrimaryEntriesAndLayoutCallOnlyTheSelectedReaders(string mode, string path)
+    {
+        Services.AddSingleton(mode == "Unavailable" ? ProjectsReadRouteSelection.Create(new ProjectsReadRoutingOptions()) : Selection(mode));
+        var supported = Substitute.For<IProjectInventorySource>();
+        var legacy = Substitute.For<ILegacyProjectInventorySource>();
+        supported.ListProjectsAsync(null, Arg.Any<CancellationToken>()).Returns(ProjectInventoryLoadResult.FromRows([]));
+        legacy.ListProjectsAsync(null, Arg.Any<CancellationToken>()).Returns(ProjectInventoryLoadResult.FromRows([]));
+        Services.AddSingleton(supported); Services.AddSingleton(legacy);
+        ComponentFactories.AddStub<Home>(); ComponentFactories.AddStub<LegacyHome>();
+        Services.GetRequiredService<NavigationManager>().NavigateTo(path);
+        var home = Render<PrimaryHome>();
+        home.FindComponents<Bunit.TestDoubles.Stub<Home>>().Count.ShouldBe(mode == "Supported" ? 1 : 0);
+        home.FindComponents<Bunit.TestDoubles.Stub<LegacyHome>>().Count.ShouldBe(mode == "LegacyRollback" ? 1 : 0);
+        if (mode == "Unavailable") home.Markup.ShouldContain("Project reads are unavailable");
+        var layout = Render<Hexalith.Projects.UI.Components.Layout.MainLayout>();
+        if (mode == "Supported")
+        {
+            layout.FindComponent<Hexalith.Projects.UI.Components.Shared.ProjectNavigation>();
+            supported.Received(1).ListProjectsAsync(null, Arg.Any<CancellationToken>());
+            legacy.ReceivedCalls().ShouldBeEmpty();
+        }
+        else if (mode == "LegacyRollback")
+        {
+            layout.FindComponent<Hexalith.Projects.UI.Components.Shared.LegacyProjectNavigation>();
+            legacy.Received(1).ListProjectsAsync(null, Arg.Any<CancellationToken>());
+            supported.ReceivedCalls().ShouldBeEmpty();
+        }
+        else { supported.ReceivedCalls().ShouldBeEmpty(); legacy.ReceivedCalls().ShouldBeEmpty(); }
+    }
+
     private static ProjectsReadRouteSelection Selection(string mode)
     {
         string directory = Path.Combine(Path.GetTempPath(), "story67-ui-" + Guid.NewGuid().ToString("N"));

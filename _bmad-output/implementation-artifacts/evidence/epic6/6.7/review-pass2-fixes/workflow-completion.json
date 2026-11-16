@@ -1,0 +1,48 @@
+{
+  "specStatus": "done",
+  "sprintStoryStatus": "review",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.7"
+      ],
+      "exitCode": 0,
+      "output": "PASS: Story 6.7 is within production authority\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "verifiedSourceManifest": "source-manifest-final-1.json",
+  "sourceHashesStillMatch": true,
+  "frozenIntentUnchanged": true,
+  "finalDiffBytes": 81088010,
+  "finalDiffSha256": "61b22de8a5791446f62532756092e1de8fdae82665292c2b6609cbbebaa54be4",
+  "allReviewLayersCompleted": true,
+  "allPatchFindingsResolved": true,
+  "preExistingDeferredItemsRetained": true,
+  "unrelatedCompatibilityWorkPreserved": true,
+  "commitCreated": false,
+  "commitDisposition": "Approved frozen specification explicitly forbids Git mutations; no commit or staging.",
+  "deploymentOrPublication": false
+}

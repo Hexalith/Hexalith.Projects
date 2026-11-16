@@ -1,0 +1,355 @@
+[
+  {
+    "label": "private-source-mapping",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net11.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.UMZA3oGr/prepared",
+      "--output",
+      "json"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-compile-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 1
+  },
+  {
+    "label": "Server-focused-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-focused-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Server-focused-2.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ReadCutoverTests"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-full-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-full-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/UI-full-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-full-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-full-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Server-full-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 1
+  },
+  {
+    "label": "Domain-full-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Domain-full-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Domain-full-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Contracts-full-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Contracts-full-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Contracts-full-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Client-full-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 1
+  },
+  {
+    "label": "Server-full-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-full-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Server-full-2.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-full-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-full-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/UI-full-2.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Client-full-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Client-full-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Client.Tests/debug/Hexalith.Projects.Client.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Client-full-2.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Rollback-full-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Rollback-full-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Rollback-full-2.xml",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 1
+  },
+  {
+    "label": "Server-full-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-full-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Server-full-3.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Rollback-full-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Rollback-full-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.UMZA3oGr/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass1-fixes/Rollback-full-3.xml",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource"
+    ],
+    "cwd": "/tmp/hexalith-job.UMZA3oGr/source",
+    "exitCode": 0
+  }
+]

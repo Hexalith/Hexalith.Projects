@@ -1,0 +1,79 @@
+{
+  "Fixture": "JWT-authenticated-host-with-controlled-authorities",
+  "AcceptedGatewayOwnerEquivalence": false,
+  "observations": [
+    {
+      "Operation": "list",
+      "SupportedStatus": 200,
+      "LegacyStatus": 404,
+      "SupportedPayloadHash": "615FE8D1C548B8A347C7D8757D6B92F41DF78E24B8D650A634C0FA913D1EEE22",
+      "LegacyPayloadHash": "4614311ECEE69624D9AC48599FAD2CC5378E9ED7F0AC558D9A511A33000FD867",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "open",
+      "SupportedStatus": 200,
+      "LegacyStatus": 404,
+      "SupportedPayloadHash": "A8471891A0A4F6A886394A5F999DB5542032FA13F0A72877A443997C9AC3A3E5",
+      "LegacyPayloadHash": "1F6AD0EFDD61B4FD81540969CF43C4CC2EEBA8E9F2B2AD30D4415B03564EC2BD",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "conversation-start",
+      "SupportedStatus": 200,
+      "LegacyStatus": 503,
+      "SupportedPayloadHash": "831C21B3953817AE25708AC38FA49D7E1E992B6BCCC58FC4196D50F9E1EAC966",
+      "LegacyPayloadHash": "D807E63F5856A503160EFF1EFE5C9870A0BB1EEF417DCA930AE61094C99C9D2C",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "context",
+      "SupportedStatus": 200,
+      "LegacyStatus": 503,
+      "SupportedPayloadHash": "8E10C04B7AE071880FCB277B1DA7E5D6CA0BDBD580DE2F4657AE8132C9EF3B79",
+      "LegacyPayloadHash": "FDF1D74233CB600ADC4136D528C7277565564F912FE23D1B7932CAE8996E80E1",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "explain",
+      "SupportedStatus": 200,
+      "LegacyStatus": 503,
+      "SupportedPayloadHash": "61A3101833D35DB0D4294B5063F3D4D1AC478DE517A8C80DAACD69E7F7E20B18",
+      "LegacyPayloadHash": "E86A092401D3EBF936EEA268C2B5681DED81EA8D6378D15DC4827F68E8911459",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "resolve-conversation",
+      "SupportedStatus": 200,
+      "LegacyStatus": 503,
+      "SupportedPayloadHash": "8060C98CB55157BC4B436F965D71CC307954636EAB5556F909FD745BAD7A6D9F",
+      "LegacyPayloadHash": "F7885538035B2FB6916107458E1B43D1D0FC0C84C60728F55F6BBE13B2DE0D8F",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    },
+    {
+      "Operation": "resolve-attachments",
+      "SupportedStatus": 200,
+      "LegacyStatus": 503,
+      "SupportedPayloadHash": "A9E0A845DD5B698D1DF35C5B9B9F423F91898738013D5B8151A357E8802D72B2",
+      "LegacyPayloadHash": "3BFAFDEFE8415822F43049A2D582B0AFE9C5BE595BBEF6A7BA560297EB386AF7",
+      "ComparisonPassed": false,
+      "Reason": "full-approved-normalization-and-security-matrix-incomplete"
+    }
+  ],
+  "PersistedByteHashes": {
+    "projects-conversation-start-setup/tenant-a:projects:project-a": "B9553D43632747E3EA990D26E66B79A8CE361646AB140AA9E0CFA428C2165B56",
+    "statestore/hxrmb:v1:marker:tqnGjGM4E0eYpI4i7reyZx4tdeA3qUR4Lg01fXeDu4w": "644708920A10851BB46E61EFFDB31C11D1F26ADCB8EDD8E3D8CBD4209C000894",
+    "statestore/hxrmb:v1:marker:tqnGjGM4E0eYpI4i7reyZx4tdeA3qUR4Lg01fXeDu4w:retired": "5639033C0853A850E5D4BA0361275BAAB5DD51682C9E696E94FFEBFAD1AA1253",
+    "statestore/hxrmb:v1:marker:tqnGjGM4E0eYpI4i7reyZx4tdeA3qUR4Lg01fXeDu4w:retired:48B5B25D4CCC1B6E8F97FC5B0DAA55D66F4A1D0D594D63EB8F1A4B756E745726": "5639033C0853A850E5D4BA0361275BAAB5DD51682C9E696E94FFEBFAD1AA1253",
+    "statestore/hxrmb:v1:marker:tqnGjGM4E0eYpI4i7reyZx4tdeA3qUR4Lg01fXeDu4w:retired:48B5B25D4CCC1B6E8F97FC5B0DAA55D66F4A1D0D594D63EB8F1A4B756E745726:participant:0": "61CAC3AB186A9E0B91E2131F1F74966498111E754F233E62B26725A8B7772FA1",
+    "statestore/hxrmb:v1:marker:tqnGjGM4E0eYpI4i7reyZx4tdeA3qUR4Lg01fXeDu4w:retired:48B5B25D4CCC1B6E8F97FC5B0DAA55D66F4A1D0D594D63EB8F1A4B756E745726:participant:1": "F9EE36C9DCC212A41264EA70C26671787883DF3DF6FBD15F52264817F3F72858",
+    "statestore/projects:reads:v1:8:tenant-a:9:project-a": "344561FCD5724592C22D85E83C0EEFE1D443EE9E8C3D0F5E3A8F9AFD8239EBBC",
+    "statestore/projects:reads:v1:8:tenant-a:index": "F88936B9E65C087EA5C67D16DC8B4C08FB267074B1B0FB5EDA733DA2F5ABFB3D"
+  }
+}

@@ -66,8 +66,11 @@ public sealed partial class SupportedProjectReadHttpTests
         await active.StopAsync(TestContext.Current.CancellationToken);
     }
 
-    [Fact]
-    public async Task ReviewLegacyPendingHistoricalFolderIdUsesTheSupportedQuarantineBoundary()
+    [Theory]
+    [InlineData("projects:role")]
+    [InlineData("role")]
+    [InlineData("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")]
+    public async Task ReviewLegacyPendingHistoricalFolderIdUsesTheSupportedQuarantineBoundary(string roleClaimType)
     {
         using RSA rsa = RSA.Create(2048); var key = new RsaSecurityKey(rsa);
         Hexalith.Projects.Infrastructure.DaprProjectProjectionStore? journal = null;
@@ -79,7 +82,7 @@ public sealed partial class SupportedProjectReadHttpTests
         var fixture = await CutoverRuntimeAsync(key, configure: services => { services.RemoveAll<IProjectDetailReadModel>(); services.AddSingleton<IProjectDetailReadModel>(detail); });
         journal = fixture.Journal; await using var lifetime = fixture.App.ConfigureAwait(true);
         using HttpClient client = CutoverClient(fixture.App, key);
-        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(key, role: "TenantProjectAdministrator"));
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(key, role: "TenantProjectAdministrator", roleClaimType: roleClaimType));
         string before = await JournalBytesAsync(fixture.State);
         using var ordinary = await client.GetAsync("/api/v1/projects/project-a?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken);
         ordinary.StatusCode.ShouldBe(HttpStatusCode.NotFound);

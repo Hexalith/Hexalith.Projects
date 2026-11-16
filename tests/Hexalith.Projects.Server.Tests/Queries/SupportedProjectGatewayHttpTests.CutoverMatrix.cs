@@ -47,15 +47,33 @@ public sealed partial class SupportedProjectGatewayHttpTests
         using var supported = new HttpClient { BaseAddress = new Uri(gateway.Urls.Single()) };
         using var legacy = new HttpClient { BaseAddress = new Uri(projects.Urls.Single()) };
         using var state = new HttpClient { BaseAddress = new Uri(daprEndpoint) };
-        foreach (string id in new[] { "project-a", "project-b" })
+        foreach (string id in new[] { "project-a", "project-b", "project-c" })
         {
-            ProjectionRequest history = id == "project-a" ? firstHistory : SupportedProjectReadFixture.Request(id, 200);
+            ProjectionRequest history = id == "project-a" ? firstHistory : SupportedProjectReadFixture.Request(id, id == "project-b" ? 200 : 250);
             history = history with { TenantId = tenant, Events = history.Events.Select(item => item with
                 { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace("tenant-a", tenant, StringComparison.Ordinal)) }).ToArray() };
             await SeedAsync(history).ConfigureAwait(false);
 
         }
-        await SeedCutoverFoldersAsync(folders, heads, tenant, now, ["project-a", "project-b"]).ConfigureAwait(false);
+        await SeedCutoverFoldersAsync(folders, heads, tenant, now, ["project-a", "project-b", "project-c"]).ConfigureAwait(false);
+        // Each replay identity has ordinary Project read authority. The replay Tenant is separate
+        // from the denied foreign-Tenant scenario, so an unpaged control can prove actual admission.
+        string replayTenant = tenant + "-cursor-authority";
+        var tenantStore = projects.Services.GetRequiredService<IProjectTenantAccessProjectionStore>();
+        var replayAccess = (await tenantStore.GetAsync(tenant, TestContext.Current.CancellationToken).ConfigureAwait(false))!;
+        replayAccess.Principals["cursor-actor"] = new("cursor-actor", "TenantOwner");
+        await tenantStore.SaveAsync(replayAccess, TestContext.Current.CancellationToken).ConfigureAwait(false);
+        var otherTenant = new ProjectTenantAccessProjection { TenantId = replayTenant, Enabled = true, Watermark = 1,
+            ProjectionWatermark = replayTenant + ":1", LastEventTimestamp = now };
+        otherTenant.Principals["actor-1"] = new("actor-1", "TenantOwner");
+        await tenantStore.SaveAsync(otherTenant, TestContext.Current.CancellationToken).ConfigureAwait(false);
+        foreach (ProjectionRequest original in histories.Values)
+        {
+            var otherHistory = original with { TenantId = replayTenant, Events = original.Events.Select(item => item with
+                { Payload = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(item.Payload).Replace(tenant, replayTenant, StringComparison.Ordinal)) }).ToArray() };
+            await new ProjectReadProjectionHandler(store, batch).ProjectAsync(otherHistory, "cursor-authority-" + original.AggregateId,
+                TestContext.Current.CancellationToken).ConfigureAwait(false);
+        }
         object pendingCoverage = await PendingAdvisoryCoverageAsync().ConfigureAwait(false);
         var receipts = new List<Dictionary<string, object?>>();
         string? output = Environment.GetEnvironmentVariable("STORY67_MATRIX_OBSERVATIONS");
@@ -205,7 +223,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                         var audit = await store.GetAsync<Hexalith.Projects.Server.Queries.ProjectReadAuditRecord>("statestore", key, TestContext.Current.CancellationToken).ConfigureAwait(false);
                         auditCorrelation &= audit.Value is { Outcome: "Inspection" } && audit.ETag is { Length: > 0 }
                             && audit.Value.RecordedAt == projectClock.Now && key == "projects:read-audit:v1:" + audit.Value.RequestSurrogate
-                            && audit.Value.ProjectCount == (operation == "list" ? 2 : 1)
+                            && audit.Value.ProjectCount == (operation == "list" ? 3 : 1)
                             && audit.Value.FieldClass == (operation == "list" ? "ProjectName" : "ProjectNameDescriptionSetupReferenceLabels");
                     }
                     auditEvidence = new { executed = true, passed = auditCorrelation, originalCorrelation = correlation,
@@ -493,7 +511,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
             keys.Add(("statestore", "projection:conversations-index:" + Encode(tenant)));
             keys.Add(("statestore", GatewayFixtureConversationTenants.Key(tenant)));
             keys.Add(("statestore", "projection:folders:tenant-access:" + tenant));
-            foreach (string id in new[] { "project-a", "project-b" })
+            foreach (string id in new[] { "project-a", "project-b", "project-c" })
                 keys.Add(("statestore", "projection:folders:folder-permissions:" + tenant + ":folder-" + id));
             if (histories.ContainsKey("historical-project"))
                 keys.Add(("statestore", "projection:conversations:" + Encode(tenant) + ":" + Encode("historical-conversation")));
@@ -569,7 +587,44 @@ public sealed partial class SupportedProjectGatewayHttpTests
             bool exactScope = cursor.RootElement.GetProperty("queryType").GetString() == ListProjectsQuery.QueryType
                 && cursor.RootElement.GetProperty("scope").GetString() == expectedScope && boundary == expectedProjects[0] && expiry == expectedExpiry;
             var continued = firstRequest with { Payload = JsonSerializer.SerializeToElement(new ListProjectsQuery(Cursor: first.Cursor, PageSize: 1, InspectDescriptiveMetadata: true), JsonSerializerOptions.Web) };
+            var tenantClock = (ProjectReadTestClock)projects.Services.GetRequiredService<IUtcClock>();
+            clock.Now = clock.Now.AddMinutes(1); tenantClock.Now = clock.Now;
             ProjectListPage second = await ReadAsync<ProjectListPage>(supported, continued).ConfigureAwait(false);
+            second.HasMore.ShouldBeTrue(); second.Cursor.ShouldNotBeNull();
+            string secondDecoded = projects.Services.GetRequiredService<IDataProtectionProvider>().CreateProtector("Hexalith.Projects.ReadCursor.v1").Unprotect(second.Cursor);
+            using var secondCursor = JsonDocument.Parse(secondDecoded);
+            using var secondPosition = JsonDocument.Parse(secondCursor.RootElement.GetProperty("position").GetString()!);
+            DateTimeOffset continuedExpiry = secondPosition.RootElement.GetProperty("expiresAt").GetDateTimeOffset();
+            continuedExpiry.ShouldBe(expiry);
+            ProjectListPage third = await ReadAsync<ProjectListPage>(supported, firstRequest with
+                { Payload = JsonSerializer.SerializeToElement(new ListProjectsQuery(Cursor: second.Cursor, PageSize: 1, InspectDescriptiveMetadata: true), JsonSerializerOptions.Web) }).ConfigureAwait(false);
+            var authorityReplays = new List<object>();
+            var originalBearer = supported.DefaultRequestHeaders.Authorization;
+            try
+            {
+                foreach (string changedAuthority in new[] { "actor", "workload", "delegation", "tenant" })
+                {
+                    string currentTenant = changedAuthority == "tenant" ? replayTenant : tenant;
+                    supported.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(currentTenant, inspection: true,
+                        projectRole: "TenantProjectAdministrator", actorId: changedAuthority == "actor" ? "cursor-actor" : "actor-1",
+                        workload: changedAuthority == "workload" ? "alternate-web" : "operator-web",
+                        delegation: changedAuthority == "delegation" ? "cursor-delegation" : "delegation-1"));
+                    using var control = await supported.PostAsJsonAsync("/api/v1/queries", firstRequest with { Tenant = currentTenant }, TestContext.Current.CancellationToken).ConfigureAwait(false);
+                    string controlRaw = await control.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+                    control.StatusCode.ShouldBe(HttpStatusCode.OK);
+                    var controlPage = JsonSerializer.Deserialize<SubmitQueryResponse>(controlRaw, JsonSerializerOptions.Web)!;
+                    controlPage.Payload.GetProperty("items").GetArrayLength().ShouldBe(1);
+                    using var replay = await supported.PostAsJsonAsync("/api/v1/queries", continued with { Tenant = currentTenant }, TestContext.Current.CancellationToken).ConfigureAwait(false);
+                    string replayRaw = await replay.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+                    replay.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+                    replayRaw.ShouldNotContain("Project project-");
+                    QueryEnvelope authenticated = routes.ProjectQueries.Last(query => query.QueryType == ListProjectsQuery.QueryType);
+                    authorityReplays.Add(new { changedAuthority, executed = true, passed = true,
+                        controlStatus = (int)control.StatusCode, replayStatus = (int)replay.StatusCode, controlRaw, replayRaw,
+                        authenticated.TenantId, authenticated.OriginalActorId, authenticated.AuthenticatedWorkloadId, authenticated.DelegationId });
+                }
+            }
+            finally { supported.DefaultRequestHeaders.Authorization = originalBearer; }
             var rejectionStatuses = new Dictionary<string, int>();
             foreach (var altered in new Dictionary<string, ListProjectsQuery>
             {
@@ -583,7 +638,6 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 using var response = await supported.PostAsJsonAsync("/api/v1/queries", firstRequest with { Payload = JsonSerializer.SerializeToElement(altered.Value, JsonSerializerOptions.Web) }, TestContext.Current.CancellationToken).ConfigureAwait(false);
                 rejectionStatuses[altered.Key] = (int)response.StatusCode;
             }
-            var tenantClock = (ProjectReadTestClock)projects.Services.GetRequiredService<IUtcClock>();
             clock.Now = expiry.AddSeconds(1); tenantClock.Now = clock.Now;
             IProjectTenantAccessProjectionStore accessStore = new DaprProjectTenantAccessProjectionStore(projects.Services.GetRequiredService<DaprReadModelStore>());
             var access = (await accessStore.GetAsync(tenant, TestContext.Current.CancellationToken).ConfigureAwait(false))!;
@@ -599,13 +653,16 @@ public sealed partial class SupportedProjectGatewayHttpTests
             access.LastEventTimestamp = prior; await accessStore.SaveAsync(access, TestContext.Current.CancellationToken).ConfigureAwait(false);
             clock.Now = now.AddSeconds(1); tenantClock.Now = clock.Now;
             bool supportedProof = exactScope && first.Items.Select(row => row.ProjectId).SequenceEqual(expectedProjects.Take(1))
-                && second.Items.Select(row => row.ProjectId).SequenceEqual(expectedProjects.Skip(1)) && !second.HasMore && second.Cursor is null
+                && second.Items.Select(row => row.ProjectId).SequenceEqual(expectedProjects.Skip(1).Take(1)) && second.HasMore
+                && continuedExpiry == expiry && third.Items.Select(row => row.ProjectId).SequenceEqual(expectedProjects.Skip(2))
+                && !third.HasMore && third.Cursor is null && authorityReplays.Count == 4
                 && rejectionStatuses.Values.All(status => status == 400) && expired.StatusCode == HttpStatusCode.BadRequest && expiryReadOnly;
             return (legacyProof && supportedProof,
                 new { transport = "retained-v1", pagingSupported = false, expectedProjects, actualProjects = legacyProjects,
                     status = (int)legacyPage.StatusCode, rawResponse = legacyPageRaw, rejectedStatus = (int)legacyRejected.StatusCode, rejectedRawResponse = legacyRejectedRaw, passed = legacyProof },
                 new { transport = "supported-Gateway", decoded, expectedScope, exactScope, expectedProjects, boundary,
-                    first = first.Items.Select(row => row.ProjectId), second = second.Items.Select(row => row.ProjectId), endOfEnumeration = !second.HasMore && second.Cursor is null,
+                    first = first.Items.Select(row => row.ProjectId), second = second.Items.Select(row => row.ProjectId), third = third.Items.Select(row => row.ProjectId),
+                    endOfEnumeration = !third.HasMore && third.Cursor is null, secondDecoded, continuedExpiry, authorityReplays,
                     expectedExpiry, expiry, rejectionStatuses, expiredStatus = (int)expired.StatusCode, expiryReadOnly,
                     controlledFixtureAuthorityRefresh = true, grantETagBefore = grantBefore.ETag, grantETagAfter = grantAfter.ETag, passed = supportedProof });
         }

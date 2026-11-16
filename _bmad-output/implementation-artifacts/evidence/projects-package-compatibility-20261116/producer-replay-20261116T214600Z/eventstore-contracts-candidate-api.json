@@ -1,0 +1,391 @@
+{
+  "namespace": "Hexalith.EventStore.Contracts.Queries",
+  "name": "QueryResultContractAttribute",
+  "metadata_name": "QueryResultContractAttribute",
+  "definition_name": {
+    "namespace": "Hexalith.EventStore.Contracts.Queries",
+    "segments": [
+      "QueryResultContractAttribute"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "class",
+  "attributes": [
+    "System.AttributeUsage((System.AttributeTargets)4, AllowMultiple = false, Inherited = false)"
+  ],
+  "has_union_attribute": false,
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+    "type_token": 33554778,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": true,
+  "is_abstract": false,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "base_type": "System.Attribute",
+  "interfaces": [],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": ".ctor",
+      "kind": "constructor",
+      "attributes": [],
+      "signature": "void .ctor(System.Type resultType, string domain, string queryType)",
+      "digest": "cf6a16d6a4",
+      "canonical_signature": "M:Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute.#ctor(System.Type,string,string)",
+      "metadata_token": 100669035,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100669035,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "method_token": 100669035,
+        "attributes": "Public, HideBySig, SpecialName, RTSpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "ResultType",
+      "kind": "property",
+      "attributes": [],
+      "signature": "System.Type ResultType { get; }",
+      "digest": "c31477dc85",
+      "canonical_signature": "P:Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute.ResultType",
+      "index_parameter_count": 0,
+      "getter_token": 100669036,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385877660,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100669036,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385877660
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67110742,
+            "matched_name": "\u003CResultType\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "method_token": 100669036,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Domain",
+      "kind": "property",
+      "attributes": [],
+      "signature": "string Domain { get; }",
+      "digest": "02b1ecd6ab",
+      "canonical_signature": "P:Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute.Domain",
+      "index_parameter_count": 0,
+      "getter_token": 100669037,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385877661,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100669037,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385877661
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67110743,
+            "matched_name": "\u003CDomain\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "method_token": 100669037,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "QueryType",
+      "kind": "property",
+      "attributes": [],
+      "signature": "string QueryType { get; }",
+      "digest": "a27bb4845d",
+      "canonical_signature": "P:Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute.QueryType",
+      "index_parameter_count": 0,
+      "getter_token": 100669038,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385877662,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100669038,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385877662
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67110744,
+            "matched_name": "\u003CQueryType\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "0507bdf3-a96b-4153-a7dc-8ba5be5ab5cb",
+          "method_token": 100669038,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    }
+  ],
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute",
+  "documentation": {
+    "samples": []
+  }
+}

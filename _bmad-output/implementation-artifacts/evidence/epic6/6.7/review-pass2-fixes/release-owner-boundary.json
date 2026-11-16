@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "files": 3,
+  "releaseOwnerDeclarations": 0,
+  "ownerServerReferences": 0,
+  "packageAdoption": false,
+  "releaseConstants": [
+    "TRACE",
+    "RELEASE"
+  ],
+  "releaseProjectReferences": [
+    "../../src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "../../src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj",
+    "../../src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+    "../../src/Hexalith.Projects.Testing/Hexalith.Projects.Testing.csproj"
+  ],
+  "commands": [
+    {
+      "label": "release-items",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-getProperty:DefineConstants",
+        "-getItem:Compile,ProjectReference"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "release-preprocessor-compile",
+      "command": [
+        "dotnet",
+        "run",
+        "--project",
+        "/tmp/hexalith-job.nsggeHV8/release-boundary/boundary.csproj",
+        "--artifacts-path",
+        "/tmp/hexalith-job.nsggeHV8/release-boundary/artifacts",
+        "--",
+        "TRACE;RELEASE",
+        "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/NativeConversationMembershipTransportTests.cs",
+        "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/NativeMembershipOwnerAccess.cs",
+        "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/NativeMembershipOwnerStore.cs"
+      ],
+      "exitCode": 0
+    }
+  ]
+}

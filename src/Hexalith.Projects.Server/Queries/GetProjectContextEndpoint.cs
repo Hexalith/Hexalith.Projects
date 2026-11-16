@@ -102,11 +102,12 @@ public static partial class ProjectsDomainServiceEndpoints
                 MemoryReferences: detail.MemoryReferences,
                 Conversations: conversationEvidence));
 
-        if (!await HasCurrentLegacyMembershipAsync(projectId, httpContext, tenantContext,
-            correlationId, cancellationToken).ConfigureAwait(false)) return ReadModelUnavailable(correlationId, null);
 
         if (assembled.Context.AssemblyOutcome is ProjectContextAssemblyOutcome.Unauthorized
             or ProjectContextAssemblyOutcome.ProjectUnavailable) return SafeDenial(correlationId, null);
+
+        if (!await HasCurrentLegacyMembershipAsync(projectId, httpContext, tenantContext,
+            correlationId, cancellationToken).ConfigureAwait(false)) return ReadModelUnavailable(correlationId, null);
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
         return Results.Json(ProjectContextSafeMetadata.Sanitize(assembled.Context), ResponseJsonOptions);

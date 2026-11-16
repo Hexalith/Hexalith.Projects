@@ -1,0 +1,77 @@
+{
+  "schema": "hexalith.projects-exact-contracts-release-route.v1",
+  "status": "existing-route-is-full-release-only; narrow-profile-required",
+  "implementationPerformed": false,
+  "coordinates": {
+    "id": "Hexalith.Projects.Contracts",
+    "version": "2.0.0-story66.3",
+    "source": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+    "builds_source": "801f268cd1b37ecae41d4fb20d115c055b4c5793",
+    "qualification_archive_sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+  },
+  "artifactTransport": {
+    "committedArtifactBlob": "3fc916b6fc7676e0327181e1e217f715e1645174",
+    "introducedAt": "de8a710bcb92040c7fa7e8bff42d600fd20f763b",
+    "bytes": 80379,
+    "sha256Verified": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+    "exactPayloadEntries": {
+      "_rels/.rels": "4d031362e43b43bd6226012303d6c2d4f80cbe9e02f772a6232b193f75a38ada",
+      "Hexalith.Projects.Contracts.nuspec": "6e96405bd1f2556bdb9d512ab69d4750ce2ce7587171660aa13e88f24b8c1e5f",
+      "README.md": "d093eb74092a75dfa6ab1d374c8a61da54533e5cce0a9855930aa6c238cb8e45",
+      "lib/net11.0/Hexalith.Projects.Contracts.dll": "a7b5a51bb87a026827e023c954e5747c275eef8376940cf5fa267898764c66f3",
+      "[Content_Types].xml": "1a6670ec6cb20a6520f5d6b9be859fcd7416bef2ba0e8e40bfbf0aaab5409e4f",
+      "package/services/metadata/core-properties/nuget.psmdcp": "7cfbbc25bfc3a25c18c5215ddc0556f802313954a2c85cee720a5b1f9bbb559a"
+    },
+    "allPayloadHashesMatchApprovedProposal": true
+  },
+  "existingRoute": {
+    "workflow": ".github/workflows/release.yml",
+    "dispatchInputs": [],
+    "sourceRequirement": "Exact live main with successful pushCI",
+    "runtimeRequirement": "Fresh exact-source G6 andvalidator --release",
+    "versionAndPayload": "SemanticRelease-selected sharedversion; rebuilds/publishesfivepackages; cannotselectretainedsingleprerelease",
+    "currentMainCI": "43967083172 failed",
+    "targetedUploadAvailable": false
+  },
+  "smallestImplementationRoute": {
+    "owner": "Hexalith.CiCd",
+    "delivery": "Extend qualified narrowCiCd owner delivery ratherthaneditProjects workflows directly",
+    "workflowIdentityToPreserve": {
+      "repository": "Hexalith/Hexalith.Projects",
+      "workflow": "release.yml",
+      "environment": "production"
+    },
+    "newClosedProfile": "One literalcompatibility-coordinate profile forHexalith.Projects.Contracts2.0.0-story66.3; noarbitrarypackage/version/source/feed",
+    "artifactAcquisition": "Fetch onlyexact committedblob3fc916 andverify80379bytes,349fSHA andallsixpayloadentryhashes before anycredential",
+    "writerBoundary": "No repack, noSemanticRelease, no wildcardupload; existingpinned NuGet/loginwithNUGET_USER andOIDC; singleexactfile dotnetnugetpush toexistingnuget.org endpoint",
+    "gateBoundary": "ExistingordinaryreleasepreflightandG6 gates unchanged; newtargetedprofile must bind requiredownerqualification andDW82nativeproof, neverignoretheirfailure orreplacewithlocalcompatibilitysmoke",
+    "concurrency": "Reuse release-production mutex andfailclosedonoccupiedcoordinate; noretryuncertainupload",
+    "verification": "Downloadpublicarchive; requireexactsource/coordinate/dependencies andeveryapprovedpayloadentrybyteidentical, permitonlyauthenticated.signature.p7s; run dotnetnugetverify--all; retainunsignedandsigneddigests"
+  },
+  "signing": {
+    "productionSelfSignedAuthorSignatureAllowed": false,
+    "repositorySigning": "NuGet.org automaticallyrepositorysignsuploads; originalunsignedapprovedpayloadmayremainunchangeduntilserveradds.signature.p7s",
+    "possibleExistingAuthorSigningRequirement": "Readexistingpackage requiredsigner/registeredcertificate state onlyifneeded; do notcreatecertificates orchangeproductiontrust",
+    "oidcPolicy": "Existingpolicy must admitProjects/release.yml/production andexactContracts package; no policy orcredentialscopeexpansion"
+  },
+  "ownerPrerequisiteReuse": {
+    "B1": "Authenticatednamedapproveractiveorgadmin plusProjectsandMcpCliadmin roles/currentexplicitapproval; recordwithoutclaimingexternalsignature",
+    "B4": "Unresolved byexistingreceipts: listlivevectorassertsempty/Unavailable withoutdiscriminatingnativefixture",
+    "V1": "Unresolved byexistingreceipts: pinnednativeMcpCliAppHost lacksProjectsservice/routes/grants; defaultprojectsliveplanunqualified",
+    "completedPublicationA8": "Reuseconfiguration/provisioning proofs, notrerun; A8 doesnotstandinfornativeproductacceptance",
+    "existingPackageNativeResults": "Earlier3read/securityrows passed thenrestartfailed; complete4scenarioproofnotaccepted, latestgraphcompilationblocked"
+  },
+  "sourceEvidence": [
+    "../../mcp/historical-candidate-qualification.json",
+    "../../mcp/historical-payload-equivalence.json",
+    "/home/administrator/projects/hexalith/cicd/_bmad-output/specs/spec-cicd/evidence/18/package-product-matrix.md",
+    "/home/administrator/projects/hexalith/cicd/_bmad-output/specs/spec-cicd/evidence/18/implementation.md",
+    "/home/administrator/projects/hexalith/cicd/_bmad-output/implementation-artifacts/evidence/projects-publication-gate-fix-20261116/README.md"
+  ],
+  "officialSigningReferences": [
+    "https://learn.microsoft.com/en-us/nuget/reference/signed-packages-reference",
+    "https://learn.microsoft.com/en-us/nuget/create-packages/sign-a-package",
+    "https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing"
+  ],
+  "noPublicationDispatchOrSharedEdits": true
+}

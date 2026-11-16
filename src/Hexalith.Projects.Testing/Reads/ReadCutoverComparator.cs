@@ -1,6 +1,7 @@
 namespace Hexalith.Projects.Testing.Reads;
 
 using System.Text.Json;
+using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>Strict Story 6.7 comparison; callers must retain proof for each conditional normalization.</summary>
 public static class ReadCutoverComparator
@@ -61,7 +62,8 @@ public static class ReadCutoverComparator
                 if (!supportedBody.TryGetProperty("context", out var nested)) return false;
                 supportedBody = nested;
             }
-            return supportedBody.TryGetProperty("setup", out var setup) && setup.ValueKind == JsonValueKind.Null
+            return HasNoIncludedReferences(supportedBody)
+                && supportedBody.TryGetProperty("setup", out var setup) && setup.ValueKind == JsonValueKind.Null
                 && supportedBody.TryGetProperty("snapshot", out var snapshot)
                 && snapshot.TryGetProperty("responseState", out var state) && state.ValueKind == JsonValueKind.String && state.GetString() == "Unavailable"
                 && snapshot.TryGetProperty("components", out var components) && components.ValueKind == JsonValueKind.Array && components.GetArrayLength() >= 4
@@ -85,6 +87,26 @@ public static class ReadCutoverComparator
             && supportedBody.TryGetProperty("unsupportedInputKinds", out var kinds) && kinds.ValueKind == JsonValueKind.Array
             && (cause != "unsupported-file" || kinds.EnumerateArray().Select(kind => kind.GetString()).SequenceEqual(["file"]));
     }
+
+    private static bool HasNoIncludedReferences(JsonElement body)
+    {
+        if (body.ValueKind != JsonValueKind.Object) return false;
+        if (body.TryGetProperty("projectFolder", out JsonElement folder)
+            && folder.ValueKind != JsonValueKind.Null && !IsExcludedReference(folder)) return false;
+        foreach (string name in new[] { "conversations", "fileReferences", "memoryReferences" })
+        {
+            if (body.TryGetProperty(name, out JsonElement references)
+                && (references.ValueKind != JsonValueKind.Array || !references.EnumerateArray().All(IsExcludedReference))) return false;
+        }
+        return true;
+    }
+
+    private static bool IsExcludedReference(JsonElement reference)
+        => reference.ValueKind == JsonValueKind.Object
+            && reference.TryGetProperty("referenceState", out JsonElement state)
+            && state.ValueKind == JsonValueKind.String
+            && Enum.TryParse(state.GetString(), ignoreCase: true, out ReferenceState parsed)
+            && Enum.IsDefined(parsed) && parsed != ReferenceState.Included;
 
     private static bool ValidAddresses(IReadOnlyList<string>? addresses)
         => addresses is { Count: > 0 } && addresses.All(address => !string.IsNullOrWhiteSpace(address) && address.Contains('/'))

@@ -1,0 +1,339 @@
+{
+  "qualificationOnly": true,
+  "source": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+  "candidateTree": "61450315ae07ad6f9e34dbca31d815fae336b480",
+  "targetBlocker": {
+    "baselineCS0234Count": 14,
+    "candidateContractsBuild": "passed, 0 warnings and 0 errors",
+    "originalQueryResultContractErrorsResolved": true
+  },
+  "solutionRestore": "passed",
+  "fullReleaseBuild": "failed",
+  "laterCompilerErrorCount": 13,
+  "laterErrors": [
+    "src/Hexalith.Projects.Server/Conversations/ConversationsProjectConversationResolutionDirectory.cs(50,31): error CS0117: 'GetConversationQuery' does not contain a definition for 'AdvisoryMetadataOnly' [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Server/Conversations/ConversationsProjectConversationResolutionDirectory.cs(70,24): error CS1061: 'ConversationDetailResult' does not contain a definition for 'ReadPurpose' and no accessible extension method 'ReadPurpose' accepting a first argument of type 'ConversationDetailResult' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Server/Conversations/ProjectConversationMembershipDirectory.cs(31,58): error CS0117: 'GetConversationQuery' does not contain a definition for 'QueryType' [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Server/Conversations/ProjectConversationMembershipDirectory.cs(41,78): error CS0117: 'GetConversationQuery' does not contain a definition for 'NativeMembershipOnly' [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Server/Conversations/ProjectConversationMembershipDirectory.cs(46,27): error CS1061: 'ConversationDetailResult' does not contain a definition for 'ReadPurpose' and no accessible extension method 'ReadPurpose' accepting a first argument of type 'ConversationDetailResult' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Server/Conversations/ProjectConversationMembershipDirectory.cs(46,63): error CS0117: 'GetConversationQuery' does not contain a definition for 'NativeMembershipPurpose' [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(25,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(27,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(29,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(31,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(33,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(35,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]",
+    "src/Hexalith.Projects.Client/ProjectsSupportedReadClient.cs(37,34): error CS1061: 'IEventStoreGatewayClient' does not contain a definition for 'QueryAsync' and no accessible extension method 'QueryAsync' accepting a first argument of type 'IEventStoreGatewayClient' could be found (are you missing a using directive or an assembly reference?) [src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj]"
+  ],
+  "laterBlockerGroups": [
+    {
+      "package": "Hexalith.Conversations.Contracts",
+      "unchangedVersion": "2.0.0",
+      "errors": 6,
+      "missingQueryMembers": [
+        "AdvisoryMetadataOnly",
+        "QueryType",
+        "NativeMembershipOnly",
+        "NativeMembershipPurpose"
+      ],
+      "missingResultMembers": [
+        "ReadPurpose"
+      ]
+    },
+    {
+      "package": "Hexalith.EventStore.RestApi.Generators",
+      "unchangedVersion": "5.1.1",
+      "clientPackageUnchangedVersion": "5.1.1",
+      "errors": 7,
+      "missingBindings": "TypedGatewayQueries.QueryAsync generated extension methods",
+      "diagnosis": "The 0be source introduces TypedGatewayQueryEmitter and the production generator emits TypedGatewayQueries.g.cs. Updating only Contracts leaves the published generator without these typed bindings. IEventStoreGatewayClient exposes SubmitQueryAsync, and is not intended to declare the generated QueryAsync extension itself."
+    }
+  ],
+  "focusedTests": {
+    "contracts": {
+      "total": 207,
+      "passed": 207,
+      "failed": 0,
+      "skipped": 0
+    },
+    "enrollmentExplicitRerun": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "includedInContractsRun": true
+    }
+  },
+  "focusedBuilds": {
+    "Hexalith.Projects.Contracts": "passed",
+    "Hexalith.Projects": "passed",
+    "Hexalith.Projects.Testing": "passed",
+    "Hexalith.Projects.ServiceDefaults": "passed",
+    "Hexalith.Projects.Client": "failed, 7 typed QueryAsync binding errors"
+  },
+  "unchangedPins": "EventStore family remains 5.1.1 except Contracts=5.3.0; Conversations=2.0.0 and all other package pins/gitlinks are preserved.",
+  "apiSurfaceEvidence": {
+    "published-es-client-511-api": {
+      "type": "Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient",
+      "members": [
+        {
+          "name": "ReadNativeSourceScanPageAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Streams.StreamReadPage> ReadNativeSourceScanPageAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "SubmitWorkloadCommandAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Commands.SubmitCommandResponse> SubmitWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest request, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "SubmitBoundWorkloadCommandAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Commands.SubmitCommandResponse> SubmitBoundWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.BoundWorkloadCommandRequest request, string proof, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "GetWorkloadCommandStatusAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Commands.CommandStatusQueryResponse?> GetWorkloadCommandStatusAsync(string tenant, string messageId, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "ReadWorkloadStreamAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Streams.StreamReadPage> ReadWorkloadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "SubmitCommandAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Commands.SubmitCommandResponse> SubmitCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest request, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "GetCommandStatusAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Commands.CommandStatusQueryResponse?> GetCommandStatusAsync(string messageId, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "SubmitQueryAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Client.Gateway.EventStoreQueryResult> SubmitQueryAsync(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest request, string? ifNoneMatch = null, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "SubmitQueryAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Client.Gateway.EventStoreQueryResult<T>> SubmitQueryAsync<T>(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest request, string? ifNoneMatch = null, System.Threading.CancellationToken cancellationToken = default)"
+        },
+        {
+          "name": "ReadStreamAsync",
+          "kind": "method",
+          "signature": "System.Threading.Tasks.Task<Hexalith.EventStore.Contracts.Streams.StreamReadPage> ReadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)"
+        }
+      ]
+    },
+    "published-conversations-query-200-api": {
+      "type": "Hexalith.Conversations.Contracts.Queries.GetConversationQuery",
+      "members": [
+        {
+          "name": ".ctor",
+          "kind": "constructor",
+          "signature": "void .ctor(Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, Hexalith.Conversations.Contracts.Identifiers.TenantId TenantId, string CallerPrincipalId, string CorrelationId, Hexalith.Conversations.Contracts.Identifiers.ConversationId ConversationId)"
+        },
+        {
+          "name": "ToString",
+          "kind": "method",
+          "signature": "string ToString()"
+        },
+        {
+          "name": "op_Inequality",
+          "kind": "operator",
+          "signature": "bool op_Inequality(Hexalith.Conversations.Contracts.Queries.GetConversationQuery? left, Hexalith.Conversations.Contracts.Queries.GetConversationQuery? right)"
+        },
+        {
+          "name": "op_Equality",
+          "kind": "operator",
+          "signature": "bool op_Equality(Hexalith.Conversations.Contracts.Queries.GetConversationQuery? left, Hexalith.Conversations.Contracts.Queries.GetConversationQuery? right)"
+        },
+        {
+          "name": "GetHashCode",
+          "kind": "method",
+          "signature": "int GetHashCode()"
+        },
+        {
+          "name": "Equals",
+          "kind": "method",
+          "signature": "bool Equals(object? obj)"
+        },
+        {
+          "name": "Equals",
+          "kind": "method",
+          "signature": "bool Equals(Hexalith.Conversations.Contracts.Queries.GetConversationQuery? other)"
+        },
+        {
+          "name": "Deconstruct",
+          "kind": "method",
+          "signature": "void Deconstruct(out Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, out Hexalith.Conversations.Contracts.Identifiers.TenantId TenantId, out string CallerPrincipalId, out string CorrelationId, out Hexalith.Conversations.Contracts.Identifiers.ConversationId ConversationId)"
+        },
+        {
+          "name": "SchemaVersion",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion { get; }"
+        },
+        {
+          "name": "TenantId",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Identifiers.TenantId TenantId { get; }"
+        },
+        {
+          "name": "CallerPrincipalId",
+          "kind": "property",
+          "signature": "string CallerPrincipalId { get; }"
+        },
+        {
+          "name": "CorrelationId",
+          "kind": "property",
+          "signature": "string CorrelationId { get; }"
+        },
+        {
+          "name": "ConversationId",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Identifiers.ConversationId ConversationId { get; }"
+        }
+      ]
+    },
+    "published-conversations-result-200-api": {
+      "type": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult",
+      "members": [
+        {
+          "name": ".ctor",
+          "kind": "constructor",
+          "signature": "void .ctor(Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState, Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode, Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details, string SafeNextAction)"
+        },
+        {
+          "name": "Visible",
+          "kind": "method",
+          "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Visible(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion, Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1 details, string safeNextAction)"
+        },
+        {
+          "name": "Hidden",
+          "kind": "method",
+          "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Hidden(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion)"
+        },
+        {
+          "name": "Unavailable",
+          "kind": "method",
+          "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Unavailable(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion)"
+        },
+        {
+          "name": "ToString",
+          "kind": "method",
+          "signature": "string ToString()"
+        },
+        {
+          "name": "op_Inequality",
+          "kind": "operator",
+          "signature": "bool op_Inequality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? left, Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? right)"
+        },
+        {
+          "name": "op_Equality",
+          "kind": "operator",
+          "signature": "bool op_Equality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? left, Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? right)"
+        },
+        {
+          "name": "GetHashCode",
+          "kind": "method",
+          "signature": "int GetHashCode()"
+        },
+        {
+          "name": "Equals",
+          "kind": "method",
+          "signature": "bool Equals(object? obj)"
+        },
+        {
+          "name": "Equals",
+          "kind": "method",
+          "signature": "bool Equals(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? other)"
+        },
+        {
+          "name": "Deconstruct",
+          "kind": "method",
+          "signature": "void Deconstruct(out Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, out Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState, out Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode, out Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details, out string SafeNextAction)"
+        },
+        {
+          "name": "Details",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details { get; init; }"
+        },
+        {
+          "name": "SchemaVersion",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion { get; }"
+        },
+        {
+          "name": "FreshnessState",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState { get; }"
+        },
+        {
+          "name": "ReasonCode",
+          "kind": "property",
+          "signature": "Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode { get; }"
+        },
+        {
+          "name": "SafeNextAction",
+          "kind": "property",
+          "signature": "string SafeNextAction { get; }"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Private feed qualification is not publication or hosted acceptance.",
+    "The 13 later API errors require separate qualification; no further dependency pin or product code changes were made.",
+    "No new immutable coordinates were published.",
+    "Owner approval, owner delivery, and fresh hosted exact-source CI/G-6 remain pending."
+  ],
+  "commands": [
+    [
+      "baseline-contracts-build",
+      1
+    ],
+    [
+      "candidate-contracts-build",
+      0
+    ],
+    [
+      "candidate-solution-restore",
+      0
+    ],
+    [
+      "candidate-solution-build",
+      1
+    ],
+    [
+      "candidate-contract-tests-build",
+      0
+    ],
+    [
+      "candidate-contract-tests-run",
+      0
+    ],
+    [
+      "candidate-enrollment-tests-run",
+      0
+    ],
+    [
+      "candidate-hexalith.projects-build",
+      0
+    ],
+    [
+      "candidate-hexalith.projects.client-build",
+      1
+    ],
+    [
+      "candidate-hexalith.projects.testing-build",
+      0
+    ],
+    [
+      "candidate-hexalith.projects.servicedefaults-build",
+      0
+    ]
+  ]
+}

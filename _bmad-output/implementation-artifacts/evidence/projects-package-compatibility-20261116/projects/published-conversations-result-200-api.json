@@ -1,0 +1,1154 @@
+{
+  "namespace": "Hexalith.Conversations.Contracts.Queries",
+  "name": "ConversationDetailResult",
+  "metadata_name": "ConversationDetailResult",
+  "definition_name": {
+    "namespace": "Hexalith.Conversations.Contracts.Queries",
+    "segments": [
+      "ConversationDetailResult"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "class",
+  "attributes": [],
+  "has_union_attribute": false,
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+    "type_token": 33554530,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": true,
+  "is_abstract": false,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "base_type": "System.Object",
+  "interfaces": [
+    "System.IEquatable\u003CHexalith.Conversations.Contracts.Queries.ConversationDetailResult\u003E"
+  ],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": ".ctor",
+      "kind": "constructor",
+      "attributes": [],
+      "signature": "void .ctor(Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState, Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode, Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details, string SafeNextAction)",
+      "digest": "39c905e26d",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.#ctor(Hexalith.Conversations.Contracts.Versioning.SchemaVersion,Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState,Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode,Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1?,string)",
+      "metadata_token": 100665441,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665441,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665441,
+        "attributes": "Public, HideBySig, SpecialName, RTSpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Visible",
+      "kind": "method",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Visible(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion, Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1 details, string safeNextAction)",
+      "digest": "9437419f6b",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Visible(Hexalith.Conversations.Contracts.Versioning.SchemaVersion,Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1,string)",
+      "metadata_token": 100665449,
+      "is_static": true,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665449,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665449,
+        "attributes": "Public, Static, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Hidden",
+      "kind": "method",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Hidden(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion)",
+      "digest": "4cbd07305b",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Hidden(Hexalith.Conversations.Contracts.Versioning.SchemaVersion)",
+      "metadata_token": 100665450,
+      "is_static": true,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665450,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665450,
+        "attributes": "Public, Static, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Unavailable",
+      "kind": "method",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult Unavailable(Hexalith.Conversations.Contracts.Versioning.SchemaVersion schemaVersion)",
+      "digest": "e10326dd68",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Unavailable(Hexalith.Conversations.Contracts.Versioning.SchemaVersion)",
+      "metadata_token": 100665451,
+      "is_static": true,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665451,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665451,
+        "attributes": "Public, Static, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "ToString",
+      "kind": "method",
+      "attributes": [],
+      "signature": "string ToString()",
+      "digest": "5653ba9914",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.ToString()",
+      "metadata_token": 100665453,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": true,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665453,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665453,
+        "attributes": "Public, Virtual, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "op_Inequality",
+      "kind": "operator",
+      "attributes": [],
+      "signature": "bool op_Inequality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? left, Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? right)",
+      "digest": "e16f1066c7",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.op_Inequality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult?,Hexalith.Conversations.Contracts.Queries.ConversationDetailResult?)",
+      "metadata_token": 100665455,
+      "is_static": true,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665455,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665455,
+        "attributes": "Public, Static, HideBySig, SpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "op_Equality",
+      "kind": "operator",
+      "attributes": [],
+      "signature": "bool op_Equality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? left, Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? right)",
+      "digest": "e5ad13784a",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.op_Equality(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult?,Hexalith.Conversations.Contracts.Queries.ConversationDetailResult?)",
+      "metadata_token": 100665456,
+      "is_static": true,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665456,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665456,
+        "attributes": "Public, Static, HideBySig, SpecialName",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "GetHashCode",
+      "kind": "method",
+      "attributes": [],
+      "signature": "int GetHashCode()",
+      "digest": "fe17546a9f",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.GetHashCode()",
+      "metadata_token": 100665457,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": true,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665457,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665457,
+        "attributes": "Public, Virtual, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Equals",
+      "kind": "method",
+      "attributes": [],
+      "signature": "bool Equals(object? obj)",
+      "digest": "2a4f089c7e",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Equals(object?)",
+      "metadata_token": 100665458,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": true,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665458,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665458,
+        "attributes": "Public, Virtual, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Equals",
+      "kind": "method",
+      "attributes": [],
+      "signature": "bool Equals(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult? other)",
+      "digest": "a776346569",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Equals(Hexalith.Conversations.Contracts.Queries.ConversationDetailResult?)",
+      "metadata_token": 100665459,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665459,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665459,
+        "attributes": "Public, Final, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Deconstruct",
+      "kind": "method",
+      "attributes": [],
+      "signature": "void Deconstruct(out Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion, out Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState, out Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode, out Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details, out string SafeNextAction)",
+      "digest": "0084a0d5fb",
+      "canonical_signature": "M:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Deconstruct(out Hexalith.Conversations.Contracts.Versioning.SchemaVersion,out Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState,out Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode,out Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1?,out string)",
+      "metadata_token": 100665462,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100665462,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "method_token": 100665462,
+        "attributes": "Public, HideBySig",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "Details",
+      "kind": "property",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Queries.ConversationDetailsV1? Details { get; init; }",
+      "digest": "532726525d",
+      "canonical_signature": "P:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.Details",
+      "index_parameter_count": 0,
+      "getter_token": 100665443,
+      "setter_token": 100665444,
+      "getter_has_method_body": true,
+      "setter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876439,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665443,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876439
+            }
+          },
+          "signature_pointer": "Absent"
+        },
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665444,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876439
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67109675,
+            "matched_name": "\u003CDetails\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665443,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        },
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665444,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "SchemaVersion",
+      "kind": "property",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Versioning.SchemaVersion SchemaVersion { get; }",
+      "digest": "5f0cc9d757",
+      "canonical_signature": "P:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.SchemaVersion",
+      "index_parameter_count": 0,
+      "getter_token": 100665445,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876440,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665445,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876440
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67109676,
+            "matched_name": "\u003CSchemaVersion\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665445,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "FreshnessState",
+      "kind": "property",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState FreshnessState { get; }",
+      "digest": "a55fd6940d",
+      "canonical_signature": "P:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.FreshnessState",
+      "index_parameter_count": 0,
+      "getter_token": 100665446,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876441,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665446,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876441
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67109677,
+            "matched_name": "\u003CFreshnessState\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665446,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "ReasonCode",
+      "kind": "property",
+      "attributes": [],
+      "signature": "Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode ReasonCode { get; }",
+      "digest": "da3da8e7cf",
+      "canonical_signature": "P:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.ReasonCode",
+      "index_parameter_count": 0,
+      "getter_token": 100665447,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876442,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665447,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876442
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67109678,
+            "matched_name": "\u003CReasonCode\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665447,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    },
+    {
+      "name": "SafeNextAction",
+      "kind": "property",
+      "attributes": [],
+      "signature": "string SafeNextAction { get; }",
+      "digest": "ac997bd04e",
+      "canonical_signature": "P:Hexalith.Conversations.Contracts.Queries.ConversationDetailResult.SafeNextAction",
+      "index_parameter_count": 0,
+      "getter_token": 100665448,
+      "getter_has_method_body": true,
+      "is_static": false,
+      "is_virtual": false,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 385876443,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 0,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "accessor_memory_safety": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "caller_contract": {
+            "kind": "none",
+            "evidence": {
+              "member_token": 100665448,
+              "rules_state": 0,
+              "pointer": "Absent",
+              "fixed_buffer": 0,
+              "direct_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_attribute": {
+                "state": 1,
+                "valid_row_count": 0,
+                "has_malformed_row": false
+              },
+              "associated_member_token": 385876443
+            }
+          },
+          "signature_pointer": "Absent"
+        }
+      ],
+      "backing_storage": {
+        "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+        "convention": "AutoProperty",
+        "state": "Associated",
+        "candidates": [
+          {
+            "field_token": 67109679,
+            "matched_name": "\u003CSafeNextAction\u003Ek__BackingField",
+            "is_static": false
+          }
+        ]
+      },
+      "accessor_implementations": [
+        {
+          "module_version_id": "e785020f-20a0-4846-95f3-3a0802d986ba",
+          "method_token": 100665448,
+          "attributes": "Public, HideBySig, SpecialName",
+          "impl_attributes": "IL",
+          "has_body_rva": true
+        }
+      ],
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "samples": []
+      }
+    }
+  ],
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Hexalith.Conversations.Contracts.Queries.ConversationDetailResult",
+  "documentation": {
+    "samples": []
+  }
+}

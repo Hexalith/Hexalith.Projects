@@ -8,10 +8,17 @@ using System.Xml.Linq;
 /// <summary>An immutable route selection evaluated once at startup, requiring explicit verified rollback.</summary>
 public sealed class ProjectsReadRouteSelection
 {
-    private ProjectsReadRouteSelection(string mode) => Mode = mode;
+    private ProjectsReadRouteSelection(string mode, string? refusalReason = null)
+    {
+        Mode = mode;
+        RefusalReason = refusalReason;
+    }
 
     /// <summary>Gets the selected route: Supported, LegacyRollback, or Unavailable.</summary>
     public string Mode { get; }
+
+    /// <summary>Gets a bounded, payload-free reason when startup refuses the requested route.</summary>
+    public string? RefusalReason { get; }
 
     /// <summary>Loads bounded, hash-bound evidence; all malformed or incomplete evidence selects Unavailable.</summary>
     /// <param name="options">The single startup configuration choice and evidence binding.</param>
@@ -19,28 +26,35 @@ public sealed class ProjectsReadRouteSelection
     public static ProjectsReadRouteSelection Create(ProjectsReadRoutingOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        if (options.Mode is not ("Supported" or "LegacyRollback") || string.IsNullOrWhiteSpace(options.EvidencePath)
-            || string.IsNullOrWhiteSpace(options.EvidenceHash) || string.IsNullOrWhiteSpace(options.SourceRevision))
-            return new("Unavailable");
+        if (options.Mode == "Unavailable") return new("Unavailable", "configured-unavailable");
+        if (options.Mode is not ("Supported" or "LegacyRollback")) return new("Unavailable", "invalid-mode");
+        if (string.IsNullOrWhiteSpace(options.EvidencePath) || string.IsNullOrWhiteSpace(options.EvidenceHash)
+            || string.IsNullOrWhiteSpace(options.SourceRevision)) return new("Unavailable", "missing-evidence-configuration");
         try
         {
             using FileStream file = File.OpenRead(options.EvidencePath);
-            if (file.Length > 1_048_576) return new("Unavailable");
+            if (file.Length > 1_048_576) return new("Unavailable", "evidence-too-large");
             using var buffer = new MemoryStream();
             file.CopyTo(buffer);
             byte[] bytes = buffer.ToArray();
-            if (!Convert.ToHexString(SHA256.HashData(bytes)).Equals(options.EvidenceHash, StringComparison.OrdinalIgnoreCase)) return new("Unavailable");
+            if (!Convert.ToHexString(SHA256.HashData(bytes)).Equals(options.EvidenceHash, StringComparison.OrdinalIgnoreCase))
+                return new("Unavailable", "evidence-hash-mismatch");
             using JsonDocument document = JsonDocument.Parse(bytes);
-            if (HasDuplicateProperties(document.RootElement)) return new("Unavailable");
+            if (HasDuplicateProperties(document.RootElement)) return new("Unavailable", "duplicate-evidence-property");
             bool eligible = options.Mode == "Supported"
                 ? ProjectReadCutoverGate.CanActivate(document.RootElement, options.SourceRevision, options.ContractHash ?? string.Empty)
                 : ProjectReadCutoverGate.CanRollback(document.RootElement, options.SourceRevision);
-            return new(eligible && ValidateNativeReceipts(document.RootElement, options.EvidencePath, options.Mode) ? options.Mode : "Unavailable");
+            if (!eligible) return new("Unavailable", options.Mode == "Supported" ? "supported-gate-rejected" : "legacy-security-rejected");
+            return ValidateNativeReceipts(document.RootElement, options.EvidencePath, options.Mode)
+                ? new(options.Mode) : new("Unavailable", "native-receipts-rejected");
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException or ArgumentException or XmlException)
-        {
-            return new("Unavailable");
-        }
+        catch (FileNotFoundException) { return new("Unavailable", "evidence-file-missing"); }
+        catch (DirectoryNotFoundException) { return new("Unavailable", "evidence-directory-missing"); }
+        catch (UnauthorizedAccessException) { return new("Unavailable", "evidence-access-denied"); }
+        catch (JsonException) { return new("Unavailable", "invalid-evidence-json"); }
+        catch (XmlException) { return new("Unavailable", "invalid-native-xml"); }
+        catch (ArgumentException) { return new("Unavailable", "invalid-evidence-path"); }
+        catch (IOException) { return new("Unavailable", "evidence-read-failed"); }
     }
 
     private static bool ValidateNativeReceipts(JsonElement evidence, string evidencePath, string mode)

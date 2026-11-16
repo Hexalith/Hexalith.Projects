@@ -47,7 +47,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<string>(), Arg.Any<CancellationToken>())
+                "bound-conversation", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateExplanation()));
         client.ListProjectConversationsAsync(
                 "project-001",
@@ -60,7 +60,7 @@ public sealed class LegacyProjectDetailSourceTests
 
         var source = new LegacyProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
-            .GetProjectDetailAsync("project-001", CancellationToken.None)
+            .GetProjectDetailAsync("project-001", "bound-conversation", CancellationToken.None)
             .ConfigureAwait(true);
 
         result.Feedback.ShouldBeNull();
@@ -87,7 +87,7 @@ public sealed class LegacyProjectDetailSourceTests
             "project-001",
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<string>(), Arg.Any<CancellationToken>()).ConfigureAwait(true);
+            "bound-conversation", Arg.Any<CancellationToken>()).ConfigureAwait(true);
         await client.Received(1).ListProjectConversationsAsync(
             "project-001",
             100,

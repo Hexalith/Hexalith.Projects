@@ -71,7 +71,8 @@ public sealed class ProjectContextQueryExecutor(
             || !TargetsMatch(query, projectId)
             || (!_principalBinding.AllowsAnonymousDevelopment
                 && (query.Scopes?.Contains("projects.read", StringComparer.Ordinal) != true
-                    || query.Audience?.Contains(_principalBinding.ExpectedAudience ?? "hexalith-eventstore", StringComparer.Ordinal) != true))
+                    || string.IsNullOrWhiteSpace(_principalBinding.ExpectedAudience)
+                    || query.Audience?.Contains(_principalBinding.ExpectedAudience, StringComparer.Ordinal) != true))
             || !_principalBinding.TryBind(query, out IProjectTenantContextAccessor tenantContext)
             || _principalBinding.HttpContext is not { } httpContext)
         {
@@ -212,9 +213,26 @@ public sealed class ProjectContextQueryExecutor(
             if (properties is [{ Value.ValueKind: JsonValueKind.String }]) conversationId = properties[0].Value.GetString();
         }
         catch (Exception exception) when (exception is JsonException or InvalidOperationException) { }
-        if (string.IsNullOrWhiteSpace(conversationId) || membership is null
-            || !await membership.IsCurrentMemberAsync(query.TenantId, projectId, conversationId,
-                query.OriginalActorId ?? query.UserId, query.CorrelationId, cancellationToken).ConfigureAwait(false))
+        string disclosureDetail = JsonSerializer.Serialize(detail, JsonSerializerOptions.Web);
+        bool currentMembership = !string.IsNullOrWhiteSpace(conversationId) && membership is not null
+            && await membership.IsCurrentMemberAsync(query.TenantId, projectId, conversationId,
+                query.OriginalActorId ?? query.UserId, query.CorrelationId, cancellationToken).ConfigureAwait(false);
+        if (!_principalBinding.TryBind(query, out _)) return ProjectContextAdmission.SafeDenial(projectId);
+        ProjectAuthorizationResult disclosure = await _authorizationGate.AuthorizeSupportedReadAsync(projectId,
+            tenantContext, httpContext, query.CorrelationId, taskId: null, LoadDetailAsync, cancellationToken).ConfigureAwait(false);
+        if (disclosure.Retryable || disclosure.IsAllowed && disclosure.TenantAccessResult is { FreshnessStatus: not TenantProjectionFreshnessStatus.Fresh })
+            return ProjectContextAdmissionAssembler.Unavailable(projectId, detail.Lifecycle, asOf, detail.Sequence,
+                projectCurrent: true, folderIncluded: false, setupCurrent: false, authorizationCurrent: false,
+                ProjectContextUnavailableCause.MissingOrStaleRequiredContext);
+        if (!disclosure.IsAllowed || disclosure.ProjectDetail is not { } currentDetail
+            || disclosure.TenantAccessResult is not { IsAllowed: true } currentTenant
+            || !HasStableTenantAuthorizationEvidence(finalTenantAccess, currentTenant)
+            || !HasStableEventStoreAuthorizationEvidence(finalAuthorization.EventStoreValidationResult, disclosure.EventStoreValidationResult)
+            || disclosureDetail != JsonSerializer.Serialize(currentDetail, JsonSerializerOptions.Web))
+            return ProjectContextAdmission.SafeDenial(projectId);
+        detail = currentDetail;
+        finalTenantAccess = currentTenant;
+        if (!currentMembership)
         {
             return ProjectContextAdmissionAssembler.Unavailable(projectId, detail.Lifecycle, asOf,
                 detail.Sequence, projectCurrent: true, folderIncluded: false, setupCurrent: false,
@@ -280,7 +298,8 @@ public sealed class ProjectContextQueryExecutor(
             && initial.CreatedAt == final.CreatedAt
             && initial.UpdatedAt == final.UpdatedAt;
 
-    private static bool HasStableTenantAuthorizationEvidence(
+    /// <summary>Compares the same Tenant authority generation across awaited read dependencies.</summary>
+    internal static bool HasStableTenantAuthorizationEvidence(
         TenantAccessAuthorizationResult initial,
         TenantAccessAuthorizationResult final)
         => initial.Outcome == final.Outcome
@@ -300,7 +319,8 @@ public sealed class ProjectContextQueryExecutor(
             _ => false,
         };
 
-    private static bool HasStableEventStoreAuthorizationEvidence(
+    /// <summary>Compares allowed EventStore authority and freshness generations across awaited dependencies.</summary>
+    internal static bool HasStableEventStoreAuthorizationEvidence(
         EventStoreAuthorizationValidationResult? initial,
         EventStoreAuthorizationValidationResult? final)
         => initial is { Status: EventStoreAuthorizationValidationStatus.Allowed }

@@ -1,0 +1,86 @@
+{
+  "classification": "Existing commands retained; no publication or workflow mutation authorized in this subtask",
+  "executed_qualification_commands": [
+    {
+      "label": "contracts-build",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:Version=5.3.0",
+        "-m:1",
+        "--disable-build-servers",
+        "-warnaserror"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "full-local-release-inventory",
+      "command": [
+        "python3",
+        "tools/pack-release-packages.py",
+        "/tmp/hexalith-job.ogcFEZ5j/Hexalith.EventStore/qualification-packages",
+        "5.3.0"
+      ],
+      "exit": 0
+    }
+  ],
+  "additional_existing_release_gate_commands": [
+    {
+      "command": [
+        "python3",
+        "tools/validate-release-packages.py",
+        "<private-14-package-inventory>",
+        "5.3.0"
+      ],
+      "selection": "entire14-packageinventory",
+      "status": "required by existing release process; standalone test fixtures separately exercise validators"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/verify-release-api-compatibility.py",
+        "<private-14-package-inventory>",
+        "5.3.0",
+        "--candidate-commit",
+        "0be0c922883d4ea61b18e843e24472162261d934",
+        "--work-directory",
+        "<new-retained-evidence-directory>"
+      ],
+      "selection": "entire14-packageinventory; no per-package selection supported",
+      "status": "Passed in api-attempt-2 against exactapprovedContracts archive plus disposable same-sourcefamilyfixtureinventory",
+      "evidence": "api-attempt-2/owner-api-gate-qualification.json"
+    },
+    {
+      "command": [
+        "env",
+        "REPOSITORY=Hexalith/Hexalith.EventStore",
+        "DISPATCH_REF=refs/heads/main",
+        "DISPATCH_SHA=0be0c922883d4ea61b18e843e24472162261d934",
+        "bash",
+        "scripts/verify-release-source.sh"
+      ],
+      "selection": "exact approved historical source",
+      "actual_exit": 1,
+      "diagnostic": "The dispatched source is no longer the current selected branch tip."
+    }
+  ],
+  "publication_command_status": "No command using the existing owner release workflow is qualified for the exact approved historical Contracts-only upload. The workflow publishes all14 packages and a container and semantic-release chooses version. Do not dispatch it for this task.",
+  "required_owner_mechanism_properties": [
+    "Owner-reviewed exact-source package-only selection for Contracts5.3.0 and approved artifactarchiveSHA1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+    "Required owner gates accepted for exact approved source, keeping failed/cancelled checks visible",
+    "Use existing owner NuGet/OIDC identity and production approval without feed,credential,policy,orcontainer expansion",
+    "Reread coordinate absence immediately before publication and verify public catalog/source/dependency/signature plus every approved payloadentry after publication",
+    "Deliver any workflow/CI changes through the qualified CiCd owner mechanism; preserve normal14-package/defaultreleasepolicy"
+  ],
+  "owner_full_contracts_suite": {
+    "status": "passed",
+    "total": 1704,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0
+  }
+}

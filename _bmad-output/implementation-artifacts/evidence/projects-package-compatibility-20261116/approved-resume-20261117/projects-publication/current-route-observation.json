@@ -1,0 +1,118 @@
+{
+  "recordedAtUtc": "2026-11-16T23:43:12.757587+00:00",
+  "projectsSource": "cdacfb2a2c9d1eb23f2dbd59b53f42b945e80f37",
+  "cicdSource": "4db3776e444f0ec6e5f97d1ff089a0d83f990082",
+  "workflowBlob": "82380c6ee77cf908e0aa259243e010a9f23a97c8",
+  "workflowSha256": "e7377e4969cc108c3e17c55dcc15fe9137b1dbed760ec548404774177ce26de8",
+  "workflowInventory": [
+    {
+      "name": "ci.yml",
+      "path": ".github/workflows/ci.yml",
+      "sha": "960a63947bc9584454a7a3dca080a9c1664231f3"
+    },
+    {
+      "name": "codeql.yml",
+      "path": ".github/workflows/codeql.yml",
+      "sha": "aa60e0014b066e85d025cbe8a44d67777fa3ab9d"
+    },
+    {
+      "name": "commitlint.yml",
+      "path": ".github/workflows/commitlint.yml",
+      "sha": "95b23f584c9bb281a5910e74fd5ab15ba3a6ad00"
+    },
+    {
+      "name": "dependency-review.yml",
+      "path": ".github/workflows/dependency-review.yml",
+      "sha": "f9c526ccb0ffde92fbf2ddf462b7a1c6e9560af9"
+    },
+    {
+      "name": "release.yml",
+      "path": ".github/workflows/release.yml",
+      "sha": "82380c6ee77cf908e0aa259243e010a9f23a97c8"
+    }
+  ],
+  "publishEnabledValue": "true",
+  "otherRepositoryVariableNames": [],
+  "production": {
+    "name": "production",
+    "protection_rules": [],
+    "deployment_branch_policy": null
+  },
+  "productionNugetUser": "jpiquot",
+  "otherProductionVariableNames": [],
+  "repositorySecretNames": [],
+  "jpiquotGitHubPermission": {
+    "permission": "admin",
+    "role_name": "admin"
+  },
+  "currentSourceCi": [
+    {
+      "id": 43967083172,
+      "head_sha": "cdacfb2a2c9d1eb23f2dbd59b53f42b945e80f37",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/43967083172"
+    }
+  ],
+  "recentReleaseRuns": [
+    {
+      "id": 43187046491,
+      "head_sha": "1ea04f7959e9ca393bc19d3b96b03cb350088e72",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/43187046491"
+    },
+    {
+      "id": 41380245331,
+      "head_sha": "e6eb06a87f1a924c8815306683c6299c41d5c3d4",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/41380245331"
+    },
+    {
+      "id": 41333151082,
+      "head_sha": "2405d82997519bdd4a6ed61cce8abef748f2b6bd",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/41333151082"
+    },
+    {
+      "id": 41231268605,
+      "head_sha": "353cfd33e54270a1acb028c1c66ecb7cd548f3e7",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/41231268605"
+    },
+    {
+      "id": 40593401697,
+      "head_sha": "515d49c93fc0544b4f49c1662578f348781c0320",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/40593401697"
+    }
+  ],
+  "retainedArtifactTransport": {
+    "repository": "Hexalith/Hexalith.Projects",
+    "commit": "cdacfb2a2c9d1eb23f2dbd59b53f42b945e80f37",
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+    "gitBlob": "3fc916b6fc7676e0327181e1e217f715e1645174",
+    "bytes": 80379,
+    "sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+  },
+  "mutationPerformed": false,
+  "credentialsReadOrPrinted": false,
+  "nugetPolicyActualActiveState": "not established by this read; existing authenticated policy readback needed, no policy mutation authorized",
+  "nugetPolicyExpectedIdentity": {
+    "owner": "Hexalith",
+    "repository": "Hexalith.Projects",
+    "workflow": "release.yml",
+    "environment": "production",
+    "exactPackageId": "Hexalith.Projects.Contracts"
+  }
+}

@@ -136,6 +136,27 @@ public sealed class ReadCutoverTests
         ReadCutoverComparator.IsApprovedUnavailablePair(operation, cause, 404, legacy, 200, payload, true, true).ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData("context", "projectFolder")]
+    [InlineData("context", "conversations")]
+    [InlineData("explain", "fileReferences")]
+    [InlineData("conversation-start", "memoryReferences")]
+    public void NativeBindingUnavailableNeverAcceptsIncludedReferences(string operation, string reference)
+    {
+        var context = System.Text.Json.Nodes.JsonNode.Parse("{\"setup\":null,\"snapshot\":{\"responseState\":\"Unavailable\",\"components\":[1,2,3,4],\"recoveryActions\":[\"Retry\"]}}")!;
+        var item = new System.Text.Json.Nodes.JsonObject { ["referenceState"] = "Included", ["referenceId"] = "protected" };
+        context[reference] = reference == "projectFolder" ? item : new System.Text.Json.Nodes.JsonArray(item);
+        var legacy = JsonSerializer.SerializeToElement(new { code = "read_model_unavailable" });
+        JsonElement Payload() => operation == "explain" ? JsonSerializer.SerializeToElement(new { context }) : JsonSerializer.SerializeToElement(context);
+        foreach (string state in new[] { "Included", "included", "1", "unknown" })
+        {
+            item["referenceState"] = state;
+            ReadCutoverComparator.IsApprovedUnavailablePair(operation, "native-binding-unavailable", 503, legacy, 200, Payload(), true, true).ShouldBeFalse();
+        }
+        item["referenceState"] = "Excluded";
+        ReadCutoverComparator.IsApprovedUnavailablePair(operation, "native-binding-unavailable", 503, legacy, 200, Payload(), true, true).ShouldBeTrue();
+    }
+
     private static ReadCutoverObservation Observation() => new(
         JsonSerializer.SerializeToElement(new { setup = new { }, ids = new[] { "a", "b" }, asOf = "2026-11-16T00:00:00Z" }),
         ["raw-key"], ["tenant:projects:opaque"], [8],

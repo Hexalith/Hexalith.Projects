@@ -1,0 +1,137 @@
+[
+  {
+    "label": "Domain-final-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Domain-final-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/Domain-final-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Contracts-final-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Contracts-final-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/Contracts-final-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Client-final-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Client-final-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Client.Tests/debug/Hexalith.Projects.Client.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/Client-final-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-final-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "UI-final-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/UI-final-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-final-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "Server-final-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/Server-final-1.xml"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  }
+]

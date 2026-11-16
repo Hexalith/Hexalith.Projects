@@ -1,0 +1,146 @@
+[
+  {
+    "label": "private-source-mapping",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net11.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.znpom7k4/prepared",
+      "--output",
+      "json"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "security-focused-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 1
+  },
+  {
+    "label": "security-focused-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 1
+  },
+  {
+    "label": "security-focused-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "security-focused-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/security-focused-3.xml",
+      "-method",
+      "*.Review2*",
+      "-method",
+      "*.OwnerV1ReadMapsCurrentEvidenceAndToleratesAdditiveFields"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "context-owner-focused-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/context-owner-focused-1.xml",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.*",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.GetConversationStartSetupQueryHandlerTests.*",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.ExplainContextSelectionQueryHandlerTests.*",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.NativeConversationMembershipTransportTests.*",
+      "-method",
+      "*.ReviewLegacy*"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "cursor-matrix-focused-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/cursor-matrix-focused-1.xml",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "chatbot-outcomes-focused-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.znpom7k4/artifacts"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  },
+  {
+    "label": "chatbot-outcomes-focused-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.znpom7k4/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/chatbot-outcomes-focused-1.xml",
+      "-method",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.Review2AuthenticatedChatbotAndTenantRolesShareTheCurrentFolderBoundary"
+    ],
+    "cwd": "/tmp/hexalith-job.znpom7k4/source",
+    "exitCode": 0
+  }
+]

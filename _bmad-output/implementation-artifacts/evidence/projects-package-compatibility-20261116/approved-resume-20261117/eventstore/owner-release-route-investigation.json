@@ -1,0 +1,201 @@
+{
+  "recorded_at": "2026-11-16T23:44:22.280518+00:00",
+  "approved_source": "0be0c922883d4ea61b18e843e24472162261d934",
+  "current_main": "d8171e6cc18cd4b67ea310822b36e49d007fa2ec",
+  "current_main_ci": {
+    "run": 43958632700,
+    "conclusion": "failure",
+    "contracts_job": "success",
+    "blocking_case": "Hexalith.EventStore.Server.Tests.Security.SecretsProtectionTests.TrackedReusableContent_DoesNotContainUsableSecrets",
+    "reported_fixture": "tests/Hexalith.EventStore.Contracts.Tests/Deployment/ProductionProfileV2Tests.cs:288"
+  },
+  "approved_source_ci": {
+    "run": 43944683003,
+    "conclusion": "cancelled",
+    "commitlint_run": 43944683386,
+    "commitlint_conclusion": "success"
+  },
+  "coordinate_recheck": {
+    "endpoint": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.contracts/5.3.0/hexalith.eventstore.contracts.5.3.0.nupkg",
+    "status": 404,
+    "present": false
+  },
+  "protocol_files": {
+    ".releaserc.json": {
+      "sha256": "3a651dd90e2d966f1184ca8b7b3b53766b06e77bff147a177a5e51afd43c853e",
+      "bytes": 1372
+    },
+    "scripts/verify-release-source.sh": {
+      "sha256": "e0f896d333cd903642730190109f3c4e3338da51d590b7781cb15bb23d73a0fe",
+      "bytes": 2020
+    },
+    "scripts/validate-publication-preflight.sh": {
+      "sha256": "c4e072ec9e6eca75ecd48a8a7d5012bf8c3c7562d27f1624b9ed5cc9150c0cf2",
+      "bytes": 5706
+    },
+    ".github/workflows/release.yml": {
+      "sha256": "55e43d3f4be8f8dc92a25b80b19e172b6226d1e6344d77b349986f72d7fcd24b",
+      "bytes": 9953
+    }
+  },
+  "existing_route": {
+    "workflow": ".github/workflows/release.yml",
+    "dispatch_inputs": [],
+    "approved_dispatch_refs": [
+      "refs/heads/main",
+      "refs/heads/release/parties-sdk-3.130.2"
+    ],
+    "source_rule": "Current selected branch tip plus successful exact-source push CI and Commitlint; maintenance also needs Integration",
+    "environment": "production",
+    "oidc_action": "NuGet/login@8d196754b4036150537f80ac539e15c2f1028841",
+    "credential_route_names": [
+      "NUGET_TRUSTED_PUBLISHING_USER",
+      "NUGET_TRUSTED_PUBLISHING_KEY"
+    ],
+    "package_manifest": "tools/release-packages.json",
+    "required_package_count": 14,
+    "semantic_release_selects_version": true,
+    "container_publication_is_coupled": true,
+    "targeted_historical_package_supported": false,
+    "source_preflight_actual_exit": 1,
+    "source_preflight_actual_diagnostic": "The dispatched source is no longer the current selected branch tip."
+  },
+  "mandatory_existing_gates": [
+    "exact current source push ci.yml and commitlint.yml success",
+    "production environment approval",
+    "full solution package-mode Release restore/build",
+    "locked npm install and provenance/signatures audit",
+    "manifest inventory of exactly14 version-aligned packages",
+    "package metadata/consumer validation",
+    "signed public4.2.0 API baseline comparison across all14 packages",
+    "existing publication preflight and same-run source reread",
+    "NuGet OIDC exchange from allowed workflow",
+    "container publisher (outside this task scope)"
+  ],
+  "route_assessment": "No existing owner upload workflow satisfies the approved historical exact-source Contracts-only scope without changing the source selector and14-package/container contract. Do not dispatch the normal Release workflow. A qualified owner mechanism change or owner-managed targeted route remains necessary; no credentials were expanded.",
+  "publication_or_dispatch_performed": false,
+  "signing_route": {
+    "authentication": "NuGet/login pinned OIDC action exchanges temporary publishing key inside production environment",
+    "existing_published_signature_type": "Repository",
+    "existing_published_signer": "NuGet.org Repository by Microsoft",
+    "baseline_signature_verification_exit": 0,
+    "candidate_still_unsigned": true,
+    "qualification_vs_upload": "Archive signing changes ZIP/signature metadata only; all approvedpayload entries must remain byte-identical. Existing owner route does not expose a standalone signing step."
+  },
+  "command_evidence": "concrete-commands-and-obligations.json",
+  "read_only_source_refusal_log_sha256": "9d8f2be6ecbbd4b6d215cfc77458a243c8bc433fdaf90abaa2ab9cd4046bf871",
+  "local_owner_source_qualification": {
+    "status": "passed",
+    "source": "0be0c922883d4ea61b18e843e24472162261d934",
+    "source_tree": "535f115648022f0eab6be19eacf2b76f6d9f6329",
+    "build": "Release package mode, warnings as errors, succeeded",
+    "direct_dependency_count": 9,
+    "all_direct_dependencies_at_pins": true,
+    "nested_initialized": false,
+    "local_release_inventory": {
+      "package_count": 14,
+      "packages": [
+        "Hexalith.EventStore.Admin.Abstractions.5.3.0.nupkg",
+        "Hexalith.EventStore.Admin.Cli.5.3.0.nupkg",
+        "Hexalith.EventStore.Admin.Server.5.3.0.nupkg",
+        "Hexalith.EventStore.Aspire.5.3.0.nupkg",
+        "Hexalith.EventStore.Client.5.3.0.nupkg",
+        "Hexalith.EventStore.Contracts.5.3.0.nupkg",
+        "Hexalith.EventStore.DomainService.5.3.0.nupkg",
+        "Hexalith.EventStore.Gateway.5.3.0.nupkg",
+        "Hexalith.EventStore.RestApi.Generators.5.3.0.nupkg",
+        "Hexalith.EventStore.Server.5.3.0.nupkg",
+        "Hexalith.EventStore.ServiceDefaults.5.3.0.nupkg",
+        "Hexalith.EventStore.SignalR.5.3.0.nupkg",
+        "Hexalith.EventStore.Testing.5.3.0.nupkg",
+        "Hexalith.EventStore.Testing.Integration.5.3.0.nupkg"
+      ],
+      "scope": "disposable qualification inputs only; no family publication"
+    },
+    "full_contracts_tests": {
+      "total": 1704,
+      "passed": 1704,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0,
+      "failures": []
+    },
+    "source_tracked_tree_unchanged": true,
+    "previous_fixture_failures_resolved": 52,
+    "previous_skips_resolved": 2,
+    "temporary_workspace_removed": true,
+    "qualifying_source_vs_approved_archive": "Fullowner source/fixturegate passed against fresh same-source14package fixtureinventory; exactapprovedarchive remains unchanged with separate207consumerpass, and APIgate is being run using exactapprovedarchive.",
+    "evidence": "owner-qualification.json"
+  },
+  "updated_at": "2026-11-16T23:55:40.548179+00:00",
+  "owner_api_gate": {
+    "status": "passed",
+    "source": "0be0c922883d4ea61b18e843e24472162261d934",
+    "exact_approved_contracts_archive": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+    "compared_package_count": 14,
+    "signed_public_baseline_package_count": 14,
+    "frameworks_verified": 4,
+    "control": {
+      "compatible": "pass",
+      "removedMember": "refused CP0002",
+      "renamedParameter": "refused CP0017",
+      "directory": "/tmp/hexalith-job.oaowSHK7/api-evidence/controls"
+    },
+    "evidence": "api-attempt-2/owner-api-gate-qualification.json",
+    "receipt_sha256": "38060413c84c7fee3862811a94927b70fd73853543ed9b2658c794a633f02a8d",
+    "temporary_workspace_removed": true
+  },
+  "remaining_obligations": [
+    "Complete successful exact-approved-source owner push CI; original43944683003 remainscancelled. Local1704Contracts and14-family APIpasses do not claim full hostedCI success.",
+    "Obtain a qualified owner mechanism that publishes only exactapprovedhistoricalContracts5.3.0 archive without the normal14-package/container release. Existing sourcepreflightrefuses0be and no targeted dispatchinput exists.",
+    "Use existing owner production/OIDCroute; no credential,feed,trust-policy orcontainer expansion. Any workflow changes must usequalifiedCiCd ownershipdelivery.",
+    "Immediately before upload reread coordinateabsence; after upload verify NuGetrepositorysignature,catalogsource,dependencyidentity and byteidentity of every approvedpayloadentry."
+  ],
+  "final_readback": {
+    "recorded_at": "2026-11-16T23:56:40.905664+00:00",
+    "remote_main": "3b2350e7c1fff640131f8101596c78a59e31a03f",
+    "coordinate_status": 404,
+    "protocol_identity": [
+      {
+        "path": ".github/workflows/release.yml",
+        "git_blob": "0ff025fd5aed2c74df66e119c87a6ecaecee4722",
+        "encoding": "utf-8",
+        "same_as_approved_owner_source": true,
+        "sha256": "55e43d3f4be8f8dc92a25b80b19e172b6226d1e6344d77b349986f72d7fcd24b"
+      },
+      {
+        "path": "scripts/verify-release-source.sh",
+        "git_blob": "e8c315b4dd03bef5818507d643e251c924720e87",
+        "encoding": "utf-8",
+        "same_as_approved_owner_source": true,
+        "sha256": "e0f896d333cd903642730190109f3c4e3338da51d590b7781cb15bb23d73a0fe"
+      },
+      {
+        "path": "scripts/validate-publication-preflight.sh",
+        "git_blob": "14b0967a8a572af68b4c4881f2d397eeaf56a88b",
+        "encoding": "utf-8",
+        "same_as_approved_owner_source": true,
+        "sha256": "c4e072ec9e6eca75ecd48a8a7d5012bf8c3c7562d27f1624b9ed5cc9150c0cf2"
+      },
+      {
+        "path": ".releaserc.json",
+        "git_blob": "c1080d048898f1ce19fcbdd299d315304391800c",
+        "encoding": "utf-8",
+        "same_as_approved_owner_source": true,
+        "sha256": "3a651dd90e2d966f1184ca8b7b3b53766b06e77bff147a177a5e51afd43c853e"
+      }
+    ],
+    "ci": {
+      "run": 43982279506,
+      "status": "queued",
+      "conclusion": null
+    },
+    "commitlint": {
+      "run": 43982279546,
+      "status": "queued",
+      "conclusion": null
+    },
+    "protocol_unchanged_since_approved_source": true
+  }
+}

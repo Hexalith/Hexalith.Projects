@@ -1,0 +1,13 @@
+{
+  "run": 43958632700,
+  "source": "d8171e6cc18cd4b67ea310822b36e49d007fa2ec",
+  "artifact": 14277336600,
+  "failures": [
+    {
+      "file": "Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.trx",
+      "test": "Hexalith.EventStore.Server.Tests.Security.SecretsProtectionTests.TrackedReusableContent_DoesNotContainUsableSecrets",
+      "message": "Shouldly.ShouldAssertException : violations.Length\n    should be\n0\n    but was\n1\n\nAdditional Info:\n    Tracked reusable content contains secret material. Only path and line are reported: tests/Hexalith.EventStore.Contracts.Tests/Deployment/ProductionProfileV2Tests.cs:288",
+      "stack": "   at Hexalith.EventStore.Server.Tests.Security.SecretsProtectionTests.TrackedReusableContent_DoesNotContainUsableSecrets() in /home/runner/work/Hexalith.EventStore/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Security/SecretsProtectionTests.cs:line 36\n   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)\n   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\n   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)"
+    }
+  ]
+}

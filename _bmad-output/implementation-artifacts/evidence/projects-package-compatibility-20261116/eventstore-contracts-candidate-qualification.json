@@ -1,0 +1,253 @@
+{
+  "recorded_at": "2026-11-16T21:18:54.322373+00:00",
+  "source": "0be0c922883d4ea61b18e843e24472162261d934",
+  "builds_source": "e2bbbd0893f586e4d447ef8358ff747ea3d34435",
+  "version": "5.3.0",
+  "package": "Hexalith.EventStore.Contracts",
+  "published": false,
+  "steps": [
+    {
+      "label": "eventstore-candidate-clone",
+      "command": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "/tmp/hexalith-job.yUbE83CX/eventstore-contracts"
+      ],
+      "exit": 0,
+      "log": "eventstore-candidate-clone.log",
+      "sha256": "d36561ccc4c05386fa7c93cf265eb45832e86c81cb870c4d455908820cdbfed6"
+    },
+    {
+      "label": "eventstore-candidate-remote",
+      "command": [
+        "git",
+        "remote",
+        "set-url",
+        "origin",
+        "https://github.com/Hexalith/Hexalith.EventStore.git"
+      ],
+      "exit": 0,
+      "log": "eventstore-candidate-remote.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "eventstore-candidate-current-source",
+      "command": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "107e50e39cf2545cbc6546e60e02252251aca274"
+      ],
+      "exit": 0,
+      "log": "eventstore-candidate-current-source.log",
+      "sha256": "26c758d3eeea5836810b8aedf9f2e01da6b5bd58b884b1ceb76386c70a7bc799"
+    },
+    {
+      "label": "eventstore-candidate-checkout",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "0be0c922883d4ea61b18e843e24472162261d934"
+      ],
+      "exit": 0,
+      "log": "eventstore-candidate-checkout.log",
+      "sha256": "d1b2bc8ecf3f64cbeec8171cb3c988573c8ae129f9be0f0c500c574bb6a7fe6e"
+    },
+    {
+      "label": "eventstore-contracts-candidate-pack",
+      "command": [
+        "dotnet",
+        "pack",
+        "src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:Version=5.3.0",
+        "-p:GeneratePackageOnBuild=false",
+        "-m:1",
+        "--output",
+        "/tmp/hexalith-job.yUbE83CX/eventstore-contracts/candidate-feed",
+        "-p:RepositoryCommit=0be0c922883d4ea61b18e843e24472162261d934"
+      ],
+      "exit": 0,
+      "log": "eventstore-contracts-candidate-pack.log",
+      "sha256": "b8ac5998efe5198b0919f298ddbd8e2bbe9d169751bef684e70ed97b60f2c48c"
+    },
+    {
+      "label": "eventstore-contracts-candidate-signature",
+      "command": [
+        "dotnet",
+        "nuget",
+        "verify",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg",
+        "--all"
+      ],
+      "exit": 1,
+      "log": "eventstore-contracts-candidate-signature.log",
+      "sha256": "3cf66358e9ca80755466daf9fa1ed3393b9c10b49a5114cf9c84c24fd2fca783"
+    },
+    {
+      "label": "eventstore-contracts-candidate-api",
+      "command": [
+        "dnx",
+        "dotnet-inspect",
+        "-y",
+        "--",
+        "member",
+        "QueryResultContractAttribute",
+        "--library",
+        "/tmp/hexalith-job.yUbE83CX/eventstore-contracts/candidate-api/Hexalith.EventStore.Contracts.dll",
+        "--json"
+      ],
+      "exit": 0,
+      "log": "eventstore-contracts-candidate-api.log",
+      "sha256": "03f86d7e54c2adeb1eca65f2af627938a6a41646f31724b1ee8b4a9c3dee7857"
+    },
+    {
+      "label": "eventstore-contracts-candidate-test-build",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:Version=5.3.0",
+        "-p:GeneratePackageOnBuild=false",
+        "-m:1"
+      ],
+      "exit": 0,
+      "log": "eventstore-contracts-candidate-test-build.log",
+      "sha256": "10d1af820783fef1f7200aed1db815e91b8c6a0528ce57ef9750af5d544bb0de"
+    },
+    {
+      "label": "eventstore-contracts-candidate-test-run",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.yUbE83CX/eventstore-contracts/tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net11.0/Hexalith.EventStore.Contracts.Tests.dll",
+        "-namespace",
+        "Hexalith.EventStore.Contracts.Tests.Queries"
+      ],
+      "exit": 0,
+      "log": "eventstore-contracts-candidate-test-run.log",
+      "sha256": "9d4d56729fd73e24eab7bb8cc63bc8ae9217cd5f97be1ad35ee460e2e7cdc871"
+    },
+    {
+      "label": "eventstore-query-generator-candidate-test-build",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.RestApi.Generators.Tests/Hexalith.EventStore.RestApi.Generators.Tests.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:Version=5.3.0",
+        "-p:GeneratePackageOnBuild=false",
+        "-m:1"
+      ],
+      "exit": 0,
+      "log": "eventstore-query-generator-candidate-test-build.log",
+      "sha256": "8677c829d685b7ad517b3ff6f3d3235b4704a6501d8846a52b69a6dddb6f0aad"
+    },
+    {
+      "label": "eventstore-query-generator-candidate-test-run",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.yUbE83CX/eventstore-contracts/tests/Hexalith.EventStore.RestApi.Generators.Tests/bin/Release/net11.0/Hexalith.EventStore.RestApi.Generators.Tests.dll",
+        "-class",
+        "*TypedGatewayQueryGenerationTests"
+      ],
+      "exit": 0,
+      "log": "eventstore-query-generator-candidate-test-run.log",
+      "sha256": "5b6318952f9088fc8910e232f473ce2be05e603e3ab5b64ac95a5519ee940156"
+    }
+  ],
+  "status": "passed",
+  "source_tree": "535f115648022f0eab6be19eacf2b76f6d9f6329",
+  "remote_query_diff": "",
+  "remote_complete_tree_diff": "M\t.github/workflows/publication-authority.yml\nM\t_bmad-output/implementation-artifacts/spec-3-19-production-profile-v2-infrastructure-scope.md\nA\tdocs/architecture/production-profile-v2.md\nM\tdocs/architecture/publication-authority-v1.md\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileCanonicalJson.cs\nM\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileCodec.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2Codec.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2Component.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2Dapr.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2Scope.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileV2Validator.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileValidationComponent.cs\nA\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileValidationDocument.cs\nM\tsrc/Hexalith.EventStore.Contracts/Deployment/ProductionProfileValidator.cs\nA\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/Fixtures/GenerateSyntheticProfileV2.py\nA\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/Fixtures/SyntheticDigests.v2.json\nA\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/Fixtures/SyntheticInfrastructurePreimage.v2.json\nA\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/Fixtures/SyntheticProfile.v2.json\nM\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/Fixtures/verify-golden.py\nA\ttests/Hexalith.EventStore.Contracts.Tests/Deployment/ProductionProfileV2Tests.cs\nM\ttools/production-profile.cs\nM\ttools/publication_authority.py\nM\ttools/tests/check_production_profile_bridge.py\nM\ttools/tests/test_publication_authority.py\n",
+  "builds_materialization": "ordinary exact Git archive, no submodule initialization",
+  "artifact": {
+    "path": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg",
+    "sha256": "e367e3e9a8d4a5d68942ed56b380acaddaeb4368f19273e6481c0ce2fce941ce",
+    "bytes": 535791,
+    "files": [
+      "_rels/.rels",
+      "Hexalith.EventStore.Contracts.nuspec",
+      "README.md",
+      "buildTransitive/Hexalith.EventStore.Contracts.targets",
+      "lib/net11.0/Hexalith.EventStore.Contracts.dll",
+      "lib/net11.0/Hexalith.EventStore.Contracts.xml",
+      "[Content_Types].xml",
+      "package/services/metadata/core-properties/nuget.psmdcp"
+    ],
+    "signed": false,
+    "signing_status": "unsigned local qualification candidate; owner publication must use approved signing/provenance process",
+    "dll_sha256": "c176e8c887f856155234639339163fc9ce9a83f327c6311a94be1677f6b8c7ae",
+    "source_commit_embedded_utf8": true,
+    "metadata_log": "eventstore-contracts-candidate-library.json",
+    "metadata_exit": 0,
+    "metadata_sha256": "808ea285f909feb79da4af6cb6de1b282af0ec6fc54856fdb5f3322e42b0f521",
+    "informational_version": "5.3.0+0be0c922883d4ea61b18e843e24472162261d934",
+    "repository_commit_in_nuspec": "0be0c922883d4ea61b18e843e24472162261d934",
+    "repository_url": "https://github.com/Hexalith/Hexalith.EventStore"
+  },
+  "binary_compatibility": {
+    "command": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "diff",
+      "--library",
+      "/tmp/hexalith-job.I7PbRDsQ/5.1.1/Hexalith.EventStore.Contracts.dll../tmp/hexalith-job.I7PbRDsQ/5.3.0/Hexalith.EventStore.Contracts.dll",
+      "--json"
+    ],
+    "exit": 0,
+    "summary": {
+      "changedTypeCount": 30,
+      "addedTypeCount": 30,
+      "removedTypeCount": 0,
+      "changedMemberCount": 451,
+      "breakingCount": 0,
+      "additiveCount": 30,
+      "potentiallyBreakingCount": 0
+    },
+    "log": "eventstore-contracts-published-to-candidate-api-diff.json",
+    "sha256": "487fa2d0257a9cc385c8b8ff6e69e9c844aa63815ce2b6ba23d295f4d3dfdec5",
+    "note": "All30 added public types are additive; source0be includes pre-existing unpublished production-profile-v1 APIs, but no later v2 additions. Full owner source and API diff are explicitly bound."
+  },
+  "coordinate_availability": {
+    "recorded_at": "2026-11-16T21:19:52.666063+00:00",
+    "approved_feed": "https://api.nuget.org/v3/index.json",
+    "coordinate": "Hexalith.EventStore.Contracts/5.3.0",
+    "status": 404,
+    "present": false
+  },
+  "builds_package_catalog": {
+    "source": "e2bbbd0893f586e4d447ef8358ff747ea3d34435",
+    "path": "Props/Directory.Packages.props",
+    "sha256": "d098dab50977041a536508f6df7e934f95678a4a0abedd80b28e9bae19ee0637",
+    "git_blob": "42441eb4cefcff2f9c582fcda630d9ad15887df2"
+  },
+  "publication_readiness": "qualification-only: unsigned candidate; owner approval and approved publication/signature process still required",
+  "tests": {
+    "contracts_queries": {
+      "total": 163,
+      "failed": 0,
+      "skipped": 0,
+      "not_run": 0
+    },
+    "typed_gateway_generator": {
+      "total": 2,
+      "failed": 0,
+      "skipped": 0,
+      "not_run": 0
+    }
+  }
+}

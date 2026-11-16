@@ -60,7 +60,7 @@ static void NormalizeGeneratedFile(string path)
     {
         string contract = normalized[interfaceStart..interfaceEnd];
         contract = Regex.Replace(contract,
-            @"System\.Threading\.Tasks\.Task<(?<result>\w+)> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^;]+)\);",
+            @"(?<documentation>(?:[ \t]*///[^\n]*\n)*)[ \t]*(?<signature>System\.Threading\.Tasks\.Task<(?<result>\w+)> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^;]+)\);)",
             match =>
             {
                 string parameters = match.Groups["parameters"].Value;
@@ -75,13 +75,13 @@ static void NormalizeGeneratedFile(string path)
                 string guard = metadata == "inspectDescriptiveMetadata" ? "inspectDescriptiveMetadata == true" : "!string.IsNullOrWhiteSpace(conversationId)";
                 string result = match.Groups["result"].Value;
                 string operation = match.Groups["operation"].Value;
-                return match.Value[..^1] + $" => {guard} ? System.Threading.Tasks.Task.FromException<{result}>(new System.NotSupportedException(\"Explicit read metadata requires an updated client implementation.\")) : {operation}Async({arguments});";
+                return match.Groups["documentation"].Value + "        " + match.Groups["signature"].Value[..^1] + $" => {guard} ? System.Threading.Tasks.Task.FromException<{result}>(new System.NotSupportedException(\"Explicit read metadata requires an updated client implementation.\")) : {operation}Async({arguments});";
             }, RegexOptions.CultureInvariant);
         normalized = normalized[..interfaceStart] + contract + normalized[interfaceEnd..];
     }
 
     normalized = Regex.Replace(normalized,
-        @"public virtual System\.Threading\.Tasks\.Task<\w+> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^)]+)\)\s*\{\s*return \k<operation>Async\([^;]+System\.Threading\.CancellationToken.None\);\s*\}",
+        @"(?:[ \t]*///[^\n]*\n)*[ \t]*public virtual System\.Threading\.Tasks\.Task<\w+> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^)]+)\)\s*\{\s*return \k<operation>Async\([^;]+System\.Threading\.CancellationToken.None\);\s*\}",
         match => match.Groups["parameters"].Value.Contains("inspectDescriptiveMetadata", StringComparison.Ordinal)
             || match.Groups["parameters"].Value.Contains("conversationId", StringComparison.Ordinal) ? string.Empty : match.Value,
         RegexOptions.CultureInvariant);

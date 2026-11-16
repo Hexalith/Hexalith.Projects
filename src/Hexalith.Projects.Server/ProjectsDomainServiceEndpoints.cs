@@ -8,6 +8,8 @@ namespace Hexalith.Projects.Server;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
+using Hexalith.EventStore.Authorization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -28,6 +30,7 @@ using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Server.Memories;
+using Hexalith.Projects.Server.Queries;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -693,6 +696,11 @@ public static partial class ProjectsDomainServiceEndpoints
             return validationProblem;
         }
 
+        string tenantId = tenantContext.AuthoritativeTenantId!;
+        string actorId = tenantContext.PrincipalId!;
+        var caller = LegacyReadCaller(httpContext, actorId);
+        if (!caller.IsAllowed) return SafeDenial(correlationId, null);
+        string observedDetail = JsonSerializer.Serialize(authorization.ProjectDetail, ResponseJsonOptions);
         ProjectDetailItem detail = authorization.ProjectDetail;
         bool quarantined = IsLegacyQuarantined(detail);
         bool inspectQuarantined = httpContext.Request.Query["inspectQuarantined"] == "true";
@@ -704,6 +712,13 @@ public static partial class ProjectsDomainServiceEndpoints
             System.Text.Json.JsonSerializer.Serialize(detail, ResponseJsonOptions), cancellationToken).ConfigureAwait(false))
             return SafeDenial(correlationId, null);
 
+        var references = await ToCurrentProjectReferenceSummariesAsync(detail, httpContext, correlationId, cancellationToken).ConfigureAwait(false);
+        ProjectAuthorizationResult disclosure = await authorizationGate.AuthorizeReadAsync(projectId, tenantContext,
+            httpContext, correlationId, null, cancellationToken).ConfigureAwait(false);
+        if (disclosure.Retryable) return ReadModelUnavailable(correlationId, null);
+        if (!HasStableLegacyReadEvidence(authorization, disclosure, observedDetail, tenantId, actorId, tenantContext)
+            || caller.Chatbot && references.FolderState != ReferenceState.Included)
+            return SafeDenial(correlationId, null);
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
         return Results.Json(
@@ -719,7 +734,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 new ContextActivationResponse(
                     detail.Lifecycle == ProjectLifecycle.Active,
                     detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
-                await ToCurrentProjectReferenceSummariesAsync(detail, httpContext, correlationId, cancellationToken).ConfigureAwait(false),
+                references.Summaries,
                 ToFreshness(detail.UpdatedAt, detail.Sequence)),
             ResponseJsonOptions);
     }
@@ -1775,6 +1790,10 @@ public static partial class ProjectsDomainServiceEndpoints
         }
 
         string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
+        string actorId = tenantContext.PrincipalId!;
+        var caller = LegacyReadCaller(httpContext, actorId);
+        if (!caller.IsAllowed) return SafeDenial(correlationId, null);
+        IProjectFolderDirectory? folders = caller.Chatbot ? httpContext.RequestServices.GetRequiredService<IProjectFolderDirectory>() : null;
         IReadOnlyList<ProjectListItem> projectedRows;
         try
         {
@@ -1790,6 +1809,7 @@ public static partial class ProjectsDomainServiceEndpoints
         bool includeQuarantined = httpContext.Request.Query["includeQuarantined"] == "true";
         if (includeQuarantined && !MayInspectLegacyQuarantine(httpContext)) return SafeDenial(correlationId, null);
         List<ProjectListItem> visible = [];
+        var observations = new Dictionary<string, (ProjectAuthorizationResult Authority, string Detail)>(StringComparer.Ordinal);
         foreach (ProjectListItem row in rows)
         {
             ProjectAuthorizationResult item = await authorizationGate.AuthorizeReadAsync(row.ProjectId, tenantContext, httpContext,
@@ -1798,7 +1818,18 @@ public static partial class ProjectsDomainServiceEndpoints
             if (!item.IsAllowed) continue;
             if (item.ProjectDetail is not { } detail || !HasCurrentLegacyReadAuthority(item))
                 return ReadModelUnavailable(correlationId, null);
-            if (IsLegacyQuarantined(detail) == includeQuarantined) visible.Add(row);
+            string observedDetail = JsonSerializer.Serialize(detail, ResponseJsonOptions);
+            if (caller.Chatbot)
+            {
+                ReferenceState folder = await ProjectReadQueryExecutor.ReadFolderStateAsync(detail, folders!, cancellationToken, correlationId).ConfigureAwait(false);
+                if (folder is ReferenceState.Stale or ReferenceState.Unavailable) return ReadModelUnavailable(correlationId, null);
+                if (folder != ReferenceState.Included) continue;
+            }
+            if (IsLegacyQuarantined(detail) == includeQuarantined)
+            {
+                visible.Add(row);
+                observations.Add(row.ProjectId, (item, observedDetail));
+            }
         }
         rows = visible;
         if (!await AuthorizeLegacyInspectionAsync(httpContext, tenantContext, correlationId,
@@ -1808,17 +1839,29 @@ public static partial class ProjectsDomainServiceEndpoints
 
         foreach (ProjectListItem row in rows)
         {
+            var observed = observations[row.ProjectId];
+            if (caller.Chatbot)
+            {
+                ReferenceState folder = await ProjectReadQueryExecutor.ReadFolderStateAsync(observed.Authority.ProjectDetail!, folders!, cancellationToken, correlationId).ConfigureAwait(false);
+                if (folder is ReferenceState.Stale or ReferenceState.Unavailable) return ReadModelUnavailable(correlationId, null);
+                if (folder != ReferenceState.Included) return SafeDenial(correlationId, null);
+            }
             ProjectAuthorizationResult finalRow = await authorizationGate.AuthorizeReadAsync(row.ProjectId, tenantContext, httpContext,
                 correlationId, null, cancellationToken).ConfigureAwait(false);
             if (finalRow.Retryable || finalRow.IsAllowed && (finalRow.ProjectDetail is null || !HasCurrentLegacyReadAuthority(finalRow)))
                 return ReadModelUnavailable(correlationId, null);
-            if (!finalRow.IsAllowed || IsLegacyQuarantined(finalRow.ProjectDetail!) != includeQuarantined)
+            if (!HasStableLegacyReadEvidence(observed.Authority, finalRow, observed.Detail, authoritativeTenantId, actorId, tenantContext)
+                || IsLegacyQuarantined(finalRow.ProjectDetail!) != includeQuarantined)
                 return SafeDenial(correlationId, null);
         }
         ProjectAuthorizationResult finalAuthority = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext,
             correlationId, null, cancellationToken).ConfigureAwait(false);
         if (finalAuthority.Retryable) return ReadModelUnavailable(correlationId, null);
-        if (!finalAuthority.IsAllowed || !HasCurrentLegacyReadAuthority(finalAuthority)) return SafeDenial(correlationId, null);
+        if (!finalAuthority.IsAllowed || !HasCurrentLegacyReadAuthority(finalAuthority)
+            || finalAuthority.TenantAccessResult is not { } finalTenant || authorization.TenantAccessResult is not { } initialTenant
+            || !ProjectContextQueryExecutor.HasStableTenantAuthorizationEvidence(initialTenant, finalTenant)
+            || !ProjectContextQueryExecutor.HasStableEventStoreAuthorizationEvidence(authorization.EventStoreValidationResult, finalAuthority.EventStoreValidationResult))
+            return SafeDenial(correlationId, null);
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
         return Results.Json(
@@ -2047,25 +2090,45 @@ public static partial class ProjectsDomainServiceEndpoints
     private static string ToWireLifecycle(Contracts.Ui.ProjectLifecycle lifecycle)
         => lifecycle.ToString().ToLowerInvariant();
 
-    private static async Task<IReadOnlyList<ProjectReferenceSummaryResponse>> ToCurrentProjectReferenceSummariesAsync(
+    private static async Task<(IReadOnlyList<ProjectReferenceSummaryResponse> Summaries, ReferenceState FolderState)> ToCurrentProjectReferenceSummariesAsync(
         ProjectDetailItem detail, HttpContext httpContext, string correlationId, CancellationToken token)
     {
         ReferenceState folderState = detail.ProjectFolder?.ReferenceState ?? ReferenceState.Pending;
-        if (detail.ProjectFolder is { FolderId: { } folderId, ReferenceState: ReferenceState.Included })
+        if (detail.ProjectFolder is { FolderId: not null, ReferenceState: ReferenceState.Included })
         {
             var directory = httpContext.RequestServices.GetRequiredService<IProjectFolderDirectory>();
-            var decision = await directory.RefreshFolderReferenceAsync(new ProjectId(detail.ProjectId), folderId, correlationId, token).ConfigureAwait(false);
-            folderState = decision.Outcome == ProjectFolderValidationOutcome.Accepted ? ReferenceState.Included : ReferenceState.Unavailable;
+            folderState = await ProjectReadQueryExecutor.ReadFolderStateAsync(detail, directory, token, correlationId).ConfigureAwait(false);
         }
-        return ToProjectReferenceSummaries(detail, folderState);
+        ReferenceState summaryState = detail.ProjectFolder is { FolderId: not null, ReferenceState: ReferenceState.Included }
+            && folderState != ReferenceState.Included ? ReferenceState.Unavailable : folderState;
+        return (ToProjectReferenceSummaries(detail, summaryState), folderState);
     }
+
+    private static (bool Chatbot, bool IsAllowed) LegacyReadCaller(HttpContext context, string actor)
+    {
+        if (context.User.Identity is not ClaimsIdentity { IsAuthenticated: true } identity) return (false, true);
+        ClaimsPrincipal principal = new(identity);
+        DualPrincipalIdentity caller = DualPrincipalClaimsHelper.Extract(principal, actor);
+        bool chatbot = caller.AuthenticatedWorkloadId == "chatbot";
+        return (chatbot, !chatbot || ProjectReadQueryAdmission.IsChatbot(caller.AuthenticatedWorkloadId, caller.IsDelegated, caller.DelegationId, principal));
+    }
+
+    private static bool HasStableLegacyReadEvidence(ProjectAuthorizationResult initial, ProjectAuthorizationResult final,
+        string observedDetail, string tenantId, string actorId, IProjectTenantContextAccessor tenant)
+        => final.IsAllowed && HasCurrentLegacyReadAuthority(final) && final.ProjectDetail is not null
+            && tenant.AuthoritativeTenantId == tenantId && tenant.PrincipalId == actorId
+            && initial.TenantAccessResult is { } before && final.TenantAccessResult is { } after
+            && ProjectContextQueryExecutor.HasStableTenantAuthorizationEvidence(before, after)
+            && ProjectContextQueryExecutor.HasStableEventStoreAuthorizationEvidence(initial.EventStoreValidationResult, final.EventStoreValidationResult)
+            && observedDetail == JsonSerializer.Serialize(final.ProjectDetail, ResponseJsonOptions);
 
     private static bool IsLegacyQuarantined(ProjectDetailItem detail)
         => detail.Lifecycle == ProjectLifecycle.Active
             && detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: not null };
 
     private static bool MayInspectLegacyQuarantine(HttpContext context)
-        => (context.User.IsInRole("TenantProjectAdministrator") || context.User.HasClaim("projects:role", "TenantProjectAdministrator"))
+        => (context.User.IsInRole("TenantProjectAdministrator") || context.User.HasClaim("role", "TenantProjectAdministrator")
+            || context.User.HasClaim("projects:role", "TenantProjectAdministrator"))
             && context.User.HasClaim("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission);
 
     private static IReadOnlyList<ProjectReferenceSummaryResponse> ToProjectReferenceSummaries(ProjectDetailItem detail, ReferenceState folderState)

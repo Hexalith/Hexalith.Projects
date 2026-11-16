@@ -233,6 +233,37 @@ public sealed partial class GetConversationStartSetupTests
         }
     }
 
+    [Theory]
+    [InlineData("conversations")]
+    [InlineData("conversations/")]
+    [InlineData("CONVERSATIONS")]
+    [InlineData("Conversations/")]
+    public async Task ConversationCursorAllowanceFollowsAspNetRouteMatching(string route)
+    {
+        var app = await StartAppAsync("tenant-a", "principal-a", null);
+        try
+        {
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+            using var response = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}/{route}?cursor=opaque-cursor", TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task NonConversationCursorIsRejectedAfterAuthorization()
+    {
+        var app = await StartAppAsync("tenant-a", "principal-a", null);
+        try
+        {
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+            using var response = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}/context?conversationId=bound-conversation&cursor=opaque-cursor", TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldContain("cursor");
+        }
+        finally { await StopAsync(app); }
+    }
+
     private static string AssertQueryResponseHeaders(HttpResponseMessage response)
     {
         response.Headers.CacheControl.ShouldNotBeNull().NoStore.ShouldBeTrue();

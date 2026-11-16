@@ -1,0 +1,416 @@
+{
+  "assemblies": [
+    {
+      "environment": "64-bit (x64) .NET 11.0.0 [collection-per-class, parallel (collections, 14 threads)]",
+      "id": "93fd6b9b-dcca-4991-85fa-873df9822945",
+      "name": "/tmp/hexalith-job.59kKahgg/eventstore-contracts/tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net11.0/Hexalith.EventStore.Contracts.Tests.dll",
+      "run-date": "2026-11-16",
+      "run-time": "21:48:09",
+      "start-rtf": "2026-11-16T21:48:09.5940159+00:00",
+      "test-framework": "xUnit.net v3 4.0.3+384aa7f0b4",
+      "target-framework": ".NETCoreApp,Version=v11.0",
+      "errors": "0",
+      "failed": "52",
+      "finish-rtf": "2026-11-16T21:51:37.9463480+00:00",
+      "not-run": "0",
+      "passed": "1650",
+      "skipped": "2",
+      "time": "208.366",
+      "time-rtf": "00:03:28.3660000",
+      "total": "1704"
+    }
+  ],
+  "namespace_results": {
+    "Hexalith.EventStore.Contracts.Tests.Packaging": {
+      "Pass": 322,
+      "Fail": 52,
+      "Skip": 2
+    },
+    "Hexalith.EventStore.Contracts.Tests.Events": {
+      "Pass": 89
+    },
+    "Hexalith.EventStore.Contracts.Tests.Commands": {
+      "Pass": 74
+    },
+    "Hexalith.EventStore.Contracts.Tests.Queries": {
+      "Pass": 163
+    },
+    "Hexalith.EventStore.Contracts.Tests.Projections": {
+      "Pass": 28
+    },
+    "Hexalith.EventStore.Contracts.Tests.Authorization": {
+      "Pass": 15
+    },
+    "Hexalith.EventStore.Contracts.Tests.Security": {
+      "Pass": 256
+    },
+    "Hexalith.EventStore.Contracts.Tests.Streams": {
+      "Pass": 28
+    },
+    "Hexalith.EventStore.Contracts.Tests.Identity": {
+      "Pass": 123
+    },
+    "Hexalith.EventStore.Contracts.Tests.Results": {
+      "Pass": 17
+    },
+    "Hexalith.EventStore.Contracts.Tests.Routing": {
+      "Pass": 233
+    },
+    "Hexalith.EventStore.Contracts.Tests.Rest": {
+      "Pass": 53
+    },
+    "Hexalith.EventStore.Contracts.Tests.Deployment": {
+      "Pass": 130
+    },
+    "Hexalith.EventStore.Contracts.Tests.Snapshots": {
+      "Pass": 2
+    },
+    "Hexalith.EventStore.Contracts.Tests.Aggregates": {
+      "Pass": 2
+    },
+    "Hexalith.EventStore.Contracts.Tests.Replay": {
+      "Pass": 13
+    },
+    "Hexalith.EventStore.Contracts.Tests.Validation": {
+      "Pass": 14
+    },
+    "Hexalith.EventStore.Contracts.Tests.Problems": {
+      "Pass": 1
+    },
+    "Hexalith.EventStore.Contracts.Tests.Reminders": {
+      "Pass": 33
+    },
+    "Hexalith.EventStore.Contracts.Tests.Effects": {
+      "Pass": 17
+    },
+    "Hexalith.EventStore.Contracts.Tests.Messages": {
+      "Pass": 37
+    }
+  },
+  "failed_cases": [
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.PackageOwnershipGovernanceTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.PackageOwnershipGovernanceTests.TenantsGatewayAndDomainServiceUseComplementaryModeEdges",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Tenants source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.CommitMessagePolicyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.CommitMessagePolicyTests.CopilotInstructionsDelegateCommitlintContractToSharedInstructions",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.AI.Tools source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContainerPublishingGovernanceTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContainerPublishingGovernanceTests.ReleaseCallerPinsSharedExecutionAndSameRunPublicationAuthorityInputs",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.CorrectiveOciProvenanceReleaseTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.CorrectiveOciProvenanceReleaseTests.PublicationAuthorityFixturesPassWithoutSkippedCases",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterPreservesAllOtherAuthorityChecksAsync(mutation: \\\"none\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterPreservesAllOtherAuthorityChecksAsync(mutation: \\\"raw\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterPreservesAllOtherAuthorityChecksAsync(mutation: \\\"raw-version\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterPreservesAllOtherAuthorityChecksAsync(mutation: \\\"effective\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterPreservesAllOtherAuthorityChecksAsync(mutation: \\\"crlf-authority\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.RootPackagePropsDelegatesAllVersionsToSharedCatalogAsync",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterRejectsChangedSharedAuthorityAsync(fileName: \\\"validate-consumer-package-authority.ps1\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageAdapterRejectsChangedSharedAuthorityAsync(fileName: \\\"validate-central-package-versions.ps1\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.Contracts_package_pins_commons_unique_ids_centrally",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedConsumerAuthorityValidatorRejectsExecutableOverrideAsync(metadata: \\\"Version\\\", tracked: False)",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedConsumerAuthorityValidatorRejectsExecutableOverrideAsync(metadata: \\\"VersionOverride\\\", tracked: False)",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedConsumerAuthorityValidatorRejectsExecutableOverrideAsync(metadata: \\\"Version\\\", tracked: True)",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedConsumerAuthorityValidatorRejectsExecutableOverrideAsync(metadata: \\\"VersionOverride\\\", tracked: True)",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedConsumerAuthorityValidatorPassesForEveryTrackedMsBuildSurfaceAsync",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"NBomber.Http\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"xunit.v3.extensibility.core\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"System.CommandLine\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"ModelContextProtocol\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"Microsoft.Extensions.TimeProvider.Testing\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"NBomber\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.SharedCatalogOwnsRequiredPackageExactlyOnce(packageId: \\\"Microsoft.Playwright\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"restored\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"missing\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"duplicate\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"extra\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"action\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"version\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"identity-case\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"item-condition\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"group-condition\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"project-condition\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"unexpected-attribute\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"nested-version\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ContractsPackageDependencyTests.AuthorizedRootPackageExceptionRejectsChangedDeclarationAsync(mutation: \\\"namespace\\\")",
+      "result": "Fail",
+      "message": "System.IO.InvalidDataException : Source path /tmp/hexalith-job.59kKahgg/eventstore-contracts/references/Hexalith.Builds does not own its Git worktree; Git discovered /tmp/hexalith-job.59kKahgg/eventstore-contracts."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.TrustedEffectPackageContractTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.TrustedEffectPackageContractTests.NamedPackagesExposeTrustedEffectContracts",
+      "result": "Skip",
+      "message": null
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_targets_live_project_outside_release_gate",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"full-server-tests\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"category-filter\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"missing-cli-tag\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"missing-runtime-tag\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"runtime-uses-cli-pin\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"missing-legacy-fallback\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"full-history-checkout\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"misplaced-shallow-depth\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"checkout-env-shallow-depth\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"published-shallow-history\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"published-missing-history\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"release-coupling-workflow\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: \\\"release-coupling-project\\\")",
+      "result": "Fail",
+      "message": "System.IO.DirectoryNotFoundException : No initialized declared Hexalith.Builds source exists for /tmp/hexalith-job.59kKahgg/eventstore-contracts. Supply the required workspace dependency or an explicit source override."
+    },
+    {
+      "type": "Hexalith.EventStore.Contracts.Tests.Packaging.PackagedReminderApiTests",
+      "name": "Hexalith.EventStore.Contracts.Tests.Packaging.PackagedReminderApiTests.PackagedReminderApiRunsWithoutWorksTypes",
+      "result": "Skip",
+      "message": null
+    }
+  ]
+}

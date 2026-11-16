@@ -7,7 +7,6 @@ namespace Hexalith.Projects.Server.Folders;
 
 using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Hexalith.Projects.Contracts.Identifiers;
 
 /// <summary>
@@ -20,8 +19,8 @@ internal sealed class FoldersV1ProjectReadDirectory(HttpClient client, IProjectF
 {
     /// <summary>The named HTTP client carrying the authenticated actor to retained owner reads.</summary>
     internal const string ClientName = "projects-retained-folder-v1-reads";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
-    { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
+    private const int MaximumResponseBytes = 16 * 1024;
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     /// <inheritdoc/>
     // Existing write-time validation remains on its original adapter and contract.
@@ -36,13 +35,17 @@ internal sealed class FoldersV1ProjectReadDirectory(HttpClient client, IProjectF
         ArgumentNullException.ThrowIfNull(projectId);
         if (string.IsNullOrWhiteSpace(folderId) || string.IsNullOrWhiteSpace(correlationId))
             return new(ProjectFolderValidationOutcome.ValidationFailed, correlationId);
+        // Streaming response bodies remain inside the client's existing timeout budget.
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        deadline.CancelAfter(client.Timeout);
+        CancellationToken readToken = deadline.Token;
         try
         {
             string resource = "api/v1/folders/" + Uri.EscapeDataString(folderId);
             using HttpResponseMessage lifecycleResponse = await SendAsync(resource + "/lifecycle-status", correlationId,
-                "eventually_consistent", cancellationToken).ConfigureAwait(false);
+                "eventually_consistent", readToken).ConfigureAwait(false);
             if (!lifecycleResponse.IsSuccessStatusCode) return new(Status(lifecycleResponse.StatusCode), correlationId);
-            FoldersV1ReadLifecycle? lifecycle = await ReadAsync<FoldersV1ReadLifecycle>(lifecycleResponse.Content, cancellationToken).ConfigureAwait(false);
+            FoldersV1ReadLifecycle? lifecycle = await ReadAsync<FoldersV1ReadLifecycle>(lifecycleResponse.Content, readToken).ConfigureAwait(false);
             if (lifecycle?.FolderId != folderId || !Current(lifecycle.Freshness, "eventually_consistent"))
                 return new(lifecycle?.Freshness.Stale == true ? ProjectFolderValidationOutcome.Stale : ProjectFolderValidationOutcome.Unavailable, correlationId);
             if (lifecycle.Archived || lifecycle.LifecycleState is "failed" or "inaccessible" or "unknown_provider_outcome")
@@ -50,9 +53,9 @@ internal sealed class FoldersV1ProjectReadDirectory(HttpClient client, IProjectF
             if (lifecycle.LifecycleState is not ("requested" or "ready" or "reconciliation_required"))
                 return new(ProjectFolderValidationOutcome.Unavailable, correlationId);
             using HttpResponseMessage permissionsResponse = await SendAsync(resource + "/effective-permissions", correlationId,
-                "read_your_writes", cancellationToken).ConfigureAwait(false);
+                "read_your_writes", readToken).ConfigureAwait(false);
             if (!permissionsResponse.IsSuccessStatusCode) return new(Status(permissionsResponse.StatusCode), correlationId);
-            FoldersV1ReadPermissions? permissions = await ReadAsync<FoldersV1ReadPermissions>(permissionsResponse.Content, cancellationToken).ConfigureAwait(false);
+            FoldersV1ReadPermissions? permissions = await ReadAsync<FoldersV1ReadPermissions>(permissionsResponse.Content, readToken).ConfigureAwait(false);
             if (permissions?.FolderId != folderId || !Current(permissions.Freshness, "read_your_writes")
                 || permissions.Permissions is null || permissions.Permissions.Any(value => value is not ("read" or "write" or "administer"))
                 || permissions.Permissions.Distinct(StringComparer.Ordinal).Count() != permissions.Permissions.Count)
@@ -70,13 +73,23 @@ internal sealed class FoldersV1ProjectReadDirectory(HttpClient client, IProjectF
         using var request = new HttpRequestMessage(HttpMethod.Get, route);
         request.Headers.TryAddWithoutValidation("X-Correlation-Id", correlationId);
         request.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", freshness);
-        return await client.SendAsync(request, token).ConfigureAwait(false);
+        return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false);
     }
 
     private static async Task<T?> ReadAsync<T>(HttpContent content, CancellationToken token)
     {
+        if (content.Headers.ContentLength is > MaximumResponseBytes) return default;
         using Stream body = await content.ReadAsStreamAsync(token).ConfigureAwait(false);
-        using JsonDocument document = await JsonDocument.ParseAsync(body, cancellationToken: token).ConfigureAwait(false);
+        byte[] bytes = new byte[MaximumResponseBytes + 1];
+        int length = 0;
+        while (length < bytes.Length)
+        {
+            int read = await body.ReadAsync(bytes.AsMemory(length), token).ConfigureAwait(false);
+            if (read == 0) break;
+            length += read;
+        }
+        if (length > MaximumResponseBytes) return default;
+        using JsonDocument document = JsonDocument.Parse(bytes.AsMemory(0, length));
         return UniqueMembers(document.RootElement) ? document.RootElement.Deserialize<T>(Json) : default;
     }
 

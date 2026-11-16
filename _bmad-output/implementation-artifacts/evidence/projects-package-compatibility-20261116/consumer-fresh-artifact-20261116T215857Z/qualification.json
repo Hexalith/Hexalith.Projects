@@ -1,0 +1,194 @@
+{
+  "kind": "qualification-only",
+  "status": "partial",
+  "recordedAt": "2026-11-16T21:58:57.984610+00:00",
+  "source": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+  "verificationScope": "focused-contracts-only",
+  "contractsCandidate": {
+    "version": "5.3.0",
+    "sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+    "pathRelativeToImmutablePacket": "producer-replay-20261116T214600Z/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg",
+    "producerSource": "0be0c922883d4ea61b18e843e24472162261d934"
+  },
+  "materialization": "Exact committed product trees; root-declared dependencies are ordinary archives, with no submodule initialization. Agent skills and retained planning/evidence are not build inputs and are omitted.",
+  "sources": {
+    ".": {
+      "revision": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+      "tree": "e3d5ecdb0851d5d1e1d617b404db67b4f0e964ba",
+      "selectedArchiveSha256": "509b86a8561e546028966565fbdc1453701b8770dba8eac23e95ca4053352123",
+      "omittedTopLevelNonProductTrees": [
+        ".agent",
+        ".agents",
+        ".claude",
+        "_bmad",
+        "_bmad-output",
+        "references"
+      ]
+    },
+    "references/Hexalith.Builds": {
+      "revision": "c751d23aa4e73e8f7d74579db26a9fcf1df4c8e5",
+      "tree": "585e3645fabdfd6b5a5da7ee438f656e20b667bf",
+      "selectedArchiveSha256": "01e04eb49a4622ab47f0ec3873ce82c697d24ff0983c892f59407932b040906c",
+      "omittedTopLevelNonProductTrees": [
+        ".claude",
+        "_bmad-output",
+        "references"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "label": "candidate-public-api-comparison",
+      "command": [
+        "dnx",
+        "dotnet-inspect@0.27.0",
+        "-y",
+        "--",
+        "diff",
+        "--library",
+        "/tmp/hexalith-job.Io2eqCLV/original-Hexalith.EventStore.Contracts.dll../tmp/hexalith-job.Io2eqCLV/selected-Hexalith.EventStore.Contracts.dll",
+        "--json"
+      ],
+      "exitCode": 0,
+      "seconds": 23.19,
+      "log": "candidate-public-api-comparison.log",
+      "logSha256": "ae8d6b126c1900a672e3d80f21028566180a406a74528f328c8798de7fd6c5df"
+    },
+    {
+      "label": "candidate-contracts-build",
+      "command": [
+        "dotnet",
+        "build",
+        "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-m:1",
+        "--disable-build-servers",
+        "-p:RestoreConfigFile=/tmp/hexalith-job.Io2eqCLV/NuGet.qualification.Config"
+      ],
+      "exitCode": 0,
+      "seconds": 8.965,
+      "log": "candidate-contracts-build.log",
+      "logSha256": "befe2e5da38de08316aee4a4aa27403d9b4c120eb683ab92143316895b24c94e"
+    },
+    {
+      "label": "candidate-contract-tests-build",
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+        "--configuration",
+        "Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-m:1",
+        "--disable-build-servers",
+        "-p:RestoreConfigFile=/tmp/hexalith-job.Io2eqCLV/NuGet.qualification.Config"
+      ],
+      "exitCode": 0,
+      "seconds": 10.324,
+      "log": "candidate-contract-tests-build.log",
+      "logSha256": "d666f998acbf552349355e8cdc626f4e5171122f09c9f2a35587b44a099de785"
+    },
+    {
+      "label": "candidate-contract-tests-run",
+      "command": [
+        "dotnet",
+        "/tmp/hexalith-job.Io2eqCLV/projects/tests/Hexalith.Projects.Contracts.Tests/bin/Release/net11.0/Hexalith.Projects.Contracts.Tests.dll",
+        "-xml",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/consumer-fresh-artifact-20261116T215857Z/candidate-contract-tests.xml"
+      ],
+      "exitCode": 0,
+      "seconds": 1.636,
+      "log": "candidate-contract-tests-run.log",
+      "logSha256": "7957407737804b4bdc47f6902c35beb3a67e02368d6b45ad4fcb175fa8ff3903",
+      "tests": {
+        "total": 207,
+        "errors": 0,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0
+      }
+    }
+  ],
+  "rootGitlinks": {
+    "references/Hexalith.AI.Tools": "cfd1ebea92587cdea41b9aa2cff47358bf2f32f6",
+    "references/Hexalith.Builds": "c751d23aa4e73e8f7d74579db26a9fcf1df4c8e5",
+    "references/Hexalith.Commons": "49187d47da882d5470deac982bb383486c90202c",
+    "references/Hexalith.Conversations": "f1a2b3da468760d4188f604045deb098af8ead52",
+    "references/Hexalith.EventStore": "0be0c922883d4ea61b18e843e24472162261d934",
+    "references/Hexalith.Folders": "f2bf547b457a4db3e7eb65d425a22f62dfb9f09a",
+    "references/Hexalith.FrontComposer": "f8c15a483257d74686bd1feabc8dc627d7d6648b",
+    "references/Hexalith.McpCli": "5008de388c5e37257ca78e48d8afe899cf7aaa2a",
+    "references/Hexalith.Memories": "262232e498511b51b5d01e769725ecc299519238",
+    "references/Hexalith.Parties": "0f261ccd3b461102dcac35da2e074d15a195ebb4",
+    "references/Hexalith.Platform": "ac272053bbc05bbdf2be236608c939787aec58c5",
+    "references/Hexalith.Tenants": "0e0e85fd646da904c5528854e271b71a2b0b9066"
+  },
+  "sourceTreeSha256": "4ce577a34328d87bdc375e538d3d205080ddbc48b300ff34c1c72075eed70c98",
+  "changedFiles": {
+    "Directory.Packages.props": {
+      "beforeSha256": "7fab9ed9ed3927248f7b755e42b9cca2d41857528206e950c4ee21694c7c59c1",
+      "afterSha256": "d3b15b81e31073b4d161fd3a6399c618ae93a9bf361cf938210e1f2856b1cf0a"
+    },
+    "tools/release-packages.json": {
+      "beforeSha256": "71d6bb332e4152e201c42ca45d8e743a0f2f01b72df057c25669d65646886edb",
+      "afterSha256": "ee692784ee2b9d1f89a758c74bb4476e1087400ee9f39ebea7e318a043c089e1"
+    }
+  },
+  "unchangedFamilyProperty": "HexalithEventStoreVersion=5.1.1",
+  "patchSha256": "8a8d17efaf169b46dc4b8956913d89825c1aa4317a87277ef759ae64a035b4ba",
+  "completeTreeProof": {
+    "pathRelativeToImmutablePacket": "projects/candidate-tree.json",
+    "sha256": "3ab96a34223c0e84101d6e0b9595e616daf3953648b69c425ab3804ff84f7387",
+    "candidateTree": "61450315ae07ad6f9e34dbca31d815fae336b480",
+    "reused": true
+  },
+  "priorArtifactQualification": {
+    "pathRelativeToImmutablePacket": "projects/qualification.json",
+    "sha256": "b978b84028a337ab4c62065e5dd65959559def957b52c4a428952f08b3a6ffb2",
+    "candidateSha256": "e367e3e9a8d4a5d68942ed56b380acaddaeb4368f19273e6481c0ce2fce941ce",
+    "fullReleaseBuild": "previously failed with 13 subsequent errors; not rerun for this archive",
+    "otherLibraryBuilds": "previous artifact qualification only; not rerun for this archive",
+    "sameProducerSourceAndPublicApi": true,
+    "inspectionToolVersion": "0.27.0",
+    "publicApiComparisonSummary": {
+      "changedTypeCount": 0,
+      "addedTypeCount": 0,
+      "removedTypeCount": 0,
+      "changedMemberCount": 0,
+      "breakingCount": 0,
+      "additiveCount": 0,
+      "potentiallyBreakingCount": 0
+    }
+  },
+  "qualificationConfig": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<configuration>\n  <packageSources><clear />\n    <add key=\"unpublished-qualification-only\" value=\"${TMPDIR}/candidate-feed\" />\n    <add key=\"nuget.org\" value=\"https://api.nuget.org/v3/index.json\" protocolVersion=\"3\" />\n  </packageSources>\n  <packageSourceMapping>\n    <packageSource key=\"unpublished-qualification-only\"><package pattern=\"Hexalith.EventStore.Contracts\" /></packageSource>\n    <packageSource key=\"nuget.org\"><package pattern=\"*\" /></packageSource>\n  </packageSourceMapping>\n</configuration>\n",
+  "contractsTestXml": {
+    "path": "candidate-contract-tests.xml",
+    "sha256": "f5f322d9d68ded2f8dacc62e086067d179806e931b28c83e99b7fd313f8cefbe"
+  },
+  "contractsResolvedPackages": [
+    "ByteAether.Ulid/1.4.2",
+    "Hexalith.Commons.UniqueIds/3.0.0",
+    "Hexalith.EventStore.Contracts/5.3.0",
+    "Hexalith.McpCli.Abstractions/3.0.0"
+  ],
+  "restoredCandidateSha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+  "contractsDependencyGraph": {
+    "net11.0": {
+      "ByteAether.Ulid/1.4.2": {},
+      "Hexalith.Commons.UniqueIds/3.0.0": {
+        "ByteAether.Ulid": "1.4.2"
+      },
+      "Hexalith.EventStore.Contracts/5.3.0": {
+        "ByteAether.Ulid": "1.4.2",
+        "Hexalith.Commons.UniqueIds": "3.0.0"
+      },
+      "Hexalith.McpCli.Abstractions/3.0.0": {}
+    }
+  },
+  "focusedContractsPassed": true,
+  "completeReleaseBuild": "not run for this archive; prior independent blockers remain",
+  "g6": "not run",
+  "hostedAcceptance": false
+}

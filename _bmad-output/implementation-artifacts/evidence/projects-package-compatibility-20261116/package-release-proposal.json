@@ -1,0 +1,185 @@
+{
+  "schema": "hexalith.projects-package-compatibility-release-proposal.v1",
+  "recorded_at": "2026-11-16T21:25:14.483539+00:00",
+  "status": "awaiting-package-owner-release-proposal-approval",
+  "approved_feed": "https://api.nuget.org/v3/index.json",
+  "packages": [
+    {
+      "id": "Hexalith.EventStore.Contracts",
+      "version": "5.3.0",
+      "owner": "Hexalith.EventStore package owner",
+      "repository": "Hexalith/Hexalith.EventStore",
+      "source": "0be0c922883d4ea61b18e843e24472162261d934",
+      "builds_source": "e2bbbd0893f586e4d447ef8358ff747ea3d34435",
+      "artifact": "producer-replay-20261116T214600Z/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg",
+      "qualification_archive_sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+      "signed": false,
+      "dependencies": {
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "ByteAether.Ulid": "1.4.2"
+      },
+      "payload_entries_sha256": {
+        "Hexalith.EventStore.Contracts.nuspec": "9f53aa07be22a59a751c2d4a14d5ab97c79d1284edc3677ab890e88b30b475aa",
+        "README.md": "31d1cbf7e617cdeb38dcca67eada11d5c1d592f7ede9b9813000c26a4bd5e497",
+        "[Content_Types].xml": "99f6d3f307e5c825ccd2ad55ab0b860eed3f607afab048b3a7bf79fd8d365855",
+        "_rels/.rels": "ff09ede05b132f352960a39e3bf4fafa3d7487a7ffdd26fe4eb7e3e9a04ad0db",
+        "buildTransitive/Hexalith.EventStore.Contracts.targets": "8d88cb4885ebde15cdb5b16b26fea3dacfb21c3d0eb74a6da3e7878fbec4f54a",
+        "lib/net11.0/Hexalith.EventStore.Contracts.dll": "928256cf4b3a21e52aebd9c8461fd51d357b0fcce3e2a8e2427f3db213a056d0",
+        "lib/net11.0/Hexalith.EventStore.Contracts.xml": "5da04ed4a46d4f65881ed5834551d35a44de4a02dde6b136507653f6c5bace55",
+        "package/services/metadata/core-properties/nuget.psmdcp": "31356b0d2898f6c28f0c9f78454ec6504dc992696523ffd4813a606ba6f61353"
+      },
+      "qualification_scope": "fresh public-cache package build, binary API, query/deployment source tests and exact-package Projects Contracts consumer; full owner packaging gate failed and remains required",
+      "superseded_initial_qualification_archive": {
+        "artifact": "unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg",
+        "sha256": "e367e3e9a8d4a5d68942ed56b380acaddaeb4368f19273e6481c0ce2fce941ce",
+        "preserved": true
+      }
+    },
+    {
+      "id": "Hexalith.Projects.Contracts",
+      "version": "2.0.0-story66.3",
+      "owner": "Hexalith.Projects package owner under existing DW-82 prerequisites",
+      "repository": "Hexalith/Hexalith.Projects",
+      "source": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+      "builds_source": "801f268cd1b37ecae41d4fb20d115c055b4c5793",
+      "artifact": "unpublished-candidates/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+      "qualification_archive_sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+      "source_binding": "119 exact committed Contracts source files and exact-source rebuild payload equivalence; no full ZIP/DLL byte-reproduction claim",
+      "dependencies": {
+        "Hexalith.EventStore.Contracts": "5.1.0",
+        "Hexalith.McpCli.Abstractions": "2.0.1",
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "ByteAether.Ulid": "1.4.2"
+      },
+      "signed": false,
+      "payload_entries_sha256": {
+        "Hexalith.Projects.Contracts.nuspec": "6e96405bd1f2556bdb9d512ab69d4750ce2ce7587171660aa13e88f24b8c1e5f",
+        "README.md": "d093eb74092a75dfa6ab1d374c8a61da54533e5cce0a9855930aa6c238cb8e45",
+        "[Content_Types].xml": "1a6670ec6cb20a6520f5d6b9be859fcd7416bef2ba0e8e40bfbf0aaab5409e4f",
+        "_rels/.rels": "4d031362e43b43bd6226012303d6c2d4f80cbe9e02f772a6232b193f75a38ada",
+        "lib/net11.0/Hexalith.Projects.Contracts.dll": "a7b5a51bb87a026827e023c954e5747c275eef8376940cf5fa267898764c66f3",
+        "package/services/metadata/core-properties/nuget.psmdcp": "7cfbbc25bfc3a25c18c5215ddc0556f802313954a2c85cee720a5b1f9bbb559a"
+      }
+    }
+  ],
+  "consumer": {
+    "repository": "Hexalith/Hexalith.Projects",
+    "base": "cd1fcd62e3180e5b037850cacb1c1756668b2866",
+    "result_tree": "080313f55def2d0972ab5cbaecfbaf5b5d27b7b3",
+    "changed_paths": [
+      "Directory.Packages.props",
+      "tools/release-packages.json"
+    ],
+    "eventstore_family_pin_preserved": "5.1.1",
+    "mcpcli_source_preserved": "5008de388c5e37257ca78e48d8afe899cf7aaa2a",
+    "direct_builds_preserved": "c751d23aa4e73e8f7d74579db26a9fcf1df4c8e5",
+    "delivered": false,
+    "prior_qualified_base": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+    "prior_result_tree": "61450315ae07ad6f9e34dbca31d815fae336b480",
+    "current_source_requalification": "current-source-candidate-qualification.json",
+    "concurrent_committed_changes_preserved": 64,
+    "compiled_input_blobs_unchanged": 578
+  },
+  "qualification": {
+    "original_attribute_failure_resolved_locally": true,
+    "pinned_mcp_restore_build_discovery_passed_locally": true,
+    "contracts_tests_passed": 207,
+    "eventstore_focused_tests_passed": 165,
+    "solution_restore_passed": true,
+    "complete_release_build": "prior independent artifact qualification failed13 subsequent errors; not rerun for final archive, whose public APIs are identical",
+    "hosted_acceptance": false,
+    "fresh_hosted_correction_run": null,
+    "producer_private_cache_and_all_new_api_family_tests": "fresh package build and all293 Queries/Deployment cases passed; full1704-case suite failed52 Packaging cases and skipped2",
+    "producer_full_contracts_suite": {
+      "total": 1704,
+      "passed": 1650,
+      "failed": 52,
+      "skipped": 2,
+      "status": "failed; not release gate acceptance",
+      "failure_scope": "Packaging namespace requires Git-backed owner dependencies and full package-contract fixtures",
+      "non_packaging_passed": 1328,
+      "new_api_families": {
+        "Queries": 163,
+        "Deployment": 130
+      },
+      "evidence": "producer-replay-20261116T214600Z/full-contracts-scope-summary.json"
+    },
+    "producer_existing_hosted_ci": {
+      "source": "0be0c922883d4ea61b18e843e24472162261d934",
+      "run": 43944683003,
+      "compilation": "success",
+      "overall": "cancelled",
+      "complete_tests_accepted": false
+    },
+    "final_exact_artifact_consumer": {
+      "evidence": "consumer-fresh-artifact-20261116T215857Z/qualification.json",
+      "contracts_tests": 207,
+      "failed": 0,
+      "skipped": 0,
+      "archive_sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+      "status": "focused-contracts-passed; overall partial"
+    }
+  },
+  "subsequent_failures": [
+    {
+      "dependency": "Hexalith.Conversations.Contracts/2.0.0",
+      "errors": 6,
+      "members": [
+        "GetConversationQuery.AdvisoryMetadataOnly",
+        "GetConversationQuery.QueryType",
+        "GetConversationQuery.NativeMembershipOnly",
+        "GetConversationQuery.NativeMembershipPurpose",
+        "ConversationDetailResult.ReadPurpose"
+      ],
+      "pin_changed": false
+    },
+    {
+      "selection": "Hexalith.EventStore.Client and RestApi.Generators/5.1.1",
+      "errors": 7,
+      "operation": "typed QueryAsync extension calls not generated/resolved",
+      "pin_changed": false
+    }
+  ],
+  "approval_requested": {
+    "publication_only_for_exact_coordinates_and_sources": true,
+    "owner_release_gates_remain_required": true,
+    "approved_signing_and_public_payload_verification_required": true,
+    "new_feed": false,
+    "credentials_broadened": false,
+    "gate_bypass": false,
+    "full_release_or_v2_activation": false,
+    "container_publication_or_deployment": false,
+    "immediate_publication_before_remaining_owner_release_gates": false,
+    "decision": "Approve the two package owners taking these exact sources, coordinates and qualified payloads through the existing required release/signing process; actual upload remains conditional on all mandatory release gates"
+  },
+  "pending": [
+    "package-owner approval",
+    "owner-controlled publication and signed public payload verification",
+    "fresh-source qualification of necessary pin correction including retained subsequent blockers",
+    "qualified CiCd narrow delivery support if required; existing closed profiles unchanged",
+    "fresh exact-delivery hosted CI and G-6 evidence"
+  ],
+  "evidence_sha256": {
+    "eventstore-contracts-candidate-qualification.json": "5b1cda93abe6b94abbf781039c68314510281f1bd314bf01d12e72bd655d259c",
+    "mcp/historical-candidate-qualification.json": "1491876dae82477dbeeed198b9eb708e38c3418f3566de8f6cdea7a1662fbf43",
+    "mcp/historical-payload-equivalence.json": "63a4df1fb0a2902cead771319b86e647cd5221c6ddcc759bb8df23013870e706",
+    "mcp/historical-source-provenance.json": "7ae10b92899a91201635cdd4ea3f72d7256e46cbcae749419f55d2fa29c0023b",
+    "projects/minimal-contracts.patch": "8a8d17efaf169b46dc4b8956913d89825c1aa4317a87277ef759ae64a035b4ba",
+    "projects/qualification.json": "b978b84028a337ab4c62065e5dd65959559def957b52c4a428952f08b3a6ffb2",
+    "projects/candidate-tree.json": "3ab96a34223c0e84101d6e0b9595e616daf3953648b69c425ab3804ff84f7387",
+    "consumer-fresh-artifact-20261116T215857Z/qualification.json": "bf0459b58b1a59be1db1e128d3db97cdedaf6453fcba0bb55b875a6fe36469d7",
+    "producer-replay-20261116T214600Z/eventstore-contracts-candidate-qualification.json": "a467c59779dace943d75cfb801bbf43095607ade3dd12ec9ea115f9fb02be8b2",
+    "producer-replay-20261116T214600Z/full-contracts-scope-summary.json": "27b843bfbf47876bcced1a99f202b11c1ef632a079a0a0f6e07b2dd2bd3a57e3",
+    "helper-hardening-verification.json": "ebab29ce171268f593f343179d344bff87b4075c53450737a244ed5839cf9d23",
+    "current-source-candidate-qualification.json": "a93b70a567e517260aa1d2de36b0fcc79a88c4adcdbe123e3cbb9c156d76a58c"
+  },
+  "public_payload_verification": {
+    "require_coordinate_source_and_dependency_identity": true,
+    "allow_added_entry_only": ".signature.p7s",
+    "zip_container_metadata_may_change": true,
+    "require_every_qualified_payload_entry_byte_identical": true,
+    "compiled_or_nuspec_payload_change_requires_new_qualification": true,
+    "retain_unsigned_and_signed_archive_hashes_and_owner_provenance": true
+  },
+  "final_public_coordinate_availability": "final-public-coordinate-availability.json"
+}

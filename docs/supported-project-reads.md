@@ -8,7 +8,7 @@ first-response authority; list/open admission does not. Session fallback remains
 Project-only calls receive no usable context. Legacy descriptive list/open calls require
 explicit inspection, permission and a durable audit; older client signatures remain callable.
 Legacy refresh carries the named Conversation through the maintenance action and performs
-its final native membership check after owner reads. The [v3 source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v3/read-cutover-final.json)
+its final native membership check after owner reads. The [v3 source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json)
 retains 77 passing authenticated comparisons and links the explicit seven-read rollback proof.
 Package publication and external Chatbot adoption remain separate release obligations.
 
@@ -280,7 +280,7 @@ NoMatch guidance above. Retained advisory responses withhold candidate names and
 protected exclusion details. Unsupported File inputs or degraded coverage return
 the already-declared 503 response; the supported Gateway continues returning its
 explicit incomplete result. Retained cutover reads now require current Tenant
-authority, with stale evidence returning 503. Conversation-start preserves Partial
+authority. Stale authority returns safe 404 on list/open; context/setup/explain and advisory retain the approved 503 versus explicit supported Unavailable/incomplete pairs. Conversation-start preserves Partial
 admission and optional omission evidence, and its retained freshness header carries
 actual Fresh/Stale plus the exact authorized sequence watermark. Existing v1 method
 and model signatures remain. These repairs do not accept read equivalence or

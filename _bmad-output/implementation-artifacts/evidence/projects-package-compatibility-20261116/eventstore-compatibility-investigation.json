@@ -1,0 +1,2283 @@
+{
+  "recorded_at": "2026-11-16T21:19:08.759195+00:00",
+  "projects_source": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+  "eventstore_source": "0be0c922883d4ea61b18e843e24472162261d934",
+  "published_latest": "5.2.0",
+  "published_source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+  "required_type": "Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute",
+  "introduced_by": "0be0c922883d4ea61b18e843e24472162261d934",
+  "find_5_1_1": "No types found matching the pattern.",
+  "find_5_2_0": "No types found matching the pattern.",
+  "contracts_api_diff_5_1_1_to_5_2_0": {
+    "changedTypeCount": 0,
+    "addedTypeCount": 0,
+    "removedTypeCount": 0,
+    "changedMemberCount": 0,
+    "breakingCount": 0,
+    "additiveCount": 0,
+    "potentiallyBreakingCount": 0
+  },
+  "compatible_existing_published_version": null,
+  "minimum_new_source": "0be0c922883d4ea61b18e843e24472162261d934",
+  "recommendation": "Do not bump to 5.2.0: no required API. Qualify exact owner source and propose a new owner release before any package publication. Preserve Projects unrelated pins. Prefer a Contracts-only package override if package graph qualification proves old Client/DomainService/etc compatible.",
+  "nuspecs": {
+    "hexalith.eventstore.admin.abstractions-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.admin.abstractions-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.admin.server-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Admin.Abstractions",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Tenants.Contracts",
+          "version": "8.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.OpenApi",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Swashbuckle.AspNetCore.SwaggerUI",
+          "version": "11.0.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "YamlDotNet",
+          "version": "18.1.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.McpCli.Abstractions",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.OpenApi",
+          "version": "3.11.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.admin.server-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Admin.Abstractions",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Tenants.Contracts",
+          "version": "8.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.OpenApi",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Swashbuckle.AspNetCore.SwaggerUI",
+          "version": "11.0.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "YamlDotNet",
+          "version": "18.1.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.McpCli.Abstractions",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.OpenApi",
+          "version": "3.11.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.client-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.client-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.contracts-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.contracts-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.domainservice-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.ServiceDefaults",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.domainservice-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.ServiceDefaults",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.gateway-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Admin.Abstractions",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.ServiceDefaults",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "FluentValidation.DependencyInjectionExtensions",
+          "version": "12.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.OpenApi",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.StackExchangeRedis",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Swashbuckle.AspNetCore.SwaggerUI",
+          "version": "11.0.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "FluentValidation",
+          "version": "12.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MessagePack",
+          "version": "3.1.12",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.OpenApi",
+          "version": "3.11.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "StackExchange.Redis",
+          "version": "3.4.35",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.gateway-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Admin.Abstractions",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.ServiceDefaults",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "FluentValidation.DependencyInjectionExtensions",
+          "version": "12.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.OpenApi",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.StackExchangeRedis",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Swashbuckle.AspNetCore.SwaggerUI",
+          "version": "11.0.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "FluentValidation",
+          "version": "12.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MessagePack",
+          "version": "3.1.12",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.OpenApi",
+          "version": "3.11.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "StackExchange.Redis",
+          "version": "3.4.35",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.restapi.generators-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": []
+    },
+    "hexalith.eventstore.restapi.generators-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": []
+    },
+    "hexalith.eventstore.server-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.DomainService",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.server-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.DomainService",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.servicedefaults-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.servicedefaults-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.signalr-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.Client",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.Common",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.signalr-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.Client",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.SignalR.Common",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.testing-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "JsonSchema.Net",
+          "version": "9.7.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Shouldly",
+          "version": "4.3.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.assert",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.testing-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Contracts",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "JsonSchema.Net",
+          "version": "9.7.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Shouldly",
+          "version": "4.3.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.assert",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.testing.integration-5.1.1.nuspec": {
+      "source": "f792bba6c0564d3c36dda6ad1c2fc55b0b0a6331",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Testing",
+          "version": "5.1.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "StackExchange.Redis",
+          "version": "3.4.35",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.assert",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.extensibility.core",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "JsonSchema.Net",
+          "version": "9.7.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Shouldly",
+          "version": "4.3.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    },
+    "hexalith.eventstore.testing.integration-5.2.0.nuspec": {
+      "source": "8b6d5bee5217b3f4bbd8fd689ad887aca863961b",
+      "dependencies": [
+        {
+          "id": "Hexalith.EventStore.Client",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Server",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.EventStore.Testing",
+          "version": "5.2.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "StackExchange.Redis",
+          "version": "3.4.35",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.assert",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "xunit.v3.extensibility.core",
+          "version": "4.0.3",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "ByteAether.Ulid",
+          "version": "1.4.2",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.19.1",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Hexalith.Commons.UniqueIds",
+          "version": "3.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "JsonSchema.Net",
+          "version": "9.7.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "MediatR",
+          "version": "15.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.Authentication.JwtBearer",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.AspNetCore.DataProtection.Abstractions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Configuration.Binder",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.DependencyInjection",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Http.Resilience",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.Extensions.ServiceDiscovery",
+          "version": "11.0.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Abstractions",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.JsonWebTokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Logging",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Microsoft.IdentityModel.Tokens",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Extensions.Hosting",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.AspNetCore",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Http",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "OpenTelemetry.Instrumentation.Runtime",
+          "version": "1.21.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "Shouldly",
+          "version": "4.3.0",
+          "exclude": "Build,Analyzers"
+        },
+        {
+          "id": "System.IdentityModel.Tokens.Jwt",
+          "version": "8.23.0",
+          "exclude": "Build,Analyzers"
+        }
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+#if HEXALITH_SOURCE_FIXTURE
 namespace Hexalith.Projects.Server.Tests.Queries;
 
 using Hexalith.Conversations.Contracts.Identifiers;
@@ -18,3 +19,4 @@ internal sealed class NativeMembershipOwnerAccess : IConversationTenantAccessSer
                 ConversationTenantAccessDenialReason.UnknownTenant));
     }
 }
+#endif

@@ -1,0 +1,81 @@
+{
+  "status": "awaiting-package-owner-release-proposal-approval",
+  "task_complete": false,
+  "published": false,
+  "consumer_pin_delivered": false,
+  "new_hosted_correction_acceptance": false,
+  "original_blockers_resolved_in_disposable_package_qualification": true,
+  "complete_release_build": "failed with 13 subsequent errors",
+  "candidate_tree": "080313f55def2d0972ab5cbaecfbaf5b5d27b7b3",
+  "contracts_tests": {
+    "passed": 207,
+    "failed": 0,
+    "skipped": 0
+  },
+  "eventstore_focused_tests": {
+    "passed": 165,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pinned_mcpcli_restore_build_discovery": "passed locally with exact retained unpublished package",
+  "current_unrepaired_hosted_source": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+  "current_unrepaired_hosted_run": 43958099038,
+  "current_unrepaired_hosted_build": "failed original CS0234; log retained",
+  "constraints_preserved": {
+    "all_unrelated_pins": true,
+    "all_12_gitlinks": true,
+    "completed_gate_fixes": true,
+    "all_module_workflows": true,
+    "concurrent_changes": true,
+    "no_story_1_17_change": true,
+    "no_nested_submodule_initialization": true,
+    "no_deploy_or_v2_activation": true,
+    "no_credentials_broadened": true
+  },
+  "proposal": "package-release-proposal.json",
+  "pending": [
+    "package-owner approval and owner-managed publication",
+    "public payload/signature verification",
+    "fresh-main qualification and authorized delivery through the required owner mechanism",
+    "fresh exact-delivery hosted evidence",
+    "retain and diagnose subsequent failures without broadening pin changes"
+  ],
+  "current_unrepaired_hosted_g6": "failed NU1102 after catalog acquisition and Conversations prepared",
+  "current_unrepaired_hosted_artifact": {
+    "id": 14274021540,
+    "sha256": "fdbff2e058d5cfe6734a37de575fe3ca773d9fde5d93c0bc42cebdd94f95229a",
+    "digest_verified": true
+  },
+  "final_eventstore_qualification_archive_sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+  "final_consumer_evidence": "consumer-fresh-artifact-20261116T215857Z/qualification.json",
+  "producer_full_contracts_suite": {
+    "total": 1704,
+    "passed": 1650,
+    "failed": 52,
+    "skipped": 2,
+    "status": "failed; not release gate acceptance",
+    "failure_scope": "Packaging namespace requires Git-backed owner dependencies and full package-contract fixtures",
+    "non_packaging_passed": 1328,
+    "new_api_families": {
+      "Queries": 163,
+      "Deployment": 130
+    },
+    "evidence": "producer-replay-20261116T214600Z/full-contracts-scope-summary.json"
+  },
+  "producer_api_families_passed": {
+    "Queries": 163,
+    "Deployment": 130
+  },
+  "helper_review": {
+    "independent_layers": 3,
+    "findings": 10,
+    "addressed_for_compatibility_qualification": 10,
+    "focused_helper_checks_passed": 20,
+    "producer_full_gate_passed": false
+  },
+  "publication_readiness": "owner approval and mandatory owner release gates still required; not authorized for immediate upload",
+  "current_consumer_source": "cd1fcd62e3180e5b037850cacb1c1756668b2866",
+  "current_source_evidence": "current-source-candidate-qualification.json",
+  "concurrent_committed_paths_preserved": 64,
+  "focused_input_equivalence_entries": 578
+}

@@ -1,3 +1,4 @@
+#if HEXALITH_SOURCE_FIXTURE
 namespace Hexalith.Projects.Server.Tests.Queries;
 
 using Hexalith.Conversations.Contracts.Identifiers;
@@ -16,3 +17,4 @@ internal sealed class NativeMembershipOwnerStore(ConversationProjectedReadModels
         IReadOnlyList<ConversationSummaryProjectionV1> page, CancellationToken cancellationToken = default)
         => throw new InvalidOperationException("Membership never pages Conversations.");
 }
+#endif

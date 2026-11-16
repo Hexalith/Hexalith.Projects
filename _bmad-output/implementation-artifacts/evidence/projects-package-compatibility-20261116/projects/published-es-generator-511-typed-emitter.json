@@ -1,0 +1,36 @@
+{
+  "command": [
+    "dnx",
+    "dotnet-inspect",
+    "-y",
+    "--",
+    "member",
+    "TypedGatewayQueryEmitter",
+    "--library",
+    "/home/administrator/.nuget/packages/hexalith.eventstore.restapi.generators/5.1.1/analyzers/dotnet/cs/Hexalith.EventStore.RestApi.Generators.dll",
+    "--json"
+  ],
+  "exitCode": 1,
+  "expectedMissingType": true,
+  "typeExists": false,
+  "diagnostic": "Error: Type 'TypedGatewayQueryEmitter' not found.",
+  "rawOutput": "published-es-generator-511-typed-emitter.log",
+  "rawOutputSha256": "35186e56b7b9eee8821a2ca85205db16af196878423c5e5650ca9964887b4d9e",
+  "assemblySha256": "271844531ae3afb904ded0a426a46fb4bb48175332fd28d99af1d8b0f9d70cd1",
+  "metadataNamePresent": false,
+  "replayInspectionTool": {
+    "package": "dotnet-inspect",
+    "version": "0.27.0"
+  },
+  "replayCommand": [
+    "dnx",
+    "dotnet-inspect@0.27.0",
+    "-y",
+    "--",
+    "member",
+    "TypedGatewayQueryEmitter",
+    "--library",
+    "/home/administrator/.nuget/packages/hexalith.eventstore.restapi.generators/5.1.1/analyzers/dotnet/cs/Hexalith.EventStore.RestApi.Generators.dll",
+    "--json"
+  ]
+}

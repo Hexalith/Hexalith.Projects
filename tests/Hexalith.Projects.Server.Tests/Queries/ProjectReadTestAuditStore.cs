@@ -5,6 +5,7 @@ using Hexalith.EventStore.Client.Projections;
 internal sealed class ProjectReadTestAuditStore(IReadModelStore inner) : IReadModelStore
 {
     public HashSet<string> Keys { get; } = new(StringComparer.Ordinal);
+    public Func<Task>? BeforeWrite { get; set; }
     public bool FailWrites { get; set; }
     public Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
         => inner.GetAsync<T>(storeName, key, cancellationToken);
@@ -12,6 +13,7 @@ internal sealed class ProjectReadTestAuditStore(IReadModelStore inner) : IReadMo
         => inner.SaveAsync(storeName, key, value, cancellationToken);
     public async Task<bool> TrySaveAsync<T>(string storeName, string key, T value, string etag, CancellationToken cancellationToken = default) where T : class
     {
+        if (BeforeWrite is not null) await BeforeWrite().WaitAsync(cancellationToken).ConfigureAwait(false);
         if (FailWrites) throw new IOException("Audit store unavailable");
         bool saved = await inner.TrySaveAsync(storeName, key, value, etag, cancellationToken).ConfigureAwait(false);
         if (saved) Keys.Add(key);

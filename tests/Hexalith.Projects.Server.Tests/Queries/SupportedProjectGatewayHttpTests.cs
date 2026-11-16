@@ -485,6 +485,10 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddSingleton<IReadModelStore>(sp => sp.GetRequiredService<ProjectMcpCliReadStore>());
         builder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(now.AddSeconds(1)));
         builder.Services.AddSingleton<TimeProvider>(new ProjectReadTestClock(now.AddSeconds(1)));
+        // Domain/cursor observations use a controlled clock. Signed transport proofs share the
+        // real Gateway protocol clock so a long evidence/rollback run cannot expire every new proof.
+        builder.Services.RemoveAll<DelegatedOwnerQueryClient>();
+        builder.Services.AddScoped(sp => ActivatorUtilities.CreateInstance<DelegatedOwnerQueryClient>(sp, TimeProvider.System));
         WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         return app;
@@ -618,10 +622,10 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         return app;
     }
 
-    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true, string? projectRole = null, string actorId = "actor-1")
+    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true, string? projectRole = null, string actorId = "actor-1", string? workload = null, string delegation = "delegation-1")
     {
-        List<Claim> claims = [new("sub", actorId), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", projectUser ? "chatbot" : "operator-web"),
-            new("client_id", "issuing-client"), new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
+        List<Claim> claims = [new("sub", actorId), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", workload ?? (projectUser ? "chatbot" : "operator-web")),
+            new("client_id", "issuing-client"), new("act", JsonSerializer.Serialize(new { sub = delegation })), new("scope", "projects.read projects.list"),
             new("projects:role", projectRole ?? (projectUser ? "ProjectUser" : "TenantOperator")), new("eventstore:permission", "query:read"),
             new("eventstore:permission", "read_metadata"), new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ReadProjectAction),
             new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ListProjectsAction)];

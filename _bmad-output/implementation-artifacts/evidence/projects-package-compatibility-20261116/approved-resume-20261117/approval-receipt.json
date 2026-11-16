@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-11-16T23:56:52.922657+00:00",
+  "user_message": "approve",
+  "approval_scope": {
+    "publication_only_for_exact_coordinates_and_sources": true,
+    "owner_release_gates_remain_required": true,
+    "approved_signing_and_public_payload_verification_required": true,
+    "new_feed": false,
+    "credentials_broadened": false,
+    "gate_bypass": false,
+    "full_release_or_v2_activation": false,
+    "container_publication_or_deployment": false,
+    "immediate_publication_before_remaining_owner_release_gates": false,
+    "decision": "Approve the two package owners taking these exact sources, coordinates and qualified payloads through the existing required release/signing process; actual upload remains conditional on all mandatory release gates"
+  },
+  "proposal_sha256": "4480a500d3d18c54932f662443c5c3c25f3199ee5ee46c124e7ff1acafed333d",
+  "packages": [
+    {
+      "id": "Hexalith.EventStore.Contracts",
+      "version": "5.3.0",
+      "source": "0be0c922883d4ea61b18e843e24472162261d934",
+      "qualification_archive_sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3"
+    },
+    {
+      "id": "Hexalith.Projects.Contracts",
+      "version": "2.0.0-story66.3",
+      "source": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+      "qualification_archive_sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+    }
+  ],
+  "mandatory_release_gates_remain_required": true,
+  "broadened_credentials_or_feeds": false
+}

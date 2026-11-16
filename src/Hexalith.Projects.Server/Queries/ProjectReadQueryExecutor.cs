@@ -266,7 +266,12 @@ public sealed class ProjectReadQueryExecutor(
             && detail.Sequence == model.Sequence ? result : null;
     }
 
-    private async Task<ReferenceState> FolderStateAsync(ProjectDetailItem detail, CancellationToken cancellationToken, string correlationId)
+    private Task<ReferenceState> FolderStateAsync(ProjectDetailItem detail, CancellationToken cancellationToken, string correlationId)
+        => ReadFolderStateAsync(detail, folders, cancellationToken, correlationId);
+
+    /// <summary>Applies the same current owner Folder rule to supported and retained disclosures.</summary>
+    internal static async Task<ReferenceState> ReadFolderStateAsync(ProjectDetailItem detail, IProjectFolderDirectory folders,
+        CancellationToken cancellationToken, string correlationId)
     {
         if (detail.ProjectFolder is null) { return ReferenceState.Pending; }
         if (detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: { } folderId })

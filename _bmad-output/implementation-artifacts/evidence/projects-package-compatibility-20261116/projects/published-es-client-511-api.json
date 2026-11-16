@@ -1,0 +1,606 @@
+{
+  "namespace": "Hexalith.EventStore.Client.Gateway",
+  "name": "IEventStoreGatewayClient",
+  "metadata_name": "IEventStoreGatewayClient",
+  "definition_name": {
+    "namespace": "Hexalith.EventStore.Client.Gateway",
+    "segments": [
+      "IEventStoreGatewayClient"
+    ]
+  },
+  "introduced_type_parameter_counts": [
+    0
+  ],
+  "kind": "interface",
+  "attributes": [],
+  "has_union_attribute": false,
+  "layout": "Auto",
+  "layout_details": {
+    "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+    "type_token": 33554716,
+    "size": 0,
+    "packing_size": 0
+  },
+  "memory_safety": {
+    "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+    "rules": {
+      "kind": "available",
+      "state": 0,
+      "observations": []
+    }
+  },
+  "is_sealed": false,
+  "is_abstract": true,
+  "is_static": false,
+  "is_by_ref_like": false,
+  "is_read_only": false,
+  "interfaces": [],
+  "derived_types": [],
+  "type_parameters": [],
+  "members": [
+    {
+      "name": "ReadNativeSourceScanPageAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Streams.StreamReadPage\u003E ReadNativeSourceScanPageAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "b7a180f6d2",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.ReadNativeSourceScanPageAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest,System.Threading.CancellationToken)",
+      "metadata_token": 100666583,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666583,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666583,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Reads one purpose/page/resource-bound native scan page under a separately enrolled workload operation.",
+        "samples": []
+      }
+    },
+    {
+      "name": "SubmitWorkloadCommandAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Commands.SubmitCommandResponse\u003E SubmitWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest request, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "c2f7806a2f",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.SubmitWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest,System.Threading.CancellationToken)",
+      "metadata_token": 100666584,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666584,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666584,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Submits through the workload-only command channel.",
+        "samples": []
+      }
+    },
+    {
+      "name": "SubmitBoundWorkloadCommandAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Commands.SubmitCommandResponse\u003E SubmitBoundWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.BoundWorkloadCommandRequest request, string proof, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "36d8f10650",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.SubmitBoundWorkloadCommandAsync(Hexalith.EventStore.Contracts.Commands.BoundWorkloadCommandRequest,string,System.Threading.CancellationToken)",
+      "metadata_token": 100666585,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666585,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666585,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Submits an exact workload command with its signed represented principal and metadata.",
+        "samples": []
+      }
+    },
+    {
+      "name": "GetWorkloadCommandStatusAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Commands.CommandStatusQueryResponse?\u003E GetWorkloadCommandStatusAsync(string tenant, string messageId, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "3e2747001c",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.GetWorkloadCommandStatusAsync(string,string,System.Threading.CancellationToken)",
+      "metadata_token": 100666586,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666586,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666586,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Reads one message-primary status through the workload-only channel.",
+        "samples": []
+      }
+    },
+    {
+      "name": "ReadWorkloadStreamAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Streams.StreamReadPage\u003E ReadWorkloadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "7175d8686c",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.ReadWorkloadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest,System.Threading.CancellationToken)",
+      "metadata_token": 100666587,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666587,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666587,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Reads one exact tenant-bound stream page through the workload-only channel.",
+        "remarks": "Approved platform source scopes carry one explicit scope header and accept only their historical storage Tenant with unchanged Domain and AggregateId. Assertion and proof remain bound to the original public request. Unsupported platform/domain pairs and conflicting scope headers refuse.",
+        "samples": []
+      }
+    },
+    {
+      "name": "SubmitCommandAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Commands.SubmitCommandResponse\u003E SubmitCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest request, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "794e709192",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.SubmitCommandAsync(Hexalith.EventStore.Contracts.Commands.SubmitCommandRequest,System.Threading.CancellationToken)",
+      "metadata_token": 100666588,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": true,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666588,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": false,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666588,
+        "attributes": "Public, Virtual, HideBySig, NewSlot, Abstract",
+        "impl_attributes": "IL",
+        "has_body_rva": false
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Submits a command through POST /api/v1/commands.",
+        "samples": []
+      }
+    },
+    {
+      "name": "GetCommandStatusAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Commands.CommandStatusQueryResponse?\u003E GetCommandStatusAsync(string messageId, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "40ec478b69",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.GetCommandStatusAsync(string,System.Threading.CancellationToken)",
+      "metadata_token": 100666589,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": false,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666589,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": true,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666589,
+        "attributes": "Public, Virtual, HideBySig, NewSlot",
+        "impl_attributes": "IL",
+        "has_body_rva": true
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Reads a command\u0027s recorded status through GET /api/v1/commands/status/{messageId}, including the bounded correlation-identifier compatibility lookup supported by the gateway.",
+        "remarks": "The default preserves compatibility with gateway implementations created before status reads were added and fails closed by reporting no recorded status.",
+        "returns": "The recorded status, or null when no status exists for the identifier.",
+        "samples": []
+      }
+    },
+    {
+      "name": "SubmitQueryAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Client.Gateway.EventStoreQueryResult\u003E SubmitQueryAsync(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest request, string? ifNoneMatch = null, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "d3358085e1",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.SubmitQueryAsync(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest,string?,System.Threading.CancellationToken)",
+      "metadata_token": 100666590,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": true,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666590,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": false,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666590,
+        "attributes": "Public, Virtual, HideBySig, NewSlot, Abstract",
+        "impl_attributes": "IL",
+        "has_body_rva": false
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Submits a query through POST /api/v1/queries.",
+        "samples": []
+      }
+    },
+    {
+      "name": "SubmitQueryAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Client.Gateway.EventStoreQueryResult\u003CT\u003E\u003E SubmitQueryAsync\u003CT\u003E(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest request, string? ifNoneMatch = null, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "1730b58e09",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.SubmitQueryAsync\u003CT\u003E(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest,string?,System.Threading.CancellationToken)",
+      "metadata_token": 100666591,
+      "generic_arity": 1,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": true,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666591,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": false,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666591,
+        "attributes": "Public, Virtual, HideBySig, NewSlot, Abstract",
+        "impl_attributes": "IL",
+        "has_body_rva": false
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Submits a query and deserializes the returned payload.",
+        "samples": []
+      }
+    },
+    {
+      "name": "ReadStreamAsync",
+      "kind": "method",
+      "attributes": [],
+      "signature": "System.Threading.Tasks.Task\u003CHexalith.EventStore.Contracts.Streams.StreamReadPage\u003E ReadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest request, System.Threading.CancellationToken cancellationToken = default)",
+      "digest": "6e21783ed0",
+      "canonical_signature": "M:Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient.ReadStreamAsync(Hexalith.EventStore.Contracts.Streams.StreamReadRequest,System.Threading.CancellationToken)",
+      "metadata_token": 100666592,
+      "is_static": false,
+      "is_virtual": true,
+      "is_abstract": true,
+      "is_override": false,
+      "is_sealed": false,
+      "is_read_only": false,
+      "is_const": false,
+      "is_unsafe": false,
+      "is_async": false,
+      "memory_safety": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "caller_contract": {
+          "kind": "none",
+          "evidence": {
+            "member_token": 100666592,
+            "rules_state": 0,
+            "pointer": "Absent",
+            "fixed_buffer": 0,
+            "direct_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            },
+            "associated_attribute": {
+              "state": 1,
+              "valid_row_count": 0,
+              "has_malformed_row": false
+            }
+          }
+        },
+        "signature_pointer": "Absent"
+      },
+      "has_method_body": false,
+      "method_implementation": {
+        "module_version_id": "67edd0b0-4a4e-4cb1-a396-047fe139c8ed",
+        "method_token": 100666592,
+        "attributes": "Public, Virtual, HideBySig, NewSlot, Abstract",
+        "impl_attributes": "IL",
+        "has_body_rva": false
+      },
+      "is_extension": false,
+      "is_obsolete": false,
+      "documentation": {
+        "summary": "Reads a public stream/replay page through POST /api/v1/streams/read.",
+        "remarks": "On the human/authority transport, a platform-scope tenant (for example platform:tenants) is also sent as the explicit X-Hexalith-Scope header; the returned page carries the retained storage identity. With UseWorkloadTransport, the client delegates to ReadWorkloadStreamAsync: only the approved platform:tenants/tenants and platform:global-administrators/global-administrators mappings may return the reserved storage Tenant, with exact Domain and AggregateId validation.",
+        "samples": []
+      }
+    }
+  ],
+  "source_resolution": "XmlDoc",
+  "additional_source_files": [],
+  "is_partial_type": false,
+  "is_forwarded": false,
+  "full_name": "Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient",
+  "documentation": {
+    "summary": "High-level HTTP client for the EventStore command and query gateway.",
+    "samples": []
+  }
+}

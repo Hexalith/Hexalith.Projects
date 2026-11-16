@@ -1,8 +1,8 @@
 # Supported read cutover and rollback
 
-Story 6.7 adds an executable selection boundary. The [final source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/read-cutover-final.json)
+Story 6.7 adds an executable selection boundary. The [final source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json)
 binds all 77 passing authenticated comparisons to actual native xUnit XML. The
-[explicit rollback proof](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/rollback-final-proof.json)
+[explicit rollback proof](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/rollback-final-proof-1.json)
 executes all seven retained HTTP reads after the production selector verifies the packet.
 Primary Web reads still default to Unavailable; selecting Supported or LegacyRollback
 requires explicit startup configuration. Historical readiness remains NOT_READY;
@@ -88,6 +88,7 @@ opaque tokens is never used as cursor equivalence.
 | Primary Web `/`, `/projects`, `/projects/{id}` and warnings entry | One startup choice selects supported, explicit verified rollback, or unavailable. |
 | Web `/inspect/projects` and detail/suggestions | Existing delivered inspection surface now consumes Contracts-generated Gateway bindings. |
 | Existing IClient / v1 REST integrations | Original method signatures and creation payload remain; generated output/fingerprints are regenerated from the spine. |
+| Obsolete `Hexalith.Projects.Cli` / `Hexalith.Projects.Mcp` | Retained v1 callers have not opted into descriptive inspection: list/describe safely return 404; unbound refresh/re-evaluate return 503. Compatibility repair is deferred (Story 6.7 review decision 1; [consumer migration deferral](../_bmad-output/implementation-artifacts/deferred-work.md)). These proprietary surfaces are superseded by McpCli. |
 | Shared Hexalith.McpCli | Existing decorated list/describe/advisory enrollment remains; this change does not add a proprietary CLI or grant additional authority. |
 | External Hexalith.Chatbot | Adoption not established. No external consumption or first-response evidence is inferred from Web tests. |
 
@@ -96,6 +97,7 @@ opaque tokens is never used as cursor equivalence.
 Configure `Projects:Reads:Mode` as `Supported`, `LegacyRollback`, or `Unavailable`.
 Use the same section's EvidencePath, EvidenceHash (SHA-256), SourceRevision (full
 Git identifier) and ContractHash (SHA-256). Restart/redeploy applies a choice.
+Relative `EvidencePath` values resolve against the process working directory; native receipt paths resolve against the evidence file directory. Use an absolute EvidencePath when the service working directory may vary. Startup logs the selected mode and a bounded refusal reason once; inspect that reason before correcting configuration or evidence and restarting.
 Selection is immutable for the process. A denial, timeout, regression or dependency
 failure never changes the route or retries through legacy.
 
@@ -122,6 +124,8 @@ authorized reference, source sequence, observation, or independently verified
 current-empty evidence respectively. Exact timestamps and array order remain.
 Raw keys, cursor behavior and supported-only admission assertions remain separate.
 The historical story61 comparator revision is retained as historical evidence.
+
+Snapshot `asOf` and Conversation-start Setup `ObservedAt` are the current computation instant from the injected clock. Component/reference last-verified observations retain the original source evidence times and describe evidence age. This interpretation was explicitly retained by Story 6.7 review decision 2; it does not introduce timestamp tolerance into comparisons.
 
 ## Recorded repairs and release obligations
 
@@ -207,7 +211,7 @@ Current rules and implementation are described above; this retained discussion i
 | Context/setup/explain accept only ProjectId; native Conversation membership exists but no session/opened-Project proof was found | Bind to the named Conversation or an authoritative opened-session Project | Owner identifies the existing proof and transport, or approves a narrower member-only scope. Advisory metadata cannot substitute. |
 | Retained list/open return required name fields without the supported descriptive-inspection audit boundary | Safe Metadata and durable audit before descriptive disclosure | Keep these rollback slices unavailable until the owner authorizes a compatible inspection contract or a withdrawal of the unsafe legacy disclosure. No name difference is normalized away. |
 
-### Native membership only option (proposed; not implemented)
+### Native membership only option (historical proposal; implemented by approved D4)
 
 An implementable narrower option is to require a named Conversation whose native
 `ConversationDetailsV1.ProjectId` equals the requested Project. A null membership,
@@ -271,8 +275,10 @@ proof contract and transport. No upstream source is changed by this proposal.
 
 ## Independent review verification
 
-The reviewed source passes 2813 full-suite tests, all 77 authenticated comparison cells and seven configured rollback reads. Current receipts are under `evidence/epic6/6.7/review-01`; prior packets remain historical. Valid-empty collection results are separate from genuine missing resources, unavailable evidence and denials. Storage evidence distinguishes the physical legacy journal container from logical aggregate keys, and each transport retains its own cursor proof.
+The reviewed source passes 2909 full-suite tests, all 77 authenticated comparison cells and seven configured rollback reads. Current receipts are under `evidence/epic6/6.7/review-pass2-fixes`; prior packets remain historical. Valid-empty collection results are separate from genuine missing resources, unavailable evidence and denials. Storage evidence distinguishes the physical legacy journal container from logical aggregate keys, and each transport retains its own cursor proof.
 
 Legacy list refuses retryable or stale row evidence and rechecks final authority. Legacy quarantine matches supported inspection, and diagnostics reload safely when the named Conversation changes. Pre-registering a configured generated Folders client retains the v1 read transport; explicit custom directory overrides remain effective. Successful stale v1 lifecycle/permission responses cannot advertise Included Folder evidence or its label.
 
 The startup revision and contract values are deployment declarations, verified against source qualification receipts here. Intrinsic binding to running application/dependency fingerprints remains a production release obligation, alongside the deferred owner/RTI admission and existing retained attachment-link race. This source acceptance does not qualify a deployed topology or advance readiness/AD-25 gates.
+
+The final review also rechecks fresh, unchanged Project/Tenant/EventStore evidence after inspection audit, Folder reads and native membership. Retained delegated ChatBot list/open share the supported current Folder boundary. Folder v1 metadata responses are capped at 16 KiB. The cursor proof enumerates three pages, advances the clock, retains the original expiry and rejects replay under four independently authorized changed identities. Additional ChatBot stale/unavailable transport outcomes are retained as safety controls and explicitly do not add an approved D2 normalization pair.

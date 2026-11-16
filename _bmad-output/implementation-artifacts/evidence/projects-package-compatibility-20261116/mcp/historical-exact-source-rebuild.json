@@ -1,0 +1,61 @@
+{
+  "revision": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+  "buildsRevision": "801f268cd1b37ecae41d4fb20d115c055b4c5793",
+  "command": [
+    "dotnet",
+    "pack",
+    "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+    "--configuration",
+    "Release",
+    "-m:1",
+    "--disable-build-servers",
+    "-p:HexalithProjectsPackageVersion=2.0.0-story66.3",
+    "-p:UseHexalithProjectReferences=false",
+    "--artifacts-path",
+    "/tmp/hexalith-job.SAy3dcbt/package-build",
+    "--output",
+    "/tmp/hexalith-job.SAy3dcbt/feed"
+  ],
+  "exitCode": 0,
+  "retainedSha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+  "rebuildSha256": "14a8f77ce2045413aab8ac7544946f27d77fc40d8d9a4f2043ba3a00d5c5c0aa",
+  "files": [
+    {
+      "path": "_rels/.rels",
+      "identical": true,
+      "retainedSha256": "4d031362e43b43bd6226012303d6c2d4f80cbe9e02f772a6232b193f75a38ada",
+      "rebuiltSha256": "4d031362e43b43bd6226012303d6c2d4f80cbe9e02f772a6232b193f75a38ada"
+    },
+    {
+      "path": "Hexalith.Projects.Contracts.nuspec",
+      "identical": true,
+      "retainedSha256": "6e96405bd1f2556bdb9d512ab69d4750ce2ce7587171660aa13e88f24b8c1e5f",
+      "rebuiltSha256": "6e96405bd1f2556bdb9d512ab69d4750ce2ce7587171660aa13e88f24b8c1e5f"
+    },
+    {
+      "path": "README.md",
+      "identical": true,
+      "retainedSha256": "d093eb74092a75dfa6ab1d374c8a61da54533e5cce0a9855930aa6c238cb8e45",
+      "rebuiltSha256": "d093eb74092a75dfa6ab1d374c8a61da54533e5cce0a9855930aa6c238cb8e45"
+    },
+    {
+      "path": "lib/net11.0/Hexalith.Projects.Contracts.dll",
+      "identical": false,
+      "retainedSha256": "a7b5a51bb87a026827e023c954e5747c275eef8376940cf5fa267898764c66f3",
+      "rebuiltSha256": "ee9d9985e122cf991daa2af6b0c7b58227cc3bd5e48bf6e8fc01656d2fc9d75a"
+    },
+    {
+      "path": "[Content_Types].xml",
+      "identical": true,
+      "retainedSha256": "1a6670ec6cb20a6520f5d6b9be859fcd7416bef2ba0e8e40bfbf0aaab5409e4f",
+      "rebuiltSha256": "1a6670ec6cb20a6520f5d6b9be859fcd7416bef2ba0e8e40bfbf0aaab5409e4f"
+    },
+    {
+      "path": "package/services/metadata/core-properties/nuget.psmdcp",
+      "identical": true,
+      "retainedSha256": "7cfbbc25bfc3a25c18c5215ddc0556f802313954a2c85cee720a5b1f9bbb559a",
+      "rebuiltSha256": "7cfbbc25bfc3a25c18c5215ddc0556f802313954a2c85cee720a5b1f9bbb559a"
+    }
+  ],
+  "dllIdentical": false
+}

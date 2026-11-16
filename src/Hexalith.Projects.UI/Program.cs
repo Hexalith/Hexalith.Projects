@@ -49,7 +49,8 @@ bool authEnabled = builder.Services.AddProjectsUiSecurity(builder.Configuration,
 if (authEnabled) _ = gatewayClient.AddFrontComposerGatewayAuthorization();
 
 WebApplication app = builder.Build();
-_ = app.Services.GetRequiredService<ProjectsReadRouteSelection>();
+ProjectsReadRouteSelection readRoute = app.Services.GetRequiredService<ProjectsReadRouteSelection>();
+ProjectsReadRouteLog.Selected(app.Logger, readRoute.Mode, readRoute.RefusalReason ?? "none");
 
 app.MapStaticAssets();
 app.UseStaticFiles();

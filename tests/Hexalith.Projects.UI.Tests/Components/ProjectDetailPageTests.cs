@@ -651,6 +651,21 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Markup.ShouldNotContain("token");
     }
 
+    [Fact]
+    public void ReevaluatePanelForwardsTheNamedConversationToTheRealMaintenanceSource()
+    {
+        var client = Substitute.For<Hexalith.Projects.Client.Generated.IClient>();
+        Services.AddSingleton<IProjectMaintenanceActionSource>(new ProjectMaintenanceActionSource(client));
+        var cut = Render<Hexalith.Projects.UI.Components.Shared.ProjectMaintenanceActionPanel>(parameters => parameters
+            .Add(p => p.Detail, Detail()).Add(p => p.ConversationId, "bound-conversation"));
+        cut.Find("[data-testid='maintenance-action-select']").Change(ProjectMaintenanceActions.Reevaluate);
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+        cut.Find("[data-testid='maintenance-action-confirm']").Change(true);
+        cut.Find("[data-testid='maintenance-action-submit']").Click();
+        cut.WaitForAssertion(() => client.Received(1).RefreshProjectContextAsync("project-001", Arg.Any<string>(),
+            Hexalith.Projects.Client.Generated.ReadConsistencyClass.Eventually_consistent, "bound-conversation", Arg.Any<CancellationToken>()));
+    }
+
     private static ProjectOperatorDiagnostic Detail()
         => new(
             "project-001",

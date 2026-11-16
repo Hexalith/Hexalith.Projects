@@ -307,7 +307,7 @@ public sealed partial class SupportedProjectReadHttpTests
         return app;
     }
 
-    private static string Token(SecurityKey key, bool inspection = true, string role = "TenantOperator")
+    private static string Token(SecurityKey key, bool inspection = true, string role = "TenantOperator", string roleClaimType = "projects:role", string workload = "operator-web")
     {
         JwtSecurityTokenHandler handler = new(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor
@@ -315,8 +315,8 @@ public sealed partial class SupportedProjectReadHttpTests
             Issuer = Issuer, Audience = Audience, NotBefore = DateTime.UtcNow.AddMinutes(-1), Expires = DateTime.UtcNow.AddMinutes(5),
             SigningCredentials = new(key, SecurityAlgorithms.RsaSha256),
             Subject = new ClaimsIdentity([
-                new("sub", "actor-1"), new("tenant_id", "tenant-a"), new("azp", "operator-web"), new("client_id", "issuing-client"),
-                new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"), new("projects:role", role),
+                new("sub", "actor-1"), new("tenant_id", "tenant-a"), new("azp", workload), new("client_id", "issuing-client"),
+                new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"), new(roleClaimType, role),
                 new("eventstore:permission", ProjectAuthorizationGate.ReadProjectAction), new("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction),
                 .. (inspection ? new[] { new Claim("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission) } : Array.Empty<Claim>()),
             ]),

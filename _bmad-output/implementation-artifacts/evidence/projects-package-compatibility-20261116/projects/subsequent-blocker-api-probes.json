@@ -1,0 +1,71 @@
+[
+  {
+    "label": "published-es-client-511-api",
+    "command": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "IEventStoreGatewayClient",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.eventstore.client/5.1.1/lib/net11.0/Hexalith.EventStore.Client.dll",
+      "--json"
+    ],
+    "exitCode": 0,
+    "assemblySha256": "5cc00b25dc7aa6492c6bbf219a3a7a28d263bc61eaa6b5ae522336cf77aa6570",
+    "outputSha256": "f1b3813edd2590fa03781d2180aa60118be7469fe9fd7b4230b587efaeefbd78"
+  },
+  {
+    "label": "published-conversations-query-200-api",
+    "command": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "GetConversationQuery",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.conversations.contracts/2.0.0/lib/net11.0/Hexalith.Conversations.Contracts.dll",
+      "--json"
+    ],
+    "exitCode": 0,
+    "assemblySha256": "25d91de97dae2c96582bdb4f5c630fc2a29574fbd4d28396014150d1ed192110",
+    "outputSha256": "7289dd2021b7e258f709adb66ece9557685542289ec0b0425c459ba41e195c8c"
+  },
+  {
+    "label": "published-conversations-result-200-api",
+    "command": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "ConversationDetailResult",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.conversations.contracts/2.0.0/lib/net11.0/Hexalith.Conversations.Contracts.dll",
+      "--json"
+    ],
+    "exitCode": 0,
+    "assemblySha256": "25d91de97dae2c96582bdb4f5c630fc2a29574fbd4d28396014150d1ed192110",
+    "outputSha256": "6d42895e7882c607ea68c96fea0c3c507060e917ce4c22f7bab421ea77f1a68f"
+  },
+  {
+    "label": "published-es-generator-511-typed-emitter",
+    "command": [
+      "dnx",
+      "dotnet-inspect",
+      "-y",
+      "--",
+      "member",
+      "TypedGatewayQueryEmitter",
+      "--library",
+      "/home/administrator/.nuget/packages/hexalith.eventstore.restapi.generators/5.1.1/analyzers/dotnet/cs/Hexalith.EventStore.RestApi.Generators.dll",
+      "--json"
+    ],
+    "exitCode": 1,
+    "assemblySha256": "271844531ae3afb904ded0a426a46fb4bb48175332fd28d99af1d8b0f9d70cd1",
+    "outputSha256": "35186e56b7b9eee8821a2ca85205db16af196878423c5e5650ca9964887b4d9e",
+    "metadataNamePresent": false
+  }
+]

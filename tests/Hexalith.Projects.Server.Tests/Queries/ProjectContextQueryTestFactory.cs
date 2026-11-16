@@ -29,9 +29,10 @@ internal static class ProjectContextQueryTestFactory
         TenantAccessAuthorizer tenantAccessAuthorizer,
         IReadOnlyList<string>? callbackAudience = null,
         IProjectEventStoreAuthorizationValidator? eventStoreAuthorizationValidator = null,
-        Action<ClaimsPrincipal>? configurePrincipal = null)
+        Action<ClaimsPrincipal>? configurePrincipal = null,
+        string? expectedAudience = "hexalith-eventstore")
     {
-        ProjectQueryEnvelopePrincipalBinding principalBinding = CreatePrincipalBinding(callbackAudience, configurePrincipal);
+        ProjectQueryEnvelopePrincipalBinding principalBinding = CreatePrincipalBinding(callbackAudience, configurePrincipal, expectedAudience);
         ProjectAuthorizationGate authorizationGate = new(
             tenantAccessAuthorizer,
             eventStoreAuthorizationValidator ?? new AllowingProjectEventStoreAuthorizationValidator(),
@@ -48,7 +49,8 @@ internal static class ProjectContextQueryTestFactory
     /// <summary>Creates a production-shaped callback principal binding for query-handler tests.</summary>
     public static ProjectQueryEnvelopePrincipalBinding CreatePrincipalBinding(
         IReadOnlyList<string>? callbackAudience = null,
-        Action<ClaimsPrincipal>? configurePrincipal = null)
+        Action<ClaimsPrincipal>? configurePrincipal = null,
+        string? expectedAudience = "hexalith-eventstore")
     {
         callbackAudience ??= ["hexalith-projects", "hexalith-eventstore"];
         List<Claim> claims =
@@ -69,7 +71,8 @@ internal static class ProjectContextQueryTestFactory
         };
         configurePrincipal?.Invoke(httpContext.User);
         FixedProjectQueryHttpContextAccessor httpContextAccessor = new(httpContext);
-        IConfiguration configuration = new ConfigurationBuilder().Build();
+        IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection(
+            new Dictionary<string, string?> { [$"{Hexalith.Projects.Server.Authentication.ProjectsAuthenticationOptions.SectionName}:Audience"] = expectedAudience }).Build();
         IHostEnvironment environment = WebApplication.CreateSlimBuilder(
             new WebApplicationOptions { EnvironmentName = Environments.Production }).Environment;
         HttpContextProjectTenantContextAccessor tenantContextAccessor = new(httpContextAccessor);

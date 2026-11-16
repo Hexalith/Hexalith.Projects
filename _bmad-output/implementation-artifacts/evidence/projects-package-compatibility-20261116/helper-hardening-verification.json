@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "fullProducerReplayRun": false,
+  "checks": [
+    "qualify-eventstore-contracts.py: default replay refused before mutation; compiled to private TMPDIR",
+    "qualify-projects-minimal.py: default replay refused before mutation; compiled to private TMPDIR",
+    "mcp/qualify_historical_mcp.py: default replay refused before mutation; compiled to private TMPDIR",
+    "mcp/reproduce_historical_contracts.py: default replay refused before mutation; compiled to private TMPDIR",
+    "mcp/compare_historical_payload.py: default replay refused before mutation; compiled to private TMPDIR",
+    "Explicit existing output directories also refused",
+    "Import is side-effect free; actual historical/rebuilt archives pass complete payload comparison",
+    "additional-entry: rejected",
+    "nuspec-mutation: rejected",
+    "readme-mutation: rejected",
+    "other-entry-mutation: rejected",
+    "duplicate-entry: rejected",
+    "Optional fresh comparison receipt succeeds once, then refuses overwrite",
+    "Fresh producer output records required command failure and returns nonzero with private NuGet cache",
+    "XML counts accept complete passing results and reject skipped tests",
+    "Projects required command failure raises and records failed status",
+    "mcp/qualify_historical_mcp.py: required failure returns nonzero in a fresh output",
+    "mcp/reproduce_historical_contracts.py: required failure returns nonzero in a fresh output",
+    "All protected original artifacts/receipts, patch and root attributes remain byte-identical",
+    "Effective receipt/patch/log/archive text and whitespace attributes are unset"
+  ],
+  "editedScriptSha256": {
+    "qualify-eventstore-contracts.py": "4bedfffa8973a9b3c8260ab8658ad687743bbddf360f8a408d90ac0fa75763cf",
+    "qualify-projects-minimal.py": "f95c793a80c6ac4eded7a7239d260dec526424cb2519d6a79894131a0109a1bd",
+    "mcp/qualify_historical_mcp.py": "23c82db381c2d2d1d20424fd877ed5109b35c5097704c810b64cd0889ec43488",
+    "mcp/reproduce_historical_contracts.py": "77a068873c390de4bfeb7a556291930b697abba93fe6910714ae94a8c577f960",
+    "mcp/compare_historical_payload.py": "6cd8c5341cbbf0bf160a48ebf2ac14447ec479ba36480dd1936cace2e4ea1813"
+  },
+  "protectedOutputsPreserved": {
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/eventstore-contracts-candidate-qualification.json": "5b1cda93abe6b94abbf781039c68314510281f1bd314bf01d12e72bd655d259c",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/qualification.json": "b978b84028a337ab4c62065e5dd65959559def957b52c4a428952f08b3a6ffb2",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/minimal-contracts.patch": "8a8d17efaf169b46dc4b8956913d89825c1aa4317a87277ef759ae64a035b4ba",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/mcp/historical-candidate-qualification.json": "1491876dae82477dbeeed198b9eb708e38c3418f3566de8f6cdea7a1662fbf43",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/mcp/historical-exact-source-rebuild.json": "5f1815b74ef0808ac7ee7b5b42e5570c43824caf75d636d6857a0597c38999c9",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/mcp/historical-payload-equivalence.json": "63a4df1fb0a2902cead771319b86e647cd5221c6ddcc759bb8df23013870e706",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/mcp/rebuilt-Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg": "14a8f77ce2045413aab8ac7544946f27d77fc40d8d9a4f2043ba3a00d5c5c0aa",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg": "e367e3e9a8d4a5d68942ed56b380acaddaeb4368f19273e6481c0ce2fce941ce",
+    "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+    "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+    ".gitattributes": "3ed5785e8db27d64f07d895049651cca04f495351010e1f894d6fe0d7c21bc2b"
+  },
+  "attributes": "_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/eventstore-contracts-candidate-qualification.json: text: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/eventstore-contracts-candidate-qualification.json: whitespace: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/minimal-contracts.patch: text: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/minimal-contracts.patch: whitespace: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/baseline-contracts-build.log: text: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/projects/baseline-contracts-build.log: whitespace: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg: text: unset\n_bmad-output/implementation-artifacts/evidence/projects-package-compatibility-20261116/unpublished-candidates/Hexalith.EventStore.Contracts.5.3.0.nupkg: whitespace: unset\n"
+}

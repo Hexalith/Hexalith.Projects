@@ -72,7 +72,7 @@ public sealed partial class GetConversationStartSetupTests
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             response.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
             response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("Fresh");
-            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldNotBeNullOrWhiteSpace();
+            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldBe("1");
 
             using JsonDocument document = JsonDocument.Parse(body);
             document.RootElement.GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
@@ -383,7 +383,7 @@ public sealed partial class GetConversationStartSetupTests
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             response.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
             response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("Fresh");
-            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldNotBeNullOrWhiteSpace();
+            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldBe("1");
         }
         finally
         {
@@ -686,6 +686,47 @@ public sealed partial class GetConversationStartSetupTests
         return request;
     }
 
+    [Theory]
+    [InlineData("context")]
+    [InlineData("context/explain")]
+    [InlineData("context/refresh")]
+    public async Task ContextDenialRemains404BeforeTheFinalMembershipRecheck(string suffix)
+    {
+        int checks = 0;
+        var tenantContext = new FixedProjectTenantContext("tenant-a", "principal-a");
+        var app = await StartAppAsync("tenant-a", "principal-a", null,
+            conversationDirectoryOverride: new RecordingConversationDirectory(() => tenantContext.AuthoritativeTenantId = "tenant-b"),
+            membership: new CurrentProjectConversationMembership(() => ++checks == 1), tenantContextOverride: tenantContext);
+        try
+        {
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+            using var response = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}/{suffix}?conversationId=bound-conversation", TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            checks.ShouldBe(1);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task StaleTenantStartWithholdsSetupAndFreshnessHeaders()
+    {
+        var store = new InMemoryProjectTenantAccessProjectionStore();
+        var app = await StartAppAsync("tenant-a", "principal-a", null, tenantAccessStoreOverride: store);
+        try
+        {
+            var authority = (await store.GetAsync("tenant-a", TestContext.Current.CancellationToken))!;
+            authority.LastEventTimestamp = DateTimeOffset.UtcNow.AddMinutes(-6);
+            await store.SaveAsync(authority, TestContext.Current.CancellationToken);
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+            using var response = await client.SendAsync(StartSetupRequest(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            response.Headers.Contains("X-Hexalith-Projection-Watermark").ShouldBeFalse();
+            response.Headers.Contains("X-Hexalith-Freshness").ShouldBeFalse();
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain("observedAt");
+        }
+        finally { await StopAsync(app); }
+    }
+
     private static async Task<WebApplication> StartAppAsync(
         string? tenantId,
         string? principalId,
@@ -701,20 +742,22 @@ public sealed partial class GetConversationStartSetupTests
         TimeProvider? timeProvider = null,
         string? existingVary = null,
         bool allowList = false,
-        IProjectEventStoreAuthorizationValidator? eventStoreValidator = null)
+        IProjectEventStoreAuthorizationValidator? eventStoreValidator = null,
+        Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory? membership = null,
+        IProjectTenantContextAccessor? tenantContextOverride = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Services.AddProjectsServer();
         builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
-        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>(membership ?? new CurrentProjectConversationMembership());
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
         if (eventStoreValidator is null) builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
         else builder.Services.AddSingleton(eventStoreValidator);
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
-        builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContext(tenantId, principalId, allowList));
+        builder.Services.AddSingleton<IProjectTenantContextAccessor>(tenantContextOverride ?? new FixedProjectTenantContext(tenantId, principalId, allowList));
         builder.Services.AddSingleton<IProjectCommandSubmitter>(new NoopProjectCommandSubmitter());
         if (timeProvider is not null)
         {
@@ -821,7 +864,7 @@ public sealed partial class GetConversationStartSetupTests
 
     private sealed class FixedProjectTenantContext(string? tenantId, string? principalId, bool allowList = false) : IProjectTenantContextAccessor
     {
-        public string? AuthoritativeTenantId { get; } = tenantId;
+        public string? AuthoritativeTenantId { get; set; } = tenantId;
 
         public string? PrincipalId { get; } = principalId;
 
@@ -891,7 +934,7 @@ public sealed partial class GetConversationStartSetupTests
             => Task.CompletedTask;
     }
 
-    private sealed class RecordingConversationDirectory : IProjectConversationDirectory
+    private sealed class RecordingConversationDirectory(Action? onRead = null) : IProjectConversationDirectory
     {
         public int CallCount { get; private set; }
 
@@ -903,6 +946,7 @@ public sealed partial class GetConversationStartSetupTests
             CancellationToken cancellationToken = default)
         {
             CallCount++;
+            onRead?.Invoke();
             return Task.FromResult(ProjectConversationsPage.Empty(projectId, ProjectConversationTrustSignal.Current));
         }
     }

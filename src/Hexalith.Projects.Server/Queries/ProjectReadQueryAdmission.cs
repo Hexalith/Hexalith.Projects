@@ -34,8 +34,11 @@ internal static class ProjectReadQueryAdmission
 
     /// <summary>Recognizes an authenticated delegated Chatbot with its required ProjectUser role.</summary>
     internal static bool IsChatbot(QueryEnvelope query, ProjectQueryEnvelopePrincipalBinding binding)
-        => query.AuthenticatedWorkloadId == "chatbot" && query.IsDelegated && !string.IsNullOrWhiteSpace(query.DelegationId)
-            && binding.HttpContext is { } http && HasRole(http.User, "ProjectUser");
+        => binding.HttpContext is { } http && IsChatbot(query.AuthenticatedWorkloadId, query.IsDelegated, query.DelegationId, http.User);
+
+    /// <summary>Recognizes the same delegated ProjectUser identity on retained authenticated reads.</summary>
+    internal static bool IsChatbot(string? workload, bool delegated, string? delegation, ClaimsPrincipal principal)
+        => workload == "chatbot" && delegated && !string.IsNullOrWhiteSpace(delegation) && HasRole(principal, "ProjectUser");
 
     /// <summary>Recognizes the Tenant role required for quarantine inventory.</summary>
     internal static bool IsTenantProjectAdministrator(ProjectQueryEnvelopePrincipalBinding binding)

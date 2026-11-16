@@ -8,10 +8,10 @@ using ConversationId = Hexalith.Conversations.Contracts.Identifiers.Conversation
 using TenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
 
 /// <summary>Supplies the identical controlled advisory owner observation to the retained REST path.</summary>
-internal sealed class CutoverConversationResolutionDirectory : IProjectConversationResolutionDirectory
+internal sealed class CutoverConversationResolutionDirectory(ReferenceState state = ReferenceState.Included) : IProjectConversationResolutionDirectory
 {
     /// <inheritdoc/>
     public Task<ConversationResolutionMetadata> ReadConversationMetadataAsync(ConversationId conversationId, TenantId tenantId,
         CallerPrincipalId caller, string correlationId, CancellationToken cancellationToken = default)
-        => Task.FromResult(new ConversationResolutionMetadata(conversationId.Value, "project-a", "Project project-b", ReferenceState.Included));
+        => Task.FromResult(new ConversationResolutionMetadata(conversationId.Value, "project-a", "Project project-b", state));
 }

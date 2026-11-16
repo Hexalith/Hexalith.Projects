@@ -1,0 +1,49 @@
+--- a/Directory.Packages.props
++++ b/Directory.Packages.props
+@@ -18,4 +18,8 @@
+   <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
+   <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
+   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
++  <!-- Preserve the EventStore family while supplying the query result metadata contract. -->
++  <ItemGroup>
++    <PackageVersion Update="Hexalith.EventStore.Contracts" Version="5.3.0" />
++  </ItemGroup>
+ </Project>
+--- a/tools/release-packages.json
++++ b/tools/release-packages.json
+@@ -24,7 +24,7 @@
+       "assembly": "Hexalith.Projects.Contracts",
+       "frameworkReferences": [],
+       "dependencies": {
+-        "Hexalith.EventStore.Contracts": "5.1.1",
++        "Hexalith.EventStore.Contracts": "5.3.0",
+         "ByteAether.Ulid": "1.4.2",
+         "Hexalith.Commons.UniqueIds": "3.0.0",
+         "Hexalith.McpCli.Abstractions": "3.0.0"
+@@ -41,7 +41,7 @@
+         "Microsoft.Extensions.Options.ConfigurationExtensions": "11.0.0",
+         "ByteAether.Ulid": "1.4.2",
+         "Hexalith.Commons.UniqueIds": "3.0.0",
+-        "Hexalith.EventStore.Contracts": "5.1.1",
++        "Hexalith.EventStore.Contracts": "5.3.0",
+         "Microsoft.Extensions.Configuration": "11.0.0",
+         "Microsoft.Extensions.Configuration.Binder": "11.0.0",
+         "Hexalith.McpCli.Abstractions": "3.0.0"
+@@ -60,7 +60,7 @@
+         "Newtonsoft.Json": "13.0.4",
+         "ByteAether.Ulid": "1.4.2",
+         "Hexalith.Commons.UniqueIds": "3.0.0",
+-        "Hexalith.EventStore.Contracts": "5.1.1",
++        "Hexalith.EventStore.Contracts": "5.3.0",
+         "Hexalith.McpCli.Abstractions": "3.0.0"
+       },
+       "probe": "using Hexalith.Projects.Client;\nConsole.WriteLine(ProjectsClientOptions.DefaultConfigurationSectionName);\n"
+@@ -75,7 +75,7 @@
+         "Hexalith.Projects": "{version}",
+         "ByteAether.Ulid": "1.4.2",
+         "Hexalith.Commons.UniqueIds": "3.0.0",
+-        "Hexalith.EventStore.Contracts": "5.1.1",
++        "Hexalith.EventStore.Contracts": "5.3.0",
+         "Microsoft.Extensions.Configuration": "11.0.0",
+         "Microsoft.Extensions.Configuration.Binder": "11.0.0",
+         "Microsoft.Extensions.Options.ConfigurationExtensions": "11.0.0",
