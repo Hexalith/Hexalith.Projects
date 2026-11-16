@@ -1,0 +1,31 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Tenants.Contracts/inputs-nhw2z5ay/vectors/1/change-user-role.vector.json",
+  "documents": [
+    {
+      "error": {
+        "code": "gateway_error",
+        "status": 503,
+        "detail": "scripted Gateway failure"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7GMNBSFMEH6C4Q1438XGBTV",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-roles",
+        "commandType": "change-user-role",
+        "payload": {
+          "NewRole": "TenantOwner",
+          "TenantId": "vector-roles",
+          "UserId": "vector-user-2@example.com"
+        },
+        "correlationId": "01M7GMNBSFMEH6C4Q1438XGBTV"
+      }
+    }
+  ]
+}

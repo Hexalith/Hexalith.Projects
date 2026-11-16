@@ -1,0 +1,36 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Projects.Contracts/inputs-n9cbjfst/vectors/0/describe.vector.json",
+  "documents": [
+    {
+      "operation": "projects.describe",
+      "tenant": "tenant-a",
+      "document": {
+        "projectId": "project-a",
+        "snapshot": {
+          "responseState": "Partial",
+          "asOf": "2026-11-15T00:00:00+00:00",
+          "projectVersion": 2,
+          "components": [],
+          "recoveryActions": []
+        },
+        "lifecycleState": "Active",
+        "createdAt": "2026-11-15T00:00:00+00:00",
+        "updatedAt": "2026-11-15T00:00:00+00:00",
+        "references": []
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "tenant-a",
+        "domain": "projects",
+        "aggregateId": "project-a",
+        "queryType": "Hexalith.Projects.Queries.GetProject.v1",
+        "payload": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "lane": "mcpcli-restore",
+    "cwd": "/tmp/hexalith-job.mzAaly8C/mcpcli",
+    "command": [
+      "dotnet",
+      "restore",
+      "Hexalith.McpCli.slnx",
+      "-m:1"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "mcpcli-build",
+    "cwd": "/tmp/hexalith-job.mzAaly8C/mcpcli",
+    "command": [
+      "dotnet",
+      "build",
+      "Hexalith.McpCli.slnx",
+      "--no-restore",
+      "--configuration",
+      "Release",
+      "-warnaserror",
+      "-m:1",
+      "--disable-build-servers"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "McpCli-Manifest-final",
+    "cwd": "/tmp/hexalith-job.mzAaly8C/mcpcli",
+    "command": [
+      "dotnet",
+      "test",
+      "--project",
+      "tests/Hexalith.McpCli.Manifest.Tests",
+      "--no-build",
+      "--configuration",
+      "Release"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "enrolled",
+    "cwd": "/tmp/hexalith-job.mzAaly8C/mcpcli",
+    "command": [
+      "python3",
+      "tools/conformance-vectors/v1/check_enrolled.py",
+      "--local",
+      "--output",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "topology-python",
+    "cwd": "/tmp/hexalith-job.mzAaly8C/mcpcli",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v",
+      "-s",
+      "tools/live-topology",
+      "-p",
+      "test_*.py"
+    ],
+    "exitCode": 1,
+    "packageSourceOverride": false
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "name": "tenants.refresh-tenant-access",
+  "kind": "write",
+  "description": "Refresh tenant access projections from authoritative tenant status, memberships and configuration-key names. Requires a current TenantOwner or verified global administrator. Disabled tenants remain disabled. Retry one recovery with the same operation ID; use a fresh ID for a later recovery.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "TenantId": {
+        "type": "string",
+        "description": "Identifier of the existing tenant whose access projections should recover."
+      }
+    },
+    "required": [
+      "TenantId"
+    ],
+    "additionalProperties": false
+  },
+  "example": {
+    "TenantId": "acme"
+  },
+  "envelope": {
+    "aggregateIdRequired": false,
+    "idempotencyKeyRequired": false,
+    "arguments": [
+      "aggregateId",
+      "correlationId",
+      "idempotencyKey",
+      "extensions"
+    ],
+    "platformScope": "platform:tenants"
+  },
+  "lintFindings": [],
+  "submittable": false,
+  "reason": "configuration_invalid"
+}

@@ -1,0 +1,1231 @@
+diff --git a/Directory.Build.props b/Directory.Build.props
+index 62663b8534ad0ae6d40b771c169c29796d1e07fc..89552fec5872844350d3e05634471051f0cf112b 100644
+--- a/Directory.Build.props
++++ b/Directory.Build.props
+@@ -2,6 +2,7 @@
+   <PropertyGroup>
+     <!-- Select the current public gateway and Contracts cohort before the Builds catalog import. -->
+     <HexalithEventStoreVersion Condition="'$(HexalithEventStoreVersion)' == ''">5.1.0</HexalithEventStoreVersion>
++    <HexalithProjectsVersion Condition="'$(HexalithProjectsVersion)' == ''">2.0.0-story66.3</HexalithProjectsVersion>
+     <HexalithMcpCliVersion Condition="'$(HexalithMcpCliVersion)' == ''">2.0.1</HexalithMcpCliVersion>
+     <HexalithPartiesVersion Condition="'$(HexalithPartiesVersion)' == ''">3.1.1</HexalithPartiesVersion>
+     <HexalithPartiesAspireVersion Condition="'$(HexalithPartiesAspireVersion)' == ''">3.1.1</HexalithPartiesAspireVersion>
+diff --git a/README.md b/README.md
+index 38f281bbcafe6e708f41185bdb2b3b65c960816c..2cf67c003b54968237a7a38b1cec67b288fccc87 100644
+--- a/README.md
++++ b/README.md
+@@ -371,13 +371,13 @@ Settings resolve in this order:
+ 
+ The Gateway URL and the token must come from the same source: both from flags, both from the environment, or both from the selected profile. A URL with no token is allowed. Any mix, such as `--url` or `EVENTSTORE_URL` with a profile token, or `--url` with `EVENTSTORE_TOKEN`, fails as `configuration_invalid` with exit 2 before any Gateway call, for example `The gateway URL from flag and the token from profile must come from the same source: flags, environment, or the selected profile.` The message names both sources and never the token. Settings resolution applies this rule on every verb that resolves settings, including discovery, `config current`, `config profile add` and `mcp` (whose error goes to stderr), so a stored token can never travel to another environment's URL.
+ 
+-Error privacy: a `gateway_error` document carries only `status`, `detail` (or the title), `reason`, `retryable`, `clientAction`, `retryAfter` and a canonical `correlationId`. Other Problem Details members, such as `type`, `instance`, `tenantId`, `errors`, `rejectionType` and extensions, non-JSON response bodies and exception text never reach stdout, stderr or MCP content in either head. Gateway HTTP diagnostics on stderr name only the method, the request URL without its query, the elapsed time and the status, and a failed request logs no exception. McpCli copies `detail` (or the title), `reason`, `clientAction` and `retryAfter` as the Gateway sends them; for a non-JSON response, `detail` is the HTTP reason phrase. The Gateway sanitizes Command rejections, but it passes a module's Query error message through as `detail` for every status except the invalid-page 400 and 403, including the 400 malformed-request response built from the module's `sentinel: detail` message, so that text is only as private as the module makes it. Parties returns only sentinel codes there.
++Error privacy: a `gateway_error` document carries only `status`, `detail` (or the title), `reason`, `retryable`, `clientAction`, `retryAfter` and a canonical `correlationId`. Other Problem Details members, such as `type`, `instance`, `tenantId`, `errors`, `rejectionType` and extensions, non-JSON response bodies and exception text never reach stdout, stderr or MCP content in either head. Gateway HTTP diagnostics on stderr name only the method, the request URL without its query, the elapsed time and the status, and a failed request logs no exception. McpCli copies `detail` (or the title), `reason`, `clientAction` and `retryAfter` as the Gateway sends them; for a non-JSON response, `detail` is the HTTP reason phrase. The Gateway sanitizes Command rejections, but it passes a module's Query error message through as `detail` for every status except the invalid-page 400 and 403, including the 400 malformed-request response built from the module's `sentinel: detail` message, so that text is only as private as the module makes it. Parties returns only sentinel codes there. Projects returns the safe `safe-denial` result for denied, absent and foreign targets, without rejected values or remote detail.
+ 
+ Legacy Party IDs: McpCli refuses a braced `{GUID}`, parenthesized `(GUID)` or X-format `{0x…,{0x…}}` root `PartyId` with `validation_failed` at `/PartyId` before any Gateway call, and does not convert it. Parties accepts these forms, but the Gateway's aggregate rules cannot address them. Support-safe IDs such as `Legacy.party_01-A` work, and child identifiers such as `ContactChannelId` and `IdentifierId` reach the Gateway unchanged in any of these forms.
+ 
+ ### Register one stdio server per client
+ 
+-All clients launch the same absolute executable with arguments `mcp --transport stdio --profile operator` and the same private `MCPCLI_HOME`. A client owns its own server process; one registration exposes both modules and the five generic tools. Do not add separate Tenants/Parties servers or point a client at the Gateway as an MCP HTTP URL.
++All clients launch the same absolute executable with arguments `mcp --transport stdio --profile operator` and the same private `MCPCLI_HOME`. A client owns its own server process; one registration exposes every enrolled module and the five generic tools. Do not add separate module servers or point a client at the Gateway as an MCP HTTP URL.
+ 
+ For [Claude Code](https://code.claude.com/docs/en/mcp), run from the project in which you will test, replacing both absolute paths:
+ 
+@@ -438,7 +438,7 @@ Require `isError: false`, matching JSON text and `structuredContent`, result `te
+ 
+ The [historical sessions](https://github.com/Hexalith/Hexalith.McpCli/blob/main/docs/release/operator-setup-history.md) used Tenants 5.10.0 and its `system` scope. The current cohort uses Contracts 8.0.0 and the selected canonical tenant as shown below; the [Gateway boundary](#gateway-boundary) describes its explicit scopes. Automated approval and scripted replay make no actual operator-client acceptance claim.
+ 
+-In each actual client, request the tools from server **hexalith** explicitly. First call `list_modules` with `{}`, then `list_operations` with `{"module":"tenants"}` and `{"module":"parties"}`, and `describe_operation` for `tenants.get-tenant`, `parties.create-party` and `parties.get-party`. Confirm the five tools `list_modules`, `list_operations`, `describe_operation`, `send_command`, `run_query`, both modules and `submittable: true` for the selected operations.
++In each actual client, request the tools from server **hexalith** explicitly. First call `list_modules` with `{}`, then `list_operations` with `{"module":"tenants"}` and `{"module":"parties"}`, and `describe_operation` for `tenants.get-tenant`, `parties.create-party` and `parties.get-party`. Confirm the five tools `list_modules`, `list_operations`, `describe_operation`, `send_command`, `run_query`, all enrolled modules and `submittable: true` for the selected operations.
+ 
+ Replace `APPROVED-TENANT` with the approved tenant and use a fresh Party ID, contact ID and identifier ID for **every** client and attempt. The following are MCP **argument objects**, not CLI commands. `payload` is a string containing JSON; keep its property casing. Use synthetic names and contact details only.
+ 
+@@ -496,7 +496,7 @@ Test projects may use the policy's `directPackages`, enrolled modules, the Decor
+ 
+ Offline captured closures prove that decorated Tenants- and Parties-shaped packages can depend on McpCli Abstractions without adding production dependencies. `Hexalith.Projects.Contracts` 1.0.0 remains excluded: its closure adds `Microsoft.AspNetCore.App` and UI/web dependencies such as Fluxor, Fluent UI, and FrontComposer.Shell. Adding those packages to the baseline still fails the gate. Run a fresh `dotnet restore Hexalith.McpCli.slnx` before building and running `tests/Hexalith.McpCli.Manifest.Tests`; the candidate checks read committed fixtures and require no network restore.
+ 
+-The production manifest references `Hexalith.Parties.Contracts` **3.1.1** and `Hexalith.Tenants.Contracts` **8.0.0**. Restored-package integrity binds each archive: its NuGet content hash must match `project.assets.json`. Each module's `approval.json` binds its inventory and vector hashes only, never an artifact hash. `Directory.Build.props` pins these module versions before importing the Builds catalog; advancing the Builds submodule leaves them unchanged. For the enrollment gates, a Contracts version change that alters no vector or inventory is reported, not failed, and needs no re-approval. The live lane's native runtime cohort in `tools/live-topology/native-runtime-current.json` is a separate selection: it binds an exact Tenants Contracts version, so a Tenants release still moves that cohort before the required live lane passes. A newly decorated operation with an existing Operation Shape needs no vector, plan, inventory or approval change; the package pin and the README operation list still move, and a description lint finding on that operation still needs an approved row in `tools/inventory-coverage/v1/<module>-accepted-lint.json`. Offline discovery with `hexalith modules --strict` lists `parties` and `tenants`; `hexalith operations parties --strict` lists the seven approved Parties operations, and `hexalith operations tenants --strict` lists fifteen decorated Tenants operations. Inspect a complete name with, for example, `hexalith describe parties.search-parties --lint --strict` or `hexalith describe tenants.get-tenant --lint --strict`.
++The current manifest references `Hexalith.Parties.Contracts` **3.1.1**, `Hexalith.Tenants.Contracts` **8.0.0** and the local `Hexalith.Projects.Contracts` **2.0.0-story66.3** candidate. The Projects candidate is unpublished; its main integration and live qualification remain under DW-82. Restored-package integrity binds each archive: its NuGet content hash must match `project.assets.json`. Each module's `approval.json` binds its inventory and vector hashes only, never an artifact hash. `Directory.Build.props` pins these module versions before importing the Builds catalog; advancing the Builds submodule leaves them unchanged. For the enrollment gates, a Contracts version change that alters no vector or inventory is reported, not failed, and needs no re-approval. The live lane's native runtime cohort in `tools/live-topology/native-runtime-current.json` is a separate selection: it binds an exact Tenants Contracts version, so a Tenants release still moves that cohort before the required live lane passes. A newly decorated operation with an existing Operation Shape needs no vector, plan, inventory or approval change; the package pin and the README operation list still move, and a description lint finding on that operation still needs an approved row in `tools/inventory-coverage/v1/<module>-accepted-lint.json`. Offline discovery with `hexalith modules --strict` lists `parties`, `projects` and `tenants`; `hexalith operations projects --strict` lists the four approved Projects reads, `hexalith operations parties --strict` lists the seven approved Parties operations, and `hexalith operations tenants --strict` lists fifteen decorated Tenants operations. Inspect a complete name with, for example, `hexalith describe parties.search-parties --lint --strict` or `hexalith describe tenants.get-tenant --lint --strict`.
+ 
+ `tenants.refresh-tenant-access` is newly discoverable in Tenants 8.0.0 and shares an already approved Operation Shape. Its omission from the retained release inventory and differing vector/approval versions are reported without refusing enrollment. The existing vectors do not prove that operation's downstream repair semantics.
+ 
+@@ -504,29 +504,31 @@ Current Tenants commands and the cross-tenant reads `tenants.list-tenants` and `
+ 
+ The operations appear in this order in each module's strict discovery output:
+ 
+-| Parties | Tenants |
+-| --- | --- |
+-| `parties.create-party` | `tenants.add-user-to-tenant` |
+-| `parties.deactivate-party` | `tenants.change-user-role` |
+-| `parties.get-party` | `tenants.create-tenant` |
+-| `parties.list-parties` | `tenants.disable-tenant` |
+-| `parties.reactivate-party` | `tenants.enable-tenant` |
+-| `parties.search-parties` | `tenants.get-tenant` |
+-| `parties.update-party` | `tenants.get-tenant-audit` |
+-| | `tenants.get-tenant-users` |
+-| | `tenants.get-user-tenants` |
+-| | `tenants.list-tenants` |
+-| | `tenants.refresh-tenant-access` |
+-| | `tenants.remove-tenant-configuration` |
+-| | `tenants.remove-user-from-tenant` |
+-| | `tenants.set-tenant-configuration` |
+-| | `tenants.update-tenant` |
+-
+-Production enrollment requires an approved release inventory for every module and approved conformance vectors that cover every Operation Shape in its Catalog. A shape is the tuple of kind, Identifier Kind, Wire Type convention, tenant source (`platformScope`, `fixedTenant` or public), aggregate-identifier source (property, constant or none), query projection selector (`projectionActorType`, `projectionType` or none) and required idempotency key. Only the C# `OperationShape` test code derives it from Catalog descriptors; the Python gates compare its key as an opaque string. An uncovered shape, a duplicate vector or a stale vector fails; a vector is stale when its operation is absent from the restored Catalog or Core rejects its inputs. Two things are reported and never fail: a vector or receipt version that differs from the restored package, and a cataloged operation that no inventory row mentions. Each report appears on stderr as a `reported: …` line and in the `reported` array of `enrolled.json`, `verification.json` and `live-lane.json`; a report never changes the exit code. For every Operation kind it declares, each module also needs at least one approved live vector with a strict companion plan in `tools/live-topology/plans-current/<operation>.json`. A vector without a plan runs in loopback only, and a plan without an approved vector fails the live preflight. The live set, and CI's discovery assertion, are the approved vector files that have a plan. For a new enrollment, the live Command vector creates an aggregate in a prerequisite, submits a second Command to it with a caller-supplied idempotency key, and reads the effect back with a postcondition Query. The count pin in `tools/live-topology/test_live_plans.py` counts the companion plans of the `requiredModules` in `tools/conformance-vectors/v1/v1-scope.json`: update it only when such a plan is added or removed. A new enrollment's plans leave it unchanged, and every plan is still loaded against its approved vector. CI checks the built manifest, strict Catalog discovery, description lint, name/type inventory coverage, Operation Shape coverage, restored-package integrity and complete CLI/MCP replay independently of dependency policy. The retained Parties and Tenants sets contain seven and fourteen vectors; together their 21 vectors cover six shapes, three per module. Story 4.11 also replays all 21 operations in the combined production manifest and benchmarks its first Catalog construction plus exactly one Ulid sample in a fresh process. Full-v1 acceptance requires both `parties` and `tenants` from `tools/conformance-vectors/v1/v1-scope.json`. The separately qualified normal Tenants 5.10.1 five-package/container release repairs the container source labels. At that publication, enrollment stayed on Contracts 5.10.0 because the approved vectors and inventory bound its signed Contracts archive. The 2026-11-06 enrollment restored Contracts 7.0.5; its receipt's owner-approval reference is the [automated public-artifact approval](https://github.com/Hexalith/Hexalith.McpCli/blob/main/evidence/release-maintenance-20261106/tenants-7.0.5/approval.json), and the receipt binds the fourteen vectors, with only package-version metadata refreshed, and the unchanged inventory digest. That approval records delegated Codex automation under the user's explicit bypass of human validation. The historical 2026-11-12 package cohort restored Parties 3.1.1 and Tenants 7.0.7 with [separate signed-artifact and vector qualification](evidence/release-maintenance-20261112/current-cohort/README.md); that evidence does not qualify the .NET 11 cohort. The current 2026-11-15 cohort restores Tenants 8.0.0 and exposes 22 decorated operations; its full hosted native lane remains required. The following Ubuntu measurement is historical evidence for the former cohort: its strict gate passed all 21 production operations; first Catalog construction plus exactly one Ulid sample measured 194.5002 ms against the 500 ms limit. See the [artifact and matrix audit](https://github.com/Hexalith/Hexalith.McpCli/blob/main/_bmad-output/implementation-artifacts/evidence/story-4-11/publication-20261021/parent-root-review-fixed-ubuntu-acceptance-audit.json). Local available-package evidence alone cannot grant acceptance. See [inventory coverage](https://github.com/Hexalith/Hexalith.McpCli/blob/main/tools/inventory-coverage/v1/README.md) and [artifact verification](https://github.com/Hexalith/Hexalith.McpCli/blob/main/tools/conformance-vectors/v1/README.md). [Move from eventstore-admin or Parties.Mcp](#move-from-eventstore-admin-or-partiesmcp) states the tested error-privacy and legacy Party ID behavior; their inventory dispositions, live authorization, domain effects, and legacy-host retirement retain their separate migration gates.
++| Parties | Projects | Tenants |
++| --- | --- | --- |
++| `parties.create-party` | `projects.describe` | `tenants.add-user-to-tenant` |
++| `parties.deactivate-party` | `projects.list` | `tenants.change-user-role` |
++| `parties.get-party` | `projects.trace-attachments` | `tenants.create-tenant` |
++| `parties.list-parties` | `projects.trace-conversation` | `tenants.disable-tenant` |
++| `parties.reactivate-party` |  | `tenants.enable-tenant` |
++| `parties.search-parties` |  | `tenants.get-tenant` |
++| `parties.update-party` |  | `tenants.get-tenant-audit` |
++|  |  | `tenants.get-tenant-users` |
++|  |  | `tenants.get-user-tenants` |
++|  |  | `tenants.list-tenants` |
++|  |  | `tenants.refresh-tenant-access` |
++|  |  | `tenants.remove-tenant-configuration` |
++|  |  | `tenants.remove-user-from-tenant` |
++|  |  | `tenants.set-tenant-configuration` |
++|  |  | `tenants.update-tenant` |
++
++Production enrollment requires an approved release inventory for every module and approved conformance vectors that cover every Operation Shape in its Catalog. A shape is the tuple of kind, Identifier Kind, Wire Type convention, tenant source (`platformScope`, `fixedTenant` or public), aggregate-identifier source (property, constant or none), query projection selector (`projectionActorType`, `projectionType` or none) and required idempotency key. Only the C# `OperationShape` test code derives it from Catalog descriptors; the Python gates compare its key as an opaque string. An uncovered shape, a duplicate vector or a stale vector fails; a vector is stale when its operation is absent from the restored Catalog or Core rejects its inputs. Two things are reported and never fail: a vector or receipt version that differs from the restored package, and a cataloged operation that no inventory row mentions. Each report appears on stderr as a `reported: …` line and in the `reported` array of `enrolled.json`, `verification.json` and `live-lane.json`; a report never changes the exit code. For every Operation kind it declares, each module also needs at least one approved live vector with a strict companion plan in `tools/live-topology/plans-current/<operation>.json`. A vector without a plan runs in loopback only, and a plan without an approved vector fails the live preflight. The live set, and CI's discovery assertion, are the approved vector files that have a plan. For a new enrollment, the live Command vector creates an aggregate in a prerequisite, submits a second Command to it with a caller-supplied idempotency key, and reads the effect back with a postcondition Query. The count pin in `tools/live-topology/test_live_plans.py` counts the companion plans of the `requiredModules` in `tools/conformance-vectors/v1/v1-scope.json`: update it only when such a plan is added or removed. A new enrollment's plans leave it unchanged, and every plan is still loaded against its approved vector. CI checks the built manifest, strict Catalog discovery, description lint, name/type inventory coverage, Operation Shape coverage, restored-package integrity and complete CLI/MCP replay independently of dependency policy. The retained Parties and Tenants sets contain seven and fourteen vectors; together their 21 vectors cover six shapes, three per module. Story 4.11 also replays all 21 operations in the combined production manifest and benchmarks its first Catalog construction plus exactly one Ulid sample in a fresh process. Full-v1 acceptance requires both `parties` and `tenants` from `tools/conformance-vectors/v1/v1-scope.json`. The separately qualified normal Tenants 5.10.1 five-package/container release repairs the container source labels. At that publication, enrollment stayed on Contracts 5.10.0 because the approved vectors and inventory bound its signed Contracts archive. The 2026-11-06 enrollment restored Contracts 7.0.5; its receipt's owner-approval reference is the [automated public-artifact approval](https://github.com/Hexalith/Hexalith.McpCli/blob/main/evidence/release-maintenance-20261106/tenants-7.0.5/approval.json), and the receipt binds the fourteen vectors, with only package-version metadata refreshed, and the unchanged inventory digest. That approval records delegated Codex automation under the user's explicit bypass of human validation. The historical 2026-11-12 package cohort restored Parties 3.1.1 and Tenants 7.0.7 with [separate signed-artifact and vector qualification](evidence/release-maintenance-20261112/current-cohort/README.md); that evidence does not qualify the .NET 11 cohort. The 2026-11-15 Parties/Tenants cohort restores Tenants 8.0.0 and exposes 22 decorated operations; its full hosted native lane remains required. The local Projects candidate adds the four supported read operations described below. The following Ubuntu measurement is historical evidence for the former cohort: its strict gate passed all 21 production operations; first Catalog construction plus exactly one Ulid sample measured 194.5002 ms against the 500 ms limit. See the [artifact and matrix audit](https://github.com/Hexalith/Hexalith.McpCli/blob/main/_bmad-output/implementation-artifacts/evidence/story-4-11/publication-20261021/parent-root-review-fixed-ubuntu-acceptance-audit.json). Local available-package evidence alone cannot grant acceptance. See [inventory coverage](https://github.com/Hexalith/Hexalith.McpCli/blob/main/tools/inventory-coverage/v1/README.md) and [artifact verification](https://github.com/Hexalith/Hexalith.McpCli/blob/main/tools/conformance-vectors/v1/README.md). [Move from eventstore-admin or Parties.Mcp](#move-from-eventstore-admin-or-partiesmcp) states the tested error-privacy and legacy Party ID behavior; their inventory dispositions, live authorization, domain effects, and legacy-host retirement retain their separate migration gates.
+ 
+ Both production gates run from the repository root after `python3 -m pip install -r tools/conformance-vectors/v1/requirements.txt`, `dotnet restore Hexalith.McpCli.slnx` and `dotnet build Hexalith.McpCli.slnx --no-restore --configuration Release -warnaserror`; `check_enrolled.py` reads that restore's `src/Hexalith.McpCli/obj/project.assets.json`. The complete command sequence is in [Production parity and first-construction gate](https://github.com/Hexalith/Hexalith.McpCli/blob/main/tools/conformance-vectors/v1/README.md#production-parity-and-first-construction-gate). Run the complete production replay gate with `python3 tools/conformance-vectors/v1/check_enrolled.py --output /tmp/mcpcli-story411-evidence`. Use `--local` to collect available-package evidence labeled `local-only`; the default fails explicitly when either required module is absent. Then run `MCPCLI_BENCHMARK_REQUIRE_V1=true MCPCLI_BENCHMARK_OUTPUT=/tmp/mcpcli-catalog.json dotnet tests/Hexalith.McpCli.Core.Tests/bin/Release/net11.0/Hexalith.McpCli.Core.Tests.dll -class Hexalith.McpCli.Core.Tests.CatalogPerformanceTests` for the strict 500 ms gate. Omit `MCPCLI_BENCHMARK_REQUIRE_V1` for a local measurement that records missing modules and `fullV1Accepted: false`.
+ 
+-The requested Works, Timesheets, Agents, Conversations, Projects, and Folders packages are not enrolled yet. Their current Contracts assemblies lack declarations or live gateway paths required by the [integration spec](https://github.com/Hexalith/Hexalith.McpCli/blob/main/_bmad-output/implementation-artifacts/spec-add-six-domain-modules.md).
++Projects is enrolled against the local `Hexalith.Projects.Contracts` 2.0.0-story66.3 candidate for Story 6.6; publication and main-branch enrollment remain DW-82. Offline strict discovery exposes exactly `projects.list`, `projects.describe`, `projects.trace-conversation` and `projects.trace-attachments`. `projects.describe` takes the Project identifier through `--aggregate-id`; payload fields use camelCase. List paging stays in the payload (`pageSize` defaults to 50, maximum 200, plus opaque `cursor`). Safe Metadata is the default; descriptive reads require `projects:inspect_descriptive_metadata` and durable server audit. HTTP 200 Partial or Unavailable results exit 0 and retain their JSON truth. Missing credentials reach the Gateway, which returns 401 before the Projects query executes; errors exit 2 with no payload. No Projects audit, writes, previews, maintenance or Diagnostic Export operation is enrolled. The legacy Projects CLI and MCP plug-in remain frozen. The list live plan requires an authenticated Projects Gateway deployment; local replay does not qualify that topology.
++
++The requested Works, Timesheets, Agents, Conversations and Folders packages are not enrolled yet. Their current Contracts assemblies lack declarations or live gateway paths required by the [integration spec](https://github.com/Hexalith/Hexalith.McpCli/blob/main/_bmad-output/implementation-artifacts/spec-add-six-domain-modules.md).
+ 
+ ## Run and debug from the Platform workspace
+ 
+@@ -566,7 +568,7 @@ Profile mutations keep the directory, profile, lock and temporary files private.
+ 
+ Commands use `hexalith send MODULE.OPERATION --payload '{"ItemId":"..."}'`, `--payload @command.json`, or `cat command.json | hexalith send MODULE.OPERATION --payload -`. The payload follows the declared schema and supplies the aggregate identifier; an optional `--aggregate-id` must equal it. A successful send exits 0, makes one Gateway request, and returns `operation`, the Gateway `messageId` when provided (otherwise the submitted message ID), the submitted `correlationId`, resolved `tenant` and `aggregateId`, and `status: "accepted"`. Each call generates a new ULID message ID and uses it as correlation unless `--correlation-id` supplies one. `--correlation-id` and `--idempotency-key` must be canonical uppercase ULIDs; any other value, including lowercase ULID text, fails with `validation_failed` instead of being replaced. The tool never generates an idempotency key. When a command declares a non-nullable or serializer-required idempotency member, the caller must supply `--idempotency-key`, including when a required member is nullable. `describe` reports this requirement as `envelope.idempotencyKeyRequired: true`. A supplied key replaces any raw mapped payload value; without it, a raw non-null key is rejected and a raw null key is removed. The result includes `idempotencyKey` only when supplied and `result` only when returned by the Gateway. It never includes a `duplicate` field. Validation failures exit 2 and submit nothing. Gateway failures exit 2 with a `gateway_error` document. A timeout or other uncertain Gateway outcome may have reached the Gateway; `gateway_error` reasons `gateway-timeout` and `gateway-unreachable` are uncertain even when the detail says the Gateway could not be reached. Do not assume that submitting the command again is safe.
+ 
+-Queries use `hexalith query MODULE.OPERATION --payload '{"Key":"item-42"}'`, `--payload @query.json`, or `cat query.json | hexalith query MODULE.OPERATION --payload -`. The payload follows the operation's described schema and preserves its property casing. Aggregate selection uses `--aggregate-id`, then the declared payload accessor, then a query's declared constant. An explicit value must agree with a payload accessor, may override a constant, and is required when neither source exists. Validation completes before exactly one Gateway submission using the catalog's routing values. Both heads preserve the descriptor's `projectionActorType` exactly when one is declared; omitting it would change the enrolled wire contract. Native receiver selection remains bound to the committed Gateway catalog. The pinned SDK 5.1.0 supplies the exact owner-enrolled selector policy. Parties 3.1.1 omits the deprecated actor compatibility hints and retains the same cataloged domain-service projection handlers; its exact legacy aliases remain accepted by the receiver. The separately hash-bound current vectors in `tools/conformance-vectors/v1/current/modules` and companion `plans-current` record that published form. Historical vectors, plans and native receipts remain unchanged. Full native compatibility still requires fresh complete live CI for this selected cohort; offline replay and owner compilation do not replace that gate.
++Queries use `hexalith query MODULE.OPERATION --payload '{"Key":"item-42"}'`, `--payload @query.json`, or `cat query.json | hexalith query MODULE.OPERATION --payload -`. The payload follows the operation's described schema and preserves its property casing. Aggregate selection uses `--aggregate-id`, then the declared payload accessor, then a query's declared constant. An explicit value must agree with a payload accessor, may override a constant, and is required when neither source exists. Validation completes before exactly one Gateway submission using the catalog's routing values. Computed domain queries may omit both `projectionType` and `projectionActorType`; both heads preserve their absence without inventing a selector. A `projectionActorType` requires a resolved `projectionType`; actor-only declarations are rejected as `missing_routing_values`. Explicit selectors retain their validation and interface/attribute precedence. Both heads preserve the descriptor's `projectionActorType` exactly when one is declared; omitting it would change the enrolled wire contract. Native receiver selection remains bound to the committed Gateway catalog. The pinned SDK 5.1.0 supplies the exact owner-enrolled selector policy. Parties 3.1.1 omits the deprecated actor compatibility hints and retains the same cataloged domain-service projection handlers; its exact legacy aliases remain accepted by the receiver. The separately hash-bound current vectors in `tools/conformance-vectors/v1/current/modules` and companion `plans-current` record that published form. Historical vectors, plans and native receipts remain unchanged. Full native compatibility still requires fresh complete live CI for this selected cohort; offline replay and owner compilation do not replace that gate.
+ 
+ Enable a read-only session with `--read-only` or `EVENTSTORE_READ_ONLY=true`. After settings resolution and catalog access succeed, a `send` naming a declared write returns `read_only` with exit code 2 and zero Gateway requests, even without a Gateway URL. Refusal happens before reading payload files or stdin, parsing JSON, processing `--extension key=value` entries, or validating `--aggregate-id`, `--correlation-id`, and `--idempotency-key`. A missing or blank `send` operation returns `invalid_arguments` for `operation` before catalog lookup in either mode. For read-only `send`, an unknown operation returns `unknown_operation` and naming a read operation returns `validation_failed`; these errors take precedence over missing or unreadable payloads and malformed extensions. Without read-only mode, `send` returns `invalid_arguments` for missing payloads or unreadable payload files, an `--extension` value with no `=`, an empty key before `=`, or repeated identical extension keys before those operation errors. Queries and discovery remain available; writes remain listed and describe reports `submittable: false, reason: read_only`. An explicit `--read-only false` overrides the environment setting. Run `hexalith config current --format json` with the same read-only flag and environment to check `readOnly` and its origin in `sources.readOnly` (`flag`, `EVENTSTORE_READ_ONLY`, or `default`).
+ 
+diff --git a/_bmad-output/implementation-artifacts/projects-migration-inventory-v2.md b/_bmad-output/implementation-artifacts/projects-migration-inventory-v2.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..6bc545bc84a384cf42c961075e7e96ab30c32980
+--- /dev/null
++++ b/_bmad-output/implementation-artifacts/projects-migration-inventory-v2.md
+@@ -0,0 +1,234 @@
++---
++inventory_version: '2.0.0'
++status: approved
++module: projects
++source_repository: 'https://github.com/Hexalith/Hexalith.Projects'
++source_revision: 'ce71717a965eb21454b3e13068b9072404dac5f5'
++source_spec: '_bmad-output/implementation-artifacts/spec-4-3-approve-projects-and-frontcomposer-migration-inventories.md'
++approval_status: session-approved
++approval_authority: requesting-user-session
++approval_ref: '#a1-session-approval-2026-10-16'
++amendment_ref: '#story-66-successor-decision-2026-11-15'
++amendment_source_spec: '_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md'
++amendment_approval_source: '_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only'
++external_maintainer_approval: unasserted
++---
++
++# Projects migration inventory v2
++
++Inventory **2.0.0** supersedes the frozen v1 inventory for the approved Story 6.6 supported read enrollment. It adds T01–T04 as `replace / include` while retaining all **11 MCP resources, five maintenance tools, 18 Frozen CLI spellings and 12 compatibility variants** below as `defer / exclude`. No legacy surface is retired.
++
++The successor baseline is `ce71717a965eb21454b3e13068b9072404dac5f5`. Historical source observations and A1 remain tied to v1's `3d256e632a7645bc2261e668ac7c74be81155f58` pin. The four new declarations and local candidate replace the historical conclusion that Projects has no enrollable Contracts. All tables remain migration/test artifacts outside `src/`, never runtime configuration. The companion [FrontComposer inventory](frontcomposer-migration-inventory-v1.md) retains its independent retirement gates.
++
++## Story 6.6 successor decision (2026-11-15)
++
++Jerome approved the four supported read queries under Projects `_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md` §E8 on 2026-11-15, as restated in the Story 6.6 spec (D3, D5–D8 and Tasks & Acceptance). This is session approval only under A1’s limits; no external owning-maintainer sign-off is asserted. This successor preserves every legacy resource, maintenance, CLI and compatibility row below as defer / exclude. It adds no retirement authority and leaves v1 byte-identical. Historical source observations below remain tied to v1's `3d256e632a7645bc2261e668ac7c74be81155f58` pin, not the successor baseline. The new target table and this decision supersede the historical statements that no decorated Contracts can be enrolled.
++
++| ID | Canonical operation | Decorated Contracts type | Routing / security |
++| --- | --- | --- | --- |
++| T01 | projects.list | Hexalith.Projects.Contracts.Queries.ListProjectsQuery | projects / ListProjects.v1; aggregate projects; payload paging ≤200 |
++| T02 | projects.describe | Hexalith.Projects.Contracts.Queries.GetProjectQuery | projects / GetProject.v1; caller --aggregate-id |
++| T03 | projects.trace-conversation | Hexalith.Projects.Contracts.Queries.ResolveProjectFromConversationQuery | projects / ResolveProjectFromConversation.v1; aggregate projects |
++| T04 | projects.trace-attachments | Hexalith.Projects.Contracts.Queries.ResolveProjectFromAttachmentsQuery | projects / ResolveProjectFromAttachments.v1; aggregate projects; ≤32 references |
++
++Every wire type is prefixed `Hexalith.Projects.Queries.`; all four omit both projection selectors for their committed computed routes (Story 6.6 D9) and use String identifiers. T01–T04 are new supported-target decisions, approved replace / include for supported reads only; their release-artifact decision-row IDs are also T01–T04 and do not reuse any legacy R/M/L/V row identity. They are transcribed into `tools/inventory-coverage/v1/projects-approved.json`. Identity and Tenant come from the platform credential; the Gateway authorizes each call. Safe Metadata is default; descriptive fields require `projects:inspect_descriptive_metadata` and durable server audit. Denied, foreign and absent targets share safe 404. Gateway 401/403 and safe target 404 exit 2 without payload; 200 Partial/Unavailable exits 0. No audit, write, preview, maintenance, Diagnostic Export, setup or context query is enrolled. Confirmation-required actions remain denied.
++
++The local candidate `2.0.0-story66.3` has no Conversations, Commons.Serialization or UI dependency. Byte-identical `conv:<id>` JSON survives the permitted CLR string change. The four approved vectors cover both Operation Shapes, and the query kind has a hash-bound list plan. Package publication and landing McpCli enrollment on main remain DW-82; no production enrollment, routing cutover, live-topology acceptance or retirement is claimed.
++
++The historical R/L/V rows and G1–G6 gates below retain their dispositions and owner obligations. The legacy parser's aliases, ignored options, differing exit codes and diagnostic audit behavior are migration evidence only; they are not recreated by these four supported reads.
++
++## A1 Session approval (2026-10-16)
++
++- **Approver and authority:** the requesting user in the source-spec session.
++  This is session scope approval for both source-pinned inventories; no external
++  Projects or FrontComposer owning-maintainer sign-off is asserted. Metadata
++  and every row reference this limited decision, never an external approval.
++- **Exact approving instruction:** "approve", after presentation of the
++  recommendation that all current rows in both inventories remain
++  `defer / exclude`, retaining legacy surfaces. The
++  [source spec's approved decision](spec-4-3-approve-projects-and-frontcomposer-migration-inventories.md#boundaries--constraints)
++  and [Implementation Notes](spec-4-3-approve-projects-and-frontcomposer-migration-inventories.md#implementation-notes)
++  record that instruction and its limits.
++- **Source and version:** inventory 1.0.0, finalized from candidate
++  1.0.0-candidate.1 at Projects revision
++  `3d256e632a7645bc2261e668ac7c74be81155f58`, together with FrontComposer
++  inventory 1.0.0 at `81a440a8890a17edb39924bd0cf676eb6f6b5c25`.
++- **Approved scope:** R01–R11, M01–M05, L01–L18 and V01–V12 remain
++  `defer / exclude`. The Projects maintainer owns these handoffs; G1–G6 retain
++  their stated owning roles and unresolved prerequisites. A1 approves retaining
++  the gaps, not their future resolution. All companion rows share this decision.
++- **Post-approval prerequisite clarifications (2026-10-16):** review corrected
++  R03 output scope, V01 host/helper bounds, V08 identity handoffs, the existing
++  strict wire evidence and V10 unsupported erasure/key-rotation variants.
++  These additions change no approved disposition, coverage, authority or source
++  pin; A1 does not claim the user reviewed these later clarifications.
++- **Accepted current limitation:** no Projects operation is included in McpCli.
++  The existing Projects plug-in, CLI and FrontComposer host retain their current
++  capabilities. Future replacement or behavior loss requires a later approved
++  revision with exact canonical operations, decorated types and Gateway routes.
++- **Limits:** finalizing these inventories supplies no external owner approval,
++  slim published Contracts, restored dependency closure, built Catalog coverage,
++  Gateway readiness, authorization/behavior/release proof, exposure, publication,
++  withdrawal, retention change or retirement permission. Missing external owner
++  approval still blocks an owner-approved completeness claim and the shared
++  retirement gate. Neither host nor plug-in is deletable under A1.
++
++## Source notation
++
++Paths below are relative to the pinned `references/Hexalith.Projects/` checkout.
++`Mcp/`, `Cli/`, `Contracts/` and `Server/` abbreviate
++`src/Hexalith.Projects.Mcp/`, `src/Hexalith.Projects.Cli/`,
++`src/Hexalith.Projects.Contracts/` and `src/Hexalith.Projects.Server/`.
++The descriptor declares resources at `Mcp/ProjectsMcpDescriptors.cs:24` and
++maintenance actions at `:43`; `:84` constructs the resource URIs and `:95`
++constructs tool names. Those are legacy protocol names, not McpCli operations.
++
++## Legacy resources and missing Query semantics
++
++All resources use `frontcomposer://Projects/projections/<resource-name>`.
++None is currently included. Each eventual included read must name its own typed,
++decorated Contracts Query and exact Gateway domain, wire, aggregate and projection
++route; a resource descriptor or matching context Query is insufficient (G1–G4).
++
++| ID | Legacy resource | Disposition | Coverage | Query requirement / rationale | Security class | Source evidence | Approval |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| R01 | `projects.inventory` | defer | exclude | Typed visible inventory Query; preserve lifecycle, bounded rows, freshness and tenant filtering (V01). | Tenant metadata read | `Mcp/ProjectsMcpResourceReader.cs:96` | [A1](#a1-session-approval-2026-10-16) |
++| R02 | `projects.detail` | defer | exclude | Typed detail Query; choose explicit project selection versus legacy first-visible default (V01). | Tenant metadata read | `Mcp/ProjectsMcpResourceReader.cs:121` | [A1](#a1-session-approval-2026-10-16) |
++| R03 | `projects.operatorDiagnostic` | defer | exclude | Typed diagnostic summary Query; preserve identity/name/lifecycle, reference/audit counts and freshness/watermark summary. Detailed task/correlation/audit/reason entries belong to R06; the diagnostic explanation text does not supply them. | Operator diagnostic read | `Mcp/ProjectsMcpResourceReader.cs:142` | [A1](#a1-session-approval-2026-10-16) |
++| R04 | `projects.referenceHealth` | defer | exclude | Typed reference-health Query; preserve bounded reference rows, trust state and observation/watermark evidence. | Cross-module reference metadata | `Mcp/ProjectsMcpResourceReader.cs:162` | [A1](#a1-session-approval-2026-10-16) |
++| R05 | `projects.resolutionTrace` | defer | exclude | Static descriptor only; never claim CLI REST resolution parity from it (V02). Decide a Query or approved static-document exclusion. | Public-shaped metadata behind host gates | `Mcp/ProjectsMcpResourceReader.cs:377` | [A1](#a1-session-approval-2026-10-16) |
++| R06 | `projects.auditTimeline` | defer | exclude | Typed bounded audit Query; suppress idempotency keys and command bodies, preserve safe task/correlation evidence. | Sensitive audit metadata | `Mcp/ProjectsMcpResourceReader.cs:183` | [A1](#a1-session-approval-2026-10-16) |
++| R07 | `projects.safeDiagnosticExport` | defer | exclude | Typed redacted summary Query; export means JSON metadata, not file/content transport (V10). | Redacted operator diagnostic | `Mcp/ProjectsMcpResourceReader.cs:205` | [A1](#a1-session-approval-2026-10-16) |
++| R08 | `projects.warningQueue` | defer | exclude | Typed composite Query; preserve visible-project scan window, partial diagnostic failures, bounded rows and total semantics (V03). | Tenant diagnostic metadata | `Mcp/ProjectsMcpResourceReader.cs:224` | [A1](#a1-session-approval-2026-10-16) |
++| R09 | `projects.warningScanSummary` | defer | exclude | Typed composite summary Query with scan and unavailability evidence; no empty-success substitution for failed reads. | Tenant diagnostic metadata | `Mcp/ProjectsMcpResourceReader.cs:231` | [A1](#a1-session-approval-2026-10-16) |
++| R10 | `projects.operationalDashboard` | defer | exclude | Typed composite Query retaining active/archived and warning counters; not just an inventory alias. | Tenant diagnostic metadata | `Mcp/ProjectsMcpResourceReader.cs:246` | [A1](#a1-session-approval-2026-10-16) |
++| R11 | `projects.maintenanceAction` | defer | exclude | Static action/confirmation/lifecycle metadata; decide an approved documentation replacement independently of executable writes (V04). | Maintenance metadata behind host gates | `Mcp/ProjectsMcpResourceReader.cs:361` | [A1](#a1-session-approval-2026-10-16) |
++
++## Legacy maintenance tools
++
++Source Command candidates under `Hexalith.Projects.Contracts.Commands` are
++undecorated and differ from the strict request DTOs admitted by the server. G1
++must resolve those schemas and their explicit legacy wire discriminators before
++any canonical McpCli name/type is approved. Shared source candidates are not
++counted as separate operations merely because a CLI spelling also invokes them.
++
++Existing strict wire evidence for G1/G3 (post-approval prerequisite clarification):
++`Server/EventStoreProjectCommandSubmitter.cs:116` emits the following per-operation
++JSON payloads; every one carries `requestSchemaVersion = "v1"`. These are existing
++wire shapes, not ready decorated Contracts. Projects Contracts/processor owners
++must align the public records, strict accepted schemas and future decorations
++before inclusion (`Server/ProjectsDomainProcessor.cs:963`); McpCli adds no
++serializer adapter. Ordinary business values
++stay payload, while tenant, task and actor retain the separate V09 authority rules.
++
++- `ArchiveProject`: `archiveIntent = "archive"` and the schema version only
++  (`Server/EventStoreProjectCommandSubmitter.cs:116`).
++- `RestoreProject`: `restoreIntent = "restore"` and the schema version only
++  (`Server/EventStoreProjectCommandSubmitter.cs:136`).
++- `SetProjectFolder`: `operation = "set"`, `projectId`, `folderId`,
++  `folderMetadata`, `replacementConfirmed` and the schema version
++  (`Server/EventStoreProjectCommandSubmitter.cs:156`).
++- `LinkFileReference`: `operation = "link"`, `projectId`, `fileReferenceId`,
++  `folderId`, `fileMetadata` and the schema version
++  (`Server/EventStoreProjectCommandSubmitter.cs:180`). The existing callback
++  has no transient workspace/path fields: V06's wrapper validation inputs
++  are not callback payload members. G2/G3 must prove equivalent foreign ACL
++  authority without adding unknown fields to this strict wire shape.
++- `UnlinkFileReference`: `operation = "unlink"`,
++  `unlinkIntent = "removeReference"`, `projectId`, `fileReferenceId` and the
++  schema version (`Server/EventStoreProjectCommandSubmitter.cs:204`).
++- `LinkMemory`: `operation = "link"`, `projectId`, `memoryReferenceId`,
++  `memoryMetadata` and the schema version
++  (`Server/EventStoreProjectCommandSubmitter.cs:227`).
++- `UnlinkMemory`: `operation = "unlink"`, `unlinkIntent = "removeReference"`,
++  `projectId`, `memoryReferenceId` and the schema version
++  (`Server/EventStoreProjectCommandSubmitter.cs:250`).
++
++| ID | Legacy tool | Disposition | Coverage | Existing source candidate / unresolved mapping | Rationale and security class | Source evidence | Approval |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| M01 | `projects.archive` | defer | exclude | `Hexalith.Projects.Contracts.Commands.ArchiveProject`; wire `Hexalith.Projects.Commands.ArchiveProject` | Lifecycle write; preserve confirmation, dry-run evidence, actor/tenant authority, task and caller idempotency (V05–V08). | `Mcp/ProjectsMcpCommandService.cs:63` | [A1](#a1-session-approval-2026-10-16) |
++| M02 | `projects.restore` | defer | exclude | `Hexalith.Projects.Contracts.Commands.RestoreProject`; wire `Hexalith.Projects.Commands.RestoreProject` | Lifecycle write; same admission and confirmation gates as M01. | `Mcp/ProjectsMcpCommandService.cs:74` | [A1](#a1-session-approval-2026-10-16) |
++| M03 | `projects.relink` | defer | exclude | Folder: `Hexalith.Projects.Contracts.Commands.SetProjectFolder`; file: `Hexalith.Projects.Contracts.Commands.LinkFileReference`; memory: `Hexalith.Projects.Contracts.Commands.LinkMemory`. Explicit wires omit `.Contracts`. Conversation relink is unsupported. | Cross-module reference write; split by reference kind, preserve labels, folder replacement confirmation and transient file ACL evidence (V06). | `Mcp/ProjectsMcpCommandService.cs:92` | [A1](#a1-session-approval-2026-10-16) |
++| M04 | `projects.unlink` | defer | exclude | File: `Hexalith.Projects.Contracts.Commands.UnlinkFileReference`; memory: `Hexalith.Projects.Contracts.Commands.UnlinkMemory`; explicit wires omit `.Contracts`. Conversation unlink uses the Conversations assignment authority, not a Projects Command. Folder unlink is unsupported. | Destructive reference write; cross-module authorization and unlink ownership need an approved mapping (V06). | `Mcp/ProjectsMcpCommandService.cs:150` | [A1](#a1-session-approval-2026-10-16) |
++| M05 | `projects.reevaluate` | defer | exclude | REST `RefreshProjectContextAsync`; existing `Hexalith.Projects.Contracts.Queries.RefreshProjectContextQuery` is not decorated or a registered equivalent refresh handler. | Read-style context refresh wrapped as Accepted; decide Query effects and freshness, do not fabricate a Command or infer committed effects (V07). | `Mcp/ProjectsMcpCommandService.cs:205` | [A1](#a1-session-approval-2026-10-16) |
++
++## Frozen CLI spellings
++
++The parser accepts the optional leading `projects` token, ten read spellings,
++seven mutation/preview spellings and `diagnostic export`. Source declarations:
++`Cli/ProjectsCliParser.cs:35`, `:49`, `:81`; dispatch:
++`Cli/ProjectsCliApplication.cs:39`. Each spelling remains explicit even when it
++shares behavior with another row. Tool and CLI equivalence is conditional on the
++differences in V01–V12, not asserted by the association column.
++
++| ID | Spelling after `projects` | Association | Disposition | Coverage | Rationale / missing contract | Security class | Approval |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| L01 | `list` | R01 | defer | exclude | Typed visible inventory Query, preserving CLI result shape. | Tenant metadata read | [A1](#a1-session-approval-2026-10-16) |
++| L02 | `describe` | R02 | defer | exclude | Explicit `--project-id`; unlike resource first-visible default. | Tenant metadata read | [A1](#a1-session-approval-2026-10-16) |
++| L03 | `inspect` | R02, L02 | defer | exclude | Separate accepted spelling sharing detail dispatch. | Tenant metadata read | [A1](#a1-session-approval-2026-10-16) |
++| L04 | `trace` | V02 | defer | exclude | Actual conversation/attachment resolution Query needed; R05 is static. | Cross-module resolution metadata | [A1](#a1-session-approval-2026-10-16) |
++| L05 | `trace-resolution` | L04 | defer | exclude | Parser alias; same resolution variants and requirements. | Cross-module resolution metadata | [A1](#a1-session-approval-2026-10-16) |
++| L06 | `validate` | R04 | defer | exclude | Explicit-project reference-health Query. | Cross-module reference metadata | [A1](#a1-session-approval-2026-10-16) |
++| L07 | `validate-references` | L06 | defer | exclude | Parser alias; retain validation semantics. | Cross-module reference metadata | [A1](#a1-session-approval-2026-10-16) |
++| L08 | `audit` | R06 | defer | exclude | Explicit-project bounded audit Query. | Sensitive audit metadata | [A1](#a1-session-approval-2026-10-16) |
++| L09 | `warnings` | R08, R09 | defer | exclude | Composite warning rows and scan summary, preserving bounded/partial outcomes. | Tenant diagnostic metadata | [A1](#a1-session-approval-2026-10-16) |
++| L10 | `dashboard` | R10 | defer | exclude | Composite counters Query, not an inventory alias. | Tenant diagnostic metadata | [A1](#a1-session-approval-2026-10-16) |
++| L11 | `diagnostic export` | R07 | defer | exclude | Explicit-project safe JSON export; no local-file export adapter. | Redacted operator diagnostic | [A1](#a1-session-approval-2026-10-16) |
++| L12 | `dry-run` | V04 | defer | exclude | Local preview only; decide documentation/non-Gateway replacement. | Local preview metadata | [A1](#a1-session-approval-2026-10-16) |
++| L13 | `preview` | V04 | defer | exclude | Local preview dispatch; distinct displayed command. | Local preview metadata | [A1](#a1-session-approval-2026-10-16) |
++| L14 | `archive` | M01 | defer | exclude | Command plus diagnostic audit reload (V05,V07); no generic post-submit polling. | Lifecycle write | [A1](#a1-session-approval-2026-10-16) |
++| L15 | `restore` | M02 | defer | exclude | Command plus diagnostic audit reload (V05,V07). | Lifecycle write | [A1](#a1-session-approval-2026-10-16) |
++| L16 | `relink` | M03 | defer | exclude | Folder/file/memory variants; transient file ACL context required. | Cross-module reference write | [A1](#a1-session-approval-2026-10-16) |
++| L17 | `unlink` | M04 | defer | exclude | Conversation/file/memory variants; no folder variant. | Destructive reference write | [A1](#a1-session-approval-2026-10-16) |
++| L18 | `reevaluate` | M05 | defer | exclude | Query refresh plus diagnostic reload; different evidence requirements from MCP. | Context refresh read | [A1](#a1-session-approval-2026-10-16) |
++
++## Compatibility and excluded variants
++
++Every variant remains `defer / exclude` under A1; none authorizes removing legacy
++behavior. Unimplemented or unsupported variants are named explicitly rather than
++counted as additional supported operations.
++
++| ID | Variant and current behavior | Disposition / coverage | Required handoff and security implication | Source evidence | Approval |
++| --- | --- | --- | --- | --- | --- |
++| V01 | Resource detail/diagnostics select first visible project; CLI requires `--project-id`. Registered FrontComposer passes configurable DefaultResourceTake (50 by default), clamped to 1..MaxResourceTake (default 200), into inventory/warning take. Projects helpers fall back to 25 only when take is absent and cap rows at 100. Registered audit dispatch fixes 25; the callable audit helper permits up to 100. | defer / exclude | Define selection, lifecycle filtering, totals and authoritative envelope paging per new Query; preserve the distinction between effective host settings, helper fallback/caps and fixed audit dispatch. Never leak another tenant or silently equate these values. | `Mcp/ProjectsMcpResourceReader.cs:33`, `:104`, `:340`, `:431`; `Cli/ProjectsCliApplication.cs:42`; [FrontComposer V05](frontcomposer-migration-inventory-v1.md#host-and-cli-compatibility-variants) | [A1](#a1-session-approval-2026-10-16) |
++| V02 | CLI resolution selects conversation mode with `--conversation-id`, else repeated `--folder-id` / `--file-id`; supports `--include-archived` and optional `--correlation-id`. R05 returns static zero counts/epoch. | defer / exclude | Define separate bounded typed resolution Queries, redacted candidate/exclusion semantics and freshness. Existing context Queries are not an equivalent resolution contract. | `Cli/ProjectsCliApplication.cs:296`; `Mcp/ProjectsMcpResourceReader.cs:377` | [A1](#a1-session-approval-2026-10-16) |
++| V03 | Warning reads scan the first 25 visible projects in ordinal project-ID order and count unavailable diagnostics; queue rows and summary/dashboard differ. | defer / exclude | Preserve partial/unavailable outcomes, stable scan ordering and trustworthy totals; dashboard lifecycle counts use the full visible list. Do not label incomplete scans complete. | `Mcp/ProjectsMcpResourceReader.cs:268`; `src/Hexalith.Projects.Client/Diagnostics/ProjectWarningScanWindow.cs:15`; `Cli/ProjectsCliApplication.cs:220` | [A1](#a1-session-approval-2026-10-16) |
++| V04 | MCP R11 describes lifecycle/confirmation; CLI `dry-run` / `preview` produces local metadata using optional `--action` / `--project-id`. | defer / exclude | No state validation or signed dry-run proof is established by local preview. Keep metadata and executable operations distinct; a future non-Gateway decision owns this convenience. | `Mcp/ProjectsMcpResourceReader.cs:361`; `Cli/ProjectsCliApplication.cs:328` | [A1](#a1-session-approval-2026-10-16) |
++| V05 | CLI mutations require project, correlation and task; non-reevaluate actions also require caller key, confirmation and nonblank dry-run evidence. MCP derives correlation/task and reevaluate still requires dry-run evidence; CLI reevaluate does not. MCP's descriptor marks confirmation/key required even for reevaluate, while its service/action metadata exempts them. | defer / exclude | Preserve effective guards at authenticated Gateway/module admission and settle descriptor/service disagreement; decide any changed evidence contract explicitly. Do not add a module-specific confirmation engine to McpCli. | `Mcp/ProjectsMcpDescriptors.cs:116`; `Mcp/ProjectsMcpCommandService.cs:226`; `Cli/ProjectsCliApplication.cs:341` | [A1](#a1-session-approval-2026-10-16) |
++| V06 | Relink folder/file/memory; unlink conversation/file/memory. File relink requires transient folder/workspace/path; optional reference label supplies display metadata. CLI --confirm also sets folder ReplacementConfirmed; MCP has a distinct ReplacementConfirmed field. Descriptor enum lists all four kinds but does not implement all combinations. | defer / exclude | Split Commands by actual ownership; transient file values are ordinary payload validation inputs, never file-content transport or trusted authority. Preserve foreign ACL checks and folder replacement confirmation; reject unsupported combinations. | `Mcp/ProjectsMcpCommandService.cs:92`, `:150`, `:247`; `Cli/ProjectsCliApplication.cs:405`, `:469` | [A1](#a1-session-approval-2026-10-16) |
++| V07 | MCP dispatch reports Acknowledged then Syncing (reevaluate Confirmed); CLI reloads diagnostics and searches correlation audit evidence. Reevaluate synthesizes Accepted after a REST refresh. | defer / exclude | Generic send returns Gateway acceptance only. Separate submitted versus observed effects; any future confirmation Query or stream needs its own contract/transport decision. No inferred replay/commit result or executor retry. | `Mcp/ProjectsMcpCommandService.cs:36`; `Cli/ProjectsCliApplication.cs:386`, `:530` | [A1](#a1-session-approval-2026-10-16) |
++| V08 | MCP fallback correlation uses a GUID-shaped hex value and derives a task fallback; reads also generate correlation hex. The MCP service resolves accepted.TaskId (fallback maintenance.CommandId) as its returned MessageId and lifecycle callback identity. Separately, legacy REST submission uses the caller idempotency key as Gateway MessageId. | defer / exclude | Adopt canonical uppercase ULIDs for McpCli correlation/idempotency without weakening validation. Prove migration from task-as-MCP-message and caller-key-as-Gateway-message to a fresh per-call MessageId plus separate caller-only IdempotencyKey preserves lifecycle handle lookup, correlation/task audit association and replay/conflict semantics; keep task identity independent. | `Mcp/ProjectsMcpCommandService.cs:38`, `:59`; `Mcp/ProjectsMcpResourceReader.cs:434`; `Server/EventStoreProjectCommandSubmitter.cs:301` | [A1](#a1-session-approval-2026-10-16) |
++| V09 | REST submission uses envelope Tenant and correlation plus `extensions["taskId"]`; processor actor comes from UserId and task falls back to correlation. | defer / exclude | Recommend retaining taskId as an explicitly allowlisted Command extension, subject to G2/G3 proof; ordinary domain/transient reference values stay payload. Tenant stays envelope-only. Actor is operator-resolved; `actorProperty` only fills a declared actor payload member, never tenant/task. Neither actor nor task is an authorization grant. Queries have no generic extension bag. | `Server/EventStoreProjectCommandSubmitter.cs:299`; `Server/ProjectsDomainProcessor.cs:108`, `:805`; McpCli-local `src/Hexalith.McpCli.Core/Execution/RunQueryArguments.cs:12` | [A1](#a1-session-approval-2026-10-16) |
++| V10 | No stream reader, file upload/download/content export, search, erasure or key-rotation operation is registered in these inspected Projects descriptors/parser. File relink carries a reference/path; diagnostic export is safe JSON metadata. Reads request Eventually_consistent. | defer / exclude | Unsupported erasure/key-rotation variants remain defer/exclude alongside future stream/file/search and alternate freshness variants, each requiring an explicit owner-approved generic contract/transport decision. Preserve current redaction and observation evidence; never imply existing capability from a name. | `Mcp/ProjectsMcpDescriptors.cs:24`; `Cli/ProjectsCliParser.cs:35`; `Mcp/ProjectsMcpResourceReader.cs:96`; `Cli/ProjectsCliApplication.cs:278` | [A1](#a1-session-approval-2026-10-16) |
++| V11 | CLI uses `HEXALITH_PROJECTS_BASE_ADDRESS`; missing/invalid address fails on stderr before dispatch. Results are JSON stdout; operational errors are bare safe codes on stderr; semantic exit codes are 0/2/3/4/5/10. | defer / exclude | Approve future script migration to McpCli profiles/Gateway settings, structured JSON errors on stdout and exit 2 for failures; no Projects-specific profile, REST client or output wrapper. | `Cli/Program.cs:9`; `Cli/ProjectsCliApplication.cs:558`; `Cli/ProjectsCliExitCodes.cs:10` | [A1](#a1-session-approval-2026-10-16) |
++| V12 | Parser permits repeated arbitrary `--name value` pairs, with `confirm` / `include-archived` flags; last single value wins and folder/file arrays preserve all values. | defer / exclude | Preserve consumed options above; arbitrary ignored options and unconditional JSON formatting do not promise new generic options, shell completion or generated subcommands. | `Cli/ProjectsCliParser.cs:100`; `Cli/ProjectsCliApplication.cs:555` | [A1](#a1-session-approval-2026-10-16) |
++
++## Gateway prerequisites and owning roles
++
++A1 records the decision to retain these unresolved prerequisites and their
++ownership handoffs. It does not supply the approvals or evidence each gate needs.
++Projects remains post-v1 until slim published Contracts, exact restored closure,
++independent Catalog coverage and authorization/behavior/release gates pass.
++The host and Projects plug-in remain nondeletable together until both
++inventories' retirement gates pass, including other host consumers' capabilities.
++
++| ID | Unresolved prerequisite and required evidence | Owning maintainer role | Approval |
++| --- | --- | --- | --- |
++| G1 | Publish slim decorated Contracts with exact schemas, canonical names, explicit wire/domain/project aggregate routes, identifier kind and Query semantics. Source records are not the strict callback payloads. Contracts currently references Conversations.Contracts, FrontComposer.Contracts/Shell, Fluxor, FluentUI and ASP.NET; analyzer-only SourceTools must be assessed separately. Verify the exact released closure against McpCli's dependency policy rather than enrolling source projects. | Projects Contracts and McpCli dependency maintainers | [A1](#a1-session-approval-2026-10-16) |
++| G2 | Preserve verified tenant/principal binding and layered reference/lifecycle authorization at direct Gateway/module admission. Legacy REST policy/tenant checks cannot disappear when adapters are bypassed; envelope tenant and actor are inputs, not identity evidence. Prove cross-tenant and unauthorized requests disclose nothing and cause no effect. | Projects security and EventStore/Gateway maintainers | [A1](#a1-session-approval-2026-10-16) |
++| G3 | Approve task/correlation/actor/key handoff, strict serialization and replay compatibility for each split Command; decide allowlisted task extensions versus ordinary payload explicitly. `actorProperty` fills a declared actor field from the generic operator actor, never task or tenant. Identity assertion extensions remain forbidden. Query task/freshness requires an approved payload/handler decision. | Projects command/query and generic contract maintainers | [A1](#a1-session-approval-2026-10-16) |
++| G4 | Add resource-equivalent Query handlers, redaction/paging/selection/composite/freshness semantics and read vectors. Current registration has three general context handlers plus a workload-bound ChatBot authority handler, not coverage for these 11 resources. Refresh has a wire constant/DTO but no corresponding equivalent registered handler. | Projects query and projection maintainers | [A1](#a1-session-approval-2026-10-16) |
++| G5 | Compare the approved inventory independently with the Catalog, then prove both heads, Gateway requests, denied cases, persisted effects and metadata under exact package/vector pins. Static documentation checks are insufficient. | Projects and McpCli conformance maintainers | [A1](#a1-session-approval-2026-10-16) |
++| G6 | Retire FrontComposer's host and Projects plug-in only together after Gateway readiness, dependency compliance, complete approved coverage and authorization/behavior/release evidence. Resolve host lifecycle/resource/HTTP capabilities in the companion inventory; neither exclusion nor A1 authorizes deletion. | Projects and FrontComposer owning maintainers | [A1](#a1-session-approval-2026-10-16) |
++
++Supporting anchors: `Contracts/Hexalith.Projects.Contracts.csproj:18`;
++`Server/ProjectsServerModule.cs:23`; `Server/ProjectsServerServiceCollectionExtensions.cs:131`,
++`:173`; `Server/Queries/ProjectChatBotAuthorityQueryHandler.cs:49`;
++`Server/Authorization/ProjectAuthorizationGate.cs:399`, `:575` (missing/system
++tenant, actor and caller-context disagreement fail closed);
++`Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs:37` (authenticated subject,
++tenant and workload/delegation binding); `Server/ProjectsDomainProcessor.cs:43`
++(strict unknown-payload rejection). Direct `/process` validation alone does not
++prove equivalence to the full REST authorization gate.
++Source completeness checks are preserved in
++[Story 4.3 verification](evidence/story-4-3/verification.md).
+diff --git a/src/Hexalith.McpCli.Abstractions/HexalithQueryAttribute.cs b/src/Hexalith.McpCli.Abstractions/HexalithQueryAttribute.cs
+index cc7e09c1f8818156efa6f6f849d867a8dd6113a7..2581eb5a1f1646825530b23f93a20feb379fbada 100644
+--- a/src/Hexalith.McpCli.Abstractions/HexalithQueryAttribute.cs
++++ b/src/Hexalith.McpCli.Abstractions/HexalithQueryAttribute.cs
+@@ -38,10 +38,12 @@ public sealed class HexalithQueryAttribute(string description) : Attribute
+     /// <summary>Gets or sets a constant aggregate identifier for a list query; mutually exclusive with <see cref="AggregateIdProperty"/>.</summary>
+     public string? AggregateId { get; set; }
+ 
+-    /// <summary>Gets or sets the gateway projection type when no contract interface supplies it.</summary>
++    /// <summary>Gets or sets the optional gateway projection type when no contract interface supplies it.</summary>
++    /// <remarks>Computed domain queries may omit both projection selectors. Omission is preserved for the Gateway
++    /// to select its committed route; explicit values must match that route and retain their normal validation.</remarks>
+     public string? ProjectionType { get; set; }
+ 
+-    /// <summary>Gets or sets the named projection actor type, when used.</summary>
++    /// <summary>Gets or sets the named projection actor type, when used with a projection type.</summary>
+     public string? ProjectionActorType { get; set; }
+ 
+     /// <summary>Gets or sets the exact CLR property filled from the envelope tenant.</summary>
+diff --git a/src/Hexalith.McpCli.Core/Catalog/RoutingResolver.cs b/src/Hexalith.McpCli.Core/Catalog/RoutingResolver.cs
+index 7b7c7fa819b973cfe41a1dbc14d8e70aba9f5ac2..bc55fa7057bee09d2060fd7180274647e54a515d 100644
+--- a/src/Hexalith.McpCli.Core/Catalog/RoutingResolver.cs
++++ b/src/Hexalith.McpCli.Core/Catalog/RoutingResolver.cs
+@@ -52,7 +52,7 @@ internal static partial class RoutingResolver
+         {
+             string.IsNullOrWhiteSpace(domain) ? DomainField : null,
+             string.IsNullOrWhiteSpace(wireType) ? WireTypeField : null,
+-            kind == OperationKind.Query && string.IsNullOrWhiteSpace(projectionType) ? ProjectionTypeField : null,
++            projectionType is null && projectionActorType is not null ? ProjectionTypeField : null,
+         }.OfType<string>().ToArray();
+         if (missing.Length > 0)
+         {
+diff --git a/src/Hexalith.McpCli/Hexalith.McpCli.csproj b/src/Hexalith.McpCli/Hexalith.McpCli.csproj
+index 0b00fadf51048b7d8f4c34e9bdb6189dcd89bd5c..e5d5f0d32a839df6b8cf56099775fbe52515359c 100644
+--- a/src/Hexalith.McpCli/Hexalith.McpCli.csproj
++++ b/src/Hexalith.McpCli/Hexalith.McpCli.csproj
+@@ -21,6 +21,7 @@
+     <ProjectReference Include="../Hexalith.McpCli.Mcp/Hexalith.McpCli.Mcp.csproj" />
+     <PackageReference Include="Microsoft.Extensions.Hosting" />
+     <PackageReference Include="Microsoft.Extensions.Http" />
++    <PackageReference Include="Hexalith.Projects.Contracts" HexalithContracts="true" />
+     <PackageReference Include="Hexalith.Parties.Contracts" HexalithContracts="true" />
+     <PackageReference Include="Hexalith.Tenants.Contracts" HexalithContracts="true" />
+     <PackageReference Include="System.CommandLine" />
+diff --git a/tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs b/tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs
+index b2706dc00dacaeda663d4c3eba244d2954c43cd1..216c8a1a01349a4a9db05fc859be283a24e22994 100644
+--- a/tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs
++++ b/tests/Hexalith.McpCli.Cli.Tests/ConfigCommandTests.cs
+@@ -2508,7 +2508,7 @@ public sealed class ConfigCommandTests
+                 else
+                 {
+                     document.GetProperty("modules").EnumerateArray().Select(module => module.GetProperty("name").GetString())
+-                        .ShouldBe(["parties", "tenants"]);
++                        .ShouldBe(["parties", "projects", "tenants"]);
+                 }
+             }
+ 
+diff --git a/tests/Hexalith.McpCli.Cli.Tests/DiscoveryCommandTests.cs b/tests/Hexalith.McpCli.Cli.Tests/DiscoveryCommandTests.cs
+index 42a2aec2e2fb48b559a324cbe3f7b128a94839a3..d3e501e253dc65e3243b93c2ea90c45daa6593b7 100644
+--- a/tests/Hexalith.McpCli.Cli.Tests/DiscoveryCommandTests.cs
++++ b/tests/Hexalith.McpCli.Cli.Tests/DiscoveryCommandTests.cs
+@@ -119,7 +119,7 @@ public sealed class DiscoveryCommandTests
+                 {"name":"explicit-fixture","description":"Explicit wire type fixture.","operationCount":1},
+                 {"name":"lint-fixture","description":"Description quality fixtures.","operationCount":4},
+                 {"name":"marked-empty","description":"Module with no operations.","operationCount":0},
+-                {"name":"routing-fixture","description":"Valid routing, aggregate source, and envelope variants.","operationCount":12},
++                {"name":"routing-fixture","description":"Valid routing, aggregate source, and envelope variants.","operationCount":13},
+                 {"name":"sample","description":"Synthetic operations for testing module declarations.","operationCount":3}
+             ]}
+             """;
+@@ -139,7 +139,7 @@ public sealed class DiscoveryCommandTests
+             list.GetProperty("module").GetString().ShouldBe("routing-fixture");
+             list.GetProperty("operations").EnumerateArray().Select(item => item.GetProperty("name").GetString()).ShouldBe(
+             [
+-                "routing-fixture.colon-wire", "routing-fixture.competing-route", "routing-fixture.computed-envelope", "routing-fixture.envelope-item",
++                "routing-fixture.colon-wire", "routing-fixture.competing-route", "routing-fixture.computed-envelope", "routing-fixture.computed-status", "routing-fixture.envelope-item",
+                 "routing-fixture.get-http2-status", "routing-fixture.interface-item", "routing-fixture.items-list",
+                 "routing-fixture.nullable-idempotency", "routing-fixture.redundant-convention",
+                 "routing-fixture.redundant-interface", "routing-fixture.renamed-aggregate",
+@@ -599,7 +599,7 @@ public sealed class DiscoveryCommandTests
+         => (warning, verb) switch
+         {
+             (true, "modules") => """
+-                {"modules":[{"name":"routing-fixture","description":"Valid routing, aggregate source, and envelope variants.","operationCount":12}]}
++                {"modules":[{"name":"routing-fixture","description":"Valid routing, aggregate source, and envelope variants.","operationCount":13}]}
+                 """,
+             (false, "modules") => """
+                 {"modules":[{"name":"explicit-fixture","description":"Explicit wire type fixture.","operationCount":1}]}
+@@ -609,6 +609,7 @@ public sealed class DiscoveryCommandTests
+                     {"name":"routing-fixture.colon-wire","kind":"write","description":"Command with a colon in its wire type."},
+                     {"name":"routing-fixture.competing-route","kind":"write","description":"Command with competing route values."},
+                     {"name":"routing-fixture.computed-envelope","kind":"write","description":"Command with a computed aggregate identifier and envelope members."},
++                    {"name":"routing-fixture.computed-status","kind":"read","description":"Read computed status."},
+                     {"name":"routing-fixture.envelope-item","kind":"write","description":"Change an item using mapped envelope values."},
+                     {"name":"routing-fixture.get-http2-status","kind":"read","description":"Read HTTP2 status."},
+                     {"name":"routing-fixture.interface-item","kind":"read","description":"Read an item through the query interface."},
+diff --git a/tests/Hexalith.McpCli.Core.Tests/CatalogTests.cs b/tests/Hexalith.McpCli.Core.Tests/CatalogTests.cs
+index f4e3597cb7eb66a44aad8b4fa3bcf8e33689b1ed..607eb03e8720bc29da847e43654ffb99adef594d 100644
+--- a/tests/Hexalith.McpCli.Core.Tests/CatalogTests.cs
++++ b/tests/Hexalith.McpCli.Core.Tests/CatalogTests.cs
+@@ -53,7 +53,7 @@ public sealed class CatalogTests
+             (typeof(Routing.RedundantConventionQuery).FullName!, "redundant_value", "warning"),
+             (typeof(Routing.RedundantInterfaceCommand).FullName!, "redundant_value", "warning"),
+         ]);
+-        routing.Modules.Single().Operations.Count.ShouldBe(12);
++        routing.Modules.Single().Operations.Count.ShouldBe(13);
+     }
+ 
+     /// <summary>Each routing field reports its own warning, and the interface value wins a conflict.</summary>
+@@ -144,6 +144,20 @@ public sealed class CatalogTests
+         OperationDescriptor sourceFree = Find(routing, "routing-fixture.get-http2-status");
+         sourceFree.AggregateIdRequired.ShouldBeTrue();
+         sourceFree.AggregateIdAccessor.ShouldBeNull();
++        OperationDescriptor computed = Find(routing, "routing-fixture.computed-status");
++        computed.Routing.ProjectionType.ShouldBeNull();
++        computed.Routing.ProjectionActorType.ShouldBeNull();
++    }
++
++    /// <summary>Computed queries preserve omitted selectors without a declaration diagnostic.</summary>
++    [Fact]
++    public void QueryWithoutProjectionSelectorsIsAccepted()
++    {
++        CatalogSnapshot catalog = CatalogBuilder.Build([typeof(Invalid.Module).Assembly]);
++        OperationDescriptor computed = catalog.Modules.Single().Operations.Single(operation => operation.ContractType == typeof(Invalid.MissingProjectionQuery));
++        computed.Routing.ProjectionType.ShouldBeNull();
++        computed.Routing.ProjectionActorType.ShouldBeNull();
++        catalog.Diagnostics.ShouldNotContain(diagnostic => diagnostic.TypeName == typeof(Invalid.MissingProjectionQuery).FullName);
+     }
+ 
+     /// <summary>Module policy and property bindings remain available without head reflection.</summary>
+@@ -245,13 +259,14 @@ public sealed class CatalogTests
+     [InlineData(typeof(Invalid.InvalidConstantQuery), "invalid_routing_value", "AggregateId 'bad id'")]
+     [InlineData(typeof(Invalid.InvalidExampleQuery), "invalid_example", "Example violates the payload schema at /ItemId")]
+     [InlineData(typeof(Invalid.InvalidIdentifierCommand), "invalid_identifier_type", "Declared identifier ItemId")]
++    [InlineData(typeof(Invalid.ActorOnlyProjectionQuery), "missing_routing_values", "ProjectionType")]
+     [InlineData(typeof(Invalid.InvalidProjectionQuery), "invalid_routing_value", "ProjectionType 'Invalid Items'")]
+     [InlineData(typeof(Invalid.InvalidRoleCommand), "invalid_property_reference", "names Missing, which is not a public instance property")]
+     [InlineData(typeof(Invalid.InvalidRoutingQuery), "invalid_routing_value", "Domain 'Bad Domain'")]
+     [InlineData(typeof(Invalid.JsonArrayMemberCommand), "invalid_schema", "Free-form member Value")]
+     [InlineData(typeof(Invalid.JsonObjectMemberCommand), "invalid_schema", "Free-form member Value")]
+     [InlineData(typeof(Invalid.MissingDescriptionQuery), "missing_description", "HexalithQuery.Description")]
+-    [InlineData(typeof(Invalid.MissingProjectionQuery), "missing_routing_values", "supplies ProjectionType")]
++    [InlineData(typeof(Invalid.WhitespaceProjectionQuery), "invalid_routing_value", "ProjectionType '   '")]
+     [InlineData(typeof(Invalid.NoAggregateCommand), "missing_routing_values", "AggregateIdProperty")]
+     [InlineData(typeof(Invalid.ObjectListCommand), "invalid_schema", "Free-form element type System.Object of member Value")]
+     [InlineData(typeof(Invalid.OpaqueRoleCommand), "invalid_property_reference", "names Tenant, whose custom JsonConverter")]
+@@ -318,8 +333,8 @@ public sealed class CatalogTests
+     {
+         CatalogSnapshot catalog = CatalogBuilder.Build([typeof(Invalid.Module).Assembly]);
+         catalog.Modules.Single().Operations.Select(operation => operation.ContractType)
+-            .ShouldBe([typeof(Invalid.DuplicateFirstQuery)]);
+-        catalog.Diagnostics.Count.ShouldBe(35);
++            .ShouldBe([typeof(Invalid.DuplicateFirstQuery), typeof(Invalid.MissingProjectionQuery)]);
++        catalog.Diagnostics.Count.ShouldBe(36);
+     }
+ 
+     /// <summary>A Contracts assembly whose types cannot be loaded is excluded with the loader's cause.</summary>
+diff --git a/tests/Hexalith.McpCli.Core.Tests/OperationExecutorTests.cs b/tests/Hexalith.McpCli.Core.Tests/OperationExecutorTests.cs
+index 24973f8351d381fcbc76b03be2a6399939451bc6..f6822992c71ef95a2e0346bbe8de7bf2b9b76fc6 100644
+--- a/tests/Hexalith.McpCli.Core.Tests/OperationExecutorTests.cs
++++ b/tests/Hexalith.McpCli.Core.Tests/OperationExecutorTests.cs
+@@ -336,6 +336,35 @@ public sealed class OperationExecutorTests
+         await gateway.Received(1).SubmitQueryAsync(Arg.Any<SubmitQueryRequest>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+     }
+ 
++    /// <summary>Computed query omission and explicit interface/attribute selectors survive the complete executor path.</summary>
++    [Theory]
++    [InlineData("routing-fixture.computed-status", "{}", null, null)]
++    [InlineData("routing-fixture.interface-item", "{\"ItemId\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}", "routing-items", "RoutingProjectionActor")]
++    public async Task QueryPreservesAbsentAndExplicitProjectionSelectorsAsync(string operation, string payload, string? projectionType, string? actorType)
++    {
++        IEventStoreGatewayClient gateway = Substitute.For<IEventStoreGatewayClient>();
++        SubmitQueryRequest? captured = null;
++        gateway.SubmitQueryAsync(Arg.Do<SubmitQueryRequest>(request => captured = request), Arg.Any<string?>(), Arg.Any<CancellationToken>())
++            .Returns(Task.FromResult(new EventStoreQueryResult(CorrelationId, JsonSerializer.SerializeToElement(new { current = true }), false, null)));
++        IOperationExecutor executor = Create(gateway, typeof(Routing.Module), hasGatewayUrl: true);
++        OperationOutcome outcome = await executor.ExecuteAsync(new RunQueryArguments(operation, payload, AggregateId: ItemId),
++            new EnvelopeContext("acme", null, false, new HashSet<string>()), TestContext.Current.CancellationToken);
++        outcome.Error.ShouldBeNull();
++        outcome.Document.ShouldBeOfType<CoreQueryResult>().Document!.Value.GetProperty("current").GetBoolean().ShouldBeTrue();
++        captured.ShouldNotBeNull();
++        captured.ProjectionType.ShouldBe(projectionType);
++        captured.ProjectionActorType.ShouldBe(actorType);
++        captured.Domain.ShouldBe("routing");
++        captured.AggregateId.ShouldBe(ItemId);
++        JsonElement wire = JsonSerializer.SerializeToElement(captured, new JsonSerializerOptions(JsonSerializerDefaults.Web)
++        {
++            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
++        });
++        if (projectionType is null) wire.TryGetProperty("projectionType", out _).ShouldBeFalse();
++        if (actorType is null) wire.TryGetProperty("projectionActorType", out _).ShouldBeFalse();
++        await gateway.Received(1).SubmitQueryAsync(Arg.Any<SubmitQueryRequest>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
++    }
++
+     /// <summary>Cursor and offset conflict is rejected before any Gateway call.</summary>
+     [Fact]
+     public async Task QueryPagingConflictFailsBeforeGatewayAsync()
+diff --git a/tests/Hexalith.McpCli.Core.Tests/OperationShapeTests.cs b/tests/Hexalith.McpCli.Core.Tests/OperationShapeTests.cs
+index 528ceb4e9aa64ac419e7bd6d30b19a0073d780c9..54ff9ed38494696fcf17b0af938ac682c56c2e30 100644
+--- a/tests/Hexalith.McpCli.Core.Tests/OperationShapeTests.cs
++++ b/tests/Hexalith.McpCli.Core.Tests/OperationShapeTests.cs
+@@ -19,6 +19,7 @@ public sealed class OperationShapeTests
+     /// <summary>Gets fixture operations whose shapes together take every value of every component.</summary>
+     public static TheoryData<string, string> FixtureShapes => new()
+     {
++        { "routing-fixture.computed-status", "kind=query;identifierKind=ulid;wireTypeConvention=kebabCase;tenantSource=public;aggregateIdSource=none;projectionSelector=none;idempotencyKey=optional" },
+         { "sample.create-item", "kind=command;identifierKind=ulid;wireTypeConvention=kebabCase;tenantSource=fixedTenant;aggregateIdSource=property;projectionSelector=none;idempotencyKey=optional" },
+         { "sample.get-item", "kind=query;identifierKind=ulid;wireTypeConvention=kebabCase;tenantSource=fixedTenant;aggregateIdSource=property;projectionSelector=projectionType;idempotencyKey=optional" },
+         { "string-fixture.lookup", "kind=query;identifierKind=string;wireTypeConvention=fullTypeName;tenantSource=fixedTenant;aggregateIdSource=property;projectionSelector=projectionType;idempotencyKey=optional" },
+diff --git a/tests/fixtures/Catalog.Invalid.Contracts/MissingProjectionQuery.cs b/tests/fixtures/Catalog.Invalid.Contracts/MissingProjectionQuery.cs
+index 56184fea1a23bd8a12ac86c1293f6498e736ca6c..534e01fd4c73181c185029717b2e32f5a7cd26ab 100644
+--- a/tests/fixtures/Catalog.Invalid.Contracts/MissingProjectionQuery.cs
++++ b/tests/fixtures/Catalog.Invalid.Contracts/MissingProjectionQuery.cs
+@@ -2,6 +2,6 @@ using Hexalith.McpCli.Abstractions;
+ 
+ namespace Catalog.Invalid.Contracts;
+ 
+-/// <summary>Exercises exclusion of an attribute-routed Query without a projection type.</summary>
+-[HexalithQuery("Query missing its projection type.", Domain = "invalid")]
++/// <summary>Preserves the former missing-selector case as an accepted computed query regression.</summary>
++[HexalithQuery("Computed query without projection selectors.", Domain = "invalid")]
+ public sealed record MissingProjectionQuery;
+diff --git a/tests/fixtures/Catalog.Invalid.Contracts/WhitespaceProjectionQuery.cs b/tests/fixtures/Catalog.Invalid.Contracts/WhitespaceProjectionQuery.cs
+new file mode 100644
+index 0000000000000000000000000000000000000000..fdfba1ff71a7cc3595f7d5abb8e29370b33e9600
+--- /dev/null
++++ b/tests/fixtures/Catalog.Invalid.Contracts/WhitespaceProjectionQuery.cs
+@@ -0,0 +1,7 @@
++using Hexalith.McpCli.Abstractions;
++
++namespace Catalog.Invalid.Contracts;
++
++/// <summary>Exercises rejection of an explicitly blank projection type rather than an absent selector.</summary>
++[HexalithQuery("Invalid blank projection query.", Domain = "invalid", ProjectionType = "   ")]
++public sealed record WhitespaceProjectionQuery;
+diff --git a/tests/fixtures/Catalog.Routing.Contracts/ComputedStatusQuery.cs b/tests/fixtures/Catalog.Routing.Contracts/ComputedStatusQuery.cs
+new file mode 100644
+index 0000000000000000000000000000000000000000..60ea6a24b5ed343e59b226f7eab0eca482e8e5ea
+--- /dev/null
++++ b/tests/fixtures/Catalog.Routing.Contracts/ComputedStatusQuery.cs
+@@ -0,0 +1,7 @@
++using Hexalith.McpCli.Abstractions;
++
++namespace Catalog.Routing.Contracts;
++
++/// <summary>Exercises computed domain queries without either projection selector.</summary>
++[HexalithQuery("Read computed status.", Domain = "routing")]
++public sealed record ComputedStatusQuery;
+diff --git a/tools/conformance-vectors/v1/README.md b/tools/conformance-vectors/v1/README.md
+index ba1d2c1a3ca2a987ccd20ad63c185eaa561ab820..698354a49092cb3a81e4d98497747b2abffb1ced 100644
+--- a/tools/conformance-vectors/v1/README.md
++++ b/tools/conformance-vectors/v1/README.md
+@@ -277,3 +277,5 @@ The [artifact and matrix audit](../../../_bmad-output/implementation-artifacts/e
+ binds that source, those artifacts and the named passing regressions. The earlier
+ Story 4.8 scratch package and 5.9.0 pin are historical and do not authorize current
+ published bytes.
++
++Computed domain Query vectors may omit both `projectionType` and `projectionActorType` in the expected Gateway body. An explicit selector keeps its existing strict type and grammar checks; JSON null is not an emitted selector. The C# Catalog remains the source of Operation Shapes, including the `none` selector shape.
+diff --git a/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/approval.json b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/approval.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..b117dcd1e115e7ad7e74db57688c7b92188eb84e
+--- /dev/null
++++ b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/approval.json
+@@ -0,0 +1,13 @@
++{
++  "packageId": "Hexalith.Projects.Contracts",
++  "version": "2.0.0-story66.3",
++  "module": "projects",
++  "inventorySha256": "18f9366ed6e9ab4c35cb1db02270ccdf1ad9e6f6a6470ecf0c3c8994e75112e8",
++  "approvalReference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only",
++  "vectorFilesSha256": {
++    "describe.vector.json": "678161829cbc9a9f4aa84bcc4b719206f857e5558261d8f5f26a3691dafe4aba",
++    "list.vector.json": "f269cf36e8afc8126435ffe155a4a90a902888f4e7c91f54aca0350e3a312aef",
++    "trace-attachments.vector.json": "988784315fa6ba7c0ee635befcc577aa0bd4bb95083d434f5762236554693933",
++    "trace-conversation.vector.json": "78a9781ae39dbc61fcbc9e75cc4b217df26995dc64b580e8a2db1789fb995969"
++  }
++}
+diff --git a/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..1755e381562c622cce12a298fb75f3d9e9c8c3d8
+--- /dev/null
++++ b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/describe.vector.json
+@@ -0,0 +1,76 @@
++{
++  "formatVersion": 1,
++  "package": {
++    "id": "Hexalith.Projects.Contracts",
++    "version": "2.0.0-story66.3"
++  },
++  "operation": "projects.describe",
++  "kind": "query",
++  "prerequisites": [],
++  "invocation": {
++    "operation": "projects.describe",
++    "kind": "query",
++    "payload": {},
++    "envelope": {
++      "tenant": "tenant-a",
++      "aggregateId": "project-a"
++    },
++    "expectedGateway": {
++      "method": "POST",
++      "path": "/api/v1/queries",
++      "body": {
++        "tenant": "tenant-a",
++        "domain": "projects",
++        "aggregateId": "project-a",
++        "queryType": "Hexalith.Projects.Queries.GetProject.v1",
++        "payload": {}
++      },
++      "maskGenerated": []
++    },
++    "scriptedResponse": {
++      "statusCode": 200,
++      "body": {
++        "success": true,
++        "payload": {
++          "projectId": "project-a",
++          "snapshot": {
++            "responseState": "Partial",
++            "asOf": "2026-11-15T00:00:00+00:00",
++            "projectVersion": 2,
++            "components": [],
++            "recoveryActions": []
++          },
++          "lifecycleState": "Active",
++          "createdAt": "2026-11-15T00:00:00+00:00",
++          "updatedAt": "2026-11-15T00:00:00+00:00",
++          "references": []
++        },
++        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
++      },
++      "echoRequestFields": []
++    },
++    "assertions": [
++      {
++        "path": "/operation",
++        "operator": "equals",
++        "value": "projects.describe"
++      },
++      {
++        "path": "/document/projectId",
++        "operator": "equals",
++        "value": "project-a"
++      },
++      {
++        "path": "/document/snapshot/responseState",
++        "operator": "equals",
++        "value": "Partial"
++      },
++      {
++        "path": "/document/lifecycleState",
++        "operator": "equals",
++        "value": "Active"
++      }
++    ]
++  },
++  "postconditions": []
++}
+diff --git a/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..3a9734cfb71b69a9bb6714ceb21792cb6aba00bc
+--- /dev/null
++++ b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/list.vector.json
+@@ -0,0 +1,86 @@
++{
++  "formatVersion": 1,
++  "package": {
++    "id": "Hexalith.Projects.Contracts",
++    "version": "2.0.0-story66.3"
++  },
++  "operation": "projects.list",
++  "kind": "query",
++  "prerequisites": [],
++  "invocation": {
++    "operation": "projects.list",
++    "kind": "query",
++    "payload": {
++      "pageSize": 50
++    },
++    "envelope": {
++      "tenant": "tenant-a"
++    },
++    "expectedGateway": {
++      "method": "POST",
++      "path": "/api/v1/queries",
++      "body": {
++        "tenant": "tenant-a",
++        "domain": "projects",
++        "aggregateId": "projects",
++        "queryType": "Hexalith.Projects.Queries.ListProjects.v1",
++        "payload": {
++          "pageSize": 50
++        }
++      },
++      "maskGenerated": []
++    },
++    "scriptedResponse": {
++      "statusCode": 200,
++      "body": {
++        "success": true,
++        "payload": {
++          "items": [],
++          "cursor": null,
++          "snapshot": {
++            "responseState": "Unavailable",
++            "asOf": "2026-11-15T00:00:00+00:00",
++            "projectVersion": 0,
++            "components": [
++              {
++                "name": "Project",
++                "included": false,
++                "freshness": "Unavailable",
++                "reason": "ProjectionUnavailable"
++              }
++            ],
++            "recoveryActions": [
++              "Retry"
++            ]
++          },
++          "hasMore": false
++        },
++        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
++      },
++      "echoRequestFields": []
++    },
++    "assertions": [
++      {
++        "path": "/operation",
++        "operator": "equals",
++        "value": "projects.list"
++      },
++      {
++        "path": "/document/items",
++        "operator": "arrayLength",
++        "value": 0
++      },
++      {
++        "path": "/document/snapshot/responseState",
++        "operator": "equals",
++        "value": "Unavailable"
++      },
++      {
++        "path": "/document/snapshot/components/0/freshness",
++        "operator": "equals",
++        "value": "Unavailable"
++      }
++    ]
++  },
++  "postconditions": []
++}
+diff --git a/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..4f5c1712540281b2c53e2819fbe813b2bc374564
+--- /dev/null
++++ b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-attachments.vector.json
+@@ -0,0 +1,72 @@
++{
++  "formatVersion": 1,
++  "package": {
++    "id": "Hexalith.Projects.Contracts",
++    "version": "2.0.0-story66.3"
++  },
++  "operation": "projects.trace-attachments",
++  "kind": "query",
++  "prerequisites": [],
++  "invocation": {
++    "operation": "projects.trace-attachments",
++    "kind": "query",
++    "payload": {
++      "attachments": [
++        {
++          "referenceKind": "folder",
++          "referenceId": "folder-a"
++        }
++      ]
++    },
++    "envelope": {
++      "tenant": "tenant-a"
++    },
++    "expectedGateway": {
++      "method": "POST",
++      "path": "/api/v1/queries",
++      "body": {
++        "tenant": "tenant-a",
++        "domain": "projects",
++        "aggregateId": "projects",
++        "queryType": "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1",
++        "payload": {
++          "attachments": [
++            {
++              "referenceKind": "folder",
++              "referenceId": "folder-a"
++            }
++          ]
++        }
++      },
++      "maskGenerated": []
++    },
++    "scriptedResponse": {
++      "statusCode": 200,
++      "body": {
++        "success": true,
++        "payload": {
++          "candidates": [],
++          "incomplete": true,
++          "result": null,
++          "unsupportedInputKinds": [],
++          "evaluatedAt": "2026-11-15T00:00:00+00:00"
++        },
++        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
++      },
++      "echoRequestFields": []
++    },
++    "assertions": [
++      {
++        "path": "/operation",
++        "operator": "equals",
++        "value": "projects.trace-attachments"
++      },
++      {
++        "path": "/document/incomplete",
++        "operator": "equals",
++        "value": true
++      }
++    ]
++  },
++  "postconditions": []
++}
+diff --git a/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..52e921b6dd84a6b0005a686c3f6c0a52a1634c98
+--- /dev/null
++++ b/tools/conformance-vectors/v1/current/modules/Hexalith.Projects.Contracts/trace-conversation.vector.json
+@@ -0,0 +1,62 @@
++{
++  "formatVersion": 1,
++  "package": {
++    "id": "Hexalith.Projects.Contracts",
++    "version": "2.0.0-story66.3"
++  },
++  "operation": "projects.trace-conversation",
++  "kind": "query",
++  "prerequisites": [],
++  "invocation": {
++    "operation": "projects.trace-conversation",
++    "kind": "query",
++    "payload": {
++      "conversationId": "conversation-a"
++    },
++    "envelope": {
++      "tenant": "tenant-a"
++    },
++    "expectedGateway": {
++      "method": "POST",
++      "path": "/api/v1/queries",
++      "body": {
++        "tenant": "tenant-a",
++        "domain": "projects",
++        "aggregateId": "projects",
++        "queryType": "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1",
++        "payload": {
++          "conversationId": "conversation-a"
++        }
++      },
++      "maskGenerated": []
++    },
++    "scriptedResponse": {
++      "statusCode": 200,
++      "body": {
++        "success": true,
++        "payload": {
++          "candidates": [],
++          "incomplete": true,
++          "result": null,
++          "unsupportedInputKinds": [],
++          "evaluatedAt": "2026-11-15T00:00:00+00:00"
++        },
++        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
++      },
++      "echoRequestFields": []
++    },
++    "assertions": [
++      {
++        "path": "/operation",
++        "operator": "equals",
++        "value": "projects.trace-conversation"
++      },
++      {
++        "path": "/document/incomplete",
++        "operator": "equals",
++        "value": true
++      }
++    ]
++  },
++  "postconditions": []
++}
+diff --git a/tools/conformance-vectors/v1/schema.json b/tools/conformance-vectors/v1/schema.json
+index 958ff8d4a3f0102b44da6e061d6f0122c35bcc90..95d7f53823251d41e6d6946da05d280bdc63616d 100644
+--- a/tools/conformance-vectors/v1/schema.json
++++ b/tools/conformance-vectors/v1/schema.json
+@@ -139,7 +139,7 @@
+     "queryGatewayBody": {
+       "type": "object",
+       "additionalProperties": false,
+-      "required": ["tenant", "domain", "aggregateId", "queryType", "projectionType"],
++      "required": ["tenant", "domain", "aggregateId", "queryType"],
+       "properties": {
+         "tenant": { "$ref": "#/$defs/requestScope" },
+         "domain": { "$ref": "#/$defs/tenant" },
+diff --git a/tools/conformance-vectors/v1/test_validate.py b/tools/conformance-vectors/v1/test_validate.py
+index 6861acab78ceb73b237b9cf72e57e36183f4340c..778b877d6785efdcc090cff9ea957e09d30431d2 100644
+--- a/tools/conformance-vectors/v1/test_validate.py
++++ b/tools/conformance-vectors/v1/test_validate.py
+@@ -312,7 +312,7 @@ class VectorContractTests(unittest.TestCase):
+     def test_gateway_request_bodies_require_every_emitted_field_at_every_call_position(self) -> None:
+         required = (
+             (self.command, ("messageId", "tenant", "domain", "aggregateId", "commandType", "payload", "correlationId")),
+-            (self.query, ("tenant", "domain", "aggregateId", "queryType", "projectionType")),
++            (self.query, ("tenant", "domain", "aggregateId", "queryType")),
+         )
+         for template, fields in required:
+             for position in POSITIONS:
+@@ -322,6 +322,22 @@ class VectorContractTests(unittest.TestCase):
+                         del step["expectedGateway"]["body"][field]
+                         self._assert_rejected(document, f"{pointer}/expectedGateway/body/{field}")
+ 
++    def test_computed_query_can_omit_projection_selectors_at_every_call_position(self) -> None:
++        for position in POSITIONS:
++            with self.subTest(position=position):
++                document, step, _ = self._step_at(self.query, position)
++                del step["expectedGateway"]["body"]["projectionType"]
++                step["expectedGateway"]["body"].pop("projectionActorType", None)
++                self.assertEqual([], self._validate(document))
++
++    def test_query_actor_requires_projection_type_at_every_call_position(self) -> None:
++        for position in POSITIONS:
++            with self.subTest(position=position):
++                document, step, pointer = self._step_at(self.query, position)
++                del step["expectedGateway"]["body"]["projectionType"]
++                step["expectedGateway"]["body"]["projectionActorType"] = "ItemProjectionActor"
++                self._assert_rejected(document, f"{pointer}/expectedGateway/body/projectionType")
++
+     def test_gateway_request_bodies_reject_unknown_and_mistyped_fields_at_every_call_position(self) -> None:
+         mistyped = (
+             (self.command, (("messageId", True), ("tenant", 1), ("payload", []), ("correlationId", False))),
+diff --git a/tools/conformance-vectors/v1/validate.py b/tools/conformance-vectors/v1/validate.py
+index 4950dd665d6bbda2ba44762b58b279babe31e9fe..988a17e14c4d973a322dd55c293ed9c475596a72 100644
+--- a/tools/conformance-vectors/v1/validate.py
++++ b/tools/conformance-vectors/v1/validate.py
+@@ -166,7 +166,9 @@ def _check_step(step: dict[str, Any], pointer: str, findings: list[str]) -> None
+     if body.get("tenant") != envelope["tenant"]:
+         findings.append(f"{pointer}/expectedGateway/body/tenant: must equal envelope tenant")
+     routing_fields = ("domain", "aggregateId", "commandType") if kind == "command" else (
+-        "domain", "aggregateId", "queryType", "projectionType")
++        "domain", "aggregateId", "queryType")
++    if kind == "query" and ("projectionType" in body or "projectionActorType" in body):
++        routing_fields += ("projectionType",)
+     for field in routing_fields:
+         if not isinstance(body.get(field), str) or not body[field].strip():
+             findings.append(f"{pointer}/expectedGateway/body/{field}: required nonblank Gateway routing value")
+diff --git a/tools/dependency-policy.json b/tools/dependency-policy.json
+index f6b187034b25b479cb082ce88d15e2102294eefb..218933c08db69bf33f86d1411eea2354e4c7c2c9 100644
+--- a/tools/dependency-policy.json
++++ b/tools/dependency-policy.json
+@@ -61,7 +61,8 @@
+   },
+   "modules": {
+     "Hexalith.Parties.Contracts": "3.1.1",
+-    "Hexalith.Tenants.Contracts": "8.0.0"
++    "Hexalith.Tenants.Contracts": "8.0.0",
++    "Hexalith.Projects.Contracts": "2.0.0-story66.3"
+   },
+   "aspireHelperSupportPackages": {
+     "Hexalith.Commons.UniqueIds": "3.0.0",
+diff --git a/tools/inventory-coverage/v1/projects-accepted-lint.json b/tools/inventory-coverage/v1/projects-accepted-lint.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..5ec87ae4c22d3cfeb28e2c3dff72f6da63d321cd
+--- /dev/null
++++ b/tools/inventory-coverage/v1/projects-accepted-lint.json
+@@ -0,0 +1,14 @@
++[
++  {
++    "operation": "projects.list",
++    "code": "payload_paging_member",
++    "property": "/properties/cursor",
++    "approvalReference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++  },
++  {
++    "operation": "projects.list",
++    "code": "payload_paging_member",
++    "property": "/properties/pageSize",
++    "approvalReference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++  }
++]
+diff --git a/tools/inventory-coverage/v1/projects-approved.json b/tools/inventory-coverage/v1/projects-approved.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..4a644e303d688efadf7d55525ac3deb770117a01
+--- /dev/null
++++ b/tools/inventory-coverage/v1/projects-approved.json
+@@ -0,0 +1,89 @@
++{
++  "formatVersion": 1,
++  "module": "projects",
++  "purpose": "release",
++  "targets": [
++    {
++      "id": "T01",
++      "name": "projects.list",
++      "contractType": "Hexalith.Projects.Contracts.Queries.ListProjectsQuery"
++    },
++    {
++      "id": "T02",
++      "name": "projects.describe",
++      "contractType": "Hexalith.Projects.Contracts.Queries.GetProjectQuery"
++    },
++    {
++      "id": "T03",
++      "name": "projects.trace-conversation",
++      "contractType": "Hexalith.Projects.Contracts.Queries.ResolveProjectFromConversationQuery"
++    },
++    {
++      "id": "T04",
++      "name": "projects.trace-attachments",
++      "contractType": "Hexalith.Projects.Contracts.Queries.ResolveProjectFromAttachmentsQuery"
++    }
++  ],
++  "legacyRows": [
++    {
++      "id": "T01",
++      "legacyOperation": "supported Project inventory read",
++      "targetIds": [
++        "T01"
++      ],
++      "disposition": "replace",
++      "coverage": "include",
++      "rationale": "Jerome's 2026-11-15 \u00a7E8 session approval enrolls this new supported read target only. No external owning-maintainer sign-off, publication, parity acceptance or retirement readiness is asserted. Every legacy Markdown R01\u2013R11, M01\u2013M05, L01\u2013L18 and V01\u2013V12 row remains defer / exclude in inventory v2.",
++      "approval": {
++        "status": "approved",
++        "authority": "owning-maintainer",
++        "reference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++      }
++    },
++    {
++      "id": "T02",
++      "legacyOperation": "supported Project detail and reference-health inspection",
++      "targetIds": [
++        "T02"
++      ],
++      "disposition": "replace",
++      "coverage": "include",
++      "rationale": "Jerome's 2026-11-15 \u00a7E8 session approval enrolls this new supported read target only. No external owning-maintainer sign-off, publication, parity acceptance or retirement readiness is asserted. Every legacy Markdown R01\u2013R11, M01\u2013M05, L01\u2013L18 and V01\u2013V12 row remains defer / exclude in inventory v2.",
++      "approval": {
++        "status": "approved",
++        "authority": "owning-maintainer",
++        "reference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++      }
++    },
++    {
++      "id": "T03",
++      "legacyOperation": "supported Conversation advisory trace",
++      "targetIds": [
++        "T03"
++      ],
++      "disposition": "replace",
++      "coverage": "include",
++      "rationale": "Jerome's 2026-11-15 \u00a7E8 session approval enrolls this new supported read target only. No external owning-maintainer sign-off, publication, parity acceptance or retirement readiness is asserted. Every legacy Markdown R01\u2013R11, M01\u2013M05, L01\u2013L18 and V01\u2013V12 row remains defer / exclude in inventory v2.",
++      "approval": {
++        "status": "approved",
++        "authority": "owning-maintainer",
++        "reference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++      }
++    },
++    {
++      "id": "T04",
++      "legacyOperation": "supported attachment advisory trace",
++      "targetIds": [
++        "T04"
++      ],
++      "disposition": "replace",
++      "coverage": "include",
++      "rationale": "Jerome's 2026-11-15 \u00a7E8 session approval enrolls this new supported read target only. No external owning-maintainer sign-off, publication, parity acceptance or retirement readiness is asserted. Every legacy Markdown R01\u2013R11, M01\u2013M05, L01\u2013L18 and V01\u2013V12 row remains defer / exclude in inventory v2.",
++      "approval": {
++        "status": "approved",
++        "authority": "owning-maintainer",
++        "reference": "https://github.com/Hexalith/Hexalith.Projects/blob/ce71717a965eb21454b3e13068b9072404dac5f5/_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md#e8-mcpcli-sibling-repository-authorization-story-66-only"
++      }
++    }
++  ]
++}
+diff --git a/tools/live-topology/plans-current/projects.list.json b/tools/live-topology/plans-current/projects.list.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..de1a7b1060ab08768a8ec85539caaf7a16ea1de7
+--- /dev/null
++++ b/tools/live-topology/plans-current/projects.list.json
+@@ -0,0 +1,12 @@
++{
++  "schemaVersion": 1,
++  "operation": "projects.list",
++  "vectorSha256": "f269cf36e8afc8126435ffe155a4a90a902888f4e7c91f54aca0350e3a312aef",
++  "deadlineSeconds": 45,
++  "pollSeconds": 0.5,
++  "actions": [
++    {
++      "step": "/invocation"
++    }
++  ]
++}
+diff --git a/tools/live-topology/test_current_cohort.py b/tools/live-topology/test_current_cohort.py
+index bfd4db1256436aa423e5543638fa4e908ea62e32..c9e1082cf2c17cec2dd25e48fd15f0b7dfe74159 100644
+--- a/tools/live-topology/test_current_cohort.py
++++ b/tools/live-topology/test_current_cohort.py
+@@ -25,8 +25,11 @@ class CurrentCohortTests(unittest.TestCase):
+     def test_current_vectors_only_change_package_versions_and_exact_deprecated_party_hints(self):
+         legacy = ROOT / 'tools/conformance-vectors/v1/modules'
+         current = ROOT / 'tools/conformance-vectors/v1/current/modules'
+-        self.assertEqual({p.relative_to(legacy) for p in legacy.rglob('*.vector.json')},
+-                         {p.relative_to(current) for p in current.rglob('*.vector.json')})
++        legacy_vectors = {p.relative_to(legacy) for p in legacy.rglob('*.vector.json')}
++        legacy_packages = {p.parts[0] for p in legacy_vectors}
++        current_legacy_vectors = {p.relative_to(current) for p in current.rglob('*.vector.json')
++                                  if p.relative_to(current).parts[0] in legacy_packages}
++        self.assertEqual(legacy_vectors, current_legacy_vectors)
+         changes = []
+         def transform(value, package):
+             if isinstance(value, dict):
+diff --git a/tools/live-topology/test_live_plans.py b/tools/live-topology/test_live_plans.py
+index f878d1c69ab0a0be1c9bf8493b21d3cdab13dd93..31e983b4b253b66f876e1b2da173081e72a9971c 100644
+--- a/tools/live-topology/test_live_plans.py
++++ b/tools/live-topology/test_live_plans.py
+@@ -408,12 +408,18 @@ class LiveKindCoverageTests(unittest.TestCase):
+ 
+     def expected_reports(self, output, inventory_reports, approval_version=None, vector_version=None, extra_inventory_reports=()):
+         """Require every current report in its phase order, including controlled version mutations."""
+-        policy = json.loads((ROOT / 'tools/dependency-policy.json').read_text())
+-        assets = json.loads((ROOT / 'src/Hexalith.McpCli/obj/project.assets.json').read_text())
++        import subprocess
++        project = ROOT / 'src/Hexalith.McpCli/Hexalith.McpCli.csproj'
++        evaluation = subprocess.run(['dotnet', 'msbuild', str(project), '-p:Configuration=Release', '-getItem:PackageReference'],
++                                    cwd=ROOT, capture_output=True, text=True, check=True)
++        packages = [item['Identity'] for item in json.loads(evaluation.stdout)['Items']['PackageReference']
++                    if any(key.casefold() == 'hexalithcontracts' and value.casefold() == 'true'
++                           for key, value in item.items())]
++        assets = json.loads((project.parent / 'obj/project.assets.json').read_text())
+         restored = {identity.rsplit('/', 1)[0].casefold(): identity.rsplit('/', 1)[1]
+                     for identity, library in assets['libraries'].items() if library['type'] == 'package'}
+         expected = []
+-        for package in policy['modules']:
++        for package in packages:
+             directory = ROOT / 'tools/conformance-vectors/v1/current/modules' / package
+             receipt = json.loads((directory / 'approval.json').read_text())
+             version = restored[package.casefold()]
+@@ -459,9 +465,11 @@ class LiveKindCoverageTests(unittest.TestCase):
+         self.assertEqual(['parties.list-parties'], [item['operation'] for item in selections])
+         operations = sorted(item['operation'] for item in bindings)
+         self.assertNotIn('parties.get-party', operations)
+-        self.assertEqual(sorted(json.loads(path.read_text())['operation'] for path in
+-                                (ROOT / 'tools/conformance-vectors/v1/current/modules').rglob('*.vector.json')
+-                                if path.name != 'get-party.vector.json'), operations)
++        planned = {path.stem for path in (ROOT / 'tools/live-topology/plans-current').glob('*.json')} - {'parties.get-party'}
++        self.assertEqual(sorted(vector['operation'] for vector in
++                                (json.loads(path.read_text()) for path in
++                                 (ROOT / 'tools/conformance-vectors/v1/current/modules').rglob('*.vector.json'))
++                                if vector['operation'] in planned), operations)
+         self.assertEqual(self.expected_current_reports, reports)
+ 
+     def test_missing_live_kind_fails_naming_the_module_and_kind(self):
+diff --git a/tests/fixtures/Catalog.Invalid.Contracts/ActorOnlyProjectionQuery.cs b/tests/fixtures/Catalog.Invalid.Contracts/ActorOnlyProjectionQuery.cs
+new file mode 100644
+index 0000000000000000000000000000000000000000..f4476ce48f75e90a729d7a4ae6951fa4f32b4ace
+--- /dev/null
++++ b/tests/fixtures/Catalog.Invalid.Contracts/ActorOnlyProjectionQuery.cs
+@@ -0,0 +1,7 @@
++using Hexalith.McpCli.Abstractions;
++
++namespace Catalog.Invalid.Contracts;
++
++/// <summary>Exercises rejection of a projection actor without its required projection type.</summary>
++[HexalithQuery("Invalid actor-only projection query.", Domain = "invalid", ProjectionActorType = "ItemProjectionActor")]
++public sealed record ActorOnlyProjectionQuery;

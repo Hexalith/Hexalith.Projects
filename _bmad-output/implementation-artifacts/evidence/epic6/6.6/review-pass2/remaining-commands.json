@@ -1,0 +1,80 @@
+[
+  {
+    "lane": "mcpcli-restore",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli",
+    "command": [
+      "dotnet",
+      "restore",
+      "Hexalith.McpCli.slnx",
+      "-m:1"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "mcpcli-build",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli",
+    "command": [
+      "dotnet",
+      "build",
+      "Hexalith.McpCli.slnx",
+      "--no-restore",
+      "--configuration",
+      "Release",
+      "-warnaserror",
+      "-m:1",
+      "--disable-build-servers"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "topology-focused",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli/tools/live-topology",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "-v",
+      "test_ci.CiWorkflowTests",
+      "test_live_plans.LiveKindCoverageTests",
+      "test_current_cohort"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "topology-preflight",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli",
+    "command": [
+      "python3",
+      "tools/live-topology/run-vectors.py",
+      "--output",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/topology-preflight",
+      "--preflight-only"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "sample-validation",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli",
+    "command": [
+      "bash",
+      "tools/conformance-vectors/v1/run-sample-validation.sh",
+      "Release"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": true
+  },
+  {
+    "lane": "sample-loopback",
+    "cwd": "/tmp/hexalith-job.omHG9y4o/mcpcli",
+    "command": [
+      "bash",
+      "tools/conformance-vectors/v1/run-sample-loopback.sh"
+    ],
+    "exitCode": 1,
+    "packageSourceOverride": true
+  }
+]

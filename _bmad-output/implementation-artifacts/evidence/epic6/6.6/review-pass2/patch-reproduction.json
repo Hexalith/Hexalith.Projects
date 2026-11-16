@@ -1,0 +1,57 @@
+{
+  "result": "pass",
+  "baseline": "23072f04f423eea3f30456fe5af13d2d382624fe",
+  "patchSha256": "5403689474f974ce0f3796a918169d3cd1019801ddb7ea266da01b1a588fe210",
+  "verifiedFiles": 30,
+  "commands": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "--no-recurse-submodules",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+        "/tmp/hexalith-job.VLksZU2p/mcpcli"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '/tmp/hexalith-job.VLksZU2p/mcpcli'...\ndone.\n"
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "23072f04f423eea3f30456fe5af13d2d382624fe"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at 23072f04 build: sync local changes via /pushall\n"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "--index",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/mcpcli-working-tree-over-23072f04.patch"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--index",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/mcpcli-working-tree-over-23072f04.patch"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "scope": "Private clone/index only; real .gitattributes checkout conversion retained; no active Git state was changed."
+}

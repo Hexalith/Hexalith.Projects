@@ -1519,7 +1519,7 @@ So that **operators and pipelines get authorized, metadata-only Project truth (F
 - Tenant and actor come from the credential, and the Gateway authorizes the call.
 - Output is deterministic JSON, Tenant-scoped, authorization-filtered and Safe Metadata by default. No meaning depends on color, terminal width or prose.
 - Project name, Setup bodies, titles, paths and Preview bodies appear only under `projects:inspect_descriptive_metadata` and are recorded by the server's existing durable inspection audit. An audit write failure denies the disclosure.
-- A missing credential fails before any query is sent.
+- The Gateway rejects a call without a token with `401`, exit `2` and no payload before any Projects query executes.
 - McpCli refuses every confirmation-required and UI-only action (Platform AD-14, AD-29). A-7 and Story 8.11 never enable confirmation on McpCli.
 - The CLI is not gated on Story 8.11.
 

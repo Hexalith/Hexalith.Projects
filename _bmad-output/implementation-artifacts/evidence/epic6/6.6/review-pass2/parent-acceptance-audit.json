@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "spec": "_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md",
+  "baselineCommit": "ce71717a965eb21454b3e13068b9072404dac5f5",
+  "implementationTasks": 10,
+  "reviewPatchTasks": 8,
+  "nativeGatewayMatrix": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Server.xml",
+  "contractDecorationTests": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Contracts.xml",
+  "routingRegressionTests": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Core.xml",
+  "candidate": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+    "version": "2.0.0-story66.3",
+    "sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+  },
+  "patch": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/mcpcli-working-tree-over-23072f04.patch",
+    "baseline": "23072f04f423eea3f30456fe5af13d2d382624fe",
+    "sha256": "5403689474f974ce0f3796a918169d3cd1019801ddb7ea266da01b1a588fe210",
+    "bytes": 113349,
+    "reproducedFiles": 30,
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/patch-reproduction.json"
+  },
+  "nonLivePython": {
+    "totalCases": 251,
+    "passingEvidenceForAllCases": true,
+    "cleanFullRerun": false,
+    "initialFullRun": {
+      "passed": 244,
+      "failed": 3,
+      "errors": 4,
+      "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/topology-python-initial.log"
+    },
+    "affectedClassesRerun": {
+      "passed": 18,
+      "failed": 0,
+      "errors": 0,
+      "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/topology-focused.log"
+    },
+    "unchangedCasesReused": 233,
+    "explanation": "The exact report-order oracle now reads actual flagged MSBuild enrollment, preserving phase order; binding expectations include only approved plan-backed vectors. The affected classes and current-cohort tests were rerun in a complete local clone with .github inputs. No full clean rerun is claimed."
+  },
+  "aggregateTotals": {
+    "total": 4625,
+    "passed": 4619,
+    "failed": 0,
+    "skipped": 6
+  },
+  "notes": [
+    "All acceptance matrix branches are in the passed GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures case.",
+    "Contracts decoration and no-audit-operation checks passed; malformed and legacy page wire cases passed.",
+    "Both-omitted computed routing and explicit-selector regressions passed; actor-only query rejection passed.",
+    "Final archive/patch/native XML/source-manifest hashes verified directly; immutable frozen intent was not edited."
+  ]
+}

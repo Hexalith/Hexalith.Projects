@@ -1,0 +1,31 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Tenants.Contracts/inputs-nhw2z5ay/vectors/12/set-tenant-configuration.vector.json",
+  "documents": [
+    {
+      "error": {
+        "code": "gateway_error",
+        "status": 503,
+        "detail": "scripted Gateway failure"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7GMRBA07KZYVBA1SXTJ4B5R",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-config",
+        "commandType": "set-tenant-configuration",
+        "payload": {
+          "Key": "billing.plan",
+          "TenantId": "vector-config",
+          "Value": "enterprise"
+        },
+        "correlationId": "01M7GMRBA07KZYVBA1SXTJ4B5R"
+      }
+    }
+  ]
+}

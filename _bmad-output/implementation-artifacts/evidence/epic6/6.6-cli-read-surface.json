@@ -3,13 +3,13 @@
   "storyStatus": "done",
   "projectsBaselineRevision": "ce71717a965eb21454b3e13068b9072404dac5f5",
   "mcpcliBaselineRevision": "23072f04f423eea3f30456fe5af13d2d382624fe",
-  "sourceState": "Uncommitted implementation over the two exact baseline revisions; source-manifest.json binds the implementation files. No commit, publication, push, gitlink move or production routing cutover occurred.",
-  "sourceManifest": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/source-manifest.json",
-  "sourceManifestSha256": "ba5483374a69b21ef432af09652f4cbde346d432b80a9882358f2712c196b7cc",
+  "sourceState": "Final .3 candidate and tested source snapshot are bound by the source manifest and reproducible McpCli patch. External user commits/submodule changes occurred during verification; no agent Git mutation or publication is asserted.",
+  "sourceManifest": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/snapshot-source-manifest.json",
+  "sourceManifestSha256": "b0a7935f7813b03b995d51501b8774fe3fa57968cbfc9531e3547802ff4a966a",
   "candidate": {
-    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/candidate/Hexalith.Projects.Contracts.2.0.0-story66.2.nupkg",
-    "version": "2.0.0-story66.2",
-    "sha256": "fe781666899e84f7dfbdd51ae86f7a616d007472271d808cc8dfee3a13a32342"
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+    "version": "2.0.0-story66.3",
+    "sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
   },
   "tests": {
     "Contracts-final": {
@@ -17,20 +17,20 @@
       "passed": 207,
       "failed": 0,
       "skipped": 0,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Contracts-final.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Contracts-final.trx",
-      "xmlSha256": "5757f0a0e08e129c7ffa5a2b1efdfc06f485a153fdfb49fd6bd4f805db338157",
-      "assembly": "/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Contracts.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Contracts.trx",
+      "xmlSha256": "a43d7eaf4e4032259e64f9fa8cc5f0f664c72e04eafa4d0d7205bae2d56921c1",
+      "verificationRun": "review-pass2"
     },
     "Server-final": {
       "total": 1417,
       "passed": 1417,
       "failed": 0,
       "skipped": 0,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full.trx",
-      "xmlSha256": "8872fab684247fb645306ddfef98b5d27b6f86fb9e8eda5c123fa89388f3e2e4",
-      "assembly": "/tmp/hexalith-job.JV27t428/build/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Server.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Server.trx",
+      "xmlSha256": "7badd30544f38bcbd789d50938572903e89bef3970fd839bcac0ca08c1f6ea44",
+      "verificationRun": "review-pass2"
     },
     "UI-final": {
       "total": 277,
@@ -40,7 +40,8 @@
       "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/UI-final.xml",
       "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/UI-final.trx",
       "xmlSha256": "9e7b48b5889e11481a002a6d85b4b81186b4e6d20d031c70002a5eca7de804d4",
-      "assembly": "/tmp/hexalith-job.WUQDA6ef/runtime/tests/Hexalith.Projects.UI.Tests/bin/Debug/net11.0/Hexalith.Projects.UI.Tests.dll"
+      "assembly": "/tmp/hexalith-job.WUQDA6ef/runtime/tests/Hexalith.Projects.UI.Tests/bin/Debug/net11.0/Hexalith.Projects.UI.Tests.dll",
+      "verificationRun": "retained earlier native run; this pass does not change UI/domain sources"
     },
     "Projects": {
       "total": 691,
@@ -50,52 +51,53 @@
       "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Projects.xml",
       "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/Projects.trx",
       "xmlSha256": "c4e42f7ced957ed3f930d29a3c8b84bff72713338c4d04a6acfe2043c8df9ef9",
-      "assembly": "/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll"
+      "assembly": "/tmp/hexalith-job.WUQDA6ef/build/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+      "verificationRun": "retained earlier native run; this pass does not change UI/domain sources"
     },
     "McpCli-Abstractions": {
       "total": 20,
       "passed": 20,
       "failed": 0,
       "skipped": 0,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Abstractions.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Abstractions.trx",
-      "xmlSha256": "96b8dc55539abbc6eb04588c0d06e8def4da1a6108c8437d64ed5f37a55735c3",
-      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Abstractions.Tests/bin/Release/net11.0/Hexalith.McpCli.Abstractions.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Abstractions.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Abstractions.trx",
+      "xmlSha256": "e664b3e3939a3df0ef9bdbb4d425959241e14ffb88204e346ae5ad8d58b3404f",
+      "verificationRun": "review-pass2"
     },
     "McpCli-Core-final": {
-      "total": 920,
-      "passed": 916,
+      "total": 921,
+      "passed": 917,
       "failed": 0,
       "skipped": 4,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Core-final.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Core-final.trx",
-      "xmlSha256": "39508c3c7814c40a134ec84487b5810088fa906a5ec36fe711a7200e84a13e7b",
-      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Core.Tests/bin/Release/net11.0/Hexalith.McpCli.Core.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Core.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Core.trx",
+      "xmlSha256": "078df443005bbf53ec0261ec2c11e465af64b5a371d779c67ebebc1a8f6df1f3",
+      "verificationRun": "review-pass2"
     },
     "McpCli-Cli-final": {
       "total": 625,
       "passed": 623,
       "failed": 0,
       "skipped": 2,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Cli-final.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Cli-final.trx",
-      "xmlSha256": "87410fec7be71d4261f8c3eb9ca00e14bbcd908ddb94bf176eddf49332160795",
-      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Cli.Tests/bin/Release/net11.0/Hexalith.McpCli.Cli.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Cli.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Cli.trx",
+      "xmlSha256": "ede5a31e2cdf4ca3614186e4c4ad7b057fc503ceb93ea41082b37dfab8357138",
+      "verificationRun": "review-pass2"
     },
     "McpCli-Mcp": {
       "total": 94,
       "passed": 94,
       "failed": 0,
       "skipped": 0,
-      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Mcp.xml",
-      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Mcp.trx",
-      "xmlSha256": "743a3480f2bce1e1588841ae6573f5ba9fb6f6b41f3a512ac265b229f3856bd8",
-      "assembly": "/tmp/hexalith-job.PUiXfUOz/mcpcli/tests/Hexalith.McpCli.Mcp.Tests/bin/Release/net11.0/Hexalith.McpCli.Mcp.Tests.dll"
+      "xml": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Mcp.xml",
+      "trx": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Mcp.trx",
+      "xmlSha256": "ea6138384af06b806517fcad4090f9bd4e18f0e61bdc8fe12ead15f4afb85637",
+      "verificationRun": "review-pass2"
     }
   },
   "nativeTotals": {
-    "total": 4251,
-    "passed": 4245,
+    "total": 4252,
+    "passed": 4246,
     "failed": 0,
     "skipped": 6
   },
@@ -105,11 +107,11 @@
     "failed": 0,
     "skipped": 0,
     "command": "dotnet test tests/Hexalith.McpCli.Manifest.Tests --no-build --configuration Release",
-    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/McpCli-Manifest-tests.log"
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/McpCli-Manifest-final.log"
   },
   "totalUniqueDotnetTests": {
-    "total": 4624,
-    "passed": 4618,
+    "total": 4625,
+    "passed": 4619,
     "failed": 0,
     "skipped": 6
   },
@@ -137,8 +139,8 @@
   },
   "combinedNativeTrx": {
     "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6-cli-read-surface.trx",
-    "sha256": "ec59fba136316cdda0307865ab5ea152a27ef63b1a36936014b3c75563ffdd62",
-    "scope": "Eight complete native suites. Supplementary Gateway/enrollment subsets are not counted twice. The 373-test Manifest MTP run is recorded separately."
+    "sha256": "8ef2aee04e049afdab0f1c57cf2bf2a258c013ed0e78957ef6d759e8e0dabce2",
+    "scope": "Eight native suites: six fresh review-pass2 runs plus unchanged UI/domain receipts. Gateway/enrollment subsets are not counted twice. Manifest 373-test MTP run is recorded separately."
   },
   "expectedSkips": [
     "Three Core Windows ACL cases on Linux",
@@ -150,12 +152,13 @@
     "productionReplayResult": "passed",
     "packageCount": 3,
     "operationCount": 26,
-    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/mcpcli-enrolled/enrolled.json",
-    "note": "The combined runtime/vector replay is unchanged by the subsequent decision-row ID/approval-reference clarification. The refreshed Projects enrollment receipt below supersedes its Projects inventory metadata."
+    "approvedReplayVectorCount": 25,
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/enrolled.json",
+    "note": "Existing Tenants vector-version differences and unmentioned refresh-tenant-access are informational; no direct behavioral replay of that unmentioned operation is claimed."
   },
   "projectsEnrollment": {
     "status": "passed",
-    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/projects-artifact/verification.json",
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Projects.Contracts/verification.json",
     "inventorySha256": "18f9366ed6e9ab4c35cb1db02270ccdf1ad9e6f6a6470ecf0c3c8994e75112e8",
     "decisionRowIds": [
       "T01",
@@ -190,7 +193,12 @@
           "projects.describe"
         ]
       }
-    ]
+    ],
+    "candidate": {
+      "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+      "version": "2.0.0-story66.3",
+      "sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+    }
   },
   "strictDiscovery": {
     "exitCode": 0,
@@ -200,7 +208,7 @@
       "projects.trace-attachments",
       "projects.trace-conversation"
     ],
-    "output": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/projects-operations-strict.json"
+    "output": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/strict-projects-canonical.log"
   },
   "packageGate": {
     "exitCode": 0,
@@ -208,20 +216,22 @@
     "isolatedConsumers": 5,
     "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/package-dependency-gate-final.log",
     "graphs": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/package-graphs.json",
-    "contractsClosure": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/contracts-package-closure.json"
+    "contractsClosure": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/contracts-package-closure.json",
+    "candidateGraphComparison": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/contracts-package-comparison.json",
+    "note": "Retained earlier full five-package gate; final .3 candidate has identical dependency edges. Fresh package-mode enrollment and native wire tests passed."
   },
   "sampleValidation": {
     "command": "bash tools/conformance-vectors/v1/run-sample-validation.sh Release",
     "exitCode": 0,
-    "pythonTests": 186,
-    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/sample-validation.log"
+    "pythonTests": 187,
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/sample-validation.log"
   },
   "sampleLoopback": {
     "command": "bash tools/conformance-vectors/v1/run-sample-loopback.sh",
     "exitCode": 0,
-    "pythonTests": 186,
-    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/sample-loopback-final.log",
-    "environment": "Task-owned RestoreSources includes the unreleased Projects candidate feed and nuget.org; the sample script adds its own synthetic feed. Production restore/build repeated successfully afterward."
+    "pythonTests": 187,
+    "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/sample-loopback-final.log",
+    "environment": "Task-owned sample feeds/caches only; final production restore/build/discovery passed afterward. Audits stayed enabled. Earlier setup failures are retained in the pass2 receipt."
   },
   "gatewayEvidence": {
     "projectionSelectors": "Both omitted by Contracts and generic McpCli; Gateway admission unchanged.",
@@ -239,14 +249,29 @@
     "Local feature verification does not publish the candidate or land McpCli main enrollment (DW-82).",
     "No production routing cutover, live release qualification or external approval is asserted.",
     "Before DW-82 main integration, qualify Projects native topology/routes/grants and a discriminating live vector; the current plan is not accepted as live proof.",
-    "Owning-maintainer authenticity requires confirmation before release use; no external owner sign-off is asserted."
+    "Owning-maintainer authenticity requires confirmation before release use; no external owner sign-off is asserted.",
+    "Local candidate is unpublished; no main integration, push, publication or production routing cutover by this task.",
+    "DW-82 retains signer authenticity, native Projects service/committed routes/grants and live fixture assertions.",
+    "Historical UI/domain receipts remain revision-bound; they are not represented as fresh reruns.",
+    "The 251 non-live cases have passing partitioned evidence (233 unchanged plus 18 affected reruns); the initial full run is retained as failed and no clean full rerun is claimed."
   ],
   "cleanup": {
-    "ownedDapr": "terminated and reaped",
-    "temporarySourceAndPackageWorkspaces": "removed by run-with-temp",
-    "mcpcliTemporaryWorkspace": "removed after verification",
-    "runningOwnedChildren": 0,
-    "reviewWorkspace": "removed after parent full Server verification; review-fixes/verification.json confirms cleanup"
+    "ownedTemporaryRoots": [
+      "/tmp/hexalith-job.0nxXmVGf",
+      "/tmp/hexalith-job.5Enyo85A",
+      "/tmp/hexalith-job.J3myEBB7",
+      "/tmp/hexalith-job.PJ8ENJ5T",
+      "/tmp/hexalith-job.mzAaly8C",
+      "/tmp/hexalith-job.omHG9y4o"
+    ],
+    "allRemoved": true,
+    "privateDaprd": "terminated and reaped before package-mode verification",
+    "activeGitMutationByThisTask": false,
+    "externalChanges": "External commits and submodule movement occurred during initial reads; active checkout/index and those changes were preserved.",
+    "parentAuditScratch": {
+      "path": "/tmp/hexalith-job.YC3M0ELY",
+      "removed": true
+    }
   },
   "commands": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/d9/commands.json",
   "sprintStatus": "review",
@@ -271,6 +296,97 @@
     ],
     "patchReceipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/verification.json",
     "parentFullServer": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-fixes/server-parent-full-command.json",
-    "note": "DW-82 retains owning-maintainer authenticity, native topology/grants, and live-vector qualification before McpCli main integration. Local feature acceptance is not release/main acceptance."
-  }
+    "note": "DW-82 retains owning-maintainer authenticity, native topology/grants, and live-vector qualification before McpCli main integration. Local feature acceptance is not release/main acceptance.",
+    "finalReview": {
+      "date": "2026-11-16",
+      "layers": 3,
+      "individualFindings": 12,
+      "verificationGaps": 0,
+      "carriedDeferrals": 5,
+      "rejectedLow": 5,
+      "rejectedFalse": 1,
+      "patched": 1,
+      "patch": "Canonical D8 acceptance sentence in epics.md; corresponding deferred entry resolved. Production/test source unchanged after verified candidate.",
+      "triage": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/independent-review-triage.json"
+    }
+  },
+  "projectsTestedRevision": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+  "mcpcliTestedRevision": "1f9df7c629c4983587363afd25b8ddca5da167e5",
+  "reviewPass2": {
+    "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/verification.json",
+    "sha256": "048572509968c1b886cae204075cdd917ca765cc6c5b181534ac2b8c4b42ea58",
+    "freshDotNetTotals": {
+      "total": 3657,
+      "passed": 3651,
+      "failed": 0,
+      "skipped": 6
+    },
+    "nonLivePython": {
+      "totalCases": 251,
+      "passingEvidenceForAllCases": true,
+      "cleanFullRerun": false,
+      "initialFullRun": {
+        "passed": 244,
+        "failed": 3,
+        "errors": 4,
+        "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/topology-python-initial.log"
+      },
+      "affectedClassesRerun": {
+        "passed": 18,
+        "failed": 0,
+        "errors": 0,
+        "log": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/topology-focused.log"
+      },
+      "unchangedCasesReused": 233,
+      "explanation": "The exact report-order oracle now reads actual flagged MSBuild enrollment, preserving phase order; binding expectations include only approved plan-backed vectors. The affected classes and current-cohort tests were rerun in a complete local clone with .github inputs. No full clean rerun is claimed."
+    },
+    "mcpcliPatch": {
+      "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/mcpcli-working-tree-over-23072f04.patch",
+      "baseline": "23072f04f423eea3f30456fe5af13d2d382624fe",
+      "sha256": "5403689474f974ce0f3796a918169d3cd1019801ddb7ea266da01b1a588fe210",
+      "bytes": 113349,
+      "reproducedFiles": 30,
+      "receipt": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/patch-reproduction.json"
+    },
+    "supersededFailures": [
+      {
+        "kind": "Concurrent external Git movement",
+        "receipt": "blocked-active-commands.json",
+        "log": "blocked-active-source-preparation.log",
+        "result": "HXW004: active McpCli HEAD differed from staged root gitlink; resolved using internally consistent private clones and their private indices."
+      },
+      {
+        "kind": "Harness environment override",
+        "log": "McpCli-Manifest.log",
+        "result": "372 passed, 1 failed; global RestoreSources reached an empty-feed negative test. No assertion changed; override was scoped to sample commands."
+      },
+      {
+        "kind": "Shared build-server chatter",
+        "log": "McpCli-Manifest-msbuild-server.log",
+        "receipt": "resume-before-server-pin-commands.json",
+        "result": "372 passed, 1 failed; a build-server fallback diagnostic contaminated an exact-output assertion. Clean 373/373 rerun uses the environment pin."
+      },
+      {
+        "kind": "Non-live oracle and copy completeness",
+        "log": "topology-python-initial.log",
+        "result": "Initial 251-case run: 244 passed, three report-order/plan-membership expectation failures and four missing-.github copy errors. Exact checks were corrected generically; all 18 affected class/current-cohort tests pass; 233 unchanged passing cases are reused."
+      },
+      {
+        "kind": "Job-authored source mapping versus dynamic sample feeds",
+        "log": "sample-loopback.log",
+        "receipt": "remaining-commands.json",
+        "result": "The private production-only source mapping omitted the sample script dynamic feed. Final sample job uses its explicit candidate/public sources without that job-only mapping, retains isolated caches and archive-hash checks, and leaves active NuGet config, production policy and audits unchanged."
+      }
+    ],
+    "commands": [
+      "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/commands.json",
+      "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/resume-commands.json",
+      "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/remaining-commands.json",
+      "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/sample-final-commands.json",
+      "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/strict-discovery-commands.json"
+    ],
+    "parentAcceptanceAudit": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/parent-acceptance-audit.json",
+    "finalValidation": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/parent-final-validation.json"
+  },
+  "latestGatewayEvidence": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/Server.xml"
 }

@@ -1,0 +1,31 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Tenants.Contracts/inputs-nhw2z5ay/vectors/13/update-tenant.vector.json",
+  "documents": [
+    {
+      "error": {
+        "code": "gateway_error",
+        "status": 503,
+        "detail": "scripted Gateway failure"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7GMRHQA8H3KX1F6HA55WJS0",
+        "tenant": "platform:tenants",
+        "domain": "tenants",
+        "aggregateId": "vector-update",
+        "commandType": "update-tenant",
+        "payload": {
+          "Description": null,
+          "Name": "Vector Update Renamed",
+          "TenantId": "vector-update"
+        },
+        "correlationId": "01M7GMRHQA8H3KX1F6HA55WJS0"
+      }
+    }
+  ]
+}

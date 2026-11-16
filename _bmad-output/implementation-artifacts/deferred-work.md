@@ -1400,3 +1400,4 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Apply the 6.6 D8 missing-credential amendment to the official Story 6.6 acceptance criterion.
   evidence: `_bmad-output/planning-artifacts/epics.md:1522` still says "A missing credential fails before any query is sent." D8 (Jerome, 2026-11-15) amends it to: the Gateway rejects a call without a token (401, exit 2, no payload) before any Projects query executes. Only `epic-6-context.md:79` was updated; the implemented and tested behavior follows D8 (medium; second-pass review acceptance-auditor finding).
+  resolution: 2026-11-16; final Story 6.6 review R3-B10 corrected epics.md to the approved Gateway 401, exit 2, no payload before Projects execution. Scoped diff/byte checks passed.

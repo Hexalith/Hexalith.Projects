@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-16",
+  "layers": {
+    "blind-hunter": 10,
+    "edge-case-hunter": 2,
+    "verification-gap": 0
+  },
+  "findings": [
+    {
+      "id": "R3-B1",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "carried V1: automatic native discovery still lacks Projects topology/routes/grants. The approved E11 local acceptance leaves native main integration with DW-82; no new deferral is appended."
+    },
+    {
+      "id": "R3-B2",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "carried B4: the list plan still binds offline empty/Unavailable assertions without arranging native state. Qualification remains a DW-82 prerequisite."
+    },
+    {
+      "id": "R3-B3",
+      "verdict": "maybe-false",
+      "route": "defer (carried)",
+      "evidence": "carried B1: signer capacity remains unverified; E8 authorizes local artifacts without asserting external owner sign-off. Release authority confirmation remains with DW-82."
+    },
+    {
+      "id": "R3-B4",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "Current trace parity inputs all use IncludeArchived=false; no existing parity case produces an incorrect comparison. Contracts payload-key tests preserve includeArchived and server advisory suites exercise lifecycle behavior. Adding true-valued fixtures/helper parameters expands test coverage without a demonstrated current read defect; the same suggestion was rejected in the prior review."
+    },
+    {
+      "id": "R3-B5",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "The matrix uses a reusable platform bearer credential and the unchanged admission checks authenticated actor/workload/delegation, audience, scopes and Tenant roles; it does not require an interactive session or operator-web identity. Additional noninteractive client fixtures would expand coverage; no failing credential path was shown. Current source/Gateway and actual catalog/transport replay evidence cover the approved local scope."
+    },
+    {
+      "id": "R3-B6",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "AdministratorInventoryAuditsEveryReturnedProjectAndBindsCursorToInventory and QuarantineDisclosureRequiresAdministratorPermissionAndDurableAudit both passed in fresh Server.xml. They cover authorized/denied quarantine and durable per-row audit. Decoration tests pin unchanged boolean payload names; duplicating these fixtures in the new matrix adds complexity without a demonstrated routing defect."
+    },
+    {
+      "id": "R3-B7",
+      "verdict": "low",
+      "route": "reject",
+      "evidence": "Fresh Server.xml passes InspectedAndChatbotListsAuditReturnedNamesOnceAndFailClosed for both modes and the real-Gateway InspectionNeedsDistinctPermissionAndDurableMetadataOnlyAuditIncludingUnchangedRetries for list/open. Both list inspection and audit-outage denial are already executed; a duplicate new-matrix row adds no demonstrated missing behavior."
+    },
+    {
+      "id": "R3-B8",
+      "verdict": "false",
+      "route": "reject",
+      "evidence": "The store observers capture SaveAsync/TrySaveAsync for every key, including new keys, and reject owner writes. The exercised read executors depend on read-model stores and audit adapters; they have no direct Dapr write or command-submission path. Raw bytes/ETags cover seeded and separate Partial models. No reachable mutation escaping this instrumentation was identified."
+    },
+    {
+      "id": "R3-B9",
+      "verdict": "low",
+      "route": "reject (spec edit)",
+      "evidence": "The matrix wording abbreviates default safe disclosure versus explicitly requested inspection; runtime tests correctly distinguish null default fields from 404 on unauthorized inspection. The proposed remedy edits this build specification, which review rules reject; frozen intent is not changed."
+    },
+    {
+      "id": "R3-B10",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "The canonical epics.md criterion still says a missing credential fails before any query is sent. D8 expressly authorizes the exact correction to Gateway 401 before Projects execution; updating that one sentence requires no new behavior or decision. Resolve the matching deferred documentation entry after correction."
+    },
+    {
+      "id": "R3-E1",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "carried V1: same plan/topology/grant gap and DW-82 route as R3-B1; its earlier disposition is preserved without another ledger entry."
+    },
+    {
+      "id": "R3-E2",
+      "verdict": "medium",
+      "route": "defer (carried)",
+      "evidence": "carried B4: same unarranged native empty/Unavailable fixture gap and DW-82 route as R3-B2; no duplicate deferral is added."
+    }
+  ],
+  "patchGroups": 1,
+  "newDeferredEntries": 0,
+  "patchCompleted": true,
+  "patchVerification": "Only the approved D8 acceptance sentence changed in epics.md; all other bytes preserved, scoped/root diff checks passed and the matching deferred entry is resolved."
+}

@@ -1,0 +1,44 @@
+{
+  "name": "projects.trace-conversation",
+  "kind": "read",
+  "description": "Trace unselected advisory Project candidates from an authorized committed Conversation. Coverage and freshness are explicit; suggestions never authorize selection, context or confirmation.",
+  "schema": {
+    "type": [
+      "object",
+      "null"
+    ],
+    "properties": {
+      "conversationId": {
+        "type": "string",
+        "description": "Exact opaque Conversation owner identifier; authority comes from the credential."
+      },
+      "includeArchived": {
+        "type": "boolean",
+        "default": false,
+        "description": "Include authorized Archived candidates; defaults to false."
+      }
+    },
+    "required": [
+      "conversationId"
+    ],
+    "additionalProperties": false
+  },
+  "example": {
+    "conversationId": "conversation-a"
+  },
+  "envelope": {
+    "aggregateIdRequired": false,
+    "idempotencyKeyRequired": false,
+    "arguments": [
+      "tenant",
+      "aggregateId",
+      "entityId",
+      "pageSize",
+      "offset",
+      "cursor"
+    ]
+  },
+  "lintFindings": [],
+  "submittable": false,
+  "reason": "configuration_invalid"
+}

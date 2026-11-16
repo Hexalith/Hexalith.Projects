@@ -1,0 +1,19 @@
+{
+  "modules": [
+    {
+      "name": "parties",
+      "description": "Manage people and organizations, their contact channels, identifiers and active status.",
+      "operationCount": 7
+    },
+    {
+      "name": "projects",
+      "description": "Read authorized Project inventory, detail, reference health and advisory resolution traces. Reads grant no mutation or diagnostic export authority.",
+      "operationCount": 4
+    },
+    {
+      "name": "tenants",
+      "description": "Manage tenant lifecycle, memberships, roles, configuration and audit. Commands and cross-tenant reads use their declared platform scope; single-tenant reads require an explicit canonical tenant. A global administrator may manage every tenant.",
+      "operationCount": 15
+    }
+  ]
+}

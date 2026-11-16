@@ -1,0 +1,125 @@
+{
+  "source": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/enrolled/Hexalith.Parties.Contracts/inputs-r_t2820y/vectors/6/update-party.vector.json",
+  "documents": [
+    {
+      "operation": "parties.create-party",
+      "messageId": "01M7GMMPEK9DDGNKW5RM75AXVF",
+      "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK",
+      "tenant": "tenant-a",
+      "aggregateId": "party-story49",
+      "status": "accepted"
+    },
+    {
+      "operation": "parties.update-party",
+      "messageId": "01M7GMMPV6B2FG9YYFEXJC7ETX",
+      "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK",
+      "tenant": "tenant-a",
+      "aggregateId": "party-story49",
+      "status": "accepted"
+    },
+    {
+      "operation": "parties.get-party",
+      "tenant": "tenant-a",
+      "document": {
+        "id": "party-story49",
+        "isActive": true,
+        "personDetails": {
+          "firstName": "Augusta Ada",
+          "lastName": "Lovelace"
+        },
+        "isErased": false,
+        "contactChannels": [
+          {
+            "id": "email-story49",
+            "type": "Email",
+            "value": "augusta@example.test",
+            "isPreferred": true
+          }
+        ],
+        "identifiers": []
+      }
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7GMMPEK9DDGNKW5RM75AXVF",
+        "tenant": "tenant-a",
+        "domain": "party",
+        "aggregateId": "party-story49",
+        "commandType": "Hexalith.Parties.Contracts.Commands.CreatePartyComposite",
+        "payload": {
+          "ContactChannels": [
+            {
+              "ContactChannelId": "email-story49",
+              "IsPreferred": true,
+              "PartyId": "party-story49",
+              "Type": "Email",
+              "Value": "ada@example.test"
+            }
+          ],
+          "Identifiers": [
+            {
+              "IdentifierId": "external-story49",
+              "PartyId": "party-story49",
+              "Type": "Other",
+              "Value": "customer-49"
+            }
+          ],
+          "PartyId": "party-story49",
+          "PersonDetails": {
+            "FirstName": "Ada",
+            "LastName": "Lovelace"
+          },
+          "Type": "Person"
+        },
+        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/commands",
+      "body": {
+        "messageId": "01M7GMMPV6B2FG9YYFEXJC7ETX",
+        "tenant": "tenant-a",
+        "domain": "party",
+        "aggregateId": "party-story49",
+        "commandType": "Hexalith.Parties.Contracts.Commands.UpdatePartyComposite",
+        "payload": {
+          "PartyId": "party-story49",
+          "PersonDetails": {
+            "FirstName": "Augusta Ada",
+            "LastName": "Lovelace"
+          },
+          "RemoveIdentifierIds": [
+            "external-story49"
+          ],
+          "UpdateContactChannels": [
+            {
+              "ContactChannelId": "email-story49",
+              "PartyId": "party-story49",
+              "Value": "augusta@example.test"
+            }
+          ]
+        },
+        "correlationId": "01J9MZHXT3RKM0VWXRXGSJDATK"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "body": {
+        "tenant": "tenant-a",
+        "domain": "party",
+        "aggregateId": "party-story49",
+        "queryType": "PartyDetail",
+        "projectionType": "party-detail",
+        "payload": {
+          "PartyId": "party-story49"
+        }
+      }
+    }
+  ]
+}

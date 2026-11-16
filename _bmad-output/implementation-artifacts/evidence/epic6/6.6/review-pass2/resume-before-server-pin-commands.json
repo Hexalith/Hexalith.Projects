@@ -1,0 +1,46 @@
+[
+  {
+    "lane": "mcpcli-restore",
+    "cwd": "/tmp/hexalith-job.J3myEBB7/mcpcli",
+    "command": [
+      "dotnet",
+      "restore",
+      "Hexalith.McpCli.slnx",
+      "-m:1"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "mcpcli-build",
+    "cwd": "/tmp/hexalith-job.J3myEBB7/mcpcli",
+    "command": [
+      "dotnet",
+      "build",
+      "Hexalith.McpCli.slnx",
+      "--no-restore",
+      "--configuration",
+      "Release",
+      "-warnaserror",
+      "-m:1",
+      "--disable-build-servers"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "McpCli-Manifest-final",
+    "cwd": "/tmp/hexalith-job.J3myEBB7/mcpcli",
+    "command": [
+      "dotnet",
+      "test",
+      "--project",
+      "tests/Hexalith.McpCli.Manifest.Tests",
+      "--no-build",
+      "--configuration",
+      "Release"
+    ],
+    "exitCode": 2,
+    "packageSourceOverride": false
+  }
+]

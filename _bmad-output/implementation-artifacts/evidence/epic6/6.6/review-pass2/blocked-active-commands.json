@@ -1,0 +1,40 @@
+[
+  {
+    "lane": "candidate-pack",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "pack",
+      "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+      "--configuration",
+      "Release",
+      "-m:1",
+      "--disable-build-servers",
+      "-p:HexalithProjectsPackageVersion=2.0.0-story66.3",
+      "-p:UseHexalithProjectReferences=false",
+      "--artifacts-path",
+      "/tmp/hexalith-job.PJ8ENJ5T/package-build",
+      "--output",
+      "/tmp/hexalith-job.PJ8ENJ5T/feed"
+    ],
+    "exitCode": 0
+  },
+  {
+    "lane": "source-preparation",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net11.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.PJ8ENJ5T/prepared",
+      "--output",
+      "json"
+    ],
+    "exitCode": 2
+  }
+]

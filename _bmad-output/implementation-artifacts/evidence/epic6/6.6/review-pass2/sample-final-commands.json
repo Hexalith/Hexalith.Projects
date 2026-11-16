@@ -1,0 +1,66 @@
+[
+  {
+    "lane": "sample-loopback-final",
+    "cwd": "/tmp/hexalith-job.5Enyo85A/mcpcli",
+    "command": [
+      "bash",
+      "tools/conformance-vectors/v1/run-sample-loopback.sh"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": true
+  },
+  {
+    "lane": "mcpcli-final-restore",
+    "cwd": "/tmp/hexalith-job.5Enyo85A/mcpcli",
+    "command": [
+      "dotnet",
+      "restore",
+      "Hexalith.McpCli.slnx",
+      "-m:1"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "mcpcli-final-build",
+    "cwd": "/tmp/hexalith-job.5Enyo85A/mcpcli",
+    "command": [
+      "dotnet",
+      "build",
+      "Hexalith.McpCli.slnx",
+      "--no-restore",
+      "--configuration",
+      "Release",
+      "-warnaserror",
+      "-m:1",
+      "--disable-build-servers"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "strict-modules",
+    "cwd": "/tmp/hexalith-job.5Enyo85A/mcpcli",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.5Enyo85A/mcpcli/src/Hexalith.McpCli/bin/Release/net11.0/Hexalith.McpCli.dll",
+      "modules",
+      "--strict"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  },
+  {
+    "lane": "strict-projects",
+    "cwd": "/tmp/hexalith-job.5Enyo85A/mcpcli",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.5Enyo85A/mcpcli/src/Hexalith.McpCli/bin/Release/net11.0/Hexalith.McpCli.dll",
+      "operations",
+      "projects",
+      "--strict"
+    ],
+    "exitCode": 0,
+    "packageSourceOverride": false
+  }
+]

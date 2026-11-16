@@ -1,0 +1,44 @@
+{
+  "result": "passed",
+  "commands": [
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]"
+    },
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --story-id 6.6",
+      "exitCode": 0,
+      "output": "PASS: Story 6.6 is within production authority"
+    },
+    {
+      "command": "git diff --check",
+      "repositories": [
+        "Projects",
+        "McpCli"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "sourceAfterVerification": "Only approved D8 planning text, ledger resolution and workflow/evidence metadata changed after fresh test verification.",
+  "nativeTotals": {
+    "total": 4252,
+    "passed": 4246,
+    "failed": 0,
+    "skipped": 6
+  },
+  "uniqueDotNetTotals": {
+    "total": 4625,
+    "passed": 4619,
+    "failed": 0,
+    "skipped": 6
+  },
+  "candidate": {
+    "path": "_bmad-output/implementation-artifacts/evidence/epic6/6.6/review-pass2/candidate/Hexalith.Projects.Contracts.2.0.0-story66.3.nupkg",
+    "version": "2.0.0-story66.3",
+    "sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5"
+  },
+  "specStatus": "done",
+  "sprintStatus": "review",
+  "gitActions": "No agent stage, commit, push, branch or gitlink mutation; approved correction excludes the workflow auto-commit."
+}

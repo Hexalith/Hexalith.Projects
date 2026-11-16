@@ -1,0 +1,18 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+The '-trx' switch has been deprecated in favor of '-result-trx' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+  Discovering: Hexalith.McpCli.Core.Tests
+  Discovered:  Hexalith.McpCli.Core.Tests
+  Starting:    Hexalith.McpCli.Core.Tests
+    Hexalith.McpCli.Core.Tests.ProfileStoreTests.WindowsTemporaryFileHasPrivateAclBeforeTokenBytesAreWritten [SKIP]
+      Windows ACLs are exercised only on Windows.
+    Hexalith.McpCli.Core.Tests.ProfileStoreTests.WindowsProfileFilesHavePrivateAcls [SKIP]
+      Windows ACLs are exercised only on Windows.
+    Hexalith.McpCli.Core.Tests.ProfileStoreTests.WindowsRestrictionPreservesInheritedExistingFiles [SKIP]
+      Windows ACL inheritance is exercised only on Windows.
+    Hexalith.McpCli.Core.Tests.CatalogPerformanceTests.MeasureFirstConstruction [SKIP]
+      Runs only in the fresh benchmark child process.
+  Finished:    Hexalith.McpCli.Core.Tests (ID = '832d220c27a2f2ecdb47529c4952e7428cf1d86e7315acb6ea5dd2599ee05c86')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.McpCli.Core.Tests  Total: 921, Errors: 0, Failed: 0, Skipped: 4, Not Run: 0, Time: 2.012s
