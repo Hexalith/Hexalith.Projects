@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -78,6 +80,40 @@ class WorkflowGateTests(unittest.TestCase):
             with self.subTest(condition=condition):
                 target.write_text(original.replace(marker, "  <ItemGroup" + condition + ">", 1))
                 self.assert_rejected("unconditional sibling library ProjectReference")
+        target.write_text(original)
+
+    def test_named_package_fixture_executable_edges_are_accepted(self) -> None:
+        result = self.run_gate()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("PASSED", result.stdout)
+
+    def test_package_fixture_exception_does_not_admit_library_references(self) -> None:
+        path = "tests/Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj"
+        self.replace(path, "</Project>", """
+  <ItemGroup>
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Abstractions/Hexalith.EventStore.Abstractions.csproj" />
+  </ItemGroup>
+</Project>""")
+        self.assert_rejected("unconditional sibling library ProjectReference: $(HexalithEventStoreRoot)/src/Hexalith.EventStore.Abstractions/")
+
+    def test_package_fixture_exception_requires_the_exact_consumer_path(self) -> None:
+        original = self.root / "tests/Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj"
+        other = self.root / "tests/another-consumer" / original.name
+        other.parent.mkdir()
+        shutil.copyfile(original, other)
+        self.assert_rejected("tests/another-consumer/Hexalith.Projects.PackageFixtures.AppHost.csproj has an unconditional sibling library ProjectReference")
+
+    def test_package_fixture_exception_requires_an_unconditional_executable_type(self) -> None:
+        target = self.root / "tests/Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj"
+        original = target.read_text()
+        for output in (
+            "<OutputType>Library</OutputType>",
+            '<OutputType Condition="false">Exe</OutputType>',
+            "<OutputType>Exe</OutputType><OutputType>Library</OutputType>",
+        ):
+            with self.subTest(output=output):
+                target.write_text(original.replace("<OutputType>Exe</OutputType>", output, 1))
+                self.assert_rejected("Hexalith.Projects.PackageFixtures.AppHost.csproj has an unconditional sibling library ProjectReference")
         target.write_text(original)
 
     def test_archived_project_copies_are_ignored_but_active_copies_remain_checked(self) -> None:
@@ -195,6 +231,103 @@ class WorkflowGateTests(unittest.TestCase):
 
 
 
+
+
+class FrontComposerInspectionTests(unittest.TestCase):
+    """Execute the real helper on a fresh checkout with a controlled tool."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="frontcomposer fresh gate ")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.helper = self.root / "tests/tools/run-frontcomposer-inspect-gate.ps1"
+        self.helper.parent.mkdir(parents=True)
+        shutil.copyfile(ROOT / self.helper.relative_to(self.root), self.helper)
+        self.contracts = self.root / "src/Hexalith.Projects.UI.Contracts"
+        self.contracts.mkdir(parents=True)
+        (self.contracts / "Projection.cs").write_text("[Projection]\nclass FixtureProjection {}\n")
+        (self.contracts / "Hexalith.Projects.UI.Contracts.csproj").write_text("<Project />\n")
+        self.record = self.root / "tool-call.json"
+        self.bin = self.root / "tools"
+        self.bin.mkdir()
+        executable = self.bin / "dotnet"
+        executable.write_text(f"#!{sys.executable}\n" + '''import json, os, sys
+from pathlib import Path
+args = sys.argv[1:]
+if args[:5] != ["tool", "run", "frontcomposer", "--", "inspect"]:
+    print("Unexpected source-tool invocation", file=sys.stderr)
+    raise SystemExit(91)
+project = Path(args[args.index("--project") + 1])
+generated = project.parent / "obj/Release/generated/HexalithFrontComposer/Fixture.g.cs"
+record = {"args": args, "cwd": str(Path.cwd()), "generated_before": generated.exists()}
+Path(os.environ["FRONTCOMPOSER_STUB_RECORD"]).write_text(json.dumps(record))
+if ("--build" not in args or "--fail-on-warning" not in args
+        or args[args.index("--configuration") + 1] != "Release"):
+    print("Missing fresh Release build or warning failure control", file=sys.stderr)
+    raise SystemExit(92)
+mode = os.environ["FRONTCOMPOSER_STUB_MODE"]
+print("retained Release build output")
+if mode == "build-failure":
+    print("retained compiler failure", file=sys.stderr)
+    raise SystemExit(17)
+generated.parent.mkdir(parents=True)
+generated.write_text("// fresh generated output\\n")
+if mode == "warning":
+    print("warning FC0001: retained generator warning", file=sys.stderr)
+    raise SystemExit(23)
+print("retained successful inspection output")
+''')
+        executable.chmod(0o755)
+
+    def run_helper(self, mode: str) -> subprocess.CompletedProcess[str]:
+        environment = dict(os.environ, FRONTCOMPOSER_STUB_BIN=str(self.bin),
+                           FRONTCOMPOSER_STUB_HELPER=str(self.helper),
+                           FRONTCOMPOSER_STUB_RECORD=str(self.record), FRONTCOMPOSER_STUB_MODE=mode)
+        # Some hosts launch pwsh through dotnet; replace PATH after that host starts.
+        command = ("$env:PATH = $env:FRONTCOMPOSER_STUB_BIN + [IO.Path]::PathSeparator + $env:PATH\n"
+                   "& $env:FRONTCOMPOSER_STUB_HELPER\n"
+                   "$helperSucceeded = $?\n"
+                   "if (-not $helperSucceeded) { if ($LASTEXITCODE) { exit $LASTEXITCODE }; exit 1 }\n"
+                   "exit 0")
+        return subprocess.run(
+            ["pwsh", "-NoLogo", "-NoProfile", "-NonInteractive", "-Command", command],
+            cwd=self.root, env=environment, capture_output=True, text=True, timeout=30,
+        )
+
+    def test_fresh_checkout_builds_and_inspects_release_with_the_packaged_tool(self) -> None:
+        self.assertFalse((self.contracts / "obj").exists())
+        result = self.run_helper("success")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        call = json.loads(self.record.read_text())
+        self.assertFalse(call["generated_before"])
+        self.assertEqual(str(self.root), call["cwd"])
+        self.assertEqual([
+            "tool", "run", "frontcomposer", "--", "inspect", "--project",
+            str(self.contracts / "Hexalith.Projects.UI.Contracts.csproj"),
+            "--configuration", "Release", "--build", "--fail-on-warning",
+        ], call["args"])
+        self.assertIn("retained successful inspection output", result.stdout)
+        self.assertIn("PASSED", result.stdout)
+
+    def test_failed_fresh_build_retains_diagnostics_and_exit_code(self) -> None:
+        result = self.run_helper("build-failure")
+        self.assertEqual(17, result.returncode, result.stdout + result.stderr)
+        self.assertIn("retained Release build output", result.stdout)
+        self.assertIn("retained compiler failure", result.stderr)
+        self.assertNotIn("PASSED", result.stdout)
+
+    def test_generated_warnings_remain_failures_with_diagnostics(self) -> None:
+        result = self.run_helper("warning")
+        self.assertEqual(23, result.returncode, result.stdout + result.stderr)
+        self.assertIn("warning FC0001: retained generator warning", result.stderr)
+        self.assertNotIn("PASSED", result.stdout)
+
+    def test_missing_annotated_inputs_fail_before_tool_execution(self) -> None:
+        (self.contracts / "Projection.cs").unlink()
+        result = self.run_helper("success")
+        self.assertNotEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("no [Projection]/[Command] files found", result.stderr)
+        self.assertFalse(self.record.exists())
 
 
 if __name__ == "__main__":

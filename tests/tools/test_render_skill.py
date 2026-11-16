@@ -24,6 +24,12 @@ CI_PATH = PROJECT_ROOT / ".github" / "workflows" / "ci.yml"
 
 
 @dataclass(frozen=True)
+class RendererFixture:
+    """Paths owned by one temporary renderer fixture."""
+
+    project_root: Path
+    skill_root: Path
+    caller_root: Path
 
 
 def _write_text(path: Path, content: str) -> None:

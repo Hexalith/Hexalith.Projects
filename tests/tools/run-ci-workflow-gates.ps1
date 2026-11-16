@@ -1050,8 +1050,23 @@ foreach ($projectFile in $projectFiles) {
         }
 
         $normalizedInclude = $reference.Include -replace '\\', '/'
-        $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
-            $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
+        $relativeProjectPath = $projectFile.FullName.Substring($repositoryRoot.Length + 1) -replace '\\', '/'
+        $fixtureOutputTypes = @($projectXml.SelectNodes('/Project/PropertyGroup/OutputType'))
+        # This named executable fixture launches these four sibling executables.
+        # Keep its exception separate from every library and other consumer.
+        $isPackageFixtureExecutable = $relativeProjectPath -ceq 'tests/Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj' -and
+            $fixtureOutputTypes.Count -eq 1 -and
+            $fixtureOutputTypes[0].InnerText.Trim() -ceq 'Exe' -and
+            [string]::IsNullOrWhiteSpace($fixtureOutputTypes[0].GetAttribute('Condition')) -and
+            [string]::IsNullOrWhiteSpace($fixtureOutputTypes[0].ParentNode.GetAttribute('Condition')) -and
+            $normalizedInclude -cin @(
+                '$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj',
+                '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj',
+                '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj',
+                '$(HexalithFoldersRoot)/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj'
+            )
+        $isAppHostExecutable = ($projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
+            $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')) -or $isPackageFixtureExecutable
         $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
         # These exact hosts and internal tooling are not published as packages.
         # They are permitted only in the named consumers with the strict source-mode

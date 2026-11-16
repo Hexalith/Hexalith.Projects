@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Inspect retained generator output from the shared Release/package build.
+# Build fresh Release generator inputs and inspect them with the packaged tool.
 
 $ErrorActionPreference = 'Stop'
 
@@ -22,23 +22,17 @@ if (-not $annotatedContracts -or $annotatedContracts.Count -eq 0) {
 Write-Host "frontcomposer-inspect-gate: inputs detected ($($annotatedContracts.Count) annotated contract file(s)) — running real gate."
 
 $contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.UI.Contracts.csproj'
-$generatedRoot = Join-Path $contractsRoot 'obj/Release'
-if (-not (Test-Path -LiteralPath $generatedRoot -PathType Container)) {
-    throw 'The shared Release build must retain FrontComposer generator output before inspection.'
-}
-$generatedOutputs = @(Get-ChildItem -LiteralPath $generatedRoot -Recurse -Filter '*.g.cs' -File |
-    Where-Object { $_.FullName -match '[/\\]generated[/\\]HexalithFrontComposer[/\\]' })
-if ($generatedOutputs.Count -eq 0) {
-    throw 'The shared Release build retained no FrontComposer generator output.'
-}
+$inspectionExitCode = 0
 Push-Location $repositoryRoot
 try {
-    & dotnet tool run frontcomposer -- inspect --project $contractsProject --configuration Release --fail-on-warning
-    if ($LASTEXITCODE -ne 0) {
-        throw "FrontComposer generated-output inspection failed with exit code $LASTEXITCODE."
-    }
+    & dotnet tool run frontcomposer -- inspect --project $contractsProject --configuration Release --build --fail-on-warning
+    $inspectionExitCode = $LASTEXITCODE
 }
 finally {
     Pop-Location
 }
-Write-Host 'frontcomposer-inspect-gate: PASSED — retained Release generator output has no warnings.'
+if ($inspectionExitCode -ne 0) {
+    Write-Error -ErrorAction Continue "FrontComposer Release build or generated-output inspection failed with exit code $inspectionExitCode."
+    exit $inspectionExitCode
+}
+Write-Host 'frontcomposer-inspect-gate: PASSED — fresh Release generator output has no warnings.'
