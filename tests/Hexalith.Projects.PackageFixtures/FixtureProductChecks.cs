@@ -36,7 +36,7 @@ internal sealed class FixtureProductChecks(FixtureInputs inputs, FixtureScratch 
             throw new InvalidOperationException("Bootstrap catalog belongs to another fixture.");
         string directory = plane.RootElement.GetProperty("directory").GetString()!;
         DirectoryInfo catalogDirectory = new(directory);
-        if (!Path.IsPathFullyQualified(directory) || catalogDirectory.LinkTarget is not null
+        if (!OperatingSystem.IsLinux() || !Path.IsPathFullyQualified(directory) || catalogDirectory.LinkTarget is not null
             || catalogDirectory.FullName != directory
             || catalogDirectory.Parent?.FullName != Path.GetDirectoryName(scratch.Directory)
             || !catalogDirectory.Name.StartsWith("hexalith-route-catalog-", StringComparison.Ordinal)

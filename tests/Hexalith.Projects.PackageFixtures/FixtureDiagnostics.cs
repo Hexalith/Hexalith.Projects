@@ -21,13 +21,6 @@ internal static class FixtureDiagnostics
         {
             if (state[field]?.GetValueKind() != JsonValueKind.String) continue;
             string value = state[field]!.GetValue<string>();
-            Match redacted = Regex.Match(value,
-                @"\AProtected data diagnostic details were redacted\. ReasonCode=([A-Za-z0-9_.:-]+); Stage=([A-Za-z0-9_.:-]+)\.\z");
-            if (redacted.Success)
-            {
-                categories.Add(field + "=" + redacted.Groups[1].Value + "/" + redacted.Groups[2].Value);
-                continue;
-            }
             if (field == "failureReason")
             {
                 Match redacted = Regex.Match(value,
