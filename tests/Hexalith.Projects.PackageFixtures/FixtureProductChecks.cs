@@ -30,8 +30,69 @@ internal sealed class FixtureProductChecks(FixtureInputs inputs, FixtureScratch 
 
     internal async Task VerifyBootstrapAsync(CancellationToken cancellationToken)
     {
-        await AwaitStateAsync(value => value.Contains("global-administrators", StringComparison.Ordinal)
-            && value.Contains(inputs.Subjects["actor-1"], StringComparison.Ordinal), "durable authenticated administrator bootstrap", cancellationToken).ConfigureAwait(false);
+        string planePath = scratch.File("catalog-plane.json");
+        using JsonDocument plane = JsonDocument.Parse(await File.ReadAllBytesAsync(planePath, cancellationToken).ConfigureAwait(false));
+        if (plane.RootElement.GetProperty("isolationId").GetString() != scratch.Isolation)
+            throw new InvalidOperationException("Bootstrap catalog belongs to another fixture.");
+        string directory = plane.RootElement.GetProperty("directory").GetString()!;
+        DirectoryInfo catalogDirectory = new(directory);
+        if (!Path.IsPathFullyQualified(directory) || catalogDirectory.LinkTarget is not null
+            || catalogDirectory.FullName != directory
+            || catalogDirectory.Parent?.FullName != Path.GetDirectoryName(scratch.Directory)
+            || !catalogDirectory.Name.StartsWith("hexalith-route-catalog-", StringComparison.Ordinal)
+            || (File.GetUnixFileMode(directory) & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
+                | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0)
+            throw new InvalidOperationException("Bootstrap receipt is outside the private fixture.");
+        string receiptPath = Path.Combine(directory, "tenants.bootstrap.json");
+        await FixtureReadiness.AwaitAsync(_ => Task.FromResult(File.Exists(receiptPath)), "original hosted bootstrap receipt",
+            TimeSpan.FromMinutes(2), cancellationToken).ConfigureAwait(false);
+        byte[] original = await File.ReadAllBytesAsync(receiptPath, cancellationToken).ConfigureAwait(false);
+        using JsonDocument receipt = JsonDocument.Parse(original);
+        JsonElement binding = receipt.RootElement;
+        string actor = inputs.Subjects["actor-1"];
+        string message = binding.GetProperty("MessageId").GetString()!;
+        string correlation = binding.GetProperty("CorrelationId").GetString()!;
+        if (binding.GetProperty("PrincipalId").GetString() != actor
+            || binding.GetProperty("RootDigest").GetString() != plane.RootElement.GetProperty("rootDigest").GetString()
+            || !ByteAether.Ulid.Ulid.TryParse(message, null, out _)
+            || !ByteAether.Ulid.Ulid.TryParse(correlation, null, out _)
+            || string.IsNullOrWhiteSpace(binding.GetProperty("AttemptId").GetString()))
+            throw new InvalidOperationException("Hosted bootstrap receipt identity differs from this fixture.");
+        using HttpClient http = inputs.CreateHttpClient();
+        await FixtureReadiness.AwaitAsync(async token =>
+        {
+            using HttpRequestMessage request = new(HttpMethod.Get,
+                new Uri(factory.GetEndpoint("eventstore", "http"), "api/v1/commands/status/" + message));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", inputs.Tokens["actor-1"]);
+            request.Headers.Add("X-Hexalith-Scope", "platform:global-administrators");
+            using HttpResponseMessage response = await http.SendAsync(request, token).ConfigureAwait(false);
+            if (response.StatusCode == HttpStatusCode.NotFound) return false;
+            response.EnsureSuccessStatusCode();
+            JsonObject state = (await response.Content.ReadFromJsonAsync<JsonObject>(token).ConfigureAwait(false))!;
+            string? outcome = state["status"]?.GetValue<string>();
+            if (outcome is "Rejected" or "TimedOut" or "PublishFailed")
+                throw new InvalidOperationException("Hosted bootstrap failed: " + FixtureDiagnostics.Status(state, inputs.ProtectedValues));
+            return outcome == "Completed" && state["correlationId"]?.GetValue<string>() == correlation;
+        }, "original hosted bootstrap command completion", TimeSpan.FromMinutes(2), cancellationToken).ConfigureAwait(false);
+        await AwaitStateAsync(value => HasBootstrapProjection(value, actor), "durable administrator projection", cancellationToken).ConfigureAwait(false);
+        using JsonDocument final = JsonDocument.Parse(await File.ReadAllBytesAsync(receiptPath, cancellationToken).ConfigureAwait(false));
+        foreach (string key in new[] { "AttemptId", "RootDigest", "MessageId", "CorrelationId", "PrincipalId" })
+            if (binding.GetProperty(key).GetString() != final.RootElement.GetProperty(key).GetString())
+                throw new InvalidOperationException("Hosted bootstrap receipt changed during completion.");
+    }
+
+    internal static bool HasBootstrapProjection(string serialized, string actor)
+    {
+        JsonObject[] matches = JsonNode.Parse(serialized)!.AsArray().OfType<JsonObject>()
+            .Where(row => row["key"]?.GetValue<string>().EndsWith("projection:global-administrators:singleton", StringComparison.Ordinal) == true).ToArray();
+        if (matches.Length != 1) return false;
+        JsonObject model = JsonNode.Parse(matches[0]["data"]!.GetValue<string>())!.AsObject();
+        JsonArray? administrators = (model["administrators"] ?? model["Administrators"]) as JsonArray;
+        string? version = (model["projectionVersion"] ?? model["ProjectionVersion"])?.GetValue<string>();
+        string? projected = (model["projectedAt"] ?? model["ProjectedAt"])?.GetValue<string>();
+        return administrators is { Count: 1 } && administrators[0]?.GetValue<string>() == actor
+            && !string.IsNullOrWhiteSpace(version) && DateTimeOffset.TryParse(projected,
+                System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out _);
     }
 
     internal async Task SeedOwnersAsync(CancellationToken cancellationToken)

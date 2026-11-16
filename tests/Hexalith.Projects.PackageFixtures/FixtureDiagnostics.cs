@@ -21,6 +21,26 @@ internal static class FixtureDiagnostics
         {
             if (state[field]?.GetValueKind() != JsonValueKind.String) continue;
             string value = state[field]!.GetValue<string>();
+            Match redacted = Regex.Match(value,
+                @"\AProtected data diagnostic details were redacted\. ReasonCode=([A-Za-z0-9_.:-]+); Stage=([A-Za-z0-9_.:-]+)\.\z");
+            if (redacted.Success)
+            {
+                categories.Add(field + "=" + redacted.Groups[1].Value + "/" + redacted.Groups[2].Value);
+                continue;
+            }
+            if (field == "failureReason")
+            {
+                Match redacted = Regex.Match(value,
+                    @"\AProtected data diagnostic details were redacted\. ReasonCode=(?<reason>protected-data-diagnostic-redacted|logical-event-read-rejected|SnapshotStreamUnavailable|readable|deferred-validation|restore-conflict|quarantine-required|operator-decision-required|missing-key|key-invalidated|provider-unavailable|provider-denied|consistency-mismatch|malformed-metadata|unknown-metadata-version|provider-opaque-unsupported|bytes-metadata-mismatch); Stage=(?<stage>unspecified|pipeline|command-status|dead-letter-publication|drain|Processing|EventsStored|EventsPublished|Rejected|PublishFailed|TimedOut|rehydrate|publish|replay|rebuild|snapshot-load|backup-admission|admin-inspection)\.\z");
+                if (redacted.Success && !protectedText.Any(item => !string.IsNullOrWhiteSpace(item)
+                    && (redacted.Groups["reason"].Value.Contains(item, StringComparison.Ordinal)
+                        || redacted.Groups["stage"].Value.Contains(item, StringComparison.Ordinal))))
+                {
+                    categories.Add("failureReasonCode=" + redacted.Groups["reason"].Value);
+                    categories.Add("failureStage=" + redacted.Groups["stage"].Value);
+                    continue;
+                }
+            }
             if (Regex.IsMatch(value, @"\A[A-Za-z][A-Za-z0-9_.:-]{0,95}\z")
                 && !protectedText.Any(item => !string.IsNullOrWhiteSpace(item) && value.Contains(item, StringComparison.Ordinal)))
                 categories.Add(field + "=" + value);

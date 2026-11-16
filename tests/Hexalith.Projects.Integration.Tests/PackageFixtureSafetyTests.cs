@@ -3,6 +3,7 @@ extern alias PackageFixtureHost;
 namespace Hexalith.Projects.Integration.Tests;
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 using global::Aspire.Hosting;
 
@@ -18,6 +19,45 @@ using Xunit;
 /// <summary>Checks fixture refusal, bounded readiness and owned cleanup without a live backend.</summary>
 public sealed class PackageFixtureSafetyTests
 {
+    /// <summary>Aggregate bytes and stale or foreign administrator models cannot satisfy bootstrap readiness.</summary>
+    [Theory]
+    [InlineData("projection:global-administrators:singleton", "actor", "sequence:1", true)]
+    [InlineData("AggregateActor||global-administrators", "actor", "sequence:1", false)]
+    [InlineData("projection:global-administrators:singleton", "foreign", "sequence:1", false)]
+    [InlineData("projection:global-administrators:singleton", "actor", null, false)]
+    public void BootstrapRequiresItsPersistedAdministratorModel(string key, string actor, string? version, bool expected)
+    {
+        string data = JsonSerializer.Serialize(new { administrators = new[] { actor }, projectionVersion = version,
+            projectedAt = DateTimeOffset.UtcNow });
+        string observation = JsonSerializer.Serialize(new[] { new { key, data } });
+        FixtureProductChecks.HasBootstrapProjection(observation, "actor").ShouldBe(expected);
+    }
+
+    /// <summary>Known redacted failure categories remain useful without exposing arbitrary diagnostic text.</summary>
+    [Theory]
+    [InlineData("Protected data diagnostic details were redacted. ReasonCode=protected-data-diagnostic-redacted; Stage=Processing.",
+        "failureReasonCode=protected-data-diagnostic-redacted,failureStage=Processing")]
+    [InlineData("Protected data diagnostic details were redacted. ReasonCode=logical-event-read-rejected; Stage=EventsStored.",
+        "failureReasonCode=logical-event-read-rejected,failureStage=EventsStored")]
+    [InlineData("Protected data diagnostic details were redacted. ReasonCode=private-token; Stage=Processing.", "")]
+    [InlineData("Protected data diagnostic details were redacted. ReasonCode=protected-data-diagnostic-redacted; Stage=private-token.", "")]
+    [InlineData("Protected data diagnostic details were redacted. ReasonCode=protected-data-diagnostic-redacted; Stage=Processing. private-token", "")]
+    [InlineData("private-token with diagnostic details", "")]
+    public void FailureDiagnosticsOnlyExposeKnownCategories(string reason, string expected)
+    {
+        FixtureDiagnostics.Status(new JsonObject { ["failureReason"] = reason }, ["private-token"]).ShouldBe(expected);
+    }
+
+    /// <summary>A fixture-protected value is suppressed even when it matches a known category.</summary>
+    [Fact]
+    public void FailureDiagnosticsKeepProtectedValuesSuppressed()
+    {
+        FixtureDiagnostics.Status(new JsonObject
+        {
+            ["failureReason"] = "Protected data diagnostic details were redacted. ReasonCode=protected-data-diagnostic-redacted; Stage=Processing.",
+        }, ["Processing"]).ShouldBeEmpty();
+    }
+
     /// <summary>A package fixture cannot activate in a production AppHost.</summary>
     [Fact]
     public void ProductionActivationIsRefusedBeforeReadingCredentials()
