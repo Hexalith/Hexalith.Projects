@@ -12,7 +12,7 @@ internal static class PackageWorkerHost
 {
     internal static async Task RunAsync()
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args: []);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args: ["--preventHostingStartup=true"]);
         if (!builder.Environment.IsDevelopment() || !builder.Configuration.GetValue<bool>("Projects:PackageFixtures:Enabled")
             || string.IsNullOrWhiteSpace(builder.Configuration["EventStore:RouteCatalog:DevelopmentBootstrap:Directory"]))
             throw new InvalidOperationException("The package worker requires explicit private Development fixture inputs.");

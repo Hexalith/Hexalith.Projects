@@ -8,6 +8,7 @@
     <IsPublishable>false</IsPublishable>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Hexalith.Projects.Integration.Tests" />
     <ProjectReference Include="../../src/Hexalith.Projects.Aspire/Hexalith.Projects.Aspire.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="../../src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj" />
     <ProjectReference Include="../../src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj" />

@@ -8,8 +8,13 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 
 /// <summary>Creates private trust, fresh OIDC identities and an isolated store without source diagnostics.</summary>
-internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool actualOwners)
+internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool actualOwners, string scenario = "browser") : IAsyncDisposable
 {
+    private PackageUserAuthority? _nativeAuthority;
+    internal bool ActualOwners => actualOwners;
+
+    internal bool NativeCredentials => scenario is "main" or "duplicate" or "full-replay";
+    internal Dictionary<string, string> ReaderTokens { get; } = [];
     internal string Password { get; } = Secret();
 
     internal string ClientSecret { get; } = Secret();
@@ -29,7 +34,7 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
     internal Dictionary<string, string> Subjects { get; } = [];
 
     internal IEnumerable<string> ProtectedValues => new[] { Password, ClientSecret,
-        "Synthetic project", "Synthetic descriptive metadata", "Restricted legacy", "Foreign synthetic name" }.Concat(Tokens.Values);
+        "Synthetic project", "Synthetic descriptive metadata", "Restricted legacy", "Foreign synthetic name" }.Concat(Tokens.Values).Concat(ReaderTokens.Values);
 
     internal static string Secret() => Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(32));
 
@@ -43,6 +48,13 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
     internal async Task PrepareAsync(CancellationToken cancellationToken)
     {
         using RSA key = RSA.Create(2048);
+        using RSA nativeUserKey = RSA.Create(2048);
+        await scratch.WriteAsync("native-user.pem", nativeUserKey.ExportPkcs8PrivateKeyPem(), cancellationToken).ConfigureAwait(false);
+        foreach (string name in new[] { "invocation", "owner-source" })
+        {
+            Directory.CreateDirectory(scratch.File(name));
+            if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(scratch.File(name), UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        }
         CertificateRequest request = new("CN=localhost", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         SubjectAlternativeNameBuilder names = new();
         names.AddDnsName("localhost"); names.AddIpAddress(IPAddress.Loopback);
@@ -96,7 +108,11 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
         await scratch.WriteAsync("realm.json", realm.ToJsonString(), cancellationToken).ConfigureAwait(false);
         int oidcPort = Port();
         string origin = "https://127.0.0.1:" + oidcPort;
-        _ = await scratch.ContainerAsync("oidc", ["-p", $"127.0.0.1:{oidcPort}:8443", "-v",
+        Authority = origin + "/realms/hexalith";
+        if (NativeCredentials)
+            _nativeAuthority = await PackageUserAuthority.StartAsync(origin, Authority, scratch.File("native-user.pem"), certificate,
+                Password, new Dictionary<string, string> { ["actor-1"] = Tenant, ["foreign-actor"] = ForeignTenant }, permissions, cancellationToken).ConfigureAwait(false);
+        else _ = await scratch.ContainerAsync("oidc", ["-p", $"127.0.0.1:{oidcPort}:8443", "-v",
             scratch.File("realm.json") + ":/opt/keycloak/data/import/fixture.json:ro", "-v",
             scratch.File("certificate.pem") + ":/opt/keycloak/conf/server.crt:ro", "-v",
             scratch.File("certificate.key") + ":/opt/keycloak/conf/server.key:ro", "quay.io/keycloak/keycloak:26.6",
@@ -117,6 +133,12 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
             string payload = token.Split('.')[1].Replace('-', '+').Replace('_', '/');
             using JsonDocument claims = JsonDocument.Parse(Convert.FromBase64String(payload.PadRight((payload.Length + 3) / 4 * 4, '=')));
             Subjects.Add(username, claims.RootElement.GetProperty("sub").GetString()!);
+            using FormUrlEncodedContent readerBody = new(new Dictionary<string, string> { ["grant_type"] = "password",
+                ["client_id"] = "supported-read-reader", ["username"] = username, ["password"] = Password, ["scope"] = "openid" });
+            using HttpResponseMessage readerResponse = await http.PostAsync(Authority + "/protocol/openid-connect/token", readerBody, cancellationToken).ConfigureAwait(false);
+            readerResponse.EnsureSuccessStatusCode();
+            using JsonDocument readerJson = JsonDocument.Parse(await readerResponse.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false));
+            ReaderTokens.Add(username, readerJson.RootElement.GetProperty("access_token").GetString()!);
         }
         int redisPort = Port();
         RedisContainer = await scratch.ContainerAsync("redis", ["-p", $"127.0.0.1:{redisPort}:6379", "redis:6"], cancellationToken).ConfigureAwait(false);
@@ -125,10 +147,15 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
             metadata = new { name = scratch.Isolation }, spec = new { accessControl = new { defaultAction = "deny", trustDomain = "public" },
                 nameResolution = new { component = "sqlite", version = "v1", configuration = new { connectionString = scratch.File("discovery.sqlite") } } } }), cancellationToken).ConfigureAwait(false);
         using RSA owner = RSA.Create(2048), tenantOwner = RSA.Create(2048), folderOwner = RSA.Create(2048);
+        using RSA folderScan = RSA.Create(2048), folderWorker = RSA.Create(2048), folderWorkerScan = RSA.Create(2048);
         var fixture = new { Enabled = true, IsolationId = scratch.Isolation, Root = root, UserIssuer = Authority,
-            Mode = actualOwners ? "actual-owner" : "compatibility", Scenario = "main", ChannelToken = Secret(),
+            Mode = actualOwners ? "actual-owner" : "compatibility", Scenario = scenario == "browser" ? "main" : scenario, ChannelToken = Secret(),
             FoldersSecret = Secret(), FolderOwnerPrivateKey = Convert.ToBase64String(folderOwner.ExportPkcs8PrivateKey()),
             FolderOwnerPublicKey = Convert.ToBase64String(folderOwner.ExportSubjectPublicKeyInfo()),
+            FolderScanPrivateKey = Convert.ToBase64String(folderScan.ExportPkcs8PrivateKey()), FolderScanPublicKey = Convert.ToBase64String(folderScan.ExportSubjectPublicKeyInfo()),
+            FolderWorkersSecret = Secret(), FolderWorkerPrivateKey = Convert.ToBase64String(folderWorker.ExportPkcs8PrivateKey()),
+            FolderWorkerPublicKey = Convert.ToBase64String(folderWorker.ExportSubjectPublicKeyInfo()),
+            FolderWorkerScanPrivateKey = Convert.ToBase64String(folderWorkerScan.ExportPkcs8PrivateKey()), FolderWorkerScanPublicKey = Convert.ToBase64String(folderWorkerScan.ExportSubjectPublicKeyInfo()),
             CertificatePath = scratch.File("certificate.pfx"), CertificatePassword = certificatePassword, TrustBundle = scratch.File("certificate.pem"),
             BootstrapPassword = Password, DiscoveryConfiguration = scratch.File("discovery.json"), Tenant, ForeignTenant,
             Browser = new { Enabled = true, PrimaryActor = Subjects["actor-1"], ForeignActor = Subjects["foreign-actor"], ClientSecret,
@@ -142,7 +169,7 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
                 SchedulerHostAddress = "127.0.0.1:" + Port() } }), cancellationToken).ConfigureAwait(false);
     }
 
-    internal HttpClient CreateHttpClient()
+    internal HttpClientHandler CreateHttpHandler()
     {
         using X509Certificate2 trusted = X509CertificateLoader.LoadCertificateFromFile(scratch.File("certificate.pem"));
         byte[] trustedHash = trusted.GetCertHash(HashAlgorithmName.SHA256);
@@ -150,7 +177,14 @@ internal sealed class FixtureInputs(FixtureScratch scratch, string root, bool ac
         handler.ServerCertificateCustomValidationCallback = (_, certificate, _, errors) =>
             errors == System.Net.Security.SslPolicyErrors.None || certificate is not null
                 && CryptographicOperations.FixedTimeEquals(certificate.GetCertHash(HashAlgorithmName.SHA256), trustedHash);
-        return new HttpClient(handler, disposeHandler: true) { Timeout = TimeSpan.FromSeconds(15) };
+        return handler;
+    }
+
+    internal HttpClient CreateHttpClient() => new(CreateHttpHandler(), disposeHandler: true) { Timeout = TimeSpan.FromSeconds(15) };
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_nativeAuthority is not null) await _nativeAuthority.DisposeAsync().ConfigureAwait(false);
     }
 
     private async Task AwaitOidcAsync(HttpClient http, CancellationToken cancellationToken)

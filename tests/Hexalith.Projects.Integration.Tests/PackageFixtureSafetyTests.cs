@@ -11,6 +11,9 @@ using Hexalith.Projects.PackageFixtures;
 using PackageHost = PackageFixtureHost::Hexalith.Projects.PackageFixtures.AppHost;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 using Shouldly;
 
@@ -19,6 +22,133 @@ using Xunit;
 /// <summary>Checks fixture refusal, bounded readiness and owned cleanup without a live backend.</summary>
 public sealed class PackageFixtureSafetyTests
 {
+    /// <summary>Failure stages keep owning method identities without exception data or source paths.</summary>
+    [Fact]
+    public async Task FailureStagesDoNotExposeExceptionData()
+    {
+        static async Task FailAsync()
+        {
+            await Task.Yield();
+            throw new InvalidOperationException("private-token");
+        }
+        Exception failure = await Should.ThrowAsync<InvalidOperationException>(FailAsync);
+        string[] stages = FixtureDiagnostics.FailureStages(failure);
+        stages.ShouldNotBeEmpty();
+        stages.Length.ShouldBeLessThanOrEqualTo(16);
+        stages.ShouldContain(stage => stage.Contains(nameof(FailAsync), StringComparison.Ordinal));
+        stages.ShouldAllBe(stage => !stage.Contains("private-token", StringComparison.Ordinal) && !stage.Contains("/", StringComparison.Ordinal));
+    }
+
+    /// <summary>The Release adapter cannot load in Production or without its explicit private activation.</summary>
+    [Theory]
+    [InlineData("Production", "1")]
+    [InlineData("Development", null)]
+    public void HostingStartupRefusesUnselectedEnvironments(string environment, string? enabled)
+    {
+        IHostBuilder builder = Host.CreateDefaultBuilder().UseEnvironment(environment).ConfigureWebHost(web =>
+        {
+            web.UseKestrel().UseSetting("HEXALITH_PACKAGE_STARTUP", enabled).Configure(_ => { });
+            new PackageHostingStartup().Configure(web);
+        });
+        Should.Throw<InvalidOperationException>(() => builder.Build()).Message.ShouldContain("private Development");
+    }
+
+    /// <summary>The driver's own authority and worker hosts do not activate the injected product adapter.</summary>
+    [Fact]
+    public void PrivateDriverHostsDoNotDiscoverTheProductAdapter()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        {
+            ApplicationName = typeof(PackageHostingStartup).Assembly.FullName,
+            Args = ["--preventHostingStartup=true"],
+        });
+        using WebApplication application = builder.Build();
+        application.Configuration["preventHostingStartup"].ShouldBe("true");
+    }
+
+    /// <summary>Missing private context is refused before any real gateway service is resolved.</summary>
+    [Fact]
+    public void HostingStartupRequiresItsPrivateDirectory()
+    {
+        IHostBuilder builder = Host.CreateDefaultBuilder().UseEnvironment("Development").ConfigureWebHost(web =>
+        {
+            web.UseKestrel().UseSetting("HEXALITH_PACKAGE_STARTUP", "1").UseSetting("HEXALITH_PACKAGE_ROLE", "eventstore").Configure(_ => { });
+            new PackageHostingStartup().Configure(web);
+        });
+        Should.Throw<InvalidOperationException>(() => builder.Build()).Message.ShouldContain("private fixture directory");
+    }
+
+    /// <summary>The Folder bridge cannot activate without its actual enrolled owner identity and proof key.</summary>
+    [Fact]
+    public async Task FolderAdapterRequiresItsActualOwnerIdentityAndProofKey()
+    {
+        FixtureScratch scratch = new(true);
+        await using var cleanup = scratch.ConfigureAwait(true);
+        IHostBuilder builder = Host.CreateDefaultBuilder().UseEnvironment("Development").ConfigureWebHost(web =>
+        {
+            web.UseKestrel().UseSetting("HEXALITH_PACKAGE_STARTUP", "1").UseSetting("HEXALITH_PACKAGE_ROLE", "folders")
+                .UseSetting("HEXALITH_PACKAGE_DIRECTORY", scratch.Directory).UseSetting("DAPR_HTTP_ENDPOINT", "http://127.0.0.1:3500")
+                .Configure(_ => { });
+            new PackageHostingStartup().Configure(web);
+        });
+        Should.Throw<InvalidOperationException>(() => builder.Build()).Message.ShouldContain("actual owner identity and proof key");
+    }
+
+    /// <summary>IPC refuses traversal, linked input and oversized output, and its scratch is disposed on failure.</summary>
+    [Fact]
+    public async Task AdapterIpcRefusesUnsafeInputAndBoundsOutput()
+    {
+        FixtureScratch scratch = new(false);
+        string directory = scratch.Directory;
+        await using (scratch.ConfigureAwait(true))
+        {
+            PackageIpcFiles files = new(directory, maximumBytes: 256);
+            Should.Throw<IOException>(() => files.PathFor("../escape", ".request"));
+            const string id = "0123456789abcdef0123456789abcdef";
+            await scratch.WriteAsync("ordinary.json", "{}", CancellationToken.None).ConfigureAwait(true);
+            File.CreateSymbolicLink(scratch.File(id + ".request"), scratch.File("ordinary.json"));
+            await Should.ThrowAsync<IOException>(() => files.ReadAsync<JsonElement>(id, ".request", CancellationToken.None));
+            await Should.ThrowAsync<IOException>(() => files.WriteAsync(id, ".response", new string('x', 300), CancellationToken.None));
+            File.Exists(scratch.File(id + ".response")).ShouldBeFalse();
+        }
+        Directory.Exists(directory).ShouldBeFalse();
+    }
+
+    /// <summary>The owner adapter cannot expand its source or operate outside the inherited deadline.</summary>
+    [Theory]
+    [InlineData("platform:tenants", 30)]
+    [InlineData("platform:global-administrators", -1)]
+    [InlineData("platform:global-administrators", 60)]
+    public void OwnerAdapterRefusesExpandedScopeAndDeadline(string scope, int seconds)
+    {
+        Hexalith.EventStore.Testing.OwnerSourceRead.OwnerSourceReadRequest request = new("0123456789abcdef0123456789abcdef",
+            DateTimeOffset.UtcNow.AddSeconds(seconds), "administrator-bootstrap", scope, "global-administrators", "global-administrators");
+        Should.Throw<InvalidOperationException>(() => PackageOwnerSelection.Validate(request));
+    }
+
+    /// <summary>Only the catalog's closed refusal codes leave structured resource diagnostics.</summary>
+    [Theory]
+    [InlineData(5130, "catalog-disagreement", "catalog-disagreement")]
+    [InlineData(5130, "owner-trust-refused", "owner-trust-refused")]
+    [InlineData(5130, "private-token", "")]
+    [InlineData(2003, "catalog-disagreement", "")]
+    public void CatalogDiagnosticsKeepOnlyKnownRefusalCodes(int eventId, string reason, string expected)
+    {
+        string content = JsonSerializer.Serialize(new { EventId = eventId, Message = "private-token", State = new { Reason = reason } });
+        FixtureDiagnostics.CatalogRefusal(content, ["private-token"]).ShouldBe(expected);
+    }
+
+    /// <summary>Malformed resource records and fixture-protected values are suppressed.</summary>
+    [Fact]
+    public void CatalogDiagnosticsSuppressMalformedAndProtectedValues()
+    {
+        FixtureDiagnostics.CatalogRefusal("private-token", []).ShouldBeEmpty();
+        FixtureDiagnostics.CatalogRefusal("{\"EventId\":5130,\"State\":{\"Reason\":\"\\uD800\"}}", []).ShouldBeEmpty();
+        FixtureDiagnostics.CatalogRefusal("{\"EventId\":\"private-token\",\"State\":{\"Reason\":\"catalog-disagreement\"}}", []).ShouldBeEmpty();
+        FixtureDiagnostics.CatalogRefusal("{\"EventId\":5130,\"State\":{\"Reason\":\"catalog-disagreement\"}}",
+            ["catalog-disagreement"]).ShouldBeEmpty();
+    }
+
     /// <summary>Aggregate bytes and stale or foreign administrator models cannot satisfy bootstrap readiness.</summary>
     [Theory]
     [InlineData("projection:global-administrators:singleton", "actor", "sequence:1", true)]

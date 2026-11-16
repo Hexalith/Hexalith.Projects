@@ -13,6 +13,15 @@ using Microsoft.Extensions.DependencyInjection;
 /// <summary>Reports bounded failure identities/categories without retaining raw response or resource text.</summary>
 internal static class FixtureDiagnostics
 {
+    /// <summary>Reports only bounded owning method identities, never exception data or source paths.</summary>
+    internal static string[] FailureStages(Exception failure)
+        => (new System.Diagnostics.StackTrace(failure, fNeedFileInfo: false).GetFrames() ?? [])
+            .Select(frame => frame.GetMethod())
+            .Where(method => method?.DeclaringType?.Assembly == typeof(FixtureDiagnostics).Assembly
+                || method?.DeclaringType?.Assembly.GetName().Name == "Hexalith.Projects.Integration.Tests")
+            .Select(method => method!.DeclaringType!.FullName + "." + method.Name)
+            .Distinct(StringComparer.Ordinal).Take(16).ToArray();
+
     internal static string Status(JsonObject state, IEnumerable<string> protectedValues)
     {
         string[] protectedText = protectedValues.ToArray();
@@ -70,21 +79,55 @@ internal static class FixtureDiagnostics
             + $"categories={string.Join(',', categories)} bodyPrefixSha256={Convert.ToHexStringLower(SHA256.HashData(buffer.AsSpan(0, count)))}");
     }
 
-    internal static async Task ResourcesAsync(DistributedApplication? application)
+    internal static string CatalogRefusal(string content, IEnumerable<string> protectedValues)
+    {
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(content);
+            JsonElement root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object || !root.TryGetProperty("EventId", out JsonElement id) || id.ValueKind != JsonValueKind.Number
+                || !id.TryGetInt32(out int eventId) || eventId != 5130
+                || !root.TryGetProperty("State", out JsonElement state) || state.ValueKind != JsonValueKind.Object
+                || !state.TryGetProperty("Reason", out JsonElement reason) || reason.ValueKind != JsonValueKind.String)
+                return string.Empty;
+            string? code = reason.GetString();
+            if (code is not ("configuration-missing" or "owner-trust-refused" or "topology-disagreement"
+                or "installed-inventory-disagreement" or "store-or-transport-unavailable" or "prior-dispatch-draining"
+                or "catalog-disagreement" or "catalog-invalid" or "canceled" or "host-validation-unavailable"))
+                return string.Empty;
+            return protectedValues.Any(value => !string.IsNullOrWhiteSpace(value) && code.Contains(value, StringComparison.Ordinal))
+                ? string.Empty : code;
+        }
+        catch (JsonException) { return string.Empty; }
+        catch (InvalidOperationException) { return string.Empty; }
+    }
+
+    internal static async Task ResourcesAsync(DistributedApplication? application, IEnumerable<string> protectedValues)
     {
         if (application is null) return;
         using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(10));
         var logs = application.Services.GetRequiredService<ResourceLoggerService>();
-        foreach (string resource in new[] { "eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers" })
+        var model = application.Services.GetRequiredService<DistributedApplicationModel>();
+        foreach (string name in new[] { "eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers" })
         {
+            IResource? resource = model.Resources.SingleOrDefault(item => item.Name == name);
+            if (resource is null) continue;
             HashSet<string> reported = [];
+            int examined = 0;
             try
             {
                 await foreach (IReadOnlyList<LogLine> batch in logs.GetAllAsync(resource).WithCancellation(timeout.Token).ConfigureAwait(false))
                     foreach (LogLine line in batch)
+                    {
+                        examined++;
+                        string refusal = CatalogRefusal(line.Content, protectedValues);
+                        if (refusal.Length > 0 && reported.Add("catalog:" + refusal))
+                            Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " catalogReason=" + refusal);
                         foreach (Match match in Regex.Matches(line.Content, @"\b[A-Za-z_][A-Za-z0-9_.]*Exception\b"))
                             if (reported.Add(match.Value))
-                                Console.Error.WriteLine("[package-fixtures] resource failure resource=" + resource + " exception=" + match.Value);
+                                Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " exception=" + match.Value);
+                    }
+                Console.Error.WriteLine("[package-fixtures] resource failure resource=" + name + " examinedLines=" + examined);
             }
             catch (OperationCanceledException) { Console.Error.WriteLine("[package-fixtures] resource failure diagnostics deadline reached."); return; }
         }

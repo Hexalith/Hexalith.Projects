@@ -25,13 +25,16 @@ internal static class PackageFixtureRun
         Environment.SetEnvironmentVariable("DOTNET_WATCH", "false");
         Type entryPoint = Assembly.LoadFrom(host).GetType("Program")
             ?? throw new InvalidOperationException("The prebuilt AppHost entry point is missing.");
-        foreach (bool actualOwners in new[] { false, true })
+        List<string> nativeCompleted = [];
+        foreach ((bool actualOwners, string scenario) in new[] { (true, "main"), (true, "duplicate"), (true, "full-replay"),
+            (true, "tenant-access-recovery"), (false, "compatibility"), (true, "browser") })
         {
-            Console.WriteLine(actualOwners ? "[package-fixtures] actual-owner journey" : "[package-fixtures] compatibility browser phases");
+            Console.WriteLine("[package-fixtures] phase=" + scenario);
             FixtureScratch scratch = new(actualOwners);
             await using var scratchCleanup = scratch.ConfigureAwait(false);
             using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(45));
-            FixtureInputs inputs = new(scratch, root, actualOwners);
+            FixtureInputs inputs = new(scratch, root, actualOwners, scenario);
+            await using var inputCleanup = inputs.ConfigureAwait(false);
             await inputs.PrepareAsync(timeout.Token).ConfigureAwait(false);
             PackageApplicationFactory factory = new(entryPoint, ["--environment", "Development",
                 "--Logging:LogLevel:Default=Warning", "--Projects:PackageFixtures:Enabled=true", "--Projects:PackageFixtures:ConfigurationFile=" + scratch.File("configuration.json")]);
@@ -44,6 +47,7 @@ internal static class PackageFixtureRun
                     startup.CancelAfter(TimeSpan.FromMinutes(5));
                     await factory.StartAsync(startup.Token).ConfigureAwait(false);
                     application = factory.Application ?? throw new InvalidOperationException("AppHost did not publish its built application.");
+                    await VerifyTelemetryAsync(factory, application, scratch, startup.Token).ConfigureAwait(false);
                     string[] resources = actualOwners
                         ? ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "folders", "folders-workers", "browser-read-observer"]
                         : ["eventstore", "tenants", "projects", "projects-workers", "projects-ui", "conversations", "folders", "memories", "live-fixtures"];
@@ -52,14 +56,30 @@ internal static class PackageFixtureRun
                 }
                 FixtureProductChecks checks = new(inputs, scratch, factory);
                 await checks.VerifyBootstrapAsync(timeout.Token).ConfigureAwait(false);
+                if (actualOwners && scenario != "browser")
+                {
+                    try
+                    {
+                        await PackageNativeRunner.InvokeAsync("RunAsync", root, inputs, scratch, factory, application, scenario, timeout.Token).ConfigureAwait(false);
+                        nativeCompleted.Add(scenario);
+                        Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=1 failed=0 skipped=0");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("[package-native] scenario=" + scenario + " total=1 passed=0 failed=1 skipped=0");
+                        throw;
+                    }
+                    continue;
+                }
                 if (!actualOwners)
                 {
+                    await PackageNativeRunner.InvokeAsync("InitializeAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
                     await checks.SeedCompatibilityTenantAsync(timeout.Token).ConfigureAwait(false);
                     await VerifyReadRecoveryAsync(root, factory, inputs, scratch, timeout.Token).ConfigureAwait(false);
                 }
                 if (actualOwners)
                 {
-                    await checks.SeedOwnersAsync(timeout.Token).ConfigureAwait(false);
+                    await PackageNativeRunner.InvokeAsync("SeedAsync", root, inputs, scratch, factory, application, "main", timeout.Token).ConfigureAwait(false);
                     await checks.RegisterObservationsAsync(timeout.Token).ConfigureAwait(false);
                 }
                 FixtureTelemetry? telemetry = actualOwners ? new FixtureTelemetry(application,
@@ -105,7 +125,7 @@ internal static class PackageFixtureRun
             }
             catch
             {
-                await FixtureDiagnostics.ResourcesAsync(application ?? factory.Application).ConfigureAwait(false);
+                await FixtureDiagnostics.ResourcesAsync(application ?? factory.Application, inputs.ProtectedValues).ConfigureAwait(false);
                 throw;
             }
             finally
@@ -118,6 +138,44 @@ internal static class PackageFixtureRun
                 }
             }
         }
+        if (!nativeCompleted.SequenceEqual(new[] { "main", "duplicate", "full-replay", "tenant-access-recovery" }))
+            throw new InvalidOperationException("The required native product matrix did not execute completely.");
+        Console.WriteLine("[package-native] scenarios=4 passed=4 failed=0 skipped=0");
+    }
+
+    private static async Task VerifyTelemetryAsync(PackageApplicationFactory factory, DistributedApplication application,
+        FixtureScratch scratch, CancellationToken cancellation)
+    {
+        // The login URL contains a credential; keep it private and retain only endpoint authorities.
+        Uri dashboard = new(await application.GetDashboardUrlAsync(cancellation).ConfigureAwait(false));
+        Uri[] endpoints = [dashboard, factory.GetEndpoint("aspire-dashboard", "otlp-grpc"), factory.GetEndpoint("aspire-dashboard", "otlp-http")];
+        foreach (Uri endpoint in endpoints)
+        {
+            if (!endpoint.IsLoopback || endpoint.Port <= 0 || endpoint.UserInfo.Length != 0)
+                throw new InvalidOperationException("Package telemetry requires its owned allocated loopback receiver.");
+            using System.Net.Sockets.TcpClient connection = new();
+            await connection.ConnectAsync(endpoint.Host, endpoint.Port, cancellation).ConfigureAwait(false);
+        }
+        var configuration = application.Services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
+        string key = configuration["AppHost:OtlpApiKey"] ?? throw new InvalidOperationException("Private telemetry authentication is missing.");
+        using HttpClient client = new(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(10) };
+        async Task<System.Net.HttpStatusCode> ExportAsync(bool authenticate)
+        {
+            using HttpRequestMessage request = new(HttpMethod.Post, new Uri(endpoints[2], "/v1/traces"));
+            request.Content = new ByteArrayContent([]);
+            request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-protobuf");
+            if (authenticate) request.Headers.Add("x-otlp-api-key", key);
+            using HttpResponseMessage response = await client.SendAsync(request, cancellation).ConfigureAwait(false);
+            return response.StatusCode;
+        }
+        if (await ExportAsync(false).ConfigureAwait(false) is not (System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden)
+            || await ExportAsync(true).ConfigureAwait(false) != System.Net.HttpStatusCode.OK)
+            throw new InvalidOperationException("The actual telemetry receiver did not enforce its private export key.");
+        await File.WriteAllTextAsync(scratch.File("telemetry-receiver.json"), JsonSerializer.Serialize(new
+        {
+            ownedLoopbackEndpointsVerified = true, unauthenticatedExportRefused = true, authenticatedExportAccepted = true,
+            ports = endpoints.Select(endpoint => endpoint.Port).ToArray(),
+        }), cancellation).ConfigureAwait(false);
     }
 
     private static async Task BrowserAsync(string phase, string[] selectors, string[] extra, string workspace,

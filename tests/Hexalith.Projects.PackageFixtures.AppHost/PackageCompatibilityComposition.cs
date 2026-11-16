@@ -243,13 +243,19 @@ public static class PackageCompatibilityComposition
             new(projects, Calls("process", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
             new(workers, []),
         ];
+        Dictionary<string, PackageOwnerLoadContext> ownerContexts = [];
         Assembly Load(string project, string assembly)
         {
             string path = project == "Hexalith.Projects.Server"
                 ? new PrebuiltMetadata<global::Projects.Hexalith_Projects_Server>().ProjectPath
                 : new PrebuiltMetadata<global::Projects.Hexalith_Tenants>().ProjectPath;
-            return Assembly.LoadFrom(Directory.GetFiles(Path.Combine(Path.GetDirectoryName(path)!, "bin", "Release"),
-                assembly, SearchOption.AllDirectories).Single());
+            string release = Path.Combine(Path.GetDirectoryName(path)!, "bin", "Release");
+            if (!ownerContexts.TryGetValue(project, out PackageOwnerLoadContext? context))
+            {
+                context = new(Directory.GetFiles(release, Path.GetFileNameWithoutExtension(path) + ".dll", SearchOption.AllDirectories).Single());
+                ownerContexts.Add(project, context);
+            }
+            return context.LoadOwner(Directory.GetFiles(release, assembly, SearchOption.AllDirectories).Single());
         }
         Assembly projectOwner = Load("Hexalith.Projects.Server", "Hexalith.Projects.Server.dll");
         Assembly tenantOwner = Load("Hexalith.Tenants", "Hexalith.Tenants.Contracts.dll");

@@ -64,6 +64,10 @@ _ = ui.WithReference(gateway).WaitFor(gateway).WithReference(projects).WaitFor(p
 DevelopmentRouteCatalogComposition catalog = actualOwners
     ? PackageActualOwnerInfrastructure.Add(builder, gateway, tenants, projects)
     : PackageCompatibilityComposition.AddResources(builder, gateway, tenants, projects, workers, ui, resources);
+PackageHostingStartupComposition.Add(root, Path.GetDirectoryName(builder.Configuration["Projects:PackageFixtures:CertificatePath"]!)!, gateway, tenants, projects);
+if (actualOwners)
+    PackageHostingStartupComposition.Add(root, Path.GetDirectoryName(builder.Configuration["Projects:PackageFixtures:CertificatePath"]!)!,
+        builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == "folders")));
 await using var catalogCleanup = catalog.ConfigureAwait(false);
 DistributedApplication application = builder.Build();
 await using var applicationCleanup = application.ConfigureAwait(false);

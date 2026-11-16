@@ -1,7 +1,6 @@
 namespace Hexalith.Projects.PackageFixtures.AppHost;
 
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text.Json;
 
 using global::Aspire.Hosting;
@@ -17,6 +16,22 @@ internal static class PackageActualOwnerInfrastructure
         IResourceBuilder<ProjectResource> gateway, IResourceBuilder<ProjectResource> tenants,
         IResourceBuilder<ProjectResource> projects)
     {
+        var ownerContexts = new Dictionary<ProjectResource, PackageOwnerLoadContext>();
+
+        Assembly Load(ProjectResource project, string artifact)
+        {
+            string projectPath = project.GetProjectMetadata().ProjectPath;
+            string release = Path.Combine(Path.GetDirectoryName(projectPath)!, "bin", "Release");
+            string path = FindArtifact(release, artifact);
+            if (!ownerContexts.TryGetValue(project, out PackageOwnerLoadContext? context))
+            {
+                string executable = FindArtifact(release, Path.GetFileNameWithoutExtension(projectPath) + ".dll");
+                context = new PackageOwnerLoadContext(executable);
+                ownerContexts.Add(project, context);
+            }
+            return context.LoadOwner(path);
+        }
+
         foreach (string key in new[] { "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey" })
             if (string.IsNullOrWhiteSpace(builder.Configuration["Projects:PackageFixtures:" + key]))
                 throw new InvalidOperationException("The actual bound Tenants bootstrap requires private input: " + key);
@@ -46,7 +61,7 @@ internal static class PackageActualOwnerInfrastructure
             .Single(resource => resource.Name == "folders-workers"));
         Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Server.dll");
         Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Server.dll");
-        Assembly folderAdapters = Load(folders.Resource, "Hexalith.Folders.EventStore.dll");
+        Assembly folderAdapters = folderOwner;
         Assembly tenantOwner = Load(tenants.Resource, "Hexalith.Tenants.Contracts.dll");
         Assembly tenantAdapters = Load(tenants.Resource, "Hexalith.Tenants.Server.dll");
         string digestKey = builder.Configuration["Projects:PackageFixtures:CatalogDigestKey"]
@@ -77,6 +92,9 @@ internal static class PackageActualOwnerInfrastructure
                 new(projects, "api/v1/commands", ["POST"]),
                 new(folders, "api/v1/commands", ["POST"]),
                 new(folders, "api/v1/streams/read/workload", ["POST"]),
+                new(folders, "api/v1/streams/scan/workload", ["POST"]),
+                new(foldersWorkers, "api/v1/streams/read/workload", ["POST"]),
+                new(foldersWorkers, "api/v1/streams/scan/workload", ["POST"]),
             ]) { TechnicalHttp = true },
             new(tenants, DomainCalls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
             new(projects, DomainCalls("process", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
@@ -98,15 +116,19 @@ internal static class PackageActualOwnerInfrastructure
         return catalog;
     }
 
-    private static Assembly Load(ProjectResource project, string artifact)
+    private static string FindArtifact(string directory, string artifact)
     {
-        string directory = Path.GetDirectoryName(project.GetProjectMetadata().ProjectPath)!;
-        string path = Directory.GetFiles(Path.Combine(directory, "bin", "Release"), artifact, SearchOption.AllDirectories).Single();
-        if (!File.Exists(path)) throw new InvalidOperationException("Build the selected Release/package owner before composing its catalog: " + path);
-        Assembly loaded = Assembly.LoadFrom(path);
-        if (!SHA256.HashData(File.ReadAllBytes(loaded.Location)).AsSpan().SequenceEqual(SHA256.HashData(File.ReadAllBytes(path))))
-            throw new InvalidOperationException("The loaded owner differs from the selected executable artifact.");
-        return loaded;
+        string[] candidates = Directory.Exists(directory)
+            ? Directory.GetFiles(directory, artifact, SearchOption.AllDirectories)
+            : [];
+        if (candidates.Length != 1)
+            throw new InvalidOperationException(
+                $"Expected exactly one {artifact} in the selected owner's Release output {directory}; found {candidates.Length}. "
+                + (candidates.Length == 0
+                    ? "Build the selected Release/package owner before composing its catalog."
+                    : "Remove duplicate owner outputs before composing its catalog. Candidates (up to five): "
+                        + string.Join(", ", candidates.Order(StringComparer.Ordinal).Take(5).Select(path => Path.GetRelativePath(directory, path)))));
+        return candidates[0];
     }
 
     private static void WriteReceipt(string directory, string file, object value)

@@ -5,6 +5,9 @@
     <DefineConstants Condition="'$(SupportedProjectReadDistributed)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_DISTRIBUTED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <AssemblyMetadata Include="PackageFixtureTenantsRoot" Value="$([MSBuild]::NormalizePath('$(HexalithTenantsRoot)'))" />
+    <AssemblyMetadata Include="PackageFixtureFoldersRoot" Value="$([MSBuild]::NormalizePath('$(HexalithFoldersRoot)'))" />
+    <PackageReference Include="Hexalith.Folders" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.AppHost\Hexalith.Projects.AppHost.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Aspire\Hexalith.Projects.Aspire.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
@@ -15,7 +18,7 @@
     <ProjectReference Include="../Hexalith.Projects.PackageFixtures/Hexalith.Projects.PackageFixtures.csproj" />
     <ProjectReference Include="../Hexalith.Projects.PackageFixtures.AppHost/Hexalith.Projects.PackageFixtures.AppHost.csproj" Aliases="PackageFixtureHost" />
   </ItemGroup>
-  <ItemGroup Condition="'$(SupportedProjectReadDistributed)' == 'true'">
+  <ItemGroup>
     <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <PackageReference Include="Hexalith.EventStore.Testing" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>

@@ -85,8 +85,9 @@ public static class PackageActualOwnerComposition
         }
         else if (configuration[Prefix + "Browser:TokenEndpoint"] is not null)
             throw new InvalidOperationException("A browser token endpoint requires the explicit browser fixture.");
-        foreach (string key in new[] { "CertificatePath", "CertificatePassword", "TrustBundle", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "Tenant", "ForeignTenant", "DiscoveryConfiguration", "CatalogDigestKey", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey" })
+        foreach (string key in new[] { "CertificatePath", "CertificatePassword", "TrustBundle", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "Tenant", "ForeignTenant", "DiscoveryConfiguration", "CatalogDigestKey", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey", "FolderScanPrivateKey", "FolderScanPublicKey", "FolderWorkersSecret", "FolderWorkerPrivateKey", "FolderWorkerPublicKey", "FolderWorkerScanPrivateKey", "FolderWorkerScanPublicKey" })
             _ = Required(configuration, Prefix + key);
+        ValidateFolderSourceKeys(configuration);
         foreach (string key in new[] { "CertificatePath", "TrustBundle" })
             if (!File.Exists(configuration[Prefix + key])) throw new InvalidOperationException("Fixture trust material is missing.");
         if (configuration[Prefix + "Tenant"] == configuration[Prefix + "ForeignTenant"])
@@ -261,22 +262,34 @@ public static class PackageActualOwnerComposition
             .WithEnvironment("EventStore__Authentication__ClientId", "supported-read-bootstrap")
             .WithEnvironment("EventStore__Authentication__Username", "actor-1")
             .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);
-        IResourceBuilder<ParameterResource> foldersSecret = Secret("folders-secret", "FoldersSecret");
-        IResourceBuilder<ParameterResource> folderOwnerKey = Secret("folders-owner-key", "FolderOwnerPrivateKey");
-        ConfigureClient(folders, "folders", foldersSecret);
-        int folderGrant = ordinal;
-        AddGrant("folders-owner-head", "folders", "FoldersSecret", "eventstore", ["eventstore:stream-read"], false);
-        string grant = "Authentication__WorkloadAuthority__Grants__" + folderGrant + "__";
-        _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
-            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
-            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
-            .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
-        _ = folders.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", folderOwnerKey)
-            .WithEnvironment("Folders__EventStore__OwnerMetadataReads__Enabled", "true")
-            .WithEnvironment("Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled", "true");
-        _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__2", "folders")
-            .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__folders", Required(configuration, Prefix + "FolderOwnerPublicKey"))
-            .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__folders", "folders");
+        foreach (var source in new[]
+        {
+            (Resource: folders, Workload: "folders", Secret: "FoldersSecret", ReadKey: "FolderOwner", ScanKey: "FolderScan", CallerIndex: 2),
+            (Resource: folderWorkers, Workload: "folders-workers", Secret: "FolderWorkersSecret", ReadKey: "FolderWorker", ScanKey: "FolderWorkerScan", CallerIndex: 3),
+        })
+        {
+            IResourceBuilder<ParameterResource> secret = Secret(source.Workload + "-secret", source.Secret);
+            IResourceBuilder<ParameterResource> readKey = Secret(source.Workload + "-owner-key", source.ReadKey + "PrivateKey");
+            IResourceBuilder<ParameterResource> scanKey = Secret(source.Workload + "-scan-key", source.ScanKey + "PrivateKey");
+            ConfigureClient(source.Resource, source.Workload, secret);
+            int folderSourceGrant = ordinal;
+            AddGrant(source.Workload + "-owner-source", source.Workload, source.Secret, "eventstore",
+                ["eventstore:stream-read", "eventstore:stream-scan-native"], false);
+            string grant = "Authentication__WorkloadAuthority__Grants__" + folderSourceGrant + "__";
+            _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
+                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
+                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
+                .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
+            _ = source.Resource.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", readKey)
+                .WithEnvironment("Authentication__NativeSourceScan__PrivateKey", scanKey);
+            _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__" + source.CallerIndex, source.Workload)
+                .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__" + source.Workload, Required(configuration, Prefix + source.ReadKey + "PublicKey"))
+                .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__" + source.Workload, "folders")
+                .WithEnvironment("Authentication__NativeSourceScan__PublicKeys__" + source.Workload, Required(configuration, Prefix + source.ScanKey + "PublicKey"))
+                .WithEnvironment("Authentication__NativeSourceScan__AllowedDomains__" + source.Workload, "folders");
+            if (source.Workload == "folders-workers")
+                _ = eventStore.WithEnvironment("Authentication__BoundStreamRead__MetadataOnlyCallers__folders-workers", "true");
+        }
         _ = eventStore.WaitFor(authority);
         _ = tenants.WaitFor(authority);
         _ = projects.WithReference(eventStore).WithReference(tenants).WithReference(folders).WaitFor(eventStore).WaitFor(tenants).WaitFor(authority);
@@ -355,6 +368,34 @@ public static class PackageActualOwnerComposition
         File.WriteAllText(path, policy.ToJsonString());
         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite);
         return directory;
+    }
+
+    private static void ValidateFolderSourceKeys(IConfiguration configuration)
+    {
+        HashSet<string> fingerprints = new(StringComparer.Ordinal);
+        foreach (string prefix in new[] { "FolderOwner", "FolderScan", "FolderWorker", "FolderWorkerScan" })
+        {
+            try
+            {
+                byte[] privateBytes = Convert.FromBase64String(Required(configuration, Prefix + prefix + "PrivateKey"));
+                byte[] publicBytes = Convert.FromBase64String(Required(configuration, Prefix + prefix + "PublicKey"));
+                using RSA privateKey = RSA.Create();
+                using RSA publicKey = RSA.Create();
+                privateKey.ImportPkcs8PrivateKey(privateBytes, out int privateRead);
+                publicKey.ImportSubjectPublicKeyInfo(publicBytes, out int publicRead);
+                byte[] actualPublic = privateKey.ExportSubjectPublicKeyInfo();
+                if (privateRead != privateBytes.Length || publicRead != publicBytes.Length || privateKey.KeySize < 2048
+                    || !actualPublic.AsSpan().SequenceEqual(publicKey.ExportSubjectPublicKeyInfo())
+                    || !fingerprints.Add(Convert.ToHexString(SHA256.HashData(actualPublic))))
+                    throw new InvalidOperationException("Folder source read/scan proof keys must match and remain independent: " + prefix);
+            }
+            catch (Exception error) when (error is FormatException or CryptographicException)
+            {
+                throw new InvalidOperationException("Invalid Folder source proof key material: " + prefix, error);
+            }
+        }
+        if (Required(configuration, Prefix + "FoldersSecret") == Required(configuration, Prefix + "FolderWorkersSecret"))
+            throw new InvalidOperationException("Folder source workloads require independent issuer secrets.");
     }
 
     private static string Required(IConfiguration configuration, string key)
