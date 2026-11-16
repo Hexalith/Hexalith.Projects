@@ -1,0 +1,284 @@
+[
+  {
+    "label": "review-session-source-mapping",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net11.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.JjjvueIE/prepared",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "server-review-repairs-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "server-review-repairs-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "server-review-repairs-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "server-review-repairs-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/server-review-repairs-3.xml",
+      "-method",
+      "*Review*"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "server-review-list-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "server-review-list-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/server-review-list-final.xml",
+      "-method",
+      "*ReviewLegacyListRefuses*"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "gateway-review-matrix-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "gateway-review-matrix-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/gateway-review-matrix-1.xml",
+      "-method",
+      "*NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "gateway-review-matrix-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "gateway-review-matrix-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/gateway-review-matrix-final.xml",
+      "-method",
+      "*NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "read-cutover-controls-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "read-cutover-controls-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/read-cutover-controls-final.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ReadCutoverTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-legacy-detail-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-legacy-detail-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/ui-legacy-detail-final.xml",
+      "-class",
+      "Hexalith.Projects.UI.Tests.Components.ProjectDetailPageTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "ui-legacy-binding-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-legacy-binding-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/ui-legacy-binding-final.xml",
+      "-method",
+      "*ReviewConversationBindingChange*"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-real-detail-source-final-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.JjjvueIE/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-real-detail-source-final-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-01/patch-focused-2/ui-real-detail-source-final.xml",
+      "-class",
+      "Hexalith.Projects.UI.Tests.Components.SupportedProjectReadPageTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  }
+]

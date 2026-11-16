@@ -34,7 +34,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateProject()));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-001",
@@ -47,7 +47,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateExplanation()));
         client.ListProjectConversationsAsync(
                 "project-001",
@@ -76,7 +76,7 @@ public sealed class LegacyProjectDetailSourceTests
             "project-001",
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+            true, Arg.Any<CancellationToken>()).ConfigureAwait(true);
         await client.Received(1).GetProjectOperatorDiagnosticsAsync(
             "project-001",
             25,
@@ -87,7 +87,7 @@ public sealed class LegacyProjectDetailSourceTests
             "project-001",
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+            Arg.Any<string>(), Arg.Any<CancellationToken>()).ConfigureAwait(true);
         await client.Received(1).ListProjectConversationsAsync(
             "project-001",
             100,
@@ -117,7 +117,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateProject()));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-001",
@@ -130,7 +130,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateExplanation()));
         client.ListProjectConversationsAsync(
                 "project-001",
@@ -172,7 +172,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateProject()));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-001",
@@ -185,7 +185,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateExplanation(freshness)));
         client.ListProjectConversationsAsync(
                 "project-001",
@@ -221,7 +221,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<Project>>(_ => throw new HexalithProjectsApiException(
                 "unsafe response hidden",
                 statusCode,
@@ -262,7 +262,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-hidden",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<Project>>(_ => throw new HexalithProjectsApiException(
                 "cross tenant project-hidden project-visible sibling-secret hidden-descriptor",
                 403,
@@ -305,7 +305,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<Project>>(_ => throw new System.Net.Http.HttpRequestException("connection refused 10.0.0.1 secret"));
 
         var source = new LegacyProjectDetailSource(client);
@@ -329,7 +329,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateProject()));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-001",
@@ -347,7 +347,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateExplanation()));
         client.ListProjectConversationsAsync(
                 "project-001",
@@ -379,7 +379,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateProject()));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-001",
@@ -392,7 +392,7 @@ public sealed class LegacyProjectDetailSourceTests
                 "project-001",
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns<Task<ProjectContextExplanation>>(_ => throw new HexalithProjectsApiException(
                 "unsafe response hidden",
                 400,

@@ -9,6 +9,18 @@ using Hexalith.Projects.Server.Queries;
 /// <summary>Bounds owner and Project authorization on the retained resolution REST adapters.</summary>
 public static partial class ProjectsDomainServiceEndpoints
 {
+    private static bool HasCurrentLegacyReadAuthority(ProjectAuthorizationResult authorization)
+        => authorization.TenantAccessResult is { IsAllowed: true, FreshnessStatus: Hexalith.Projects.Authorization.TenantProjectionFreshnessStatus.Fresh };
+
+    private static Hexalith.Projects.Contracts.Models.ProjectResolution SafeLegacyResolution(Hexalith.Projects.Contracts.Models.ProjectResolution resolution)
+        => new(resolution.Result, resolution.Candidates.Select(candidate =>
+            new Hexalith.Projects.Contracts.Models.ResolutionCandidate(candidate.ProjectId, null, candidate.ReasonCodes, candidate.Rank, candidate.Score)).ToArray(),
+            [], resolution.ObservedAt);
+
+    private static bool IsLegacyResolutionIncomplete(Hexalith.Projects.Contracts.Models.ProjectResolution resolution)
+        => resolution.Excluded.Any(exclusion => exclusion.ReferenceState is not
+            (ReferenceState.Unauthorized or ReferenceState.Excluded or ReferenceState.Archived));
+
     private static async Task<HashSet<string>?> AuthorizeLegacyResolutionCandidatesAsync(IEnumerable<string> projectIds,
         ProjectAuthorizationGate gate, IProjectTenantContextAccessor tenant, HttpContext http,
         string? correlationId, string? taskId, CancellationToken token, IProjectFolderDirectory? folders = null)

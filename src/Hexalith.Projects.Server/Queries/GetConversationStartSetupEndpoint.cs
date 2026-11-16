@@ -108,7 +108,8 @@ public static partial class ProjectsDomainServiceEndpoints
 
         ConversationStartSetup body = ConversationStartSetupProjector.Project(assembled.Context);
 
-        httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
+        httpContext.Response.Headers[FreshnessHeaderName] = body.Freshness.ToString();
+        httpContext.Response.Headers["X-Hexalith-Projection-Watermark"] = detail.Sequence.ToString(System.Globalization.CultureInfo.InvariantCulture);
         return Results.Json(body, ResponseJsonOptions);
     }
 }

@@ -40,6 +40,7 @@ public sealed class ProjectNavigationTests : FrontComposerTestBase
     public ProjectNavigationTests()
     {
         _authorization = AddAuthorization();
+        Services.AddSingleton(Hexalith.Projects.Client.ProjectsReadRouteSelection.Create(new Hexalith.Projects.Client.ProjectsReadRoutingOptions()));
     }
 
     [Fact]

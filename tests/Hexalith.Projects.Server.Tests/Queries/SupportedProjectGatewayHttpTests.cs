@@ -13,6 +13,7 @@ using System.Text.Json;
 using Dapr.Client;
 using Hexalith.Conversations.Contracts.Queries;
 using Hexalith.Conversations.Server.Projections;
+using Hexalith.Conversations.Server.Api;
 using Hexalith.Conversations.Server.Queries;
 using Hexalith.Conversations.Server.TenantAccess;
 using Hexalith.Tenants.Client.Projections;
@@ -472,6 +473,13 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         var builder = Builder("projects", http, grpc, routes, observer);
         builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
         builder.Services.AddProjectsServer(); builder.Services.AddProjectsServerRuntimeInfrastructure();
+        AddCutoverHumanAuthentication(builder);
+        builder.Services.AddHttpClient(nameof(Hexalith.Conversations.Client.IConversationClient))
+            .ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
+        builder.Services.AddHttpClient("projects-retained-folder-v1-reads")
+            .ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
+        builder.Services.AddHttpClient(nameof(Hexalith.Folders.Client.Generated.IClient))
+            .ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
         builder.Services.AddSingleton<ProjectMcpCliReadStore>(sp => new(sp.GetRequiredService<DaprReadModelStore>()));
         builder.Services.RemoveAll<IReadModelStore>();
         builder.Services.AddSingleton<IReadModelStore>(sp => sp.GetRequiredService<ProjectMcpCliReadStore>());
@@ -487,6 +495,8 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
     {
         var builder = Builder("folders", http, grpc, routes, observer);
         builder.Services.AddFoldersProductionAuthentication(builder.Configuration, builder.Environment);
+        builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SigningKey)));
         builder.Services.AddFoldersServer(); builder.Services.AddEventStoreReadModelStore();
         builder.Services.AddSingleton<ProjectMcpCliReadStore>(sp => new(sp.GetRequiredService<DaprReadModelStore>()));
         builder.Services.RemoveAll<IReadModelStore>();
@@ -499,6 +509,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddSingleton<EventStoreOrganizationEffectivePermissionsReadModel>();
         builder.Services.AddSingleton<EventStoreFolderEffectivePermissionsReadModel>();
         builder.Services.AddSingleton<IEffectivePermissionsReadModel>(sp => sp.GetRequiredService<EventStoreFolderEffectivePermissionsReadModel>());
+        builder.Services.AddSingleton<IFolderAclReadModel>(sp => sp.GetRequiredService<EventStoreFolderEffectivePermissionsReadModel>());
         builder.Services.AddSingleton<IFolderTenantAccessProjectionStore, EventStoreFolderTenantAccessProjectionStore>();
         builder.Services.AddSingleton<IEventStoreAuthorizationValidator, VerifiedReceiptEventStoreAuthorizationValidator>();
         builder.Services.AddAuthentication().AddEventStoreWorkloadScheme(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme, "Authentication:Workload",
@@ -522,12 +533,16 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddSingleton<ITenantProjectionStore>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
         builder.Services.AddSingleton<IConversationTenantProjectionSignal>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
         builder.Services.AddSingleton<IConversationTenantAccessService, ConversationTenantAccessService>();
+        builder.Services.AddConversationQueries(_ => { });
+        builder.Services.AddScoped<IDomainQueryHandler, GetConversationDomainQueryHandler>();
         builder.Services.AddSingleton<IDomainQueryHandler, GetConversationAdvisoryMetadataDomainQueryHandler>();
+        AddCutoverHumanAuthentication(builder);
         builder.Services.AddAuthentication().AddEventStoreWorkloadScheme(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme, "Authentication:Workload",
             (options, _) => { options.Audience = "conversations"; options.AllowedCallers.Add("eventstore"); });
         builder.Services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
             [EventStoreWorkloadOperations.DomainServiceQuery]);
         WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization();
+        app.MapConversationReadApi();
         app.MapPost("/query", async (QueryEnvelope query, IServiceProvider services, CancellationToken token) =>
         {
             QueryResult result = await DomainQueryDispatcher.ExecuteAsync(services, query, token).ConfigureAwait(false);
@@ -537,7 +552,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
     }
 
     private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant,
-        ProjectReadDenialObserver? denialObserver = null)
+        ProjectReadDenialObserver? denialObserver = null, Action<Exception>? exceptionObserver = null)
     {
         var builder = Builder("eventstore", http, grpc, routes, denialObserver);
         if (denialObserver is not null)
@@ -546,11 +561,14 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
                 .AddProcessor(new SimpleActivityExportProcessor(denialObserver.TraceExporter)));
         }
         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
-         builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType + "," + GetConversationAdvisoryMetadataQuery.QueryType;
+         builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType + "," + GetConversationAdvisoryMetadataQuery.QueryType + "," + GetConversationQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:0"] = ListProjectsQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:1"] = GetProjectQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:2"] = ResolveProjectFromConversationQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:3"] = ResolveProjectFromAttachmentsQuery.QueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:4"] = ProjectsServerModule.GetProjectContextQueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:5"] = ProjectsServerModule.GetConversationStartSetupQueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:6"] = ProjectsServerModule.ExplainContextSelectionQueryType;
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;
@@ -580,14 +598,21 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddHttpClient(DaprDomainQueryInvoker.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
             .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
-        builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<AuthorizationExceptionHandler>(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
+        builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<AuthorizationExceptionHandler>(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>(); builder.Services.AddExceptionHandler<Hexalith.EventStore.ErrorHandling.RouteCatalogUnavailableExceptionHandler>();
         WebApplication app = builder.Build();
         if (denialObserver is not null)
         {
             app.Use(async (context, next) => { denialObserver.BindGatewayRequest(context); await next(context).ConfigureAwait(false); });
-            app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
         }
-        app.UseExceptionHandler(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+        app.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>();
+        app.UseExceptionHandler();
+        if (exceptionObserver is not null)
+            app.Use(async (context, next) =>
+            {
+                try { await next(context).ConfigureAwait(false); }
+                catch (Exception exception) { exceptionObserver(exception); throw; }
+            });
+        app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         denialObserver?.InstallCompletionGate(app.Services.GetRequiredService<TracerProvider>());
         return app;

@@ -48,6 +48,8 @@ public sealed class GetProjectContextQueryCompositionTests
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         await using WebApplication app = builder.Build();
         app.Services.GetService<Dapr.Client.DaprClient>().ShouldBeNull();
         var directory = app.Services.GetRequiredService<Hexalith.Projects.Server.Folders.IProjectFolderDirectory>();
@@ -94,7 +96,7 @@ public sealed class GetProjectContextQueryCompositionTests
                 ProjectsServerModule.DomainName,
                 ProjectId,
                 ProjectsServerModule.ExplainContextSelectionQueryType,
-                JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId), JsonOptions),
+                JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId) { ConversationId = "bound-conversation" }, JsonOptions),
                 "corr-1",
                 "actor-1");
             HttpResponseMessage response = await client.PostAsJsonAsync("/query", envelope, JsonOptions, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -200,7 +202,7 @@ public sealed class GetProjectContextQueryCompositionTests
             ProjectsServerModule.DomainName,
             ProjectId,
             ProjectsServerModule.GetProjectContextQueryType,
-            JsonSerializer.SerializeToUtf8Bytes(new GetProjectContextQuery(ProjectId), JsonOptions),
+            JsonSerializer.SerializeToUtf8Bytes(new GetProjectContextQuery(ProjectId) { ConversationId = "bound-conversation" }, JsonOptions),
             "corr-1",
             "actor-1");
 
@@ -210,6 +212,8 @@ public sealed class GetProjectContextQueryCompositionTests
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:AllowAnonymousDevelopment"] = "true";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         _ = builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
         builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
@@ -271,6 +275,8 @@ public sealed class GetProjectContextQueryCompositionTests
         builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:Issuer"] = "https://identity.example";
         builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:Audience"] = "hexalith-projects";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         _ = builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
         WebApplication app = builder.Build();
         _ = app.UseAuthentication();

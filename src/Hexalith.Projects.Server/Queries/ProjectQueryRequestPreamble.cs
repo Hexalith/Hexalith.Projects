@@ -12,6 +12,7 @@ using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 /// <summary>Shared request handling for the retained legacy read operations.</summary>
 public static partial class ProjectsDomainServiceEndpoints
@@ -50,6 +51,10 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, "idempotency_key");
         }
 
+        if (httpContext.Request.Query.ContainsKey("cursor")
+            && !httpContext.Request.Path.Value!.EndsWith("/conversations", StringComparison.Ordinal))
+            return ValidationProblem(correlationId, taskId, "cursor");
+
         string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
         return requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal)
             ? ValidationProblem(correlationId, taskId, "freshness")
@@ -75,10 +80,20 @@ public static partial class ProjectsDomainServiceEndpoints
             .ConfigureAwait(false);
         if (!authorization.IsAllowed || authorization.ProjectDetail is null)
         {
-            IResult rejection = authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+            IResult rejection = authorization.Retryable
                 ? ReadModelUnavailable(correlationId, null)
                 : SafeDenial(correlationId, null, authorization);
             return (null, null, rejection);
+        }
+
+        if (authorization.TenantAccessResult is null)
+        {
+            return (null, null, SafeDenial(correlationId, null));
+        }
+
+        if (!HasCurrentLegacyReadAuthority(authorization))
+        {
+            return (null, null, ReadModelUnavailable(correlationId, null));
         }
 
         if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
@@ -86,10 +101,29 @@ public static partial class ProjectsDomainServiceEndpoints
             return (null, null, validationProblem);
         }
 
+        if (authorization.ProjectDetail.Lifecycle == Hexalith.Projects.Contracts.Ui.ProjectLifecycle.Active
+            && (authorization.ProjectDetail.ProjectFolder is null
+                || authorization.ProjectDetail.ProjectFolder.ReferenceState != Hexalith.Projects.Contracts.Ui.ReferenceState.Included))
+            return (null, null, ReadModelUnavailable(correlationId, null));
+
+        if (!await HasCurrentLegacyMembershipAsync(projectId, httpContext, tenantContext,
+            correlationId, cancellationToken).ConfigureAwait(false))
+            return (null, null, ReadModelUnavailable(correlationId, null));
+
         // An allowed result without its tenant evidence is an upstream regression. Retain the
         // existing safe-denial collapse instead of assembling a response from incomplete authority.
         return authorization.TenantAccessResult is { } tenantAccess
             ? (authorization.ProjectDetail, tenantAccess, null)
             : (null, null, SafeDenial(correlationId, null));
+    }
+
+    private static async Task<bool> HasCurrentLegacyMembershipAsync(string projectId, HttpContext context,
+        IProjectTenantContextAccessor tenant, string correlationId, CancellationToken cancellationToken)
+    {
+        string? conversationId = context.Request.Query["conversationId"].Count == 1 ? context.Request.Query["conversationId"][0] : null;
+        var membership = context.RequestServices.GetService<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        return !string.IsNullOrWhiteSpace(conversationId) && membership is not null
+            && await membership.IsCurrentMemberAsync(tenant.AuthoritativeTenantId!, projectId, conversationId,
+                tenant.PrincipalId!, correlationId, cancellationToken).ConfigureAwait(false);
     }
 }

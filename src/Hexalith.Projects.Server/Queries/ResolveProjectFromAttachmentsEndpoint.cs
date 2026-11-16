@@ -64,6 +64,7 @@ public static partial class ProjectsDomainServiceEndpoints
             ProjectAuthorizationResult authorization = await authorizationGate
                 .AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
+            if (authorization.IsAllowed && !HasCurrentLegacyReadAuthority(authorization)) return ReadModelUnavailable(correlationId, taskId);
             if (!authorization.IsAllowed)
             {
                 return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
@@ -80,6 +81,9 @@ public static partial class ProjectsDomainServiceEndpoints
             {
                 return ValidationProblem(correlationId, taskId, "includeArchived");
             }
+
+            // The retained result cannot express incomplete coverage without changing its v1 result type.
+            if (fileIds.Count > 0) return ReadModelUnavailable(correlationId, taskId);
 
             string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
             string[]? acceptedFolders = await AuthorizeLegacyResolutionFoldersAsync(folderIds, folderDirectory, correlationId ?? httpContext.TraceIdentifier, cancellationToken)
@@ -110,6 +114,7 @@ public static partial class ProjectsDomainServiceEndpoints
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
             callerToken.ThrowIfCancellationRequested();
+            if (authorization.IsAllowed && !HasCurrentLegacyReadAuthority(authorization)) return ReadModelUnavailable(correlationId, taskId);
             if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
             List<AttachmentResolutionProjectCandidate> candidateProjects = new(projectedRows.Count);
@@ -172,7 +177,9 @@ public static partial class ProjectsDomainServiceEndpoints
             ProjectResolution resolution = resolutionEngine.Resolve(context, candidates);
 
             httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
-            return Results.Json(resolution, ResponseJsonOptions);
+            return IsLegacyResolutionIncomplete(resolution)
+                ? ReadModelUnavailable(correlationId, taskId)
+                : Results.Json(SafeLegacyResolution(resolution), ResponseJsonOptions);
         }
         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
         catch (Exception) { return ReadModelUnavailable(correlationId, taskId); }

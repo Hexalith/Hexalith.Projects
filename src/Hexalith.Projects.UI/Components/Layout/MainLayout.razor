@@ -1,12 +1,13 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject Hexalith.Projects.Client.ProjectsReadRouteSelection ReadRoute
 @using Hexalith.FrontComposer.Shell.Components.Layout
 
 <FrontComposerShell @key="_scope">
     <Navigation>
-        @if (new Uri(Navigation.Uri).AbsolutePath.StartsWith("/inspect/", StringComparison.Ordinal))
+        @if (ReadRoute.Mode == "Supported" || new Uri(Navigation.Uri).AbsolutePath.StartsWith("/inspect/", StringComparison.Ordinal))
         { <ProjectNavigation /> }
-        else { <LegacyProjectNavigation /> }
+        else if (ReadRoute.Mode == "LegacyRollback") { <LegacyProjectNavigation /> }
     </Navigation>
     <ChildContent>
         @Body

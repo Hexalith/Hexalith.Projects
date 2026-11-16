@@ -1,0 +1,33 @@
+<assemblies schema-version="3" id="3d7b9572-737e-4f2c-b6af-9710347305fa" user="administrator" start-rtf="2026-11-16T16:43:23.6677987+00:00" finish-rtf="2026-11-16T16:43:25.9045502+00:00" timestamp="11/16/2026 17:43:25"><assembly environment="64-bit (x64) .NET 11.0.0 [collection-per-class, parallel (collections, 14 threads)]" id="15e477fd-0902-461e-825d-f231c59a5464" name="/home/administrator/projects/hexalith/projects/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll" run-date="2026-11-16" run-time="16:43:23" start-rtf="2026-11-16T16:43:23.6677987+00:00" test-framework="xUnit.net v3 4.0.3+384aa7f0b4" target-framework=".NETCoreApp,Version=v11.0" errors="0" failed="1" finish-rtf="2026-11-16T16:43:25.9045502+00:00" not-run="0" passed="0" skipped="0" time="2.237" time-rtf="00:00:02.2370000" total="1"><collection name="ProjectReadTelemetry" id="e1cb6f14-c87a-4abd-8806-1febfeb84b41" failed="1" not-run="0" passed="0" skipped="0" time="2.126" time-rtf="00:00:02.1260000" total="1"><test id="40fc52b9-166f-4515-a8a3-dcb7541340ee" name="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource" result="Fail" time="2.126" time-rtf="00:00:02.1260000" start-rtf="2026-11-16T16:43:23.7429477+00:00" finish-rtf="2026-11-16T16:43:25.8854677+00:00" type="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests" method="NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource" source-file="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs" source-line="52"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : response.StatusCode
+    should be
+HttpStatusCode.OK
+    but was
+HttpStatusCode.NoContent
+
+Additional Info:
+    statestore/projection:conversations-resolution-selection:d26a82e806f6fe93e66d9e70cb980312c1e9aa10fd8083c1fb76366faaa6b481:7d478e3d64a7736af13479775aac785ea3f66b7cb06467d68e4ea357f7ec68b0 must be a persisted source record</message><stack-trace>   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.&lt;&gt;c__DisplayClass42_0.&lt;&lt;ObserveCutoverMatrixAsync&gt;g__SnapshotAsync|4&gt;d.MoveNext() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.CutoverMatrix.cs:line 250
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.ObserveCutoverMatrixAsync(WebApplication gateway, WebApplication projects, WebApplication folders, WebApplication conversations, GatewayFixtureLocalRoutes routes, GatewayFixtureOwnerHeads heads, String tenant, DateTimeOffset now, ProjectionRequest firstHistory, String daprEndpoint) in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.CutoverMatrix.cs:line 110
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 104
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 106
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 106
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 106
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 106
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)</stack-trace></failure></test></collection></assembly></assemblies>

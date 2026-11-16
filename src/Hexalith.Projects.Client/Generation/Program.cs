@@ -52,6 +52,42 @@ static void NormalizeGeneratedFile(string path)
         string.Empty,
         RegexOptions.Multiline | RegexOptions.CultureInvariant);
 
+    // Additive read metadata must not add abstract requirements to existing IClient implementations.
+    // NSwag remains the generator; this existing normalization stage supplies safe compatibility defaults.
+    int interfaceStart = normalized.IndexOf("public partial interface IClient", StringComparison.Ordinal);
+    int interfaceEnd = interfaceStart < 0 ? -1 : normalized.IndexOf("public partial class Client", interfaceStart, StringComparison.Ordinal);
+    if (interfaceStart >= 0 && interfaceEnd > interfaceStart)
+    {
+        string contract = normalized[interfaceStart..interfaceEnd];
+        contract = Regex.Replace(contract,
+            @"System\.Threading\.Tasks\.Task<(?<result>\w+)> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^;]+)\);",
+            match =>
+            {
+                string parameters = match.Groups["parameters"].Value;
+                string? metadata = parameters.Contains("bool? inspectDescriptiveMetadata", StringComparison.Ordinal) ? "inspectDescriptiveMetadata"
+                    : parameters.Contains("string conversationId", StringComparison.Ordinal) ? "conversationId" : null;
+                if (metadata is null) return match.Value;
+                // Keep the original four-argument CancellationToken call unambiguous for `default`.
+                // New metadata overloads always take an explicit cancellation token.
+                if (!parameters.Contains("System.Threading.CancellationToken cancellationToken", StringComparison.Ordinal)) return string.Empty;
+                string[] names = parameters.Split(',').Select(parameter => parameter.Trim().Split(' ')[^1]).ToArray();
+                string arguments = string.Join(", ", names.Where(name => name != metadata));
+                string guard = metadata == "inspectDescriptiveMetadata" ? "inspectDescriptiveMetadata == true" : "!string.IsNullOrWhiteSpace(conversationId)";
+                string result = match.Groups["result"].Value;
+                string operation = match.Groups["operation"].Value;
+                return match.Value[..^1] + $" => {guard} ? System.Threading.Tasks.Task.FromException<{result}>(new System.NotSupportedException(\"Explicit read metadata requires an updated client implementation.\")) : {operation}Async({arguments});";
+            }, RegexOptions.CultureInvariant);
+        normalized = normalized[..interfaceStart] + contract + normalized[interfaceEnd..];
+    }
+
+    normalized = Regex.Replace(normalized,
+        @"public virtual System\.Threading\.Tasks\.Task<\w+> (?<operation>ListProjects|GetProject|GetProjectContext|GetProjectContextExplanation|GetConversationStartSetup|RefreshProjectContext)Async\((?<parameters>[^)]+)\)\s*\{\s*return \k<operation>Async\([^;]+System\.Threading\.CancellationToken.None\);\s*\}",
+        match => match.Groups["parameters"].Value.Contains("inspectDescriptiveMetadata", StringComparison.Ordinal)
+            || match.Groups["parameters"].Value.Contains("conversationId", StringComparison.Ordinal) ? string.Empty : match.Value,
+        RegexOptions.CultureInvariant);
+
+    normalized = Regex.Replace(normalized, "[ \t]+$", string.Empty, RegexOptions.Multiline | RegexOptions.CultureInvariant);
+
     if (!normalized.EndsWith('\n'))
     {
         normalized += "\n";

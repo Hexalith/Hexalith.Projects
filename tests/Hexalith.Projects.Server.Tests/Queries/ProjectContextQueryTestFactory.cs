@@ -21,6 +21,8 @@ using Microsoft.Extensions.Hosting;
 /// <summary>Builds the supported Project Context query executor with a production-shaped callback principal.</summary>
 internal static class ProjectContextQueryTestFactory
 {
+    internal static DateTimeOffset ComputationTime { get; } = new(2026, 11, 16, 12, 0, 0, TimeSpan.Zero);
+
     /// <summary>Creates an executor whose complete authorization chain allows valid test evidence.</summary>
     public static ProjectContextQueryExecutor Create(
         IReadModelStore readModelStore,
@@ -40,7 +42,7 @@ internal static class ProjectContextQueryTestFactory
             readModelStore,
             authorizationGate,
             principalBinding,
-            new ProjectContextInclusionPolicy());
+            new ProjectContextInclusionPolicy(), new CurrentProjectConversationMembership(), new ProjectReadTestClock(ComputationTime));
     }
 
     /// <summary>Creates a production-shaped callback principal binding for query-handler tests.</summary>

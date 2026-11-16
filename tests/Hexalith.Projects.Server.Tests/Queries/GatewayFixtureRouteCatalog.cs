@@ -12,6 +12,7 @@ using Hexalith.Folders.Contracts;
 using Hexalith.Folders.Server.Queries;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Server.Queries;
+using Hexalith.Projects.Server;
 
 /// <summary>Commits only the query routes exercised by an isolated gateway fixture.</summary>
 /// <param name="tenant">The only tenant served by this fixture's committed routes.</param>
@@ -74,6 +75,11 @@ internal sealed class GatewayFixtureRouteCatalog(string tenant, bool includeAdvi
         ];
         if (includeAdvisoryQueries)
         {
+            queries.Add(("projects-context", "projects", ProjectsServerModule.GetProjectContextQueryType, typeof(GetProjectContextQueryHandler), typeof(GetProjectContextQuery), typeof(ProjectContextReadResponse), false));
+            queries.Add(("projects-start", "projects", ProjectsServerModule.GetConversationStartSetupQueryType, typeof(GetConversationStartSetupQueryHandler), typeof(GetConversationStartSetupQuery), typeof(ConversationStartSetupResponse), false));
+            queries.Add(("projects-explain", "projects", ProjectsServerModule.ExplainContextSelectionQueryType, typeof(ExplainContextSelectionQueryHandler), typeof(ExplainContextSelectionQuery), typeof(ExplainContextSelectionResponse), false));
+            queries.Add(("conversations-native-detail", "conversations", GetConversationQuery.QueryType, typeof(GetConversationDomainQueryHandler),
+                typeof(GetConversationQuery).Assembly.GetType("Hexalith.Conversations.Contracts.Queries.GetConversationPayload")!, typeof(ConversationDetailResult), false));
             queries.Add(("projects-suggest-conversation", "projects", ResolveProjectFromConversationQuery.QueryType, typeof(ResolveProjectFromConversationQueryHandler), typeof(ResolveProjectFromConversationQuery), typeof(ProjectAdvisoryResolutionResponse), false));
             queries.Add(("projects-suggest-attachments", "projects", ResolveProjectFromAttachmentsQuery.QueryType, typeof(ResolveProjectFromAttachmentsQueryHandler), typeof(ResolveProjectFromAttachmentsQuery), typeof(ProjectAdvisoryResolutionResponse), false));
             queries.Add(("conversations-advisory-metadata", "conversations", GetConversationAdvisoryMetadataQuery.QueryType, typeof(GetConversationAdvisoryMetadataDomainQueryHandler), typeof(GetConversationAdvisoryMetadataQuery), typeof(ConversationAdvisoryMetadataResult), true));
@@ -91,7 +97,8 @@ internal sealed class GatewayFixtureRouteCatalog(string tenant, bool includeAdvi
                     "domain-service", "computed", [], RequiresDelegatedContext: query.Internal));
             RouteOperationContract operation = RouteOperationSchema.Create(
                 declaration, query.Request, query.Result,
-                query.Internal ? "internal" : "public", "agent-eligible", JsonSerializerOptions.Web);
+                query.Internal || query.QueryType == GetConversationQuery.QueryType ? "internal" : "public",
+                query.QueryType == GetConversationQuery.QueryType ? "UI-only" : "agent-eligible", JsonSerializerOptions.Web);
             declarations.Add(declaration);
             operations.Add(operation);
             bindings.Add(new RouteCatalogEntry(declaration.RouteId, 1,

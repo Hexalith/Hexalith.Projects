@@ -21,6 +21,7 @@ using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
@@ -1248,6 +1249,9 @@ public sealed class ProjectsAuthenticationContractTests
         _ = builder.Configuration.AddInMemoryCollection(ValidProductionConfiguration());
         builder.Services.AddProjectsServer();
         builder.Services.AddProjectsServerRuntimeInfrastructure();
+        // Authentication fixtures use a controlled durable-audit seam; the cutover lane separately proves Dapr persistence.
+        builder.Services.RemoveAll<Hexalith.EventStore.Client.Projections.IReadModelStore>();
+        builder.Services.AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelStore, InMemoryProjectReadModelStore>();
         builder.Services.RemoveAll<IProjectDetailReadModel>();
         builder.Services.AddSingleton<InMemoryProjectDetailReadModel>();
         builder.Services.AddSingleton<IProjectDetailReadModel>(static services => services.GetRequiredService<InMemoryProjectDetailReadModel>());
@@ -1389,6 +1393,9 @@ public sealed class ProjectsAuthenticationContractTests
             new ProjectCreated(
                 tenantId, projectId, projectName, "Fixture metadata", "fixture-setup", ProjectLifecycle.Active,
                 actorId, "correlation-fixture", "task-fixture", "idempotency-fixture", "sha256:fixture", DateTimeOffset.UtcNow));
+        services.GetRequiredService<InMemoryProjectDetailReadModel>().Project(tenantId,
+            new ProjectFolderSet(tenantId, projectId, "fixture-folder", new ProjectFolderMetadata("Fixture Folder"), actorId,
+                "correlation-fixture-folder", "task-fixture-folder", "idempotency-fixture-folder", "sha256:fixture-folder", DateTimeOffset.UtcNow));
         ProjectTenantAccessProjection projection = new()
         {
             TenantId = tenantId,
@@ -1412,7 +1419,7 @@ public sealed class ProjectsAuthenticationContractTests
             app,
             token ?? CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5)));
         using HttpResponseMessage response = await client
-            .GetAsync($"/api/v1/projects/{projectId}", TestContext.Current.CancellationToken)
+            .GetAsync($"/api/v1/projects/{projectId}?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -1504,7 +1511,7 @@ public sealed class ProjectsAuthenticationContractTests
         return handler.CreateEncodedJwt(
             new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(subjectClaims),
+                Subject = new ClaimsIdentity(subjectClaims.Append(new Claim("permissions", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission))),
                 Claims = additionalClaims,
                 Issuer = issuer,
                 Audience = audience,

@@ -11,7 +11,12 @@ public sealed class ProjectDetailSource(ProjectReadQueryClient queries) : IProje
         => InspectAsync(projectId, false, false, cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken)
+    public Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken)
+        => InspectAsync(projectId, descriptive, quarantined, null, cancellationToken);
+
+    /// <inheritdoc/>
+    public async Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined,
+        string? conversationId, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectId);
         var initialAuthority = queries.CurrentContext;
@@ -20,9 +25,9 @@ public sealed class ProjectDetailSource(ProjectReadQueryClient queries) : IProje
         if (opened.Value is null || opened.Value.ProjectId != projectId || opened.Value.Snapshot.ResponseState == AdmissionResponseState.Denied)
             return ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"));
         ProjectReadResult<ProjectContextReadResponse> context = await queries.QueryAsync<ProjectContextReadResponse>(projectId,
-            "Hexalith.Projects.Queries.GetProjectContext.v1", new GetProjectContextQuery(projectId), cancellationToken).ConfigureAwait(false);
+            "Hexalith.Projects.Queries.GetProjectContext.v1", new GetProjectContextQuery(projectId) { ConversationId = conversationId }, cancellationToken).ConfigureAwait(false);
         ProjectReadResult<ConversationStartSetupResponse> start = await queries.QueryAsync<ConversationStartSetupResponse>(projectId,
-            "Hexalith.Projects.Queries.GetConversationStartSetup.v1", new GetConversationStartSetupQuery(projectId), cancellationToken).ConfigureAwait(false);
+            "Hexalith.Projects.Queries.GetConversationStartSetup.v1", new GetConversationStartSetupQuery(projectId) { ConversationId = conversationId }, cancellationToken).ConfigureAwait(false);
         var finalAuthority = queries.CurrentContext;
         if (initialAuthority is null || finalAuthority is null
             || initialAuthority.TenantId != finalAuthority.TenantId || initialAuthority.UserId != finalAuthority.UserId

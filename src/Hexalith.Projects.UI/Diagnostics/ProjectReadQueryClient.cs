@@ -1,6 +1,6 @@
 namespace Hexalith.Projects.UI.Diagnostics;
 
-using System.Text.Json;
+using Hexalith.Projects.Client;
 using Microsoft.AspNetCore.Components.Authorization;
 using Hexalith.FrontComposer.Shell.Services.Auth;
 using Hexalith.EventStore.Client.Gateway;
@@ -11,7 +11,7 @@ using Hexalith.Projects.UI.Rendering;
 /// <summary>Adapts supported typed SDK reads using only the current FrontComposer server authority.</summary>
 public sealed class ProjectReadQueryClient(IEventStoreGatewayClient client, IEnumerable<IFrontComposerTenantContextAccessor> contexts, IEnumerable<AuthenticationStateProvider> authentication)
 {
-    private static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web);
+    private readonly ProjectsSupportedReadClient _supportedReads = new(client);
 
     /// <summary>Gets the current validated server authority, including in auth-disabled local startup.</summary>
     public TenantContextSnapshot? CurrentContext
@@ -39,9 +39,7 @@ public sealed class ProjectReadQueryClient(IEventStoreGatewayClient client, IEnu
 
         try
         {
-            SubmitQueryRequest request = new(authority.TenantId, "projects", target, queryType,
-                Payload: JsonSerializer.SerializeToElement(payload, payload.GetType(), PayloadOptions));
-            EventStoreQueryResult<T> response = await client.SubmitQueryAsync<T>(request, null, cancellationToken).ConfigureAwait(false);
+            EventStoreQueryResult<T> response = await _supportedReads.QueryAsync<T>(authority.TenantId, target, queryType, payload, cancellationToken).ConfigureAwait(false);
             // An authority change while the query was pending cannot disclose the previous Tenant's result.
             AuthenticationState current = await provider!.GetAuthenticationStateAsync().ConfigureAwait(false);
             if (contexts.First().Revalidate(authority, "projects-read").Succeeded != true

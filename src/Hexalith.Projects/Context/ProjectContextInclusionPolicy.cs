@@ -156,6 +156,10 @@ public sealed class ProjectContextInclusionPolicy
                 context);
         }
 
+        // Setup's explicit source exclusions apply to every read adapter using this policy.
+        ProjectContextAdmissionAssembler.ApplyExcludedSourceKinds(detail.Setup ?? ProjectSetup.Empty,
+            includedFiles, includedMemories, includedConversations, excluded, evaluations);
+
         // Deterministic ordering across all output lists by (ReferenceKind, ReferenceId) Ordinal.
         ProjectContextReference? singleFolder = includedFolder.FirstOrDefault();
         IReadOnlyList<ProjectContextReference> conversationsOut = SortRefs(includedConversations);

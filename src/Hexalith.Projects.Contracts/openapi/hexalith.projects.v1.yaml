@@ -36,10 +36,12 @@ paths:
         Tenant authority comes from authenticated principal claims and EventStore envelopes, never
         from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected
         if present after authorization.
+        Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning required names.
       parameters:
         - $ref: "#/components/parameters/LifecycleFilter"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/InspectDescriptiveMetadata"
       responses:
         "200":
           description: Authorized metadata-only project choices with freshness evidence.
@@ -168,10 +170,12 @@ paths:
         payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial
         detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header.
         Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning descriptive fields.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/InspectDescriptiveMetadata"
       responses:
         "200":
           description: Metadata-only Open Project body with freshness evidence.
@@ -358,10 +362,12 @@ paths:
         query parameter and is rejected if present after authorization. Internal AssemblyOutcome
         values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP
         boundary (existence-non-inference).
+        Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/ContextConversationId"
       responses:
         "200":
           description: Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.
@@ -424,10 +430,12 @@ paths:
         is not a query parameter and is rejected if present after authorization. Internal
         AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial
         404 at the HTTP boundary (existence-non-inference).
+        Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/ContextConversationId"
       responses:
         "200":
           description: Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.
@@ -494,6 +502,7 @@ paths:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/ContextConversationId"
       responses:
         "200":
           description: Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.
@@ -557,13 +566,17 @@ paths:
         file / memory reference inventory. Consumers that need per-reference inventory or
         exclusion diagnostics call GetProjectContext / GetProjectContextExplanation /
         RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness
-        response header. Idempotency-Key is not a query parameter and is rejected if present after
+        response header (Fresh or Stale) and the exact authorized legacy source global position in
+        X-Hexalith-Projection-Watermark. Authentication at the Gateway remains independent;
+        this handler returns only 200, 400, safe 404 and retryable 503. Idempotency-Key is not a query parameter and is rejected if present after
         authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both
         collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable Setup. Session fallback is deferred.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
+        - $ref: "#/components/parameters/ContextConversationId"
       responses:
         "200":
           description: Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.
@@ -571,7 +584,15 @@ paths:
             X-Correlation-Id:
               $ref: "#/components/headers/CorrelationId"
             X-Hexalith-Freshness:
-              $ref: "#/components/headers/Freshness"
+              description: Actual freshness of the returned setup observation.
+              schema:
+                type: string
+                enum: [Fresh, Stale]
+            X-Hexalith-Projection-Watermark:
+              description: Exact authorized legacy source global position, distinct from the supported aggregate ProjectVersion.
+              schema:
+                type: string
+                pattern: '^[0-9]+$'
           content:
             application/json:
               schema:
@@ -581,12 +602,8 @@ paths:
                   $ref: "#/components/examples/ConversationStartSetup"
                 empty:
                   $ref: "#/components/examples/ConversationStartSetupEmpty"
-        "401":
-          $ref: "#/components/responses/SafeAuthorizationDenial401"
         "400":
           $ref: "#/components/responses/ValidationFailure"
-        "403":
-          $ref: "#/components/responses/SafeAuthorizationDenial403"
         "404":
           $ref: "#/components/responses/SafeAuthorizationDenial404"
         "503":
@@ -1512,6 +1529,9 @@ paths:
       operationId: ResolveProjectFromConversation
       summary: Resolve candidate Projects for a conversation that has no explicit Project.
       description: >
+        Returns only unselected candidate identifiers, ranks, scores and reason codes; names and
+        protected exclusion details are withheld. Stale Tenant authority or incomplete dependency
+        coverage returns the existing 503 response.
         Computes candidate Projects for a project-less conversation by running the Story 4.1
         resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's
         authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no
@@ -1520,11 +1540,10 @@ paths:
         MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived
         is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header.
         Idempotency-Key is not a query parameter and is rejected if present after authorization.
-        Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404
-        (existence-non-inference). A well-formed conversation the caller cannot read in scope
-        (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a
-        non-match and returns NoMatch (200) — the same response as a legitimately project-less
-        conversation — so no cross-tenant existence is leaked.
+        Unauthorized callers, unverifiable tenant evidence and unreadable Conversations collapse
+        to safe-denial 404 (existence-non-inference). Unavailable or degraded Conversation evidence
+        returns 503 rather than asserting an exhaustive NoMatch. A current, readable Conversation
+        with no authorized Project match can legitimately return NoMatch (200).
       parameters:
         - name: conversationId
           in: query
@@ -1592,11 +1611,14 @@ paths:
       operationId: ResolveProjectFromAttachments
       summary: Resolve candidate Projects from attached Project Folder references.
       description: >
+        Returns only unselected candidate identifiers, ranks, scores and reason codes; names and
+        protected exclusion details are withheld. Stale Tenant authority or incomplete dependency
+        coverage returns the existing 503 response. Any File input has unsupported coverage and returns 503.
         Computes candidate Projects for authorized metadata-only Project Folder identifiers.
         File identifiers remain accepted for compatibility but do not score because production File
-        identity mapping is unsupported. A File-only request returns NoMatch (200); the legacy
-        response has no incomplete or unsupported-coverage fields, so that result does not prove
-        that no Project matches the File. Runs the existing resolution engine over Projects-owned
+        identity mapping is unsupported. A File-only or mixed File/Folder request returns 503;
+        the legacy response cannot represent incomplete or unsupported coverage. Runs the existing
+        resolution engine over Projects-owned
         reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event,
         projection, state, or resolution trace and returns no 202 — only the later
         ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate /
@@ -1605,8 +1627,9 @@ paths:
         and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter
         and is rejected if present after authorization. Unauthorized callers, unverifiable tenant
         evidence, and missing or malformed attachment identifiers collapse to safe-denial 404
-        (existence-non-inference). A well-formed attachment that no authorized Project references is
-        a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        (existence-non-inference). A supported Folder-only request with current coverage and no
+        authorized Project match can legitimately return NoMatch (200), without creating a
+        cross-tenant or nonexistent Folder oracle.
       parameters:
         - name: folderId
           in: query
@@ -1857,6 +1880,22 @@ components:
         evaluated.
       openIdConnectUrl: https://oidc.invalid/.well-known/openid-configuration
   parameters:
+    InspectDescriptiveMetadata:
+      name: inspectDescriptiveMetadata
+      in: query
+      required: false
+      description: Explicit opt-in to separately authorized, durably audited descriptive inspection.
+      schema:
+        type: boolean
+        default: false
+    ContextConversationId:
+      name: conversationId
+      in: query
+      required: false
+      description: Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.
+      schema:
+        type: string
+
     IdempotencyKey:
       name: Idempotency-Key
       in: header

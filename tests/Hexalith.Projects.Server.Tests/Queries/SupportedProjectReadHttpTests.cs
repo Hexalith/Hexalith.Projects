@@ -247,7 +247,7 @@ public sealed partial class SupportedProjectReadHttpTests
         });
     }
 
-    private static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false, IProjectAdvisoryConversationDirectory? conversations = null)
+    private static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false, IProjectAdvisoryConversationDirectory? conversations = null, Action<IServiceCollection>? configure = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = "Production" });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -259,6 +259,8 @@ public sealed partial class SupportedProjectReadHttpTests
             ["Authentication:JwtBearer:Audience"] = Audience, ["Authentication:JwtBearer:RequireHttpsMetadata"] = "true",
         });
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         if (conversations is not null)
         {
             builder.Services.RemoveAll<IProjectAdvisoryConversationDirectory>();
@@ -295,6 +297,7 @@ public sealed partial class SupportedProjectReadHttpTests
             OpenIdConnectConfiguration oidc = new() { Issuer = Issuer }; oidc.SigningKeys.Add(key);
             options.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(oidc);
         });
+        configure?.Invoke(builder.Services);
         WebApplication app = builder.Build();
         ProjectTenantAccessProjection tenant = new() { TenantId = "tenant-a", Enabled = true, Watermark = 1, ProjectionWatermark = "tenant-a:1", LastEventTimestamp = clock.Now };
         tenant.Principals["actor-1"] = new("actor-1", "TenantOwner");
@@ -304,7 +307,7 @@ public sealed partial class SupportedProjectReadHttpTests
         return app;
     }
 
-    private static string Token(SecurityKey key)
+    private static string Token(SecurityKey key, bool inspection = true, string role = "TenantOperator")
     {
         JwtSecurityTokenHandler handler = new(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor
@@ -313,9 +316,9 @@ public sealed partial class SupportedProjectReadHttpTests
             SigningCredentials = new(key, SecurityAlgorithms.RsaSha256),
             Subject = new ClaimsIdentity([
                 new("sub", "actor-1"), new("tenant_id", "tenant-a"), new("azp", "operator-web"), new("client_id", "issuing-client"),
-                new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"), new("projects:role", "TenantOperator"),
+                new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"), new("projects:role", role),
                 new("eventstore:permission", ProjectAuthorizationGate.ReadProjectAction), new("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction),
-                new("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission),
+                .. (inspection ? new[] { new Claim("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission) } : Array.Empty<Claim>()),
             ]),
         });
     }

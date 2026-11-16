@@ -48,7 +48,11 @@ public sealed record ProjectMaintenanceActionExecutionRequest(
     string? TransientFolderId,
     string? TransientWorkspaceId,
     string? TransientFilePath,
-    string ExpectedAuditOperation);
+    string ExpectedAuditOperation)
+{
+    /// <summary>Gets the explicitly named native Conversation used only for context recomputation.</summary>
+    public string? ConversationId { get; init; }
+}
 
 /// <summary>Safe metadata-only maintenance execution result.</summary>
 /// <param name="Succeeded">Whether the final projection/audit confirmation was observed.</param>
@@ -149,11 +153,12 @@ public sealed class ProjectMaintenanceActionSource(Hexalith.Projects.Client.Gene
             {
                 // Re-evaluate is a read-only recompute over the existing RefreshProjectContext query. It
                 // submits no command, persists no trace/score/state, and emits no audit event.
-                await _client.RefreshProjectContextAsync(
-                    request.ProjectId,
-                    correlationId,
-                    Hexalith.Projects.Client.Generated.ReadConsistencyClass.Eventually_consistent,
-                    cancellationToken).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(request.ConversationId))
+                    await _client.RefreshProjectContextAsync(request.ProjectId, correlationId,
+                        Hexalith.Projects.Client.Generated.ReadConsistencyClass.Eventually_consistent, cancellationToken).ConfigureAwait(false);
+                else
+                    await _client.RefreshProjectContextAsync(request.ProjectId, correlationId,
+                        Hexalith.Projects.Client.Generated.ReadConsistencyClass.Eventually_consistent, request.ConversationId, cancellationToken).ConfigureAwait(false);
                 return ProjectMaintenanceActionExecutionResult.Reloaded(correlationId, taskId);
             }
 

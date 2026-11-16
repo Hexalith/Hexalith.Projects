@@ -1,0 +1,18 @@
+@page "/"
+@page "/projects"
+@page "/projects/warnings"
+@using Hexalith.Projects.Client
+@inject ProjectsReadRouteSelection ReadRoute
+
+@if (ReadRoute.Mode == "Supported")
+{
+    <Home />
+}
+else if (ReadRoute.Mode == "LegacyRollback")
+{
+    <LegacyHome />
+}
+else
+{
+    <FluentText role="status">Project reads are unavailable.</FluentText>
+}

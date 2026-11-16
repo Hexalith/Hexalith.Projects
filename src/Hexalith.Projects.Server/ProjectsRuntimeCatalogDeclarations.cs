@@ -114,15 +114,12 @@ public static class ProjectsRuntimeCatalogDeclarations
         new(typeof(ProjectProjectionHandler).FullName!, "exact", [ProjectsServerModule.ProjectionType], "domain-service", null,
             [ProjectsServerModule.ProjectionType]));
 
-    private static Type QueryResultType(string type) => type switch
+    private static Type QueryResultType(string type)
     {
-        ProjectsServerModule.GetConversationStartSetupQueryType => typeof(ConversationStartSetupResponse),
-        ProjectsServerModule.GetProjectContextQueryType => typeof(ProjectContextReadResponse),
-        ProjectsServerModule.ExplainContextSelectionQueryType => typeof(ExplainContextSelectionResponse),
-        _ when type == ResolveProjectChatBotAuthority.QueryType => typeof(ProjectChatBotAuthorityResult),
-        ListProjectsQuery.QueryType => typeof(ProjectListPage),
-        GetProjectQuery.QueryType => typeof(GetProjectResponse),
-        ResolveProjectFromConversationQuery.QueryType or ResolveProjectFromAttachmentsQuery.QueryType => typeof(ProjectAdvisoryResolutionResponse),
-        _ => throw new InvalidOperationException("An installed Projects query has no result schema."),
-    };
+        if (type == ResolveProjectChatBotAuthority.QueryType) return typeof(ProjectChatBotAuthorityResult);
+        return typeof(ListProjectsQuery).Assembly.GetTypes()
+            .Select(query => query.GetCustomAttributes(typeof(Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute), false)
+                .Cast<Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute>().SingleOrDefault())
+            .Single(contract => contract?.QueryType == type)!.ResultType;
+    }
 }

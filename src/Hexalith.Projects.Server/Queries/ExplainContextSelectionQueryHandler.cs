@@ -45,9 +45,10 @@ public sealed class ExplainContextSelectionQueryHandler(ProjectContextQueryExecu
             return QueryResult.Failure("safe-denial");
         }
 
+        if (query.Paging is not null) return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
+
         return QueryResult.FromPayload(
-            JsonSerializer.SerializeToElement(admission.ToExplanation(), JsonOptions),
-            QueryType);
+            JsonSerializer.SerializeToElement(admission.ToExplanation(), JsonOptions));
     }
 
     private static bool TryReadProjectId(QueryEnvelope query, out string projectId)

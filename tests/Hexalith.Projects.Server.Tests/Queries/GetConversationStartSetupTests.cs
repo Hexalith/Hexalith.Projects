@@ -71,7 +71,8 @@ public sealed partial class GetConversationStartSetupTests
 
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             response.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
-            response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("eventually_consistent");
+            response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("Fresh");
+            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldNotBeNullOrWhiteSpace();
 
             using JsonDocument document = JsonDocument.Parse(body);
             document.RootElement.GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
@@ -381,7 +382,8 @@ public sealed partial class GetConversationStartSetupTests
 
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             response.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
-            response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("eventually_consistent");
+            response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("Fresh");
+            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldNotBeNullOrWhiteSpace();
         }
         finally
         {
@@ -656,9 +658,30 @@ public sealed partial class GetConversationStartSetupTests
         }
     }
 
+    [Fact]
+    public async Task RetryableAuthorizationWithNonUnavailableReasonReturns503WithoutDisclosure()
+    {
+        ProjectReadTestAuthorization validator = new()
+        {
+            Decision = _ => new EventStoreAuthorizationValidationResult(
+                EventStoreAuthorizationValidationStatus.Denied, "transient-private-reason", null, "fresh", Retryable: true),
+        };
+        WebApplication app = await StartAppAsync("tenant-a", "principal-a", null, eventStoreValidator: validator).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(StartSetupRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldNotContain("transient-private-reason");
+        }
+        finally { await StopAsync(app).ConfigureAwait(true); }
+    }
+
     private static HttpRequestMessage StartSetupRequest(string? url = null)
     {
         HttpRequestMessage request = new(HttpMethod.Get, url ?? $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start");
+        if (request.RequestUri is { } uri)
+            request.RequestUri = new Uri(uri.OriginalString + (uri.OriginalString.Contains('?') ? "&" : "?") + "conversationId=bound-conversation", UriKind.RelativeOrAbsolute);
         request.Headers.Add("X-Correlation-Id", CorrelationIdValue);
         return request;
     }
@@ -677,13 +700,17 @@ public sealed partial class GetConversationStartSetupTests
         IProjectMemoryDirectory? memoryDirectoryOverride = null,
         TimeProvider? timeProvider = null,
         string? existingVary = null,
-        bool allowList = false)
+        bool allowList = false,
+        IProjectEventStoreAuthorizationValidator? eventStoreValidator = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
-        builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
+        if (eventStoreValidator is null) builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
+        else builder.Services.AddSingleton(eventStoreValidator);
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
@@ -736,7 +763,7 @@ public sealed partial class GetConversationStartSetupTests
             Description: "metadata-only conversation start",
             SetupMetadata: null,
             Setup: setup,
-            ProjectFolder: null,
+            ProjectFolder: new ProjectFolderReference("folder-1", "Folder", ReferenceState.Included, null, DateTimeOffset.UnixEpoch),
             FileReferences: [],
             MemoryReferences: [],
             Lifecycle: lifecycle,
@@ -770,6 +797,12 @@ public sealed partial class GetConversationStartSetupTests
             });
         }
 
+        app.Use(async (context, next) =>
+        {
+            context.User.AddIdentity(new System.Security.Claims.ClaimsIdentity(
+                [new System.Security.Claims.Claim("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission)], "fixture"));
+            await next(context).ConfigureAwait(false);
+        });
         app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
         return app;

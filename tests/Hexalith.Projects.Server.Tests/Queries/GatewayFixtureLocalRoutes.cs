@@ -12,6 +12,8 @@ internal sealed class GatewayFixtureLocalRoutes
         public bool TamperNextProjectQuery { get; set; }
         public bool HumanBearerForwarded { get; set; }
         public int OwnerQueries { get; set; }
+        /// <summary>Gets the actual serialized Gateway-to-Projects envelopes observed on the existing transport.</summary>
+        public ConcurrentQueue<Hexalith.EventStore.Contracts.Queries.QueryEnvelope> ProjectQueries { get; } = new();
         public ConcurrentQueue<string> TransportResponses { get; } = new();
         public void Add(string name, WebApplication app) => Hosts[name] = new Uri(app.Urls.Single());
     }

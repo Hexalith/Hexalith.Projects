@@ -21,6 +21,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 IHttpClientBuilder gatewayClient = builder.Services.AddEventStoreGatewayClient(options =>
     options.BaseAddress = new Uri(builder.Configuration["EventStore:GatewayAddress"] ?? "http://eventstore"));
+builder.Services.AddProjectsSupportedReads();
+builder.Services.AddProjectsReadRouting();
 builder.Services.AddScoped<ProjectReadQueryClient>();
 builder.Services.AddScoped<ILegacyProjectInventorySource, LegacyProjectInventorySource>();
 builder.Services.AddScoped<ILegacyProjectWarningsDashboardSource, LegacyProjectWarningsDashboardSource>();
@@ -47,6 +49,7 @@ bool authEnabled = builder.Services.AddProjectsUiSecurity(builder.Configuration,
 if (authEnabled) _ = gatewayClient.AddFrontComposerGatewayAuthorization();
 
 WebApplication app = builder.Build();
+_ = app.Services.GetRequiredService<ProjectsReadRouteSelection>();
 
 app.MapStaticAssets();
 app.UseStaticFiles();

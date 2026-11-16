@@ -1,0 +1,149 @@
+{
+  "sourceEditsStopped": true,
+  "scope": "Review patch; full verification and final acceptance packet remain with parent workflow.",
+  "sourceFiles": [
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs",
+      "sha256": "62e77153049940634333e188277d71a128c0db3a5ba79b89f27589e030981a9f"
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+      "sha256": "4159fe890fe58e6903e48271fe14be9e026a58661cabc03c3fa8e6537b7f6c14"
+    },
+    {
+      "path": "src/Hexalith.Projects.UI/Components/Pages/LegacyProjectDiagnostics.razor",
+      "sha256": "edc667dbcd34a8b50854517aa609d07a40046890a9fdc23da7bb32d0b50bf7c9"
+    },
+    {
+      "path": "src/Hexalith.Projects.Testing/Reads/ReadCutoverObservation.cs",
+      "sha256": "14c2f13f7f84891b30206de864cf73b5e260805126e275d47448044d01ac1a13"
+    },
+    {
+      "path": "src/Hexalith.Projects.Testing/Reads/ReadCutoverComparator.cs",
+      "sha256": "dd979591c21daf1bf0bb49a6ec94442b64a63befc1df3d847b89327a07053c7c"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs",
+      "sha256": "5df32b9c238e95c6f3aa2769603d0d78a631234e674500f1a588cbaf6353b52c"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs",
+      "sha256": "16045acbea112e1f52fd314ffe3f70aecb050b6a372273fea173ab2b5f9566bf"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.CutoverMatrix.cs",
+      "sha256": "6698fa52d1b48dc4afd22f40bf7e4a9e28763ad7d0e774c16d1f5e817f835962"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ReadCutoverTests.cs",
+      "sha256": "70a91f71e9e9a137c3d47e642d3d77340ff98da531a36ee0e1445fc47fd4f316"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadHttpTests.ReviewRepairs.cs",
+      "sha256": "45185b11d927e978d97d66e0f52abf6c841c768006d546cb16aa23c98cd5ef19"
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/CutoverReviewDetailReadModel.cs",
+      "sha256": "6e715877d3e3c39ba7ccbdeeec10523dd483d82f48e9dc71c5ce836587687265"
+    },
+    {
+      "path": "tests/Hexalith.Projects.UI.Tests/Components/ProjectDetailPageTests.cs",
+      "sha256": "6571cebe25e6fb33adbf682a3cdfef69c0f4c80f5a3f8d554eb6af7c11f6d28a"
+    },
+    {
+      "path": "tests/Hexalith.Projects.UI.Tests/Components/SupportedProjectReadPageTests.cs",
+      "sha256": "a586f6fd6841f059f771edbd4f7f1bf9a919dd759500da963d5746bdad661750"
+    }
+  ],
+  "whitespace": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs",
+      "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+      "src/Hexalith.Projects.UI/Components/Pages/LegacyProjectDiagnostics.razor",
+      "src/Hexalith.Projects.Testing/Reads/ReadCutoverObservation.cs",
+      "src/Hexalith.Projects.Testing/Reads/ReadCutoverComparator.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLocalRoutes.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureLoopbackHandler.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.CutoverMatrix.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/ReadCutoverTests.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadHttpTests.ReviewRepairs.cs",
+      "tests/Hexalith.Projects.Server.Tests/Queries/CutoverReviewDetailReadModel.cs",
+      "tests/Hexalith.Projects.UI.Tests/Components/ProjectDetailPageTests.cs",
+      "tests/Hexalith.Projects.UI.Tests/Components/SupportedProjectReadPageTests.cs"
+    ],
+    "exitCode": 0
+  },
+  "passingNativeReceipts": [
+    {
+      "path": "server-review-list-final.xml",
+      "sha256": "6bc5d0316ea9c95b3f0f0f5468580e96e1c1c3d2393268999e6b28fad884a339",
+      "passed": 6,
+      "total": 6,
+      "actualAssemblyPath": "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+    },
+    {
+      "path": "read-cutover-controls-final.xml",
+      "sha256": "61a6005e56f502f5c23a30ab8b8598527f843dbbf888ca60a029ee432232f468",
+      "passed": 30,
+      "total": 30,
+      "actualAssemblyPath": "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+    },
+    {
+      "path": "gateway-review-matrix-final.xml",
+      "sha256": "82c825286a26e6b0757739a7f07004f975b44ff52ddea28ef4022ca4222d749f",
+      "passed": 1,
+      "total": 1,
+      "actualAssemblyPath": "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll"
+    },
+    {
+      "path": "ui-legacy-binding-final.xml",
+      "sha256": "0e469e0a12ddaedb5975a84ea7aaa17575ef6aaf2aa7cff6e131c151caf0ae9e",
+      "passed": 1,
+      "total": 1,
+      "actualAssemblyPath": "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll"
+    },
+    {
+      "path": "ui-real-detail-source-final.xml",
+      "sha256": "1fe37997ef740fae95574064c336c1e43e17487929f12a9c34d14d1eadf1bc62",
+      "passed": 21,
+      "total": 21,
+      "actualAssemblyPath": "/tmp/hexalith-job.JjjvueIE/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll"
+    }
+  ],
+  "otherTargetedPassingCases": {
+    "provisionalXml": "server-review-repairs-3.xml",
+    "passingTestNames": [
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ReviewPreregisteredFoldersEndpointStillUsesV1AndWithholdsStaleFolderEvidence(stale: \\\"lifecycle\\\")",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ReviewPreregisteredFoldersEndpointStillUsesV1AndWithholdsStaleFolderEvidence(stale: \\\"permissions\\\")",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ReviewLegacyPendingHistoricalFolderIdUsesTheSupportedQuarantineBoundary",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ReviewRuntimeCompositionPreservesAnExplicitCustomFolderDirectory"
+    ],
+    "note": "Four additional regressions passed in this provisional run; its separate stale-status test expectation was corrected and the final6-case list theory rerun. Provisional failing XML is not an activation receipt."
+  },
+  "matrixCells": 77,
+  "missingTargetOrValidEmptySubcases": 7,
+  "normalizationExpanded": false,
+  "cleanup": [
+    {
+      "ownedPid": 59008,
+      "reaped": true,
+      "productionAcceptance": false,
+      "scratch": "/tmp/hexalith-job.JjjvueIE",
+      "scratchRemoved": true,
+      "processAbsent": true
+    },
+    {
+      "ownedPid": 43939,
+      "reaped": true,
+      "productionAcceptance": false,
+      "scratch": "/tmp/hexalith-job.HBx4AKCF",
+      "scratchRemoved": true,
+      "processAbsent": true
+    }
+  ],
+  "rootArtifactsPreserved": true
+}

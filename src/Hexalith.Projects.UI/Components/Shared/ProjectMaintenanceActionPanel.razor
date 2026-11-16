@@ -119,6 +119,9 @@
     public string TenantScope { get; set; } = "server-derived tenant";
 
     [Parameter]
+    public string? ConversationId { get; set; }
+
+    [Parameter]
     public EventCallback OnSucceeded { get; set; }
 
     private string _action = ProjectMaintenanceActions.Archive;
@@ -383,7 +386,7 @@
                 null,
                 null,
                 null,
-                ExpectedAuditOperation),
+                ExpectedAuditOperation) { ConversationId = ConversationId },
             lifecycleProgress,
             CancellationToken.None).ConfigureAwait(true);
 

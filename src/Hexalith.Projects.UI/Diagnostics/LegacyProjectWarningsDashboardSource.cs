@@ -38,7 +38,7 @@ public sealed class LegacyProjectWarningsDashboardSource(IClient client) : ILega
                 ToGeneratedLifecycle(lifecycle),
                 correlationId,
                 ReadConsistencyClass.Eventually_consistent,
-                cancellationToken).ConfigureAwait(false);
+                inspectDescriptiveMetadata: true, cancellationToken).ConfigureAwait(false);
             ProjectListItem[] visibleProjects = response.Items.ToArray();
             projects = visibleProjects
                 .Select(item => ToProjection(item, response.Freshness))

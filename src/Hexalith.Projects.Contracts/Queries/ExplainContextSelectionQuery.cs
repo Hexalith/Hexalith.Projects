@@ -7,4 +7,9 @@ namespace Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Identifies the supported Explain Context Selection query.</summary>
 /// <param name="ProjectId">The opaque Project identifier targeted by the query.</param>
-public sealed record ExplainContextSelectionQuery(string ProjectId);
+[Hexalith.EventStore.Contracts.Queries.QueryResultContract(typeof(ExplainContextSelectionResponse), "projects", "Hexalith.Projects.Queries.ExplainContextSelection.v1")]
+public sealed record ExplainContextSelectionQuery(string ProjectId)
+{
+    /// <summary>Gets the named Conversation whose current native membership authorizes context use.</summary>
+    public string? ConversationId { get; init; }
+}

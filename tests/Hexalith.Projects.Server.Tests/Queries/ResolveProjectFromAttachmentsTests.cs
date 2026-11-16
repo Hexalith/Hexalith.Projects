@@ -75,10 +75,9 @@ public sealed class ResolveProjectFromAttachmentsTests
             url: $"/api/v1/projects/resolution/from-attachments?fileId={FileId}",
             rows: [Row(ProjectAId, Reference(AttachmentKind.File, FileId))]).ConfigureAwait(true);
 
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
         using JsonDocument document = JsonDocument.Parse(response.Body);
-        document.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
-        document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
+        document.RootElement.TryGetProperty("result", out _).ShouldBeFalse();
     }
 
     [Fact]
@@ -336,13 +335,16 @@ public sealed class ResolveProjectFromAttachmentsTests
         EndpointResponse response = await SendAsync(
             rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId, state: degraded))]).ConfigureAwait(true);
 
+        if (degraded is ReferenceState.Stale or ReferenceState.Unavailable)
+        {
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            return;
+        }
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         using JsonDocument document = JsonDocument.Parse(response.Body);
         document.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
         document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
-        JsonElement excluded = document.RootElement.GetProperty("excluded");
-        excluded.GetArrayLength().ShouldBeGreaterThan(0);
-        excluded[0].GetProperty("projectId").GetString().ShouldBe(ProjectAId);
+        document.RootElement.GetProperty("excluded").GetArrayLength().ShouldBe(0);
     }
 
     [Fact]
@@ -491,9 +493,9 @@ public sealed class ResolveProjectFromAttachmentsTests
     {
         var result = await SendAsync(url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}&fileId={FileId}",
             rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId)), Row(ProjectBId, Reference(AttachmentKind.File, FileId, projectId: ProjectBId))]);
-        result.StatusCode.ShouldBe(HttpStatusCode.OK); result.Body.ShouldNotContain(ProjectBId);
+        result.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable); result.Body.ShouldNotContain(ProjectBId);
         using var body = JsonDocument.Parse(result.Body);
-        body.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
+        body.RootElement.TryGetProperty("result", out _).ShouldBeFalse();
     }
 
     private static async Task<EndpointResponse> SendAsync(

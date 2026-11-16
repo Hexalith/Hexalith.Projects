@@ -61,7 +61,7 @@ public sealed class AdmissionSnapshotTests
     }
 
     [Fact]
-    public void ConversationStartCompatibilityProjection_PreservesFrozenStory62Snapshot()
+    public void ConversationStartProjection_PreservesPartialAndOptionalOmissionEvidence()
     {
         AdmissionSnapshot snapshot = new(
             AdmissionResponseState.Partial,
@@ -79,10 +79,10 @@ public sealed class AdmissionSnapshotTests
 
         ConversationStartAdmissionSnapshot projected = ConversationStartAdmissionSnapshot.FromShared(snapshot);
 
-        projected.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        projected.ResponseState.ShouldBe(ConversationStartResponseState.Partial);
         projected.Components.Select(static component => component.Name).ShouldBe(
-            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
-        projected.RecoveryActions.ShouldBeEmpty();
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization", "References"]);
+        projected.RecoveryActions.ShouldBe([AdmissionRecoveryAction.SelectAlternative]);
     }
 
     [Fact]

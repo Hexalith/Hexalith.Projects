@@ -1,0 +1,249 @@
+[
+  {
+    "label": "session-source-mapping",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net11.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/hexalith-job.KxPHWl0m/prepared",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "native-transport-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "native-transport-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "native-transport-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/native-transport-2.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.NativeConversationMembershipTransportTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "server-regression-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "server-regression-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/server-regression-2.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "client-compatibility-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "auth-inspection-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "auth-inspection-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/auth-inspection-3.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Authentication.ProjectsAuthenticationContractTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  },
+  {
+    "label": "binding-and-audit-3-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "binding-and-audit-3-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/binding-and-audit-3.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "client-compatibility-2-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "client-compatibility-2-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Client.Tests/debug/Hexalith.Projects.Client.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/client-compatibility-2.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "auth-inspection-4-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "auth-inspection-4-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/auth-inspection-4.xml",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Authentication.ProjectsAuthenticationContractTests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-routing-1-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 0
+  },
+  {
+    "label": "ui-routing-1-tests",
+    "command": [
+      "dotnet",
+      "/tmp/hexalith-job.KxPHWl0m/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v2/ui-routing-1.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1
+  }
+]

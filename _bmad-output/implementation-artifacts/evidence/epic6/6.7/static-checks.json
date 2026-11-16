@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.7"
+    ],
+    "exitCode": 0,
+    "output": "PASS: Story 6.7 is within production authority\n"
+  },
+  {
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "exitCode": 0,
+    "output": "PASS: production-authority index is [6, 7, 8]\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "git",
+      "-C",
+      "references/Hexalith.EventStore",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "output": ""
+  }
+]

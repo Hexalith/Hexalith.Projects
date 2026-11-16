@@ -36,3 +36,8 @@ tools/qualification/run_g6_current.py whitespace=cr-at-eol
 # Preserve Story 6.6 native receipts and hash-bound artifact verification inputs byte for byte.
 _bmad-output/implementation-artifacts/evidence/epic6/6.6/** -text -whitespace
 _bmad-output/implementation-artifacts/evidence/epic6/6.6-cli-read-surface.trx -text -whitespace
+
+# Retain Story 6.7 native receipts, failed attempts and exact verification commands.
+_bmad-output/implementation-artifacts/evidence/epic6/6.7/** -text -whitespace
+_bmad-output/implementation-artifacts/evidence/epic6/6.7-read-cutover.json -text -whitespace
+_bmad-output/implementation-artifacts/evidence/epic6/6.7-rollback.log -text -whitespace

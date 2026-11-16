@@ -7,7 +7,7 @@ namespace Hexalith.Projects.Contracts.Queries;
 
 /// <summary>AD-32 response snapshot governing Conversation-start setup usability.</summary>
 /// <param name="ResponseState">The aggregate response state.</param>
-/// <param name="AsOf">The persisted read-model observation instant.</param>
+/// <param name="AsOf">The current authorization and evidence computation instant; component observations remain separate.</param>
 /// <param name="ProjectVersion">The authorized Project read-model version.</param>
 /// <param name="Components">Metadata-only component evidence.</param>
 /// <param name="RecoveryActions">Bounded recovery actions.</param>
@@ -29,7 +29,7 @@ public sealed record ConversationStartAdmissionSnapshot(
             snapshot.ResponseState switch
             {
                 AdmissionResponseState.Complete => ConversationStartResponseState.Complete,
-                AdmissionResponseState.Partial => ConversationStartResponseState.Complete,
+                AdmissionResponseState.Partial => ConversationStartResponseState.Partial,
                 AdmissionResponseState.Unavailable => ConversationStartResponseState.Unavailable,
                 AdmissionResponseState.Denied => ConversationStartResponseState.Denied,
                 _ => throw new ArgumentOutOfRangeException(nameof(snapshot)),
@@ -37,15 +37,16 @@ public sealed record ConversationStartAdmissionSnapshot(
             snapshot.AsOf,
             snapshot.ProjectVersion,
             snapshot.Components
-                .Where(static component => component.Name is
-                    "Project" or "Folder" or "Setup" or "FirstResponseAuthorization")
+                .Where(component => component.Name is
+                    "Project" or "Folder" or "Setup" or "FirstResponseAuthorization"
+                    || (snapshot.ResponseState == AdmissionResponseState.Partial && component.Name == "References"))
                 .Select(static component => new ConversationStartComponent(
                     component.Name,
                     component.Included,
                     component.Freshness,
                     component.Reason))
                 .ToArray(),
-            snapshot.ResponseState is AdmissionResponseState.Complete or AdmissionResponseState.Partial
+            snapshot.ResponseState == AdmissionResponseState.Complete
                 ? []
                 : snapshot.RecoveryActions.ToArray());
     }

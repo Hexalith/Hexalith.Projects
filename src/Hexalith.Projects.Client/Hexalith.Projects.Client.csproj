@@ -13,6 +13,14 @@
     <None Include="Generation\Program.cs" Pack="false" />
     <HexalithProjectsHelperGeneratorInput Include="Generation\Shared\**\*.cs;Generation\Shared\*.csproj" Exclude="Generation\Shared\bin\**;Generation\Shared\obj\**" />
   </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.Client/Hexalith.EventStore.Client.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)/src/Hexalith.EventStore.RestApi.Generators/Hexalith.EventStore.RestApi.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+    <PackageReference Include="Hexalith.EventStore.Client" />
+    <PackageReference Include="Hexalith.EventStore.RestApi.Generators" PrivateAssets="all" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NSwag.MSBuild" PrivateAssets="all" />
@@ -44,17 +52,18 @@
     <HexalithProjectsDotnetHostFile Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</HexalithProjectsDotnetHostFile>
     <HexalithProjectsDotnetHostFile Condition="'$(OS)' != 'Windows_NT'">dotnet</HexalithProjectsDotnetHostFile>
     <HexalithProjectsDotnetHostPath>$([System.IO.Path]::GetFullPath('$(MSBuildToolsPath)/../../$(HexalithProjectsDotnetHostFile)'))</HexalithProjectsDotnetHostPath>
+    <HexalithProjectsHelperArtifactsArgument Condition="'$(ArtifactsPath)' != ''">--artifacts-path &quot;$(ArtifactsPath)&quot;</HexalithProjectsHelperArtifactsArgument>
   </PropertyGroup>
   <Target Name="GenerateHexalithProjectsClient"
           BeforeTargets="BeforeCompile"
-          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)/Generation/Program.cs"
           Outputs="$(HexalithProjectsGeneratedClient)"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <MakeDir Directories="$(MSBuildProjectDirectory)/Generated" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
           Command="$(NSwagExe_Net110) run nswag.json /variables:Configuration=$(Configuration)" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --normalize-file &quot;$(HexalithProjectsGeneratedClient)&quot;" />
+          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; $(HexalithProjectsHelperArtifactsArgument) -- --normalize-file &quot;$(HexalithProjectsGeneratedClient)&quot;" />
   </Target>
   <Target Name="GenerateHexalithProjectsIdempotencyHelpers"
           BeforeTargets="BeforeCompile"
@@ -62,7 +71,7 @@
           Outputs="$(HexalithProjectsGeneratedHelpers)"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(ProjectsRepositoryDirectory)&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)/nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
+          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; $(HexalithProjectsHelperArtifactsArgument) -- --repository-root &quot;$(ProjectsRepositoryDirectory)&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)/nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
   </Target>
   <Target Name="VerifyHexalithProjectsGeneratedArtifacts"
           BeforeTargets="CoreCompile"

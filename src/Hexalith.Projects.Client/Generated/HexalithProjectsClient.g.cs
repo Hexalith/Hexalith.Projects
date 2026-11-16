@@ -31,28 +31,30 @@ namespace Hexalith.Projects.Client.Generated
         /// List authorized tenant-scoped project choices.
         /// </summary>
         /// <remarks>
-        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning required names.
         /// </remarks>
         /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// List authorized tenant-scoped project choices.
         /// </summary>
         /// <remarks>
-        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning required names.
         /// </remarks>
         /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, bool? inspectDescriptiveMetadata, System.Threading.CancellationToken cancellationToken) => inspectDescriptiveMetadata == true ? System.Threading.Tasks.Task.FromException<ProjectListResponse>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : ListProjectsAsync(lifecycle, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Create a tenant-scoped project (command-async).
@@ -85,28 +87,30 @@ namespace Hexalith.Projects.Client.Generated
         /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning descriptive fields.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning descriptive fields.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, bool? inspectDescriptiveMetadata, System.Threading.CancellationToken cancellationToken) => inspectDescriptiveMetadata == true ? System.Threading.Tasks.Task.FromException<Project>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : GetProjectAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Read metadata-only operator diagnostics for one Project.
@@ -172,55 +176,59 @@ namespace Hexalith.Projects.Client.Generated
         /// Assemble the authorization-filtered Project Context for a Project.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Assemble the authorization-filtered Project Context for a Project.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken) => !string.IsNullOrWhiteSpace(conversationId) ? System.Threading.Tasks.Task.FromException<ProjectContext>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : GetProjectContextAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Explain why each Project Context candidate was included or excluded.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Explain why each Project Context candidate was included or excluded.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken) => !string.IsNullOrWhiteSpace(conversationId) ? System.Threading.Tasks.Task.FromException<ProjectContextExplanation>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : GetProjectContextExplanationAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Request a refreshed Project Context after links, setup, or resource availability change.
@@ -231,9 +239,10 @@ namespace Hexalith.Projects.Client.Generated
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -245,36 +254,39 @@ namespace Hexalith.Projects.Client.Generated
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken) => !string.IsNullOrWhiteSpace(conversationId) ? System.Threading.Tasks.Task.FromException<ProjectContext>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : RefreshProjectContextAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
         /// </summary>
         /// <remarks>
-        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header (Fresh or Stale) and the exact authorized legacy source global position in X-Hexalith-Projection-Watermark. Authentication at the Gateway remains independent; this handler returns only 200, 400, safe 404 and retryable 503. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable Setup. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
         /// </summary>
         /// <remarks>
-        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header (Fresh or Stale) and the exact authorized legacy source global position in X-Hexalith-Projection-Watermark. Authentication at the Gateway remains independent; this handler returns only 200, 400, safe 404 and retryable 503. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable Setup. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken) => !string.IsNullOrWhiteSpace(conversationId) ? System.Threading.Tasks.Task.FromException<ConversationStartSetup>(new System.NotSupportedException("Explicit read metadata requires an updated client implementation.")) : GetConversationStartSetupAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, cancellationToken);
 
         /// <summary>
         /// Link an existing conversation to a Project (command-async).
@@ -644,7 +656,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects for a conversation that has no explicit Project.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404 (existence-non-inference). A well-formed conversation the caller cannot read in scope (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a non-match and returns NoMatch (200) — the same response as a legitimately project-less conversation — so no cross-tenant existence is leaked.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence and unreadable Conversations collapse to safe-denial 404 (existence-non-inference). Unavailable or degraded Conversation evidence returns 503 rather than asserting an exhaustive NoMatch. A current, readable Conversation with no authorized Project match can legitimately return NoMatch (200).
         /// </remarks>
         /// <param name="conversationId">Opaque Conversations-owned identifier of the conversation to resolve. A reference identity, not tenant authority or transcript content.</param>
         /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
@@ -659,7 +671,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects for a conversation that has no explicit Project.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404 (existence-non-inference). A well-formed conversation the caller cannot read in scope (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a non-match and returns NoMatch (200) — the same response as a legitimately project-less conversation — so no cross-tenant existence is leaked.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence and unreadable Conversations collapse to safe-denial 404 (existence-non-inference). Unavailable or degraded Conversation evidence returns 503 rather than asserting an exhaustive NoMatch. A current, readable Conversation with no authorized Project match can legitimately return NoMatch (200).
         /// </remarks>
         /// <param name="conversationId">Opaque Conversations-owned identifier of the conversation to resolve. A reference identity, not tenant authority or transcript content.</param>
         /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
@@ -673,7 +685,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects from attached Project Folder references.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only request returns NoMatch (200); the legacy response has no incomplete or unsupported-coverage fields, so that result does not prove that no Project matches the File. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Any File input has unsupported coverage and returns 503. Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only or mixed File/Folder request returns 503; the legacy response cannot represent incomplete or unsupported coverage. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A supported Folder-only request with current coverage and no authorized Project match can legitimately return NoMatch (200), without creating a cross-tenant or nonexistent Folder oracle.
         /// </remarks>
         /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
         /// <param name="fileId">Repeated opaque File Reference identifier accepted for compatibility. File IDs never score because production File identity mapping is unsupported. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
@@ -689,7 +701,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects from attached Project Folder references.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only request returns NoMatch (200); the legacy response has no incomplete or unsupported-coverage fields, so that result does not prove that no Project matches the File. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Any File input has unsupported coverage and returns 503. Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only or mixed File/Folder request returns 503; the legacy response cannot represent incomplete or unsupported coverage. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A supported Folder-only request with current coverage and no authorized Project match can legitimately return NoMatch (200), without creating a cross-tenant or nonexistent Folder oracle.
         /// </remarks>
         /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
         /// <param name="fileId">Repeated opaque File Reference identifier accepted for compatibility. File IDs never score because production File identity mapping is unsupported. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
@@ -790,31 +802,30 @@ namespace Hexalith.Projects.Client.Generated
         /// List authorized tenant-scoped project choices.
         /// </summary>
         /// <remarks>
-        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning required names.
         /// </remarks>
         /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return ListProjectsAsync(lifecycle, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// List authorized tenant-scoped project choices.
         /// </summary>
         /// <remarks>
-        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning required names.
         /// </remarks>
         /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, bool? inspectDescriptiveMetadata, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -839,6 +850,10 @@ namespace Hexalith.Projects.Client.Generated
                     if (lifecycle != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("lifecycle")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(lifecycle, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (inspectDescriptiveMetadata != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("inspectDescriptiveMetadata")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(inspectDescriptiveMetadata, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -1111,31 +1126,30 @@ namespace Hexalith.Projects.Client.Generated
         /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning descriptive fields.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return GetProjectAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Requires explicit inspectDescriptiveMetadata=true, descriptive inspection permission and a successful durable metadata-only audit before returning descriptive fields.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="inspectDescriptiveMetadata">Explicit opt-in to separately authorized, durably audited descriptive inspection.</param>
         /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, bool? inspectDescriptiveMetadata, System.Threading.CancellationToken cancellationToken)
         {
             if (projectId == null)
                 throw new System.ArgumentNullException("projectId");
@@ -1160,6 +1174,12 @@ namespace Hexalith.Projects.Client.Generated
                     // Operation Path: "api/v1/projects/{projectId}"
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('?');
+                    if (inspectDescriptiveMetadata != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("inspectDescriptiveMetadata")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(inspectDescriptiveMetadata, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1603,31 +1623,30 @@ namespace Hexalith.Projects.Client.Generated
         /// Assemble the authorization-filtered Project Context for a Project.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return GetProjectContextAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Assemble the authorization-filtered Project Context for a Project.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken)
         {
             if (projectId == null)
                 throw new System.ArgumentNullException("projectId");
@@ -1653,6 +1672,12 @@ namespace Hexalith.Projects.Client.Generated
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/context");
+                    urlBuilder_.Append('?');
+                    if (conversationId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("conversationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1760,31 +1785,30 @@ namespace Hexalith.Projects.Client.Generated
         /// Explain why each Project Context candidate was included or excluded.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return GetProjectContextExplanationAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Explain why each Project Context candidate was included or excluded.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken)
         {
             if (projectId == null)
                 throw new System.ArgumentNullException("projectId");
@@ -1810,6 +1834,12 @@ namespace Hexalith.Projects.Client.Generated
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/context/explain");
+                    urlBuilder_.Append('?');
+                    if (conversationId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("conversationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1922,12 +1952,10 @@ namespace Hexalith.Projects.Client.Generated
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return RefreshProjectContextAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1939,9 +1967,10 @@ namespace Hexalith.Projects.Client.Generated
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken)
         {
             if (projectId == null)
                 throw new System.ArgumentNullException("projectId");
@@ -1967,6 +1996,12 @@ namespace Hexalith.Projects.Client.Generated
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/context/refresh");
+                    urlBuilder_.Append('?');
+                    if (conversationId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("conversationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2074,31 +2109,30 @@ namespace Hexalith.Projects.Client.Generated
         /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
         /// </summary>
         /// <remarks>
-        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header (Fresh or Stale) and the exact authorized legacy source global position in X-Hexalith-Projection-Watermark. Authentication at the Gateway remains independent; this handler returns only 200, 400, safe 404 and retryable 503. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable Setup. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
-        {
-            return GetConversationStartSetupAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
-        }
+
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
         /// </summary>
         /// <remarks>
-        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header (Fresh or Stale) and the exact authorized legacy source global position in X-Hexalith-Projection-Watermark. Authentication at the Gateway remains independent; this handler returns only 200, 400, safe 404 and retryable 503. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference). Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable Setup. Session fallback is deferred.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <param name="conversationId">Named Conversation; current authorized native membership in this Project is required for usable context. Session fallback is unavailable.</param>
         /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, string conversationId, System.Threading.CancellationToken cancellationToken)
         {
             if (projectId == null)
                 throw new System.ArgumentNullException("projectId");
@@ -2124,6 +2158,12 @@ namespace Hexalith.Projects.Client.Generated
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/setup/conversation-start");
+                    urlBuilder_.Append('?');
+                    if (conversationId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("conversationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2166,26 +2206,6 @@ namespace Hexalith.Projects.Client.Generated
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 401)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 403)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -4414,7 +4434,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects for a conversation that has no explicit Project.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404 (existence-non-inference). A well-formed conversation the caller cannot read in scope (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a non-match and returns NoMatch (200) — the same response as a legitimately project-less conversation — so no cross-tenant existence is leaked.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence and unreadable Conversations collapse to safe-denial 404 (existence-non-inference). Unavailable or degraded Conversation evidence returns 503 rather than asserting an exhaustive NoMatch. A current, readable Conversation with no authorized Project match can legitimately return NoMatch (200).
         /// </remarks>
         /// <param name="conversationId">Opaque Conversations-owned identifier of the conversation to resolve. A reference identity, not tenant authority or transcript content.</param>
         /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
@@ -4432,7 +4452,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects for a conversation that has no explicit Project.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404 (existence-non-inference). A well-formed conversation the caller cannot read in scope (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a non-match and returns NoMatch (200) — the same response as a legitimately project-less conversation — so no cross-tenant existence is leaked.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Computes candidate Projects for a project-less conversation by running the Story 4.1 resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence and unreadable Conversations collapse to safe-denial 404 (existence-non-inference). Unavailable or degraded Conversation evidence returns 503 rather than asserting an exhaustive NoMatch. A current, readable Conversation with no authorized Project match can legitimately return NoMatch (200).
         /// </remarks>
         /// <param name="conversationId">Opaque Conversations-owned identifier of the conversation to resolve. A reference identity, not tenant authority or transcript content.</param>
         /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
@@ -4578,7 +4598,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects from attached Project Folder references.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only request returns NoMatch (200); the legacy response has no incomplete or unsupported-coverage fields, so that result does not prove that no Project matches the File. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Any File input has unsupported coverage and returns 503. Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only or mixed File/Folder request returns 503; the legacy response cannot represent incomplete or unsupported coverage. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A supported Folder-only request with current coverage and no authorized Project match can legitimately return NoMatch (200), without creating a cross-tenant or nonexistent Folder oracle.
         /// </remarks>
         /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
         /// <param name="fileId">Repeated opaque File Reference identifier accepted for compatibility. File IDs never score because production File identity mapping is unsupported. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
@@ -4597,7 +4617,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Resolve candidate Projects from attached Project Folder references.
         /// </summary>
         /// <remarks>
-        /// Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only request returns NoMatch (200); the legacy response has no incomplete or unsupported-coverage fields, so that result does not prove that no Project matches the File. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// Returns only unselected candidate identifiers, ranks, scores and reason codes; names and protected exclusion details are withheld. Stale Tenant authority or incomplete dependency coverage returns the existing 503 response. Any File input has unsupported coverage and returns 503. Computes candidate Projects for authorized metadata-only Project Folder identifiers. File identifiers remain accepted for compatibility but do not score because production File identity mapping is unsupported. A File-only or mixed File/Folder request returns 503; the legacy response cannot represent incomplete or unsupported coverage. Runs the existing resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A supported Folder-only request with current coverage and no authorized Project match can legitimately return NoMatch (200), without creating a cross-tenant or nonexistent Folder oracle.
         /// </remarks>
         /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
         /// <param name="fileId">Repeated opaque File Reference identifier accepted for compatibility. File IDs never score because production File identity mapping is unsupported. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>

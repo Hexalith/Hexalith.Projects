@@ -47,7 +47,7 @@ public sealed class ConversationsProjectConversationResolutionDirectory(IConvers
             tenantId,
             caller.Value,
             correlationId,
-            conversationId);
+            conversationId) { AdvisoryMetadataOnly = true };
 
         try
         {
@@ -63,8 +63,12 @@ public sealed class ConversationsProjectConversationResolutionDirectory(IConvers
             ConversationDetailResult detail = result.Value;
             if (detail.Details is null)
             {
-                return ConversationResolutionMetadata.FailClosed(conversationId.Value, ToReferenceState(detail.FreshnessState));
+                return ConversationResolutionMetadata.FailClosed(conversationId.Value,
+                    detail.FreshnessState == ProjectionTrustState.Forbidden ? ReferenceState.Unauthorized
+                        : detail.FreshnessState == ProjectionTrustState.Redacted ? ReferenceState.Excluded : ReferenceState.Unavailable);
             }
+            if (detail.ReadPurpose != ConversationResolutionScoringLabel.SupportedPurpose)
+                return ConversationResolutionMetadata.FailClosed(conversationId.Value, ReferenceState.Unavailable);
 
             // Per-row scope re-check (Ordinal): never surface evidence for a conversation that escaped
             // the requested tenant/identity scope — collapse to a fail-closed Unavailable record.
@@ -73,10 +77,8 @@ public sealed class ConversationsProjectConversationResolutionDirectory(IConvers
                 return ConversationResolutionMetadata.FailClosed(conversationId.Value, ReferenceState.Unavailable);
             }
 
-            // A project-less conversation carries no explicit ProjectId; a response-scoped hydration
-            // pointer is the only soft hint and is used only when an explicit assignment is absent.
-            string? linkedProjectId = detail.Details.ProjectId?.Value
-                ?? detail.Details.ProjectHydration?.ProjectId.Value;
+            // The owner returned only its classified committed advisory subset. Hydration and rich labels are never coverage proof.
+            string? linkedProjectId = detail.Details.ProjectId?.Value;
 
             return new ConversationResolutionMetadata(
                 conversationId.Value,

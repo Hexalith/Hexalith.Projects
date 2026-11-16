@@ -1607,9 +1607,10 @@ public sealed class CreateProjectEndpointTests
             // Drive the projection as the Workers/projection subscriber would after the 202'd create.
             InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+            readModel.Project("tenant-a", FolderSetEvent("tenant-a", "fixture-folder"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -1622,7 +1623,7 @@ public sealed class CreateProjectEndpointTests
             document.RootElement.GetProperty("contextActivation").GetProperty("enabled").GetBoolean().ShouldBeTrue();
             document.RootElement.GetProperty("contextActivation").TryGetProperty("blockedReasonCode", out JsonElement blockedReason).ShouldBeTrue();
             blockedReason.ValueKind.ShouldBe(JsonValueKind.Null);
-            document.RootElement.GetProperty("references").GetArrayLength().ShouldBe(0);
+            document.RootElement.GetProperty("references").GetArrayLength().ShouldBe(1);
             document.RootElement.GetProperty("freshness").GetProperty("readConsistency").GetString().ShouldBe("eventually_consistent");
             document.RootElement.GetProperty("freshness").GetProperty("trustState").GetString().ShouldBe("trusted");
         }
@@ -1644,7 +1645,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -1666,7 +1667,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -1699,9 +1700,9 @@ public sealed class CreateProjectEndpointTests
             list.Project("tenant-a", ArchivedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken).ConfigureAwait(true);
-            HttpResponseMessage active = await client.GetAsync("/api/v1/projects?lifecycle=active", TestContext.Current.CancellationToken).ConfigureAwait(true);
-            HttpResponseMessage archived = await client.GetAsync("/api/v1/projects?lifecycle=archived", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage active = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=active", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage archived = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=archived", TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             open.StatusCode.ShouldBe(HttpStatusCode.OK);
             using JsonDocument document = JsonDocument.Parse(await open.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
@@ -1732,13 +1733,18 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived, "01HZ9K8YQ3W6V2N4R7T5P0X1AC"));
             readModel.Project("tenant-b", CreatedEvent("tenant-b", ProjectLifecycle.Active, "01HZ9K8YQ3W6V2N4R7T5P0X1AD"));
 
+            InMemoryProjectDetailReadModel details = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            details.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Active, ProjectIdValue));
+            details.Project("tenant-a", FolderSetEvent("tenant-a", "fixture-folder"));
+            details.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived, "01HZ9K8YQ3W6V2N4R7T5P0X1AC"));
+
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
 
             HttpResponseMessage activeResponse = await client
-                .GetAsync("/api/v1/projects?lifecycle=active", TestContext.Current.CancellationToken)
+                .GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=active", TestContext.Current.CancellationToken)
                 .ConfigureAwait(true);
             HttpResponseMessage allResponse = await client
-                .GetAsync("/api/v1/projects", TestContext.Current.CancellationToken)
+                .GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken)
                 .ConfigureAwait(true);
 
             activeResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -1773,7 +1779,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             request.Headers.Add("Idempotency-Key", "idem-key-a");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1794,7 +1800,7 @@ public sealed class CreateProjectEndpointTests
         try
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects");
+            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects?inspectDescriptiveMetadata=true");
             request.Headers.Add("Idempotency-Key", "idem-key-a");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1818,7 +1824,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             request.Headers.Add("Idempotency-Key", "idem-key-a");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1839,7 +1845,7 @@ public sealed class CreateProjectEndpointTests
         try
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects");
+            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects?inspectDescriptiveMetadata=true");
             request.Headers.Add("Idempotency-Key", "idem-key-a");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1862,7 +1868,7 @@ public sealed class CreateProjectEndpointTests
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
 
             HttpResponseMessage response = await client
-                .GetAsync("/api/v1/projects?lifecycle=deleted", TestContext.Current.CancellationToken)
+                .GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=deleted", TestContext.Current.CancellationToken)
                 .ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -1884,7 +1890,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             request.Headers.Add("X-Hexalith-Freshness", "strict");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1908,7 +1914,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             request.Headers.Add("X-Hexalith-Freshness", "strict");
 
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -1932,7 +1938,7 @@ public sealed class CreateProjectEndpointTests
             readModel.Project("tenant-b", CreatedEvent("tenant-b"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            using HttpRequestMessage foreignProject = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            using HttpRequestMessage foreignProject = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
             using HttpRequestMessage missingProject = new(HttpMethod.Get, "/api/v1/projects/01HZ9K8YQ3W6V2N4R7T5P0X1AC");
             foreignProject.Headers.Add("X-Correlation-Id", "corr-same");
             missingProject.Headers.Add("X-Correlation-Id", "corr-same");
@@ -1996,7 +2002,7 @@ public sealed class CreateProjectEndpointTests
                         async cancellationToken =>
                         {
                             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-                            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+                            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true");
                             HttpResponseMessage response = await client.SendAsync(request, cancellationToken).ConfigureAwait(true);
                             string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true);
                             bool leaked = response.StatusCode != HttpStatusCode.NotFound
@@ -2033,7 +2039,7 @@ public sealed class CreateProjectEndpointTests
                         async cancellationToken =>
                         {
                             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-                            HttpResponseMessage response = await client.GetAsync("/api/v1/projects", cancellationToken).ConfigureAwait(true);
+                            HttpResponseMessage response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", cancellationToken).ConfigureAwait(true);
                             string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true);
                             bool leaked = response.StatusCode != HttpStatusCode.OK
                                 || body.Contains(ProjectIdValue, StringComparison.Ordinal)
@@ -2080,11 +2086,12 @@ public sealed class CreateProjectEndpointTests
         try
         {
             app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", FolderSetEvent("tenant-a", "fixture-folder"));
             app.Services.GetRequiredService<InMemoryProjectListReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken).ConfigureAwait(true);
-            HttpResponseMessage list = await client.GetAsync("/api/v1/projects", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage list = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             open.StatusCode.ShouldBe(HttpStatusCode.OK);
             list.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -2112,7 +2119,7 @@ public sealed class CreateProjectEndpointTests
 
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             HttpResponseMessage response = await client.GetAsync(
-                $"/api/v1/projects/{ProjectIdValue}",
+                $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true&inspectQuarantined=true",
                 TestContext.Current.CancellationToken).ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
@@ -2122,8 +2129,10 @@ public sealed class CreateProjectEndpointTests
             reference.GetProperty("referenceKind").GetString().ShouldBe("folder");
             reference.GetProperty("referenceState").GetString().ShouldBe("pending");
             reference.TryGetProperty("referenceId", out _).ShouldBeFalse();
-            reference.GetProperty("displayName").GetString().ShouldBe("Tracer Bullet");
-            reference.GetProperty("reasonCode").GetString().ShouldBe("folder_create_external_unavailable");
+            reference.TryGetProperty("displayName", out _).ShouldBeFalse();
+            reference.GetProperty("reasonCode").GetString().ShouldBe("ReferenceUnavailable");
+            (await readModel.GetAsync("tenant-a", ProjectIdValue, TestContext.Current.CancellationToken).ConfigureAwait(true))!
+                .ProjectFolder!.ReasonCode.ShouldBe("folder_create_external_unavailable");
             Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
         }
         finally
@@ -2145,7 +2154,7 @@ public sealed class CreateProjectEndpointTests
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             HttpResponseMessage response = await client
-                .GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken)
+                .GetAsync($"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken)
                 .ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
@@ -2171,7 +2180,7 @@ public sealed class CreateProjectEndpointTests
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             HttpResponseMessage response = await client
-                .GetAsync("/api/v1/projects", TestContext.Current.CancellationToken)
+                .GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken)
                 .ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
@@ -2667,6 +2676,13 @@ public sealed class CreateProjectEndpointTests
                 lastTenantAccessTimestamp ?? DateTimeOffset.UtcNow).ConfigureAwait(true);
         }
 
+        app.Use(async (context, next) =>
+        {
+            context.User = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(
+                [new System.Security.Claims.Claim("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission),
+                 new System.Security.Claims.Claim("projects:role", "TenantProjectAdministrator")], "fixture"));
+            await next(context).ConfigureAwait(false);
+        });
         app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
         return app;

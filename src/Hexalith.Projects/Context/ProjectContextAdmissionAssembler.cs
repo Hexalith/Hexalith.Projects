@@ -31,7 +31,7 @@ public static class ProjectContextAdmissionAssembler
     /// <param name="tenantAccess">The tenant-access evidence used for the assembly.</param>
     /// <param name="references">The candidate reference evidence supplied to the allowlist.</param>
     /// <param name="projectVersion">The authorized persisted Project version.</param>
-    /// <param name="asOf">The authoritative evidence cutoff.</param>
+    /// <param name="asOf">The current authorization and evidence computation instant.</param>
     /// <param name="ownerBackedTrustAvailable">Whether an accepted Reference Trust Index is available.</param>
     /// <returns>The AD-32 admission.</returns>
     public static ProjectContextAdmission FromAssembled(
@@ -178,7 +178,7 @@ public static class ProjectContextAdmissionAssembler
     /// <summary>Builds a required-evidence <see cref="AdmissionResponseState.Unavailable"/> admission.</summary>
     /// <param name="projectId">The opaque Project identifier.</param>
     /// <param name="lifecycle">The owning Project lifecycle.</param>
-    /// <param name="asOf">The authoritative evidence cutoff.</param>
+    /// <param name="asOf">The current authorization and evidence computation instant.</param>
     /// <param name="projectVersion">The authorized persisted Project version.</param>
     /// <param name="folderIncluded">Whether a current authorized Folder was confirmed.</param>
     /// <param name="setupCurrent">Whether Setup evidence is current.</param>
@@ -210,7 +210,7 @@ public static class ProjectContextAdmissionAssembler
     /// <summary>Builds a cause-specific minimal unavailable admission.</summary>
     /// <param name="projectId">The opaque Project identifier.</param>
     /// <param name="lifecycle">The owning Project lifecycle.</param>
-    /// <param name="asOf">The authoritative evidence cutoff.</param>
+    /// <param name="asOf">The current authorization and evidence computation instant.</param>
     /// <param name="projectVersion">The authorized persisted Project version.</param>
     /// <param name="projectCurrent">Whether current Project evidence was established.</param>
     /// <param name="folderIncluded">Whether a current authorized Folder was confirmed.</param>
@@ -301,7 +301,14 @@ public static class ProjectContextAdmissionAssembler
             || tenantAccess.Result.FreshnessStatus == TenantProjectionFreshnessStatus.Stale
             || freshness == ProjectContextFreshness.Stale;
 
-    private static void ApplyExcludedSourceKinds(
+    /// <summary>Applies explicit Setup exclusions consistently to retained and supported context evidence.</summary>
+    /// <param name="setup">The original Project Setup policy.</param>
+    /// <param name="files">Observed File references to filter.</param>
+    /// <param name="memories">Observed Memory references to filter.</param>
+    /// <param name="conversations">Observed Conversation references to filter.</param>
+    /// <param name="excluded">The destination for exact exclusion evidence.</param>
+    /// <param name="evaluations">The destination for corresponding policy evaluations.</param>
+    internal static void ApplyExcludedSourceKinds(
         ProjectSetup setup,
         List<ProjectContextReference> files,
         List<ProjectContextReference> memories,

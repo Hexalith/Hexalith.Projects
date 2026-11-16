@@ -1,5 +1,19 @@
 # Supported Project list/open implementation (Story 6.1)
 
+Story 6.7 adds one immutable startup selection for the primary Web read surfaces.
+See [read cutover](read-cutover.md) for the current evidence gate and explicit rollback.
+Context/setup/explain require a named `ConversationId` with current authorized native
+membership in the requested Project. The separate owner membership read determines
+first-response authority; list/open admission does not. Session fallback remains deferred.
+Project-only calls receive no usable context. Legacy descriptive list/open calls require
+explicit inspection, permission and a durable audit; older client signatures remain callable.
+Legacy refresh carries the named Conversation through the maintenance action and performs
+its final native membership check after owner reads. The [v3 source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/approved-v3/read-cutover-final.json)
+retains 77 passing authenticated comparisons and links the explicit seven-read rollback proof.
+Package publication and external Chatbot adoption remain separate release obligations.
+
+The sections below retain the history of earlier delivered slices.
+
 
 ## Authenticated browser inspection (Story 6.5)
 
@@ -258,3 +272,17 @@ The 2026-10-24 request-boundary repair covers all eleven retained legacy reads, 
 Every retained read response sets `Cache-Control: no-store` and adds `Authorization` and `Cookie` to `Vary`, preserving existing values. Tenant authority still comes exclusively from authenticated server context. After authorization, read operations reject `Idempotency-Key` in either headers or the query string, including empty, repeated and case-varied query keys. Other unknown query parameters remain ignored. Requested freshness retains the existing exact `eventually_consistent` comparison and response semantics.
 
 These validation and header differences close DW-49, DW-50, DW-53, DW-58 and DW-62 locally. DW-58 and DW-62 previously named Story 6.7 because they affect the legacy shadow baseline: future cutover comparisons must use this repaired baseline and explicitly account for the new correlation/cache headers and query-key rejection. Existing retained comparison evidence is historical. This repair does not approve a normalization rule, accept Story 6.7, qualify a live topology, or advance any supported-read prerequisite gate.
+
+## Story 6.7 retained-read safety baseline
+
+The Story 6.7 source implementation supersedes earlier legacy advisory File-only
+NoMatch guidance above. Retained advisory responses withhold candidate names and
+protected exclusion details. Unsupported File inputs or degraded coverage return
+the already-declared 503 response; the supported Gateway continues returning its
+explicit incomplete result. Retained cutover reads now require current Tenant
+authority, with stale evidence returning 503. Conversation-start preserves Partial
+admission and optional omission evidence, and its retained freshness header carries
+actual Fresh/Stale plus the exact authorized sequence watermark. Existing v1 method
+and model signatures remain. These repairs do not accept read equivalence or
+production readiness. The [cutover inventory and accepted v3 source evidence](read-cutover.md)
+record the explicit selection and verified rollback gates; historical blocked receipts remain retained.

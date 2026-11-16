@@ -387,7 +387,8 @@ public sealed class ResolveProjectFromConversationTests
                             HttpResponseMessage response = await client.SendAsync(Request(), ct).ConfigureAwait(false);
                             string body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                             using JsonDocument document = JsonDocument.Parse(body);
-                            bool leaked = document.RootElement.GetProperty("candidates").GetArrayLength() > 0
+                            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+                            bool leaked = document.RootElement.TryGetProperty("candidates", out _)
                                 || body.Contains(ProjectAId, StringComparison.Ordinal);
                             return leaked
                                 ? ProjectTenantIsolationResult.Leak("resolve-endpoint", null, ProjectAId)

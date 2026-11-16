@@ -272,8 +272,10 @@ public sealed class ProjectMaintenanceActionSourceTests
         ]);
     }
 
-    [Fact]
-    public async Task ExecuteAsync_ReevaluateUsesReadOnlyRefreshAndEmitsNoAuditEvent()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("bound-conversation")]
+    public async Task ExecuteAsync_ReevaluateUsesReadOnlyRefreshAndEmitsNoAuditEvent(string? conversationId)
     {
         Generated.IClient client = Substitute.For<Generated.IClient>();
         ProjectMaintenanceActionSource source = new(client);
@@ -289,7 +291,7 @@ public sealed class ProjectMaintenanceActionSourceTests
                 null,
                 null,
                 null,
-                "none (read-only recompute)"),
+                "none (read-only recompute)") { ConversationId = conversationId },
             null,
             TestContext.Current.CancellationToken);
 
@@ -299,13 +301,12 @@ public sealed class ProjectMaintenanceActionSourceTests
 
         // Re-evaluate is a read-only recompute: it calls only the refresh query and never a mutation
         // or an audit-confirmation poll.
-        await client.Received(1)
-            .RefreshProjectContextAsync(
-                "project-001",
-                Arg.Any<string>(),
-                Generated.ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
-            .ConfigureAwait(true);
+        if (conversationId is null)
+            await client.Received(1).RefreshProjectContextAsync("project-001", Arg.Any<string>(),
+                Generated.ReadConsistencyClass.Eventually_consistent, Arg.Any<CancellationToken>()).ConfigureAwait(true);
+        else
+            await client.Received(1).RefreshProjectContextAsync("project-001", Arg.Any<string>(),
+                Generated.ReadConsistencyClass.Eventually_consistent, conversationId, Arg.Any<CancellationToken>()).ConfigureAwait(true);
         await client.DidNotReceiveWithAnyArgs()
             .GetProjectOperatorDiagnosticsAsync(default!, default, default!, default, TestContext.Current.CancellationToken)
             .ConfigureAwait(true);

@@ -23,14 +23,14 @@ public sealed partial class GetConversationStartSetupTests
     /// <summary>Gets every retained read operation, including the read-only POST proposal preview.</summary>
     public static TheoryData<string, string> ReadRequestRoutes => new()
     {
-        { "GET", "/api/v1/projects" },
-        { "GET", $"/api/v1/projects/{ProjectIdValue}" },
+        { "GET", "/api/v1/projects?inspectDescriptiveMetadata=true" },
+        { "GET", $"/api/v1/projects/{ProjectIdValue}?inspectDescriptiveMetadata=true" },
         { "GET", $"/api/v1/projects/{ProjectIdValue}/operator-diagnostics" },
         { "GET", $"/api/v1/projects/{ProjectIdValue}/conversations" },
-        { "GET", $"/api/v1/projects/{ProjectIdValue}/context" },
-        { "GET", $"/api/v1/projects/{ProjectIdValue}/context/explain" },
-        { "GET", $"/api/v1/projects/{ProjectIdValue}/context/refresh" },
-        { "GET", $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start" },
+        { "GET", $"/api/v1/projects/{ProjectIdValue}/context?conversationId=bound-conversation" },
+        { "GET", $"/api/v1/projects/{ProjectIdValue}/context/explain?conversationId=bound-conversation" },
+        { "GET", $"/api/v1/projects/{ProjectIdValue}/context/refresh?conversationId=bound-conversation" },
+        { "GET", $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start?conversationId=bound-conversation" },
         { "GET", "/api/v1/projects/resolution/from-conversation?conversationId=conversation-a" },
         { "GET", "/api/v1/projects/resolution/from-attachments?fileId=unsupported-file" },
         { "POST", "/api/v1/projects/resolution/new-project-proposal" },
@@ -40,6 +40,7 @@ public sealed partial class GetConversationStartSetupTests
     [MemberData(nameof(ReadRequestRoutes))]
     public async Task QueryPreamble_AllReadOperations_GenerateCorrelationAndPreventCaching(string method, string url)
     {
+        ArgumentNullException.ThrowIfNull(url);
         WebApplication app = await StartAppAsync("tenant-a", "principal-a", setup: null, allowList: true).ConfigureAwait(true);
         try
         {
@@ -52,8 +53,10 @@ public sealed partial class GetConversationStartSetupTests
 
             using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
 
-            // The proposal has no required fields and reaches its normal body-validation response.
-            response.StatusCode.ShouldBe(method == "POST" ? HttpStatusCode.BadRequest : HttpStatusCode.OK);
+            // The proposal validates its body; unsupported/unavailable advisory inputs now retain safe 503 semantics.
+            HttpStatusCode expected = method == "POST" ? HttpStatusCode.BadRequest
+                : url.Contains("/resolution/", StringComparison.Ordinal) ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK;
+            response.StatusCode.ShouldBe(expected);
             Ulid.IsValid(AssertQueryResponseHeaders(response)).ShouldBeTrue();
         }
         finally
@@ -162,7 +165,7 @@ public sealed partial class GetConversationStartSetupTests
                 (" caller_corr-1.2 ", "caller_corr-1.2"), ("caller_corr-1.2", "caller_corr-1.2"),
             })
             {
-                using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start");
+                using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start?conversationId=bound-conversation");
                 if (presented is not null)
                 {
                     request.Headers.TryAddWithoutValidation("X-Correlation-Id", presented).ShouldBeTrue();

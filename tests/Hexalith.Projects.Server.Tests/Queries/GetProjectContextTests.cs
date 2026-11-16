@@ -382,6 +382,8 @@ public sealed class GetProjectContextTests
     private static HttpRequestMessage GetContextRequest(string? url = null)
     {
         HttpRequestMessage request = new(HttpMethod.Get, url ?? $"/api/v1/projects/{ProjectIdValue}/context");
+        if (request.RequestUri is { } uri)
+            request.RequestUri = new Uri(uri.OriginalString + (uri.OriginalString.Contains('?') ? "&" : "?") + "conversationId=bound-conversation", UriKind.RelativeOrAbsolute);
         request.Headers.Add("X-Correlation-Id", CorrelationIdValue);
         return request;
     }
@@ -405,6 +407,8 @@ public sealed class GetProjectContextTests
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
         builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();

@@ -1,4 +1,3 @@
-@page "/projects/{ProjectId}"
 @using Hexalith.Projects.Contracts.Models
 @using Hexalith.Projects.Contracts.Ui
 @using Hexalith.Projects.UI.Diagnostics
@@ -182,6 +181,7 @@ else if (_result?.Detail is not null)
                     <ProjectMaintenanceActionPanel Detail="@_result.Detail"
                                                    ReferenceRows="@_result.ReferenceHealthRows"
                                                    TenantScope="@_result.TenantScope"
+                                                   ConversationId="@ConversationId"
                                                    OnSucceeded="ReloadAsync" />
                 </section>
                 break;
@@ -194,6 +194,7 @@ else if (_result?.Feedback is not null)
 }
 
 @code {
+    [Parameter, SupplyParameterFromQuery(Name = "conversationId")] public string? ConversationId { get; set; }
     private const string MetadataSection = "metadata";
     private const string SetupSection = "setup";
     private const string ReferencesSection = "references";
@@ -216,21 +217,31 @@ else if (_result?.Feedback is not null)
     private bool _loading = true;
     private ProjectDetailLoadResult? _result;
     private string? _loadedProjectId;
+    private string? _loadedConversationId;
+    private long _loadGeneration;
     private string _selectedSection = MetadataSection;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (string.Equals(_loadedProjectId, ProjectId, StringComparison.Ordinal))
+        if (string.Equals(_loadedProjectId, ProjectId, StringComparison.Ordinal)
+            && string.Equals(_loadedConversationId, ConversationId, StringComparison.Ordinal))
         {
             return;
         }
 
+        long generation = ++_loadGeneration;
         _loading = true;
+        _result = null;
         _loadedProjectId = ProjectId;
+        _loadedConversationId = ConversationId;
         _selectedSection = MetadataSection;
-        _result = string.IsNullOrWhiteSpace(ProjectId)
+        ProjectDetailLoadResult result = string.IsNullOrWhiteSpace(ProjectId)
             ? ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("invalid_project_id"))
-            : await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+            : await (string.IsNullOrWhiteSpace(ConversationId)
+                ? Details.GetProjectDetailAsync(ProjectId, CancellationToken.None)
+                : Details.GetProjectDetailAsync(ProjectId, ConversationId, CancellationToken.None)).ConfigureAwait(true);
+        if (generation != _loadGeneration) return;
+        _result = result;
         _loading = false;
     }
 
@@ -255,8 +266,14 @@ else if (_result?.Feedback is not null)
 
         // A reload after a confirmed action refreshes the inspector only when it yields a detail; feedback
         // (for example a transient read-model miss) keeps the current inspector and its action panel.
-        ProjectDetailLoadResult reloaded = await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
-        if (reloaded.Detail is not null)
+        long generation = _loadGeneration;
+        string projectId = ProjectId;
+        string? conversationId = ConversationId;
+        ProjectDetailLoadResult reloaded = await (string.IsNullOrWhiteSpace(ConversationId)
+                ? Details.GetProjectDetailAsync(ProjectId, CancellationToken.None)
+                : Details.GetProjectDetailAsync(ProjectId, ConversationId, CancellationToken.None)).ConfigureAwait(true);
+        if (generation == _loadGeneration && string.Equals(projectId, ProjectId, StringComparison.Ordinal)
+            && string.Equals(conversationId, ConversationId, StringComparison.Ordinal) && reloaded.Detail is not null)
         {
             _result = reloaded;
         }

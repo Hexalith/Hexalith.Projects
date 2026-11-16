@@ -63,7 +63,7 @@
                     </FluentStack>
                 }
                 else if (_result.StartFeedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
-                <FluentText>Owner evidence and first-response authorization retain their delivered limits. Open and context observations do not grant Conversation-start authority.</FluentText>
+                <FluentText>Context requires a named Conversation with current native Project membership. Session fallback is unavailable. Owner evidence and first-response authorization retain their delivered limits. Open and context observations do not grant Conversation-start authority.</FluentText>
             </FluentAccordionItem>
             <FluentAccordionItem Header="Project suggestions"><ProjectResolutionTraceWorkbench ProjectId="opened.ProjectId" /></FluentAccordionItem>
             <FluentAccordionItem Header="Capabilities">
@@ -75,8 +75,9 @@
 </section>
 @code {
     [Parameter] public string? ProjectId { get; set; }
-    [SupplyParameterFromQuery(Name = "descriptive")] public bool Descriptive { get; set; }
-    [SupplyParameterFromQuery(Name = "quarantined")] public bool Quarantined { get; set; }
+    [Parameter, SupplyParameterFromQuery(Name = "conversationId")] public string? ConversationId { get; set; }
+    [Parameter, SupplyParameterFromQuery(Name = "descriptive")] public bool Descriptive { get; set; }
+    [Parameter, SupplyParameterFromQuery(Name = "quarantined")] public bool Quarantined { get; set; }
     private readonly CancellationTokenSource _lifetime = new();
     private CancellationTokenSource? _loadCancellation;
     private int _loadGeneration;
@@ -92,7 +93,9 @@
         int generation = ++_loadGeneration;
         _loading = true; _result = null;
         try { var result = string.IsNullOrWhiteSpace(ProjectId) ? ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"))
-            : await Details.InspectAsync(ProjectId, _descriptive, Quarantined, request.Token);
+            : await (string.IsNullOrWhiteSpace(ConversationId)
+                ? Details.InspectAsync(ProjectId, _descriptive, Quarantined, request.Token)
+                : Details.InspectAsync(ProjectId, _descriptive, Quarantined, ConversationId, request.Token));
             if (generation == _loadGeneration && !request.IsCancellationRequested) _result = result; }
         catch (OperationCanceledException) when (request.IsCancellationRequested) { }
         finally { if (generation == _loadGeneration) _loading = false; }

@@ -29,7 +29,7 @@ public sealed class LegacyProjectInventorySourceTests
                 Lifecycle.Active,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateResponse()));
 
         var source = new LegacyProjectInventorySource(client);
@@ -48,7 +48,7 @@ public sealed class LegacyProjectInventorySourceTests
             Lifecycle.Active,
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+            true, Arg.Any<CancellationToken>()).ConfigureAwait(true);
     }
 
     [Theory]
@@ -65,7 +65,7 @@ public sealed class LegacyProjectInventorySourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw new HexalithProjectsApiException(
                 "unsafe response hidden",
                 statusCode,
@@ -95,7 +95,7 @@ public sealed class LegacyProjectInventorySourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw new System.Net.Http.HttpRequestException("connection refused 10.0.0.1 secret"));
 
         var source = new LegacyProjectInventorySource(client);

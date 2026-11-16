@@ -45,13 +45,10 @@ using Microsoft.Extensions.Primitives;
 /// Fail-closed contract at the <i>caller</i> boundary (mirrors the Story 3.2 read endpoints): a
 /// missing/malformed conversation id, an unauthorized caller, or unverifiable tenant authority all
 /// collapse to an RFC 9457 safe-denial <c>404</c> (unauthorized and nonexistent are externally
-/// indistinguishable); read-model unavailability surfaces as a retryable <c>503</c>. A well-formed
-/// conversation that the ACL cannot read in scope (cross-tenant, unknown, or degraded trust) is
-/// deliberately <b>not</b> turned into a <c>404</c> here: it fails closed to degraded reference
-/// evidence that the engine surfaces as an exclusion, yielding <c>NoMatch</c> (HTTP 200). Returning
-/// the same <c>NoMatch</c> for an unreadable conversation and for a legitimately project-less one
-/// leaks no cross-tenant existence (NFR-2) and avoids the in-tenant-vs-cross-tenant oracle a
-/// conversation-scoped 404 would create.
+/// indistinguishable). An unreadable conversation also returns safe <c>404</c>; unavailable or
+/// degraded evidence returns retryable <c>503</c> without an exhaustive non-match claim. Only a
+/// current, readable conversation with complete supported coverage can yield <c>NoMatch</c>
+/// (HTTP 200). Candidate names and protected exclusion details are withheld.
 /// </para>
 /// </remarks>
 public static partial class ProjectsDomainServiceEndpoints
@@ -87,6 +84,7 @@ public static partial class ProjectsDomainServiceEndpoints
             ProjectAuthorizationResult authorization = await authorizationGate
                 .AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
+            if (authorization.IsAllowed && !HasCurrentLegacyReadAuthority(authorization)) return ReadModelUnavailable(correlationId, taskId);
             if (!authorization.IsAllowed)
             {
                 return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
@@ -118,6 +116,9 @@ public static partial class ProjectsDomainServiceEndpoints
                     cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
 
+            if (conversationMetadata.ReferenceState is ReferenceState.Unauthorized or ReferenceState.Excluded) return SafeDenial(correlationId, taskId);
+            if (conversationMetadata.ReferenceState != ReferenceState.Included) return ReadModelUnavailable(correlationId, taskId);
+
             // Enumerate the tenant's authorized Projects (all lifecycles; the engine applies the
             // archived-exclusion rule). Each candidate then passes its exact Project Read authorization.
             IReadOnlyList<ProjectListItem> projectedRows;
@@ -145,6 +146,7 @@ public static partial class ProjectsDomainServiceEndpoints
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
             callerToken.ThrowIfCancellationRequested();
+            if (authorization.IsAllowed && !HasCurrentLegacyReadAuthority(authorization)) return ReadModelUnavailable(correlationId, taskId);
             if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
             List<ConversationResolutionProjectCandidate> candidateProjects = new(rows.Count);
@@ -170,7 +172,9 @@ public static partial class ProjectsDomainServiceEndpoints
             ProjectResolution resolution = resolutionEngine.Resolve(context, candidates);
 
             httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
-            return Results.Json(resolution, ResponseJsonOptions);
+            return IsLegacyResolutionIncomplete(resolution)
+                ? ReadModelUnavailable(correlationId, taskId)
+                : Results.Json(SafeLegacyResolution(resolution), ResponseJsonOptions);
         }
         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
         catch (Exception) { return ReadModelUnavailable(correlationId, taskId); }

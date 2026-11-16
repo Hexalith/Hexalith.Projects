@@ -24,6 +24,27 @@ using GeneratedProjectsClient = Hexalith.Projects.Client.Generated.Client;
 /// </remarks>
 public static class ProjectsClientServiceCollectionExtensions
 {
+    /// <summary>Registers the evidence-validated primary Web read choice for this process lifetime.</summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection.</returns>
+    public static IServiceCollection AddProjectsReadRouting(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        services.AddOptions<ProjectsReadRoutingOptions>().BindConfiguration("Projects:Reads");
+        services.AddSingleton(provider => ProjectsReadRouteSelection.Create(provider.GetRequiredService<IOptions<ProjectsReadRoutingOptions>>().Value));
+        return services;
+    }
+
+    /// <summary>Registers typed supported reads over the separately configured EventStore Gateway.</summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The service collection.</returns>
+    public static IServiceCollection AddProjectsSupportedReads(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        services.AddTransient<ProjectsSupportedReadClient>();
+        return services;
+    }
+
     /// <summary>
     /// Registers the Projects typed client, binding <see cref="ProjectsClientOptions"/> from the
     /// <see cref="ProjectsClientOptions.DefaultConfigurationSectionName"/> configuration section.

@@ -15,6 +15,7 @@ using Hexalith.McpCli.Abstractions;
 [HexalithQuery("List authorized Projects with one snapshot. Use payload paging: default 50, maximum 200; continue with the opaque cursor and unchanged filters and authority. Descriptive metadata requires a separate permission and durable audit.",
     Name = "list", Domain = "projects", WireType = QueryType, AggregateId = "projects",
     Example = """{"pageSize":50}""")]
+[Hexalith.EventStore.Contracts.Queries.QueryResultContract(typeof(ProjectListPage), "projects", "Hexalith.Projects.Queries.ListProjects.v1")]
 public sealed record ListProjectsQuery(
     [property: Description("Optional Active or Archived filter; omitted includes both."), JsonPropertyName("lifecycleState")]
     string? LifecycleState = null,

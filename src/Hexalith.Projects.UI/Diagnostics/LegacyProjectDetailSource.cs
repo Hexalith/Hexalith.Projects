@@ -22,9 +22,12 @@ public sealed class LegacyProjectDetailSource(IClient client) : ILegacyProjectDe
     public Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken) => GetProjectDetailAsync(projectId, cancellationToken);
 
     /// <inheritdoc />
+    public Task<ProjectDetailLoadResult> GetProjectDetailAsync(string projectId, CancellationToken cancellationToken)
+        => GetProjectDetailAsync(projectId, null, cancellationToken);
+
+    /// <inheritdoc/>
     public async Task<ProjectDetailLoadResult> GetProjectDetailAsync(
-        string projectId,
-        CancellationToken cancellationToken)
+        string projectId, string? conversationId, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectId);
 
@@ -36,7 +39,7 @@ public sealed class LegacyProjectDetailSource(IClient client) : ILegacyProjectDe
                 projectId,
                 correlationId,
                 ReadConsistencyClass.Eventually_consistent,
-                cancellationToken).ConfigureAwait(false);
+                inspectDescriptiveMetadata: true, cancellationToken).ConfigureAwait(false);
             detail = ProjectGeneratedContractMapper.ToContract(project);
         }
         catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
@@ -106,10 +109,8 @@ public sealed class LegacyProjectDetailSource(IClient client) : ILegacyProjectDe
         try
         {
             contextExplanation = await client.GetProjectContextExplanationAsync(
-                projectId,
-                correlationId,
-                ReadConsistencyClass.Eventually_consistent,
-                cancellationToken).ConfigureAwait(false);
+                projectId, correlationId, ReadConsistencyClass.Eventually_consistent,
+                conversationId!, cancellationToken).ConfigureAwait(false);
         }
         catch (HexalithProjectsApiException ex)
         {

@@ -19,6 +19,8 @@ using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
+using Hexalith.Projects.Server.Conversations;
+using System.Text.Json;
 
 /// <summary>
 /// Shared zero-write Get/Explain assembly over persisted Project detail and the pure allowlist.
@@ -27,8 +29,21 @@ public sealed class ProjectContextQueryExecutor(
     IReadModelStore readModelStore,
     ProjectAuthorizationGate authorizationGate,
     ProjectQueryEnvelopePrincipalBinding principalBinding,
-    ProjectContextInclusionPolicy inclusionPolicy)
+    ProjectContextInclusionPolicy inclusionPolicy,
+    IProjectConversationMembershipDirectory? membership = null,
+    TimeProvider? timeProvider = null)
 {
+    /// <summary>Preserves the original constructor; callers without native evidence remain unavailable.</summary>
+    public ProjectContextQueryExecutor(IReadModelStore readModelStore, ProjectAuthorizationGate authorizationGate,
+        ProjectQueryEnvelopePrincipalBinding principalBinding, ProjectContextInclusionPolicy inclusionPolicy)
+        : this(readModelStore, authorizationGate, principalBinding, inclusionPolicy, null) { }
+
+    /// <summary>Preserves the additive native membership constructor.</summary>
+    public ProjectContextQueryExecutor(IReadModelStore readModelStore, ProjectAuthorizationGate authorizationGate,
+        ProjectQueryEnvelopePrincipalBinding principalBinding, ProjectContextInclusionPolicy inclusionPolicy,
+        IProjectConversationMembershipDirectory? membership)
+        : this(readModelStore, authorizationGate, principalBinding, inclusionPolicy, membership, null) { }
+
     private readonly IReadModelStore _readModelStore = readModelStore ?? throw new ArgumentNullException(nameof(readModelStore));
     private readonly ProjectAuthorizationGate _authorizationGate = authorizationGate ?? throw new ArgumentNullException(nameof(authorizationGate));
     private readonly ProjectQueryEnvelopePrincipalBinding _principalBinding = principalBinding ?? throw new ArgumentNullException(nameof(principalBinding));
@@ -48,13 +63,15 @@ public sealed class ProjectContextQueryExecutor(
     {
         ArgumentNullException.ThrowIfNull(query);
         cancellationToken.ThrowIfCancellationRequested();
+        DateTimeOffset asOf = (timeProvider ?? TimeProvider.System).GetUtcNow();
 
         if (string.IsNullOrWhiteSpace(query.TenantId)
             || string.IsNullOrWhiteSpace(query.UserId)
             || string.IsNullOrWhiteSpace(projectId)
             || !TargetsMatch(query, projectId)
-            || !ProjectContextQueryAuthority.MatchesPresented(query.Scopes, ProjectContextQueryAuthority.ExpectedScopes)
-            || !ProjectContextQueryAuthority.MatchesPresented(query.Audience, ProjectContextQueryAuthority.ExpectedAudience)
+            || (!_principalBinding.AllowsAnonymousDevelopment
+                && (query.Scopes?.Contains("projects.read", StringComparer.Ordinal) != true
+                    || query.Audience?.Contains(_principalBinding.ExpectedAudience ?? "hexalith-eventstore", StringComparer.Ordinal) != true))
             || !_principalBinding.TryBind(query, out IProjectTenantContextAccessor tenantContext)
             || _principalBinding.HttpContext is not { } httpContext)
         {
@@ -110,7 +127,7 @@ public sealed class ProjectContextQueryExecutor(
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
                 ProjectLifecycle.Active,
-                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                asOf,
                 projectVersion: 0,
                 projectCurrent: false,
                 folderIncluded: false,
@@ -134,7 +151,7 @@ public sealed class ProjectContextQueryExecutor(
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
                 ProjectLifecycle.Active,
-                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                asOf,
                 projectVersion: 0,
                 projectCurrent: false,
                 folderIncluded: false,
@@ -153,7 +170,7 @@ public sealed class ProjectContextQueryExecutor(
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
                 detail.Lifecycle,
-                detail.UpdatedAt,
+                asOf,
                 projectVersion: 0,
                 projectCurrent: true,
                 folderIncluded: false,
@@ -173,7 +190,7 @@ public sealed class ProjectContextQueryExecutor(
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
                 detail.Lifecycle,
-                detail.UpdatedAt,
+                asOf,
                 projectVersion: 0,
                 projectCurrent: false,
                 folderIncluded: false,
@@ -182,13 +199,35 @@ public sealed class ProjectContextQueryExecutor(
                 ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
-        DateTimeOffset asOf = detail.UpdatedAt;
+        if (finalTenantAccess.FreshnessStatus != TenantProjectionFreshnessStatus.Fresh)
+            return ProjectContextAdmissionAssembler.Unavailable(projectId, detail.Lifecycle, asOf,
+                detail.Sequence, projectCurrent: true, folderIncluded: false, setupCurrent: false,
+                authorizationCurrent: false, ProjectContextUnavailableCause.MissingOrStaleRequiredContext);
+
+        string? conversationId = null;
+        try
+        {
+            using JsonDocument payload = JsonDocument.Parse(query.Payload);
+            JsonProperty[] properties = payload.RootElement.EnumerateObject().Where(p => p.NameEquals("conversationId")).ToArray();
+            if (properties is [{ Value.ValueKind: JsonValueKind.String }]) conversationId = properties[0].Value.GetString();
+        }
+        catch (Exception exception) when (exception is JsonException or InvalidOperationException) { }
+        if (string.IsNullOrWhiteSpace(conversationId) || membership is null
+            || !await membership.IsCurrentMemberAsync(query.TenantId, projectId, conversationId,
+                query.OriginalActorId ?? query.UserId, query.CorrelationId, cancellationToken).ConfigureAwait(false))
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(projectId, detail.Lifecycle, asOf,
+                detail.Sequence, projectCurrent: true, folderIncluded: false, setupCurrent: false,
+                authorizationCurrent: false, ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
+        }
+
+        asOf = (timeProvider ?? TimeProvider.System).GetUtcNow();
         ProjectContextReferenceEvidence references = new(
             detail.ProjectFolder,
             detail.FileReferences,
             detail.MemoryReferences,
             Conversations: []);
-        return _inclusionPolicy.AssembleAdmission(
+        return ProjectContextSafeMetadata.Sanitize(_inclusionPolicy.AssembleAdmission(
             new ProjectContextAssemblyContext(
                 query.TenantId,
                 query.TenantId,
@@ -202,7 +241,7 @@ public sealed class ProjectContextQueryExecutor(
             references,
             detail.Sequence,
             asOf,
-            ownerBackedTrustAvailable: false);
+            ownerBackedTrustAvailable: false));
     }
 
     private async Task<ProjectDetailItem?> LoadDetailAsync(

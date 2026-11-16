@@ -54,7 +54,7 @@ public sealed class GetProjectContextQueryHandlerTests
         response.Setup.PreferredSourceKinds.ShouldBeEmpty();
         response.Setup.ExcludedSourceKinds.ShouldBeEmpty();
         response.ProjectFolder.ShouldNotBeNull();
-        response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.AsOf.ShouldBe(ProjectContextQueryTestFactory.ComputationTime);
         response.Snapshot.ProjectVersion.ShouldBe(4);
         response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(response));
@@ -185,7 +185,7 @@ public sealed class GetProjectContextQueryHandlerTests
 
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         response.Lifecycle.ShouldBe(ProjectLifecycle.Active);
-        response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.AsOf.ShouldBe(ProjectContextQueryTestFactory.ComputationTime);
         response.Snapshot.ProjectVersion.ShouldBe(0);
         response.FileReferences.ShouldBeEmpty();
         response.Snapshot.Components.ShouldContain(component =>
@@ -709,7 +709,7 @@ public sealed class GetProjectContextQueryHandlerTests
             await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken));
 
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
-        response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.AsOf.ShouldBe(ProjectContextQueryTestFactory.ComputationTime);
         response.Snapshot.ProjectVersion.ShouldBe(0);
         response.Setup.ShouldBeNull();
         response.ProjectFolder.ShouldBeNull();
@@ -1052,7 +1052,7 @@ public sealed class GetProjectContextQueryHandlerTests
             ProjectsServerModule.DomainName,
             ProjectId,
             ProjectsServerModule.GetProjectContextQueryType,
-            JsonSerializer.SerializeToUtf8Bytes(new GetProjectContextQuery(projectId), JsonOptions),
+            JsonSerializer.SerializeToUtf8Bytes(new GetProjectContextQuery(projectId) { ConversationId = "bound-conversation" }, JsonOptions),
             "corr-1",
             "actor-1")
         {

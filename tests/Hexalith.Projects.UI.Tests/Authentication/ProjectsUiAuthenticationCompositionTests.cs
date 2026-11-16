@@ -296,7 +296,7 @@ public sealed class ProjectsUiAuthenticationCompositionTests
 
     private static string ReadProjectFile(params string[] segments)
     {
-        string root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        string root = ProjectsTestRepository.Root;
         return File.ReadAllText(Path.Combine([root, .. segments]));
     }
 }

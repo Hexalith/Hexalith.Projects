@@ -1,0 +1,23 @@
+@page "/projects/{ProjectId}"
+@using Hexalith.Projects.Client
+@inject ProjectsReadRouteSelection ReadRoute
+
+@if (ReadRoute.Mode == "Supported")
+{
+    <ProjectDiagnostics ProjectId="@ProjectId" ConversationId="@ConversationId" Descriptive="@Descriptive" Quarantined="@Quarantined" />
+}
+else if (ReadRoute.Mode == "LegacyRollback")
+{
+    <LegacyProjectDiagnostics ProjectId="@ProjectId" ConversationId="@ConversationId" />
+}
+else
+{
+    <FluentText role="status">Project reads are unavailable.</FluentText>
+}
+
+@code {
+    [Parameter] public string? ProjectId { get; set; }
+    [SupplyParameterFromQuery(Name = "conversationId")] public string? ConversationId { get; set; }
+    [SupplyParameterFromQuery(Name = "descriptive")] public bool Descriptive { get; set; }
+    [SupplyParameterFromQuery(Name = "quarantined")] public bool Quarantined { get; set; }
+}

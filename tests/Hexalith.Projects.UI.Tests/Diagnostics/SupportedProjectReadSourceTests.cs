@@ -167,7 +167,7 @@ public sealed class SupportedProjectReadSourceTests
     [Fact]
     public async Task NavigationRemountCannotOverwriteAnotherConsumersContinuation()
     {
-        string program = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "Hexalith.Projects.UI", "Program.cs"));
+        string program = File.ReadAllText(Path.Combine(ProjectsTestRepository.Root, "src", "Hexalith.Projects.UI", "Program.cs"));
         program.ShouldContain("AddTransient<IProjectInventorySource, ProjectInventorySource>()");
         SupportedReadTestContext context = new();
         List<SubmitQueryRequest> requests = [];

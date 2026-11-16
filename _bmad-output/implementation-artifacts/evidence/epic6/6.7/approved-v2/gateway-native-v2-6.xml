@@ -1,0 +1,50 @@
+<assemblies schema-version="3" id="e6b2e56d-ba0d-46d9-94eb-df1f434e9513" user="administrator" start-rtf="2026-11-16T16:16:25.2936844+00:00" finish-rtf="2026-11-16T16:16:27.5446906+00:00" timestamp="11/16/2026 17:16:27"><assembly environment="64-bit (x64) .NET 11.0.0 [collection-per-class, parallel (collections, 14 threads)]" id="26c7b90c-bffb-49a1-8290-2328e619f29a" name="/home/administrator/projects/hexalith/projects/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll" run-date="2026-11-16" run-time="16:16:25" start-rtf="2026-11-16T16:16:25.2936844+00:00" test-framework="xUnit.net v3 4.0.3+384aa7f0b4" target-framework=".NETCoreApp,Version=v11.0" errors="0" failed="1" finish-rtf="2026-11-16T16:16:27.5446906+00:00" not-run="0" passed="0" skipped="0" time="2.251" time-rtf="00:00:02.2510000" total="1"><collection name="ProjectReadTelemetry" id="d0eb9ce6-63de-4887-8977-09edbc143850" failed="1" not-run="0" passed="0" skipped="0" time="2.113" time-rtf="00:00:02.1130000" total="1"><test id="a0ba5491-9e62-4465-8dea-66b24270b53c" name="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource" result="Fail" time="2.113" time-rtf="00:00:02.1130000" start-rtf="2026-11-16T16:16:25.3916145+00:00" finish-rtf="2026-11-16T16:16:27.5229225+00:00" type="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests" method="NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource" source-file="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs" source-line="52"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : response.StatusCode
+    should be
+HttpStatusCode.OK
+    but was
+HttpStatusCode.InternalServerError
+
+Additional Info:
+    {\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.6.1\",\"title\":\"Internal Server Error\",\"status\":500,\"traceId\":\"00-615ae1c570743b261354b777f8cf52ce-3440768252300966-02\"}
+Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException
+   at Hexalith.EventStore.Queries.DaprDomainQueryInvoker.InvokeAsync(QueryEnvelope query, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs:line 107
+   at Hexalith.EventStore.Queries.DaprDomainQueryInvoker.InvokeAsync(QueryEnvelope query, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs:line 125
+   at Hexalith.EventStore.Queries.HandlerAwareQueryRouter.RouteQueryAsync(SubmitQuery query, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/HandlerAwareQueryRouter.cs:line 111
+   at Hexalith.EventStore.Queries.HandlerAwareQueryRouter.RouteQueryAsync(SubmitQuery query, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/HandlerAwareQueryRouter.cs:line 139
+   at Hexalith.EventStore.Server.Pipeline.SubmitQueryHandler.Handle(SubmitQuery request, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Pipeline/SubmitQueryHandler.cs:line 25
+   at Hexalith.EventStore.Controllers.QueriesController.Submit(SubmitQueryRequest request, String ifNoneMatch, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs:line 387
+   at Hexalith.EventStore.Controllers.QueriesController.Submit(SubmitQueryRequest request, String ifNoneMatch, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs:line 458
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.&lt;InvokeActionMethodAsync&gt;g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.&lt;InvokeNextActionFilterAsync&gt;g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State&amp; next, Scope&amp; scope, Object&amp; state, Boolean&amp; isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.&lt;InvokeInnerFilterAsync&gt;g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeNextResourceFilter&gt;g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State&amp; next, Scope&amp; scope, Object&amp; state, Boolean&amp; isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeFilterPipelineAsync&gt;g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeAsync&gt;g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeAsync&gt;g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.&lt;&gt;c__DisplayClass13_0.&lt;&lt;StartGatewayAsync&gt;b__9&gt;d.MoveNext() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 605
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+
+conversations:query:200;eventstore:api/v1/queries/owner-authority/workload:200;projects:query:200;conversations:query:200;eventstore:api/v1/queries/owner-authority/workload:200;projects:query:200;conversations:query:200;eventstore:api/v1/queries/owner-authority/workload:200;projects:query:200</message><stack-trace>   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 99
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 111
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 111
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 111
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.NativeConversationMembershipUsesTheRealGatewayOwnerAndPersistedNativeSource() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.Cutover.cs:line 111
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)</stack-trace></failure></test></collection></assembly></assemblies>

@@ -80,7 +80,7 @@ public sealed class ConversationsProjectConversationResolutionDirectoryTests
     }
 
     [Fact]
-    public async Task ReadConversationMetadata_NoExplicitProjectButHydrationPointer_UsesHydrationAsSoftLink()
+    public async Task ReadConversationMetadata_NoExplicitProjectButHydrationPointer_NeverUsesHydrationAsCommittedEvidence()
     {
         StubConversationClient client = new()
         {
@@ -101,7 +101,7 @@ public sealed class ConversationsProjectConversationResolutionDirectoryTests
             .ReadConversationMetadataAsync(Conversation, Tenant, Caller, CorrelationId, TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
 
-        metadata.LinkedProjectId.ShouldBe("project-hydrated");
+        metadata.LinkedProjectId.ShouldBeNull();
     }
 
     [Fact]
@@ -280,9 +280,19 @@ public sealed class ConversationsProjectConversationResolutionDirectoryTests
         metadata.SafeLabel.ShouldBeNull();
     }
 
+    [Fact]
+    public async Task OlderOwnerIgnoringAdvisoryModeCannotAuthorizeRichMetadata()
+    {
+        var result = VisibleSuccess(Details(projectId: new ConversationProjectId("project-a"), label: "Unclassified"));
+        var old = ConversationClientResult<ConversationDetailResult>.Success(result.Value! with { ReadPurpose = null }, HttpStatusCode.OK);
+        var directory = new ConversationsProjectConversationResolutionDirectory(new StubConversationClient { DetailResult = old });
+        var value = await directory.ReadConversationMetadataAsync(Conversation, Tenant, Caller, CorrelationId, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        value.ReferenceState.ShouldBe(ReferenceState.Unavailable); value.SafeLabel.ShouldBeNull(); value.LinkedProjectId.ShouldBeNull();
+    }
+
     private static ConversationClientResult<ConversationDetailResult> VisibleSuccess(ConversationDetailsV1 details)
         => ConversationClientResult<ConversationDetailResult>.Success(
-            ConversationDetailResult.Visible(SchemaVersion.Current, details, "Visible."),
+            ConversationDetailResult.Visible(SchemaVersion.Current, details, "Visible.") with { ReadPurpose = ConversationResolutionScoringLabel.SupportedPurpose },
             HttpStatusCode.OK);
 
     private static ConversationClientResult<ConversationDetailResult> Failure(HttpStatusCode statusCode)

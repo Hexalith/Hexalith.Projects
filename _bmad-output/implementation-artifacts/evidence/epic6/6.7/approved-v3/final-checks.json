@@ -1,0 +1,157 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.7"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "output": "PASS: Story 6.7 is within production authority\n"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "references/Hexalith.Conversations",
+        "-c",
+        "core.whitespace=cr-at-eol",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "references/Hexalith.EventStore",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "nativeResults": [
+    {
+      "path": "Domain-private-final-2.xml",
+      "sha256": "f707363a1ae1458005438bfb149e528b2f72cebe6bea6e35da18d4c36c5620db",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+      "total": 693,
+      "passed": 693,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Contracts-private-final-2.xml",
+      "sha256": "4607a3de6f6305a6d5975769f3e9318a565e04171659dc2463e904d69120743d",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll",
+      "total": 207,
+      "passed": 207,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Client-private-final-2.xml",
+      "sha256": "6b9f76cf12b4058df9878d58c98be29e3ef850a843f3c1eade975b55008f35b2",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Client.Tests/debug/Hexalith.Projects.Client.Tests.dll",
+      "total": 145,
+      "passed": 145,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Server-private-final-4.xml",
+      "sha256": "7c8cf14709c6d1e06f5d0d8c4cbf55cfd23a5ecd9701026aadcd4a1c701e4452",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "total": 1473,
+      "passed": 1473,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "UI-private-final-2.xml",
+      "sha256": "b349fc0f7384fa9d0250cdefe44bd34a8d9eed913fedb1105bdca35615f0beac",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "total": 281,
+      "passed": 281,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Conversations-catalog-final-2.xml",
+      "sha256": "5628d07379a93d18849c8bc9e72c85fc0700d9b06498b78fa72b853911f2688a",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/owner-work/artifacts/bin/Hexalith.Conversations.Server.Tests/debug/Hexalith.Conversations.Server.Tests.dll",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "gateway-final-v3-5.xml",
+      "sha256": "c53d4fbeeb163f08c133dfc4966a92786b62e5680b13b5919b590d1b81682484",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "total": 1,
+      "passed": 1,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "gateway-rollback-final-v3-7.xml",
+      "sha256": "7df7000c7ac36bbd44d03057ec764918accee9cc7c240ddc2133cef674fd5bfc",
+      "assemblyPath": "/tmp/hexalith-job.r31UazNg/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "total": 1,
+      "passed": 1,
+      "skipped": 0,
+      "notRun": 0
+    }
+  ],
+  "sourceManifestSha256": "3cd847d8c03533f4d9e129bfe8ad008f1184e47854fe71aaea3595529efd1230",
+  "activationPacket": {
+    "path": "read-cutover-final.json",
+    "sha256": "4ba7f3a79ab6cf0efba9f444bd1c5321351ce53a706e28be7b2003d7cde8b94e",
+    "passingCells": 77
+  },
+  "rollbackProof": {
+    "path": "rollback-final-proof.json",
+    "sha256": "718d237517ca7ba29e31a26ae0f729c9dcb6f2fcfae7d639ffcb6a8abbdaef9f",
+    "passingReads": 7
+  },
+  "cleanup": {
+    "ownedPid": 3806806,
+    "reaped": true,
+    "productionAcceptance": false,
+    "processAbsent": true,
+    "privateTMPDIRRemoved": true,
+    "rootArtifactsPreserved": true
+  },
+  "buildWarnings": 0,
+  "buildErrors": 0,
+  "deploymentOrPublication": false
+}

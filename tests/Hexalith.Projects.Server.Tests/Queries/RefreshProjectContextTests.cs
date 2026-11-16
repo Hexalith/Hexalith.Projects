@@ -554,7 +554,7 @@ public sealed class RefreshProjectContextTests
     }
 
     [Fact]
-    public async Task RefreshProjectContext_FolderUnavailableAndProjectionStoredPending_PreservesPendingDiagnostic()
+    public async Task RefreshProjectContext_FolderUnavailableAndProjectionStoredPending_WithholdsUsableContext()
     {
         // AC 3 Folder mapping rule: when outcome=Unavailable AND projection-stored=Pending, preserve
         // Pending so the inclusion policy continues to emit the projectFolderPending diagnostic rather
@@ -570,12 +570,9 @@ public sealed class RefreshProjectContextTests
             HttpResponseMessage response = await client.SendAsync(RefreshContextRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
-            using JsonDocument document = JsonDocument.Parse(body);
-            JsonElement folderRow = document.RootElement.GetProperty("excluded").EnumerateArray()
-                .First(e => string.Equals(e.GetProperty("referenceKind").GetString(), "folder", StringComparison.Ordinal));
-            folderRow.GetProperty("referenceState").GetString().ShouldBe("Pending");
-            folderRow.GetProperty("diagnostic").GetString().ShouldBe(ProjectContextInclusionDiagnostic.ProjectFolderPending);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            body.ShouldNotContain("projectSetup"); body.ShouldNotContain("goals");
+            body.ShouldNotContain("memoryReferences");
         }
         finally
         {
@@ -603,7 +600,7 @@ public sealed class RefreshProjectContextTests
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             HttpResponseMessage refresh = await client.SendAsync(RefreshContextRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
             HttpResponseMessage get = await client.SendAsync(
-                new HttpRequestMessage(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}/context"),
+                new HttpRequestMessage(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}/context?conversationId=bound-conversation"),
                 TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             refresh.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -704,6 +701,8 @@ public sealed class RefreshProjectContextTests
     private static HttpRequestMessage RefreshContextRequest(string? url = null)
     {
         HttpRequestMessage request = new(HttpMethod.Get, url ?? $"/api/v1/projects/{ProjectIdValue}/context/refresh");
+        if (request.RequestUri is { } uri)
+            request.RequestUri = new Uri(uri.OriginalString + (uri.OriginalString.Contains('?') ? "&" : "?") + "conversationId=bound-conversation", UriKind.RelativeOrAbsolute);
         request.Headers.Add("X-Correlation-Id", CorrelationIdValue);
         return request;
     }
@@ -734,6 +733,8 @@ public sealed class RefreshProjectContextTests
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
+        builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
         builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();

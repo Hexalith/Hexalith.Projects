@@ -57,6 +57,10 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
     /// <summary>Gets the deployment-owned audience validated by Projects bearer authentication.</summary>
     public string? ExpectedAudience => _configuration[$"{ProjectsAuthenticationOptions.SectionName}:Audience"];
 
+    /// <summary>Gets the existing explicitly configured Development-only anonymous bypass.</summary>
+    public bool AllowsAnonymousDevelopment
+        => ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(_configuration, _environment);
+
     /// <summary>Validates principal-to-envelope identity and returns the authority context to evaluate.</summary>
     /// <param name="query">The immutable EventStore query envelope.</param>
     /// <param name="tenantContext">The authenticated or explicit Development authority context.</param>
@@ -65,7 +69,7 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        if (ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(_configuration, _environment))
+        if (AllowsAnonymousDevelopment)
         {
             string actorId = query.OriginalActorId ?? query.UserId;
             tenantContext = new DevelopmentProjectQueryTenantContextAccessor(query.TenantId, actorId);

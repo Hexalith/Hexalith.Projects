@@ -56,14 +56,14 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         response.Setup!.Goals.ShouldBe(["goal"]);
         response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
         response.Snapshot.ProjectVersion.ShouldBe(4);
-        response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.AsOf.ShouldBe(ProjectContextQueryTestFactory.ComputationTime);
         response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
             ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
         response.Snapshot.RecoveryActions.ShouldBeEmpty();
     }
 
     [Fact]
-    public async Task ExecuteAsync_OptionalContextOmission_PreservesCompleteStory62Snapshot()
+    public async Task ExecuteAsync_OptionalContextOmission_PreservesPartialAdmission()
     {
         ProjectSetup setup = new(
             [],
@@ -85,10 +85,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             JsonOptions)!;
 
         response.Setup.ShouldNotBeNull();
-        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Partial);
         response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
-            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
-        response.Snapshot.RecoveryActions.ShouldBeEmpty();
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization", "References"]);
+        response.Snapshot.RecoveryActions.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -466,7 +466,7 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     }
 
     private static QueryEnvelope Query()
-        => new(TenantId, ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, [], "corr-1", "actor-1")
+        => new(TenantId, ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, "{\"conversationId\":\"bound-conversation\"}"u8.ToArray(), "corr-1", "actor-1")
         {
             OriginalActorId = "actor-1",
             AuthenticatedWorkloadId = "projects-callback",

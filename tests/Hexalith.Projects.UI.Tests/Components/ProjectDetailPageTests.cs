@@ -15,6 +15,7 @@ using Hexalith.Projects.UI.Diagnostics;
 using Hexalith.Projects.UI.Rendering;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components;
 
 using NSubstitute;
 
@@ -27,6 +28,35 @@ using Xunit;
 /// </summary>
 public sealed class ProjectDetailPageTests : FrontComposerTestBase
 {
+    [Fact]
+    public async Task ReviewConversationBindingChangeClearsPriorContextAndDiscardsAnInFlightResult()
+    {
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
+        TaskCompletionSource<ProjectDetailLoadResult> late = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        source.GetProjectDetailAsync("project-001", "bound-conversation", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        source.GetProjectDetailAsync("project-001", "late-conversation", Arg.Any<CancellationToken>()).Returns(late.Task);
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"))));
+        Services.AddSingleton(source);
+        var navigation = Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo("/projects/project-001?conversationId=bound-conversation");
+        var cut = Render<LegacyProjectDiagnostics>(parameters => parameters.Add(p => p.ProjectId, "project-001"));
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-setup']").Click();
+        cut.Markup.ShouldContain("keep continuity");
+        await cut.InvokeAsync(() => navigation.NavigateTo("/projects/project-001?conversationId=late-conversation"));
+        cut.FindAll("[data-testid='project-detail-inspector']").ShouldBeEmpty();
+        cut.Markup.ShouldNotContain("keep continuity");
+        await cut.InvokeAsync(() => navigation.NavigateTo("/projects/project-001"));
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-detail-inspector']").ShouldBeEmpty());
+        await cut.InvokeAsync(() => late.SetResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-detail-inspector']").ShouldBeEmpty());
+        cut.Markup.ShouldNotContain("keep continuity");
+        await source.Received(1).GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>());
+        await source.Received(1).GetProjectDetailAsync("project-001", "late-conversation", Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public void DetailRendersHeaderSectionsSetupReferencesAndAudit()
     {

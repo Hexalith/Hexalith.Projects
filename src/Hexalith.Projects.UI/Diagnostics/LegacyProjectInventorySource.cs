@@ -31,7 +31,7 @@ public sealed class LegacyProjectInventorySource(IClient client) : ILegacyProjec
                 ToGeneratedLifecycle(lifecycle),
                 correlationId,
                 ReadConsistencyClass.Eventually_consistent,
-                cancellationToken).ConfigureAwait(false);
+                inspectDescriptiveMetadata: true, cancellationToken).ConfigureAwait(false);
 
             ProjectInventoryRowProjection[] rows = response.Items
                 .Select(item => ToProjection(item, response.Freshness))

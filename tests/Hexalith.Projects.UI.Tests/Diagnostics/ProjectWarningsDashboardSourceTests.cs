@@ -36,7 +36,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 Lifecycle.Active,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ListResponse(
                 ListItem("project-001", ProjectLifecycleState.Active),
                 ListItem("project-002", ProjectLifecycleState.Archived))));
@@ -80,7 +80,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
             Lifecycle.Active,
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+            true, Arg.Any<CancellationToken>()).ConfigureAwait(true);
         await client.Received(1).GetProjectOperatorDiagnosticsAsync(
             "project-001",
             25,
@@ -97,7 +97,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ListResponse(
                 ListItem("project-001", ProjectLifecycleState.Active),
                 ListItem("project-002", ProjectLifecycleState.Active))));
@@ -175,7 +175,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ListResponse(visibleProjects)));
         var diagnosedProjectIds = new List<string>();
         client.GetProjectOperatorDiagnosticsAsync(
@@ -226,10 +226,10 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(call =>
             {
-                call.ArgAt<CancellationToken>(3).ThrowIfCancellationRequested();
+                call.ArgAt<CancellationToken>(4).ThrowIfCancellationRequested();
                 return Task.FromResult(ListResponse());
             });
 
@@ -254,7 +254,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ListResponse(
                 ListItem("project-001", ProjectLifecycleState.Active),
                 ListItem("project-002", ProjectLifecycleState.Active))));
@@ -291,7 +291,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw new TaskCanceledException("transport timeout"));
 
         var source = new LegacyProjectWarningsDashboardSource(client);
@@ -316,7 +316,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ListResponse(
                 ListItem("project-001", ProjectLifecycleState.Active),
                 ListItem("project-002", ProjectLifecycleState.Active))));
@@ -371,7 +371,7 @@ public sealed class LegacyProjectWarningsDashboardSourceTests
                 null,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
+                true, Arg.Any<CancellationToken>())
             .Returns<Task<ProjectListResponse>>(_ => throw ApiException(statusCode));
 
         var source = new LegacyProjectWarningsDashboardSource(client);

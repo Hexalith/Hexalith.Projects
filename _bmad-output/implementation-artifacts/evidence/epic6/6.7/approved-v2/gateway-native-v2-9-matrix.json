@@ -1,0 +1,166 @@
+{
+  "normalizationRevision": "story67-read-normalization-2026-11-16-v2",
+  "transport": "authenticated-existing-Gateway-and-retained-v1-REST",
+  "cases": [
+    {
+      "operation": "list",
+      "scenario": "complete",
+      "executed": true,
+      "skipped": false,
+      "passed": false,
+      "canonicalOutput": false,
+      "independentKeys": true,
+      "exactPositions": true,
+      "cursorScope": true,
+      "isolation": true,
+      "supportedOnlyAssertions": true,
+      "noDomainWrites": true,
+      "unexpectedSdkWriteKeys": [],
+      "legacyStatus": 200,
+      "supportedStatus": 200,
+      "legacyRawResponse": "{\u0022items\u0022:[{\u0022projectId\u0022:\u0022project-a\u0022,\u0022name\u0022:\u0022Project project-a\u0022,\u0022lifecycleState\u0022:\u0022active\u0022,\u0022createdAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022updatedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022freshness\u0022:{\u0022readConsistency\u0022:\u0022eventually_consistent\u0022,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022projectionWatermark\u0022:\u0022watermark_00000101\u0022,\u0022stale\u0022:false,\u0022trustState\u0022:\u0022trusted\u0022}},{\u0022projectId\u0022:\u0022project-b\u0022,\u0022name\u0022:\u0022Project project-b\u0022,\u0022lifecycleState\u0022:\u0022active\u0022,\u0022createdAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022updatedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022freshness\u0022:{\u0022readConsistency\u0022:\u0022eventually_consistent\u0022,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022projectionWatermark\u0022:\u0022watermark_00000201\u0022,\u0022stale\u0022:false,\u0022trustState\u0022:\u0022trusted\u0022}}],\u0022freshness\u0022:{\u0022readConsistency\u0022:\u0022eventually_consistent\u0022,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022projectionWatermark\u0022:\u0022watermark_00000201\u0022,\u0022stale\u0022:false,\u0022trustState\u0022:\u0022trusted\u0022}}",
+      "supportedRawResponse": "{\u0022correlationId\u0022:\u002203982f73-41a9-4932-a2d2-b2fd37db66f5\u0022,\u0022payload\u0022:{\u0022items\u0022:[{\u0022projectId\u0022:\u0022project-a\u0022,\u0022name\u0022:\u0022Project project-a\u0022,\u0022lifecycleState\u0022:\u0022Active\u0022,\u0022projectFolderAvailability\u0022:\u0022Included\u0022,\u0022snapshot\u0022:{\u0022responseState\u0022:\u0022Complete\u0022,\u0022asOf\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022,\u0022projectVersion\u0022:2,\u0022components\u0022:[{\u0022name\u0022:\u0022Project\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Folder\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022Setup\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Authorization\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022References\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022}],\u0022recoveryActions\u0022:[\u0022None\u0022]}},{\u0022projectId\u0022:\u0022project-b\u0022,\u0022name\u0022:\u0022Project project-b\u0022,\u0022lifecycleState\u0022:\u0022Active\u0022,\u0022projectFolderAvailability\u0022:\u0022Included\u0022,\u0022snapshot\u0022:{\u0022responseState\u0022:\u0022Complete\u0022,\u0022asOf\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022,\u0022projectVersion\u0022:2,\u0022components\u0022:[{\u0022name\u0022:\u0022Project\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Folder\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022Setup\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Authorization\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022References\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022}],\u0022recoveryActions\u0022:[\u0022None\u0022]}}],\u0022cursor\u0022:null,\u0022hasMore\u0022:false,\u0022snapshot\u0022:{\u0022responseState\u0022:\u0022Complete\u0022,\u0022asOf\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022,\u0022projectVersion\u0022:0,\u0022components\u0022:[{\u0022name\u0022:\u0022Enumeration\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022}],\u0022recoveryActions\u0022:[\u0022None\u0022]}},\u0022success\u0022:true,\u0022errorMessage\u0022:null,\u0022metadata\u0022:{\u0022eTag\u0022:null,\u0022isNotModified\u0022:null,\u0022isStale\u0022:null,\u0022isDegraded\u0022:null,\u0022projectionVersion\u0022:null,\u0022servedAt\u0022:\u00222026-11-16T16:22:57.4978572\u002B00:00\u0022,\u0022paging\u0022:null,\u0022warningCodes\u0022:null,\u0022provenance\u0022:\u0022HandlerComputed\u0022,\u0022lifecycle\u0022:\u0022Unknown\u0022}}",
+      "approvedOutcomePair": null,
+      "domainBytesAndEtagsBefore": {
+        "statestore/projects:projection-journal:cutover-native-8106af8391b3488a97409ed624301213": "589B1ABC0CB7A3D68FDE4EB17CF5795C3A148235FE6EF4235D1133A3BFA54174:e243444a-03a5-4b4f-9acd-2f76e53b5718",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:index": "2057D6A1BDC0161EE83221AC5D3324DDB1E3252EE5D68D1A80D286AD5BDB10B1:4fc70b29-df37-4d48-88e9-2fbe8450bba9",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:9:project-a": "8E1EAF810C803862BAEC5C43A9031A5F6FE92C452233C0179610414E335462DB:df29e3fa-44af-47de-abce-6a59700ab9ef",
+        "projects-conversation-start-setup/cutover-native-8106af8391b3488a97409ed624301213:projects:project-a": "60728F05350D6BCABF542A2FE1E85C5159A8F48825F50A8770E2583539E31BD3:0953ae20-2bb4-4f84-b038-6af8aeb26b96",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:9:project-b": "CF5C7205DA1C2080C5B8BA3F807C4109BF5E5787096CA779AC58897106CB5261:04ac3ce9-b79b-4c2c-8d22-c9b974cd591b",
+        "projects-conversation-start-setup/cutover-native-8106af8391b3488a97409ed624301213:projects:project-b": "8C76A13B2895D9BE37A71DE7190009779268DA615D278FD320EFCADAF9B2968F:4ebb8556-aeee-44ea-b6ba-21f29d3f2b90",
+        "statestore/projection:conversations:Y3V0b3Zlci1uYXRpdmUtODEwNmFmODM5MWIzNDg4YTk3NDA5ZWQ2MjQzMDEyMTM:Ym91bmQtY29udmVyc2F0aW9u": "3E74F8A35AB7A5C132BD37306303FF962706BCF6BB9199EE079173812815DA39:3e2da8b3-a336-479c-8b4f-f903d45db6ae",
+        "statestore/projection:conversations-index:Y3V0b3Zlci1uYXRpdmUtODEwNmFmODM5MWIzNDg4YTk3NDA5ZWQ2MjQzMDEyMTM": "49C5733579A0307D6308E6FEE40286478B501F860B96B1A0CB0EF461A95D4EFE:cc488f73-93d0-4c2e-a44b-663d5d41d34f",
+        "statestore/story64:conversation-tenant:cutover-native-8106af8391b3488a97409ed624301213": "B93D93164C04CE010D95B38D924CD7E0897879FC755AE0B2657547CE6D1B0A1E:da125f9d-00a1-4cf2-8f26-9e01d6cc5daf",
+        "logical:project:project-a": "DC4821375C80CCB8F337B5938E5B2FD486D692CEAA3A9A1125CE4939B85BF09D:df29e3fa-44af-47de-abce-6a59700ab9ef",
+        "logical:setup:project-a": "60728F05350D6BCABF542A2FE1E85C5159A8F48825F50A8770E2583539E31BD3:0953ae20-2bb4-4f84-b038-6af8aeb26b96",
+        "logical:project:project-b": "1AF222C748D3E9156AD34CFCE750FF97D2D8C0A859A070643860B11941BFF1C6:04ac3ce9-b79b-4c2c-8d22-c9b974cd591b",
+        "logical:setup:project-b": "8C76A13B2895D9BE37A71DE7190009779268DA615D278FD320EFCADAF9B2968F:4ebb8556-aeee-44ea-b6ba-21f29d3f2b90"
+      },
+      "cursorEvidence": null,
+      "auditWrites": 2,
+      "sourcePositions": [
+        {
+          "projectId": "project-a",
+          "globalPosition": 101,
+          "sequenceNumber": 2
+        },
+        {
+          "projectId": "project-b",
+          "globalPosition": 201,
+          "sequenceNumber": 2
+        }
+      ],
+      "reason": "unapproved-wire-output-difference-retained-without-discarding-fields"
+    },
+    {
+      "operation": "open",
+      "scenario": "complete",
+      "executed": true,
+      "skipped": false,
+      "passed": false,
+      "canonicalOutput": false,
+      "independentKeys": true,
+      "exactPositions": true,
+      "cursorScope": true,
+      "isolation": true,
+      "supportedOnlyAssertions": true,
+      "noDomainWrites": true,
+      "unexpectedSdkWriteKeys": [],
+      "legacyStatus": 200,
+      "supportedStatus": 200,
+      "legacyRawResponse": "{\u0022projectId\u0022:\u0022project-a\u0022,\u0022name\u0022:\u0022Project project-a\u0022,\u0022description\u0022:\u0022Safe description\u0022,\u0022lifecycleState\u0022:\u0022active\u0022,\u0022createdAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022updatedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022setupMetadata\u0022:null,\u0022projectSetup\u0022:null,\u0022contextActivation\u0022:{\u0022enabled\u0022:true,\u0022blockedReasonCode\u0022:null},\u0022references\u0022:[{\u0022referenceKind\u0022:\u0022folder\u0022,\u0022referenceState\u0022:\u0022included\u0022,\u0022referenceId\u0022:\u0022folder-project-a\u0022,\u0022displayName\u0022:\u0022Folder\u0022,\u0022freshness\u0022:{\u0022readConsistency\u0022:\u0022eventually_consistent\u0022,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022projectionWatermark\u0022:\u0022watermark_00000101\u0022,\u0022stale\u0022:false,\u0022trustState\u0022:\u0022trusted\u0022}}],\u0022freshness\u0022:{\u0022readConsistency\u0022:\u0022eventually_consistent\u0022,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022projectionWatermark\u0022:\u0022watermark_00000101\u0022,\u0022stale\u0022:false,\u0022trustState\u0022:\u0022trusted\u0022}}",
+      "supportedRawResponse": "{\u0022correlationId\u0022:\u0022ee8cea7a-2a77-407a-9b8b-74f2b88c3506\u0022,\u0022payload\u0022:{\u0022projectId\u0022:\u0022project-a\u0022,\u0022name\u0022:\u0022Project project-a\u0022,\u0022description\u0022:\u0022Safe description\u0022,\u0022lifecycleState\u0022:\u0022Active\u0022,\u0022createdAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022updatedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022,\u0022setup\u0022:{\u0022goals\u0022:[],\u0022userInstructions\u0022:[],\u0022preferredSourceKinds\u0022:[],\u0022excludedSourceKinds\u0022:[],\u0022conversationStartDefaults\u0022:null},\u0022references\u0022:[{\u0022referenceKind\u0022:\u0022ProjectFolder\u0022,\u0022folderId\u0022:\u0022folder-project-a\u0022,\u0022fileReferenceId\u0022:null,\u0022memoryReferenceId\u0022:null,\u0022displayName\u0022:\u0022Folder\u0022,\u0022referenceState\u0022:\u0022Included\u0022,\u0022reasonCode\u0022:null,\u0022observedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022}],\u0022snapshot\u0022:{\u0022responseState\u0022:\u0022Complete\u0022,\u0022asOf\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022,\u0022projectVersion\u0022:2,\u0022components\u0022:[{\u0022name\u0022:\u0022Project\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Folder\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022Setup\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022},{\u0022name\u0022:\u0022Authorization\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-11-16T16:22:55.411756\u002B00:00\u0022},{\u0022name\u0022:\u0022References\u0022,\u0022included\u0022:true,\u0022freshness\u0022:\u0022Current\u0022,\u0022reason\u0022:\u0022Current\u0022,\u0022lastVerifiedAt\u0022:\u00222026-10-17T09:00:00\u002B00:00\u0022}],\u0022recoveryActions\u0022:[\u0022None\u0022]}},\u0022success\u0022:true,\u0022errorMessage\u0022:null,\u0022metadata\u0022:{\u0022eTag\u0022:null,\u0022isNotModified\u0022:null,\u0022isStale\u0022:null,\u0022isDegraded\u0022:null,\u0022projectionVersion\u0022:null,\u0022servedAt\u0022:\u00222026-11-16T16:22:57.7893631\u002B00:00\u0022,\u0022paging\u0022:null,\u0022warningCodes\u0022:null,\u0022provenance\u0022:\u0022HandlerComputed\u0022,\u0022lifecycle\u0022:\u0022Unknown\u0022}}",
+      "approvedOutcomePair": null,
+      "domainBytesAndEtagsBefore": {
+        "statestore/projects:projection-journal:cutover-native-8106af8391b3488a97409ed624301213": "589B1ABC0CB7A3D68FDE4EB17CF5795C3A148235FE6EF4235D1133A3BFA54174:e243444a-03a5-4b4f-9acd-2f76e53b5718",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:index": "2057D6A1BDC0161EE83221AC5D3324DDB1E3252EE5D68D1A80D286AD5BDB10B1:4fc70b29-df37-4d48-88e9-2fbe8450bba9",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:9:project-a": "8E1EAF810C803862BAEC5C43A9031A5F6FE92C452233C0179610414E335462DB:df29e3fa-44af-47de-abce-6a59700ab9ef",
+        "projects-conversation-start-setup/cutover-native-8106af8391b3488a97409ed624301213:projects:project-a": "60728F05350D6BCABF542A2FE1E85C5159A8F48825F50A8770E2583539E31BD3:0953ae20-2bb4-4f84-b038-6af8aeb26b96",
+        "statestore/projects:reads:v1:47:cutover-native-8106af8391b3488a97409ed624301213:9:project-b": "CF5C7205DA1C2080C5B8BA3F807C4109BF5E5787096CA779AC58897106CB5261:04ac3ce9-b79b-4c2c-8d22-c9b974cd591b",
+        "projects-conversation-start-setup/cutover-native-8106af8391b3488a97409ed624301213:projects:project-b": "8C76A13B2895D9BE37A71DE7190009779268DA615D278FD320EFCADAF9B2968F:4ebb8556-aeee-44ea-b6ba-21f29d3f2b90",
+        "statestore/projection:conversations:Y3V0b3Zlci1uYXRpdmUtODEwNmFmODM5MWIzNDg4YTk3NDA5ZWQ2MjQzMDEyMTM:Ym91bmQtY29udmVyc2F0aW9u": "3E74F8A35AB7A5C132BD37306303FF962706BCF6BB9199EE079173812815DA39:3e2da8b3-a336-479c-8b4f-f903d45db6ae",
+        "statestore/projection:conversations-index:Y3V0b3Zlci1uYXRpdmUtODEwNmFmODM5MWIzNDg4YTk3NDA5ZWQ2MjQzMDEyMTM": "49C5733579A0307D6308E6FEE40286478B501F860B96B1A0CB0EF461A95D4EFE:cc488f73-93d0-4c2e-a44b-663d5d41d34f",
+        "statestore/story64:conversation-tenant:cutover-native-8106af8391b3488a97409ed624301213": "B93D93164C04CE010D95B38D924CD7E0897879FC755AE0B2657547CE6D1B0A1E:da125f9d-00a1-4cf2-8f26-9e01d6cc5daf",
+        "logical:project:project-a": "DC4821375C80CCB8F337B5938E5B2FD486D692CEAA3A9A1125CE4939B85BF09D:df29e3fa-44af-47de-abce-6a59700ab9ef",
+        "logical:setup:project-a": "60728F05350D6BCABF542A2FE1E85C5159A8F48825F50A8770E2583539E31BD3:0953ae20-2bb4-4f84-b038-6af8aeb26b96",
+        "logical:project:project-b": "1AF222C748D3E9156AD34CFCE750FF97D2D8C0A859A070643860B11941BFF1C6:04ac3ce9-b79b-4c2c-8d22-c9b974cd591b",
+        "logical:setup:project-b": "8C76A13B2895D9BE37A71DE7190009779268DA615D278FD320EFCADAF9B2968F:4ebb8556-aeee-44ea-b6ba-21f29d3f2b90"
+      },
+      "cursorEvidence": null,
+      "auditWrites": 2,
+      "sourcePositions": [
+        {
+          "projectId": "project-a",
+          "globalPosition": 101,
+          "sequenceNumber": 2
+        },
+        {
+          "projectId": "project-b",
+          "globalPosition": 201,
+          "sequenceNumber": 2
+        }
+      ],
+      "reason": "unapproved-wire-output-difference-retained-without-discarding-fields"
+    }
+  ],
+  "originalSourceEnvelopes": [
+    {
+      "tenantId": "cutover-native-8106af8391b3488a97409ed624301213",
+      "domain": "projects",
+      "aggregateId": "project-a",
+      "events": [
+        {
+          "eventTypeName": "Hexalith.Projects.Contracts.Events.ProjectCreated",
+          "payload": "eyJ0ZW5hbnRJZCI6ImN1dG92ZXItbmF0aXZlLTgxMDZhZjgzOTFiMzQ4OGE5NzQwOWVkNjI0MzAxMjEzIiwicHJvamVjdElkIjoicHJvamVjdC1hIiwibmFtZSI6IlByb2plY3QgcHJvamVjdC1hIiwiZGVzY3JpcHRpb24iOiJTYWZlIGRlc2NyaXB0aW9uIiwic2V0dXBNZXRhZGF0YSI6bnVsbCwibGlmZWN5Y2xlIjoiQWN0aXZlIiwiYWN0b3JQcmluY2lwYWxJZCI6ImFjdG9yLTEiLCJjb3JyZWxhdGlvbklkIjoiY3JlYXRlIiwidGFza0lkIjoidGFzayIsImlkZW1wb3RlbmN5S2V5IjoiY3JlYXRlIiwiaWRlbXBvdGVuY3lGaW5nZXJwcmludCI6ImNyZWF0ZSIsIm9jY3VycmVkQXQiOiIyMDI2LTEwLTE3VDA5OjAwOjAwKzAwOjAwIn0=",
+          "serializationFormat": "json",
+          "sequenceNumber": 1,
+          "timestamp": "2026-10-17T09:00:00+00:00",
+          "correlationId": "projection",
+          "messageId": "event-100",
+          "userId": "actor-1",
+          "globalPosition": 100
+        },
+        {
+          "eventTypeName": "Hexalith.Projects.Contracts.Events.ProjectFolderSet",
+          "payload": "eyJ0ZW5hbnRJZCI6ImN1dG92ZXItbmF0aXZlLTgxMDZhZjgzOTFiMzQ4OGE5NzQwOWVkNjI0MzAxMjEzIiwicHJvamVjdElkIjoicHJvamVjdC1hIiwiZm9sZGVySWQiOiJmb2xkZXItcHJvamVjdC1hIiwiZm9sZGVyTWV0YWRhdGEiOnsiZGlzcGxheU5hbWUiOiJGb2xkZXIifSwiYWN0b3JQcmluY2lwYWxJZCI6ImFjdG9yLTEiLCJjb3JyZWxhdGlvbklkIjoiZm9sZGVyIiwidGFza0lkIjoidGFzayIsImlkZW1wb3RlbmN5S2V5IjoiZm9sZGVyIiwiaWRlbXBvdGVuY3lGaW5nZXJwcmludCI6ImZvbGRlciIsIm9jY3VycmVkQXQiOiIyMDI2LTEwLTE3VDA5OjAwOjAwKzAwOjAwIn0=",
+          "serializationFormat": "json",
+          "sequenceNumber": 2,
+          "timestamp": "2026-10-17T09:00:00+00:00",
+          "correlationId": "projection",
+          "messageId": "event-101",
+          "userId": "actor-1",
+          "globalPosition": 101
+        }
+      ]
+    },
+    {
+      "tenantId": "cutover-native-8106af8391b3488a97409ed624301213",
+      "domain": "projects",
+      "aggregateId": "project-b",
+      "events": [
+        {
+          "eventTypeName": "Hexalith.Projects.Contracts.Events.ProjectCreated",
+          "payload": "eyJ0ZW5hbnRJZCI6ImN1dG92ZXItbmF0aXZlLTgxMDZhZjgzOTFiMzQ4OGE5NzQwOWVkNjI0MzAxMjEzIiwicHJvamVjdElkIjoicHJvamVjdC1iIiwibmFtZSI6IlByb2plY3QgcHJvamVjdC1iIiwiZGVzY3JpcHRpb24iOiJTYWZlIGRlc2NyaXB0aW9uIiwic2V0dXBNZXRhZGF0YSI6bnVsbCwibGlmZWN5Y2xlIjoiQWN0aXZlIiwiYWN0b3JQcmluY2lwYWxJZCI6ImFjdG9yLTEiLCJjb3JyZWxhdGlvbklkIjoiY3JlYXRlIiwidGFza0lkIjoidGFzayIsImlkZW1wb3RlbmN5S2V5IjoiY3JlYXRlIiwiaWRlbXBvdGVuY3lGaW5nZXJwcmludCI6ImNyZWF0ZSIsIm9jY3VycmVkQXQiOiIyMDI2LTEwLTE3VDA5OjAwOjAwKzAwOjAwIn0=",
+          "serializationFormat": "json",
+          "sequenceNumber": 1,
+          "timestamp": "2026-10-17T09:00:00+00:00",
+          "correlationId": "projection",
+          "messageId": "event-200",
+          "userId": "actor-1",
+          "globalPosition": 200
+        },
+        {
+          "eventTypeName": "Hexalith.Projects.Contracts.Events.ProjectFolderSet",
+          "payload": "eyJ0ZW5hbnRJZCI6ImN1dG92ZXItbmF0aXZlLTgxMDZhZjgzOTFiMzQ4OGE5NzQwOWVkNjI0MzAxMjEzIiwicHJvamVjdElkIjoicHJvamVjdC1iIiwiZm9sZGVySWQiOiJmb2xkZXItcHJvamVjdC1iIiwiZm9sZGVyTWV0YWRhdGEiOnsiZGlzcGxheU5hbWUiOiJGb2xkZXIifSwiYWN0b3JQcmluY2lwYWxJZCI6ImFjdG9yLTEiLCJjb3JyZWxhdGlvbklkIjoiZm9sZGVyIiwidGFza0lkIjoidGFzayIsImlkZW1wb3RlbmN5S2V5IjoiZm9sZGVyIiwiaWRlbXBvdGVuY3lGaW5nZXJwcmludCI6ImZvbGRlciIsIm9jY3VycmVkQXQiOiIyMDI2LTEwLTE3VDA5OjAwOjAwKzAwOjAwIn0=",
+          "serializationFormat": "json",
+          "sequenceNumber": 2,
+          "timestamp": "2026-10-17T09:00:00+00:00",
+          "correlationId": "projection",
+          "messageId": "event-201",
+          "userId": "actor-1",
+          "globalPosition": 201
+        }
+      ]
+    }
+  ]
+}

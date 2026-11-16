@@ -45,6 +45,8 @@ public sealed class GetProjectContextQueryHandler(ProjectContextQueryExecutor ex
             return QueryResult.Failure("safe-denial");
         }
 
+        if (query.Paging is not null) return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
+
         return QueryResult.FromPayload(
             JsonSerializer.SerializeToElement(admission.ToReadResponse(), JsonOptions));
     }

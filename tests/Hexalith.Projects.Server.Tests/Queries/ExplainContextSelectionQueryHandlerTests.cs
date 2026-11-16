@@ -110,7 +110,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
                 ProjectsServerModule.DomainName,
                 ProjectId,
                 ProjectsServerModule.ExplainContextSelectionQueryType,
-                JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId), JsonOptions),
+                JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId) { ConversationId = "bound-conversation" }, JsonOptions),
                 "corr-1",
                 "actor-1"),
             TestContext.Current.CancellationToken);
@@ -255,7 +255,7 @@ public sealed class ExplainContextSelectionQueryHandlerTests
             ProjectsServerModule.DomainName,
             ProjectId,
             ProjectsServerModule.ExplainContextSelectionQueryType,
-            JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId), JsonOptions),
+            JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId) { ConversationId = "bound-conversation" }, JsonOptions),
             "corr-1",
             "actor-1")
         {

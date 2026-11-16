@@ -1414,3 +1414,19 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Align the Folders.Client and McpCli.Abstractions package cohort so Projects Server.Tests restores in Release/package mode.
   evidence: Story 6.6 resumed verification at Projects bf9f98969efa036fd60700c627e712b4375e654a fails before compilation with NU1109: Hexalith.Folders.Client 2.0.0 requires Hexalith.McpCli.Abstractions >=3.0.0, while Projects centrally pins 2.0.1. Exact command and raw result are retained in `evidence/epic6/6.6/review-pass4/verification.json` and `server-package-build.log`. The unchanged production cohort is separate from the seven test/documentation corrections; Debug/source build and all four new admission cases pass. Owner: Projects package/release maintenance (DW-82/DW-83 prerequisites). No package-mode success is asserted.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Bind released read-cutover evidence to intrinsic running application, contract and dependency fingerprints before production adoption.
+  evidence: The source-only gate compares receipt identity with operator-supplied startup configuration; retaining both an old receipt and its old configuration after binary replacement can still qualify. Current local proof verifies exact source hashes, and no deployed acceptance is claimed.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Deliver current Folder owner/RTI admission for context/setup/explain under the planned Refresh/RTI ownership.
+  evidence: Baseline c6541a3 consumes persisted Included Folder evidence; delivered 6.2/6.3 explicitly defer sibling ACL fan-out. A later owner revocation is not observed by those persisted reads until owner-backed evidence is integrated.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Recheck retained attachment candidate linkage against the final authorized Project Folder.
+  evidence: The unchanged retained attachment path scores original reference-index matches after rereading detail, whereas supported advisory rechecks the new Folder relationship. A change between discovery and final authorization can retain an obsolete suggestion.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Preserve existing Open timeout/unavailable feedback in ProjectDetailSource.
+  evidence: The baseline and current source replace any missing Open payload with safe_denial even when ProjectReadQueryClient supplied more precise safe feedback.

@@ -106,12 +106,21 @@ public static class ProjectsServerServiceCollectionExtensions
                 ? new UnavailableProjectConversationResolutionDirectory()
                 : new ConversationsProjectConversationResolutionDirectory(client);
         });
+        services.TryAddTransient<IProjectConversationMembershipDirectory>(sp =>
+        {
+            IHttpContextAccessor accessor = sp.GetRequiredService<IHttpContextAccessor>();
+            return new ProjectConversationMembershipDirectory(sp.GetService<IConversationClient>(), () =>
+                (accessor.HttpContext ?? throw new InvalidOperationException("Owner queries require an active request."))
+                    .RequestServices.GetRequiredService<DelegatedOwnerQueryClient>(), accessor);
+        });
         services.AddHttpClient();
         services.TryAddTransient<DelegatedOwnerQueryClient>(sp => ActivatorUtilities.CreateInstance<DelegatedOwnerQueryClient>(sp));
         services.TryAddTransient<IProjectFolderDirectory>(sp =>
         {
             FoldersClient? client = sp.GetService<FoldersClient>();
             IProjectFolderDirectory direct = client is null ? new UnavailableProjectFolderDirectory() : new FoldersProjectFolderDirectory(client);
+            if (sp.GetService<FoldersV1ProjectReadTransport>() is not null)
+                direct = new FoldersV1ProjectReadDirectory(sp.GetRequiredService<IHttpClientFactory>().CreateClient(FoldersV1ProjectReadDirectory.ClientName), direct);
             IHttpContextAccessor accessor = sp.GetRequiredService<IHttpContextAccessor>();
             return new DelegatedProjectFolderDirectory(() =>
                 (accessor.HttpContext ?? throw new InvalidOperationException("Owner queries require an active request."))
@@ -231,7 +240,9 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddSingleton<IProjectAuditTimelineReadModel, DaprProjectAuditTimelineReadModel>();
         if (!services.Any(static service => service.ServiceType == typeof(IConversationClient)))
         {
-            services.AddHexalithConversationsClient(options => options.Endpoint = new Uri("http://conversations"));
+            services.TryAddTransient<EventStoreGatewayTokenForwardingHandler>();
+            services.AddHexalithConversationsClient(options => options.Endpoint = new Uri("http://conversations"))
+                .AddHttpMessageHandler<EventStoreGatewayTokenForwardingHandler>();
         }
 
         if (!services.Any(static service => service.ServiceType == typeof(FoldersClient)))
@@ -240,6 +251,12 @@ public static class ProjectsServerServiceCollectionExtensions
             services.AddFoldersClient(options => options.BaseAddress = new Uri("http://folders"))
                 .AddHttpMessageHandler<EventStoreGatewayTokenForwardingHandler>();
         }
+        // The retained read contract is independent of whether a host pre-registers the generated client.
+        services.TryAddTransient<EventStoreGatewayTokenForwardingHandler>();
+        services.TryAddSingleton<FoldersV1ProjectReadTransport>();
+        services.AddHttpClient(FoldersV1ProjectReadDirectory.ClientName, (sp, http) =>
+            http.BaseAddress = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<Hexalith.Folders.Client.FoldersClientOptions>>().Value.BaseAddress)
+            .AddHttpMessageHandler<EventStoreGatewayTokenForwardingHandler>();
 
         if (!services.Any(static service => service.ServiceType == typeof(MemoriesClient)))
         {

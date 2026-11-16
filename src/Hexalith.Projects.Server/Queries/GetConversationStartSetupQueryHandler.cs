@@ -66,6 +66,8 @@ public sealed class GetConversationStartSetupQueryHandler(ProjectContextQueryExe
             setup,
             ConversationStartAdmissionSnapshot.FromShared(admission.Snapshot));
 
+        if (query.Paging is not null) return QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
+
         return QueryResult.FromPayload(JsonSerializer.SerializeToElement(response, JsonOptions));
     }
 }

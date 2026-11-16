@@ -1,0 +1,153 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.7"
+      ],
+      "exitCode": 0,
+      "output": "PASS: Story 6.7 is within production authority\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "references/Hexalith.EventStore",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "references/Hexalith.Conversations",
+        "-c",
+        "core.whitespace=cr-at-eol",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    }
+  ],
+  "nativeResults": [
+    {
+      "path": "Server-full-2.xml",
+      "sha256": "eaaacf6cc4fdae9480fbfddc32b635cd0aa867d4fbbf3ab3328ebadf47727caa",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "total": 1484,
+      "passed": 1484,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Client-full-1.xml",
+      "sha256": "7a2697f4b98d51c97fdbfe768e951c73e562cf4b0415bfc86c71e1c86a31a14e",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.Client.Tests/debug/Hexalith.Projects.Client.Tests.dll",
+      "total": 145,
+      "passed": 145,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "UI-full-1.xml",
+      "sha256": "a9039fcc0c92298875c986616cb06428491f5b2f72c10f671a21fa90c39bb27d",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.UI.Tests/debug/Hexalith.Projects.UI.Tests.dll",
+      "total": 284,
+      "passed": 284,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Contracts-full-1.xml",
+      "sha256": "60d50260c764209e5e549881fe876efb67e9fce3bfafef3ed6f526c17cacea50",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.Contracts.Tests/debug/Hexalith.Projects.Contracts.Tests.dll",
+      "total": 207,
+      "passed": 207,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Domain-full-1.xml",
+      "sha256": "b42e3b98e1935b620625e44f9c446c60a36c68ac8a299ef782c93898553cb852",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.Tests/debug/Hexalith.Projects.Tests.dll",
+      "total": 693,
+      "passed": 693,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "path": "Rollback-full-2.xml",
+      "sha256": "a4b7e631333ab9e2fdf09d8d68376f9937d632d01eacff79b29b9e3ba8b8a323",
+      "assemblyPath": "/tmp/hexalith-job.9baytNdd/artifacts/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    }
+  ],
+  "fullProjectsPassed": 2813,
+  "matrixCasesPassed": 77,
+  "additionalAbsenceOrValidEmptyProofs": 7,
+  "retainedRollbackReadsPassed": 7,
+  "sourceManifestSha256": "7a50f34645c7de9ed8f022d6c92019b1feb2e20873d2eb11c0b93c34f666adf9",
+  "activationPacket": {
+    "path": "read-cutover-final.json",
+    "sha256": "357734074a864730a3b1d2372abe9747becab418635404cf996cb7ce62b6541b"
+  },
+  "rollbackProof": {
+    "path": "rollback-final-proof.json",
+    "sha256": "5150a53d4eb3a68387e0c467fccabb1de4f557df29150badd8bfbf961a27ba4b"
+  },
+  "cleanup": {
+    "ownedPid": 811690,
+    "reaped": true,
+    "productionAcceptance": false,
+    "processAbsent": true,
+    "privateTMPDIRRemoved": true
+  },
+  "sourceCSharpWhitespaceChecked": 136,
+  "postBuildChanges": "One trailing whitespace correction and workflow/docs/tracking updates only; application behavior unchanged.",
+  "historicalAttempts": "Server-full-1 had an order-only dictionary assertion failure, corrected and fully rerun. Rollback-full-1 lacked routing input and is not rollback evidence.",
+  "sourceQualificationDiagnostics": [
+    "HXW011",
+    "HXW009",
+    "HXW010"
+  ],
+  "productionAcceptance": false,
+  "deploymentPublicationOrGitMutation": false,
+  "specStatus": "done",
+  "sprintStatus": "review",
+  "deferredFollowups": 4
+}

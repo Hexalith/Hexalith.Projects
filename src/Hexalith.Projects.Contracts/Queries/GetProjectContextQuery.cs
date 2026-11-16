@@ -7,4 +7,9 @@ namespace Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Identifies the supported Get Project Context query.</summary>
 /// <param name="ProjectId">The opaque Project identifier targeted by the query.</param>
-public sealed record GetProjectContextQuery(string ProjectId);
+[Hexalith.EventStore.Contracts.Queries.QueryResultContract(typeof(ProjectContextReadResponse), "projects", "Hexalith.Projects.Queries.GetProjectContext.v1")]
+public sealed record GetProjectContextQuery(string ProjectId)
+{
+    /// <summary>Gets the named Conversation whose current native membership authorizes context use.</summary>
+    public string? ConversationId { get; init; }
+}

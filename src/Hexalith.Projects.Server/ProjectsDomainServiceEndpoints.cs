@@ -686,12 +686,23 @@ public static partial class ProjectsDomainServiceEndpoints
                 : SafeDenial(correlationId, null, authorization);
         }
 
+        if (!HasCurrentLegacyReadAuthority(authorization)) return SafeDenial(correlationId, null);
+
         if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
             return validationProblem;
         }
 
         ProjectDetailItem detail = authorization.ProjectDetail;
+        bool quarantined = IsLegacyQuarantined(detail);
+        bool inspectQuarantined = httpContext.Request.Query["inspectQuarantined"] == "true";
+        if (quarantined != inspectQuarantined || inspectQuarantined && !MayInspectLegacyQuarantine(httpContext))
+            return SafeDenial(correlationId, null);
+        if (quarantined) detail = detail with { Description = null, Setup = null, SetupMetadata = null };
+        if (!await AuthorizeLegacyInspectionAsync(httpContext, tenantContext, correlationId,
+            Hexalith.Projects.Contracts.Queries.GetProjectQuery.QueryType, projectId, 1,
+            System.Text.Json.JsonSerializer.Serialize(detail, ResponseJsonOptions), cancellationToken).ConfigureAwait(false))
+            return SafeDenial(correlationId, null);
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
@@ -708,7 +719,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 new ContextActivationResponse(
                     detail.Lifecycle == ProjectLifecycle.Active,
                     detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
-                ToProjectReferenceSummaries(detail),
+                await ToCurrentProjectReferenceSummariesAsync(detail, httpContext, correlationId, cancellationToken).ConfigureAwait(false),
                 ToFreshness(detail.UpdatedAt, detail.Sequence)),
             ResponseJsonOptions);
     }
@@ -1751,6 +1762,8 @@ public static partial class ProjectsDomainServiceEndpoints
             return SafeDenial(correlationId, null, authorization);
         }
 
+        if (!HasCurrentLegacyReadAuthority(authorization)) return SafeDenial(correlationId, null);
+
         if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
             return validationProblem;
@@ -1774,7 +1787,38 @@ public static partial class ProjectsDomainServiceEndpoints
             return ReadModelUnavailable(correlationId, null);
         }
         IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
+        bool includeQuarantined = httpContext.Request.Query["includeQuarantined"] == "true";
+        if (includeQuarantined && !MayInspectLegacyQuarantine(httpContext)) return SafeDenial(correlationId, null);
+        List<ProjectListItem> visible = [];
+        foreach (ProjectListItem row in rows)
+        {
+            ProjectAuthorizationResult item = await authorizationGate.AuthorizeReadAsync(row.ProjectId, tenantContext, httpContext,
+                correlationId, null, cancellationToken).ConfigureAwait(false);
+            if (item.Retryable) return ReadModelUnavailable(correlationId, null);
+            if (!item.IsAllowed) continue;
+            if (item.ProjectDetail is not { } detail || !HasCurrentLegacyReadAuthority(item))
+                return ReadModelUnavailable(correlationId, null);
+            if (IsLegacyQuarantined(detail) == includeQuarantined) visible.Add(row);
+        }
+        rows = visible;
+        if (!await AuthorizeLegacyInspectionAsync(httpContext, tenantContext, correlationId,
+            Hexalith.Projects.Contracts.Queries.ListProjectsQuery.QueryType, "projects", rows.Count,
+            System.Text.Json.JsonSerializer.Serialize(rows, ResponseJsonOptions), cancellationToken).ConfigureAwait(false))
+            return SafeDenial(correlationId, null);
 
+        foreach (ProjectListItem row in rows)
+        {
+            ProjectAuthorizationResult finalRow = await authorizationGate.AuthorizeReadAsync(row.ProjectId, tenantContext, httpContext,
+                correlationId, null, cancellationToken).ConfigureAwait(false);
+            if (finalRow.Retryable || finalRow.IsAllowed && (finalRow.ProjectDetail is null || !HasCurrentLegacyReadAuthority(finalRow)))
+                return ReadModelUnavailable(correlationId, null);
+            if (!finalRow.IsAllowed || IsLegacyQuarantined(finalRow.ProjectDetail!) != includeQuarantined)
+                return SafeDenial(correlationId, null);
+        }
+        ProjectAuthorizationResult finalAuthority = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext,
+            correlationId, null, cancellationToken).ConfigureAwait(false);
+        if (finalAuthority.Retryable) return ReadModelUnavailable(correlationId, null);
+        if (!finalAuthority.IsAllowed || !HasCurrentLegacyReadAuthority(finalAuthority)) return SafeDenial(correlationId, null);
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
         return Results.Json(
@@ -2003,7 +2047,28 @@ public static partial class ProjectsDomainServiceEndpoints
     private static string ToWireLifecycle(Contracts.Ui.ProjectLifecycle lifecycle)
         => lifecycle.ToString().ToLowerInvariant();
 
-    private static IReadOnlyList<ProjectReferenceSummaryResponse> ToProjectReferenceSummaries(ProjectDetailItem detail)
+    private static async Task<IReadOnlyList<ProjectReferenceSummaryResponse>> ToCurrentProjectReferenceSummariesAsync(
+        ProjectDetailItem detail, HttpContext httpContext, string correlationId, CancellationToken token)
+    {
+        ReferenceState folderState = detail.ProjectFolder?.ReferenceState ?? ReferenceState.Pending;
+        if (detail.ProjectFolder is { FolderId: { } folderId, ReferenceState: ReferenceState.Included })
+        {
+            var directory = httpContext.RequestServices.GetRequiredService<IProjectFolderDirectory>();
+            var decision = await directory.RefreshFolderReferenceAsync(new ProjectId(detail.ProjectId), folderId, correlationId, token).ConfigureAwait(false);
+            folderState = decision.Outcome == ProjectFolderValidationOutcome.Accepted ? ReferenceState.Included : ReferenceState.Unavailable;
+        }
+        return ToProjectReferenceSummaries(detail, folderState);
+    }
+
+    private static bool IsLegacyQuarantined(ProjectDetailItem detail)
+        => detail.Lifecycle == ProjectLifecycle.Active
+            && detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: not null };
+
+    private static bool MayInspectLegacyQuarantine(HttpContext context)
+        => (context.User.IsInRole("TenantProjectAdministrator") || context.User.HasClaim("projects:role", "TenantProjectAdministrator"))
+            && context.User.HasClaim("eventstore:permission", Hexalith.Projects.Server.Queries.ProjectReadQueryExecutor.InspectionPermission);
+
+    private static IReadOnlyList<ProjectReferenceSummaryResponse> ToProjectReferenceSummaries(ProjectDetailItem detail, ReferenceState folderState)
     {
         List<ProjectReferenceSummaryResponse> summaries = [];
 
@@ -2011,10 +2076,10 @@ public static partial class ProjectsDomainServiceEndpoints
         {
             summaries.Add(new ProjectReferenceSummaryResponse(
                 "folder",
-                ToWireReferenceState(detail.ProjectFolder.ReferenceState),
+                ToWireReferenceState(folderState),
                 detail.ProjectFolder.FolderId,
-                detail.ProjectFolder.DisplayName,
-                detail.ProjectFolder.ReasonCode,
+                folderState == ReferenceState.Included ? detail.ProjectFolder.DisplayName : null,
+                folderState == ReferenceState.Included ? null : "ReferenceUnavailable",
                 ToFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)));
         }
 
@@ -2022,10 +2087,10 @@ public static partial class ProjectsDomainServiceEndpoints
         {
             summaries.Add(new ProjectReferenceSummaryResponse(
                 "file",
-                ToWireReferenceState(file.ReferenceState),
+                ToWireReferenceState(ReferenceState.Unavailable),
                 file.FileReferenceId,
-                file.DisplayName,
-                file.ReasonCode,
+                null,
+                "OwnerReadUnverified",
                 ToFreshness(file.ObservedAt, detail.Sequence)));
         }
 
@@ -2033,10 +2098,10 @@ public static partial class ProjectsDomainServiceEndpoints
         {
             summaries.Add(new ProjectReferenceSummaryResponse(
                 "memory",
-                ToWireReferenceState(memory.ReferenceState),
+                ToWireReferenceState(ReferenceState.Unavailable),
                 memory.MemoryReferenceId,
-                memory.DisplayName,
-                memory.ReasonCode,
+                null,
+                "OwnerReadUnverified",
                 ToFreshness(memory.ObservedAt, detail.Sequence)));
         }
 

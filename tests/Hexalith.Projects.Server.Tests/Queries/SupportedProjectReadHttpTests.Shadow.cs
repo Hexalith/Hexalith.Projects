@@ -80,7 +80,7 @@ public sealed partial class SupportedProjectReadHttpTests
                 legacyDetailsBefore[id] = JsonSerializer.Serialize(await legacyDetail.GetAsync("tenant-a", id, TestContext.Current.CancellationToken));
             int storedKeysBefore = store.Count;
 
-            using HttpResponseMessage legacyListed = await client.GetAsync("/api/v1/projects", TestContext.Current.CancellationToken);
+            using HttpResponseMessage legacyListed = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken);
             legacyListed.EnsureSuccessStatusCode();
             JsonElement legacyPage = await legacyListed.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
             QueryEnvelope list = new("tenant-a", "projects", "projects", ListProjectsQuery.QueryType,
@@ -111,7 +111,7 @@ public sealed partial class SupportedProjectReadHttpTests
                 supportedRow.ProjectFolderAvailability.ShouldBe(ReferenceState.Included);
                 supportedRow.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
 
-                using HttpResponseMessage legacyOpened = await client.GetAsync("/api/v1/projects/" + projectIds[index], TestContext.Current.CancellationToken);
+                using HttpResponseMessage legacyOpened = await client.GetAsync("/api/v1/projects/" + projectIds[index] + "?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken);
                 legacyOpened.EnsureSuccessStatusCode();
                 JsonElement legacyOpen = await legacyOpened.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
                 GetProjectResponse supportedOpen = await ReadShadowQueryAsync<GetProjectResponse>(client, list with
@@ -145,7 +145,7 @@ public sealed partial class SupportedProjectReadHttpTests
 
             foreach (ProjectLifecycle lifecycle in new[] { ProjectLifecycle.Active, ProjectLifecycle.Archived })
             {
-                using HttpResponseMessage legacyFiltered = await client.GetAsync("/api/v1/projects?lifecycle=" + lifecycle.ToString().ToLowerInvariant(), TestContext.Current.CancellationToken);
+                using HttpResponseMessage legacyFiltered = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=" + lifecycle.ToString().ToLowerInvariant(), TestContext.Current.CancellationToken);
                 legacyFiltered.EnsureSuccessStatusCode();
                 JsonElement legacyFilteredPage = await legacyFiltered.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
                 ProjectListPage filtered = await ReadShadowQueryAsync<ProjectListPage>(client, list with
@@ -158,8 +158,8 @@ public sealed partial class SupportedProjectReadHttpTests
                 filtered.Items.Single().LifecycleState.ShouldBe(lifecycle);
             }
 
-            // Two pages, two opens and two filtered lists add only inspection audit records.
-            store.Count.ShouldBe(storedKeysBefore + 6);
+            // Supported and retained inspected reads add only metadata audit records.
+            store.Count.ShouldBe(storedKeysBefore + 11);
             store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a")).ShouldBe(indexBefore);
             foreach (string id in projectIds)
             {

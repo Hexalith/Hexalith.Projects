@@ -17,6 +17,50 @@ using Xunit;
 /// <summary>Supported presentation preserves each observation without invented admission or metadata.</summary>
 public sealed class SupportedProjectReadPageTests : FrontComposerTestBase
 {
+    [Theory]
+    [InlineData(null)]
+    [InlineData("native-bound-conversation")]
+    public void ReviewRouteConversationReachesBothRealDetailSourcePayloadsAndControlsRenderedAdmission(string? conversation)
+    {
+        var scope = new Hexalith.Projects.UI.Tests.Diagnostics.SupportedReadTestContext();
+        List<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest> requests = [];
+        scope.Client.SubmitQueryAsync<GetProjectResponse>(Arg.Any<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(new Hexalith.EventStore.Client.Gateway.EventStoreQueryResult<GetProjectResponse>(null,
+                new("p1", null, null, ProjectLifecycle.Active, default, default, null, null, [], Snapshot(AdmissionResponseState.Complete, 1)), false, null));
+        bool Bound(Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest request)
+        {
+            requests.Add(request);
+            return request.Payload!.Value.GetProperty("conversationId").GetString() == "native-bound-conversation";
+        }
+        scope.Client.SubmitQueryAsync<ProjectContextReadResponse>(Arg.Any<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                bool bound = Bound(call.Arg<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest>());
+                return new Hexalith.EventStore.Client.Gateway.EventStoreQueryResult<ProjectContextReadResponse>(null,
+                    new("p1", ProjectLifecycle.Active, bound ? Hexalith.Projects.Contracts.Models.ProjectSetup.Empty : null,
+                        null, [], [], [], [], Snapshot(bound ? AdmissionResponseState.Complete : AdmissionResponseState.Unavailable, 2)), false, null);
+            });
+        scope.Client.SubmitQueryAsync<ConversationStartSetupResponse>(Arg.Any<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                bool bound = Bound(call.Arg<Hexalith.EventStore.Contracts.Queries.SubmitQueryRequest>());
+                return new Hexalith.EventStore.Client.Gateway.EventStoreQueryResult<ConversationStartSetupResponse>(null,
+                    new(bound ? Hexalith.Projects.Contracts.Models.ConversationStartSetup.Empty("p1", ProjectLifecycle.Active, DateTimeOffset.UnixEpoch, ProjectContextFreshness.Fresh) : null,
+                        new(bound ? ConversationStartResponseState.Complete : ConversationStartResponseState.Unavailable, DateTimeOffset.UnixEpoch, 3, [], [])), false, null);
+            });
+        Services.AddSingleton<IProjectDetailSource>(new ProjectDetailSource(scope.Queries));
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.GetRequiredService<NavigationManager>().NavigateTo("/inspect/projects/p1" + (conversation is null ? string.Empty : "?conversationId=" + Uri.EscapeDataString(conversation)));
+        var cut = Render<ProjectDiagnostics>(parameters => parameters.Add(p => p.ProjectId, "p1"));
+        string expected = conversation is null ? "Unavailable" : "Complete";
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-context-snapshot']").TextContent.ShouldContain(expected));
+        cut.Find("[data-testid='project-start-snapshot']").TextContent.ShouldContain(expected);
+        cut.Find("[data-testid='project-start-snapshot']").TextContent.ShouldContain(conversation is null ? "Setup: Omitted" : "Setup: Included");
+        requests.Count.ShouldBe(2);
+        requests.Select(r => r.QueryType).ShouldBe(new[] { "Hexalith.Projects.Queries.GetProjectContext.v1", "Hexalith.Projects.Queries.GetConversationStartSetup.v1" });
+        requests.ShouldAllBe(r => r.Payload!.Value.GetProperty("conversationId").GetString() == conversation);
+    }
+
     [Fact]
     public void InventoryRendersIndependentEnumerationAndRowEvidenceWithoutInventedDatesOrWarnings()
     {
