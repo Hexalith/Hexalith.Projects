@@ -203,7 +203,9 @@ internal sealed class FixtureProductChecks(FixtureInputs inputs, FixtureScratch 
                 JsonObject state = (await response.Content.ReadFromJsonAsync<JsonObject>(timeout.Token).ConfigureAwait(false))!;
                 string? outcome = state["status"]?.GetValue<string>();
                 if (outcome == "Completed") return true;
-                if (outcome is "Rejected" or "TimedOut" or "PublishFailed") throw new InvalidOperationException("Fixture product command failed: " + type + " (" + outcome + ").");
+                if (outcome is "Rejected" or "TimedOut" or "PublishFailed")
+                    throw new InvalidOperationException("Fixture product command failed: " + type + " (" + outcome + "; "
+                        + FixtureDiagnostics.Status(state, inputs.ProtectedValues) + ").");
             }
             else if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden or HttpStatusCode.Conflict)
                 throw new InvalidOperationException("Authenticated fixture command status was refused: " + type);

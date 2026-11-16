@@ -2,6 +2,7 @@ namespace Hexalith.Projects.PackageFixtures;
 
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 using Aspire.Hosting;
@@ -12,6 +13,21 @@ using Microsoft.Extensions.DependencyInjection;
 /// <summary>Reports bounded failure identities/categories without retaining raw response or resource text.</summary>
 internal static class FixtureDiagnostics
 {
+    internal static string Status(JsonObject state, IEnumerable<string> protectedValues)
+    {
+        string[] protectedText = protectedValues.ToArray();
+        List<string> categories = [];
+        foreach (string field in new[] { "failureReason", "rejectionEventType", "recoveryReasonCode" })
+        {
+            if (state[field]?.GetValueKind() != JsonValueKind.String) continue;
+            string value = state[field]!.GetValue<string>();
+            if (Regex.IsMatch(value, @"\A[A-Za-z][A-Za-z0-9_.:-]{0,95}\z")
+                && !protectedText.Any(item => !string.IsNullOrWhiteSpace(item) && value.Contains(item, StringComparison.Ordinal)))
+                categories.Add(field + "=" + value);
+        }
+        return string.Join(',', categories);
+    }
+
     internal static async Task ResponseAsync(HttpResponseMessage response, string operation, IEnumerable<string> protectedValues,
         CancellationToken cancellationToken)
     {
