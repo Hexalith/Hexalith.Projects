@@ -70,6 +70,50 @@ class WorkflowGateTests(unittest.TestCase):
         self.assertIn(diagnostic, result.stderr)
         self.assertNotIn("PASSED", result.stdout)
 
+    def test_reviewed_prerequisite_jobs_reject_any_changed_execution(self) -> None:
+        path = self.root / ".github/workflows/release.yml"
+        original = path.read_text()
+        for before, after in (
+            ("--profile projects --report prerequisite-qualification.json", "--profile eventstore --report prerequisite-qualification.json"),
+            ("--profile projects --report prerequisite-publication.json", "--profile eventstore --report prerequisite-publication.json"),
+        ):
+            with self.subTest(before=before):
+                self.assertIn(before, original)
+                path.write_text(original.replace(before, after))
+                self.assert_rejected("differs from the exact owner-qualified publisher")
+        path.write_text(original)
+
+    def test_unrelated_release_job_remains_forbidden(self) -> None:
+        self.replace(".github/workflows/release.yml", "jobs:\n", "jobs:\n  unrelated-publisher:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo forbidden\n")
+        self.assert_rejected("additional jobs are forbidden")
+
+    def test_root_execution_context_and_dispatch_default_cannot_drift(self) -> None:
+        path = self.root / ".github/workflows/release.yml"
+        original = path.read_text()
+        for before, after in (
+            ("default: full", "default: contracts-prerequisite"),
+            ("jobs:\n", "defaults:\n  run:\n    shell: python\njobs:\n"),
+            ("jobs:\n", "defaults:\n  run:\n    working-directory: does-not-exist\njobs:\n"),
+        ):
+            with self.subTest(after=after):
+                self.assertIn(before, original)
+                path.write_text(original.replace(before, after))
+                self.assert_rejected("root context differs from the approved publication profiles")
+        path.write_text(original)
+
+    def test_approved_release_workflow_accepts_crlf(self) -> None:
+        path = self.root / ".github/workflows/release.yml"
+        original = path.read_text()
+        path.write_bytes(original.replace("\r\n", "\n").replace("\n", "\r\n").encode())
+        result = self.run_gate()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    def test_full_release_profile_guard_cannot_be_disabled(self) -> None:
+        self.replace(".github/workflows/release.yml",
+            "    if: ${{ inputs.release-profile != 'contracts-prerequisite' && inputs.release-profile != 'contracts-prerequisite-verify' }}",
+            "    if: ${{ false }}")
+        self.assert_rejected("full-release preflight may select only the normal full-release profile")
+
     def test_unpublished_apphost_helpers_require_the_exact_source_mode_condition(self) -> None:
         path = "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
         target = self.root / path

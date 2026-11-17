@@ -348,11 +348,46 @@ else {
 }
 
 $releaseJobBlocks = @(Get-WorkflowJobBlocks -Text $release)
-$expectedReleaseJobNames = @('verify-source', 'release')
+$expectedReleaseJobNames = @('verify-source', 'release', 'qualify-contracts-prerequisite', 'publish-contracts-prerequisite')
 $releaseJobNames = @($releaseJobBlocks | ForEach-Object { $_.Name })
 if ($releaseJobNames.Count -ne $expectedReleaseJobNames.Count -or
     @(Compare-Object -ReferenceObject $expectedReleaseJobNames -DifferenceObject $releaseJobNames).Count -ne 0) {
-    $failures.Add('Release must define exactly the verify-source and caller-owned release jobs; additional jobs are forbidden.')
+    $failures.Add('Release must define exactly the reviewed full-release and Contracts prerequisite jobs; additional jobs are forbidden.')
+}
+
+# The package owner approved only these fixed prerequisite jobs. Bind their
+# complete executable text to the qualified immutable CiCd publisher source;
+# normal full-release checks below retain every preflight/G-6/OIDC invariant.
+$prerequisiteJobHashes = @{
+    'qualify-contracts-prerequisite' = '6c56e8718613347274c4138ba2f6abdfc32975d272da436864d6a7ad88762c9d'
+    'publish-contracts-prerequisite' = '2009465c17a4e4bc5e390ba1ad007dee72c47e647dd28a75023e825ff558592d'
+}
+foreach ($name in $prerequisiteJobHashes.Keys) {
+    $blocks = @($releaseJobBlocks | Where-Object { $_.Name -ceq $name })
+    if ($blocks.Count -ne 1) {
+        $failures.Add("The reviewed Contracts prerequisite job '$name' must exist exactly once.")
+        continue
+    }
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-TrimmedBlockText -Text $blocks[0].Text))
+    $actualHash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant()
+    if ($actualHash -cne $prerequisiteJobHashes[$name]) {
+        $failures.Add("The Contracts prerequisite job '$name' differs from the exact owner-qualified publisher.")
+    }
+}
+
+# Include inherited execution context and the complete dispatch defaults in
+# the approved shape; otherwise root defaults can change the hashed jobs.
+$releaseRootContext = [regex]::Match($release, '(?ms)\A.*?(?=^jobs:\r?$)')
+if (-not $releaseRootContext.Success) {
+    $failures.Add('Release workflow root context is missing.')
+}
+else {
+    $activeRootContext = Get-TrimmedBlockText -Text (Get-ActiveWorkflowText -Text $releaseRootContext.Value)
+    $rootBytes = [System.Text.Encoding]::UTF8.GetBytes($activeRootContext)
+    $rootHash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($rootBytes)).ToLowerInvariant()
+    if ($rootHash -cne 'bedc9b3f51a5eea0ec555093a07c01e0a783b60fee6e9cadccf1aa2c93470447') {
+        $failures.Add('Release workflow root context differs from the approved publication profiles.')
+    }
 }
 
 $releaseJobCandidates = @($releaseJobBlocks | Where-Object { $_.Name -ceq 'release' })
@@ -361,6 +396,9 @@ $releaseJob = if ($releaseJobCandidates.Count -eq 1) { $releaseJobCandidates[0].
 $verifySourceJob = if ($verifySourceJobCandidates.Count -eq 1) { $verifySourceJobCandidates[0].Text } else { '' }
 $releaseSteps = @(Get-NamedStepBlocks -JobText $releaseJob)
 $verifySourceSteps = @(Get-NamedStepBlocks -JobText $verifySourceJob)
+$fullReleaseProfileGuard = '    if: ${{ inputs.release-profile != ''contracts-prerequisite'' && inputs.release-profile != ''contracts-prerequisite-verify'' }}'
+Require-Match $verifySourceJob ('(?m)^' + [regex]::Escape($fullReleaseProfileGuard) + '\r?$') 'The full-release preflight may select only the normal full-release profile; package-only jobs must remain isolated.'
+
 $verifySourceStep = Get-RequiredNamedStep -Steps $verifySourceSteps -Name 'Require current main with successful exact-source CI' -Owner 'verify-source'
 
 foreach ($jobBlock in $releaseJobBlocks) {
