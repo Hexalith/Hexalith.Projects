@@ -1,0 +1,50 @@
+{
+  "source": "95d181721d55535c0e7c57d2f12f6537d754341c",
+  "parent": "3e1a70665b543a2e39c1562778c39bafa9a86e2a",
+  "changed_paths": [
+    ".github/workflows/qualify-package-owner-access.yml"
+  ],
+  "commitlint_source": "fdda17c0a4538b0f7c99f813c20ca24b49006530",
+  "commitlint_exit": 0,
+  "actionlint_exit": 0,
+  "review_findings_addressed": 3,
+  "probe_behavior_cases": [
+    {
+      "case": "ok",
+      "exit": 0,
+      "api_requests": 2,
+      "status": "qualified"
+    },
+    {
+      "case": "missing-token",
+      "exit": 1,
+      "api_requests": 0,
+      "status": "failed"
+    },
+    {
+      "case": "wrong-app",
+      "exit": 1,
+      "api_requests": 0,
+      "status": "failed"
+    },
+    {
+      "case": "wrong-repository-scope",
+      "exit": 1,
+      "api_requests": 1,
+      "status": "failed"
+    },
+    {
+      "case": "api-403",
+      "exit": 1,
+      "api_requests": 1,
+      "status": "failed"
+    }
+  ],
+  "push_exit": 0,
+  "push_stdout": "To https://github.com/Hexalith/Hexalith.CiCd.git\n \t95d181721d55535c0e7c57d2f12f6537d754341c:refs/heads/main\t3e1a706..95d1817\nDone\n",
+  "push_stderr": "",
+  "credential_profile": "gh-cicd-agent",
+  "module_writes": false,
+  "package_publication": false,
+  "scope": "fixed two-repository read-only existing App probe"
+}

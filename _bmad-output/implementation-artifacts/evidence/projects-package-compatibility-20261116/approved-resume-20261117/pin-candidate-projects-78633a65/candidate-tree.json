@@ -1,0 +1,25 @@
+{
+  "status": "prepared-not-delivered",
+  "source": "78633a653c1a6768a795678203d836b3caac2c12",
+  "base_tree": "5c119865a200f961e997f68c043fb7520fd96997",
+  "candidate_tree": "09192422c484c8519e9a21547d13a4cb6200f735",
+  "only_changed_paths": [
+    "Directory.Packages.props",
+    "tools/release-packages.json"
+  ],
+  "all_other_pins_tree_entries_and_gitlinks_preserved": true,
+  "patch_sha256": "8a8d17efaf169b46dc4b8956913d89825c1aa4317a87277ef759ae64a035b4ba",
+  "prior_exact_artifact_consumer_source": "0bb322c2105c841eba150fd6cb5aab2b3d4b2d4c",
+  "prior_source_difference_only": [
+    ".github/workflows/release.yml",
+    "tests/tools/run-ci-workflow-gates.ps1",
+    "tests/tools/test_run_ci_workflow_gates.py"
+  ],
+  "focused_product_and_test_build_inputs_identical": true,
+  "focused_207_case_result": "prior actual passing0bb qualification; no new test run claimed",
+  "public_prerequisites": {
+    "Projects.Contracts/2.0.0-story66.3": "published; hosted payload/signature verification passed",
+    "EventStore.Contracts/5.3.0": "not published; PR401 blocked by inherited required owner checks"
+  },
+  "hosted_corrected_source_CI_G6": "pending; no pin delivery before both public package proofs"
+}

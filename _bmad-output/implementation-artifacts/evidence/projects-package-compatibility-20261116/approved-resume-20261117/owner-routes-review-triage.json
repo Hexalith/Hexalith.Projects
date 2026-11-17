@@ -1,0 +1,92 @@
+[
+  {
+    "finding": "BH1",
+    "verdict": "false",
+    "evidence": "The concrete policy triplet and four logs are dependent coordinator preparation, not hidden runtime functionality; create and validate all seven before any source publication or dispatch.",
+    "route": "rejected"
+  },
+  {
+    "finding": "BH2",
+    "verdict": "high",
+    "evidence": "Real Git reproduction confirms branch creation race. Apply an empty expected-ref lease for atomic create-only branch publication; it cannot overwrite any existing ref.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH3",
+    "verdict": "medium",
+    "evidence": "Confirmed complete release input/default declaration was outside job hashes. Bind executable workflow root context and add default mutation test.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH4",
+    "verdict": "medium",
+    "evidence": "Confirmed inherited workflow shell/directory can alter hashed job execution. Root context hash must reject those defaults and cover tests.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH5",
+    "verdict": "medium",
+    "evidence": "Confirmed unordered same-App same-SHA run correlation lacks operation identity. API2026-03-10 now returns200 with workflow_run_id and URLs; require direct response identity for success, retain204/lost response as unresolved candidates only.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH6",
+    "verdict": "medium",
+    "evidence": "Confirmed explicit403 can be misattributed as correlated success. Preserve definite rejection; no attribution to later runs.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH7",
+    "verdict": "medium",
+    "evidence": "Confirmed unrelated matches currentlyoverride returned run ID. Select the returned exact identity first and independently verify source/workflow/actor/URLs.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH8",
+    "verdict": "low",
+    "evidence": "Fresh runner intentionally has no prior checkpoint and fails closed rather than repeating a POST. Automatic checkpoint restoration is not required for this task. Correct documentation to state coordinator read-only observation is required; reject extra restoration complexity.",
+    "route": "documentation correction; reject restore complexity"
+  },
+  {
+    "finding": "BH9",
+    "verdict": "false",
+    "evidence": "Current-main authorization is an explicit dispatcher requirement. Refusing stale-source automation is intended; coordinator can inspect retained exact run IDs through read-only GitHub APIs without rerunning a writer. No stale-source automatic recovery is promised.",
+    "route": "rejected"
+  },
+  {
+    "finding": "BH10",
+    "verdict": "medium",
+    "evidence": "Confirmed workflow initializer erases PR attempt state on rerun. Refuse new PR POST and branch creation on reruns lacking durable prior checkpoint, while allowing read-only observation of existing exact results.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH1",
+    "verdict": "high",
+    "evidence": "Duplicate verified branch race, same empty-expected-ref lease correction.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH2",
+    "verdict": "medium",
+    "evidence": "Duplicate verified clean-runner ambiguous PR retry, same rerun write refusal.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH3",
+    "verdict": "low",
+    "evidence": "CRLF leaves a carriage return before end anchor. Accept optional carriage return without changing guard meaning; add CRLF fixture case.",
+    "route": "patch"
+  },
+  {
+    "finding": "VG1",
+    "verdict": "medium",
+    "evidence": "Pre-verified removal of CLI outputs leaves23 tests green. Add main() success round trip asserting actual GITHUB_OUTPUT plan and branch-success.",
+    "route": "patch"
+  },
+  {
+    "finding": "VG2",
+    "verdict": "medium",
+    "evidence": "Pre-verified production HTTP403diagnostic bypass in stubs. Add actual HTTPError opener refusal test.",
+    "route": "patch"
+  }
+]

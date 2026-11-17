@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "authors": "Hexalith Contributors",
+    "license": "MIT",
+    "projectUrl": "https://github.com/Hexalith/Hexalith.Projects",
+    "repositoryType": "git",
+    "repositoryUrl": "https://github.com/Hexalith/Hexalith.Projects",
+    "readme": "README.md",
+    "description": "Tenant-scoped project workspace and context-resolution module for .NET built on Hexalith.EventStore.",
+    "tags": [
+      "projects",
+      "dapr",
+      "eventsourcing",
+      "dotnet",
+      "hexalith"
+    ],
+    "targetFramework": "net11.0"
+  },
+  "packages": [
+    {
+      "id": "Hexalith.Projects.Contracts",
+      "project": "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+      "assembly": "Hexalith.Projects.Contracts",
+      "frameworkReferences": [],
+      "dependencies": {
+        "Hexalith.EventStore.Contracts": "5.3.0",
+        "ByteAether.Ulid": "1.4.2",
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "Hexalith.McpCli.Abstractions": "3.0.0"
+      },
+      "probe": "using Hexalith.Projects.Contracts.Identifiers;\nConsole.WriteLine(new ProjectId(\"01HZ9K8YQ3W6V2N4R7T5P0X1AB\").Value);\n"
+    },
+    {
+      "id": "Hexalith.Projects",
+      "project": "src/Hexalith.Projects/Hexalith.Projects.csproj",
+      "assembly": "Hexalith.Projects",
+      "frameworkReferences": [],
+      "dependencies": {
+        "Hexalith.Projects.Contracts": "{version}",
+        "Microsoft.Extensions.Options.ConfigurationExtensions": "11.0.0",
+        "ByteAether.Ulid": "1.4.2",
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "Hexalith.EventStore.Contracts": "5.3.0",
+        "Microsoft.Extensions.Configuration": "11.0.0",
+        "Microsoft.Extensions.Configuration.Binder": "11.0.0",
+        "Hexalith.McpCli.Abstractions": "3.0.0"
+      },
+      "probe": "using Hexalith.Projects;\nConsole.WriteLine(ProjectsModule.Name);\n"
+    },
+    {
+      "id": "Hexalith.Projects.Client",
+      "project": "src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj",
+      "assembly": "Hexalith.Projects.Client",
+      "frameworkReferences": [
+        "Microsoft.AspNetCore.App"
+      ],
+      "dependencies": {
+        "Hexalith.Projects.Contracts": "{version}",
+        "Newtonsoft.Json": "13.0.4",
+        "ByteAether.Ulid": "1.4.2",
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "Hexalith.EventStore.Contracts": "5.3.0",
+        "Hexalith.McpCli.Abstractions": "3.0.0"
+      },
+      "probe": "using Hexalith.Projects.Client;\nConsole.WriteLine(ProjectsClientOptions.DefaultConfigurationSectionName);\n"
+    },
+    {
+      "id": "Hexalith.Projects.Testing",
+      "project": "src/Hexalith.Projects.Testing/Hexalith.Projects.Testing.csproj",
+      "assembly": "Hexalith.Projects.Testing",
+      "frameworkReferences": [],
+      "dependencies": {
+        "Hexalith.Projects.Contracts": "{version}",
+        "Hexalith.Projects": "{version}",
+        "ByteAether.Ulid": "1.4.2",
+        "Hexalith.Commons.UniqueIds": "3.0.0",
+        "Hexalith.EventStore.Contracts": "5.3.0",
+        "Microsoft.Extensions.Configuration": "11.0.0",
+        "Microsoft.Extensions.Configuration.Binder": "11.0.0",
+        "Microsoft.Extensions.Options.ConfigurationExtensions": "11.0.0",
+        "Hexalith.McpCli.Abstractions": "3.0.0"
+      },
+      "probe": "using Hexalith.Projects.Testing;\nConsole.WriteLine(ProjectsTestingMarker.Name);\n"
+    },
+    {
+      "id": "Hexalith.Projects.ServiceDefaults",
+      "project": "src/Hexalith.Projects.ServiceDefaults/Hexalith.Projects.ServiceDefaults.csproj",
+      "assembly": "Hexalith.Projects.ServiceDefaults",
+      "frameworkReferences": [
+        "Microsoft.AspNetCore.App"
+      ],
+      "dependencies": {
+        "Microsoft.Extensions.Http.Resilience": "11.0.0",
+        "Microsoft.Extensions.ServiceDiscovery": "11.0.0",
+        "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.21.0",
+        "OpenTelemetry.Extensions.Hosting": "1.21.0",
+        "OpenTelemetry.Instrumentation.AspNetCore": "1.21.0",
+        "OpenTelemetry.Instrumentation.Http": "1.21.0",
+        "OpenTelemetry.Instrumentation.Runtime": "1.21.0",
+        "OpenTelemetry": "1.21.0"
+      },
+      "probe": "using Hexalith.Projects.ServiceDefaults;\nConsole.WriteLine(ProjectsServiceDefaults.Name);\n"
+    }
+  ]
+}

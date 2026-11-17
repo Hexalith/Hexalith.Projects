@@ -1,0 +1,42 @@
+{
+  "head": "e67afa4519e3d9d0d37eab3c110077b14218dcd3",
+  "parent": "392a7e4e9daade785ee9f1ae5f40e25931002735",
+  "only_changed_path": ".github/workflows/release.yml",
+  "comparison": [
+    {
+      "check": "advisory",
+      "parent_status": "failure",
+      "parent_job": 133916970347,
+      "same_missing_cicd_ref": true,
+      "same_no_tests_ran": false
+    },
+    {
+      "check": "live-sidecar",
+      "parent_status": "failure",
+      "parent_job": 133916972616,
+      "same_missing_cicd_ref": false,
+      "same_no_tests_ran": true
+    },
+    {
+      "check": "Phase 4 gate risk matrix fixtures",
+      "parent_status": "failure",
+      "parent_job": 133916964472,
+      "same_missing_cicd_ref": false,
+      "same_no_tests_ran": true
+    },
+    {
+      "check": "ci / build-and-test",
+      "parent_status": "failure",
+      "parent_job": 133916998681,
+      "same_missing_cicd_ref": true,
+      "same_no_tests_ran": false
+    },
+    {
+      "check": "ci / tenants-source-mode",
+      "parent_status": "failure",
+      "parent_job": 133916998457,
+      "same_missing_cicd_ref": true,
+      "same_no_tests_ran": false
+    }
+  ]
+}

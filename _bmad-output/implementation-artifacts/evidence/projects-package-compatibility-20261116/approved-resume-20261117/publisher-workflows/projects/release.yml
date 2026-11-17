@@ -1,0 +1,375 @@
+name: Release
+
+# Publication is an explicit operator action. The unprotected preflight proves
+# the dispatch selected the current main tip and that exact source already has
+# a successful push CI run before the protected release environment is entered.
+# The protected job then reruns the focused G-6 proof on that exact checkout.
+on:
+  workflow_dispatch:
+    inputs:
+      release-profile:
+        description: Full release or the fixed owner-approved Contracts prerequisite
+        type: choice
+        default: full
+        options:
+          - full
+          - contracts-prerequisite
+          - contracts-prerequisite-verify
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source:
+    if: ${{ inputs.release-profile != 'contracts-prerequisite' && inputs.release-profile != 'contracts-prerequisite-verify' }}
+    name: Verify exact green main source
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Require current main with successful exact-source CI
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DISPATCH_REF: ${{ github.ref }}
+          DISPATCH_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$DISPATCH_REF" != "refs/heads/main" ]; then
+            echo "Release must be dispatched from refs/heads/main." >&2
+            exit 1
+          fi
+          if [[ ! "$DISPATCH_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The dispatch source must be an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+
+          live_main_sha="$(gh api "repos/${REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          if [[ ! "$live_main_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The live main SHA could not be resolved safely." >&2
+            exit 1
+          fi
+          if [ "$DISPATCH_SHA" != "$live_main_sha" ]; then
+            echo "The dispatched source is no longer the live main tip." >&2
+            exit 1
+          fi
+
+          ci_runs="$(gh api --method GET \
+            "repos/${REPOSITORY}/actions/workflows/ci.yml/runs" \
+            -f branch=main \
+            -f event=push \
+            -f head_sha="$DISPATCH_SHA" \
+            -f per_page=100)"
+          if printf '%s\n' "$ci_runs" | jq -e --arg sha "$DISPATCH_SHA" '
+            [.workflow_runs[] | select(
+              .head_sha == $sha and
+              .head_branch == "main" and
+              .event == "push" and
+              .status == "completed" and
+              .conclusion == "success"
+            )] | length > 0
+          ' >/dev/null; then
+            exit 0
+          fi
+          echo "No successful push CI run exists for the exact current main SHA." >&2
+          exit 1
+
+  release:
+    name: Release packages
+    needs: verify-source
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: production
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          submodules: false
+          persist-credentials: false
+      - name: Checkout approved Builds actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Hexalith/Hexalith.Builds
+          ref: 6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
+          path: .hexalith/builds-execution
+          persist-credentials: false
+      - name: Validate approved Builds actions identity
+        shell: bash
+        env:
+          BUILDS_EXECUTION_SHA: 6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
+        run: |
+          set -euo pipefail
+          checked_out_builds_sha="$(git -C .hexalith/builds-execution rev-parse HEAD)"
+          if [ "$checked_out_builds_sha" != "$BUILDS_EXECUTION_SHA" ]; then
+            echo "Checked-out Hexalith.Builds actions do not match the approved execution SHA." >&2
+            exit 1
+          fi
+      - name: Initialize root-declared submodules
+        uses: ./.hexalith/builds-execution/Github/initialize-build
+      - name: Initialize .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+          dotnet-version: '10.0.404'
+      - name: Initialize Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('Directory.Packages.props', 'global.json', 'references/Hexalith.Builds/Props/Directory.Packages.props') }}
+          restore-keys: nuget-
+      - name: Install npm dependencies
+        run: npm ci --ignore-scripts
+      - name: Verify npm dependency provenance and signatures
+        run: npm audit signatures
+      - name: Restore release solution
+        run: dotnet restore Hexalith.Projects.CI.slnx
+      - name: Build release solution
+        run: dotnet build Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror
+      - name: Pull pinned G-6 PostgreSQL fixture image
+        run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+      - name: Run fresh exact-source G-6 qualifier
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          python3 tools/qualification/run_g6_current.py
+          --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
+          --output "$G6_OUTPUT"
+          --execution-scope release
+      - name: Validate fresh exact-source G-6 evidence
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          python3 references/Hexalith.Builds/Tools/g6_current.py validate
+          --workspace .
+          --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
+          --evidence "$G6_OUTPUT/result.json"
+          --release
+      - name: Upload exact-source G-6 evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: g6-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 90
+      - name: Validate five-package manifest
+        shell: bash
+        env:
+          EXPECTED_PACKAGE_COUNT: '5'
+          PACKAGE_MANIFEST: tools/release-packages.json
+        run: |
+          set -euo pipefail
+          if ! jq -e --argjson expected "$EXPECTED_PACKAGE_COUNT" '
+            .schemaVersion == 1 and
+            (.packages | type == "array") and
+            (.packages | length == $expected) and
+            ([.packages[].id] | all(type == "string" and length > 0)) and
+            ([.packages[].id] | unique | length == $expected)
+          ' "$PACKAGE_MANIFEST" >/dev/null; then
+            echo "The release manifest must declare exactly five unique package IDs." >&2
+            exit 1
+          fi
+      - name: Resolve release publication freeze
+        id: publish-gate
+        shell: bash
+        env:
+          HEXALITH_RELEASE_PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+        run: |
+          set -euo pipefail
+          # GitHub expression equality is case-insensitive, so preserve the effective
+          # variable value and perform the exact, untrimmed comparison in the shell.
+          if [ "${HEXALITH_RELEASE_PUBLISH_ENABLED-}" = "true" ]; then
+            echo "publish-enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Release publication is enabled by the exact repository-level override."
+            exit 0
+          fi
+          echo "publish-enabled=false" >> "$GITHUB_OUTPUT"
+          echo "::notice title=Release publication frozen::The effective variable HEXALITH_RELEASE_PUBLISH_ENABLED is not exactly the string 'true', so NuGet login and Semantic Release are skipped and this run concludes successfully."
+      - name: Revalidate current source before NuGet login
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DISPATCH_SHA: ${{ github.sha }}
+          SOURCE_BRANCH: main
+          PUBLISH_ENABLED: ${{ steps.publish-gate.outputs.publish-enabled }}
+        run: |
+          set -euo pipefail
+          # Only an explicit frozen verdict skips this gate; an unset or empty value keeps the
+          # guard running so a broken gate cannot quietly disable the staleness proof.
+          publish_enabled="${PUBLISH_ENABLED-true}"
+          if [ -z "$publish_enabled" ]; then
+            publish_enabled="true"
+          fi
+          if [ "$publish_enabled" != "true" ]; then
+            echo "::notice title=Source revalidation skipped::Release publication is frozen, so no credential or publication boundary is reached."
+            exit 0
+          fi
+          if [[ ! "$DISPATCH_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The dispatched release source must be an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$SOURCE_BRANCH" != "main" ]; then
+            echo "The release source branch must be exactly main." >&2
+            exit 1
+          fi
+
+          checked_out_sha="$(git rev-parse HEAD)"
+          if [[ ! "$checked_out_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The checked-out release source could not be resolved as an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$checked_out_sha" != "$DISPATCH_SHA" ]; then
+            echo "The checked-out release source does not match the dispatched commit SHA." >&2
+            exit 1
+          fi
+
+          live_source_sha="$(gh api "repos/${REPOSITORY}/git/ref/heads/${SOURCE_BRANCH}" --jq '.object.sha')"
+          if [[ ! "$live_source_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The live ${SOURCE_BRANCH} SHA could not be resolved as an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$checked_out_sha" != "$live_source_sha" ]; then
+            echo "The release source became stale during setup. Redispatch Release from the new ${SOURCE_BRANCH} tip after exact-source CI succeeds." >&2
+            exit 1
+          fi
+      - name: Exchange GitHub OIDC token for temporary NuGet API key
+        id: nuget-login
+        if: ${{ steps.publish-gate.outputs.publish-enabled == 'true' }}
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Semantic Release
+        if: ${{ steps.publish-gate.outputs.publish-enabled == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: npm exec --no -- semantic-release
+
+  qualify-contracts-prerequisite:
+    if: ${{ github.ref == 'refs/heads/main' && (inputs.release-profile == 'contracts-prerequisite' || inputs.release-profile == 'contracts-prerequisite-verify') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      plan: ${{ steps.qualify.outputs.plan }}
+    steps:
+      - name: Initialize qualification failure receipt
+        run: >-
+          printf '%s\n' '{"status":"failed","failed_operation":"workflow initialization","reason":"qualification has not completed","push_attempted":false,"upload_count":0}' > prerequisite-qualification.json
+      - name: Checkout immutable CiCd prerequisite verifier and approved archives
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Hexalith/Hexalith.CiCd
+          ref: 264e5de34341187a0ad4724dd6a39248b9cb9b58
+          path: .prerequisite-owner
+          submodules: false
+          persist-credentials: false
+          sparse-checkout: |
+            tools/publish_contracts_prerequisite.py
+            tools/test_publish_contracts_prerequisite.py
+            docs/contracts-prerequisites
+          sparse-checkout-cone-mode: false
+      - name: Exercise fixed publisher controls without publication credentials
+        run: python3 -B .prerequisite-owner/tools/test_publish_contracts_prerequisite.py
+      - name: Initialize package signature verifier for read-only recovery
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '11.0.x'
+      - name: Bind exact approved payload and package-only owner gates
+        id: qualify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREREQUISITE_OWNER_SOURCE: 264e5de34341187a0ad4724dd6a39248b9cb9b58
+          HEXALITH_RELEASE_PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+          PREREQUISITE_OPERATION: ${{ inputs.release-profile == 'contracts-prerequisite-verify' && 'verify' || 'qualify' }}
+        run: python3 -I .prerequisite-owner/tools/publish_contracts_prerequisite.py "$PREREQUISITE_OPERATION" --profile projects --report prerequisite-qualification.json
+      - name: Retain exact-source prerequisite qualification
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: contracts-prerequisite-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: prerequisite-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+
+  publish-contracts-prerequisite:
+    needs: qualify-contracts-prerequisite
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && inputs.release-profile == 'contracts-prerequisite' && needs.qualify-contracts-prerequisite.result == 'success' && needs.qualify-contracts-prerequisite.outputs.plan != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize publication failure receipts
+        run: |
+          printf '%s\n' '{"status":"failed","failed_operation":"workflow initialization","reason":"pre-OIDC qualification has not completed","push_attempted":false,"upload_count":0}' > prerequisite-pre-oidc.json
+          printf '%s\n' '{"status":"failed","failed_operation":"workflow initialization","reason":"publisher has not completed","push_attempted":false,"upload_count":0}' > prerequisite-publication.json
+      - name: Checkout only immutable CiCd prerequisite publisher and approved archives
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Hexalith/Hexalith.CiCd
+          ref: 264e5de34341187a0ad4724dd6a39248b9cb9b58
+          path: .prerequisite-owner
+          submodules: false
+          persist-credentials: false
+          sparse-checkout: |
+            tools/publish_contracts_prerequisite.py
+            docs/contracts-prerequisites
+          sparse-checkout-cone-mode: false
+      - name: Initialize package signature verifier
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '11.0.x'
+      - name: Requalify immediately before OIDC exchange
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREREQUISITE_OWNER_SOURCE: 264e5de34341187a0ad4724dd6a39248b9cb9b58
+          HEXALITH_RELEASE_PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+        run: python3 -I .prerequisite-owner/tools/publish_contracts_prerequisite.py qualify --profile projects --report prerequisite-pre-oidc.json
+      - name: Exchange existing owner release identity for temporary NuGet key
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Publish the single approved archive and verify signed public payload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREREQUISITE_OWNER_SOURCE: 264e5de34341187a0ad4724dd6a39248b9cb9b58
+          HEXALITH_RELEASE_PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+          PREREQUISITE_QUALIFICATION: ${{ needs.qualify-contracts-prerequisite.result }}
+          PREREQUISITE_PLAN: ${{ needs.qualify-contracts-prerequisite.outputs.plan }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: python3 -I .prerequisite-owner/tools/publish_contracts_prerequisite.py publish --profile projects --report prerequisite-publication.json
+      - name: Retain publication outcome and verification
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: contracts-prerequisite-publication-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            prerequisite-pre-oidc.json
+            prerequisite-publication.json
+          if-no-files-found: error
+          retention-days: 90

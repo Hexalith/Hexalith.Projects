@@ -1,0 +1,28 @@
+{
+  "layers": 3,
+  "edge_findings": 0,
+  "verification_gaps": 0,
+  "blind_findings": [
+    {
+      "id": "OA1",
+      "verdict": "medium",
+      "claim": "receipt lacks exact execution/App provenance",
+      "route": "patch",
+      "fix": "recordsource/workflow/run/timestamp and verify fixedexistingApp identity"
+    },
+    {
+      "id": "OA2",
+      "verdict": "medium",
+      "claim": "APIfailure context lost",
+      "route": "patch",
+      "fix": "retain sanitizedendpoint/status/requestID/message/rate metadata"
+    },
+    {
+      "id": "OA3",
+      "verdict": "medium",
+      "claim": "missingreceipt can passartifactretention",
+      "route": "patch",
+      "fix": "initializefailure receipt beforetoken request and requireartifactfile"
+    }
+  ]
+}

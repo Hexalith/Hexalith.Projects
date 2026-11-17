@@ -1,0 +1,122 @@
+{
+  "status": "blocked-on-required-eventstore-owner-checks",
+  "task_complete": false,
+  "recorded_at": "2026-11-17T09:43:10.125200+00:00",
+  "approved_scopes": {
+    "exact_packages": "User approve; retained original approved-proposal.json",
+    "prerequisite_only_gate_scope": "User *yes; prerequisite-publisher-approval.json",
+    "alternate_PR_metadata_route": "User Use existing GitHub account; connected jpiquot account opened PR401; App grants unchanged"
+  },
+  "delivered_cicd_sources": [
+    "95d181721d55535c0e7c57d2f12f6537d754341c",
+    "264e5de34341187a0ad4724dd6a39248b9cb9b58",
+    "cc4b8cc46f4e254e20518c46726fc5a57ed1164f",
+    "c47729d371295387f99b88f36388162623ef41d4",
+    "5abd918e58ab95a554c680c49d3bc1b044270011"
+  ],
+  "projects_main": "78633a653c1a6768a795678203d836b3caac2c12",
+  "projects_deliveries": {
+    "publisher": "8b53d6b917957762949d39c21bc5de0919811413",
+    "closed_policy_compatibility": "78633a653c1a6768a795678203d836b3caac2c12"
+  },
+  "published_projects_contracts": {
+    "coordinate": "Hexalith.Projects.Contracts/2.0.0-story66.3",
+    "producer": "5b4bdeacde318a1d948db7ef76843df0c548f084",
+    "approved_unsigned_sha256": "349f938db77dd83ff45e200997b1cba97147c46b1855ec58fd6e2a4b0572eff5",
+    "signed_public_sha256": "81888d8267dbf6593ca2cfd8c63bdd6da2732351a67400602058612dc70e5b8b",
+    "all_payload_entries_identical": true,
+    "repository_signature_verified": true,
+    "upload_run": 44048396433,
+    "upload_attempts": 1,
+    "upload_result": "HTTP Created, exit0; retained publisher failure due delayed public indexing, never retried upload",
+    "successful_hosted_verification": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/44050366352",
+    "current_pinned_McpCli": "c9ffbd5c9f6bc100ecbf6ac13acf4fbe50a498a9",
+    "current_public_restore_build_strict_discovery": "passed; current-public-mcp/qualification.json; public nuget.org only"
+  },
+  "eventstore": {
+    "coordinate": "Hexalith.EventStore.Contracts/5.3.0",
+    "producer": "0be0c922883d4ea61b18e843e24472162261d934",
+    "approved_archive_sha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3",
+    "publication_attempted": false,
+    "public_availability": "absent at last direct verification",
+    "pr": "https://github.com/Hexalith/Hexalith.EventStore/pull/401",
+    "pr_head": "e67afa4519e3d9d0d37eab3c110077b14218dcd3",
+    "pr_base": "392a7e4e9daade785ee9f1ae5f40e25931002735",
+    "only_changed_module_path": ".github/workflows/release.yml",
+    "required_checks": {
+      "success": [
+        "codeql / analyze",
+        "commitlint / commitlint",
+        "dependency-review / dependency-review"
+      ],
+      "failure": [
+        "ci / build-and-test",
+        "ci / tenants-source-mode",
+        "advisory",
+        "live-sidecar",
+        "Phase 4 gate risk matrix fixtures"
+      ]
+    },
+    "inherited_failure_causes": [
+      "Three required jobs cannot fetch existing references/Hexalith.CiCd gitlink88fb9071e8b9cac526b51684bf92f891a0ef1bee",
+      "Two required jobs discover0 tests and exit5; same parent failures confirmed"
+    ],
+    "same_App_PR_token": "HTTP422 requested permissions not granted; no App grant changed",
+    "user_authorized_existing_account_PR_creation": true
+  },
+  "necessary_pin_correction": {
+    "status": "prepared-not-delivered",
+    "source": "78633a653c1a6768a795678203d836b3caac2c12",
+    "candidate_tree": "09192422c484c8519e9a21547d13a4cb6200f735",
+    "only_paths": [
+      "Directory.Packages.props",
+      "tools/release-packages.json"
+    ],
+    "family_pin_and_all_other_pins_and_gitlinks_preserved": true,
+    "delivery_gate": "both fixed public signed archive proofs; EventStore proof unavailable"
+  },
+  "checks": {
+    "eventstore_contracts": 1704,
+    "eventstore_API_families": 14,
+    "projects_contracts": 207,
+    "publisher_controls": 36,
+    "delivery_controls": 44,
+    "proposal_controls": 30,
+    "dispatch_controls": 50,
+    "projects_policy_controls": 22,
+    "all_reported_local_controls_passed": true
+  },
+  "hosted_CI_G6": {
+    "final_corrected_pin_source": "pending, no pin delivery before EventStore publication",
+    "latest_projects_CI": "https://github.com/Hexalith/Hexalith.Projects/actions/runs/44047607339",
+    "retained_G6_failure": "package restore failed before Projects.Contracts became public",
+    "attempted_same_source_G6_rerun": "Connected GitHub integration returned403 Resource not accessible by integration; rerun did not occur; no alternate writer retry",
+    "successful_hosted_public_signature_payload_verification": 44050366352,
+    "local_current_public_McpCli_consumer": "passed; not full hosted G6 acceptance"
+  },
+  "subsequent_product_failures_retained": "Original full Release qualification retains13 independent Conversations Contracts/generator API errors; no unrelated pin changed, no newer full Release pass claimed",
+  "next_authorized_sequence": [
+    "Resolve inherited required EventStore owner CI checks through its owners without weakening gates or changing unrelated pins under this repair",
+    "Requalify reviewed one-file publisher proposal against any repaired/advanced EventStore source and complete normal protected PR delivery",
+    "Publish the exact approved EventStore archive once; verify repository signature and unchanged payload",
+    "Requalify and deliver only the two-file Contracts pin correction through CiCd",
+    "Obtain fresh exact-delivery automatic Projects CI/G6; retain later failures"
+  ],
+  "forbidden_actions_performed": {
+    "nested_submodule_initialization": false,
+    "deployment": false,
+    "v2_activation": false,
+    "Story_1_17_tracking_change": false,
+    "new_feed_or_credential_grant": false,
+    "gate_weakening_or_failed_required_check_merge": false
+  },
+  "final_feed_recheck": "final-public-feed-recheck.json",
+  "eventstore_inherited_failure_comparison": "eventstore-pr401-inherited-failure-comparison.json",
+  "eventstore_all_required_checks_completed": true,
+  "projects_completed_fix_checks": [
+    "Validate workflow policy",
+    "commitlint / commitlint",
+    "codeql / analyze",
+    "P1R candidate evidence replay"
+  ]
+}

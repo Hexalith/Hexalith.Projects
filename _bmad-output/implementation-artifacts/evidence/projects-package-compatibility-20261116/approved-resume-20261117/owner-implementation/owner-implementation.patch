@@ -1,0 +1,1194 @@
+diff --git a/tools/deliver_contracts_prerequisites.py b/tools/deliver_contracts_prerequisites.py
+new file mode 100644
+--- /dev/null
++++ b/tools/deliver_contracts_prerequisites.py
+@@ -0,0 +1,373 @@
++"""Deliver three fixed, reviewed contracts prerequisites without executing target code.
++
++Only a transport supplied at the Python invocation boundary is replaceable for
++offline real-Git tests. No environment or proposal can supply remotes or paths.
++"""
++from __future__ import annotations
++
++import argparse
++import base64
++import hashlib
++import importlib.util
++import json
++import os
++from pathlib import Path
++import re
++import signal
++import subprocess
++import sys
++import tempfile
++
++_SPEC = importlib.util.spec_from_file_location("_contracts_delivery_runtime", Path(__file__).with_name("delivery_runtime.py"))
++rt = importlib.util.module_from_spec(_SPEC)
++sys.modules[_SPEC.name] = rt
++_SPEC.loader.exec_module(rt)
++
++PROFILES = ("eventstore-publisher", "projects-publisher", "projects-pins")
++WORKFLOW = ".github/workflows/deliver-contracts-prerequisites.yml"
++CHECKS = frozenset({"scope-preservation", "behavioral-controls", "actionlint", "package-qualification"})
++SCHEMA = "hexalith.contracts-prerequisites.v1"
++VALIDATION_SCHEMA = "hexalith.contracts-prerequisites-validation.v1"
++PLAN_SCHEMA = "hexalith.contracts-prerequisites-plan.v1"
++RECEIPT_SCHEMA = "hexalith.contracts-prerequisites-delivery.v1"
++
++
++def require(condition, message):
++    if not condition:
++        raise rt.DeliveryError(message)
++
++
++def digest(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def configuration(profile):
++    """The complete closed perimeter; callers choose only a fixed profile."""
++    require(profile in PROFILES, "unknown closed contracts prerequisite profile")
++    prefix = "docs/proposals/contracts-prerequisites/" + profile
++    manifest_path, patch_path, validation_path = prefix + ".json", prefix + ".patch", prefix + "-validation.json"
++    return {"repository": "Hexalith.EventStore" if profile == "eventstore-publisher" else "Hexalith.Projects",
++            "paths": ("Directory.Packages.props", "tools/release-packages.json") if profile == "projects-pins"
++                     else (".github/workflows/release.yml",),
++            "manifest": manifest_path, "patch": patch_path, "validation": validation_path,
++            "sources": ("tools/deliver_contracts_prerequisites.py", "tools/delivery_runtime.py", WORKFLOW,
++                        "tools/tests/test_deliver_contracts_prerequisites.py", manifest_path, patch_path, validation_path),
++            "message": ("build(cicd): deliver approved contracts prerequisite " + profile + "\n").encode()}
++
++
++def sha256(value):
++    require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value), "invalid SHA256 identity")
++    return value
++
++
++def manifest(data, profile):
++    config = configuration(profile)
++    value = rt.json_read(data)
++    require(isinstance(value, dict) and set(value) == {
++        "schema", "repository", "base_commit", "base_tree", "result_tree", "patch_sha256",
++        "before", "after", "validation_sha256", "pre_push_gate"}, "invalid closed prerequisite manifest")
++    require(value["schema"] == SCHEMA and value["repository"] == config["repository"],
++            "prerequisite repository/schema mismatch")
++    require(value["pre_push_gate"] == "reviewed-tree-owner-authorized", "pre-push owner gate is not authorized")
++    for field in ("base_commit", "base_tree", "result_tree"):
++        rt.sha(value[field])
++    for field in ("patch_sha256", "validation_sha256"):
++        sha256(value[field])
++    for field in ("before", "after"):
++        require(isinstance(value[field], dict) and set(value[field]) == set(config["paths"]),
++                "unexpected prerequisite manifest path")
++        for item in value[field].values():
++            require(isinstance(item, list) and len(item) == 3 and item[:2] == ["100644", "blob"],
++                    "prerequisite requires existing regular 100644 blobs")
++            rt.sha(item[2])
++    return value
++
++
++def validation(data, value):
++    """Bind passed independent named checks to the exact complete target tree."""
++    require(digest(data) == value["validation_sha256"], "reviewed validation SHA256 mismatch")
++    proof = rt.json_read(data)
++    require(isinstance(proof, dict) and set(proof) == {
++        "schema", "status", "base_commit", "base_tree", "result_tree", "patch_sha256", "checks"},
++        "invalid closed prerequisite validation proof")
++    require(proof["schema"] == VALIDATION_SCHEMA and proof["status"] == "passed", "reviewed validation did not pass")
++    for field in ("base_commit", "base_tree", "result_tree", "patch_sha256"):
++        require(proof[field] == value[field], "reviewed validation source/proposal mismatch: " + field)
++    require(isinstance(proof["checks"], dict) and set(proof["checks"]) == CHECKS,
++            "reviewed validation required checks differ")
++    for name, check in proof["checks"].items():
++        require(isinstance(check, dict) and set(check) == {"status", "log_sha256"}
++                and check["status"] == "passed", "reviewed validation check did not pass: " + name)
++        sha256(check["log_sha256"])
++    return proof
++
++
++def entries(git, revision, expected):
++    actual = git.items(revision)
++    for path, item in expected.items():
++        require(actual.get(path) == tuple(item), "unexpected prerequisite blob/mode: " + path)
++    return actual
++
++
++def proposal(owner, source, target, value, config):
++    patch = owner.blob(source, config["patch"])
++    require(digest(patch) == value["patch_sha256"], "reviewed patch SHA256 mismatch")
++    require(target.resolve(value["base_commit"] + "^{tree}") == value["base_tree"], "reviewed base tree mismatch")
++    before = entries(target, value["base_commit"], value["before"])
++    target.run("read-tree", value["base_tree"])
++    target.run("apply", "--cached", "--whitespace=nowarn", data=patch)
++    tree = rt.sha(target.run("write-tree", "--missing-ok").decode().strip())
++    require(tree == value["result_tree"], "complete prerequisite output tree mismatch")
++    after = entries(target, tree, value["after"])
++    changed = {path for path in set(before) | set(after) if before.get(path) != after.get(path)}
++    require(changed == set(config["paths"]), "patch changed paths outside the exact prerequisite perimeter")
++    return tree
++
++
++def parents(git, revision):
++    header = git.run("cat-file", "commit", revision).split(b"\n\n", 1)[0]
++    return [line[7:].decode("ascii") for line in header.splitlines() if line.startswith(b"parent ")]
++
++
++def plan(profile, source, raw, value, live):
++    return {"schema": PLAN_SCHEMA, "profile": profile, "repository": value["repository"],
++            "owner_source": source, "manifest_sha256": digest(raw), "patch_sha256": value["patch_sha256"],
++            "validation_sha256": value["validation_sha256"], "pre_push_gate": value["pre_push_gate"],
++            "base_commit": value["base_commit"], "base_tree": value["base_tree"],
++            "result_tree": value["result_tree"], "observed_main": live}
++
++
++def token_scope(transport, repository, token):
++    """Read only the existing installation token's exact repository inventory."""
++    require(token, "scoped prerequisite App token unavailable")
++    repositories = transport.api.pages("/installation/repositories", token, field="repositories")
++    require(len(repositories) == 1 and isinstance(repositories[0], dict)
++            and repositories[0].get("full_name") == "Hexalith/" + repository,
++            "App token repository scope is not exactly the fixed prerequisite repository")
++    metadata = transport.api.get("/repos/Hexalith/" + repository, token)
++    require(isinstance(metadata, dict) and metadata.get("full_name") == "Hexalith/" + repository
++            and metadata.get("default_branch") == "main", "App repository/main identity mismatch")
++
++
++def exclude_full_writer(owner, source, transport, repository, receipt, phase):
++    """Require absence in both selectors without altering either full writer."""
++    proof = {"phase": phase, "owner_source": source, "registry_absent": None,
++             "accepted_ref_absent": None, "advertised_main": None}
++    receipt["full_writer_exclusion"].append(proof)
++    receipt["failed_operation"] = "verify target registry absence during " + phase
++    registry = rt.registry(owner, source)
++    matches = [name for name in registry if name.casefold() == repository.casefold()]
++    proof.update(registry_count=len(registry), registry_sha256=digest(json.dumps(registry).encode()),
++                 registry_absent=not matches, matching_registry_entries=matches[:32])
++    require(not matches, repository + " is present in the exact committed full-delivery registry; coordinator requalification required")
++    receipt["failed_operation"] = "verify atomic owner-main/accepted-ref advertisement during " + phase
++    output = owner.run("ls-remote", "--heads", transport.remote(rt.CICD), "refs/heads/main", "refs/heads/delivered/*")
++    proof.update(advertisement_sha256=digest(output), advertisement_bytes=len(output))
++    refs = {}
++    for row in output.decode("utf-8").splitlines():
++        parts = row.split("\t")
++        require(len(parts) == 2, "invalid live owner/ref advertisement row")
++        revision, reference = parts
++        revision = rt.sha(revision)
++        if reference == "refs/heads/main":
++            require(proof["advertised_main"] is None, "duplicate live owner main advertisement")
++            proof["advertised_main"] = revision
++            continue
++        require(reference.startswith("refs/heads/delivered/"), "unexpected live owner/ref advertisement")
++        name = rt.name(reference.removeprefix("refs/heads/delivered/"))
++        require(reference not in refs, "duplicate live accepted ref")
++        refs[reference] = (name, revision)
++    require(proof["advertised_main"] == source, "advertised owner main differs from reviewed source")
++    matches = [reference for reference, (name, _) in refs.items() if name.casefold() == repository.casefold()]
++    proof.update(accepted_ref_count=len(refs), accepted_refs_sha256=digest(json.dumps(refs, sort_keys=True).encode()),
++                 accepted_ref_absent=not matches, matching_accepted_refs=matches[:32])
++    require(not matches, repository + " has a live full-delivery accepted ref; coordinator requalification required")
++
++
++class Git(rt.Git):
++    """Retain bounded combined push diagnostics, including ambiguous timeouts."""
++    def run(self, *args, **options):
++        if not args or args[0] != "push":
++            return super().run(*args, **options)
++        token = options.get("token")
++        require(token, "scoped prerequisite App token unavailable")
++        self.budget.check(token=True)
++        env = self.env.copy()
++        header = base64.b64encode(("x-access-token:" + token).encode()).decode()
++        rt._SECRETS.extend((token, header))
++        index = int(env["GIT_CONFIG_COUNT"])
++        env.update({"GIT_CONFIG_COUNT": str(index + 1), f"GIT_CONFIG_KEY_{index}": "http.https://github.com/.extraheader",
++                    f"GIT_CONFIG_VALUE_{index}": "AUTHORIZATION: basic " + header})
++        self.push_diagnostics = {"exit_code": None, "output": "", "timed_out": False}
++        timeout = self.budget.timeout()
++        with tempfile.TemporaryFile() as output:
++            process = subprocess.Popen(["git", "-C", str(self.root), *map(str, args)],
++                                       stdout=output, stderr=subprocess.STDOUT, env=env, start_new_session=True)
++            try:
++                process.wait(timeout=timeout)
++            except subprocess.TimeoutExpired:
++                self.push_diagnostics["timed_out"] = True
++                try:
++                    os.killpg(process.pid, signal.SIGKILL)
++                except ProcessLookupError:
++                    pass
++                process.wait()
++            output.seek(0)
++            data = output.read(rt.MAX_GIT + 1)
++        self.push_diagnostics.update(exit_code=process.returncode,
++                                     output=rt.clean(data[:rt.MAX_GIT].decode("utf-8", "replace")))
++        require(not self.push_diagnostics["timed_out"], "Git push timed out; remote outcome is ambiguous; no retry")
++        require(len(data) <= rt.MAX_GIT, "Git push diagnostics exceed limit; remote outcome is ambiguous; no retry")
++        return process.returncode, data
++
++
++def execute(operation, context, report_path, *, profile, transport=None, token="", scratch=None, local_root=None):
++    """Qualify or deliver with private bare objects/index and durable receipts."""
++    rt._SECRETS.extend([token] if token else [])
++    receipt = {"schema": RECEIPT_SCHEMA, "operation": operation, "profile": profile, "repository": None,
++               "owner_source": None, "status": "failed", "failed_operation": "authorize owner invocation", "reason": None,
++               "observed_main": None, "candidate_sha": None, "candidate_tree": None,
++               "delivered_sha": None, "delivered_tree": None, "push_attempted": False,
++               "plan": None, "full_writer_exclusion": []}
++    try:
++        config = configuration(profile)
++        repository = config["repository"]
++        receipt["repository"] = repository
++        require(operation in {"qualify", "deliver"}, "unsupported closed prerequisite operation")
++        require(context.get("PREREQUISITE_PROFILE") == profile, "prerequisite profile differs from invocation")
++        require(context.get("GITHUB_REPOSITORY") == "Hexalith/Hexalith.CiCd"
++                and context.get("GITHUB_REF") == "refs/heads/main"
++                and context.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
++                and context.get("GITHUB_WORKFLOW_REF") == "Hexalith/Hexalith.CiCd/" + WORKFLOW + "@refs/heads/main",
++                "ineligible closed prerequisite owner invocation")
++        source = rt.sha(context.get("PREREQUISITE_OWNER_SOURCE"))
++        receipt["owner_source"] = source
++        require(source == context.get("GITHUB_SHA") and source == context.get("GITHUB_WORKFLOW_SHA"),
++                "owner source differs from exact dispatch/workflow source")
++        receipt["failed_operation"] = "verify secret-free behavioral suites"
++        require(context.get("PREREQUISITE_BEHAVIORAL_RESULT") == "success",
++                "secret-free behavioral qualification failed or was skipped")
++        if operation == "deliver":
++            receipt["failed_operation"] = "verify successful secret-free qualification"
++            require(context.get("PREREQUISITE_QUALIFICATION") == "success", "secret-free qualification did not succeed")
++            receipt["failed_operation"] = "read exact qualified plan"
++            qualified = rt.json_read(context.get("PREREQUISITE_PLAN", ""))
++            receipt["failed_operation"] = "require scoped prerequisite App token"
++            require(token, "scoped prerequisite App token unavailable")
++        budget = rt.Budget()
++        transport = transport or rt.Transport(budget)
++        with tempfile.TemporaryDirectory(prefix="contracts-owner-", dir=scratch) as temporary:
++            root = Path(temporary)
++            owner = rt.Git(root / "owner.git", budget)
++            owner.init()
++            receipt["failed_operation"] = "fetch exact CiCd main"
++            require(transport.module(owner, rt.CICD) == source, "owner source is not current exact CiCd main")
++            receipt["failed_operation"] = "verify exact committed trusted owner source"
++            source_root = Path(local_root) if local_root else Path(__file__).resolve().parents[1]
++            for path in config["sources"]:
++                local = source_root / path
++                require(local.is_file() and not local.is_symlink() and local.stat().st_size <= rt.MAX_JSON,
++                        "local owner payload missing, nonregular or exceeds source size limit: " + path)
++                with local.open("rb") as stream:
++                    local_bytes = stream.read(rt.MAX_JSON + 1)
++                require(local_bytes == owner.blob(source, path),
++                        "local owner payload differs from exact committed source: " + path)
++            raw = owner.blob(source, config["manifest"])
++            value = manifest(raw, profile)
++            receipt["failed_operation"] = "verify exact reviewed validation proof"
++            validation(owner.blob(source, config["validation"]), value)
++            exclude_full_writer(owner, source, transport, repository, receipt,
++                                "qualification" if operation == "qualify" else "delivery source verification")
++            target = Git(root / "target.git", budget, index=root / "private-index")
++            target.init()
++            receipt["failed_operation"] = "fetch exact target main"
++            live = transport.module(target, repository)
++            receipt["observed_main"] = live
++            if live != value["base_commit"]:
++                receipt["failed_operation"] = "verify already delivered exact tree and direct parent"
++                require(target.resolve(live + "^{tree}") == value["result_tree"]
++                        and parents(target, live) == [value["base_commit"]],
++                        "target main differs from reviewed base/direct child; coordinator requalification required")
++                target.run("fetch", "--depth=1", "--no-tags", "--no-recurse-submodules",
++                           transport.remote(repository), value["base_commit"])
++            receipt["failed_operation"] = "construct exact reviewed prerequisite proposal"
++            tree = proposal(owner, source, target, value, config)
++            binding = plan(profile, source, raw, value, live)
++            receipt["plan"] = binding
++            if operation == "deliver":
++                receipt["failed_operation"] = "verify qualified source/proposal/main binding"
++                require(qualified == binding, "qualified source/proposal/main binding mismatch; coordinator requalification required")
++                receipt["failed_operation"] = "verify exact App token repository scope"
++                token_scope(transport, repository, token)
++            if operation == "qualify":
++                receipt["status"] = "qualified"
++            else:
++                if live == value["base_commit"]:
++                    receipt["failed_operation"] = "create exact direct child commit"
++                    commit = rt.sha(target.run("commit-tree", tree, "-p", live, data=config["message"]).decode().strip())
++                    require(parents(target, commit) == [live] and target.resolve(commit + "^{tree}") == tree,
++                            "candidate tree/direct parent mismatch")
++                    receipt.update(candidate_sha=commit, candidate_tree=tree)
++                receipt["failed_operation"] = "reread exact CiCd main before push/unchanged confirmation"
++                require(transport.module(owner, rt.CICD) == source, "CiCd main advanced; coordinator requalification required")
++                receipt["failed_operation"] = "reread exact target main before push/unchanged confirmation"
++                require(transport.module(target, repository) == live, "target main advanced; coordinator requalification required")
++                exclude_full_writer(owner, source, transport, repository, receipt, "push" if live == value["base_commit"] else "unchanged confirmation")
++                receipt["failed_operation"] = "reread exact target main after full-writer exclusion"
++                require(transport.module(target, repository) == live, "target main advanced during exclusion; coordinator requalification required")
++                if live != value["base_commit"]:
++                    receipt.update(status="unchanged", delivered_sha=live, delivered_tree=tree)
++                else:
++                    receipt["failed_operation"] = "git push " + commit + ":refs/heads/main"
++                    receipt["push_attempted"] = True
++                    try:
++                        code, output = transport.push(target, repository, commit, token)
++                        receipt["push_result"] = {"exit_code": code, "output": rt.clean(output.decode("utf-8", "replace"))}
++                        require(code == 0, "non-forced prerequisite push failed; remote outcome may be ambiguous; no retry or reapply")
++                    except Exception:
++                        if "push_result" not in receipt and hasattr(target, "push_diagnostics"):
++                            receipt["push_result"] = target.push_diagnostics
++                        try:
++                            observed = transport.module(target, repository)
++                            observed_tree = target.resolve(observed + "^{tree}")
++                            observed_parents = parents(target, observed)
++                            receipt["observed_main"] = observed
++                            receipt["reconciliation"] = {"status": "observed", "main": observed,
++                                                         "tree": observed_tree, "parents": observed_parents}
++                            if observed == commit and observed_tree == tree and observed_parents == [live]:
++                                receipt.update(delivered_sha=commit, delivered_tree=tree)
++                        except Exception as error:
++                            receipt["reconciliation"] = {"status": "unavailable", "reason": rt.clean(error)
++                                if isinstance(error, rt.DeliveryError) else type(error).__name__}
++                        raise
++                    receipt["failed_operation"] = "reread exact published target tree/direct parent"
++                    observed = transport.module(target, repository)
++                    receipt["observed_main"] = observed
++                    require(observed == commit and target.resolve(observed + "^{tree}") == tree
++                            and parents(target, observed) == [live], "target main changed after push; no retry")
++                    receipt.update(status="delivered", delivered_sha=commit, delivered_tree=tree)
++            receipt["failed_operation"] = None
++    except Exception as error:
++        receipt["reason"] = rt.clean(error) if isinstance(error, rt.DeliveryError) else "prerequisite owner operation failed: " + type(error).__name__
++    rt.atomic(Path(report_path), receipt)
++    return receipt
++
++
++def main(argv=None, *, transport=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("operation", choices=("qualify", "deliver"))
++    parser.add_argument("--profile", choices=PROFILES, required=True)
++    parser.add_argument("--report", required=True)
++    args = parser.parse_args(argv)
++    context = os.environ.copy()
++    tokens = rt.sanitize()
++    result = execute(args.operation, context, args.report, profile=args.profile, transport=transport,
++                     token=tokens["MODULE_TOKEN"], scratch=context.get("TMPDIR"))
++    if args.operation == "qualify" and result["status"] == "qualified" and context.get("GITHUB_OUTPUT"):
++        with open(context["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
++            stream.write("plan=" + json.dumps(result["plan"], separators=(",", ":")) + "\n")
++    return 0 if result["status"] in {"qualified", "unchanged", "delivered"} else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/tests/test_deliver_contracts_prerequisites.py b/tools/tests/test_deliver_contracts_prerequisites.py
+new file mode 100644
+--- /dev/null
++++ b/tools/tests/test_deliver_contracts_prerequisites.py
+@@ -0,0 +1,660 @@
++#!/usr/bin/env python3
++"""Offline behavioral qualification using real Git objects and private indexes."""
++from __future__ import annotations
++
++import copy
++import importlib.util
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++
++sys.dont_write_bytecode = True
++ROOT = Path(__file__).resolve().parents[2]
++
++
++def load(path, name):
++    spec = importlib.util.spec_from_file_location(name, path)
++    module = importlib.util.module_from_spec(spec)
++    sys.modules[name] = module
++    spec.loader.exec_module(module)
++    return module
++
++
++delivery = load(ROOT / "tools/deliver_contracts_prerequisites.py", "_contracts_behavioral_tests")
++rt = delivery.rt
++
++
++def allow_fixture_files(environment):
++    result = environment.copy()
++    index = int(result["GIT_CONFIG_COUNT"])
++    result.update(GIT_CONFIG_COUNT=str(index + 1))
++    result[f"GIT_CONFIG_KEY_{index}"] = "protocol.file.allow"
++    result[f"GIT_CONFIG_VALUE_{index}"] = "always"
++    return result
++
++
++def git(root, *args, data=None, raw=False):
++    result = subprocess.run(["git", "-C", str(root), *map(str, args)], input=data, capture_output=True,
++                            env=allow_fixture_files(rt.environment()), check=True)
++    return result.stdout if raw else result.stdout.decode().strip()
++
++
++def items(root, revision):
++    result = {}
++    for row in git(root, "ls-tree", "-r", "-z", "--full-tree", revision, raw=True).split(b"\0"):
++        if row:
++            header, path = row.split(b"\t", 1)
++            result[path.decode()] = header.decode().split()
++    return result
++
++
++def file_transport(runtime, remotes, repository, token, observer=None):
++    """Replace only the network transport at the public invocation boundary."""
++    class API:
++        def pages(self, path, passed_token=None, *, field=None):
++            if path != "/installation/repositories" or field != "repositories" or passed_token != token:
++                raise AssertionError("unexpected authenticated API access")
++            if observer:
++                observer.api_reads.append(path)
++                return observer.inventory
++            return [{"full_name": "Hexalith/" + repository}]
++
++        def get(self, path, passed_token=None, **options):
++            if path != "/repos/Hexalith/" + repository or passed_token != token:
++                raise AssertionError("unexpected repository API access")
++            if observer:
++                observer.api_reads.append(path)
++                return observer.metadata
++            return {"full_name": "Hexalith/" + repository, "default_branch": "main"}
++
++    class Transport(runtime.Transport):
++        def __init__(self):
++            super().__init__(api=API())
++
++        def remote(self, selected):
++            if selected not in remotes:
++                raise AssertionError("transport repository broadened")
++            if observer:
++                observer.before_remote(selected)
++            return Path(remotes[selected]).as_uri()
++
++        def configure(self, target, selected):
++            super().configure(target, selected)
++            target.env = allow_fixture_files(target.env)
++
++        def module(self, target, selected):
++            if token and any(token in value for value in target.env.values()):
++                raise AssertionError("write token inherited by secret-free Git command")
++            if observer:
++                observer.before_read(selected)
++            return super().module(target, selected)
++
++        def push(self, target, selected, revision, passed_token):
++            if selected != repository or passed_token != token:
++                raise AssertionError("write repository/token broadened")
++            if observer:
++                observer.pushes.append(revision)
++                if observer.push_mode == "refuse":
++                    return 1, ("denied " + token + "\n" + "x" * 4000).encode()
++                if observer.push_mode == "race-before":
++                    observer.advance()
++            result = super().push(target, selected, revision, passed_token)
++            if observer:
++                if observer.push_mode == "accepted-error":
++                    return 1, b"server accepted write; connection lost"
++                if observer.push_mode == "accepted-timeout":
++                    raise runtime.DeliveryError("Git push timed out; remote outcome is ambiguous; no retry")
++            return result
++    return Transport()
++
++
++class Workspace:
++    def __init__(self, root, profile="projects-pins"):
++        self.root = Path(root)
++        self.root.mkdir()
++        self.profile = profile
++        self.config = delivery.configuration(profile)
++        self.repository = self.config["repository"]
++        self.product = self.root / "product"
++        self.product.mkdir()
++        git(self.product, "init", "--quiet", "--initial-branch=main")
++        for path in self.config["paths"]:
++            target = self.product / path
++            target.parent.mkdir(parents=True, exist_ok=True)
++            target.write_bytes(("original " + path + "\r\n").encode())
++        (self.product / "foreign.txt").write_bytes(b"unchanged\r\nforeign\r\n")
++        (self.product / ".gitattributes").write_text("* filter=poison\n")
++        (self.product / ".gitmodules").write_text('[submodule "Foreign"]\n path = references/Foreign\n url = https://invalid.example/unavailable\n')
++        (self.product / "foreign-link").symlink_to("foreign.txt")
++        (self.product / "executable").write_bytes(b"#!/bin/sh\nexit 99\n")
++        (self.product / "executable").chmod(0o755)
++        git(self.product, "add", ".")
++        git(self.product, "commit", "--quiet", "-m", "test: initial source")
++        initial = git(self.product, "rev-parse", "HEAD")
++        git(self.product, "update-index", "--add", "--cacheinfo", "160000", initial, "references/Foreign")
++        git(self.product, "commit", "--quiet", "-m", "test: preserve foreign gitlink")
++        self.base = git(self.product, "rev-parse", "HEAD")
++        self.base_tree = git(self.product, "rev-parse", "HEAD^{tree}")
++        self.before = items(self.product, self.base)
++        for path in self.config["paths"]:
++            target = self.product / path
++            target.write_bytes(target.read_bytes() + b"reviewed prerequisite\r\n")
++        git(self.product, "add", "--", *self.config["paths"])
++        self.patch = git(self.product, "diff", "--cached", "--binary", "--full-index", self.base, raw=True)
++        self.result_tree = git(self.product, "write-tree")
++        self.after = items(self.product, self.result_tree)
++        self.value = {"schema": delivery.SCHEMA, "repository": self.repository,
++                      "pre_push_gate": "reviewed-tree-owner-authorized", "base_commit": self.base,
++                      "base_tree": self.base_tree, "result_tree": self.result_tree,
++                      "patch_sha256": delivery.digest(self.patch), "validation_sha256": "0" * 64,
++                      "before": {path: self.before[path] for path in self.config["paths"]},
++                      "after": {path: self.after[path] for path in self.config["paths"]}}
++        self.remote = self.root / "product.git"
++        git(self.root, "clone", "--bare", "--quiet", self.product, self.remote)
++        for key in ("uploadpack.allowFilter", "uploadpack.allowAnySHA1InWant"):
++            git(self.remote, "config", key, "true")
++        self.owner = self.root / "owner"
++        self.owner.mkdir()
++        git(self.owner, "init", "--quiet", "--initial-branch=main")
++        for path in self.config["sources"]:
++            if path in {self.config["manifest"], self.config["patch"], self.config["validation"]}:
++                continue
++            target = self.owner / path
++            target.parent.mkdir(parents=True, exist_ok=True)
++            target.write_bytes((ROOT / path).read_bytes())
++        (self.owner / "setup").mkdir()
++        (self.owner / "setup/Hexalith.Foreign.yml").write_text("{}\n")
++        self.write_proof()
++        self.commit_owner()
++        self.owner_remote = self.root / "owner.git"
++        git(self.root, "clone", "--bare", "--quiet", self.owner, self.owner_remote)
++        for key in ("uploadpack.allowFilter", "uploadpack.allowAnySHA1InWant"):
++            git(self.owner_remote, "config", key, "true")
++        self.report = self.root / "receipt.json"
++        self.token = "inert-contracts-test-token"
++        self.inventory = [{"full_name": "Hexalith/" + self.repository}]
++        self.metadata = {"full_name": "Hexalith/" + self.repository, "default_branch": "main"}
++        self.read_counts = {}
++        self.fetches = []
++        self.api_reads = []
++        self.pushes = []
++        self.push_mode = None
++        self.read_race = None
++        self.accepted_race = False
++        self.fail_post_push_read = False
++        self.transport = file_transport(rt, {rt.CICD: self.owner_remote, self.repository: self.remote},
++                                        self.repository, self.token, self)
++
++    def write_proof(self):
++        proof = {"schema": delivery.VALIDATION_SCHEMA, "status": "passed",
++                 **{key: self.value[key] for key in ("base_commit", "base_tree", "result_tree", "patch_sha256")},
++                 "checks": {name: {"status": "passed", "log_sha256": delivery.digest((name + " fixture\n").encode())}
++                            for name in delivery.CHECKS}}
++        self.proof = proof
++        self.save_proof()
++
++    def save_proof(self):
++        path = self.owner / self.config["validation"]
++        path.parent.mkdir(parents=True, exist_ok=True)
++        path.write_text(json.dumps(self.proof) + "\n")
++        self.value["validation_sha256"] = delivery.digest(path.read_bytes())
++
++    def commit_owner(self):
++        path = self.owner / self.config["manifest"]
++        path.parent.mkdir(parents=True, exist_ok=True)
++        path.write_text(json.dumps(self.value) + "\n")
++        (self.owner / self.config["patch"]).write_bytes(self.patch)
++        git(self.owner, "add", ".")
++        git(self.owner, "commit", "--quiet", "-m", "test: exact owner proposal")
++        self.source = git(self.owner, "rev-parse", "HEAD")
++        if hasattr(self, "owner_remote"):
++            git(self.owner, "push", "--quiet", self.owner_remote, "HEAD:refs/heads/main")
++
++    def context(self):
++        return {"GITHUB_REPOSITORY": "Hexalith/Hexalith.CiCd", "GITHUB_REF": "refs/heads/main",
++                "GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_SHA": self.source, "GITHUB_WORKFLOW_SHA": self.source,
++                "GITHUB_WORKFLOW_REF": "Hexalith/Hexalith.CiCd/" + delivery.WORKFLOW + "@refs/heads/main",
++                "PREREQUISITE_OWNER_SOURCE": self.source, "PREREQUISITE_PROFILE": self.profile,
++                "PREREQUISITE_BEHAVIORAL_RESULT": "success"}
++
++    def run(self, operation="qualify", token=None, **overrides):
++        self.read_counts.clear()
++        return delivery.execute(operation, self.context() | overrides, self.report, profile=self.profile,
++                                transport=self.transport, token=self.token if token is None and operation == "deliver" else token or "",
++                                scratch=self.root, local_root=self.owner)
++
++    def deliver(self, qualified=None, **overrides):
++        qualified = qualified if qualified is not None else self.run()
++        return self.run("deliver", **({"PREREQUISITE_QUALIFICATION": "success",
++                                       "PREREQUISITE_PLAN": json.dumps(qualified["plan"])} | overrides))
++
++    def before_remote(self, selected):
++        pass
++
++    def before_read(self, selected):
++        self.fetches.append(selected)
++        count = self.read_counts[selected] = self.read_counts.get(selected, 0) + 1
++        if self.read_race == (selected, count):
++            self.advance(self.owner_remote if selected == rt.CICD else self.remote)
++        if self.accepted_race and selected == self.repository and count == 2:
++            git(self.owner_remote, "update-ref", "refs/heads/delivered/" + self.repository.swapcase(), self.source)
++        if self.fail_post_push_read and self.pushes:
++            raise rt.DeliveryError("post-push reconciliation unavailable")
++
++    def advance(self, remote=None, tree=None, parent=None):
++        remote = remote or self.remote
++        head = git(remote, "rev-parse", "refs/heads/main")
++        revision = git(remote, "commit-tree", tree or git(remote, "rev-parse", head + "^{tree}"),
++                       "-p", parent or head, data=b"test: independent concurrent source\n")
++        git(remote, "update-ref", "refs/heads/main", revision)
++        return revision
++
++    def cli(self, operation="qualify", **overrides):
++        configuration = self.root / "transport.json"
++        configuration.write_text(json.dumps({"source": str(self.owner / "tools/deliver_contracts_prerequisites.py"),
++            "remotes": {rt.CICD: str(self.owner_remote), self.repository: str(self.remote)},
++            "repository": self.repository, "token": self.token}))
++        output = self.root / "outputs"
++        output.unlink(missing_ok=True)
++        result = subprocess.run([sys.executable, "-I", str(Path(__file__).resolve()), "transport-driver", str(configuration),
++                                 operation, "--profile", self.profile, "--report", str(self.report)],
++                                env=os.environ | self.context() | {"TMPDIR": str(self.root), "GITHUB_OUTPUT": str(output),
++                                    "MODULE_TOKEN": self.token if operation == "deliver" else "", "CICD_TOKEN": "",
++                                    "PYTHONPATH": "/invalid/poison", "GIT_DIR": "/invalid/poison"} | overrides,
++                                capture_output=True)
++        return result, output.read_text() if output.exists() else ""
++
++
++class PrerequisiteDeliveryTests(unittest.TestCase):
++    def setUp(self):
++        self.temporary = tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR"))
++        self.addCleanup(self.temporary.cleanup)
++        self.serial = 0
++        self.w = self.workspace()
++
++    def workspace(self, profile="projects-pins"):
++        self.serial += 1
++        return Workspace(Path(self.temporary.name) / str(self.serial), profile)
++
++    def refused(self, result, reason=None, workspace=None):
++        workspace = workspace or self.w
++        self.assertEqual(result["status"], "failed", result)
++        self.assertTrue(result["failed_operation"])
++        self.assertFalse(result["push_attempted"])
++        self.assertIsNone(result["delivered_sha"])
++        self.assertEqual(workspace.pushes, [])
++        self.assertEqual(git(workspace.remote, "rev-parse", "main"), workspace.base)
++        if reason:
++            self.assertIn(reason, result["reason"])
++
++    def snapshot(self, workspace):
++        return [(root, (root / ".git/index").read_bytes(), git(root, "status", "--porcelain"), git(root, "show-ref"))
++                for root in (workspace.product, workspace.owner)]
++
++    def test_happy_each_profile_preserves_all_foreign_tree_entries_and_working_state(self):
++        for profile in delivery.PROFILES:
++            with self.subTest(profile=profile):
++                w = self.workspace(profile)
++                snapshots = self.snapshot(w)
++                q = w.run()
++                self.assertEqual(q["status"], "qualified", q)
++                self.assertEqual(w.api_reads, [], "qualification must use no authenticated API")
++                result = w.deliver(q)
++                self.assertEqual(result["status"], "delivered", result)
++                self.assertEqual(w.pushes, [result["candidate_sha"]])
++                self.assertEqual(git(w.remote, "rev-parse", "main^{tree}"), w.result_tree)
++                self.assertEqual(git(w.remote, "rev-list", "--parents", "-n", "1", "main").split(),
++                                 [result["delivered_sha"], w.base])
++                self.assertEqual(git(w.remote, "show", "-s", "--format=%B", "main") + "\n", w.config["message"].decode())
++                actual = items(w.remote, "main")
++                self.assertEqual(actual, w.after)
++                for path in set(w.before) - set(w.config["paths"]):
++                    self.assertEqual(actual[path], w.before[path])
++                self.assertEqual(self.snapshot(w), snapshots)
++                self.assertEqual(json.loads(w.report.read_text()), result)
++                self.assertEqual([p["phase"] for p in result["full_writer_exclusion"]], ["delivery source verification", "push"])
++                self.assertNotIn(w.token, w.report.read_text())
++
++    def test_isolated_cli_qualifies_and_delivers_with_success_outputs_and_sanitized_environment(self):
++        w = self.w
++        result, output = w.cli()
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(result.stdout + result.stderr, b"")
++        self.assertTrue(output.startswith("plan="))
++        qualified = json.loads(output.removeprefix("plan="))
++        result, output = w.cli("deliver", PREREQUISITE_QUALIFICATION="success", PREREQUISITE_PLAN=json.dumps(qualified))
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(output, "")
++        self.assertEqual(json.loads(w.report.read_text())["status"], "delivered")
++
++    def test_cli_failed_behavior_writes_receipt_and_emits_no_plan(self):
++        for status in ("failure", "skipped", "cancelled", ""):
++            with self.subTest(status=status):
++                result, output = self.w.cli(PREREQUISITE_BEHAVIORAL_RESULT=status)
++                self.assertEqual(result.returncode, 1)
++                self.assertEqual(output, "")
++                self.refused(json.loads(self.w.report.read_text()), "behavioral")
++
++    def test_exact_dispatch_source_repo_ref_workflow_and_profile_are_required(self):
++        cases = {"GITHUB_REPOSITORY": "Hexalith/Hexalith.Projects", "GITHUB_REF": "refs/heads/product",
++                 "GITHUB_EVENT_NAME": "push", "GITHUB_WORKFLOW_REF": "Hexalith/Hexalith.CiCd/.github/workflows/deliver.yml@refs/heads/main",
++                 "GITHUB_SHA": "a" * 40, "GITHUB_WORKFLOW_SHA": "a" * 40,
++                 "PREREQUISITE_OWNER_SOURCE": "a" * 40, "PREREQUISITE_PROFILE": "projects-publisher"}
++        for key, value in cases.items():
++            with self.subTest(key=key):
++                self.refused(self.w.run(**{key: value}))
++        self.assertEqual(self.w.fetches, [])
++
++    def test_failed_skipped_or_missing_behavior_and_qualification_are_refused(self):
++        for field in ("PREREQUISITE_BEHAVIORAL_RESULT", "PREREQUISITE_QUALIFICATION"):
++            for status in ("failure", "skipped", "cancelled", "", None):
++                with self.subTest(field=field, status=status):
++                    self.refused(self.w.deliver({"plan": {}}, **{field: status}))
++
++    def test_each_exact_plan_field_and_unknown_fields_are_bound(self):
++        w = self.w
++        q = w.run()
++        for field in (*q["plan"], "unknown"):
++            with self.subTest(field=field):
++                changed = copy.deepcopy(q)
++                changed["plan"][field] = "different-reviewed-value"
++                self.refused(w.deliver(changed), "binding mismatch")
++
++    def test_plan_cannot_be_omitted_malformed_or_cross_profile(self):
++        for raw in ("", "null", "[]", '{"duplicate":1,"duplicate":2}', '{"NaN":NaN}'):
++            with self.subTest(raw=raw):
++                self.refused(self.w.deliver({"plan": {}}, PREREQUISITE_PLAN=raw))
++
++    def test_each_local_trusted_source_must_match_committed_source(self):
++        w = self.w
++        for path in w.config["sources"]:
++            with self.subTest(path=path):
++                local = w.owner / path
++                original = local.read_bytes()
++                local.write_bytes(original + b"tampered\n")
++                self.refused(w.run(), "local owner payload differs")
++                local.write_bytes(original)
++
++    def test_symlink_trusted_source_is_refused(self):
++        local = self.w.owner / self.w.config["patch"]
++        data = local.read_bytes()
++        sibling = local.with_name("foreign-copy.patch")
++        sibling.write_bytes(data)
++        local.unlink()
++        local.symlink_to(sibling.name)
++        self.refused(self.w.run(), "nonregular")
++
++    def test_oversized_local_source_is_refused_before_unbounded_read(self):
++        local = self.w.owner / self.w.config["patch"]
++        with local.open("wb") as stream:
++            stream.truncate(rt.MAX_JSON + 1)
++        self.refused(self.w.run(), "source size limit")
++
++    def test_manifest_cross_repository_unknown_fields_paths_modes_and_pending_owner_gate_refuse(self):
++        cases = [("repository", "Hexalith.EventStore"), ("unknown", True), ("pre_push_gate", "pending-owner-decision"),
++                 ("before", {"foreign.txt": ["100644", "blob", "a" * 40]}),
++                 ("after", {path: ["100755", "blob", "a" * 40] for path in self.w.config["paths"]}),
++                 ("after", {path: None for path in self.w.config["paths"]})]
++        for field, value in cases:
++            with self.subTest(field=field, value=value):
++                w = self.workspace()
++                w.value[field] = value
++                w.commit_owner()
++                self.refused(w.run(), workspace=w)
++
++    def test_patch_cannot_change_extra_path_even_when_full_result_hash_is_updated(self):
++        w = self.w
++        (w.product / "foreign.txt").write_bytes(b"forbidden foreign change\n")
++        git(w.product, "add", "foreign.txt")
++        w.patch = git(w.product, "diff", "--cached", "--binary", "--full-index", w.base, raw=True)
++        w.value["patch_sha256"] = delivery.digest(w.patch)
++        w.value["result_tree"] = git(w.product, "write-tree")
++        w.write_proof()
++        w.commit_owner()
++        self.refused(w.run(), "exact prerequisite perimeter")
++
++    def test_patch_hash_base_tree_result_tree_and_individual_blobs_are_bound(self):
++        for kind in ("patch", "base_tree", "result_tree", "before", "after"):
++            with self.subTest(kind=kind):
++                w = self.workspace()
++                if kind == "patch":
++                    w.patch += b"changed patch bytes\n"
++                elif kind in {"before", "after"}:
++                    w.value[kind][w.config["paths"][0]][2] = "a" * 40
++                else:
++                    w.value[kind] = "a" * 40
++                w.write_proof()
++                w.commit_owner()
++                self.refused(w.run(), workspace=w)
++
++    def test_validation_hash_exact_tree_and_all_passed_named_log_hashes_are_required(self):
++        mutations = ("unbound", "failed", "stale-tree", "missing-check", "extra-check", "failed-check", "skipped-check", "bad-log", "unknown-field")
++        for kind in mutations:
++            with self.subTest(kind=kind):
++                w = self.workspace()
++                check = next(iter(delivery.CHECKS))
++                if kind == "unbound":
++                    w.value["validation_sha256"] = "a" * 64
++                elif kind == "failed":
++                    w.proof["status"] = "failed"
++                elif kind == "stale-tree":
++                    w.proof["result_tree"] = "a" * 40
++                elif kind == "missing-check":
++                    del w.proof["checks"][check]
++                elif kind == "extra-check":
++                    w.proof["checks"]["extra"] = {"status": "passed", "log_sha256": "a" * 64}
++                elif kind in {"failed-check", "skipped-check"}:
++                    w.proof["checks"][check]["status"] = kind.removesuffix("-check")
++                elif kind == "bad-log":
++                    w.proof["checks"][check]["log_sha256"] = "not-a-hash"
++                else:
++                    w.proof["unknown"] = True
++                if kind != "unbound":
++                    w.save_proof()
++                w.commit_owner()
++                self.refused(w.run(), workspace=w)
++
++    def test_missing_wrong_and_overbroad_token_fail_without_write(self):
++        w = self.w
++        q = w.run()
++        self.refused(w.deliver(q, token=""), "token unavailable")
++        for inventory in ([], [{"full_name": "Hexalith/Hexalith.EventStore"}],
++                          [{"full_name": "Hexalith/" + w.repository}, {"full_name": "Hexalith/Hexalith.CiCd"}]):
++            with self.subTest(inventory=inventory):
++                w.inventory = inventory
++                self.refused(w.deliver(q), "repository scope")
++
++    def test_token_repository_metadata_identity_and_main_are_checked(self):
++        w = self.w
++        q = w.run()
++        for metadata in ({}, {"full_name": "Hexalith/" + w.repository, "default_branch": "product"},
++                         {"full_name": "Hexalith/Wrong", "default_branch": "main"}):
++            with self.subTest(metadata=metadata):
++                w.metadata = metadata
++                self.refused(w.deliver(q), "App repository/main identity")
++
++    def test_owner_advance_between_qualification_and_delivery_requires_requalification(self):
++        w = self.w
++        q = w.run()
++        w.advance(w.owner_remote)
++        self.refused(w.deliver(q), "not current exact CiCd main")
++
++    def test_target_advance_between_qualification_and_delivery_requires_requalification(self):
++        w = self.w
++        q = w.run()
++        advanced = w.advance(tree=w.result_tree)
++        result = w.deliver(q)
++        self.assertEqual(result["status"], "failed")
++        self.assertIn("binding mismatch", result["reason"])
++        self.assertFalse(result["push_attempted"])
++        self.assertEqual(git(w.remote, "rev-parse", "main"), advanced)
++
++    def test_owner_and_target_are_reread_immediately_before_push(self):
++        for selected, count in ((rt.CICD, 2), (self.w.repository, 2), (self.w.repository, 3)):
++            with self.subTest(repository=selected, read=count):
++                w = self.workspace()
++                q = w.run()
++                w.read_race = (selected, count)
++                result = w.deliver(q)
++                self.assertEqual(result["status"], "failed", result)
++                self.assertFalse(result["push_attempted"])
++                self.assertEqual(w.pushes, [])
++                self.assertIsNotNone(result["candidate_sha"])
++
++    def test_each_profile_blocks_full_registry_and_live_accepted_ref_case_insensitively(self):
++        for profile in delivery.PROFILES:
++            for selector in ("registry", "accepted"):
++                with self.subTest(profile=profile, selector=selector):
++                    w = self.workspace(profile)
++                    if selector == "registry":
++                        (w.owner / ("setup/" + w.repository.swapcase() + ".yml")).write_text("{}\n")
++                        w.commit_owner()
++                    else:
++                        git(w.owner_remote, "update-ref", "refs/heads/delivered/" + w.repository.swapcase(), w.source)
++                    self.refused(w.run(), "full-delivery", w)
++
++    def test_live_accepted_ref_added_after_qualification_blocks_final_push(self):
++        w = self.w
++        q = w.run()
++        w.accepted_race = True
++        self.refused(w.deliver(q), "live full-delivery accepted ref")
++        self.assertEqual(len(json.loads(w.report.read_text())["full_writer_exclusion"]), 2)
++
++    def test_atomic_owner_main_advertisement_detects_advance_after_fetch(self):
++        w = self.w
++        original = w.before_remote
++        calls = 0
++        def boundary(selected):
++            nonlocal calls
++            original(selected)
++            if selected == rt.CICD:
++                calls += 1
++                # configure, fetch, then the atomic main/accepted advertisement.
++                if calls == 3:
++                    w.advance(w.owner_remote)
++        w.before_remote = boundary
++        self.refused(w.run(), "advertised owner main differs")
++
++    def test_non_direct_child_with_exact_result_tree_is_refused(self):
++        w = self.w
++        w.advance()
++        head = w.advance(tree=w.result_tree)
++        result = w.run()
++        self.assertEqual(result["status"], "failed", result)
++        self.assertIn("direct child", result["reason"])
++        self.assertEqual(git(w.remote, "rev-parse", "main"), head)
++        self.assertEqual(w.pushes, [])
++
++    def test_idempotent_exact_direct_child_is_qualified_then_confirmed_without_push(self):
++        w = self.w
++        child = w.advance(tree=w.result_tree)
++        q = w.run()
++        self.assertEqual(q["status"], "qualified", q)
++        result = w.deliver(q)
++        self.assertEqual(result["status"], "unchanged", result)
++        self.assertEqual(result["delivered_sha"], child)
++        self.assertFalse(result["push_attempted"])
++        self.assertEqual(w.pushes, [])
++
++    def test_idempotent_confirmation_still_requires_scope_and_current_sources(self):
++        w = self.w
++        w.advance(tree=w.result_tree)
++        q = w.run()
++        w.inventory = []
++        result = w.deliver(q)
++        self.assertEqual(result["status"], "failed")
++        self.assertIn("repository scope", result["reason"])
++        self.assertEqual(w.pushes, [])
++        w.inventory = [{"full_name": "Hexalith/" + w.repository}]
++        w.read_race = (w.repository, 3)
++        result = w.deliver(q)
++        self.assertEqual(result["status"], "failed")
++        self.assertEqual(w.pushes, [])
++
++    def test_push_refusal_retains_sanitized_bounded_diagnostics_and_never_retries(self):
++        w = self.w
++        w.push_mode = "refuse"
++        result = w.deliver()
++        self.assertEqual(result["status"], "failed", result)
++        self.assertTrue(result["push_attempted"])
++        self.assertEqual(len(w.pushes), 1)
++        self.assertEqual(git(w.remote, "rev-parse", "main"), w.base)
++        self.assertEqual(result["reconciliation"]["main"], w.base)
++        self.assertIsNone(result["delivered_sha"])
++        self.assertLessEqual(len(result["push_result"]["output"]), 2000)
++        self.assertIn("[redacted]", result["push_result"]["output"])
++        self.assertNotIn(w.token, w.report.read_text())
++
++    def test_real_nonforce_git_push_rejects_concurrent_target_main_and_retains_stderr(self):
++        w = self.w
++        w.push_mode = "race-before"
++        result = w.deliver()
++        self.assertEqual(result["status"], "failed", result)
++        self.assertTrue(result["push_attempted"])
++        self.assertEqual(len(w.pushes), 1)
++        self.assertNotEqual(result["push_result"]["exit_code"], 0)
++        self.assertIn("rejected", result["push_result"]["output"])
++        self.assertNotEqual(git(w.remote, "rev-parse", "main"), result["candidate_sha"])
++
++    def test_ambiguous_accepted_error_or_timeout_stays_failed_and_records_exact_published_tree_without_retry(self):
++        for mode in ("accepted-error", "accepted-timeout"):
++            with self.subTest(mode=mode):
++                w = self.workspace()
++                w.push_mode = mode
++                result = w.deliver()
++                self.assertEqual(result["status"], "failed", result)
++                self.assertTrue(result["push_attempted"])
++                self.assertEqual(len(w.pushes), 1)
++                self.assertEqual(result["delivered_sha"], result["candidate_sha"])
++                self.assertEqual(result["delivered_tree"], w.result_tree)
++                self.assertEqual(result["reconciliation"]["parents"], [w.base])
++                self.assertIn("ambiguous", result["reason"])
++
++    def test_ambiguous_push_with_unavailable_reconciliation_retains_failure(self):
++        w = self.w
++        w.push_mode = "accepted-timeout"
++        w.fail_post_push_read = True
++        result = w.deliver()
++        self.assertEqual(result["status"], "failed", result)
++        self.assertEqual(result["reconciliation"]["status"], "unavailable")
++        self.assertEqual(len(w.pushes), 1)
++        self.assertIsNone(result["delivered_sha"])
++
++    def test_post_push_main_advance_is_failed_without_retry_or_reapply(self):
++        w = self.w
++        w.read_race = (w.repository, 4)
++        result = w.deliver()
++        self.assertEqual(result["status"], "failed", result)
++        self.assertIn("changed after push", result["reason"])
++        self.assertEqual(len(w.pushes), 1)
++        self.assertIsNone(result["delivered_sha"])
++
++    def test_failed_proposal_does_not_change_any_source_index_worktree_or_remote(self):
++        w = self.w
++        w.value["result_tree"] = "a" * 40
++        w.write_proof()
++        w.commit_owner()
++        snapshots = self.snapshot(w)
++        self.refused(w.run(), "output tree mismatch")
++        self.assertEqual(self.snapshot(w), snapshots)
++        self.assertEqual(git(w.owner_remote, "rev-parse", "main"), w.source)
++
++    def test_unknown_profile_has_structured_failure_without_transport(self):
++        result = delivery.execute("qualify", {}, self.w.report, profile="arbitrary", transport=self.w.transport)
++        self.assertEqual(result["status"], "failed")
++        self.assertIn("unknown closed", result["reason"])
++        self.assertFalse(result["push_attempted"])
++        self.assertEqual(self.w.fetches, [])
++
++
++if __name__ == "__main__":
++    if sys.argv[1:2] == ["transport-driver"]:
++        config = json.loads(Path(sys.argv[2]).read_text())
++        selected = load(Path(config["source"]), "_contracts_isolated_driver")
++        raise SystemExit(selected.main(sys.argv[3:], transport=file_transport(selected.rt, config["remotes"],
++                                                                             config["repository"], config["token"])))
++    unittest.main(verbosity=2)
+diff --git a/.github/workflows/deliver-contracts-prerequisites.yml b/.github/workflows/deliver-contracts-prerequisites.yml
+new file mode 100644
+--- /dev/null
++++ b/.github/workflows/deliver-contracts-prerequisites.yml
+@@ -0,0 +1,146 @@
++name: Deliver reviewed contracts prerequisites
++
++on:
++  workflow_dispatch:
++    inputs:
++      profile:
++        description: Fixed reviewed prerequisite
++        required: true
++        type: choice
++        options:
++          - eventstore-publisher
++          - projects-publisher
++          - projects-pins
++
++permissions: {}
++
++concurrency:
++  group: deliver-contracts-prerequisites
++  cancel-in-progress: false
++
++jobs:
++  validate:
++    if: ${{ github.repository == 'Hexalith/Hexalith.CiCd' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.workflow_ref == 'Hexalith/Hexalith.CiCd/.github/workflows/deliver-contracts-prerequisites.yml@refs/heads/main' }}
++    runs-on: ubuntu-latest
++    timeout-minutes: 40
++    permissions:
++      contents: read
++    outputs:
++      plan: ${{ steps.qualify.outputs.plan }}
++      behavioral-result: ${{ steps.tests.outcome }}
++    steps:
++      - name: Initialize qualification failure receipt
++        run: >-
++          printf '%s\n' '{"schema":"hexalith.contracts-prerequisites-delivery.v1","status":"failed","failed_operation":"workflow initialization","reason":"qualification controller has not completed","push_attempted":false,"candidate_sha":null,"candidate_tree":null,"delivered_sha":null,"delivered_tree":null}' > contracts-prerequisites-qualification.json
++
++      - name: Checkout exact owner source without dependencies or persisted credentials
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          ref: ${{ github.sha }}
++          path: .contracts-validation
++          submodules: false
++          persist-credentials: false
++
++      - name: Run secret-free behavioral qualification
++        id: tests
++        run: python3 -I .contracts-validation/tools/tests/test_deliver_contracts_prerequisites.py
++
++      - name: Bind fixed prerequisite to exact owner source and current target
++        id: qualify
++        if: ${{ !cancelled() }}
++        env:
++          PREREQUISITE_OWNER_SOURCE: ${{ github.sha }}
++          PREREQUISITE_PROFILE: ${{ inputs.profile }}
++          PREREQUISITE_BEHAVIORAL_RESULT: ${{ steps.tests.outcome }}
++        run: >-
++          python3 -I .contracts-validation/tools/deliver_contracts_prerequisites.py qualify
++          --profile "$PREREQUISITE_PROFILE" --report contracts-prerequisites-qualification.json
++
++      - name: Upload qualification receipt
++        if: ${{ always() }}
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
++        with:
++          name: contracts-prerequisites-qualification-${{ inputs.profile }}
++          path: contracts-prerequisites-qualification.json
++          if-no-files-found: error
++          retention-days: 90
++
++  deliver:
++    needs: validate
++    if: ${{ !cancelled() && github.repository == 'Hexalith/Hexalith.CiCd' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.workflow_ref == 'Hexalith/Hexalith.CiCd/.github/workflows/deliver-contracts-prerequisites.yml@refs/heads/main' && needs.validate.result == 'success' && needs.validate.outputs.behavioral-result == 'success' && needs.validate.outputs.plan != '' }}
++    concurrency:
++      group: deliver-owned-writes
++      cancel-in-progress: false
++    runs-on: ubuntu-latest
++    timeout-minutes: 40
++    environment: cicd-app
++    permissions:
++      contents: read
++    steps:
++      - name: Initialize delivery failure receipt
++        run: >-
++          printf '%s\n' '{"schema":"hexalith.contracts-prerequisites-delivery.v1","status":"failed","failed_operation":"workflow initialization","reason":"delivery controller has not completed","push_attempted":false,"candidate_sha":null,"candidate_tree":null,"delivered_sha":null,"delivered_tree":null}' > contracts-prerequisites-delivery.json
++
++      - name: Checkout only exact qualified trusted owner sources
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          ref: ${{ github.sha }}
++          path: .contracts-owner
++          sparse-checkout: |
++            tools/deliver_contracts_prerequisites.py
++            tools/delivery_runtime.py
++            tools/tests/test_deliver_contracts_prerequisites.py
++            .github/workflows/deliver-contracts-prerequisites.yml
++            docs/proposals/contracts-prerequisites/
++          sparse-checkout-cone-mode: false
++          submodules: false
++          persist-credentials: false
++
++      - name: Mint fixed publisher repository contents and workflows token
++        if: ${{ inputs.profile == 'eventstore-publisher' || inputs.profile == 'projects-publisher' }}
++        id: publisher-token
++        timeout-minutes: 1
++        continue-on-error: true
++        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
++        with:
++          client-id: ${{ vars.HEXALITH_CICD_APP_CLIENT_ID }}
++          private-key: ${{ secrets.HEXALITH_CICD_APP_PRIVATE_KEY }}
++          owner: Hexalith
++          repositories: ${{ inputs.profile == 'eventstore-publisher' && 'Hexalith.EventStore' || 'Hexalith.Projects' }}
++          permission-contents: write
++          permission-workflows: write
++
++      - name: Mint only Projects contents token for fixed pins
++        if: ${{ inputs.profile == 'projects-pins' }}
++        id: pins-token
++        timeout-minutes: 1
++        continue-on-error: true
++        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
++        with:
++          client-id: ${{ vars.HEXALITH_CICD_APP_CLIENT_ID }}
++          private-key: ${{ secrets.HEXALITH_CICD_APP_PRIVATE_KEY }}
++          owner: Hexalith
++          repositories: Hexalith.Projects
++          permission-contents: write
++
++      - name: Deliver only the exact qualified prerequisite
++        if: ${{ !cancelled() }}
++        env:
++          PREREQUISITE_OWNER_SOURCE: ${{ github.sha }}
++          PREREQUISITE_PROFILE: ${{ inputs.profile }}
++          PREREQUISITE_BEHAVIORAL_RESULT: ${{ needs.validate.outputs.behavioral-result }}
++          PREREQUISITE_QUALIFICATION: ${{ needs.validate.result }}
++          PREREQUISITE_PLAN: ${{ needs.validate.outputs.plan }}
++          MODULE_TOKEN: ${{ inputs.profile == 'projects-pins' && steps.pins-token.outputs.token || steps.publisher-token.outputs.token }}
++        run: >-
++          python3 -I .contracts-owner/tools/deliver_contracts_prerequisites.py deliver
++          --profile "$PREREQUISITE_PROFILE" --report contracts-prerequisites-delivery.json
++
++      - name: Upload delivery receipt
++        if: ${{ always() }}
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
++        with:
++          name: contracts-prerequisites-delivery-${{ inputs.profile }}
++          path: contracts-prerequisites-delivery.json
++          if-no-files-found: error
++          retention-days: 90

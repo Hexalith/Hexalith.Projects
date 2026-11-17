@@ -1,0 +1,983 @@
+{
+  "testedSource": "85ff97950a7cb290288d56618ed7da8152f5a2c6",
+  "currentSource": "0bb322c2105c841eba150fd6cb5aab2b3d4b2d4c",
+  "prior207Receipt": {
+    "pathRelativeToImmutablePacket": "consumer-fresh-artifact-20261116T215857Z/qualification.json",
+    "sha256": "bf0459b58b1a59be1db1e128d3db97cdedaf6453fcba0bb55b875a6fe36469d7",
+    "xmlSha256": "f5f322d9d68ded2f8dacc62e086067d179806e931b28c83e99b7fd313f8cefbe",
+    "counts": {
+      "total": "207",
+      "passed": "207",
+      "failed": "0",
+      "skipped": "0",
+      "errors": "0",
+      "not-run": "0"
+    }
+  },
+  "focusedSourceEntries": {
+    "src/Hexalith.Projects.Contracts/Commands/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/ArchiveProject.cs": {
+      "tested": "100644 blob 74ac33a52a7e828d1f0eefa127bb69279c086cc3",
+      "current": "100644 blob 74ac33a52a7e828d1f0eefa127bb69279c086cc3",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/ConfirmProjectResolution.cs": {
+      "tested": "100644 blob 51508615a952f599d5c7a9502048afb6f28e788b",
+      "current": "100644 blob 51508615a952f599d5c7a9502048afb6f28e788b",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/CreateProject.cs": {
+      "tested": "100644 blob 371a13efc3e43909098c7c95c4650854c0fa378a",
+      "current": "100644 blob 371a13efc3e43909098c7c95c4650854c0fa378a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/GrantProjectChatBotAuthority.cs": {
+      "tested": "100644 blob eb859447d824a19731a5686da063a76d434099f2",
+      "current": "100644 blob eb859447d824a19731a5686da063a76d434099f2",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/IProjectCommand.cs": {
+      "tested": "100644 blob 513952545681e8da9235a376090751d11f9d0807",
+      "current": "100644 blob 513952545681e8da9235a376090751d11f9d0807",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/LinkFileReference.cs": {
+      "tested": "100644 blob 65a0894b0454acb681438e801b871039415ca35a",
+      "current": "100644 blob 65a0894b0454acb681438e801b871039415ca35a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/LinkMemory.cs": {
+      "tested": "100644 blob 49e3ad6dcf4583d8f7622c46724f853087ae87a4",
+      "current": "100644 blob 49e3ad6dcf4583d8f7622c46724f853087ae87a4",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/RestoreProject.cs": {
+      "tested": "100644 blob 6002f2d7ef431a09cd66b7df073101bfd4ac0bc4",
+      "current": "100644 blob 6002f2d7ef431a09cd66b7df073101bfd4ac0bc4",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/RevokeProjectChatBotAuthority.cs": {
+      "tested": "100644 blob 5fcf8790c9374358015470918772c1bb1bc9b07a",
+      "current": "100644 blob 5fcf8790c9374358015470918772c1bb1bc9b07a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/SetProjectFolder.cs": {
+      "tested": "100644 blob e946f8985492e9a7cf13bccda2699b31b1954005",
+      "current": "100644 blob e946f8985492e9a7cf13bccda2699b31b1954005",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/UnlinkFileReference.cs": {
+      "tested": "100644 blob d0c41d1baf72fac8439810fa3c4b76616d7bec27",
+      "current": "100644 blob d0c41d1baf72fac8439810fa3c4b76616d7bec27",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/UnlinkMemory.cs": {
+      "tested": "100644 blob 7749eb758df51da0d28d097ef55ec240ac22ed3d",
+      "current": "100644 blob 7749eb758df51da0d28d097ef55ec240ac22ed3d",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Commands/UpdateProjectSetup.cs": {
+      "tested": "100644 blob 356a9cdcb62202f44a5a251f6f0e5036d7a20c6e",
+      "current": "100644 blob 356a9cdcb62202f44a5a251f6f0e5036d7a20c6e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/FileReferenceLinked.cs": {
+      "tested": "100644 blob 3567b6e0b8b54c70a837249c026d7432ec921cc6",
+      "current": "100644 blob 3567b6e0b8b54c70a837249c026d7432ec921cc6",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/FileReferenceUnlinked.cs": {
+      "tested": "100644 blob 165f1814bd53413be0a30f2e89edbfc504d4032d",
+      "current": "100644 blob 165f1814bd53413be0a30f2e89edbfc504d4032d",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/IProjectEvent.cs": {
+      "tested": "100644 blob c887e437ed97825799c18ef1e714a42d8820960e",
+      "current": "100644 blob c887e437ed97825799c18ef1e714a42d8820960e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/MemoryLinked.cs": {
+      "tested": "100644 blob fa72644b1dc3c19e7ef806d3742fe224fc11ade5",
+      "current": "100644 blob fa72644b1dc3c19e7ef806d3742fe224fc11ade5",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/MemoryUnlinked.cs": {
+      "tested": "100644 blob 8aeaf2e63c66f66524b84c3af244c359671aaf9f",
+      "current": "100644 blob 8aeaf2e63c66f66524b84c3af244c359671aaf9f",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectArchiveRejected.cs": {
+      "tested": "100644 blob b596a26fbba0f668f2ec506d0cd37023b295e2b8",
+      "current": "100644 blob b596a26fbba0f668f2ec506d0cd37023b295e2b8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectArchived.cs": {
+      "tested": "100644 blob 0f048611a58da7f20f4b511e33acd3c9d5257082",
+      "current": "100644 blob 0f048611a58da7f20f4b511e33acd3c9d5257082",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectChatBotAuthorityGranted.cs": {
+      "tested": "100644 blob 1d8847d31f6d6143c602455b43a71be405594bb6",
+      "current": "100644 blob 1d8847d31f6d6143c602455b43a71be405594bb6",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectChatBotAuthorityRejected.cs": {
+      "tested": "100644 blob c8249499f6f93598dd418d2a79efe66f36d49dc3",
+      "current": "100644 blob c8249499f6f93598dd418d2a79efe66f36d49dc3",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectChatBotAuthorityRevoked.cs": {
+      "tested": "100644 blob ddf169c0599b966ea7563fd93fdc2a6ab1d5bfd8",
+      "current": "100644 blob ddf169c0599b966ea7563fd93fdc2a6ab1d5bfd8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectCreated.cs": {
+      "tested": "100644 blob a4ef5b8c30680312f6237c8f741720be3f7e7b08",
+      "current": "100644 blob a4ef5b8c30680312f6237c8f741720be3f7e7b08",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectCreationRejected.cs": {
+      "tested": "100644 blob 2093ead2914f80ed992f4a93ab43b28e00ab8406",
+      "current": "100644 blob 2093ead2914f80ed992f4a93ab43b28e00ab8406",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectFolderCreationPending.cs": {
+      "tested": "100644 blob 9f8d2fd9df12d6fef0675e4dedde9cc92997faac",
+      "current": "100644 blob 9f8d2fd9df12d6fef0675e4dedde9cc92997faac",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectFolderSet.cs": {
+      "tested": "100644 blob d6a2d13c5a941a3eb81b26aa8a68a9b11c131ff2",
+      "current": "100644 blob d6a2d13c5a941a3eb81b26aa8a68a9b11c131ff2",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectReferenceLinkRejected.cs": {
+      "tested": "100644 blob 49ebf700ac6e66d58b4102c0961df9f9f6c3a838",
+      "current": "100644 blob 49ebf700ac6e66d58b4102c0961df9f9f6c3a838",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectReferenceUnlinkRejected.cs": {
+      "tested": "100644 blob ccf004218f22244651954dc5c5c1352506fc8282",
+      "current": "100644 blob ccf004218f22244651954dc5c5c1352506fc8282",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectResolutionConfirmationRejected.cs": {
+      "tested": "100644 blob fc7d4e5e8f9ea3d878adc9c2107bdff50b17d967",
+      "current": "100644 blob fc7d4e5e8f9ea3d878adc9c2107bdff50b17d967",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectResolutionConfirmed.cs": {
+      "tested": "100644 blob 245b422851f318bc2fcdb3460a7b20d47cd9fc73",
+      "current": "100644 blob 245b422851f318bc2fcdb3460a7b20d47cd9fc73",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectRestoreRejected.cs": {
+      "tested": "100644 blob 7cb27e36dfa8c4047a0129c4d1f6d3ba840d99b3",
+      "current": "100644 blob 7cb27e36dfa8c4047a0129c4d1f6d3ba840d99b3",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectRestored.cs": {
+      "tested": "100644 blob 7ce248ac209dec1fcb8972cc747c021512b5218d",
+      "current": "100644 blob 7ce248ac209dec1fcb8972cc747c021512b5218d",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectSetupUpdateRejected.cs": {
+      "tested": "100644 blob 6338e18f0a41bf472aa9e422f35a37f29acaca4a",
+      "current": "100644 blob 6338e18f0a41bf472aa9e422f35a37f29acaca4a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Events/ProjectSetupUpdated.cs": {
+      "tested": "100644 blob 4a62130b9ce7db38315431e8ba25eb4f0477969a",
+      "current": "100644 blob 4a62130b9ce7db38315431e8ba25eb4f0477969a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj": {
+      "tested": "100644 blob 07fda1d1ca239ab1745ef103dc12d1f38839b10b",
+      "current": "100644 blob 07fda1d1ca239ab1745ef103dc12d1f38839b10b",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Identifiers/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Identifiers/CallerPrincipalId.cs": {
+      "tested": "100644 blob 5a17376e734ebdb2945b6e077d1bb7a14a2c0b82",
+      "current": "100644 blob 5a17376e734ebdb2945b6e077d1bb7a14a2c0b82",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Identifiers/ProjectId.cs": {
+      "tested": "100644 blob e52d930e432396b135930c0f35d4b5c4895c7e04",
+      "current": "100644 blob e52d930e432396b135930c0f35d4b5c4895c7e04",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Identifiers/ProjectIdJsonConverter.cs": {
+      "tested": "100644 blob 09116f0e9dd5b8c907ebc865285f8c5034b2606c",
+      "current": "100644 blob 09116f0e9dd5b8c907ebc865285f8c5034b2606c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Identifiers/ProjectIdentity.cs": {
+      "tested": "100644 blob 226d8f1e53207cd5d9dd5c45ea87d176fad9e22e",
+      "current": "100644 blob 226d8f1e53207cd5d9dd5c45ea87d176fad9e22e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ConversationStartDefaults.cs": {
+      "tested": "100644 blob bada92f1a86382c4539ba9d04cdc603cbd46446e",
+      "current": "100644 blob bada92f1a86382c4539ba9d04cdc603cbd46446e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs": {
+      "tested": "100644 blob 8c30cc15ec323473d15226a5baaf0146ef6d38f2",
+      "current": "100644 blob 8c30cc15ec323473d15226a5baaf0146ef6d38f2",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/EvidenceFreshnessState.cs": {
+      "tested": "100644 blob 4ed230c1e075bc7b3039ab0c9fd0b3e10985c0a0",
+      "current": "100644 blob 4ed230c1e075bc7b3039ab0c9fd0b3e10985c0a0",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/EvidenceFreshnessStateCode.cs": {
+      "tested": "100644 blob 8a427168f6155341572dbd07746e1e0a15e7095c",
+      "current": "100644 blob 8a427168f6155341572dbd07746e1e0a15e7095c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/LinkedSourcePolicy.cs": {
+      "tested": "100644 blob 49fbf818cd0e764c664e533d93c04d0af74e0a49",
+      "current": "100644 blob 49fbf818cd0e764c664e533d93c04d0af74e0a49",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/PayloadClassification.cs": {
+      "tested": "100644 blob e5f6cffdc7bcda5259e99b54021d59b10437083a",
+      "current": "100644 blob e5f6cffdc7bcda5259e99b54021d59b10437083a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContext.cs": {
+      "tested": "100644 blob 4a29755906fe2b1fab50d4f8f891945b17ce6bd0",
+      "current": "100644 blob 4a29755906fe2b1fab50d4f8f891945b17ce6bd0",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextAssemblyResult.cs": {
+      "tested": "100644 blob d9edd60faa43d48028dc2f8183c1f25f63558291",
+      "current": "100644 blob d9edd60faa43d48028dc2f8183c1f25f63558291",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextEvaluation.cs": {
+      "tested": "100644 blob c925d732320bb1f377cd1da646d54da0e7cd295a",
+      "current": "100644 blob c925d732320bb1f377cd1da646d54da0e7cd295a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextExclusion.cs": {
+      "tested": "100644 blob 27ddc869ace4003d41ed4f437aee6f92ef38d0e4",
+      "current": "100644 blob 27ddc869ace4003d41ed4f437aee6f92ef38d0e4",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextExplanation.cs": {
+      "tested": "100644 blob 2b646f2393cb03917ed1240ac89bf8e9d3e91111",
+      "current": "100644 blob 2b646f2393cb03917ed1240ac89bf8e9d3e91111",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextReference.cs": {
+      "tested": "100644 blob 4a448e1653608a5ee857a985262e49f2036c3038",
+      "current": "100644 blob 4a448e1653608a5ee857a985262e49f2036c3038",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectContextSourceKind.cs": {
+      "tested": "100644 blob c51e841d1de890b7f54cd319975aec7ab6758b6a",
+      "current": "100644 blob c51e841d1de890b7f54cd319975aec7ab6758b6a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectCreationProposal.cs": {
+      "tested": "100644 blob 6288ca8ca047827d6552d33ae0ffa662dddd45bd",
+      "current": "100644 blob 6288ca8ca047827d6552d33ae0ffa662dddd45bd",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectFileReference.cs": {
+      "tested": "100644 blob 38c2d552f59e1af945e30a2c606fb9d19f76e547",
+      "current": "100644 blob 38c2d552f59e1af945e30a2c606fb9d19f76e547",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectFileReferenceMetadata.cs": {
+      "tested": "100644 blob 34a19e7540d88cfed3ee3f6cb1322db2054c2cd9",
+      "current": "100644 blob 34a19e7540d88cfed3ee3f6cb1322db2054c2cd9",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectFolderMetadata.cs": {
+      "tested": "100644 blob 873dc6e7e28acf13fcf90d58155b8bbca68ed0d6",
+      "current": "100644 blob 873dc6e7e28acf13fcf90d58155b8bbca68ed0d6",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectFolderReference.cs": {
+      "tested": "100644 blob ac19a8e26c77d7c3841884e984b8a0db038e3686",
+      "current": "100644 blob ac19a8e26c77d7c3841884e984b8a0db038e3686",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectMemoryReference.cs": {
+      "tested": "100644 blob f2fcd1e33bc9a01613da0b6d21bbf03d37e8efcb",
+      "current": "100644 blob f2fcd1e33bc9a01613da0b6d21bbf03d37e8efcb",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectMemoryReferenceMetadata.cs": {
+      "tested": "100644 blob 6ed13a5ea01f6fbb3237fb47ddf2ed8e88f89cc7",
+      "current": "100644 blob 6ed13a5ea01f6fbb3237fb47ddf2ed8e88f89cc7",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectOperatorAuditTimelineItem.cs": {
+      "tested": "100644 blob 62fa1dcf98889356ae9c7650e8b737af556adcc9",
+      "current": "100644 blob 62fa1dcf98889356ae9c7650e8b737af556adcc9",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectOperatorContextActivation.cs": {
+      "tested": "100644 blob bb8e3a52dda2f315f7da62e582bff80553f5361c",
+      "current": "100644 blob bb8e3a52dda2f315f7da62e582bff80553f5361c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectOperatorDiagnostic.cs": {
+      "tested": "100644 blob 97f86f68fd4160c34ceb8949b2dcfee4c60702d8",
+      "current": "100644 blob 97f86f68fd4160c34ceb8949b2dcfee4c60702d8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectOperatorFreshnessMetadata.cs": {
+      "tested": "100644 blob 6cb27e79b06209e23742d6fdb52147b198465f9c",
+      "current": "100644 blob 6cb27e79b06209e23742d6fdb52147b198465f9c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectOperatorReferenceSummary.cs": {
+      "tested": "100644 blob 122c7155c2b66ba1fb6f856cf16a885bf668abc8",
+      "current": "100644 blob 122c7155c2b66ba1fb6f856cf16a885bf668abc8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectResolution.cs": {
+      "tested": "100644 blob 4974988893c1ea46e05dbf83d60fd454c6fa68b0",
+      "current": "100644 blob 4974988893c1ea46e05dbf83d60fd454c6fa68b0",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Models/ProjectSetup.cs": {
+      "tested": "100644 blob c96ca8867bc22f5747652971796ae52c3ecc3b54",
+      "current": "100644 blob c96ca8867bc22f5747652971796ae52c3ecc3b54",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/ProjectsContractMetadata.cs": {
+      "tested": "100644 blob 55c35da91219b8a7742981ca027dc4341436fd19",
+      "current": "100644 blob 55c35da91219b8a7742981ca027dc4341436fd19",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/ProjectsMcpCliModule.cs": {
+      "tested": "100644 blob 0332c59b74173e0999f05abd299ff5707ac84123",
+      "current": "100644 blob 0332c59b74173e0999f05abd299ff5707ac84123",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/AdmissionComponent.cs": {
+      "tested": "100644 blob 3e1c19bd0b2858dd433f0c229dab1ee8d3ad0909",
+      "current": "100644 blob 3e1c19bd0b2858dd433f0c229dab1ee8d3ad0909",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/AdmissionRecoveryAction.cs": {
+      "tested": "100644 blob fe123207e282f324f83c83ac7bc41ed71048940e",
+      "current": "100644 blob fe123207e282f324f83c83ac7bc41ed71048940e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/AdmissionResponseState.cs": {
+      "tested": "100644 blob 543b033ca174db381c94dc4d896a0ba2345eb5c2",
+      "current": "100644 blob 543b033ca174db381c94dc4d896a0ba2345eb5c2",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/AdmissionSnapshot.cs": {
+      "tested": "100644 blob 0cb51cf0d34ffb35e0e6369cc862d748137b353c",
+      "current": "100644 blob 0cb51cf0d34ffb35e0e6369cc862d748137b353c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ConversationStartAdmissionSnapshot.cs": {
+      "tested": "100644 blob e649602bd6ac17479717290f1e051e9d47cfc793",
+      "current": "100644 blob e649602bd6ac17479717290f1e051e9d47cfc793",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ConversationStartComponent.cs": {
+      "tested": "100644 blob 74e9d144195fda3a47aae4989d05f1ac37d23d04",
+      "current": "100644 blob 74e9d144195fda3a47aae4989d05f1ac37d23d04",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ConversationStartResponseState.cs": {
+      "tested": "100644 blob 57d21fd5fba491c7dc8fccbab860099d6bf1e44e",
+      "current": "100644 blob 57d21fd5fba491c7dc8fccbab860099d6bf1e44e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ConversationStartSetupResponse.cs": {
+      "tested": "100644 blob ba869b324fe4bfc1fbcb414ce8d69fdca8a59d78",
+      "current": "100644 blob ba869b324fe4bfc1fbcb414ce8d69fdca8a59d78",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ExplainContextSelectionQuery.cs": {
+      "tested": "100644 blob a53e2ec77bf81d0015603c98afaa6a42ae0f0585",
+      "current": "100644 blob a53e2ec77bf81d0015603c98afaa6a42ae0f0585",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ExplainContextSelectionResponse.cs": {
+      "tested": "100644 blob c5be0603047f74f086ec766bef3a23d7a70f4a08",
+      "current": "100644 blob c5be0603047f74f086ec766bef3a23d7a70f4a08",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/GetConversationStartSetupQuery.cs": {
+      "tested": "100644 blob 32061bcf7ef06a6abc44518c3490fb3e44a32de8",
+      "current": "100644 blob 32061bcf7ef06a6abc44518c3490fb3e44a32de8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/GetProjectContextQuery.cs": {
+      "tested": "100644 blob 804f09072dfb0ca21e18abf5d51f08a807701d92",
+      "current": "100644 blob 804f09072dfb0ca21e18abf5d51f08a807701d92",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/GetProjectQuery.cs": {
+      "tested": "100644 blob d6d6fafcb0f9df6e2745ab5bc8a531d707a2a094",
+      "current": "100644 blob d6d6fafcb0f9df6e2745ab5bc8a531d707a2a094",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/GetProjectResponse.cs": {
+      "tested": "100644 blob 9bb5565deb8429640b39ea2a797b1873eb3eada1",
+      "current": "100644 blob 9bb5565deb8429640b39ea2a797b1873eb3eada1",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ListProjectsQuery.cs": {
+      "tested": "100644 blob 0fec6c83997593b70cdc29e6a94e8b69c1de614c",
+      "current": "100644 blob 0fec6c83997593b70cdc29e6a94e8b69c1de614c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/PageRequest.cs": {
+      "tested": "100644 blob 4a98e529d1358d357c8629987e69d6d453c12d09",
+      "current": "100644 blob 4a98e529d1358d357c8629987e69d6d453c12d09",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectAdvisoryAttachment.cs": {
+      "tested": "100644 blob 5d06ed3ed1a57dac6fcd802b615d695cc5ba92be",
+      "current": "100644 blob 5d06ed3ed1a57dac6fcd802b615d695cc5ba92be",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectAdvisoryCandidate.cs": {
+      "tested": "100644 blob 68267ec54c3b6107771306f804e91382091c841e",
+      "current": "100644 blob 68267ec54c3b6107771306f804e91382091c841e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectAdvisoryResolutionResponse.cs": {
+      "tested": "100644 blob f7866970569624f4b3b66544d16b2abcd38ebcf8",
+      "current": "100644 blob f7866970569624f4b3b66544d16b2abcd38ebcf8",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectChatBotAuthorityResult.cs": {
+      "tested": "100644 blob 33b6ecc4d46cec667d5cb308e06b5aaceb462db3",
+      "current": "100644 blob 33b6ecc4d46cec667d5cb308e06b5aaceb462db3",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectContextReadResponse.cs": {
+      "tested": "100644 blob 5265fc54fabda9bb1be0e909bcdbf383864bfb07",
+      "current": "100644 blob 5265fc54fabda9bb1be0e909bcdbf383864bfb07",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectConversationIdJsonConverter.cs": {
+      "tested": "100644 blob 10eafa8912e1eb26b03c1f32a672608c9473664b",
+      "current": "100644 blob 10eafa8912e1eb26b03c1f32a672608c9473664b",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectConversationItem.cs": {
+      "tested": "100644 blob e38fc4a432239303b01e03a9c07634531f02895e",
+      "current": "100644 blob e38fc4a432239303b01e03a9c07634531f02895e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectConversationPageMetadata.cs": {
+      "tested": "100644 blob 1120a1429f38aea03bb30a6d3e4038bc77786323",
+      "current": "100644 blob 1120a1429f38aea03bb30a6d3e4038bc77786323",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectConversationTrustSignal.cs": {
+      "tested": "100644 blob 53c2547e2af9915df31326ca4f8da8b01401747a",
+      "current": "100644 blob 53c2547e2af9915df31326ca4f8da8b01401747a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectConversationsPage.cs": {
+      "tested": "100644 blob 0b1e30650da3f7dba42aa81899b7c308a0cc87ce",
+      "current": "100644 blob 0b1e30650da3f7dba42aa81899b7c308a0cc87ce",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectListPage.cs": {
+      "tested": "100644 blob 6f8c07d66af65df011989056624c3065bee0928c",
+      "current": "100644 blob 6f8c07d66af65df011989056624c3065bee0928c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectListRow.cs": {
+      "tested": "100644 blob e01b565ed7e972549457e1144cdccfcce3935829",
+      "current": "100644 blob e01b565ed7e972549457e1144cdccfcce3935829",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ProjectReadReference.cs": {
+      "tested": "100644 blob 267dd82483e6a8b3a6fc4f42d7075da36b763121",
+      "current": "100644 blob 267dd82483e6a8b3a6fc4f42d7075da36b763121",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/RefreshProjectContextQuery.cs": {
+      "tested": "100644 blob 74b6050c067a2eb14e5f3c63e6e2cba27d5279cf",
+      "current": "100644 blob 74b6050c067a2eb14e5f3c63e6e2cba27d5279cf",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ResolveProjectChatBotAuthority.cs": {
+      "tested": "100644 blob bbde28708b47bbe133fab9def90de7bc69dd9ad3",
+      "current": "100644 blob bbde28708b47bbe133fab9def90de7bc69dd9ad3",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromAttachmentsQuery.cs": {
+      "tested": "100644 blob 7a361753c43865c89f146ee9f0ebbb1e20a56f5a",
+      "current": "100644 blob 7a361753c43865c89f146ee9f0ebbb1e20a56f5a",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromConversationQuery.cs": {
+      "tested": "100644 blob d97333f7e2f1d64981731c25d0c677d7f8d0eee6",
+      "current": "100644 blob d97333f7e2f1d64981731c25d0c677d7f8d0eee6",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/.gitkeep": {
+      "tested": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "current": "100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectContextAssemblyOutcome.cs": {
+      "tested": "100644 blob 1d66038c4e4ae46d6b58bf3a9d36e9c0e5acd7bb",
+      "current": "100644 blob 1d66038c4e4ae46d6b58bf3a9d36e9c0e5acd7bb",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs": {
+      "tested": "100644 blob 97ec98400756c34f3f7cb2e97e92e9d8b88da2bd",
+      "current": "100644 blob 97ec98400756c34f3f7cb2e97e92e9d8b88da2bd",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectContextInclusionCheck.cs": {
+      "tested": "100644 blob 6c2c1a2aa35180e84399c01b3a2f71b0f34d2d9b",
+      "current": "100644 blob 6c2c1a2aa35180e84399c01b3a2f71b0f34d2d9b",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectContextInclusionDiagnostic.cs": {
+      "tested": "100644 blob 0c31570ca05b80e434c26809ff332ed410cf2cd1",
+      "current": "100644 blob 0c31570ca05b80e434c26809ff332ed410cf2cd1",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectLifecycle.cs": {
+      "tested": "100644 blob a9b9732e689267cb6d9e7af562e2c54d0246554c",
+      "current": "100644 blob a9b9732e689267cb6d9e7af562e2c54d0246554c",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectMaintenanceActions.cs": {
+      "tested": "100644 blob 214ec5e4d8aefc6a05666ce52ad275d2586f4461",
+      "current": "100644 blob 214ec5e4d8aefc6a05666ce52ad275d2586f4461",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectMaintenanceCommandLifecycleStates.cs": {
+      "tested": "100644 blob db7685915f4492eb3d40292283091491ed1bd5c6",
+      "current": "100644 blob db7685915f4492eb3d40292283091491ed1bd5c6",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ProjectReasonCode.cs": {
+      "tested": "100644 blob db989d1c6c543959edd5c3e3de57096de3737c44",
+      "current": "100644 blob db989d1c6c543959edd5c3e3de57096de3737c44",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ReferenceState.cs": {
+      "tested": "100644 blob b95477c41056ff097e30799a0a5ddb0cf48ae69e",
+      "current": "100644 blob b95477c41056ff097e30799a0a5ddb0cf48ae69e",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/Ui/ResolutionResult.cs": {
+      "tested": "100644 blob 1364846c5d45caa363135dcfeb52b2c9c8a6fd70",
+      "current": "100644 blob 1364846c5d45caa363135dcfeb52b2c9c8a6fd70",
+      "identical": true
+    },
+    "src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml": {
+      "tested": "100644 blob bec9bf25d752db6d5e443e0543d5dba2bdf5c5a6",
+      "current": "100644 blob bec9bf25d752db6d5e443e0543d5dba2bdf5c5a6",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Events/RejectionEventTaxonomyTests.cs": {
+      "tested": "100644 blob e867292c9b15f9717008dcb826b89dd57ca928d6",
+      "current": "100644 blob e867292c9b15f9717008dcb826b89dd57ca928d6",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj": {
+      "tested": "100644 blob 778873d8bb1979db3f24d6a3b3ed53ab88e53fb5",
+      "current": "100644 blob 778873d8bb1979db3f24d6a3b3ed53ab88e53fb5",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Identifiers/ProjectIdTests.cs": {
+      "tested": "100644 blob 949ab7ba06f3b4bc5584a6db42bc294cae4582af",
+      "current": "100644 blob 949ab7ba06f3b4bc5584a6db42bc294cae4582af",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Identifiers/ProjectIdentityTests.cs": {
+      "tested": "100644 blob b8d73186b1ee3f3f6f990de4bf0dca7dfa4369c4",
+      "current": "100644 blob b8d73186b1ee3f3f6f990de4bf0dca7dfa4369c4",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Models/ConversationStartSetupTests.cs": {
+      "tested": "100644 blob 94598d959c253f23c55ee5fffc6995abd52aa3ca",
+      "current": "100644 blob 94598d959c253f23c55ee5fffc6995abd52aa3ca",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Models/EvidenceFreshnessStateCodeTests.cs": {
+      "tested": "100644 blob 73d53698a514fef9f0bd9d008b2a57026ed9f113",
+      "current": "100644 blob 73d53698a514fef9f0bd9d008b2a57026ed9f113",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Models/PayloadClassificationTests.cs": {
+      "tested": "100644 blob 3a9773a0a7b401d35bd5956023f141ecf72e322d",
+      "current": "100644 blob 3a9773a0a7b401d35bd5956023f141ecf72e322d",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs": {
+      "tested": "100644 blob 08c4a7f0701c822523cebcc9b30fa9413f129d4a",
+      "current": "100644 blob 08c4a7f0701c822523cebcc9b30fa9413f129d4a",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/ProjectsContractMetadataTests.cs": {
+      "tested": "100644 blob dd4de095b1d0bab6c3e18112511d4ad34cc47852",
+      "current": "100644 blob dd4de095b1d0bab6c3e18112511d4ad34cc47852",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/AdmissionSnapshotTests.cs": {
+      "tested": "100644 blob 84ab10ffe6311faba53aa243301aca5534e843b2",
+      "current": "100644 blob 84ab10ffe6311faba53aa243301aca5534e843b2",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ConversationStartSetupResponseTests.cs": {
+      "tested": "100644 blob 3f0f60abb7802549a24eeaae1d57e1e8e1484ae2",
+      "current": "100644 blob 3f0f60abb7802549a24eeaae1d57e1e8e1484ae2",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectAdvisoryContractTests.cs": {
+      "tested": "100644 blob bf3a13072da7f26f6a06ef8fec78b02de315f914",
+      "current": "100644 blob bf3a13072da7f26f6a06ef8fec78b02de315f914",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectConversationsContractTests.cs": {
+      "tested": "100644 blob 35f08da0dca18263e305a44b7894002a9aac44ed",
+      "current": "100644 blob 35f08da0dca18263e305a44b7894002a9aac44ed",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectMcpCliDecorationTests.cs": {
+      "tested": "100644 blob e170d2f15341859fc419f969c4404ebb1ce8e3f2",
+      "current": "100644 blob e170d2f15341859fc419f969c4404ebb1ce8e3f2",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectReadQueryCompatibilityTests.cs": {
+      "tested": "100644 blob 34adaf0a12ef235babe3bac7ce043d5cefc92593",
+      "current": "100644 blob 34adaf0a12ef235babe3bac7ce043d5cefc92593",
+      "identical": true
+    },
+    "tests/Hexalith.Projects.Contracts.Tests/Ui/ProjectVocabularyTests.cs": {
+      "tested": "100644 blob a25d69106120fb55bb42deaad1d1fefbd4faef5f",
+      "current": "100644 blob a25d69106120fb55bb42deaad1d1fefbd4faef5f",
+      "identical": true
+    }
+  },
+  "focusedSourceEntriesIdentical": true,
+  "configurationEntries": {
+    ".editorconfig": {
+      "tested": "100644 blob c54eac9331ed8697380466213cae6b4ff362dd2a",
+      "current": "100644 blob c54eac9331ed8697380466213cae6b4ff362dd2a",
+      "identical": true
+    },
+    ".gitattributes": {
+      "tested": "100644 blob 1928a9decdee9a7bcd9748f8b69920b91728fbeb",
+      "current": "100644 blob 1928a9decdee9a7bcd9748f8b69920b91728fbeb",
+      "identical": true
+    },
+    "Directory.Build.props": {
+      "tested": "100644 blob e4d90fd50f27d74cea63058d176c5e2fb2929992",
+      "current": "100644 blob e4d90fd50f27d74cea63058d176c5e2fb2929992",
+      "identical": true
+    },
+    "Directory.Build.targets": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "Directory.Packages.props": {
+      "tested": "100644 blob f56d16dfc2e951732ff1c7644f86da4ce951e9f8",
+      "current": "100644 blob f56d16dfc2e951732ff1c7644f86da4ce951e9f8",
+      "identical": true
+    },
+    "Module.Directory.Build.props": {
+      "tested": "100644 blob 12c925e5152454ba115f702751726329f50ec75a",
+      "current": "100644 blob 12c925e5152454ba115f702751726329f50ec75a",
+      "identical": true
+    },
+    "Module.Directory.Packages.props": {
+      "tested": "100644 blob 756168f8a89c13ec02f3e0e3b13c583098e9140f",
+      "current": "100644 blob 756168f8a89c13ec02f3e0e3b13c583098e9140f",
+      "identical": true
+    },
+    "global.json": {
+      "tested": "100644 blob 554f2c50134c3940823846e0fb836d96d9cb80b5",
+      "current": "100644 blob 554f2c50134c3940823846e0fb836d96d9cb80b5",
+      "identical": true
+    },
+    "nuget.config": {
+      "tested": "100644 blob 0b50c58e1d53fd6585e020dcdb2a780f079e0625",
+      "current": "100644 blob 0b50c58e1d53fd6585e020dcdb2a780f079e0625",
+      "identical": true
+    },
+    "NuGet.Config": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "src/Directory.Build.props": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "src/Directory.Packages.props": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "src/.editorconfig": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "tests/Directory.Build.props": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "tests/Directory.Packages.props": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "tests/.editorconfig": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "Directory.Build.rsp": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    },
+    "MSBuild.rsp": {
+      "tested": null,
+      "current": null,
+      "identical": true
+    }
+  },
+  "configurationEntriesIdentical": true,
+  "productionEntriesChangedOutsideFocusedClosure": {
+    "src/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs": {
+      "tested": "100644 blob 7ec9e7486dc32376623824aed1f467031bd5a425",
+      "current": "100644 blob 5cc277beeaee5ba8a46c0a9ecea3de4480976eb8",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Client/Generation/Program.cs": {
+      "tested": "100644 blob 71d80b67a7883671220289745daebf58be54c540",
+      "current": "100644 blob 01d6178af894e2f498ede220bc48250181dc1bf2",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Client/ProjectsReadRouteSelection.cs": {
+      "tested": "100644 blob 3b3c8365c761388a601af35d7195c88b6ad43380",
+      "current": "100644 blob d76225766a4747579ec9c0bcd247e1be21776f9b",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Folders/FoldersV1ProjectReadDirectory.cs": {
+      "tested": "100644 blob 10aa54d23829a08987dc9a87b631bf16189cfada",
+      "current": "100644 blob 0a0040689e206d71c65e632242387cf1881aae03",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs": {
+      "tested": "100644 blob a82906620a22867c619f2edbff2d76776aa57718",
+      "current": "100644 blob 0d51afa931c49f01bd03a210d44f56e92c3da47b",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/GetProjectContextEndpoint.cs": {
+      "tested": "100644 blob cbd92aa92b8dcb314602544ef256f617362004de",
+      "current": "100644 blob 284fe4944afc25077660d4096c77fef3c07c4b3c",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/GetProjectContextExplanationEndpoint.cs": {
+      "tested": "100644 blob 0c1587c56422790efe5db24ef7442096619949bf",
+      "current": "100644 blob 77d1939abda144fee2b6bf53b2a2cc5245755331",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/ProjectContextQueryAuthority.cs": {
+      "tested": "100644 blob 928c624cc0a745c1268c5c28d6d31a1073370f73",
+      "current": null,
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs": {
+      "tested": "100644 blob d4f65b87d9628d4b67662934f72b458da2819e96",
+      "current": "100644 blob 4c2f0062466981c51a4ef48e5f454ebe9b77ca94",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/ProjectQueryRequestPreamble.cs": {
+      "tested": "100644 blob f84ef91098ce5ec548593795095603743a43a596",
+      "current": "100644 blob bdd5751526c9e0006b17bdc945b080552099e591",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/ProjectReadQueryAdmission.cs": {
+      "tested": "100644 blob 03e92ca9d291c1858f162a74722dc59162778a3f",
+      "current": "100644 blob 32fef40a642b3cc5e60ef4e52055a78b42c682c1",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs": {
+      "tested": "100644 blob 2d1b57d5d98f0c94fa0419a937ccabe96de8a795",
+      "current": "100644 blob bf9e043a66b12e7aedcaababe49bb7485ebcf162",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Server/Queries/RefreshProjectContextEndpoint.cs": {
+      "tested": "100644 blob 40871f7b0fbfa07db7f1a5eae9783421eee18d08",
+      "current": "100644 blob eae2dfb4a3287809ae3a14bdb77f9a28cc8f8b8d",
+      "identical": false
+    },
+    "src/Hexalith.Projects.Testing/Reads/ReadCutoverComparator.cs": {
+      "tested": "100644 blob 71d0feaed1dadc3a8cfd582951d14135b7ae13cf",
+      "current": "100644 blob fb77fd056274a3de0c996247762371a35ab6d107",
+      "identical": false
+    },
+    "src/Hexalith.Projects.UI/Program.cs": {
+      "tested": "100644 blob ea776a80f6391311830d7739de0623a82e94df89",
+      "current": "100644 blob afb9adc439dab7a2d1048f452c3e0bd972cecbff",
+      "identical": false
+    },
+    "src/Hexalith.Projects.UI/ProjectsReadRouteLog.cs": {
+      "tested": null,
+      "current": "100644 blob d4e8ff2ff9eee28de24c6e618b22c9f456ab3e10",
+      "identical": false
+    }
+  },
+  "directCatalog": {
+    "testedSource": "c751d23aa4e73e8f7d74579db26a9fcf1df4c8e5",
+    "currentSource": "717e5ab29569fc57b0f43415f1aee2fc93441859",
+    "path": "Props/Directory.Packages.props",
+    "testedSha256": "7a786be8def06cef4ce7ab795ecfb80ea2f0b7b1bb295b95a7b7a2ad99af180c",
+    "currentSha256": "9ba3a73743716b5351840e333ea455db588c075182450369b1f32b0a2e96f267",
+    "testedSelectedPackageEntries": {
+      "Hexalith.EventStore.Contracts": [
+        {
+          "Include": "Hexalith.EventStore.Contracts",
+          "Version": "$(HexalithEventStoreVersion)",
+          "Condition": "'$(UseHexalithProjectReferences)' != 'true' or !$(MSBuildProjectName.StartsWith('Hexalith.Works'))"
+        }
+      ],
+      "Hexalith.McpCli.Abstractions": [
+        {
+          "Include": "Hexalith.McpCli.Abstractions",
+          "Version": "$(HexalithMcpCliVersion)"
+        }
+      ],
+      "Microsoft.NET.Test.Sdk": [
+        {
+          "Include": "Microsoft.NET.Test.Sdk",
+          "Version": "18.12.0"
+        }
+      ],
+      "Shouldly": [
+        {
+          "Include": "Shouldly",
+          "Version": "4.3.0"
+        }
+      ],
+      "YamlDotNet": [
+        {
+          "Include": "YamlDotNet",
+          "Version": "18.1.0"
+        }
+      ],
+      "coverlet.collector": [
+        {
+          "Include": "coverlet.collector",
+          "Version": "10.1.0"
+        }
+      ],
+      "xunit.runner.visualstudio": [
+        {
+          "Include": "xunit.runner.visualstudio",
+          "Version": "4.0.1"
+        }
+      ],
+      "xunit.v3": [
+        {
+          "Include": "xunit.v3",
+          "Version": "4.0.3"
+        }
+      ]
+    },
+    "currentSelectedPackageEntries": {
+      "Hexalith.EventStore.Contracts": [
+        {
+          "Include": "Hexalith.EventStore.Contracts",
+          "Version": "$(HexalithEventStoreVersion)",
+          "Condition": "'$(UseHexalithProjectReferences)' != 'true' or !$(MSBuildProjectName.StartsWith('Hexalith.Works'))"
+        }
+      ],
+      "Hexalith.McpCli.Abstractions": [
+        {
+          "Include": "Hexalith.McpCli.Abstractions",
+          "Version": "$(HexalithMcpCliVersion)"
+        }
+      ],
+      "Microsoft.NET.Test.Sdk": [
+        {
+          "Include": "Microsoft.NET.Test.Sdk",
+          "Version": "18.12.0"
+        }
+      ],
+      "Shouldly": [
+        {
+          "Include": "Shouldly",
+          "Version": "4.3.0"
+        }
+      ],
+      "YamlDotNet": [
+        {
+          "Include": "YamlDotNet",
+          "Version": "18.1.0"
+        }
+      ],
+      "coverlet.collector": [
+        {
+          "Include": "coverlet.collector",
+          "Version": "10.1.1"
+        }
+      ],
+      "xunit.runner.visualstudio": [
+        {
+          "Include": "xunit.runner.visualstudio",
+          "Version": "4.0.1"
+        }
+      ],
+      "xunit.v3": [
+        {
+          "Include": "xunit.v3",
+          "Version": "4.0.3"
+        }
+      ]
+    }
+  },
+  "full207TestContextEquivalent": false,
+  "reason": "Current Builds advances the direct Contracts test dependency coverlet.collector from 10.1.0 to 10.1.1. Broader concurrent production changes are preserved and not covered by the prior Contracts-only proof.",
+  "decision": "Do not transfer exact-input 207-test qualification. Coordinator authorized a fresh narrow Contracts Release build and 207-case suite against the same approved archive, preserving current Builds and all other pins.",
+  "approvedArchiveSha256": "1c3bdabc4778467d74b468a47f0413f5f85272539d9969891036c8865f6949c3"
+}

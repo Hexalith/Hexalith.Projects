@@ -28,6 +28,9 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--candidate", type=Path, help="Exact EventStore.Contracts 5.3.0 archive; independent of the output directory")
 parser.add_argument("--expected-sha256", help="Required when --candidate is supplied")
 parser.add_argument("--focused-contracts", action="store_true", help="Build Contracts and run its 207 tests only; complete Release and G-6 remain unverified")
+parser.add_argument("--source", default="85ff97950a7cb290288d56618ed7da8152f5a2c6", help="Exact Projects source commit; defaults to the original qualified source")
+parser.add_argument("--tree-proof", type=Path, help="Complete two-file candidate tree proof for --source")
+parser.add_argument("--reuse-package-api-proof", type=Path, help="Reuse a retained 0.27.0 public-API comparison bound to this exact unchanged archive")
 options = parser.parse_args()
 if options.candidate is not None and options.expected_sha256 is None:
     parser.error("--candidate requires --expected-sha256")
@@ -35,6 +38,8 @@ CANDIDATE = (options.candidate or DEFAULT_CANDIDATE).resolve()
 EXPECTED = options.expected_sha256 or DEFAULT_SHA256
 if not re.fullmatch(r"[0-9a-f]{64}", EXPECTED):
     parser.error("--expected-sha256 must contain exactly 64 lowercase hexadecimal characters")
+if not re.fullmatch(r"[0-9a-f]{40}", options.source):
+    parser.error("--source must be an exact 40-character commit SHA")
 OUT = Path(os.environ.get("HEXALITH_QUALIFICATION_OUTPUT", str(PACKET / "projects"))).resolve()
 if OUT.exists():
     raise FileExistsError("Refusing existing qualification output: " + str(OUT))
@@ -44,7 +49,7 @@ if OUT.is_relative_to(SCRATCH.resolve()):
 OUT.mkdir(parents=True, exist_ok=False)
 WORK = SCRATCH / "projects"
 WORK.mkdir()
-SOURCE = "85ff97950a7cb290288d56618ed7da8152f5a2c6"
+SOURCE = options.source
 VERSION = "5.3.0"
 RESULT = {
     "kind": "qualification-only",
@@ -153,6 +158,10 @@ for line in tree.splitlines():
             materialize(ROOT / path, revision, WORK / path)
 RESULT["rootGitlinks"] = gitlinks
 RESULT["sourceTreeSha256"] = sha(tree.encode())
+catalog_path = "Props/Directory.Packages.props"
+RESULT["catalogProvenance"] = {"source": gitlinks["references/Hexalith.Builds"], "path": catalog_path,
+    "sha256": sha((WORK / "references/Hexalith.Builds" / catalog_path).read_bytes()),
+    "blob": git(ROOT / "references/Hexalith.Builds", "rev-parse", gitlinks["references/Hexalith.Builds"] + ":" + catalog_path).decode().strip()}
 save()
 
 env = os.environ.copy()
@@ -189,11 +198,11 @@ RESULT["changedFiles"] = {relative: {"beforeSha256": sha(original), "afterSha256
 RESULT["unchangedFamilyProperty"] = "HexalithEventStoreVersion=5.1.1"
 RESULT["patchSha256"] = sha((OUT / "minimal-contracts.patch").read_bytes())
 if options.focused_contracts:
-    proof = PACKET / "projects/candidate-tree.json"
+    proof = (options.tree_proof or PACKET / "projects/candidate-tree.json").resolve()
     tree_proof = json.loads(proof.read_text())
     if tree_proof["patchSha256"] != RESULT["patchSha256"] or tree_proof["source"] != SOURCE:
         raise ValueError("Focused candidate differs from the complete retained Git tree proof")
-    RESULT["completeTreeProof"] = {"pathRelativeToImmutablePacket": str(proof.relative_to(PACKET)),
+    RESULT["completeTreeProof"] = {"pathRelativeToImmutablePacket": os.path.relpath(proof, PACKET),
         "sha256": sha(proof.read_bytes()), "candidateTree": tree_proof["candidateTree"], "reused": True}
     prior = PACKET / "projects/qualification.json"
     RESULT["priorArtifactQualification"] = {
@@ -229,9 +238,21 @@ if options.focused_contracts and EXPECTED != DEFAULT_SHA256:
         with zipfile.ZipFile(archive) as package:
             library.write_bytes(package.read("lib/net11.0/Hexalith.EventStore.Contracts.dll"))
         libraries.append(library)
-    run("candidate-public-api-comparison", ["dnx", "dotnet-inspect@0.27.0", "-y", "--", "diff", "--library",
-        str(libraries[0]) + ".." + str(libraries[1]), "--json"], env)
-    api = json.loads((OUT / "candidate-public-api-comparison.log").read_text())
+    if options.reuse_package_api_proof:
+        api_proof_path = options.reuse_package_api_proof.resolve()
+        api_proof = json.loads(api_proof_path.read_text())
+        prior_api = api_proof["priorArtifactQualification"]
+        if (api_proof["contractsCandidate"]["sha256"] != EXPECTED or api_proof["restoredCandidateSha256"] != EXPECTED
+                or not prior_api["sameProducerSourceAndPublicApi"] or prior_api["inspectionToolVersion"] != "0.27.0"
+                or api_proof["contractsCandidate"]["producerSource"] != RESULT["contractsCandidate"]["producerSource"]):
+            raise ValueError("Retained package API proof does not match this exact archive and producer")
+        api = {"outcome": "available", "document": {"summary": prior_api["publicApiComparisonSummary"]}}
+        RESULT["priorArtifactQualification"]["publicApiComparisonReusedFrom"] = {
+            "pathRelativeToImmutablePacket": os.path.relpath(api_proof_path, PACKET), "sha256": sha(api_proof_path.read_bytes())}
+    else:
+        run("candidate-public-api-comparison", ["dnx", "dotnet-inspect@0.27.0", "-y", "--", "diff", "--library",
+            str(libraries[0]) + ".." + str(libraries[1]), "--json"], env)
+        api = json.loads((OUT / "candidate-public-api-comparison.log").read_text())
     if api["outcome"] != "available" or any(api["document"]["summary"].values()):
         raise ValueError("Selected candidate public API differs from the original qualified archive")
     with zipfile.ZipFile(DEFAULT_CANDIDATE) as package:
@@ -273,6 +294,11 @@ if assets.exists():
     assert RESULT["restoredCandidateSha256"] == EXPECTED
     RESULT["contractsDependencyGraph"] = {target: {identity: item.get("dependencies", {}) for identity, item in entries.items()}
                                           for target, entries in data["targets"].items()}
+    tests_assets = WORK / "tests/Hexalith.Projects.Contracts.Tests/obj/project.assets.json"
+    tests_data = json.loads(tests_assets.read_text())
+    RESULT["contractsTestResolvedPackages"] = sorted(key for key, value in tests_data["libraries"].items() if value["type"] == "package")
+    RESULT["contractsTestDependencyGraph"] = {target: {identity: item.get("dependencies", {}) for identity, item in entries.items()}
+                                              for target, entries in tests_data["targets"].items()}
 else:
     raise RuntimeError("Missing restored Contracts assets")
 RESULT["status"] = ("partial" if options.focused_contracts or any(label != "baseline-contracts-build" for label in

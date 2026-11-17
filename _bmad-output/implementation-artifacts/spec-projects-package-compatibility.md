@@ -102,3 +102,47 @@ Final approval packet selects fresh public-cache EventStore.Contracts5.3.0 archi
 Final source reread found concurrent Projects cd1fcd62e3180e5b037850cacb1c1756668b2866 and CiCd4d5a41c69b1c57e049a3d3a5c084259d896c6e5b. Private requalification rebases only the two necessary blobs onto current Projects, yielding tree080313f55def2d0972ab5cbaecfbaf5b5d27b7b3; all64 concurrent committed paths, including historical evidence deletions, and all12 gitlinks are preserved. All578 focused production/test/configuration/dependency input entries are identical to the tested85ff base. The207-case exact-artifact result is reused on that evidence; no new complete Release or hosted acceptance is claimed. Shared working-tree/index/branch state remains owned by concurrent work.
 
 User approval received on2026-11-17 for the exact two package-owner release proposals, with mandatory gates preserved. Approval receipt and immutable approved proposal are in approved-resume-20261117/. A necessary read-only CiCd workflow proposal probes only existing App access to the two fixed approved package-owner repositories, requesting Contents read only. It performs GETs, reports existing visibility and main SHA, and retains failures. It cannot grant access, publish, push, checkout/execute module source, adopt modules, change pins or produce NuGet credentials. The proposed workflow is authored/qualified in CiCd and needs its exact-message validator before any owner-source publication.
+
+User explicitly approved the new fixed prerequisite-only publication scope with `*yes` on2026-11-17. The exact gate contract and approval receipt are retained in approved-resume-20261117/. Existing full release jobs retain their normal gates; two closed profiles transport only exact approved archives through the existing release.yml/production identities. Full owner EventStore Contracts1704/1704 and14-family API checks now pass with the complete permitted fixtures; current Projects0bb Contracts207/207 passed with the exact approved archive. Native B4/V1 and later13 application API errors remain unqualified. New publisher code and necessary narrow owner delivery support are undergoing behavioral qualification and independent review before dispatch.
+
+Prerequisite publisher/controller review (three independent lenses):
+
+| Finding | Verdict | Evidence and route |
+| --- | --- | --- |
+| BH1 | false | Workflow SHA placeholders are preparation state, not a delivered runnable proposal. Bind the final immutable source after its reviewed first owner commit and rerun actionlint before dispatch. |
+| BH2 | false | Proposal triplets are a dependent preparation step explicitly assigned to coordinator. Concrete exact-tree proposals will be created before the second owner source commit or any delivery. |
+| BH3 | high | Confirmed pin writer has no feed guard. Patch fixed public payload checks and require both approved coordinates during qualification and immediately before pin push. |
+| BH4 | medium | Confirmed validation hashes were syntactic only. Retain fixed check logs in each proposal and verify actual committed bytes. |
+| BH5 | medium | Confirmed subprocess timeout discards spool diagnostics and skips observation. Return bounded redacted timeout output and observe without retry. |
+| BH6 | medium | Confirmed first transient polling exception exits. Retain bounded observation diagnostics and continue within the fixed polling budget. |
+| BH7 | medium | Confirmed verifier operation lacks a workflow route. Add closed read-only verification choice to existing release profile. |
+| BH8 | medium | Confirmed verify shares the publication freeze guard. Keep source authorization but allow verification while publishing is frozen. |
+| BH9 | medium | Confirmed discovery receipt retains digest without operation identities/output. Include original strict discovery output and require its four operation identities. |
+| BH10 | medium | Confirmed execution scenarios only cover EventStore. Run the same behavioral cases for Projects and add interrupted/delayed observations. |
+| EH1 | medium | Reviewer reproduced accepted Git push followed by interruption leaving unattempted receipt. Atomically checkpoint candidate and push_attempted before transport.push. |
+| EH2 | medium | Reviewer reproduced terminated NuGet upload leaving upload_count0. Atomically checkpoint attempted upload before external process. |
+| EH3 | high | Confirmed duplicate of BH3; source-bound public proof must gate Projects pin delivery. |
+| VG1 | medium | Pre-verified mutation of repository selection leaves existing12 tests green. Parameterize both owners. |
+| VG2 | medium | Pre-verified polling count mutation leaves tests green. Add delayed-publication and exhausted-polling cases. |
+
+Owner dispatch/protected proposal/policy review (three independent lenses):
+
+| Finding | Verdict | Evidence and route |
+| --- | --- | --- |
+| BH1 | false | The concrete policy triplet and four logs are dependent coordinator preparation, not hidden runtime functionality; create and validate all seven before any source publication or dispatch. |
+| BH2 | high | Real Git reproduction confirms branch creation race. Apply an empty expected-ref lease for atomic create-only branch publication; it cannot overwrite any existing ref. |
+| BH3 | medium | Confirmed complete release input/default declaration was outside job hashes. Bind executable workflow root context and add default mutation test. |
+| BH4 | medium | Confirmed inherited workflow shell/directory can alter hashed job execution. Root context hash must reject those defaults and cover tests. |
+| BH5 | medium | Confirmed unordered same-App same-SHA run correlation lacks operation identity. API2026-03-10 now returns200 with workflow_run_id and URLs; require direct response identity for success, retain204/lost response as unresolved candidates only. |
+| BH6 | medium | Confirmed explicit403 can be misattributed as correlated success. Preserve definite rejection; no attribution to later runs. |
+| BH7 | medium | Confirmed unrelated matches currentlyoverride returned run ID. Select the returned exact identity first and independently verify source/workflow/actor/URLs. |
+| BH8 | low | Fresh runner intentionally has no prior checkpoint and fails closed rather than repeating a POST. Automatic checkpoint restoration is not required for this task. Correct documentation to state coordinator read-only observation is required; reject extra restoration complexity. |
+| BH9 | false | Current-main authorization is an explicit dispatcher requirement. Refusing stale-source automation is intended; coordinator can inspect retained exact run IDs through read-only GitHub APIs without rerunning a writer. No stale-source automatic recovery is promised. |
+| BH10 | medium | Confirmed workflow initializer erases PR attempt state on rerun. Refuse new PR POST and branch creation on reruns lacking durable prior checkpoint, while allowing read-only observation of existing exact results. |
+| EH1 | high | Duplicate verified branch race, same empty-expected-ref lease correction. |
+| EH2 | medium | Duplicate verified clean-runner ambiguous PR retry, same rerun write refusal. |
+| EH3 | low | CRLF leaves a carriage return before end anchor. Accept optional carriage return without changing guard meaning; add CRLF fixture case. |
+| VG1 | medium | Pre-verified removal of CLI outputs leaves23 tests green. Add main() success round trip asserting actual GITHUB_OUTPUT plan and branch-success. |
+| VG2 | medium | Pre-verified production HTTP403diagnostic bypass in stubs. Add actual HTTPError opener refusal test. |
+
+Approved continuation outcome: Projects.Contracts2.0.0-story66.3 published once and publicly verified (hosted44050366352, signedSHA81888d8267dbf6593ca2cfd8c63bdd6da2732351a67400602058612dc70e5b8b). Current pinnedMcp c9ffbd5c9f6bc100ecbf6ac13acf4fbe50a498a9 public-only restore/Release/discovery passed. EventStore PR401 head e67afa4519e3d9d0d37eab3c110077b14218dcd3 is blocked by five inherited required checks: unavailableCiCd gitlink88fb9071e8b9cac526b51684bf92f891a0ef1bee and zero-test discovery jobs. No merge or EventStore upload attempted. Current two-file Projects candidate tree09192422c484c8519e9a21547d13a4cb6200f735 is prepared on78633a653c1a6768a795678203d836b3caac2c12, with no unrelated pins/gitlinks changed. Final delivery/hostedCI-G6 acceptance remains outstanding; task is not marked done. Detailed continuation result and receipts are in approved-resume-20261117/result.json.

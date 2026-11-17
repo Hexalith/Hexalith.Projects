@@ -1,0 +1,17 @@
+from pathlib import Path
+import json,os,importlib.util,sys,subprocess,hashlib
+OUT=Path(__file__).resolve().parent;WORK=Path(json.loads((OUT/'active-owner-source-workspace.json').read_text())['work'])
+spec=importlib.util.spec_from_file_location('runtime',WORK/'tools/delivery_runtime.py');rt=importlib.util.module_from_spec(spec);sys.modules[spec.name]=rt;spec.loader.exec_module(rt)
+transport=rt.Transport();target=rt.Git(Path(os.environ['TMPDIR'])/'eventstore.git');target.init();base=transport.module(target,'Hexalith.EventStore');assert base=='392a7e4e9daade785ee9f1ae5f40e25931002735','Main advanced again; qualify exact fresh source'
+folder=WORK/'docs/proposals/contracts-prerequisites';name='eventstore-publisher';prior=json.loads((folder/(name+'.json')).read_text());before=target.items(base);assert before['.github/workflows/release.yml']==tuple(prior['before']['.github/workflows/release.yml']),'Concurrent owner workflow changed; reauthor preserving it first'
+base_tree=target.resolve(base+'^{tree}');target.run('read-tree',base_tree);patch=(folder/(name+'.patch')).read_bytes();target.run('apply','--cached','--whitespace=nowarn',data=patch);tree=rt.sha(target.run('write-tree','--missing-ok').decode().strip());after=target.items(tree);changed={p for p in before.keys()|after.keys() if before.get(p)!=after.get(p)};assert changed=={'.github/workflows/release.yml'};assert all(before[p]==after[p] for p in before if before[p][0]=='160000')
+dest=OUT/'eventstore-proposal-rebase-attempt-1';dest.mkdir(exist_ok=False)
+validation=json.loads((folder/(name+'-validation.json')).read_text());validation.update(base_commit=base,base_tree=base_tree,result_tree=tree)
+logs={}
+for check in validation['checks']:logs[check]=(folder/(name+'-'+check+'.log')).read_bytes()
+logs['scope-preservation']=(json.dumps({'status':'passed','prior_reviewed_base':prior['base_commit'],'base_commit':base,'base_tree':base_tree,'result_tree':tree,'only_changed_path':'.github/workflows/release.yml','current_workflow_blob_identical_to_qualified_prior_base':True,'all_other_tree_entries_and_gitlinks_preserved':True,'patch_unchanged':hashlib.sha256(patch).hexdigest()},indent=2)+'\n').encode()
+logs['behavioral-controls']=(OUT/'owner-implementation/logs/delivery-policy-regression.log').read_bytes()+b'\n'+(OUT/'eventstore-proposal-final-tests.log').read_bytes()+b'\n'+(OUT/'publisher-private-workspace-tests.log').read_bytes()
+workflow=Path(os.environ['TMPDIR'])/'release.yml';workflow.write_bytes(target.blob(tree,'.github/workflows/release.yml'));v=subprocess.run(['actionlint','-shellcheck=',str(workflow)],capture_output=True,timeout=60);assert v.returncode==0;logs['actionlint']=(json.dumps({'status':'passed','workflow_sha256':hashlib.sha256(workflow.read_bytes()).hexdigest(),'exit':v.returncode,'output':(v.stdout+v.stderr).decode()},indent=2)+'\n').encode()
+for check,data in logs.items():validation['checks'][check]['log_sha256']=hashlib.sha256(data).hexdigest();(dest/(name+'-'+check+'.log')).write_bytes(data)
+raw=(json.dumps(validation,indent=2)+'\n').encode();(dest/(name+'-validation.json')).write_bytes(raw);manifest=dict(prior,base_commit=base,base_tree=base_tree,result_tree=tree,validation_sha256=hashlib.sha256(raw).hexdigest());(dest/(name+'.json')).write_text(json.dumps(manifest,indent=2)+'\n');(dest/(name+'.patch')).write_bytes(patch)
+print(json.dumps({'base':base,'tree':tree,'patch_unchanged':manifest['patch_sha256'],'paths':list(changed)}))

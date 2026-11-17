@@ -1,0 +1,92 @@
+[
+  {
+    "finding": "BH1",
+    "verdict": "false",
+    "evidence": "Workflow SHA placeholders are preparation state, not a delivered runnable proposal. Bind the final immutable source after its reviewed first owner commit and rerun actionlint before dispatch.",
+    "route": "rejected preparation-state claim; finish dependent artifacts"
+  },
+  {
+    "finding": "BH2",
+    "verdict": "false",
+    "evidence": "Proposal triplets are a dependent preparation step explicitly assigned to coordinator. Concrete exact-tree proposals will be created before the second owner source commit or any delivery.",
+    "route": "rejected preparation-state claim; finish dependent artifacts"
+  },
+  {
+    "finding": "BH3",
+    "verdict": "high",
+    "evidence": "Confirmed pin writer has no feed guard. Patch fixed public payload checks and require both approved coordinates during qualification and immediately before pin push.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH4",
+    "verdict": "medium",
+    "evidence": "Confirmed validation hashes were syntactic only. Retain fixed check logs in each proposal and verify actual committed bytes.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH5",
+    "verdict": "medium",
+    "evidence": "Confirmed subprocess timeout discards spool diagnostics and skips observation. Return bounded redacted timeout output and observe without retry.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH6",
+    "verdict": "medium",
+    "evidence": "Confirmed first transient polling exception exits. Retain bounded observation diagnostics and continue within the fixed polling budget.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH7",
+    "verdict": "medium",
+    "evidence": "Confirmed verifier operation lacks a workflow route. Add closed read-only verification choice to existing release profile.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH8",
+    "verdict": "medium",
+    "evidence": "Confirmed verify shares the publication freeze guard. Keep source authorization but allow verification while publishing is frozen.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH9",
+    "verdict": "medium",
+    "evidence": "Confirmed discovery receipt retains digest without operation identities/output. Include original strict discovery output and require its four operation identities.",
+    "route": "patch"
+  },
+  {
+    "finding": "BH10",
+    "verdict": "medium",
+    "evidence": "Confirmed execution scenarios only cover EventStore. Run the same behavioral cases for Projects and add interrupted/delayed observations.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH1",
+    "verdict": "medium",
+    "evidence": "Reviewer reproduced accepted Git push followed by interruption leaving unattempted receipt. Atomically checkpoint candidate and push_attempted before transport.push.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH2",
+    "verdict": "medium",
+    "evidence": "Reviewer reproduced terminated NuGet upload leaving upload_count0. Atomically checkpoint attempted upload before external process.",
+    "route": "patch"
+  },
+  {
+    "finding": "EH3",
+    "verdict": "high",
+    "evidence": "Confirmed duplicate of BH3; source-bound public proof must gate Projects pin delivery.",
+    "route": "patch"
+  },
+  {
+    "finding": "VG1",
+    "verdict": "medium",
+    "evidence": "Pre-verified mutation of repository selection leaves existing12 tests green. Parameterize both owners.",
+    "route": "patch"
+  },
+  {
+    "finding": "VG2",
+    "verdict": "medium",
+    "evidence": "Pre-verified polling count mutation leaves tests green. Add delayed-publication and exhausted-polling cases.",
+    "route": "patch"
+  }
+]
