@@ -5,8 +5,8 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <!-- Align Contracts decorations with the 3.0.0 dependency required by Folders 2.0.0. -->
     <HexalithMcpCliVersion Condition="'$(HexalithMcpCliVersion)' == ''">3.0.0</HexalithMcpCliVersion>
-    <!-- Story 1.17: consume the published 5.1.1 native source scanner package family. -->
-    <HexalithEventStoreVersion Condition="'$(HexalithEventStoreVersion)' == ''">5.1.1</HexalithEventStoreVersion>
+    <!-- Consume the published 5.3.1 package family, which provides QueryResultContractAttribute. -->
+    <HexalithEventStoreVersion Condition="'$(HexalithEventStoreVersion)' == ''">5.3.1</HexalithEventStoreVersion>
     <!-- Consume the .NET 11 SDK snapshot limits and tenant access recovery contracts. -->
     <HexalithTenantsVersion Condition="'$(HexalithTenantsVersion)' == ''">8.0.0</HexalithTenantsVersion>
     <!-- Define paths of the Hexalith packages props. -->
