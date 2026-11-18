@@ -23,7 +23,7 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
 
     internal DistributedApplication? Application { get; private set; }
 
-    // Mirror Aspire 13.6.5's authenticated EnableDashboard testing defaults. Blank
+    // Mirror Aspire 17.0.0's authenticated EnableDashboard testing defaults. Blank
     // UI/OTLP URLs request dynamic loopback ports; no machine-wide collector is used.
     private Dictionary<string, string?> TelemetrySettings => new()
     {

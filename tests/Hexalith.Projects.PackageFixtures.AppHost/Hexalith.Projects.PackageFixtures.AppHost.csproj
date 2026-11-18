@@ -4,6 +4,8 @@
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)../../references/Hexalith.Platform/DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)../../references/Hexalith.Platform</HexalithPlatformRoot>
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == ''">$(MSBuildThisFileDirectory)../../../Hexalith.Platform</HexalithPlatformRoot>
     <AspireUseCliBundle>true</AspireUseCliBundle>
+    <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS0618</WarningsNotAsErrors>
     <IsPackable>false</IsPackable>
     <IsPublishable>false</IsPublishable>
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>

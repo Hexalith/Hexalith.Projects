@@ -5,6 +5,8 @@
     <IsPackable>false</IsPackable>
     <IsPublishable>true</IsPublishable>
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>
+    <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS0618</WarningsNotAsErrors>
     <UserSecretsId>hexalith-projects</UserSecretsId>
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform</HexalithPlatformRoot>
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform</HexalithPlatformRoot>

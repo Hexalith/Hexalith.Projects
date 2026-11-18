@@ -43,7 +43,7 @@ class CurrentToolArchiveTests(unittest.TestCase):
         (self.builds / "Props").mkdir(parents=True)
         self.scratch = self.root / "scratch"
         self.scratch.mkdir()
-        self.policy = {"tuple": {"daprCli": "1.19.1", "daprRuntime": "1.19.1", "aspireCli": "13.6.5"}}
+        self.policy = {"tuple": {"daprCli": "1.19.1", "daprRuntime": "1.19.1", "aspireCli": "17.0.0"}}
         self.archives = {"dapr": archive("dapr"), "daprd": archive("daprd")}
         self.identity = {"schema": "hexalith.builds.dapr-toolchain-sha256.v1", "cli": {}, "runtime": {}}
         self.write_identity()
@@ -78,7 +78,7 @@ class CurrentToolArchiveTests(unittest.TestCase):
             self.assertEqual(("synthetic " + binary).encode(), (self.scratch / folder / binary).read_bytes())
         self.assertFalse((self.root / "escape").exists())
         self.assertFalse((self.scratch / "escape").exists())
-        self.assertEqual(["dotnet", "tool", "install", "Aspire.Cli", "--tool-path", str(self.scratch / "tools"), "--version", "13.6.5"], command.call_args.args[0])
+        self.assertEqual(["dotnet", "tool", "install", "Aspire.Cli", "--tool-path", str(self.scratch / "tools"), "--version", "17.0.0"], command.call_args.args[0])
         self.assertTrue(command.call_args.kwargs["check"])
         self.assertEqual({"PATH": "/controlled-tools"}, command.call_args.kwargs["env"])
 
