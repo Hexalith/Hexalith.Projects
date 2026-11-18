@@ -2,9 +2,9 @@
   "schema": "hexalith.g6-current-policy.v1",
   "tuple": {
     "dotnetSdk": "11.0.100",
-    "aspireSdk": "13.6.5",
-    "aspireCli": "13.6.5",
-    "communityToolkitAspireDapr": "13.6.2-beta.959",
+    "aspireSdk": "17.0.0",
+    "aspireCli": "17.0.0",
+    "communityToolkitAspireDapr": "17.0.0-beta.1052",
     "daprCli": "1.19.1",
     "daprRuntime": "1.19.1",
     "daprDotnetPackages": "1.19.1",
@@ -15,9 +15,9 @@
   "approval": {
     "decision": "approved",
     "approvedBy": "Current user authorization",
-    "approvedAtUtc": "2026-11-12T07:06:14Z",
-    "reference": "Projects-owned source-mode tuple authorization under the current user instruction to select the latest compatible SDK/packages, release, and bypass human validation. The actual signed Builds4.48.2 source6ad catalog selects Dapr.NET1.19.1. This new owning policy corrects the authorization field without modifying any published producer policy or overriding package catalog authority. It claims no Builds signature, independent human review, native/image acceptance, or qualification result acceptance. Full fresh source-mode G-6 behavior tests, exact clean sources, evaluated dependencies,33 native cases, real PostgreSQL two-sidecar stop/restart, provenance, zero required skips and owned-resource cleanup remain mandatory.",
-    "tupleSha256": "2709f684b5065a1039e585bfdaeafed28dc05774b19790342bb643cc77c48f15"
+    "approvedAtUtc": "2026-11-18T11:25:00Z",
+    "reference": "Projects-owned source-mode tuple authorization under the current user instruction to update to Aspire 17.0.0. The owning policy selects Aspire17.0.0 with CommunityToolkit.Aspire.Hosting.Dapr17.0.0-beta.1052 and Dapr.NET1.19.1 without modifying any published producer policy or overriding package catalog authority. It claims no Builds signature, independent human review, native/image acceptance, or qualification result acceptance. Full fresh source-mode G-6 behavior tests, exact clean sources, evaluated dependencies,33 native cases, real PostgreSQL two-sidecar stop/restart, provenance, zero required skips and owned-resource cleanup remain mandatory.",
+    "tupleSha256": "8236f18e133343aab984a02c998f74957aaa409c9de0e93690f37d6acccbf351"
   },
   "exceptions": {
     "daprSupportTable": "approved-explicit-exception",
