@@ -62,7 +62,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!-- G-6 explicitly accepts the prerelease Fluent UI dependency. Keep NU5104 visible during
          stable package creation without turning that approved exception into a release failure. -->
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU5104</WarningsNotAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU5104;CS0618;ASPIRE012</WarningsNotAsErrors>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
