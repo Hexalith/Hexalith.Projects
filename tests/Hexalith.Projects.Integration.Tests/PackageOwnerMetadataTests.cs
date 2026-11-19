@@ -56,7 +56,7 @@ public sealed class PackageOwnerMetadataTests
     [Fact]
     public async Task ChangedOwnerSdkContractIsRefused()
     {
-        (string executable, _, _) = Artifacts("tenants");
+        (string executable, string declaration, _) = Artifacts("tenants");
         FixtureScratch scratch = new(true);
         await using var cleanup = scratch.ConfigureAwait(true);
         foreach (string path in Directory.GetFiles(Path.GetDirectoryName(executable)!))
