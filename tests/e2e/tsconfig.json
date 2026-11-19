@@ -18,11 +18,10 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": false,
     "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
-      "@support/*": ["support/*"],
-      "@factories/*": ["support/factories/*"],
-      "@helpers/*": ["support/helpers/*"]
+      "@support/*": ["./support/*"],
+      "@factories/*": ["./support/factories/*"],
+      "@helpers/*": ["./support/helpers/*"]
     }
   },
   "include": ["specs/**/*.ts", "support/**/*.ts", "reporters/**/*.ts", "*.ts"],

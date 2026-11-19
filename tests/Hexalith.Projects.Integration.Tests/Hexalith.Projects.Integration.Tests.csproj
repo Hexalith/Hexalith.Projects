@@ -31,9 +31,9 @@
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
     <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
     <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
-    <PackageDownload Include="Hexalith.Builds.Module.Cli" Version="[4.48.2]" />
+    <PackageDownload Include="Hexalith.Builds.Module.Cli" Version="[$(HexalithBuildsModuleCliVersion)]" />
     <Reference Include="Hexalith.Builds.Tooling">
-      <HintPath>$(NuGetPackageRoot)/hexalith.builds.module.cli/4.48.2/tools/net10.0/any/Hexalith.Builds.Tooling.dll</HintPath>
+      <HintPath>$(NuGetPackageRoot)/hexalith.builds.module.cli/$(HexalithBuildsModuleCliVersion)/tools/net11.0/any/Hexalith.Builds.Tooling.dll</HintPath>
       <Private>true</Private>
     </Reference>
   </ItemGroup>
