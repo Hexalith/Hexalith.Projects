@@ -86,6 +86,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     environment: production
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       actions: read
       contents: write
@@ -144,19 +147,26 @@ jobs:
         run: dotnet build Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror
       - name: Pull pinned G-6 PostgreSQL fixture image
         run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+      - name: Resolve reviewed direct Platform revision
+        id: g6-platform
+        shell: bash
+        run: |
+          set -euo pipefail
+          platform_revision="$(git rev-parse HEAD:references/Hexalith.Platform)"
+          [[ "$platform_revision" =~ ^[0-9a-f]{40}$ ]]
+          printf 'revision=%s\n' "$platform_revision" >> "$GITHUB_OUTPUT"
+      - name: Acquire reviewed G-6 catalog
+        uses: ./.github/actions/prepare-g6-catalog
+        with:
+          platform-revision: ${{ steps.g6-platform.outputs.revision }}
+          diagnostics: ${{ env.G6_OUTPUT }}/source-mapping
       - name: Run fresh exact-source G-6 qualifier
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
         run: >-
           python3 tools/qualification/run_g6_current.py
           --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
           --output "$G6_OUTPUT"
           --execution-scope release
       - name: Validate fresh exact-source G-6 evidence
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
         run: >-
           python3 references/Hexalith.Builds/Tools/g6_current.py validate
           --workspace .
@@ -168,7 +178,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: g6-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.G6_OUTPUT }}
           if-no-files-found: error
           retention-days: 90
       - name: Validate five-package manifest

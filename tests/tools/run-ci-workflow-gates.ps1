@@ -459,6 +459,8 @@ $verifyNpmStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Verify npm de
 $restoreStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Restore release solution' -Owner 'release'
 $buildStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Build release solution' -Owner 'release'
 Require-G6PostgresqlPull -Steps $releaseSteps -BeforeStep 'Run fresh exact-source G-6 qualifier' -Owner 'release'
+$g6PlatformStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Resolve reviewed direct Platform revision' -Owner 'release'
+$g6CatalogStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Acquire reviewed G-6 catalog' -Owner 'release'
 $g6RunStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Run fresh exact-source G-6 qualifier' -Owner 'release'
 $g6ValidateStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate fresh exact-source G-6 evidence' -Owner 'release'
 $g6UploadStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Upload exact-source G-6 evidence' -Owner 'release'
@@ -479,6 +481,9 @@ Require-Match $installNpmStep.Text '^\s{8}run:\s*npm ci --ignore-scripts\s*$' 'T
 Require-Match $verifyNpmStep.Text '^\s{8}run:\s*npm audit signatures\s*$' 'The npm provenance step must verify registry signatures.'
 Require-Match $restoreStep.Text '^\s{8}run:\s*dotnet restore Hexalith\.Projects\.CI\.slnx\s*$' 'The restore step must use the package-only CI solution.'
 Require-Match $buildStep.Text '^\s{8}run:\s*dotnet build Hexalith\.Projects\.CI\.slnx --no-restore --configuration Release -warnaserror\s*$' 'The build step must use the package-only CI solution in Release with warnings as errors.'
+Require-Match $g6PlatformStep.Text 'HEAD:references/Hexalith\.Platform' 'Release must resolve the reviewed Platform gitlink before catalog acquisition.'
+Require-Match $g6CatalogStep.Text '^\s{8}uses:\s*\./\.github/actions/prepare-g6-catalog\s*$' 'Release must acquire the reviewed G-6 catalog with the Projects action.'
+Require-Match $g6CatalogStep.Text 'steps\.g6-platform\.outputs\.revision' 'Release catalog acquisition must use the reviewed Platform revision.'
 Require-Match $g6RunStep.Text 'run_g6_current\.py' 'Release must run the focused G-6 qualifier.'
 Require-Match $g6RunStep.Text '--execution-scope release' 'Release G-6 must record the release Builds execution pin.'
 Require-Match $g6ValidateStep.Text 'g6_current\.py validate' 'Release must validate the current G-6 result.'
@@ -544,6 +549,8 @@ $orderedReleaseSteps = @(
     'Restore release solution',
     'Build release solution',
     'Pull pinned G-6 PostgreSQL fixture image',
+    'Resolve reviewed direct Platform revision',
+    'Acquire reviewed G-6 catalog',
     'Run fresh exact-source G-6 qualifier',
     'Validate fresh exact-source G-6 evidence',
     'Upload exact-source G-6 evidence',
