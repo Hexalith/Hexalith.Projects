@@ -58,7 +58,7 @@ class OwningCurrentPolicyTests(unittest.TestCase):
         expected = copy.deepcopy(original["tuple"])
         expected["aspireSdk"] = "17.0.0"
         expected["aspireCli"] = "17.0.0"
-        expected["communityToolkitAspireDapr"] = "17.0.0-beta.1052"
+        expected["communityToolkitAspireDapr"] = "17.0.0-beta.1078"
         expected["daprDotnetPackages"] = "1.19.1"
         expected["fluentUi"] = "5.1.0"
         self.assertEqual(expected, policy["tuple"])

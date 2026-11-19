@@ -61,15 +61,19 @@ internal static class ConversationsFixtureEndpoints
                 return Results.NotFound();
             }
 
+            bool advisory = request.Query["advisoryMetadataOnly"] is { Count: 1 } advisoryMode
+                && string.Equals(advisoryMode[0], "true", StringComparison.Ordinal);
+            string? readPurpose = advisory ? "projects-internal-equality-scoring" : null;
+
             if (string.Equals(conversationId, graph.UnavailableConversationId, StringComparison.Ordinal))
             {
                 await Task.Delay(UnavailableReadDelay, cancellationToken).ConfigureAwait(false);
-                return Results.Ok(HiddenDetail(Unavailable));
+                return Results.Ok(HiddenDetail(Unavailable, readPurpose));
             }
 
             if (string.Equals(conversationId, graph.ForbiddenConversationId, StringComparison.Ordinal))
             {
-                return Results.Ok(HiddenDetail(Forbidden));
+                return Results.Ok(HiddenDetail(Forbidden, readPurpose));
             }
 
             ConversationFixtureTrust trust = string.Equals(conversationId, graph.StaleConversationId, StringComparison.Ordinal) ? Stale : Current;
@@ -80,6 +84,7 @@ internal static class ConversationsFixtureEndpoints
                 reasonCode = trust.ReasonCode,
                 details = Conversation(graph, conversationId, LinkedProject(graph, conversationId), trust),
                 safeNextAction = trust.SafeNextAction,
+                readPurpose,
             });
         });
         _ = app.MapPost(RoutePrefix + "/{conversationId}/project", (string conversationId, JsonElement body, HttpRequest request) =>
@@ -135,13 +140,14 @@ internal static class ConversationsFixtureEndpoints
         }
     }
 
-    private static object HiddenDetail(ConversationFixtureTrust trust) => new
+    private static object HiddenDetail(ConversationFixtureTrust trust, string? readPurpose) => new
     {
         schemaVersion = 1,
         freshnessState = trust.State,
         reasonCode = trust.ReasonCode,
         details = (object?)null,
         safeNextAction = trust.SafeNextAction,
+        readPurpose,
     };
 
     // Only the existing conversation is assigned; the unlinked and ambiguous conversations carry folder

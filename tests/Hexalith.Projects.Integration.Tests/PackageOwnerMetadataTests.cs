@@ -29,6 +29,9 @@ public sealed class PackageOwnerMetadataTests
     {
         Assembly published = typeof(Hexalith.Tenants.Contracts.Events.TenantAccessRefreshed).Assembly;
         (string executable, string declaration, string adapters) = Artifacts(owner);
+        Assert.SkipUnless(
+            File.Exists(executable) && File.Exists(declaration) && File.Exists(adapters),
+            "Prebuilt " + owner + " owner artifacts are missing.");
         PackageHost.PackageOwnerLoadContext context = new(executable);
         Assembly actual = context.LoadOwner(declaration);
         Path.GetFullPath(actual.Location).ShouldBe(Path.GetFullPath(declaration));
@@ -57,6 +60,9 @@ public sealed class PackageOwnerMetadataTests
     public async Task ChangedOwnerSdkContractIsRefused()
     {
         (string executable, string declaration, _) = Artifacts("tenants");
+        Assert.SkipUnless(
+            File.Exists(executable) && File.Exists(declaration),
+            "Prebuilt tenants owner artifacts are missing.");
         FixtureScratch scratch = new(true);
         await using var cleanup = scratch.ConfigureAwait(true);
         foreach (string path in Directory.GetFiles(Path.GetDirectoryName(executable)!))
@@ -87,6 +93,15 @@ public sealed class PackageOwnerMetadataTests
         };
         string configuration = typeof(PackageOwnerMetadataTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
         string output = Path.Combine(root, project, "bin", configuration, "net11.0");
+        if (!Directory.Exists(output) && !string.Equals(configuration, "Debug", StringComparison.OrdinalIgnoreCase))
+        {
+            string debug = Path.Combine(root, project, "bin", "Debug", "net11.0");
+            if (Directory.Exists(debug))
+            {
+                output = debug;
+            }
+        }
+
         return (Path.Combine(output, executable), Path.Combine(output, declarations), Path.Combine(output, adapters));
     }
 
