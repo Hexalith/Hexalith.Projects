@@ -25,7 +25,13 @@ $contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.UI.Contracts.csp
 $inspectionExitCode = 0
 Push-Location $repositoryRoot
 try {
-    & dotnet tool run frontcomposer -- inspect --project $contractsProject --configuration Release --build --fail-on-warning
+    & dotnet tool restore
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error -ErrorAction Continue "FrontComposer local tool restore failed with exit code $LASTEXITCODE."
+        exit $LASTEXITCODE
+    }
+
+    & dotnet tool run frontcomposer -- inspect --project $contractsProject --configuration Release --framework net11.0 --build --fail-on-warning
     $inspectionExitCode = $LASTEXITCODE
 }
 finally {

@@ -298,6 +298,9 @@ class FrontComposerInspectionTests(unittest.TestCase):
         executable.write_text(f"#!{sys.executable}\n" + '''import json, os, sys
 from pathlib import Path
 args = sys.argv[1:]
+if args[:2] == ["tool", "restore"]:
+    print("restored local FrontComposer tool")
+    raise SystemExit(0)
 if args[:5] != ["tool", "run", "frontcomposer", "--", "inspect"]:
     print("Unexpected source-tool invocation", file=sys.stderr)
     raise SystemExit(91)
@@ -306,7 +309,8 @@ generated = project.parent / "obj/Release/generated/HexalithFrontComposer/Fixtur
 record = {"args": args, "cwd": str(Path.cwd()), "generated_before": generated.exists()}
 Path(os.environ["FRONTCOMPOSER_STUB_RECORD"]).write_text(json.dumps(record))
 if ("--build" not in args or "--fail-on-warning" not in args
-        or args[args.index("--configuration") + 1] != "Release"):
+        or args[args.index("--configuration") + 1] != "Release"
+        or args[args.index("--framework") + 1] != "net11.0"):
     print("Missing fresh Release build or warning failure control", file=sys.stderr)
     raise SystemExit(92)
 mode = os.environ["FRONTCOMPOSER_STUB_MODE"]
@@ -348,7 +352,7 @@ print("retained successful inspection output")
         self.assertEqual([
             "tool", "run", "frontcomposer", "--", "inspect", "--project",
             str(self.contracts / "Hexalith.Projects.UI.Contracts.csproj"),
-            "--configuration", "Release", "--build", "--fail-on-warning",
+            "--configuration", "Release", "--framework", "net11.0", "--build", "--fail-on-warning",
         ], call["args"])
         self.assertIn("retained successful inspection output", result.stdout)
         self.assertIn("PASSED", result.stdout)
