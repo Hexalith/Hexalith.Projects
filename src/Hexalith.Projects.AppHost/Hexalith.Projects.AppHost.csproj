@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AspireUseCliBundle>true</AspireUseCliBundle>
+    <SkipAddAspireDefaultReferences>true</SkipAddAspireDefaultReferences>
     <IsPackable>false</IsPackable>
     <IsPublishable>true</IsPublishable>
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>
@@ -35,6 +36,7 @@
     <ProjectReference Include="$(HexalithBuildsRoot)\src\libraries\Hexalith.Builds.Tooling\Hexalith.Builds.Tooling.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
   <ItemGroup>
+    <!-- SkipAddAspireDefaultReferences avoids the SDK's implicit versioned reference, which CPM rejects. -->
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
