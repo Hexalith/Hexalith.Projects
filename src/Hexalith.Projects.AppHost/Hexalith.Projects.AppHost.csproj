@@ -35,6 +35,7 @@
     <ProjectReference Include="$(HexalithBuildsRoot)\src\libraries\Hexalith.Builds.Tooling\Hexalith.Builds.Tooling.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>

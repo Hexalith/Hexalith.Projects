@@ -24,6 +24,7 @@
     <ProjectReference Include="$(HexalithFoldersRoot)/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" />
     <PackageReference Include="YamlDotNet" />

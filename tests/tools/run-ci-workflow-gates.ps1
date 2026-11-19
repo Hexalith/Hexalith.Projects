@@ -900,7 +900,6 @@ Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
 Require-Match $ci "^\s*runtime-version:\s*'1\.19\.1'" 'Scheduled E2E must initialize the exact Dapr runtime 1.19.1.'
-Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.6\.5' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
 Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'
@@ -942,6 +941,11 @@ if ($e2eJobs.Count -ne 1) {
 else {
     $e2eJobText = $e2eJobs[0].Text
     $e2eSteps = @(Get-NamedStepBlocks -JobText $e2eJobText)
+    $e2eAspireStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Install Aspire CLI' -Owner 'Scheduled E2E'
+    $expectedAspireInstall = "      - name: Install Aspire CLI`n        run: dotnet tool install --global Aspire.Cli --version 17.0.0"
+    if ($null -ne $e2eAspireStep -and (Get-TrimmedBlockText -Text $e2eAspireStep.Text) -cne $expectedAspireInstall) {
+        $failures.Add('Scheduled E2E must install the exact supported Aspire CLI 17.0.0.')
+    }
     $e2eDaprStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Initialize Dapr' -Owner 'Scheduled E2E'
     if ($null -ne $e2eDaprStep) {
         Require-Match $e2eDaprStep.Text "^\s*version:\s*'1\.19\.1'\s*$" 'Scheduled E2E must initialize the exact Dapr CLI 1.19.1.'
