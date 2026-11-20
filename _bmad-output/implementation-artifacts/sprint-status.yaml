@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-11-16
+# last_updated: 2026-11-20
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -52,7 +52,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-11-16
+last_updated: 2026-11-20
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -216,6 +216,8 @@ readiness_provenance:
   correction_scope: internal-planning-artifacts-only
 story_6_1_prerequisite_chain: "usable supported SDK reads + authenticated actor/Folder authority -> focused story readiness -> finish/review 6.1 and accept recorded feature evidence -> 6.5 readiness against accepted 6.1-6.4 contracts and FrontComposer auth seam"
 entry_gate_correction: "Jerome approved E1-E7 on 2026-11-02; sprint-change-proposal-2026-11-01.md. Bounded 6.1/6.5 development exception only; historical NOT_READY, false P1R usability and all release obligations remain. P4 superseded, not accepted."
+
+audit_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-20.md
 
 development_status:
   # Epic 1: Project Workspace Foundation
@@ -551,7 +553,7 @@ action_items:
     status: open
     target_date: uncommitted
     depends_on: ["Epic-7-gate"]
-    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback"
+    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback. Include the owner status lookup and receipt needed to resume after Folder success and before Project activation."
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1"
   - epic: 8
@@ -603,7 +605,7 @@ action_items:
     status: open
     target_date: uncommitted
     depends_on: ["Stories 8.3-8.5", "G-5"]
-    expected_evidence: "Pinned revisions; authenticated commands and fixtures; semantic action/response parity manifest; cross-Tenant negative controls; authorization freshness results; NoPayloadLeakage artifacts; owner disposition"
+    expected_evidence: "Pinned revisions; authenticated commands and fixtures; semantic action/response parity manifest; cross-Tenant negative controls; authorization freshness results; NoPayloadLeakage artifacts; owner disposition. Exercise both shipped worker callbacks and both Server policy decisions in Release, including permitted delivery, denial with unchanged rows, and deployed ingress and identity evidence."
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
     routed_to: "Story 8.8"
   - epic: 8
@@ -638,7 +640,7 @@ action_items:
     status: open
     target_date: uncommitted
     depends_on: ["All deployable Epic 8 capabilities"]
-    expected_evidence: "Pinned deployed version and environment; topology identity; health/readiness results; authenticated smoke command, fixtures, artifact, result, and owner disposition"
+    expected_evidence: "Pinned deployed version and environment; topology identity; health/readiness results; authenticated smoke command, fixtures, artifact, result, and owner disposition. Attach role-specific outage and recovery evidence plus the exact-candidate authenticated journey with persistence and recovery. Record the full-release profile, source SHA, run and job."
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
     routed_to: "Story 8.11"
   - epic: 8
