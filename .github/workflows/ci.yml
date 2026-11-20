@@ -120,7 +120,6 @@ jobs:
       # `github.workspace` is empty when a reusable-workflow `with:` is evaluated.
       # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
       solution: Hexalith.Projects.CI.slnx
-      additional-sdk-version: '10.0.404'
       dapr-version: '1.19.1'
       dapr-runtime-version: '1.19.1'
       test-platform: microsoft-testing-platform
@@ -155,7 +154,7 @@ jobs:
         uses: Hexalith/Hexalith.Builds/Github/initialize-build@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
 
@@ -191,7 +190,7 @@ jobs:
         uses: Hexalith/Hexalith.Builds/Github/initialize-build@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
 
@@ -366,7 +365,7 @@ jobs:
         uses: Hexalith/Hexalith.Builds/Github/initialize-build@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
 
