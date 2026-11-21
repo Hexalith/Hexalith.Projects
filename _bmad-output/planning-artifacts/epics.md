@@ -69,11 +69,13 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 **Technical audit, 20 November 2026.** The [sprint change proposal](sprint-change-proposal-2026-11-20.md) maps the nine findings at `52d7ab34` to the owner, evidence and order of work. The following criteria apply to the current production plan in Epics 7 and 8. Story 6.7 retains its existing read-cutover review scope.
 
+**Sprint reconciliation, 21 November 2026.** The [course correction](sprint-change-proposal-2026-11-21.md) records the revised membership tests, public CLI/MCP refusals, exclusive Folder claim proof and full-release evidence.
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
 
-Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a domain-centric **EventStore DomainService** with platform-owned runtime and presentation adapters (per `architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md`, AD-1…34). It gives Hexalith.Chatbot a durable project context (metadata, setup, lifecycle, and references to Conversations/Folders/Files/Memories) and exposes one operational model through three surfaces (Web via FrontComposer, MCP, CLI). It is a **metadata control plane** — it references but never owns sibling-context payloads. Following the 2026-07-15/16 rebaseline the module is treated as **brownfield**: Epics 1–5 are completed implementation history, and the corrective Epics 6–8 migrate onto the supported platform via shadow-read-first, single-writer, compatibility-controlled cutover with **no event-history rewrite**.
+Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a domain-centric **EventStore DomainService** with platform-owned runtime and presentation adapters (per `architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md`, AD-1…35). It gives Hexalith.Chatbot a durable project context (metadata, setup, lifecycle, and references to Conversations/Folders/Files/Memories) and exposes one operational model through three surfaces (Web via FrontComposer, MCP, CLI). It is a **metadata control plane** — it references but never owns sibling-context payloads. Following the 2026-07-15/16 rebaseline the module is treated as **brownfield**: Epics 1–5 are completed implementation history, and the corrective Epics 6–8 migrate onto the supported platform via shadow-read-first, single-writer, compatibility-controlled cutover with **no event-history rewrite**.
 
 ## Requirements Inventory
 
@@ -81,7 +83,7 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable consequences in the PRD; abbreviated here._
 
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, and the 2026-09-08 PRD semantic revision is landed by E-31, with broader qualification still contained; the approved 2026-11-02 bounded entry correction governs 6.1 and its 6.5 consumer. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance. Consequential MCP confirmation by a human actor (and MCP Selection Evidence) stays disabled until Story 8.11 terminal acceptance together with §9 A-7; autonomous MCP confirmation stays out of scope (PRD §2.4). CLI confirmation depends on A-7 only.
+> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, and the 2026-09-08 PRD semantic revision is landed by E-31, with broader qualification still contained; the approved 2026-11-02 bounded entry correction governs 6.1 and its 6.5 consumer. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
 
 > **Machine-checkable scheduling guard:** `_bmad-output/implementation-artifacts/sprint-status.yaml` owns the authoritative `production_authority_epics: [6, 7, 8]` field. Before story creation, reopening, or scheduling, and before sprint reconciliation, `tools/planning/validate_production_authority.py` must pass. The validator permits current production work only for Epics 6–8 and rejects Epic 1–5 requests while preserving their readable `done` records. The required preflight is loaded by both workflows through `_bmad-output/project-context.md`; a nonzero result is a hard stop.
 
@@ -112,8 +114,8 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable con
 
 **Project Context Assembly**
 
-- **FR-16: Get Project Context** — Request names the Conversation. Projects serves context only for that Conversation's member Project, or, if unmembered, only for a Project the actor explicitly opened in that session. Same-Tenant; owner-system read re-checked at assembly; titles only when that read is current. Follows §5 required-set and `Denied` rules. (UJ-1, UJ-4)
-- **FR-17: Explain Context Selection** — Display/log metadata explaining why each reference was included/excluded. No secrets/file contents/transcripts/prompts/memory payloads in explanation metadata; supports troubleshooting incorrect context selection. (UJ-4)
+- **FR-16: Get Project Context** — Conversations must return current native membership for the named Conversation in the requested Project and Tenant under the original actor and any delegation. Project and Folder authorization are checked independently. Require current owner authorization for each included reference. Apply the §5 required-set and denial rules. (UJ-1, UJ-4)
+- **FR-17: Explain Context Selection** — Display/log metadata explaining why each reference was included/excluded. No secrets/file contents/transcripts/prompts/memory payloads in explanation metadata; supports troubleshooting incorrect context selection. (UJ-4) Context explanations use the same native membership and actor checks as FR-16. Story 6.4 advisory explanations describe observations only.
 - **FR-18: Refresh Project Context** — Re-assemble Project Context after links/setup/availability changes. Reflects current links + lifecycle, preserves tenant authorization, surfaces stale/unavailable references rather than silently ignoring them.
 
 **Project Setup Quality**
@@ -232,11 +234,11 @@ _Source: UX Design Specification + FrontComposer web-UX research. The UX scope i
 
 **CLI surface**
 
-- **UX-DR19 — CLI command structure:** Scriptable, stable command grouping mirroring the model — read-only `list`/`describe`/`inspect`/`trace-resolution`(`trace`)/`validate-references`(`validate`)/`audit`/`refresh-context`; preview `dry-run`/`preview`; mutating `archive`/`restore`/`move`/`replace-folder`/`unlink` (explicit target + confirmation semantics). A retained `reevaluate` compatibility alias is read-only and maps exactly to `RefreshContext`. Machine-readable JSON output, stable exit codes, redaction-safe, no reliance on color for meaning. On `Hexalith.McpCli` (approved 2026-11-15), the read-only group is exposed as `projects.list`; `projects.describe`, which covers `describe`, `inspect` and `validate`/`validate-references` through its reference states; and `projects.trace-conversation` and `projects.trace-attachments`, which cover `trace`/`trace-resolution`. `audit` is absent until Story 8.1. `refresh-context`, preview and mutating commands belong to Story 8.4. McpCli refuses confirmation-required and UI-only actions (Platform AD-14, AD-29), and neither A-7 nor Story 8.11 enables them on McpCli. Confirmation stays on the confidential interactive Web and Chatbot UI.
+- **UX-DR19 — CLI command structure:** McpCli enrolls four inspection operations: `projects.list`, `projects.describe` (including reference validation), `projects.trace-conversation` and `projects.trace-attachments`. Story 8.1 owns audit and Story 8.4 owns the eligible CLI extensions, including read-only `refresh-context`. Require explicit scope, stable exit codes and redaction-safe JSON. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
 
 **MCP surface**
 
-- **UX-DR20 — MCP resources vs tools:** Read-only **resources** (project metadata, references, resolution traces, audit events, `RefreshContext`) are clearly separated from mutating **tools** (archive/restore/move/replace-folder/unlink). Structured safe metadata fields (`projectId`, `tenantId`, state, references, reasonCodes, warnings, audit IDs) **plus** a short safe explanation — never explanation-only. Tenant-aware; mutating tools require explicit action + target IDs + tenant scope + confirmation contract + validation/dry-run before execution; reject unknown tools with suggestions. Consequential MCP confirmation by a human actor and MCP Selection Evidence stay disabled until §9 A-7 holds and Story 8.11 records terminal acceptance; autonomous MCP confirmation stays out of scope (PRD §2.4).
+- **UX-DR20 — MCP resources and tools:** Discover eligible decorated Contracts and authorize each call through the Gateway. Return structured Safe Metadata, reason codes and a short explanation. Unknown tools get safe suggestions. Task control and export require their own enrollment and authorization. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
 
 **Interaction & feedback patterns**
 
@@ -1276,11 +1278,7 @@ and evidence, **not** release authority.
 story-file creation and sprint reconciliation. The 2026-08-01 independent assessment supersedes the
 implementation disposition with `NOT READY`. The approved 2026-08-01 artifact corrections are
 applied. Broader qualification retains NOT_READY; the approved 2026-11-02 bounded exception allows 6.1/6.5 focused feature readiness without the old P0–P4/READY chain.
-Production release, consequential MCP confirmation by a human actor (and MCP Selection Evidence),
-and proposed-Project confirmation on MCP remain blocked until **Story 8.11** terminal acceptance
-together with §9 A-7. Autonomous MCP confirmation stays out of scope (PRD §2.4) and is never
-enabled by that record. CLI confirmation depends on A-7 only. Dated terminal acceptance remains
-from **Jerome and John**. No
+Production release requires dated terminal acceptance from **Jerome and John** under Story 8.11. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role. No
 failed/skipped/blocked/unavailable critical evidence may be represented as passing; no event history
 is rewritten; no unsafe dual writer is introduced; no sibling repository is changed without separate
 repository-local authorization and validation.
@@ -1431,7 +1429,7 @@ So that **Chatbot can start or resume that Conversation from durable setup truth
 
 **Acceptance Criteria:**
 
-**Given** a request that names a Conversation, **When** `GetConversationStartSetup` runs, **Then** Projects serves the start subset only for that Conversation's member Project, or, if it has no membership, only for a Project the actor explicitly opened in that session.
+**Given** a Conversation-start request, **when** retrieving Setup, **then** Conversations must return current native membership for the named Conversation in the requested Project and Tenant under the original actor and any delegation. Project and Folder authorization are checked independently. First-response admission requires the authorized snapshot and usable membership. Return only the Conversation-start subset.
 
 **Given** an authorized Active Project under that rule, **When** the read runs, **Then** it returns only the start subset (goals, instructions, context preferences, default linked-source policy), excludes internal audit metadata and unauthorized/unavailable references, and carries the AD-32 snapshot bound to one `projectVersion` / `asOf`. The required set is the Project record, Project Folder, Project Setup, and actor authorization evidence; Setup-marked references join the required set; optional omissions use `ExcludedBySetupPolicy`. Every included reference is same-Tenant; owner-system read is re-checked at assembly; titles appear only when that read is current.
 
@@ -1451,7 +1449,7 @@ So that **Chatbot grounds that Conversation in current, authorized, metadata-onl
 
 **Acceptance Criteria:**
 
-**Given** a request that names a Conversation, **When** `GetProjectContext`/`RefreshProjectContext` runs, **Then** Projects serves context only for that Conversation's member Project, or, if it has no membership, only for a Project the actor explicitly opened in that session.
+**Given** a named Conversation, **when** serving `GetProjectContext` or explaining its selection, **then** Conversations must return current native membership for the named Conversation in the requested Project and Tenant under the original actor and any delegation. Project and Folder authorization are checked independently. Refresh preserves the applicable context authorization.
 
 **Given** an authorized Active Project under that rule and the Reference Trust Index, **When** assembly runs, **Then** a reference is included only after same-Tenant + project + lifecycle + owner-system read + freshness all pass; titles/names appear only when owner-system read is current; exclusions carry a shared-vocabulary state + reason code; Setup-marked references join the required set and optional omissions use `ExcludedBySetupPolicy`; the result is metadata-only and carries the AD-32 snapshot; refresh is a **read-only recompute** that never mutates.
 
@@ -1568,6 +1566,8 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 **Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** activation is refused or an operator explicitly selects deterministic rollback to a security-verified legacy path; if no safe rollback path is available, the affected read is unavailable, and the blocker is recorded honestly.
 
+**Given** the supported and retained reads, **when** checking native membership, **then** test an unbound Conversation after an explicit Project open and a stale advisory `ConversationLinked` hint separately. With readable Project and missing or unavailable membership, return supported AD-32 `Unavailable` with null Setup, no included references and no first-response admission. Retained context/setup/explain returns 503 without a usable payload. Project or Tenant denial keeps its nondisclosing response. Bind the results to the Story 6.7 source packet.
+
 - **Verification (E1 lane, extended 2026-11-16):** the individual Debug Projects test projects named in the 6.7 spec, each built with `--configuration Debug -m:1 -p:NuGetAudit=false --disable-build-servers` and run as a built xUnit v3 assembly with native XML. No common runner; AD-25 still gates runtime retirement. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
 
 ### Story 6.8: Split Hexalith.Projects.UI.Contracts from the packable Contracts package
@@ -1683,15 +1683,15 @@ As a **Project User with no prior Project authority on Chatbot, or a Service/Wor
 I want **an accepted creation request to activate through the proven Folder-first Durable Task path**,
 So that **the Project becomes caller-visible and Active only after exactly one authorized Folder is bound and the authoritative read model confirms completion (FR-1, FR-19), with no observable folderless-Active interval**.
 
-- **Traceability:** FR-1, FR-19, FR-25 (when a Folder is supplied); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31, AD-33; UJ-2, UJ-3; findings REL-001, E-9; §9 A-2, A-3; canonical evidence rows `fr-1`, `fr-19`.
-- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. Open DW-63 must also be accepted before writer cutover, with SDK-host compatibility and AD-17 evidence as specified in the Epic 7 prerequisite above.
+- **Traceability:** FR-1, FR-19, FR-25 (when a Folder is supplied); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31, AD-33, AD-35; UJ-2, UJ-3; findings REL-001, E-9; §9 A-2, A-3; canonical evidence rows `fr-1`, `fr-19`.
+- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. At the first writer gate, Projects must prove the AD-35 claim against pinned Folders authorization under G-2. Open DW-63 must also be accepted before writer cutover, with SDK-host compatibility and AD-17 evidence as specified in the Epic 7 prerequisite above.
 - **Persona note:** A Tenant Project Administrator is **not** a creation persona.
 
 **Acceptance Criteria** (plus shared invariants 1–8):
 
 **Given** an authorized request accepted through 7.1-P1, **When** admission runs, **Then** the task reserves one hidden ProjectId, invokes the accepted 7.1-P2 Folder contract using a deterministic task-step key and expected owner version, and persists the owner receipt before advancing.
 
-**Given** the accepted Folder receipt, **When** activation advances, **Then** one `ProjectCreated` event is committed already containing the Folder binding and the Project remains hidden until the authoritative read model confirms Active completion.
+**Given** current Folders resource and actor authorization, **when** activating a Project, **then** Projects atomically acquires the exclusive `(TenantId, FolderId)` claim under AD-35. Its durable receipt binds Project, task, step and generation. Commit one `ProjectCreated` event containing the Folder binding against the expected Project version, fenced by the winning claim receipt. Expose the Project only after the Active read model confirms it.
 
 **Given** Folder creation for a no-Folder request, **When** Folders creates the Folder, **Then** it names the original actor as sole manager with no Tenant-default read, and Projects' workload identity holds no Folder authorization.
 
@@ -1700,6 +1700,10 @@ So that **the Project becomes caller-visible and Active only after exactly one a
 **Given** a Project User request that supplies a Folder without valid Selection Evidence, **When** admission is evaluated, **Then** it is an Inferred Association under FR-8/FR-15 and returns `RequestPreview`.
 
 **Given** a target Folder that is already another Active Project's Folder or belongs to another Tenant, **When** bind is attempted, **Then** it fails closed (exclusive Folder). Same-name creation is create-only; a collision fails closed (A-2). An orphaned or reserved Folder stays `NeedsAttention` and is never an implicit target.
+
+**Given** two Projects racing for one free Folder, **when** the winner loses its reply and resumes on another replica, **then** query authoritative claim status by task and step and recover the same receipt. The competing Project receives a nondisclosing refusal. The receipts and both Project histories must prove at most one Active holder. An uncertain commit retains the claim. Fence the outstanding commit before releasing an abandoned reservation. A stale commit or release from an older generation must leave a later holder intact.
+
+**Given** legacy writers at cutover, **when** enabling a Tenant/Folder key, **then** fence legacy writes under AD-17, reconstruct the incumbent from authoritative Project history and reserve its claim first. Reject new claims to an occupied key and keep incomplete or conflicting histories closed. Include incumbent, ambiguous history and free-Folder cases in the first writer evidence.
 
 **Given** an equivalent retry, changed request, duplicate delivery, restart, concurrency, or lost response, **When** the task resumes, **Then** equivalent retries converge to the original task and outcome, changed requests conflict, and unknown owner responses are resolved through authoritative status before retry.
 
@@ -1713,9 +1717,9 @@ So that **the Project becomes caller-visible and Active only after exactly one a
 
 **Given** a Projects or sibling workload identity, **When** it is presented as the actor, **Then** it does not widen Folder manage, subject read, or confirmation authority.
 
-**Given** a reserved identity, **when** execution stops before Folder provisioning, after its durable receipt, or while list/detail projections lag, **then** an equivalent retry produces exactly one bound Project/Folder pair. Inspect the committed events and both supported and retained list/detail reads at each boundary. A new Project becomes visible as Active and usable for context only after binding. Replay historical `ProjectFolderCreationPending` records under the legacy reconciliation rules.
+**Given** a reserved identity, **when** execution stops before Folder provisioning, after its durable receipt, or while list/detail projections lag, **then** an equivalent retry produces exactly one bound Project/Folder pair. Inspect the committed events and both supported and retained list/detail reads at each boundary. A new Project becomes visible as Active only after binding and read-model confirmation. Conversation context also requires current native membership. Replay historical `ProjectFolderCreationPending` records under the legacy reconciliation rules.
 
-- **Estimate:** L. **Completion boundary:** end-to-end Folder-first FR-1 activation with no folderless-Active window; neither prerequisite package independently delivers FR-1. Supersedes Story 1.4's create criteria.
+- **Estimate:** L. **Completion boundary:** end-to-end Folder-first FR-1 activation with one authorized Folder per Active Project and at most one Active Project per Tenant/Folder; neither prerequisite package independently delivers FR-1. Supersedes Story 1.4's create criteria.
 
 ### Story 7.2: Update Project Setup idempotently
 
@@ -1837,7 +1841,7 @@ So that **the exactly-one-Folder invariant holds during replacement (FR-8) and t
 
 **Given** a valid confirmation, authority, and a new authorized Folder, **When** replace runs, **Then** the new Folder is verified before binding, `ProjectFolderSet` records the new stable Folder identity, the Project retains exactly one Folder throughout, and folder authorization stays delegated to Folders.
 
-**Given** a target that is another Active Project's Folder or another Tenant, **When** replace is attempted, **Then** it fails closed (exclusive Folder).
+**Given** a target that is another Active Project's Folder or another Tenant, **When** replace is attempted, **Then** it fails closed (exclusive Folder). Under AD-35, acquire the incoming claim before the expected-version binding commit. Release the outgoing generation conditionally after that commit and writer fencing. Retain it while the commit outcome is unknown.
 
 **Given** a Project User, **When** replace is requested, **Then** the actor holds manage on both Folders; any reader loss fails closed; the Preview delta is counts already readable in Folders.
 
@@ -2015,7 +2019,7 @@ So that **a Project is created from inference only after authorized confirmation
 
 **Acceptance Criteria** (plus shared invariants 1–8; confirmation-required):
 
-**Given** a proposed Project with suggested name + initial setup and a bound Preview, **When** the user confirms, **Then** creation runs the **same Folder-first idempotent path as 7.1** (metadata classified, exactly-one-Folder), then links the initiating Conversation/attachments via the owner; no Project exists before confirmation.
+**Given** a proposed Project with suggested name + initial setup and a bound Preview, **When** the user confirms, **Then** creation runs the **same Folder-first idempotent path as 7.1** (metadata classified, exactly-one-Folder), then links the initiating Conversation/attachments via the owner; no Project exists before confirmation. Reuse the AD-35 claim receipt. Task success requires owner-confirmed membership of the initiating Conversation and outcomes for the authorized attachments.
 
 **Given** a stale/replayed Preview or denied authority, **When** confirm is attempted, **Then** it fails closed with no Project and no Folder side effect.
 
@@ -2029,7 +2033,7 @@ So that **a Project is created from inference only after authorized confirmation
 
 **Given** an admitted proposal whose creation or Conversation, Folder or File step has already succeeded, **when** an authorized equivalent request reaches another replica after restart, **then** resolve the scoped idempotency key to the original task before recomputing `NoMatch`. Resume from durable owner receipts and reconcile an unknown result before retrying. Verify one effect per owner and a truthful terminal or recoverable outcome after each interruption. Independent actors and Tenants may reuse a key. Within one scope a changed request conflicts. A Boolean alone, an expired artifact or a mismatched session cannot admit a new task.
 
-- **Estimate:** L. **Completion boundary:** durable confirmed proposed-creation; consequential MCP confirmation by a human actor stays disabled until §9 A-7 holds and Story 8.11 records terminal acceptance; autonomous MCP confirmation stays out of scope (§2.4).
+- **Estimate:** L. **Completion boundary:** The Project User confirms proposed creation in the confidential Chatbot component. Both public McpCli heads refuse confirmation.
 
 ### Story 7.13: Archive an Active Project
 
@@ -2041,9 +2045,9 @@ So that **archival is consequential, recoverable, and auditable (FR-4) while ref
 
 **Acceptance Criteria** (plus shared invariants 1–8; confirmation-required):
 
-**Given** a valid confirmation and authority over an Active Project, **When** archive runs, **Then** lifecycle becomes `Archived` after read-model confirmation, the Project is excluded from automatic resolution unless explicitly requested, and references remain auditable.
+**Given** a valid confirmation and authority over an Active Project, **When** archive runs, **Then** lifecycle becomes `Archived` after read-model confirmation, the Project is excluded from automatic resolution unless explicitly requested, and references remain auditable. Release the outgoing AD-35 claim only after the authoritative archive commit and fencing of stale writers. A delayed release names the exact Project and generation.
 
-**Given** a Project User, **When** archive is requested, **Then** Folder manage is required. Tenant-role archive is on Web; CLI once A-7 holds; MCP once A-7 holds **and** the consequential-MCP gate passes.
+**Given** a Project User, **when** archive is requested, **then** Folder manage is required. A Tenant-role actor confirms archive on the authorized confidential Web surface. Both public McpCli heads refuse the action regardless of the caller’s interactive claim.
 
 **Given** a Tenant-role caller, **When** Preview is issued, **Then** Preview bodies are Descriptive Metadata and require inspection authorization.
 
@@ -2069,7 +2073,7 @@ So that **restore is the safe counterpart to archive (FR-23, UJ-5) with no inval
 
 **Given** an authorized Archived Project, **When** `RequestPreview` runs, **Then** it verifies Tenant, actor, authority, current Project version, and **exactly one authorized Folder**; if the prior Folder is invalid or missing, the Preview requires an authorized replacement or same-name Folder plan and issues a bound artifact.
 
-**Given** a prior Folder that is invalid or missing, **When** restore is planned, **Then** replacement or same-name creation is a Tenant Project Administrator inferred binding under FR-8 (no Selection Evidence) or create-only same-name creation naming a designated Project User; Project User replacement-restore is unreachable when the Folder is missing. An orphaned Folder is never the implicit target.
+**Given** a prior Folder that is invalid or missing, **When** restore is planned, **Then** replacement or same-name creation is a Tenant Project Administrator inferred binding under FR-8 (no Selection Evidence) or create-only same-name creation naming a designated Project User; Project User replacement-restore is unreachable when the Folder is missing. An orphaned Folder is never the implicit target. While the Project is Archived, acquire its AD-35 claim before any binding or restore commit. A competing holder leaves the Project Archived.
 
 **Given** a Tenant Operator, **When** restore is requested, **Then** only rebinding the prior Folder is allowed.
 
@@ -2105,6 +2109,8 @@ So that **legacy partial records reach a safe terminal disposition before their 
 
 **Given** Active-folderless records, **When** inventory runs, **Then** they are quarantined and inventoried, never auto-bound. Binding is Story 7.6 / FR-8 by a Tenant Project Administrator.
 
+For legacy Folder repair, resolve the incumbent from authoritative history and apply the Story 7.1 claim and fencing checks before restoring visibility.
+
 **Given** per-record compensating tasks, **When** classified, **Then** they are migration (AD-17), not FR-22 reconciliation.
 
 **Given** committed history, **When** reconciliation runs, **Then** no event is rewritten and no unsafe dual writer is introduced; new writes stop emitting `ProjectFolderCreationPending` while its deserializer/apply are retained.
@@ -2120,7 +2126,7 @@ I want **to pick the target of an additive association inside the Projects-owned
 So that **actor-selected links and initial Folder binding are distinguishable from Inferred Associations (FR-25, §4, §9 A-6) without a mint or confirm API**.
 
 - **Traceability:** FR-25; NFR-1, NFR-8; AD-2, AD-5, AD-13, AD-20, AD-33; UJ-1, UJ-2 (PRD Realizes claim; story journeys also exercise UJ-3); evidence row `fr-25`.
-- **Entry gate:** Epic 7 gate, G-2, G-3, G-5; Chatbot host via accepted 8.8-P3 companion pin. Web or MCP hosting is out of v1 unless a Project User surface is registered there and, for MCP, the consequential-MCP gate (Story 8.11 + A-7) has passed.
+- **Entry gate:** Epic 7 gate, G-2, G-3, G-5 and the accepted 8.8-P3 companion pin for the Chatbot host. Only a registered confidential Project User component may mint Selection Evidence. Story 7.16 delivers the Chatbot component.
 - **Prior-only deps:** Stories 6.1 (permitted-set enumeration) and 7.1 (creation/initial Folder). Stories 7.3, 7.7, 7.9, and 7.14 consume this story’s evidence contract.
 
 **Acceptance Criteria** (plus shared invariants 1–8):
@@ -2135,7 +2141,7 @@ So that **actor-selected links and initial Folder binding are distinguishable fr
 
 **Given** evidence that is missing, expired, consumed, mismatched on subject or target, or minted on another surface, **When** a link or binding is requested, **Then** it is rejected with `RequestPreview`.
 
-**Given** CLI, or MCP before the consequential-MCP gate, **When** an association is requested, **Then** it is an Inferred Association; no Selection Evidence is minted.
+**Given** either public McpCli head, **when** an association is requested, **then** classify it as inferred, refuse confirmation and mint no Selection Evidence.
 
 - **Estimate:** L. **Completion boundary:** Chatbot selection component mints session-bound Selection Evidence; no mint/confirm API; Web/MCP hosting not in the v1 completion boundary.
 
@@ -2256,7 +2262,7 @@ So that **support gets bounded metadata truth (FR-24) without unbounded troubles
 
 Every operator adapter consumes the versioned Projects contract classification below. A surface may
 retain `reevaluate` only as an explicit compatibility alias for read-only `RefreshContext`; it cannot
-infer or change admission behavior.
+infer or change admission behavior. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
 
 | Admission class | Stable actions | UX contract |
 |---|---|---|
@@ -2658,7 +2664,7 @@ So that **scripted operations get a stable, independently verifiable, redaction-
 
 **Acceptance Criteria:**
 
-**Given** an action from the canonical matrix, **When** invoked, **Then** the CLI requires explicit target IDs and Tenant scope, applies that action's exact confirmation-required, task-only, task-control, selection-mint, or synchronous-read admission contract, and returns deterministic JSON with stable exit codes. Confirmation-required CLI actions run only after the accepted A-7 claim; otherwise they return a safe denial. CLI is not gated on Story 8.11. Output is Safe Metadata by default; Descriptive fields appear only under inspection authorization.
+**Given** an enrolled CLI operation, **when** invoked, **then** use credential-bound Tenant and actor scope, explicit target IDs as applicable, stable exit codes and deterministic Safe Metadata JSON. Descriptive output requires its inspection authorization. Exercise requests for confirmation and selection with an interactive claim and after release: return a safe refusal without a token, task or domain effect.
 
 **Given** `refresh-context`, **When** invoked, **Then** it is a read command with no confirmation, task, or maintenance audit; any retained `reevaluate` alias maps byte-for-byte to the same canonical request and semantics.
 
@@ -2681,13 +2687,13 @@ So that **agents operate Projects safely and all three adapters can be compared 
 
 **Given** MCP read **resources** and action **tools**, **When** a tool is invoked, **Then** it consumes the canonical action classification, requires explicit action, target IDs, and Tenant scope, carries structured safe metadata plus a short safe explanation, applies the action's exact admission contract, and cannot bypass required Preview/Confirmation/admission or expand permissions.
 
-**Given** an end-user resolution/proposal confirmation, **When** MCP attempts it, **Then** it is refused; consequential MCP confirmation by a human actor remains disabled until A-7 holds and Story 8.11 records terminal acceptance, with containment state shown explicitly; autonomous mutation stays out of scope and is never enabled.
+**Given** either a human or agent caller, **when** the public MCP head receives a confirmation-required or selection request, **then** refuse it with a safe explanation and no artifact, task or domain effect. Repeat with A-7 present and terminal release accepted. Eligible reads still require Gateway authorization.
 
-**Given** Web Story 8.3 and CLI Story 8.4 evidence, **When** the parity lane runs after the MCP adapter exists, **Then** Web, CLI, and MCP are semantically equivalent for action classification, authority, states, reason codes, timestamps, recovery actions, denial, and redaction while surface formatting may differ.
+**Given** Web and public McpCli conformance evidence, **when** comparing surfaces, **then** verify shared classification, reason codes, denial, redaction and task semantics for enrolled operations. Verify that only registered confidential UI can confirm and that both public heads refuse the same attempted confirmation.
 
 **Given** an unknown tool, **When** called, **Then** it is rejected with suggestions.
 
-- **Estimate:** M. **Completion boundary:** agent-safe MCP contracts plus the first complete three-surface semantic comparison; consequential MCP confirmation by a human actor stays disabled until A-7 and Story 8.11; autonomous mutation stays out of scope and is never enabled.
+- **Estimate:** M. **Completion boundary:** Agent-safe MCP contracts and verified Web, CLI and MCP behavior for eligible calls and mandatory refusals.
 
 ### Story 8.6: Observe truthful dependency and projection health
 
@@ -2753,7 +2759,7 @@ immutable revision, companion contract version, approval date, approving authori
 owner, authenticated commands and deterministic fixtures, expected artifact paths and hashes,
 results and terminal disposition, and containment/rollback treatment for contract drift. Its
 journey evidence covers candidate/proposal presentation, no preselection, confirm/cancel,
-the FR-25 selection step, sole-candidate accept/decline, `ConversationLinked` exemption,
+the FR-25 selection step, sole-candidate accept/decline, current authorized native membership for resumption, and refusal of first-response admission after an unbound Project open or stale `ConversationLinked` hint,
 `ReadOnlyCandidate`, session/surface mismatch, expiry/staleness/replay/tamper/mismatch, lost response,
 every task state, cancellation, recovery, authoritative completion re-query, response-state
 admission, and NFR-9 accessibility. SM-7 / SM-8 / SM-C4 companion feed follows A-1; SM-2 and SM-3
@@ -2852,7 +2858,7 @@ So that **production is enabled only from complete, honest, owner-approved proof
 
 **Given** accepted 8.11-P1/P2/P3 artifacts and all other critical evidence, **When** release is proposed, **Then** Jerome and John review the evidence, record dated residual-risk dispositions, and each records an explicit terminal accept or reject decision.
 
-**Given** both Release Owners accept, **When** the terminal record is validated, **Then** production, consequential MCP confirmation by a human actor, MCP Selection Evidence, and proposed-Project confirmation on MCP may be enabled only after that accepted record together with §9 A-7. Autonomous MCP confirmation and blanket service-identity mutation stay out of scope (PRD §2.4) and are never enabled by the record.
+**Given** both Release Owners accept the full candidate, **when** the dated terminal record is validated, **then** it authorizes production deployment for that candidate. Repeat the public CLI and MCP refusal checks for confirmation and Selection Evidence after acceptance. Autonomous mutation remains excluded.
 
 **Given** a rejection, unavailable environment, unresolved critical case, missing package, or blocker, **When** Story 8.11 is evaluated, **Then** it cannot complete and records no passing terminal disposition.
 

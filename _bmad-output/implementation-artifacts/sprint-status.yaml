@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-11-20
+# last_updated: 2026-11-21
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -52,7 +52,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-11-20
+last_updated: 2026-11-21
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -218,6 +218,7 @@ story_6_1_prerequisite_chain: "usable supported SDK reads + authenticated actor/
 entry_gate_correction: "Jerome approved E1-E7 on 2026-11-02; sprint-change-proposal-2026-11-01.md. Bounded 6.1/6.5 development exception only; historical NOT_READY, false P1R usability and all release obligations remain. P4 superseded, not accepted."
 
 audit_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-20.md
+sprint_reconciliation: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-21.md
 
 development_status:
   # Epic 1: Project Workspace Foundation
@@ -294,6 +295,7 @@ development_status:
 
   # Epic 7: Users Complete Durable Project Decisions and Recover Them
   # DW-63 stays open; SDK-host integration now gates 7.1 writer cutover, not 6.7 (sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md).
+  # Story 7.1 also requires Projects-owned AD-35 cross-replica claim and legacy fencing proof at the first writer gate.
   epic-7: backlog
   7-1-activate-a-project-with-exactly-one-authorized-folder: blocked
   7-2-update-project-setup-idempotently: backlog
@@ -553,7 +555,7 @@ action_items:
     status: open
     target_date: uncommitted
     depends_on: ["Epic-7-gate"]
-    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback. Include the owner status lookup and receipt needed to resume after Folder success and before Project activation."
+    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback. Include Folders authorization and its owner receipt/status lookup after provisioning. Story 7.1 separately verifies the Projects-owned AD-35 claim, fencing and recovery using those owner inputs."
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1"
   - epic: 8
@@ -627,7 +629,7 @@ action_items:
     status: blocked-external
     target_date: uncommitted
     depends_on: ["Approved Chatbot companion artifact"]
-    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage"
+    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage. Cover unbound membership after explicit open and stale advisory linkage as separate first-response denial cases."
     projects_evidence_pin: "evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#46-require-and-pin-the-external-chatbot-companion-ux-artifact"
     latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#45-reconcile-package-tracking-and-traceability-without-claiming-acceptance"

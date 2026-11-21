@@ -68,7 +68,7 @@ The direct UX users for this module are administrators, operators, developers, a
 ### Design Opportunities
 
 - Treat CLI, MCP, and Web as three adapters over one operational diagnostic model.
-- Provide scriptable CLI diagnostics for project lookup, reference health, current resolution recomputation from authorized inputs, lifecycle changes, and safe maintenance actions.
+- Provide scriptable CLI inspection of authorized Projects, reference health and current advisory resolution results.
 - Provide MCP resources and tools for agent-assisted troubleshooting, with read-only resources separated from mutating tools.
 - Provide FrontComposer-generated Web views for project lists, project detail, reference inventory, resolution trace, audit timeline, warnings, and guided maintenance actions.
 - Explain context inclusion and exclusion with safe reason codes that administrators and tools can understand.
@@ -76,7 +76,7 @@ The direct UX users for this module are administrators, operators, developers, a
 
 ### Design Principle: One Operational Model, Three Surfaces
 
-CLI, MCP, and Web UX must expose the same project metadata, lifecycle states, context-resolution evidence, reference health, reason codes, warnings, audit identifiers, and maintenance actions through surface-appropriate interactions. Web UX is composed through Hexalith.FrontComposer; CLI remains scriptable; MCP remains structured for agent-assisted diagnostics. No surface may expose payloads owned by Conversations, Folders, Files, Memories, Chatbot, or other bounded contexts.
+CLI, MCP, and Web UX must expose the same project metadata, lifecycle states, context-resolution evidence, reference health, reason codes, warnings, audit identifiers, through surface-appropriate interactions. Each surface exposes only its authorized operations. Confirmation-required maintenance uses confidential UI. Web UX is composed through Hexalith.FrontComposer; CLI remains scriptable; MCP remains structured for agent-assisted diagnostics. No surface may expose payloads owned by Conversations, Folders, Files, Memories, Chatbot, or other bounded contexts.
 
 ## Core User Experience
 
@@ -298,7 +298,7 @@ Web UX should be specified as FrontComposer-generated operational views:
 
 CLI UX should use stable command structures and machine-readable output while preserving the same state and reason-code vocabulary.
 
-MCP UX should expose structured resources and tools using the same safe metadata model, with clear separation between read-only diagnostic resources and mutating maintenance tools.
+The public MCP surface exposes enrolled Gateway operations. Return Safe Metadata under the calling actor’s authority. Refuse confirmation-required and UI-only actions, including requests to mint Selection Evidence.
 
 ### Customization Strategy
 
@@ -576,9 +576,9 @@ FrontComposer Web UX should implement the chosen direction through:
 - Warning and error panels.
 - Maintenance action panels with preview, Confirmation Artifact, Durable Task, and recovery behavior.
 
-CLI should mirror the same model through describe, inspect, trace, validate, dry-run, and maintenance commands.
+CLI inspection uses the enrolled McpCli list, describe and trace operations documented under Navigation Patterns.
 
-MCP should mirror the same model through read-only resources for project metadata, references, resolution traces, and audit events, plus clearly separated mutating tools for maintenance actions.
+MCP presents the enrolled read operations. Task control and export require separate enrollment, authorization and proof. Confirmation-required maintenance remains on the eligible confidential UI.
 
 All surfaces must preserve the same state names, reason codes, warning semantics, tenant scope, audit identifiers, and payload-exclusion guarantees.
 
@@ -631,7 +631,8 @@ flowchart TD
     J --> K{Canonical admission class?}
     K -- Synchronous read --> L[Export/copy safe diagnostic metadata if needed]
     K -- Durable Task only --> M[Show tenant, target IDs, impact, task, and recovery]
-    K -- Confirmation + Durable Task --> N[Show server Preview, scope, impact, expiry, and expected audit]
+    K -- Confirmation on confidential UI --> N[Show server Preview, scope, impact, expiry, and expected audit]
+    K -- Confirmation on public CLI or MCP --> P
     N --> O{Confirm action?}
     O -- No --> P[Return to read-only diagnostics]
     O -- Yes --> Q[Admit Durable Task and record applicable metadata-only audit]
@@ -643,7 +644,7 @@ flowchart TD
 
 ### Journey 3: Confirm and Recover a Durable Maintenance Action
 
-Administrators archive, restore, move, replace-folder, or unlink through a Confirmation Artifact and a pollable
+On the confidential Web surface, administrators archive, restore, move, replace-folder, or unlink through a Confirmation Artifact and a pollable
 Durable Task. Admission, progress, recovery, cancellation, and completion are separate states.
 
 1. `RequestPreview` returns an opaque, single-use Confirmation Artifact that expires after 15
@@ -695,6 +696,8 @@ Durable Tasks.
 | Synchronous read | list/open/resolve/context/refresh/validate/Conversation-start/audit/operator-read and `safe-diagnostic-export.create` | No Confirmation Artifact or Durable Task; Safe Diagnostic Export retains separate authorization and bounds |
 | Selection mint | `selection.mint` | Synchronous, session-bound, mints Selection Evidence, no Durable Task, no Confirmation Artifact |
 
+Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
+
 **Selection step.** The Projects-owned component on Chatbot enumerates permitted targets and mints
 Selection Evidence from the actor’s pick. List, open, and resolution never preselect a target.
 Missing, expired, consumed, or mismatched evidence yields `RequestPreview`.
@@ -713,19 +716,14 @@ flowchart TD
     B -- Synchronous read --> C[Return structured safe metadata]
     C --> D[Include raw fields: projectId, tenantId, state, references, reasonCodes, warnings, audit IDs]
     D --> E[Include short safe explanation]
-    B -- Confirmation + Durable Task --> GATE{A-7 and Story 8.11 gate open?}
-    GATE -- No --> CLOSED[Safe denial naming Web; show containment state]
-    GATE -- Yes --> F[Request single-use Confirmation Artifact]
-    F --> G[Return scope, current versions, impact, warnings, expiry, and expected audit]
-    G --> H{Authorized confirmation accepted?}
-    H -- No --> I[Return safe rejection or RenewPreview and admit no task]
-    H -- Yes --> J[Return pollable Durable Task ID]
-    B -- Durable Task only --> J
-    B -- Durable Task control --> J
+    B -- Confirmation or UI-only --> CLOSED[Refuse and direct the actor to the eligible confidential UI]
+    B -- Enrolled task operation --> AUTH{Gateway authorizes this call?}
+    AUTH -- Yes --> J[Return authorized task result]
+    AUTH -- No --> CLOSED_AUTH[Safe denial]
     B -- Selection mint --> CLOSED
     J --> K[Poll authoritative task and read model; return terminal result and audit ID]
     E --> L[End]
-    I --> L
+    CLOSED_AUTH --> L
     CLOSED --> L
     K --> L
 ```
@@ -900,14 +898,7 @@ Web UX should follow FrontComposer/Fluent UI action hierarchy.
 
 **Destructive or state-changing actions** must not appear as casual primary actions. They require tenant scope, target identifiers, expected impact, canonical admission classification, recovery state, and applicable audit evidence. Only confirmation-required actions add Preview and explicit confirmation; task-only actions do not.
 
-**CLI and MCP parity:** CLI commands and MCP tools should mirror the same action hierarchy through command naming and tool classification:
-
-- Read-only diagnostics: `describe`, `inspect`, `trace`, `validate`, `list`.
-- Read-only context recomputation: `refresh-context`; any retained `reevaluate` alias maps exactly to this action.
-- Preview actions: `dry-run`, `preview`.
-- Confirmation-required actions: `archive`, `restore`, `move`, `replace-folder`, `unlink`, `confirm-resolution`, and `confirm-proposal`, requiring explicit targets, server Preview, one Confirmation Artifact, and Durable Task semantics.
-- Task-only actions: `create`, `update-setup`, actor-selected additive `link`, and initial-Folder selection, requiring explicit targets and Durable Task semantics without a second confirmation.
-- Task controls: `cancel-task` and Administrator-only `reconcile-task`, authorized against current task/checkpoint truth.
+**CLI and MCP action hierarchy.** Use the same domain classification on both heads. The four inspection operations use credential-bound Tenant scope and Safe Metadata. Additional read, export or task-control operations need their own enrollment and Gateway authorization. An inferred association requiring confirmation, an archive or restore, and a request to mint Selection Evidence all receive a safe refusal. The response may identify the confidential UI appropriate to the actor.
 
 ### Feedback Patterns
 
@@ -945,17 +936,13 @@ Web navigation should follow operational resource-console patterns:
 - Deep links from warnings, reference rows, resolution candidates, and audit events into the relevant detail view.
 - Breadcrumb or context header showing tenant, project, and mode.
 
-CLI navigation is command-based and should preserve predictable command grouping:
+Discover the four Projects inspection operations with `hexalith operations projects --strict`.
 
-- `projects list`
-- `projects describe`
-- `projects trace-resolution`
-- `projects validate-references`
-- `projects audit`
-- `projects dry-run`
-- `projects archive|restore|move|replace-folder|unlink`
+- `projects.list` lists authorized Projects.
+- `projects.describe` returns authorized details and reference states for inspection and validation.
+- `projects.trace-conversation` and `projects.trace-attachments` return advisory results for their respective inputs.
 
-MCP navigation is resource/tool-based and should separate read-only resources from mutating tools.
+Audit depends on Story 8.1. Story 8.4 covers eligible CLI extensions including read-only context refresh. Both public heads refuse UI-only and confirmation-required operations.
 
 ### Additional Patterns
 
@@ -1018,7 +1005,7 @@ pin; they do not manufacture or assume authority over the companion artifact.
 The companion artifact must specify and verify:
 
 - candidate presentation without preselection, proposal presentation, the FR-25 selection step,
-  sole-candidate accept/decline, independently confirmed membership exemption, `ReadOnlyCandidate`, Folder-read
+  sole-candidate accept/decline, resumption only on current authorized native membership for the named Conversation and Project, `ReadOnlyCandidate`, Folder-read
   versus Folder-manage capability states, explicit confirm/cancel, and safe handling of expired,
   stale, replayed, tampered, actor-, tenant-, target-, session-, and surface-mismatched
   Confirmation Artifacts and a non-interactive credential;
@@ -1079,7 +1066,7 @@ Mobile should support urgent inspection and safe metadata lookup, not full dense
 - Collapse tables into stacked rows or summary lists.
 - Hide advanced comparison until explicitly expanded.
 - Keep state-changing actions available only when their task-only or confirmation-required scope, impact, admission state, and recovery content remain fully visible and understandable.
-- Prefer CLI or desktop Web for complex maintenance when mobile space would hide critical evidence.
+- Use desktop Web for confirmation-required maintenance when a small screen would hide decision evidence. CLI remains available for enrolled diagnostics.
 
 CLI and MCP are inherently responsive through structured text/schema output and should not rely on terminal width, color, or prose formatting for meaning.
 

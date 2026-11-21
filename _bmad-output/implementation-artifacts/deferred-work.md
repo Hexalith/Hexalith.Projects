@@ -786,7 +786,8 @@ location: _bmad-output/planning-artifacts/epics.md Stories 8.4 and 8.5; _bmad-ou
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-15-schedule-stories-6-8-and-6-6.md
 reason: The amended AD-33 and UX-DR19 state that McpCli never confirms: A-7 and Story 8.11 cannot enable confirmation-required actions on McpCli (AD-29, Platform AD-14). Stories 8.4 and 8.5 still say "CLI after A-7" and "MCP after A-7 + 8.11", Journey 4 still shows an MCP confirmation gate, and the UX CLI navigation list predates the McpCli operation names in UX-DR19. Recheck the PRD §9 A-7 revisit clause at the same time. Owner: Product Owner with Solution Architect. Not an Epic 6 gate.
 removal_condition: Stories 8.4 and 8.5 and the UX spec are specified against the amended AD-33 and UX-DR19.
-status: open
+status: resolved
+resolution: 2026-11-21. Stories 8.4 and 8.5, the terminal release criteria and UX Journey 4 require refusal on both public heads. UX navigation names the four enrolled inspection operations. PRD A-7 preserves Platform AD-14. See sprint-change-proposal-2026-11-21.md.
 
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
