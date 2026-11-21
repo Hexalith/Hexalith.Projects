@@ -2,7 +2,7 @@
 title: "PRD: Hexalith.Projects"
 status: final
 created: 2026-05-24
-updated: 2026-09-08
+updated: 2026-11-20
 ---
 
 # PRD: Hexalith.Projects
@@ -12,7 +12,7 @@ updated: 2026-09-08
 
 ## 0. Document Purpose
 
-This PRD defines the v1 product requirements for `Hexalith.Projects`, the Hexalith module that gives `Hexalith.Chatbot` a durable, tenant-aware AI project workspace. It is the product baseline for UX, architecture, epics, implementation, and release acceptance. Requirements are grouped by feature with stable functional requirement IDs; cross-cutting quality obligations have stable NFR IDs. Technical mechanisms, migration detail, and proposal-specific implementation evidence live in [addendum.md](./addendum.md). Tagged assumptions and open specification items live in §9. `status: final` means the product baseline is direction-complete with stable IDs; the 2026-09-08 rules are binding on downstream work pending the re-baselining that §2.5 requires.
+This PRD defines the v1 product requirements for `Hexalith.Projects`, the Hexalith module that gives `Hexalith.Chatbot` a durable, tenant-aware AI project workspace. It is the product baseline for UX, architecture, epics, implementation, and release acceptance. Requirements are grouped by feature with stable functional requirement IDs; cross-cutting quality obligations have stable NFR IDs. Technical mechanisms, migration detail, and proposal-specific implementation evidence live in [addendum.md](./addendum.md). Tagged assumptions and open specification items live in §9. `status: final` means the product baseline is direction-complete with stable IDs; the September 8 requirements and traceability updates were applied downstream. Section 2.5 records current delivery and release status.
 
 ## 1. Vision
 
@@ -49,7 +49,7 @@ v1 is an internal platform and near-term implementation baseline for Hexalith.Ch
 - Project identity, setup, `Active`/`Archived` lifecycle, tenant scoping, and exactly-one-Folder invariant.
 - Durable, idempotent, recoverable creation, archive, restore, and cross-context association workflows.
 - Server Preview and Confirmation Artifacts for destructive, inferred, or consequential user-intent changes.
-- Project Resolution, accessible candidate/proposal confirmation, transient current Resolution Traces, and read-only refresh.
+- Project Resolution, accessible candidate/proposal confirmation, request-scoped Resolution Traces, and read-only refresh.
 - Project Context retrieval for Chatbot and Conversation-start setup.
 - Role-scoped metadata-only operator access, audit, reconciliation status, and bounded Safe Diagnostic Export.
 - v1 compatibility for historical unversioned name-only creation requests.
@@ -93,9 +93,9 @@ v1 does not serve external customers consuming Projects as an independent produc
 
 ### 2.5 Planning Status
 
-Product direction is decided: no open product-direction question blocks UX, architecture, or epic decomposition, and FR/NFR IDs are stable. Specification-level holes surfaced by validation are tagged in §9 with owners and revisit conditions; downstream artifacts must source those rules from §9 rather than invent them.
+As of November 20, Story 6.7 (read cutover) is in review and production release remains blocked. The sprint tracker records Stories 6.1–6.6 and 6.8 as done. Story 7.1, which must bind a Folder before activating a Project, is blocked. Epics 7 and 8 remain in backlog. The August 2 broader readiness assessment remains `NOT_READY`. The approved Epic 6 exceptions allowed individual read stories to proceed. [Sprint tracker](../../../implementation-artifacts/sprint-status.yaml) · [Read cutover decision](../../sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md)
 
-Historical addendum E-17 remains `NOT READY` (2026-08-02) for broader implementation/release qualification; no READY result is manufactured. The 2026-11-02 entry correction approved by Jerome in E1–E7 of the November 1 proposal permits Story 6.1 focused readiness on usable supported SDK reads and real fail-closed authenticated Tenant/original actor/workload/delegation/Folder authority. Story 6.5 additionally needs accepted 6.1–6.4 contracts/handlers, usable FrontComposer server authentication/current-Tenant/per-circuit credentials and DW-1 done. Publication, package/rollback qualification, live production enrollment, P4 and global READY are not feature entry gates. Historical NOT_READY and false P1R current usability remain; P4 is superseded, not accepted. Mandatory security, inspection audit, AD-32, scoped cursors and persisted no-domain-write proof remain. 6.7 owns exhaustive equivalence/reversible routing, Epic 7 retains writer safety, and Epic 8 retains qualification/terminal release acceptance. [Approved proposal](../../sprint-change-proposal-2026-11-01.md). The recorded failed live `release-smoke` result (19 passed / 56 failed) stays historical. The 2026-09-08 FR semantic landing is indexed by addendum E-31; broader conformance/release work remains contained outside the named feature exception. Repository-local capability failures still block affected story behavior; no FR/NFR body or product requirement is reduced.
+For full release, an authenticated journey must run on the exact candidate, pass, and demonstrate persisted state and recovery. The November 20 audit found that push CI passed at `52d7ab34`, but the managed journey stopped before launch because the test-user credential binding was missing. Contracts-only releases follow their own evidence profiles. Jerome and John retain the terminal full-release decision under Story 8.11. [Applied audit proposal](../../sprint-change-proposal-2026-11-20.md)
 
 ## 3. Target Users and Journeys
 
@@ -123,13 +123,13 @@ The primary user works in Hexalith.Chatbot across multiple Conversations and res
 
 ### 3.4 Key User Journeys
 
-- **UJ-1. Priya resumes an existing Project.** Priya opens Chatbot and selects an authorized Project. Chatbot receives a read-model-confirmed Active Project and its current authorized Project Context. Priya sees continuity without manually reattaching prior work; stale or unavailable references are disclosed safely rather than silently omitted.
+- **UJ-1. Priya resumes an existing Project.** Priya reopens a Conversation in Chatbot. Projects verifies that the Conversation belongs to its Active Project and that Priya still has access. Chatbot receives the authorized context and identifies any unavailable references so Priya can continue without reattaching prior work.
 
 - **UJ-2. Jules creates a Project from attached work.** Jules attaches files before choosing a Project. When no suitable Project exists, Chatbot presents a proposal without creating anything silently. Jules confirms a server-issued preview. A Durable Task verifies or creates the Project Folder, binds authorized references, and exposes the Project as Active only after read-model confirmation. Jules can recover the task after a lost response.
 
-- **UJ-3. Sam resolves an ambiguous Conversation.** Sam starts a Conversation that matches several Projects. Chatbot presents accessible, unselected candidates with current reason metadata. Sam confirms one candidate using a single-use Confirmation Artifact. A Durable Task records the association; expired or stale confirmation returns Sam to a fresh preview.
+- **UJ-3. Sam resolves an ambiguous Conversation.** Sam starts a Conversation that matches several Projects. Chatbot presents accessible, unselected candidates with reasons drawn from authorized observations and a warning when coverage is incomplete. Sam confirms one candidate using a single-use Confirmation Artifact. A Durable Task records the association; expired or stale confirmation returns Sam to a fresh preview.
 
-- **UJ-4. Alex protects unrelated work.** Alex works on Projects with overlapping terminology. Project Resolution and Project Context use only current authorized references. Unconfirmed candidates, foreign payloads, transient traces, and unrelated Tenant data never enter the active context.
+- **UJ-4. Alex protects unrelated work.** Alex works on Projects with overlapping terminology. Resolution may suggest a Project from an older observation after checking current access. Chatbot uses context only after Projects verifies current membership, authority and the required evidence. Unconfirmed candidates, foreign payloads, transient traces, and unrelated Tenant data never enter the active context.
 
 - **UJ-5. Morgan restores an archived Project.** Morgan, a Tenant Project Administrator, previews the current archived Project. Restore verifies actor authority, Project version, and exactly one authorized Project Folder. If Folder evidence is missing, Morgan chooses a replacement, which the Preview confirms covers the Project's current permitted set, or confirms same-name creation naming a designated Project User as manager. The Project becomes Active only after the Durable Task and read model confirm completion.
 
@@ -180,10 +180,11 @@ Project open, list, context, Conversation-start, and proposal-recovery responses
 
 The response states have binding consequences:
 
-- Required evidence per purpose: for open, context, and Conversation-start, the required components are the Project record, its Project Folder, its Project Setup, and the actor's current authorization evidence; for list, the response-level state is `Complete` when the enumeration itself is authorized and current, and each Project entry or candidate carries its own state, requiring the Project record, its Project Folder, and authorization evidence, with an entry whose Folder is not `Current` reported `Unavailable`; for proposal recovery, the task record and authorization evidence. Conversation, File Reference, and Memory components are optional unless Project Setup marks a reference as required, in which case it joins the required set.
+- Open, context, and Conversation-start require the Project record, its Folder, Setup, and current actor authorization. For context, its explanation, and Conversation-start Setup, the named Conversation’s current membership in that Project is also required (FR-16). Other Conversation, File Reference, and Memory components are optional unless Setup requires them.
+- For list, the response is `Complete` when the enumeration is authorized and current. Each Project entry carries its own state based on its record, Folder, and authorization evidence. An entry whose Folder is not `Current` is `Unavailable`. Proposal recovery requires the task record and current authorization.
 - `Complete` means every required component is `Current` and every optional component is `Current` or `Excluded` with reason code `ExcludedBySetupPolicy`; the response is usable for its requested purpose.
 - `Partial` means every required component is `Current`, while one or more optional references are excluded, stale, rebuilding, or unavailable. The response may be used only with every omission represented in `components`.
-- `Unavailable` means a required component is missing, stale, rebuilding, or unavailable. The response cannot initialize or resume a Conversation and returns `Retry`, `RefreshContext`, `SelectAlternative`, or `ContactAdministrator` as applicable.
+- `Unavailable` means a required component is missing, stale, rebuilding, or unavailable. The response cannot initialize or resume a Conversation and returns `Retry`, `RefreshContext`, `SelectAlternative`, or `ContactAdministrator` as applicable. When an authorized, bound Conversation is waiting for its required Folder to finish materializing, the response includes `PollTask` and withholds Setup and references.
 - `Denied` means current actor authorization failed. Unauthorized, cross-Tenant, and nonexistent targets produce one indistinguishable `Denied` outcome for every read, Preview, single-target resolution input, and task-status request; for multi-input resolution (FR-13) such an input is indistinguishable from an authorized input with no match so that one bad attachment does not deny the request; it discloses no protected Project/component metadata and becomes eligible for another outcome only through a newly authorized request.
 
 Refresh and recovery never rewrite an earlier response silently. A refresh recomputes authorization and evidence and returns a new `asOf`, `projectVersion`, state, and component set. `Partial` or `Unavailable` becomes `Complete` only after fresh recomputation proves all required evidence current. Expired or stale confirmation returns `RenewPreview` and admits no task; a lost admission response returns `PollTask` or an equivalent Idempotency Key retry that resolves to the original task before any single-use artifact is re-validated. Dependency delay returns `WaitingForDependency`; human-recoverable work returns `NeedsAttention` plus `ResolveNeedsAttention`; terminal Task Status values remain immutable.
@@ -221,11 +222,11 @@ Chatbot can admit Project creation as an idempotent Durable Task. A Project beco
 
 #### FR-2: Open Project
 
-Chatbot can open an authorized Project and receive the metadata, lifecycle state, Project Setup, and references needed to initialize a Conversation. Realizes UJ-1.
+Chatbot can open an authorized Project to inspect its metadata, lifecycle state, Setup, and references. Admitting a Conversation’s first response also requires the membership check in FR-16 and the Setup outcome in FR-20. Realizes UJ-1.
 
 **Consequences (testable):**
 
-- Opening returns only data visible to the requesting Tenant and actor.
+- Opening returns only data visible to the requesting Tenant and actor. Retained v1 open and list follow the descriptive-inspection rule in FR-22.
 - Opening follows the Context Response State, Evidence Freshness State, and Recovery Action Code semantics in §5.
 - Pre-activation creation tasks are not exposed through Project open APIs.
 - Archived or unavailable Projects are identified and cannot silently become active Conversation context.
@@ -262,7 +263,7 @@ Authorized callers can list visible Active and Archived Projects.
 **Consequences (testable):**
 
 - Results are Tenant-scoped, authorization-filtered, and filterable by Project Lifecycle State.
-- Each result contains authorized Project identity, lifecycle state, current Project version, Project Folder availability, and the §5 response/freshness/recovery metadata needed for selection without loading full Project Context; Project name is included for Project Users and, for Tenant-role callers, only under descriptive-metadata inspection authorization (FR-22). Chatbot list responses are Folder-derived only; Tenant-role entries appear only on Web, CLI, and MCP.
+- Each result contains authorized Project identity, lifecycle state, current Project version, Project Folder availability, and the §5 response, freshness, and recovery metadata needed for selection without loading full Project Context. On supported reads, authorized Chatbot Project Users may receive the name. Tenant-role callers receive Safe Metadata by default and may request descriptive inspection under FR-22. The retained v1 list requires descriptive inspection. Chatbot lists are Folder-derived. Tenant-role entries appear only on Web, CLI, and MCP.
 - Pre-activation tasks never appear as Projects.
 - Pagination follows NFR-6; cursors remain scoped to the authenticated query.
 
@@ -420,7 +421,8 @@ Chatbot can request Project Context for an Active Project on behalf of a named C
 
 **Consequences (testable):**
 
-- The request names the Conversation; Projects serves context only for the Project that Conversation is a member of, or, when it has no membership, only for a Project the actor explicitly opened in that session, so Chatbot cannot inject another Project's context into a membered Conversation.
+- Using the original actor’s authority and any required delegation, Projects verifies with `Hexalith.Conversations` that the named Conversation belongs to the same Tenant and its current `ProjectId` matches the requested Project. Opening a Project, an advisory match, and a workload credential alone cannot establish membership.
+- When the actor may read the Project but membership is missing, unbound, or unavailable, the supported read returns `Unavailable`, with null Setup and no included references. If the Conversation belongs to a different Project, Projects withholds context for the requested Project. Project or Tenant access denial follows §5 and discloses no protected information.
 - Context is Tenant-scoped, actor-authorized, and available only for a read-model-confirmed Active Project with exactly one authorized Project Folder; every included reference is same-Tenant and its authorization is re-checked at assembly time.
 - It contains Project Setup and reference metadata, not payloads owned by other bounded contexts; included references come only from the Project's Context Reference set, filtered by Setup policy.
 - It follows the §5 contract, representing every excluded, stale, rebuilding, or unavailable reference as a metadata-only component; `Denied` discloses no protected detail.
@@ -431,7 +433,7 @@ Authorized callers can obtain current metadata explaining why a reference was in
 
 **Consequences (testable):**
 
-- Context explanations retain current evidence semantics. Advisory resolution explains the observations used in the request, labels incomplete coverage, and claims no global-current snapshot or reconstructed history.
+- Context explanations require the same named Conversation, verified membership, and current authority as FR-16. Advisory resolution explains the observations used in the request, labels incomplete coverage, and claims no global-current snapshot or reconstructed history.
 - Traces carry Safe Metadata only: no secrets, payloads, prompts, unrestricted paths, raw upstream problems, unconfirmed-candidate detail, Project Setup bodies, or titles.
 - Traces are request-scoped and not persisted; only confirmed outcomes enter audit history.
 
@@ -471,7 +473,7 @@ Chatbot can retrieve the subset of Project Setup needed to start or resume a Con
 
 - The result includes goals, user-facing instructions, context preferences, and default source policy.
 - It excludes internal audit metadata and unavailable or unauthorized references.
-- The request names the Conversation and follows the FR-16 membership rule. It is bound to one authorized `projectVersion` and `asOf` snapshot and follows §5. Chatbot may admit the first response only for `Complete` or `Partial`; `Unavailable` or `Denied` blocks first-response admission and returns the applicable Recovery Action Codes without re-querying every bounded context.
+- The request names the Conversation and follows the FR-16 membership rule. Without verified membership, Chatbot cannot admit a first response. The response is bound to one authorized `projectVersion` and `asOf` snapshot and follows §5. Chatbot may admit the first response only for `Complete` or `Partial`; `Unavailable` or `Denied` blocks first-response admission and returns the applicable Recovery Action Codes without re-querying every bounded context.
 
 ### 6.6 Audit and Operations
 
@@ -495,6 +497,7 @@ Tenant Operators and Tenant Project Administrators can inspect authorized Projec
 **Consequences (testable):**
 
 - Access is Tenant-scoped, action-authorized, and Safe Metadata only across Web, CLI, and MCP; Descriptive Metadata requires separate descriptive-metadata inspection authorization, is never included by default, and every such read is audited (§9 A-5). The same rule governs Project name in FR-5 results and Preview bodies in FR-4/FR-23 for Tenant-role callers.
+- Retained v1 list and open require real Project names in their successful responses. Before disclosing them, Projects requires explicit inspection opt-in, the existing descriptive-inspection permission, and a successful durable Safe Metadata audit. If any condition fails, the call fails without disclosing names. Existing v1 signatures remain callable.
 - Inspection is per Project and per task. Reference and audit reads are scoped to one Project and paged under NFR-6; v1 offers no cross-Project audit or reference enumeration.
 - Project Users may inspect only their own permitted task status through Chatbot.
 - Pre-activation tasks remain separate from Project list/open APIs. Their status, for any role, carries only task identity, Task Status, safe reason and Recovery Action Codes, timestamps, and expiry; reserved Project identity, names, Folder/File/Memory identifiers, Setup, and Conversation identifiers are withheld until Read-Model-Confirmed Completion.
@@ -596,4 +599,4 @@ Each item is a specification dependency or hole surfaced by validation. None cha
 - **A-4 `[ASSUMPTION]` Legacy folderless inventory.** §2.4, FR-8, FR-22, and NFR-4 assume the count of legacy Active folderless Projects is small enough to reconcile before the first production Tenant cutover (addendum §5). Owner: Product Owner with Amelia. Revisit: if inventory shows a volume that cannot be reconciled before cutover, quarantine remains, the FR-22 inventory read and FR-8 legacy binding stay the only path, and the migration story must add bulk-binding tooling under those FRs.
 - **A-5 `[ASSUMPTION]` Descriptive-metadata inspection authorization.** §2.1, §3.2, and FR-22 introduce a separate descriptive-metadata inspection authorization for operators. Owner: Jerome with Winston. Until the identity contract pins it, the default is that Tenant-role actors receive Safe Metadata only, including in FR-5 names and FR-4/FR-23 Preview bodies. Revisit: if the platform identity contract cannot express that permission distinctly from FR-22 read and FR-24 export, that default becomes the v1 rule and Descriptive Metadata stays Project-User-only.
 - **A-6 `[ASSUMPTION]` Selection Evidence issuer.** FR-25 makes Projects the issuer of Selection Evidence through a Projects-owned interactive component hosted via FrontComposer on Chatbot and Web, over its own permitted-Projects enumeration and, for Folder targets, a `Hexalith.Folders` authorization check at pick time. The components authenticate their own requests with a Projects-issued credential bound to the actor's session and unavailable to the host adapter, so the host cannot replay a pick or a confirmation; a host that drives the component's rendered UI is an accepted residual risk shared with every interactive surface. Owner: Winston with the Folders owner. Revisit: until the FR-25 component exists on a surface, every additive link and initial Folder set on that surface is an Inferred Association requiring confirmation; if Folders cannot answer the pick-time check, Folder targets stay confirmation-required.
-- **A-7 `[ASSUMPTION]` Interactive-session claim.** §2.1, §4, and FR-14 assume the platform identity contract exposes, on every call, whether the credential carries the original actor's interactive session or a delegated-service/non-interactive claim, so Confirmation Artifacts and Selection Evidence can bind to the session and fail closed otherwise. Owner: Identity/Security owner with Winston. Revisit: until that claim exists, confirmation is accepted only from the Chatbot and Web adapters that the platform composition registers as interactive, and `Hexalith.McpCli` confirmation remains disabled under Platform AD-14.
+- **A-7 `[ASSUMPTION]` Interactive-session claim.** §2.1, §4, and FR-14 assume the platform identity contract exposes, on every call, whether the credential carries the original actor's interactive session or a delegated-service/non-interactive claim, so Confirmation Artifacts and Selection Evidence can bind to the session and fail closed otherwise. Owner: Identity/Security owner with Winston. Revisit: until that claim exists, confirmation is accepted only from the Chatbot and Web adapters that the platform composition registers as interactive. Platform AD-14 independently bars confirmation and Selection Evidence on both `Hexalith.McpCli` heads.

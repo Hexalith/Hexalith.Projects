@@ -67,6 +67,8 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 **Approved 6.7 cutover decisions — 2026-11-16.** Jerome selected "apply recommended" after the transport, comparison and hosting options discussion; [sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md](sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) records the decision. Use the existing Gateway and typed supported consumption, preserve v1 REST/client signatures, and switch primary Web entry routing through one explicit configuration choice. Finite conditional normalization never hides safety defects; explicit rollback requires a security-verified legacy path, otherwise the affected read is unavailable. DW-63 stays open and moves to Story 7.1 alongside writer integration; current query hosting remains for 6.7. No development/readiness/release status changes.
 
+**Technical audit, 20 November 2026.** The [sprint change proposal](sprint-change-proposal-2026-11-20.md) maps the nine findings at `52d7ab34` to the owner, evidence and order of work. The following criteria apply to the current production plan in Epics 7 and 8. Story 6.7 retains its existing read-cutover review scope.
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
@@ -1711,6 +1713,8 @@ So that **the Project becomes caller-visible and Active only after exactly one a
 
 **Given** a Projects or sibling workload identity, **When** it is presented as the actor, **Then** it does not widen Folder manage, subject read, or confirmation authority.
 
+**Given** a reserved identity, **when** execution stops before Folder provisioning, after its durable receipt, or while list/detail projections lag, **then** an equivalent retry produces exactly one bound Project/Folder pair. Inspect the committed events and both supported and retained list/detail reads at each boundary. A new Project becomes visible as Active and usable for context only after binding. Replay historical `ProjectFolderCreationPending` records under the legacy reconciliation rules.
+
 - **Estimate:** L. **Completion boundary:** end-to-end Folder-first FR-1 activation with no folderless-Active window; neither prerequisite package independently delivers FR-1. Supersedes Story 1.4's create criteria.
 
 ### Story 7.2: Update Project Setup idempotently
@@ -2023,6 +2027,8 @@ So that **a Project is created from inference only after authorized confirmation
 
 **Given** a Projects or sibling workload identity, **When** it is presented as the actor, **Then** it does not widen Folder manage, subject read, or confirmation authority.
 
+**Given** an admitted proposal whose creation or Conversation, Folder or File step has already succeeded, **when** an authorized equivalent request reaches another replica after restart, **then** resolve the scoped idempotency key to the original task before recomputing `NoMatch`. Resume from durable owner receipts and reconcile an unknown result before retrying. Verify one effect per owner and a truthful terminal or recoverable outcome after each interruption. Independent actors and Tenants may reuse a key. Within one scope a changed request conflicts. A Boolean alone, an expired artifact or a mismatched session cannot admit a new task.
+
 - **Estimate:** L. **Completion boundary:** durable confirmed proposed-creation; consequential MCP confirmation by a human actor stays disabled until §9 A-7 holds and Story 8.11 records terminal acceptance; autonomous MCP confirmation stays out of scope (§2.4).
 
 ### Story 7.13: Archive an Active Project
@@ -2046,6 +2052,8 @@ So that **archival is consequential, recoverable, and auditable (FR-4) while ref
 **Given** a stale/replayed confirmation or denied authority, **When** archive is attempted, **Then** it fails closed with no lifecycle change.
 
 **Given** duplicate delivery / lost response, **When** retried, **Then** the equivalent retry converges to the single archived outcome.
+
+**Given** a retained v1 archive request containing only the literal confirmation intent, **when** the writer is gated or the replacement writer is selected, **then** the request alone cannot archive a Project. Test both outcomes at the existing route. A fresh, authorized Preview and its bound single-use artifact admit at most one task through the supported confirmation flow.
 
 - **Estimate:** M. **Completion boundary:** durable confirmed archive; **restore is 7.14**. Supersedes Story 1.8 archive criteria.
 
@@ -2697,6 +2705,8 @@ So that **availability/recovery (NFR-3) is observable without fabricated health 
 
 **Given** a dependency outage, **When** observed, **Then** readiness degrades truthfully and supports the RTO/recovery evidence in 8.10.
 
+**Given** each shipped host role and a disposable state dependency required by that role, **when** the dependency stops and recovers, **then** bounded read-only checks drive `/ready` through 200 → 503 → 200 while process liveness stays healthy. Exercise the role’s other mandatory dependencies individually. Report a quarantined Tenant through an authorized, metadata-only diagnostic and verify that an unaffected Tenant remains serviceable.
+
 - **Estimate:** M. **Completion boundary:** truthful bounded health/telemetry/logging with fail-fast admission.
 
 ### Story 8.7: Consume reproducible packages and supply-chain evidence
@@ -2715,6 +2725,12 @@ So that **release artifacts are reproducible and correctly bounded (NFR-10, NFR-
 
 **Given** a boundary violation (e.g. `Contracts` depending on Shell/Fluxor/Fluent/ASP.NET/Dapr/Aspire), **When** CI runs, **Then** it fails closed.
 
+**Given** a fresh checkout with only root-declared submodules, **when** a contributor follows the root quick start and runs ordinary `npm ci` in `tests/e2e`, **then** the E2E workspace disables dependency lifecycle scripts by default. Verify unchanged gitlinks, no nested registrations, an explicit browser install and one passing test. Derive the documented SDK, target framework and Dapr pins from the repository and keep audit checks enabled.
+
+**Given** the root and E2E lockfiles and the three Builds policy-workflow references, **when** the affected parents and workflow revisions are updated, **then** retain both audit results, the release dry run, the offline browser result and required-check results at reviewed immutable workflow commits. Coordinate the workflow pins with Hexalith.CiCd and Builds.
+
+**Given** a full release candidate with green push CI, **when** exact-revision managed journey evidence is missing, unsuccessful, skipped or belongs to a different revision, **then** the full-release source check blocks. A passing authenticated journey with persisted state and recovery at the candidate SHA may satisfy this check and proceed to existing publication controls. Exercise full, Contracts-prerequisite and verification-only profiles separately.
+
 - **Estimate:** M. **Completion boundary:** reproducible, correctly bounded package graph + supply-chain evidence matching AD-24.
 
 ### Story 8.8 prerequisite evidence packages
@@ -2729,6 +2745,8 @@ change the Chatbot repository.
 | 8.8-P1 | Projects/platform adapters + Identity platform | Authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and `NoPayloadLeakage` evidence over the accepted live topology | Test Architect + Platform Adapter Owners + Identity/Security Owner | open; blocked by Stories 8.3–8.5, G-4, G-5, and the current implementation-readiness freeze |
 | 8.8-P2 | FrontComposer/Web presentation | Operator WCAG 2.2 AA automated and authenticated manual keyboard, focus, live-region, screen-reader, 200%-zoom, and 320px evidence at small, median, and maximum shapes | FrontComposer/Web Owner + Test Architect | open; blocked by Story 8.3, G-3, G-6, and the current implementation-readiness freeze |
 | 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Version-pinned Chatbot companion UX specification and authenticated candidate, proposal, confirm/cancel, expiry/staleness, lost-response, task-status, recovery, and first-response-admission evidence | Chatbot Presentation Owner + Chatbot Test Owner | blocked-external; external owner and approved immutable revision required; absence blocks Story 8.8 and release |
+
+For 8.8-P1, exercise the ordinary Release Workers and Server executables. Both worker callbacks require the platform sidecar identity. Server authorization decisions require verified EventStore and Dapr policy evidence. Record successful authorized delivery, denial when either authority is missing or denies, and unchanged persisted rows on denial. The deployment owner supplies the effective ingress and workload-identity policy.
 
 8.8-P3 acceptance requires an owner-supplied manifest containing the Chatbot owner repository and
 immutable revision, companion contract version, approval date, approving authority, accountable
@@ -2781,6 +2799,8 @@ So that **scale/performance (NFR-5), pagination/export bounds (NFR-6), and back-
 
 **Given** per-Tenant limits (100 reads/s burst 200, 20 mutations/s burst 40, 1,000 nonterminal tasks, 2 export leases, 2 s interactive / 10 s durable timeouts, ≤ 3 retries in 30 s), **When** exceeded, **Then** platform admission rejects **before** partial durable work with structured retry guidance; domain handlers carry no retry/quota logic.
 
+**Given** the duplicate-heavy advisory fixture, **when** testing candidate selection, **then** control the deadline and assert the bounded distinct lookups independently of a cancellation test. Measure authenticated supported and rollback reads and concurrent appends on Dapr/Redis at the PRD shapes. Record bytes, allocation, p95 and write conflicts by path. If a required path misses its budget, compare the affected keyed view or checkpoint against full replay before switching readers.
+
 - **Estimate:** L. **Completion boundary:** authenticated performance + back-pressure evidence at supported scale.
 
 ### Story 8.10: Prove cross-workflow resilience
@@ -2799,6 +2819,8 @@ So that **availability/recovery (NFR-3) and durability/idempotency (NFR-4) hold 
 
 **Given** a mid-saga partial failure, **When** recovered, **Then** compensation or `NeedsAttention` applies and reconciliation (7.15) reaches a terminal disposition.
 
+**Given** a malformed or conflicted legacy journal and a healthy control Tenant in a persistent store, **when** an operator follows the recovery runbook, **then** rebuild the affected Tenant into a fresh generation, verify list/detail/audit parity against authoritative replay through a recorded watermark, and atomically switch readers. Interrupt and restart the rebuild, including delivery during catch-up. Verify the affected Tenant stays fail-closed until validation, the control stays readable and the old generation remains available for investigation.
+
 - **Estimate:** L. **Completion boundary:** adversarial resilience evidence for the durable-workflow platform path.
 
 ### Story 8.11 prerequisite release-evidence packages
@@ -2812,6 +2834,8 @@ environment is unavailable.
 | 8.11-P1 | Platform deployment/release | Pinned deployed version and environment, topology/configuration identity, truthful health/readiness, and authenticated smoke evidence | Platform Deployment Owner + Release Engineering + Test Architect | open; blocked by accepted Stories 8.6–8.10, G-4/G-5, and an available deployment environment |
 | 8.11-P2 | Security/KMS/platform | Authenticated encryption in transit, managed encryption at rest, KMS rotation, revocation, fail-fast configuration, and recovery evidence | Security/KMS Owner + Platform Owner + Test Architect | open; blocked by G-5 and an available production-equivalent environment |
 | 8.11-P3 | Release engineering + Projects/platform routing owners | Executed routing/package/deployment rollback drill with commands, timing, resulting health, data-integrity checks, and recovery evidence | Release Engineering + Solution Architect + Test Architect | open; blocked by accepted cutover/package/deployment inputs and an available rollback environment |
+
+For 8.11-P1, attach the 8.6 dependency-outage results and the candidate-specific 8.7 managed journey. Record the source SHA, profile, run and job identity, recovery result and redacted artifact. A fixture that stops at credential setup leaves the journey unverified.
 
 ### Story 8.11: Record the terminal production-release decision
 
