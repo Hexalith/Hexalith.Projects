@@ -305,6 +305,7 @@ public static class ProjectsServerServiceCollectionExtensions
             {
                 QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
                 if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType
+                    or GetProjectAuditQuery.QueryType or GetProjectTaskStatusQuery.QueryType
                     or ResolveProjectFromConversationQuery.QueryType or ResolveProjectFromAttachmentsQuery.QueryType))
                 {
                     return result.Success ? Results.Ok(result) : Results.NotFound(result);

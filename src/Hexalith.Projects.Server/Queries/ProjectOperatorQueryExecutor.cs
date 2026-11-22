@@ -5,6 +5,7 @@ using System.Text.Json;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Queries;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.Client.Streams;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
@@ -14,7 +15,7 @@ using Hexalith.Projects.Server.Projections.ProjectReads;
 /// <summary>Reads committed operator facts under the current identity and exact target authority.</summary>
 public sealed class ProjectOperatorQueryExecutor(IReadModelStore store, ProjectAuthorizationGate gate,
     ProjectQueryEnvelopePrincipalBinding binding, IProjectAuditTimelineReadModel timeline, ProjectReadAudit audit,
-    IQueryCursorCodec cursors, TimeProvider clock, IProjectTaskStatusAuthority? tasks = null)
+    IQueryCursorCodec cursors, TimeProvider clock, IProjectTaskStatusAuthority? tasks = null, IAuthoritativeEventStreamReader? streams = null)
 {
     /// <summary>Reads a bounded, authorized Project audit page.</summary>
     public async Task<QueryResult> AuditAsync(QueryEnvelope query, CancellationToken token)
@@ -61,14 +62,22 @@ public sealed class ProjectOperatorQueryExecutor(IReadModelStore store, ProjectA
         bool domainAvailable = true;
         try
         {
-            var history = await timeline.ListAsync(query.TenantId, query.AggregateId, null, token).ConfigureAwait(false);
-            HashSet<string> committedIds = new(StringComparer.Ordinal);
-            foreach (ProjectAuditTimelineItem row in history.Reverse())
+            IReadOnlyList<ProjectAuditFact>? facts = streams is null ? null : await ProjectCommittedAuditHistory.ReadAsync(
+                streams, query.TenantId, query.AggregateId, authority.ProjectDetail!.Sequence, clock, token).ConfigureAwait(false);
+            if (facts is null)
             {
-                if (row.TenantId != query.TenantId || row.ProjectId != query.AggregateId || row.OccurredAt == default)
+                var retained = await timeline.ListAsync(query.TenantId, query.AggregateId, null, token).ConfigureAwait(false);
+                if (retained.Any(row => row.TenantId != query.TenantId || row.ProjectId != query.AggregateId || row.OccurredAt == default))
                     throw new InvalidDataException("Invalid audit scope.");
-                if (ProjectAuditTimelineProjection.ToSupportedFact(row) is { } fact && committedIds.Add(fact.AuditEventId)) Observe(fact);
+                facts = retained.Reverse().Select(ProjectAuditTimelineProjection.ToSupportedFact).OfType<ProjectAuditFact>().ToArray();
             }
+
+            foreach (ProjectAuditFact fact in facts.DistinctBy(row => row.AuditEventId, StringComparer.Ordinal)) Observe(fact);
+        }
+        catch (InvalidDataException) when (!token.IsCancellationRequested)
+        {
+            // A contradicting source scope or head also invalidates the authority snapshot for security facts.
+            return Success(new ProjectAuditPage("Unavailable", [], null));
         }
         catch (Exception) when (!token.IsCancellationRequested) { rows.Clear(); domainAvailable = false; }
 
@@ -125,11 +134,24 @@ public sealed class ProjectOperatorQueryExecutor(IReadModelStore store, ProjectA
             || observation.Status is not ("Pending" or "Running" or "WaitingForDependency" or "NeedsAttention" or "Succeeded" or "Rejected" or "Failed" or "Cancelled")
             || observation.Reason is not ("Admitted" or "InProgress" or "DependencyUnavailable" or "NeedsAttention" or "Confirmed" or "Denied" or "Failed" or "Cancelled" or "Reconciled")
             || observation.ReconciliationOutcome is not (null or "Resumed" or "Rejected")
+            || observation.ReconciliationOutcome == "Rejected" && observation.Status != "Rejected"
             || observation.CreatedAt is null || observation.CreatedAt == default(DateTimeOffset) || observation.UpdatedAt is null
             || observation.UpdatedAt < observation.CreatedAt || observation.ExpiresAt < observation.CreatedAt
             || observation.RecoveryActions is null || observation.RecoveryActions.Count > AdmissionRecoveryAction.Values.Count
             || observation.RecoveryActions.Any(code => !AdmissionRecoveryAction.Values.Contains(code, StringComparer.Ordinal)))
             return TaskUnavailable();
+        if (observation.RecoveryActions.Contains(AdmissionRecoveryAction.ResolveNeedsAttention, StringComparer.Ordinal))
+        {
+            if (observation.Status != "NeedsAttention") return TaskUnavailable();
+            if (ProjectReadQueryAdmission.IsChatbot(query, binding) || !ProjectReadQueryAdmission.IsTenantProjectAdministrator(binding))
+            {
+                observation = observation with
+                {
+                    RecoveryActions = observation.RecoveryActions.Select(action => action == AdmissionRecoveryAction.ResolveNeedsAttention
+                        ? AdmissionRecoveryAction.ContactAdministrator : action).Distinct(StringComparer.Ordinal).ToArray(),
+                };
+            }
+        }
         return Success(authorized.PreActivation ? observation with { ReconciliationOutcome = null } : observation);
     }
 

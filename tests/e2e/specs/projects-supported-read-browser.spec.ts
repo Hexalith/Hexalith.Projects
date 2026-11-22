@@ -274,6 +274,14 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       await page.getByRole('button', { name: 'Audit history', exact: true }).click();
       await page.getByTestId('project-audit-load').click();
       await expect(page.getByTestId('project-audit-state')).toContainText('Partial');
+      const creationRow = page.getByTestId('project-audit-row').filter({ hasText: 'project.created' });
+      await expect(creationRow).toHaveCount(1);
+      await expect(creationRow).toContainText('Active');
+      const creationId = /audit_[0-9A-F]{64}/.exec(await creationRow.innerText())?.[0];
+      expect(creationId).toBeTruthy();
+      const folderRow = page.getByTestId('project-audit-row').filter({ hasText: 'project.folder_set' });
+      await expect(folderRow).toHaveCount(1);
+      await expect(folderRow).toContainText('Included');
       const inspectionRow = page.getByTestId('project-audit-row').filter({ hasText: 'ProjectNameDescriptionSetupReferenceLabels' }).first();
       await expect(inspectionRow).toContainText('metadata.inspected');
       const stableId = /audit_[0-9A-F]{64}/.exec(await inspectionRow.innerText())?.[0];
@@ -284,6 +292,7 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       }
       await page.getByTestId('project-audit-load').click();
       await expect(page.getByTestId('project-audit-row').filter({ hasText: stableId! })).toHaveCount(1);
+      await expect(creationRow).toContainText(creationId!);
       expect(await observe()).toEqual(inspected);
       for (const taskId of ['preview-task-a', 'preview-task-b']) {
         await page.goto('/inspect/tasks/' + taskId);

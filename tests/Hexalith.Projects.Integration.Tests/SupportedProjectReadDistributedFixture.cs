@@ -23,6 +23,7 @@ using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.Contracts.Streams;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Tenants.Contracts.Identity;
 using Hexalith.EventStore.Contracts.Identity;
@@ -674,6 +675,11 @@ internal sealed partial class SupportedProjectReadDistributedFixture : IDisposab
             "The Project index must point to the durable inspection exactly once.");
         Require((await RedisAsync("TTL", indexKey).ConfigureAwait(false)).Trim() == "-1", "The index would expire before the retained fact.");
 
+        StreamReadPage stream = await ObserveRetainedSourceAsync(Tenant, project).ConfigureAwait(false);
+        StreamReadEvent creation = stream.Events.Single(item => item.EventTypeName.Split(',', 2)[0].Trim() == typeof(ProjectCreated).FullName);
+        var created = JsonSerializer.Deserialize<ProjectCreated>(creation.Payload, Json)!;
+        var folder = JsonSerializer.Deserialize<ProjectFolderSet>(
+            stream.Events.Single(item => item.EventTypeName.Split(',', 2)[0].Trim() == typeof(ProjectFolderSet).FullName).Payload, Json)!;
         var request = new SubmitQueryRequest(Tenant, "projects", project, GetProjectAuditQuery.QueryType,
             Payload: JsonSerializer.SerializeToElement(new GetProjectAuditQuery(), Json));
         for (int read = 0; read < 2; read++)
@@ -682,6 +688,18 @@ internal sealed partial class SupportedProjectReadDistributedFixture : IDisposab
             Require(response.StatusCode == HttpStatusCode.OK, "Operator audit query failed.");
             var envelope = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
             var page = envelope!.Payload.Deserialize<ProjectAuditPage>(Json)!;
+            foreach (var expected in new[] {
+                (Operation: "project.created", Outcome: "Active", created.ActorPrincipalId, created.IdempotencyKey, created.OccurredAt),
+                (Operation: "project.folder_set", Outcome: "Included", folder.ActorPrincipalId, folder.IdempotencyKey, folder.OccurredAt),
+            })
+            {
+                string eventId = "audit_" + Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new[] {
+                    Tenant, project, expected.ActorPrincipalId, expected.Operation, expected.IdempotencyKey,
+                })));
+                Require(page.Items.Count(row => row.AuditEventId == eventId && row.Operation == expected.Operation
+                    && row.Outcome == expected.Outcome && row.OccurredAt == expected.OccurredAt) == 1,
+                    "The audit page must match the mutation in the persisted Project stream.");
+            }
             Require(page.Items.Count(row => row.AuditEventId == "audit_" + id && row.Outcome == "Inspection"
                 && row.ProjectCount == 1 && row.FieldClass == "ProjectNameDescriptionSetupReferenceLabels") == 1,
                 "The timeline must expose the committed inspection exactly once under its stable audit ID.");

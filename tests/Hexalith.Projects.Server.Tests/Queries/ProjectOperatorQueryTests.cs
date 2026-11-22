@@ -3,6 +3,10 @@ namespace Hexalith.Projects.Server.Tests.Queries;
 using System.Text;
 using System.Text.Json;
 using Hexalith.EventStore.Client.Queries;
+using Hexalith.EventStore.Client.Streams;
+using Hexalith.EventStore.Contracts.Identity;
+using Hexalith.EventStore.Contracts.Streams;
+using Hexalith.Projects.Server.Tests.Authorization;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
@@ -56,6 +60,51 @@ public sealed class ProjectOperatorQueryTests
         (await executor.AuditAsync(Query("alpha", first.Cursor), token)).ErrorMessage.ShouldBe("safe-denial");
         (await executor.AuditAsync(Query("missing"), token)).ErrorMessage.ShouldBe("safe-denial");
         (await executor.AuditAsync(Query("alpha") with { TenantId = "other" }, token)).PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task CommittedStreamIncludesResolutionRefusalAndDenialAcrossRestart()
+    {
+        var fixture = await SupportedProjectReadFixture.CreateAsync();
+        var token = TestContext.Current.CancellationToken;
+        const string project = "alpha";
+        var request = SupportedProjectReadFixture.Request(project);
+        var denied = new ProjectArchiveRejected(new(project), "tenant-a", ReferenceState.Unauthorized, "private field", "private correlation");
+        var refused = new ProjectResolutionConfirmationRejected(new(project), "tenant-a", ReferenceState.Ambiguous, "private choice", "private correlation");
+        request = request with { Events = [.. request.Events, SupportedProjectReadFixture.Event(denied, 3, 102),
+            SupportedProjectReadFixture.Event(refused, 4, 103)] };
+        await fixture.Projection.ProjectAsync(request, "persist-events", token);
+        var created = JsonSerializer.Deserialize<ProjectCreated>(request.Events[0].Payload, SupportedProjectReadFixture.Json)!;
+        var journal = new InMemoryProjectAuditTimelineReadModel();
+        journal.Project("tenant-a", created);
+        var query = fixture.Query(new GetProjectAuditQuery(), project) with { QueryType = GetProjectAuditQuery.QueryType };
+        var retained = SupportedProjectReadFixture.Payload<ProjectAuditPage>(await Executor(fixture, journal).AuditAsync(query, token));
+        var events = request.Events.Select(e => new StreamReadEvent(e.SequenceNumber, e.EventTypeName, e.Payload,
+            e.SerializationFormat, 1, e.MessageId!, e.CorrelationId, null, e.Timestamp, e.UserId) { GlobalPosition = e.GlobalPosition }).ToArray();
+        var stream = new AuthoritativeEventStream(new AggregateIdentity("tenant-a", "projects", project), events.Length, fixture.Clock.Now, events, "observation");
+
+        async Task<ProjectAuditPage> ReadAsync(AuthoritativeEventStream source)
+            => SupportedProjectReadFixture.Payload<ProjectAuditPage>(await Executor(fixture, new(),
+                streams: new ProjectAuthorityReaderFixture(new(source, null))).AuditAsync(query, token).ConfigureAwait(false));
+
+        var page = await ReadAsync(stream);
+        page.Items.Count.ShouldBe(4);
+        page.Items.Single(row => row.Operation == "project.created").ShouldBe(retained.Items.Single());
+        page.Items.Single(row => row.Operation == "project.resolution_confirmation_rejected").Outcome.ShouldBe("Rejected");
+        page.Items.Single(row => row.Operation == "authorization.denied").Outcome.ShouldBe("SafeDenial");
+        page.Items.ShouldBe((await ReadAsync(stream)).Items);
+        JsonSerializer.Serialize(page).ShouldNotContain("private");
+        var audit = new ProjectReadAudit(fixture.Store, fixture.Clock);
+        (await audit.RecordAsync(query, false, 0, null, false, token, [project])).ShouldBeTrue();
+        var wrongScope = events[3] with { Payload = JsonSerializer.SerializeToUtf8Bytes(refused with { TenantId = "other" }) };
+        foreach (var inconsistent in new[] { stream with { Events = [events[0], events[1], events[2], wrongScope] },
+            stream with { Head = 2, Events = events[..2] } })
+        {
+            var unavailable = await ReadAsync(inconsistent);
+            unavailable.State.ShouldBe("Unavailable");
+            unavailable.Items.ShouldBeEmpty();
+            unavailable.Cursor.ShouldBeNull();
+        }
     }
 
     [Fact]
@@ -121,6 +170,7 @@ public sealed class ProjectOperatorQueryTests
         json.RootElement.EnumerateObject().Select(p => p.Name).Except(
             ["state", "taskId", "status", "reason", "recoveryActions", "createdAt", "updatedAt", "expiresAt"]).ShouldBeEmpty();
         json.RootElement.GetProperty("status").GetString().ShouldBe("NeedsAttention");
+        json.RootElement.GetProperty("recoveryActions").EnumerateArray().Single().GetString().ShouldBe("ContactAdministrator");
         (await executor.TaskStatusAsync(query with { AggregateId = "foreign-task" }, token)).ErrorMessage.ShouldBe("safe-denial");
         int calls = owner.Calls;
         var wrongSurface = await SupportedProjectReadFixture.CreateAsync();
@@ -136,6 +186,13 @@ public sealed class ProjectOperatorQueryTests
         unavailable.State.ShouldBe("Unavailable");
         unavailable.TaskId.ShouldBeNull();
 
+        var admin = await SupportedProjectReadFixture.CreateAsync(administrator: true);
+        var adminQuery = admin.Query(new GetProjectTaskStatusQuery(), "opaque-task") with { QueryType = GetProjectTaskStatusQuery.QueryType };
+        var adminStatus = SupportedProjectReadFixture.Payload<ProjectTaskStatusResponse>(
+            await Executor(admin, new(), owner).TaskStatusAsync(adminQuery, token));
+        adminStatus.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ResolveNeedsAttention]);
+        adminStatus.ReconciliationOutcome.ShouldBeNull();
+
         bound = bound with { PreActivation = false };
         var activated = SupportedProjectReadFixture.Payload<ProjectTaskStatusResponse>(await executor.TaskStatusAsync(query, token));
         activated.ReconciliationOutcome.ShouldBe("Resumed");
@@ -150,7 +207,7 @@ public sealed class ProjectOperatorQueryTests
     }
 
     private static ProjectOperatorQueryExecutor Executor(SupportedProjectReadFixture fixture,
-        InMemoryProjectAuditTimelineReadModel journal, IProjectTaskStatusAuthority? tasks = null)
+        InMemoryProjectAuditTimelineReadModel journal, IProjectTaskStatusAuthority? tasks = null, IAuthoritativeEventStreamReader? streams = null)
         => new(fixture.Store, fixture.Gate, fixture.Binding, journal, new ProjectReadAudit(fixture.Store, fixture.Clock),
-            new QueryCursorCodec(fixture.DataProtection, "operator-tests"), fixture.Clock, tasks);
+            new QueryCursorCodec(fixture.DataProtection, "operator-tests"), fixture.Clock, tasks, streams);
 }

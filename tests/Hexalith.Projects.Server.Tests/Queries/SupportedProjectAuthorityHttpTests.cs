@@ -156,15 +156,30 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         await InspectAsync();
         (await InspectionKeysAsync(fixture)).ShouldBe(keys);
         (await fixture.SnapshotAsync(keys)).Last().Bytes.ShouldBe(first.Bytes);
+        int indexedProjects = 0;
         foreach (string key in fixture.Audit.Keys.Keys)
         {
+            ProjectAuditStorageKeys.IsAuditKey(key).ShouldBeTrue();
             var snapshot = (await fixture.SnapshotAsync(key).ConfigureAwait(true)).Last();
             using var document = JsonDocument.Parse(snapshot.Bytes);
-            document.RootElement.EnumerateObject().Select(property => property.Name.ToLowerInvariant()).Order().ShouldBe(
-                new[] { "requestsurrogate", "outcome", "projectcount", "fieldclass", "recordedat" }.Order());
+            string[] properties = document.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
+            if (key.StartsWith("projects:audit-index:", StringComparison.Ordinal))
+            {
+                properties.ShouldBe(["surrogates"]);
+                string[] ids = document.RootElement.GetProperty("surrogates").EnumerateArray().Select(element => element.GetString()!).ToArray();
+                ids.Length.ShouldBeInRange(1, 128);
+                ids.Distinct(StringComparer.Ordinal).Count().ShouldBe(ids.Length);
+                foreach (string id in ids) fixture.Audit.Keys.ContainsKey("projects:read-audit:v1:" + id).ShouldBeTrue();
+                if (ids.Contains(record.RequestSurrogate, StringComparer.Ordinal)) indexedProjects++;
+            }
+            else
+            {
+                properties.ShouldBe(new[] { "requestSurrogate", "outcome", "projectCount", "fieldClass", "recordedAt" }.Order());
+            }
             string serialized = System.Text.Encoding.UTF8.GetString(snapshot.Bytes);
             foreach (string secret in new[] { fixture.Tenant, fixture.ForeignTenant, "actor-1", "project-a", "Project project", "Safe description", "Owner label", "delegation-1" }) serialized.ShouldNotContain(secret);
         }
+        indexedProjects.ShouldBe(record.ProjectCount);
         fixture.Audit.Unavailable = true;
         fixture.Client.DefaultRequestHeaders.Remove("X-Correlation-Id");
         fixture.Client.DefaultRequestHeaders.Add("X-Correlation-Id", "inspection-outage");
@@ -443,7 +458,7 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
     private static async Task<string[]> InspectionKeysAsync(ProjectReadAuthorityFixture fixture)
     {
         List<string> keys = [];
-        foreach (string key in fixture.Audit.Keys.Keys)
+        foreach (string key in fixture.Audit.Keys.Keys.Where(key => key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal)))
         {
             var snapshot = (await fixture.SnapshotAsync(key).ConfigureAwait(true)).Last();
             var record = JsonSerializer.Deserialize<ProjectReadAuditRecord>(snapshot.Bytes, JsonSerializerOptions.Web)!;

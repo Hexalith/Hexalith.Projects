@@ -251,6 +251,35 @@ def restart_budget(seconds: float = 180):
         _command_deadline = previous_deadline
 
 
+def process_children(pid: int, proc: Path = Path("/proc")) -> list[int]:
+    """Read direct children even on kernels built without the optional task children file."""
+    parent = proc / str(pid)
+    try:
+        return [int(value) for value in (parent / "task" / str(pid) / "children").read_text().split()]
+    except FileNotFoundError:
+        # A missing process on a kernel with the children file is still an observation failure.
+        if (proc / "self" / "task" / str(os.getpid()) / "children").is_file():
+            raise
+
+    def parent_start() -> str:
+        return (parent / "stat").read_text().rsplit(")", 1)[1].split()[19]
+
+    started = parent_start()
+    children = []
+    for entry in proc.iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+        except FileNotFoundError:
+            continue
+        if int(fields[1]) == pid and fields[0] != "Z":
+            children.append(int(entry.name))
+    if parent_start() != started:
+        raise RuntimeError("Process identity changed during child observation.")
+    return children
+
+
 def helper_descendants(pid: int) -> dict[int, str]:
     result, pending = {}, [pid]
     while pending:
@@ -260,7 +289,7 @@ def helper_descendants(pid: int) -> dict[int, str]:
             continue
         result[current] = started
         try:
-            pending.extend(int(child) for child in Path("/proc", str(current), "task", str(current), "children").read_text().split())
+            pending.extend(process_children(current))
         except FileNotFoundError:
             pass
     return result
@@ -884,7 +913,7 @@ def projects_process_identity(owned: dict, graph: dict, *, run=execute) -> dict:
         arguments = process.joinpath("cmdline").read_bytes().split(b"\0")
         if executable == binary or executable.name == "dotnet" and str(Path(str(binary) + ".dll")).encode() in arguments:
             candidates.append(pid)
-        pending.extend(int(child) for child in process.joinpath("task", str(pid), "children").read_text().split())
+        pending.extend(process_children(pid))
     if len(candidates) != 1:
         raise RuntimeError("The actual Projects server process is missing or ambiguous.")
     pid = candidates[0]
@@ -1842,7 +1871,7 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -
             arguments = process.joinpath("cmdline").read_bytes().split(b"\0")
             if executable == binary or executable.name == "dotnet" and str(Path(str(binary) + ".dll")).encode() in arguments:
                 candidates.append(pid)
-            pending.extend(int(child) for child in process.joinpath("task", str(pid), "children").read_text().split())
+            pending.extend(process_children(pid))
         if len(candidates) != 1:
             raise RuntimeError("A native scenario server is missing or ambiguous.")
         pid = candidates[0]

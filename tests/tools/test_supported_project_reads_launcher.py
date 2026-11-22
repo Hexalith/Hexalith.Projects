@@ -840,6 +840,28 @@ class SupportedReadSourceManifestControls(unittest.TestCase):
                     path.write_text("original")
 
 
+class SupportedReadProcessChildrenControls(unittest.TestCase):
+    def test_parent_id_census_is_exact_without_kernel_children_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            for pid, parent, state in [(20, 1, "S"), (21, 20, "S"), (22, 21, "R"), (23, 20, "Z"), (24, 1, "R")]:
+                (proc / str(pid)).mkdir()
+                fields = [state, str(parent), *(["0"] * 17), "100"]
+                (proc / str(pid) / "stat").write_text(f"{pid} (name with ) paren) " + " ".join(fields))
+            self.assertEqual(LAUNCHER.process_children(20, proc), [21])
+            with self.assertRaises(FileNotFoundError):
+                LAUNCHER.process_children(99, proc)
+
+    def test_available_kernel_children_interface_keeps_missing_process_unobservable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            own = proc / "self/task" / str(os.getpid())
+            own.mkdir(parents=True)
+            (own / "children").write_text("")
+            with self.assertRaises(FileNotFoundError):
+                LAUNCHER.process_children(99, proc)
+
+
 class SupportedReadProjectsRestartControls(unittest.TestCase):
     def identity(self, pid=301, wrapper=201, started="100"):
         return {"resourceName": "projects-owned", "launcherPid": wrapper, "launcherStartTicks": started,
