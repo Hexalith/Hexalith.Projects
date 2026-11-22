@@ -23,7 +23,6 @@ internal sealed class SupportedReadTestContext
         SetTenant("tenant-a");
         Queries = new(Client, [Authority], [Authentication]);
     }
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0013", Justification = "This call configures an NSubstitute return value; it does not read or cache live authentication state.")]
     public void SetTenant(string tenant)
     {
         TenantContextSnapshot snapshot = new(tenant, "user-1", true, "test-correlation");
@@ -31,8 +30,17 @@ internal sealed class SupportedReadTestContext
         Authority.Revalidate(Arg.Any<TenantContextSnapshot>(), Arg.Any<string>()).Returns(call =>
             call.Arg<TenantContextSnapshot>().TenantId == tenant ? TenantContextResult.Success(snapshot)
                 : TenantContextResult.Failure(TenantContextFailureCategory.StaleTenantContext, "test-correlation"));
-        Authentication.GetAuthenticationStateAsync().Returns(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity([
+        SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity([
             new Claim("sub", "user-1"), new Claim("eventstore:current-tenant", tenant),
             new Claim(FrontComposerTokenSession.ClaimType, "session-" + tenant)], "test")))));
     }
+
+    /// <summary>Configures the authentication lookup result for the query client.</summary>
+    public void SetAuthenticationState(Task<AuthenticationState> state)
+        => SetAuthenticationState(() => state);
+
+    /// <summary>Configures what the authentication provider does when the query client calls it.</summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0013", Justification = "This call configures an NSubstitute return value; it does not read or cache live authentication state.")]
+    public void SetAuthenticationState(Func<Task<AuthenticationState>> getState)
+        => Authentication.GetAuthenticationStateAsync().Returns(_ => getState());
 }

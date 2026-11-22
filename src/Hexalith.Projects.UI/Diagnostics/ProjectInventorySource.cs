@@ -6,6 +6,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// <summary>Loads bounded inventory through the supported SDK query.</summary>
 public sealed class ProjectInventorySource(ProjectReadQueryClient queries) : IProjectInventorySource
 {
+    private readonly Lock _loadState = new();
     private string? _view;
     private string? _issuedCursor;
     private int _loadGeneration;
@@ -18,18 +19,30 @@ public sealed class ProjectInventorySource(ProjectReadQueryClient queries) : IPr
     public async Task<ProjectInventoryLoadResult> LoadPageAsync(ListProjectsQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
-        string view = $"{queries.CurrentContext?.TenantId}|{query.LifecycleState}|{query.PageSize}|{query.InspectDescriptiveMetadata}|{query.IncludeQuarantined}";
-        // Continuations are opaque, are never reconstructed and can only continue this exact view.
-        if (_view != view || query.Cursor != _issuedCursor)
-            query = query with
+        int generation;
+        lock (_loadState)
+        {
+            generation = ++_loadGeneration;
+        }
+
+        string? view = null;
+        ProjectReadResult<ProjectListPage> result = await queries.QueryAsync<ProjectListPage>("projects", ListProjectsQuery.QueryType, tenant =>
+        {
+            view = $"{tenant}|{query.LifecycleState}|{query.PageSize}|{query.InspectDescriptiveMetadata}|{query.IncludeQuarantined}";
+            // An opaque continuation belongs to the exact tenant and view that issued it.
+            lock (_loadState)
             {
-                Cursor = null
-            };
-        _view = view;
-        int generation = ++_loadGeneration;
-        ProjectReadResult<ProjectListPage> result = await queries.QueryAsync<ProjectListPage>("projects", ListProjectsQuery.QueryType, query, cancellationToken).ConfigureAwait(false);
-        if (generation == _loadGeneration)
-            _issuedCursor = result.Value?.Cursor;
+                return _view == view && query.Cursor == _issuedCursor ? query : query with { Cursor = null };
+            }
+        }, cancellationToken).ConfigureAwait(false);
+        lock (_loadState)
+        {
+            if (generation == _loadGeneration)
+            {
+                _view = view;
+                _issuedCursor = result.Value?.Cursor;
+            }
+        }
         if (result.Value is not { } page)
             return ProjectInventoryLoadResult.FromFeedback(result.Feedback!);
         return ProjectInventoryLoadResult.FromRows(page.Items.Select(item => new ProjectInventoryRowProjection

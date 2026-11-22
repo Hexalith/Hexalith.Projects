@@ -22,12 +22,35 @@ public sealed class ProjectReadQueryClient(IEventStoreGatewayClient client, IEnu
     public async Task<ProjectReadResult<T>> QueryAsync<T>(string target, string queryType, object payload, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(payload);
+        return await QueryAsync<T>(target, queryType, _ => payload, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Prepares a tenant-scoped payload after validating the current identity.</summary>
+    internal async Task<ProjectReadResult<T>> QueryAsync<T>(string target, string queryType, Func<string, object> createPayload, CancellationToken cancellationToken)
+    {
         cancellationToken.ThrowIfCancellationRequested();
-        TenantContextSnapshot? authority = CurrentContext;
-        if (authority is not { IsAuthenticated: true })
-            return new(default, ProjectConsoleFeedback.FailClosed("safe_denial"), "server-derived tenant");
-        AuthenticationStateProvider? provider = authentication.FirstOrDefault();
-        AuthenticationState? state = provider is null ? null : await provider.GetAuthenticationStateAsync().ConfigureAwait(false);
+        AuthenticationStateProvider? provider;
+        AuthenticationState? state;
+        TenantContextSnapshot? authority;
+        try
+        {
+            provider = authentication.FirstOrDefault();
+            state = provider is null
+                ? null
+                : await provider.GetAuthenticationStateAsync().WaitAsync(cancellationToken).ConfigureAwait(false);
+            authority = state?.User.Identity?.IsAuthenticated == true ? CurrentContext : null;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return new(default, ProjectConsoleFeedback.Warning("data_unavailable"), "server-derived tenant");
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
         if (authority is not { IsAuthenticated: true }
             || state?.User.Identity?.IsAuthenticated != true
             || state.User.FindFirst("sub")?.Value != authority.UserId
@@ -39,6 +62,7 @@ public sealed class ProjectReadQueryClient(IEventStoreGatewayClient client, IEnu
 
         try
         {
+            object payload = createPayload(authority.TenantId);
             EventStoreQueryResult<T> response = await _supportedReads.QueryAsync<T>(authority.TenantId, target, queryType, payload, cancellationToken).ConfigureAwait(false);
             // An authority change while the query was pending cannot disclose the previous Tenant's result.
             AuthenticationState current = await provider!.GetAuthenticationStateAsync().ConfigureAwait(false);

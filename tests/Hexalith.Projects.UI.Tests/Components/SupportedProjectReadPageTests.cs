@@ -1,6 +1,11 @@
 namespace Hexalith.Projects.UI.Tests.Components;
 
 using Bunit;
+using Hexalith.EventStore.Client.Gateway;
+using Hexalith.FrontComposer.Contracts;
+using Hexalith.FrontComposer.Shell.Infrastructure.Tenancy;
+using Hexalith.FrontComposer.Shell.Options;
+using Hexalith.FrontComposer.Shell.Services.Auth;
 using Hexalith.FrontComposer.Testing;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
@@ -8,7 +13,12 @@ using Hexalith.Projects.UI.Components.Pages;
 using Hexalith.Projects.UI.Components.Shared;
 using Hexalith.Projects.UI.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.Http;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NSubstitute;
 using Shouldly;
@@ -88,6 +98,36 @@ public sealed class SupportedProjectReadPageTests : FrontComposerTestBase
         source.Received().LoadPageAsync(Arg.Is<ListProjectsQuery>(query => query.Cursor == "opaque"), Arg.Any<CancellationToken>());
         cut.Find("[data-testid='project-inventory-filter-archived']").Click();
         source.Received().LoadPageAsync(Arg.Is<ListProjectsQuery>(query => query.Cursor == null && query.LifecycleState == "Archived"), Arg.Any<CancellationToken>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void InventoryRendersUnavailableWhenInitialCircuitAuthenticationLookupFaults(bool faultedTask)
+    {
+        const string providerFailure = "private authentication provider detail";
+        // An uninitialized server provider throws during lookup. A faulted state tests the asynchronous provider path.
+        ServerAuthenticationStateProvider authentication = new();
+        if (faultedTask)
+        {
+            authentication.SetAuthenticationState(Task.FromException<AuthenticationState>(new InvalidOperationException(providerFailure)));
+        }
+
+        using ServiceProvider circuit = new ServiceCollection().AddSingleton<AuthenticationStateProvider>(authentication).BuildServiceProvider();
+        CircuitServicesAccessor circuitServices = new() { Services = circuit };
+        ServerCircuitUserContextAccessor user = new(new HttpContextAccessor(), circuitServices,
+            Options.Create(new FrontComposerAuthenticationOptions()), NullLogger<ServerCircuitUserContextAccessor>.Instance);
+        FrontComposerTenantContextAccessor authority = new(user, Options.Create(new FcShellOptions()), NullLogger<FrontComposerTenantContextAccessor>.Instance);
+        IEventStoreGatewayClient gateway = Substitute.For<IEventStoreGatewayClient>();
+        ProjectReadQueryClient queries = new(gateway, [authority], [authentication]);
+        Services.AddSingleton<IProjectWarningsDashboardSource>(new ProjectWarningsDashboardSource(new ProjectInventorySource(queries)));
+
+        IRenderedComponent<Home> cut = Render<Home>();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-feedback-warning']").TextContent.ShouldContain("data_unavailable"));
+        cut.FindAll("[data-testid='project-inventory-grid']").ShouldBeEmpty();
+        cut.Markup.ShouldNotContain(providerFailure);
+        gateway.ReceivedCalls().ShouldBeEmpty();
     }
 
     [Fact]

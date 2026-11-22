@@ -1,12 +1,16 @@
 namespace Hexalith.Projects.UI.Tests.Diagnostics;
 
+using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.FrontComposer.Shell.Infrastructure.Tenancy;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.UI.Diagnostics;
+using Hexalith.Projects.UI.Rendering;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -113,6 +117,100 @@ public sealed class SupportedProjectReadSourceTests
         ProjectReadResult<ProjectListPage> stale = await scope.Queries.QueryAsync<ProjectListPage>("projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), TestContext.Current.CancellationToken);
         stale.Feedback!.SafeReasonCode.ShouldBe("safe_denial");
         scope.Client.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task InitialAuthenticationFaultReturnsUnavailableWithoutGatewayCall()
+    {
+        SupportedReadTestContext scope = new();
+        scope.SetAuthenticationState(Task.FromException<AuthenticationState>(new InvalidOperationException("private provider failure")));
+
+        ProjectReadResult<ProjectListPage> result = await scope.Queries.QueryAsync<ProjectListPage>(
+            "projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), TestContext.Current.CancellationToken);
+
+        result.Value.ShouldBeNull();
+        result.Feedback.ShouldBe(ProjectConsoleFeedback.Warning("data_unavailable"));
+        scope.Client.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("tenant-other")]
+    public async Task MissingOrMismatchedIdentityReturnsSafeDenialWithoutGatewayCall(string? authenticationTenant)
+    {
+        SupportedReadTestContext scope = new();
+        if (authenticationTenant is null)
+        {
+            scope.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+        }
+        else
+        {
+            scope.SetTenant(authenticationTenant);
+            scope.Authority.TryGetContext(Arg.Any<string?>(), Arg.Any<string>())
+                .Returns(TenantContextResult.Success(new("tenant-a", "user-1", true, "test-correlation")));
+        }
+
+        ProjectReadResult<ProjectListPage> result = await scope.Queries.QueryAsync<ProjectListPage>(
+            "projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), TestContext.Current.CancellationToken);
+
+        result.Value.ShouldBeNull();
+        result.Feedback.ShouldBe(ProjectConsoleFeedback.FailClosed("safe_denial"));
+        scope.Client.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task CallerCancellationStopsWaitingForInitialAuthenticationWithoutGatewayCall()
+    {
+        SupportedReadTestContext scope = new();
+        using CancellationTokenSource cancellation = new();
+        TaskCompletionSource<AuthenticationState> authentication = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        scope.SetAuthenticationState(authentication.Task);
+
+        Task<ProjectReadResult<ProjectListPage>> pending = scope.Queries.QueryAsync<ProjectListPage>(
+            "projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), cancellation.Token);
+        cancellation.Cancel();
+
+        OperationCanceledException exception = await Should.ThrowAsync<OperationCanceledException>(
+            () => pending.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+        exception.CancellationToken.ShouldBe(cancellation.Token);
+        scope.Client.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task CallerCancellationTakesPrecedenceOverInitialAuthenticationFault()
+    {
+        SupportedReadTestContext scope = new();
+        using CancellationTokenSource cancellation = new();
+        scope.SetAuthenticationState(() =>
+        {
+            cancellation.Cancel();
+            return Task.FromException<AuthenticationState>(new InvalidOperationException("private provider failure"));
+        });
+
+        OperationCanceledException exception = await Should.ThrowAsync<OperationCanceledException>(() => scope.Queries.QueryAsync<ProjectListPage>(
+            "projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), cancellation.Token));
+        exception.CancellationToken.ShouldBe(cancellation.Token);
+        scope.Client.ReceivedCalls().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ChangedAuthenticationAfterGatewayReadDiscardsPayload()
+    {
+        SupportedReadTestContext scope = new();
+        ProjectListPage page = new([], null, false, Snapshot(AdmissionResponseState.Complete, 0));
+        scope.Client.SubmitQueryAsync<ProjectListPage>(Arg.Any<SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                scope.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+                return new EventStoreQueryResult<ProjectListPage>(null, page, false, null);
+            });
+
+        ProjectReadResult<ProjectListPage> result = await scope.Queries.QueryAsync<ProjectListPage>(
+            "projects", ListProjectsQuery.QueryType, new ListProjectsQuery(), TestContext.Current.CancellationToken);
+
+        result.Value.ShouldBeNull();
+        result.Feedback.ShouldBe(ProjectConsoleFeedback.FailClosed("safe_denial"));
+        scope.Client.ReceivedCalls().Count().ShouldBe(1);
     }
 
     [Fact]

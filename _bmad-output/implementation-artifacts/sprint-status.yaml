@@ -703,6 +703,8 @@ action_items:
       Web reads and verify bounded feedback with zero Gateway calls while preserving
       caller cancellation."
     owner: "Projects UI maintainer"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md"
     plan: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md"
+    resolution: "Initial Web authentication faults render data_unavailable with no payload and zero Gateway calls. Identity denial, caller cancellation and the post-query recheck are covered. The focused tests passed 44 of 44 and the full UI suite passed 306 of 306."
+    evidence: "_bmad-output/implementation-artifacts/spec-epic-6-retro-handle-web-auth-unavailability.md#verification"
