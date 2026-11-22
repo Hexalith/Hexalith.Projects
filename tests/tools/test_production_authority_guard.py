@@ -1031,6 +1031,30 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     with self.assertRaisesRegex(GUARD.GuardViolation, error):
                         self.validate_boundary(sprint=candidate)
 
+    def test_retrospective_keeps_the_existing_action_inventory_and_scheduling_gates(self) -> None:
+        sprint = GUARD._load_yaml_text(GUARD.DEFAULT_SPRINT_STATUS.read_text(), "active sprint")
+        development = sprint["development_status"]
+        self.assertEqual("done", development[GUARD.EPIC6_RETRO_KEY])
+        self.assertEqual("in-progress", development["epic-6"])
+        actions = GUARD._action_map(sprint)
+        item = actions[GUARD.EPIC6_RETRO_ACTION_IDS[0]]
+        for field, invalid in (("epic", 8), ("status", "released"), ("id", "unapproved-action")):
+            with self.subTest(field=field):
+                old = item[field]
+                item[field] = invalid
+                with self.assertRaises(GUARD.GuardViolation):
+                    GUARD._action_map(sprint)
+                item[field] = old
+
+        development[GUARD.EPIC6_RETRO_KEY] = "optional"
+        with self.assertRaisesRegex(GUARD.GuardViolation, "action inventory"):
+            GUARD._action_map(sprint)
+        sprint["action_items"] = [
+            item for item in sprint["action_items"] if item.get("id") not in GUARD.EPIC6_RETRO_ACTION_IDS
+        ]
+        GUARD._validate_scheduling(sprint)
+        self.assertEqual(tuple(GUARD.ACTION_STATUSES), tuple(GUARD._action_map(sprint)))
+
     def test_active_repository_index_passes(self) -> None:
         self.assertEqual((6, 7, 8), GUARD.validate_index())
 

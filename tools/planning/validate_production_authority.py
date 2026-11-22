@@ -90,11 +90,19 @@ ACCEPTED_ROLES = (
 )
 SELECTED_REFERENCE = "#/selected"
 
+EPIC6_RETRO_KEY = "epic-6-retrospective"
+EPIC6_RETRO_ACTION_IDS = (
+    "epic-6-retro-requalify-v4",
+    "epic-6-retro-correct-cutover-runbook",
+    "epic-6-retro-reconcile-context-scope",
+    "epic-6-retro-handle-web-auth-unavailability",
+)
+
 EPIC6_DEVELOPMENT_STATUSES = {
     "epic-6": "in-progress",
     "6-2-retrieve-conversation-start-setup-with-admission-truth": "done",
     "6-3-retrieve-assembled-project-context-through-supported-read-models": "done",
-    "epic-6-retrospective": "optional",
+    EPIC6_RETRO_KEY: "optional",
 }
 TRANSITIVE_EPIC_STATUSES = {
     "epic-7": "backlog",
@@ -288,6 +296,8 @@ def _validate_scheduling(
         if tracking_key_epic(key) in EXPECTED_PRODUCTION_EPICS
     }
     expected = {**EPIC6_DEVELOPMENT_STATUSES, **TRANSITIVE_EPIC_STATUSES}
+    if production.get(EPIC6_RETRO_KEY) == "done":
+        expected[EPIC6_RETRO_KEY] = "done"
     for key, story in ((STORY_6_1_KEY, "6.1"), (STORY_6_5_KEY, "6.5")):
         status = production.get(key)
         if status not in READ_FEATURE_STATUSES:
@@ -338,8 +348,14 @@ def _action_map(sprint: dict[str, Any]) -> dict[str, dict[str, Any]]:
         if item_id in protected:
             raise GuardViolation(f"duplicate action item id {item_id}")
         protected[item_id] = action
-    if tuple(protected) != tuple(ACTION_STATUSES):
+    retro_done = sprint["development_status"].get(EPIC6_RETRO_KEY) == "done"
+    retro_ids = EPIC6_RETRO_ACTION_IDS if retro_done else ()
+    if tuple(protected) != (*ACTION_STATUSES, *retro_ids):
         raise GuardViolation("Epic 6-8 action inventory must remain exact")
+    for item_id in retro_ids:
+        action = protected[item_id]
+        if action.get("epic") != 6 or action.get("status") not in ("open", "in-progress", "done"):
+            raise GuardViolation(f"invalid Epic 6 retrospective action: {item_id}")
     return protected
 
 
