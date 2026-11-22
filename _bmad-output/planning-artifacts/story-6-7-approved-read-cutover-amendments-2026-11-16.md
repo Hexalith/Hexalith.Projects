@@ -87,6 +87,18 @@ The legacy safety repair must never return a successful empty/Fresh setup as usa
 context. This approval does not accept any cell or weaken other source/position,
 cursor, disclosure, audit or rollback checks.
 
+# Additional explicit approval: retained v1 reference reason-code spelling
+
+On 2026-11-22, in Story 6.7 code review pass 3, the user chose "snake_case on the
+legacy path" (answer: "apply recommended"). Retained v1 open emits
+`reference_unavailable` and `owner_read_unverified`, as its schema pattern requires.
+Normalization revision advances to `story67-read-normalization-2026-11-22-v4`: v3 plus
+exactly one closed mapping for the reference-summary `reasonCode` only,
+`reference_unavailable` to `ReferenceUnavailable` and `owner_read_unverified` to
+`OwnerReadUnverified`. No other value, field or operation is mapped. Prior v1-v3
+receipts retain their original meaning and are not reclassified.
+
+
 # Execution and evidence
 
 Continue the existing implementation and finish actual authenticated seven-read

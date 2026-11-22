@@ -1477,3 +1477,13 @@ resolution: 2026-11-21. Stories 8.4 and 8.5, the terminal release criteria and U
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Remove the pre-existing dependency-audit suppression from the release-packaging helper.
   evidence: R2-B7; scripts/_pack_release_packages.py already passes NuGetAudit=false in committed release-tooling work. The Story 6.7 Debug verification preserves audits; release-tooling repair must remove that override and retain actual audit failures.
+
+## Deferred from: code review of spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md (2026-11-22)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Account for the Story 6.7 feature and approved legacy behavior change in release versioning and notes.
+  evidence: Pass 3; the Story 6.7 source landed only in `e8fe8141` and `329ddd1e` ("build: sync local changes via /pushall"). They add public IClient metadata overloads and change retained v1 list/open (explicit audited inspection) and context reads (named Conversation). Conventional-Commit release tooling will neither bump the minor version nor record the behavior break from these commits. Severity medium. Owner: the release that first ships the cutover.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
+  summary: Restore managed AppHost E2E UI coverage under the read cutover.
+  evidence: Pass 3, decision 4; the scheduled "Run managed AppHost E2E suite" step failed on 2026-11-21 and 2026-11-22. The readiness probe and list/open helpers now opt into audited descriptive inspection. Most UI specs (maintenance, lifecycle, reference health, resolution trace, console shell, audit, inventory detail, accessibility) exercise the legacy inspector, which only the LegacyRollback page renders; the supported `/inspect/` pages lack those sections, and the lane cannot select LegacyRollback or Supported without evidence bound to its exact revision. Severity medium. Owner: the work that gives the managed lane a real read mode or retires the legacy inspector (Epic 8).

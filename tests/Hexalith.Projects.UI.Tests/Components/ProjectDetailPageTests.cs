@@ -139,6 +139,42 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     }
 
     [Fact]
+    public void RollbackReevaluateForwardsTheBoundConversationAndReloadsWithIt()
+    {
+        ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", "bound-conversation", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"))));
+        IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
+        maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-reevaluate")));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<ILegacyProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(maintenance);
+        Services.GetRequiredService<NavigationManager>().NavigateTo("/projects/project-001?conversationId=bound-conversation");
+
+        IRenderedComponent<LegacyProjectDiagnostics> cut = Render<LegacyProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+        cut.Find("[data-testid='maintenance-action-select']").Change(ProjectMaintenanceActions.Reevaluate);
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+        cut.Find("[data-testid='maintenance-action-confirm']").Change(true);
+        cut.Find("[data-testid='maintenance-action-submit']").Click();
+
+        cut.WaitForAssertion(() => source.Received(2).GetProjectDetailAsync("project-001", "bound-conversation", Arg.Any<CancellationToken>()));
+        maintenance.Received(1).ExecuteAsync(
+            Arg.Is<ProjectMaintenanceActionExecutionRequest>(request => request.Action == ProjectMaintenanceActions.Reevaluate
+                && request.ConversationId == "bound-conversation"),
+            Arg.Any<IProgress<string>?>(),
+            Arg.Any<CancellationToken>());
+        source.DidNotReceive().GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public void MaintenancePanelRequiresDryRunAndConfirmationBeforeSubmit()
     {
         ILegacyProjectDetailSource source = Substitute.For<ILegacyProjectDetailSource>();

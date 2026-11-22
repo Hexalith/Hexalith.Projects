@@ -2130,7 +2130,7 @@ public sealed class CreateProjectEndpointTests
             reference.GetProperty("referenceState").GetString().ShouldBe("pending");
             reference.TryGetProperty("referenceId", out _).ShouldBeFalse();
             reference.TryGetProperty("displayName", out _).ShouldBeFalse();
-            reference.GetProperty("reasonCode").GetString().ShouldBe("ReferenceUnavailable");
+            reference.GetProperty("reasonCode").GetString().ShouldBe("reference_unavailable");
             (await readModel.GetAsync("tenant-a", ProjectIdValue, TestContext.Current.CancellationToken).ConfigureAwait(true))!
                 .ProjectFolder!.ReasonCode.ShouldBe("folder_create_external_unavailable");
             Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));

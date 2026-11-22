@@ -35,7 +35,7 @@ row. Current Folder permission is independently checked where required. Ordinary
 reads return Safe Metadata. Descriptive and quarantine inspection require separate
 authorization and a successful metadata-only audit before disclosure.
 
-Legacy-only reads remain: context/refresh, Project conversations, operator
+Legacy-only reads remain: context refresh, Project conversations, operator
 diagnostics, and proposal preview. Existing maintenance/write surfaces retain their
 own admission. They are not substitute supported reads or accepted rollback proof.
 `ResolveProjectChatBotAuthority` is owner-only and outside the seven public reads.
@@ -102,7 +102,7 @@ Selection is immutable for the process. A denial, timeout, regression or depende
 failure never changes the route or retries through legacy.
 
 The hash-bound receipt must use normalization revision
-`story67-read-normalization-2026-11-16-v3`, match the selected application revision
+`story67-read-normalization-2026-11-22-v4`, match the selected application revision
 and contract hash, prove contract/identity compatibility, and contain every
 operation/scenario cell from ProjectReadCutoverGate. Duplicate, missing, skipped,
 unexecuted or failing cells refuse activation. Every cell must also prove persisted
@@ -116,6 +116,12 @@ legacy slices: current authority, Safe Metadata, indistinguishable denial and
 persisted no-domain-write behavior. Missing or failed legacy proof selects
 Unavailable. Writer rollback and legacy-runtime retirement remain separate gates.
 Retain legacy implementations until Epic 8 acceptance and AD-25 retirement proof.
+In LegacyRollback the primary Web pages (`/`, `/projects`, `/projects/warnings` and
+`/projects/{id}`) read through retained v1 list/open with explicit descriptive
+inspection (approved amendment 4). Their users need the descriptive-inspection
+permission (`projects:inspect_descriptive_metadata`); other users receive the safe
+not-found result. Every page load writes a durable metadata-only inspection audit
+before names are shown.
 
 Approved normalization permits object property order only without extra proof.
 Lifecycle spelling, Folder field alignment, Sequence/ProjectVersion,
@@ -123,6 +129,10 @@ ObservedAt/AsOf, and null Setup/current-empty mappings require the identical enu
 authorized reference, source sequence, observation, or independently verified
 current-empty evidence respectively. Exact timestamps and array order remain.
 Raw keys, cursor behavior and supported-only admission assertions remain separate.
+Revision v4 (Story 6.7 review decision, 2026-11-22) adds one closed spelling mapping
+for the retained v1 reference-summary `reasonCode`: `reference_unavailable` to
+`ReferenceUnavailable` and `owner_read_unverified` to `OwnerReadUnverified`. Retained
+v1 open emits the snake_case spellings its schema requires; no other value is mapped.
 The historical story61 comparator revision is retained as historical evidence.
 
 Snapshot `asOf` and Conversation-start Setup `ObservedAt` are the current computation instant from the injected clock. Component/reference last-verified observations retain the original source evidence times and describe evidence age. This interpretation was explicitly retained by Story 6.7 review decision 2; it does not introduce timestamp tolerance into comparisons.
@@ -147,7 +157,9 @@ identity and current membership. Its delegated Projects mode returns bounded nat
 evidence only; direct authorized owner reads retain their full result. First-response
 usability is established by that separate named membership read, never by list/open
 Complete or `contextActivation.enabled`. Missing or unavailable native membership yields
-no usable Setup. Session/opened-Project fallback remains deferred.
+no usable Setup: retained reads return 503, and supported reads return Unavailable with
+cause `MissingOrStaleRequiredContext` and recovery `RefreshContext` (Story 6.7 review
+decision, 2026-11-22). Session/opened-Project fallback remains deferred.
 
 Legacy list/open require `inspectDescriptiveMetadata=true`, the existing inspection
 permission and successful durable metadata-only audit. Original generated client methods
@@ -281,4 +293,4 @@ Legacy list refuses retryable or stale row evidence and rechecks final authority
 
 The startup revision and contract values are deployment declarations, verified against source qualification receipts here. Intrinsic binding to running application/dependency fingerprints remains a production release obligation, alongside the deferred owner/RTI admission and existing retained attachment-link race. This source acceptance does not qualify a deployed topology or advance readiness/AD-25 gates.
 
-The final review also rechecks fresh, unchanged Project/Tenant/EventStore evidence after inspection audit, Folder reads and native membership. Retained delegated ChatBot list/open share the supported current Folder boundary. Folder v1 metadata responses are capped at 16 KiB. The cursor proof enumerates three pages, advances the clock, retains the original expiry and rejects replay under four independently authorized changed identities. Additional ChatBot stale/unavailable transport outcomes are retained as safety controls and explicitly do not add an approved D2 normalization pair.
+The final review also rechecks fresh, unchanged Project/Tenant/EventStore evidence after inspection audit, Folder reads and native membership. Retained delegated ChatBot list/open share the supported current Folder boundary. Folder v1 metadata responses are capped at 16 KiB. The cursor proof enumerates three pages, advances the clock, retains the original expiry and rejects replay under four independently authorized changed identities. Additional ChatBot stale/unavailable transport outcomes are retained as safety controls and explicitly do not add an approved D2 normalization pair. Retained context, Conversation-start, explain and refresh reads likewise re-read Project/Tenant/EventStore authority after their last owner await and before disclosure (Story 6.7 review pass 3).

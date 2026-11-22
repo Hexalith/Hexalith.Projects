@@ -192,6 +192,8 @@ public static partial class ProjectsDomainServiceEndpoints
 
         if (!await HasCurrentLegacyMembershipAsync(projectId, httpContext, tenantContext,
             safeCorrelationId, cancellationToken).ConfigureAwait(false)) return ReadModelUnavailable(correlationId, null);
+        if (await ConfirmLegacyContextDisclosureAsync(projectId, prepared.Authority!, httpContext, tenantContext,
+            authorizationGate, safeCorrelationId, taskId, cancellationToken).ConfigureAwait(false) is { } authorityChanged) return authorityChanged;
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
         return Results.Json(ProjectContextSafeMetadata.Sanitize(assembled.Context), ResponseJsonOptions);
     }

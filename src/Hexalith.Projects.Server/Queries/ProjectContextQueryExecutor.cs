@@ -236,7 +236,7 @@ public sealed class ProjectContextQueryExecutor(
         {
             return ProjectContextAdmissionAssembler.Unavailable(projectId, detail.Lifecycle, asOf,
                 detail.Sequence, projectCurrent: true, folderIncluded: false, setupCurrent: false,
-                authorizationCurrent: false, ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
+                authorizationCurrent: false, ProjectContextUnavailableCause.MissingOrStaleRequiredContext);
         }
 
         asOf = (timeProvider ?? TimeProvider.System).GetUtcNow();

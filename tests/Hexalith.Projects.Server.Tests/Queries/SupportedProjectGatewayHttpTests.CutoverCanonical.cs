@@ -66,7 +66,9 @@ public sealed partial class SupportedProjectGatewayHttpTests
                     legacyCanonical = Canonical(new { old.ProjectId, old.Name, old.Description, Lifecycle = Lifecycle(old.LifecycleState),
                         old.CreatedAt, old.UpdatedAt, old.SetupMetadata, Setup = setup,
                         References = old.References.Select(row => new { Kind = ReferenceKind(row.ReferenceKind), Id = row.ReferenceId,
-                            row.DisplayName, State = State(row.ReferenceState), row.ReasonCode, ObservedAt = row.Freshness.ObservedAt }) });
+                            row.DisplayName, State = State(row.ReferenceState),
+                            ReasonCode = Hexalith.Projects.Testing.Reads.ReadCutoverComparator.SupportedReferenceReasonCode(row.ReasonCode),
+                            ObservedAt = row.Freshness.ObservedAt }) });
                     supportedCanonical = Canonical(new { current.ProjectId, current.Name, current.Description, Lifecycle = current.LifecycleState,
                         current.CreatedAt, current.UpdatedAt, current.SetupMetadata, current.Setup,
                         References = current.References.Select(row => new { Kind = row.ReferenceKind.ToString(), Id = row.FileReferenceId ?? row.MemoryReferenceId ?? row.FolderId,

@@ -162,6 +162,8 @@ public sealed class ReadCutoverRoutingTests
     [InlineData("identityCompatibility", "supported-gate-rejected")]
     [InlineData("mode-case", "invalid-mode")]
     [InlineData("missing-evidence", "evidence-file-missing")]
+    [InlineData("missing-contract-hash", "missing-evidence-configuration")]
+    [InlineData("missing-receipt", "native-receipts-rejected")]
     public void InvalidStartupEvidenceHasABoundedRefusalReason(string fault, string reason)
     {
         string directory = Path.Combine(Path.GetTempPath(), "story67-refusal-" + Guid.NewGuid().ToString("N"));
@@ -185,8 +187,9 @@ public sealed class ReadCutoverRoutingTests
             File.WriteAllBytes(path, bytes);
             var options = new ProjectsReadRoutingOptions { Mode = fault == "mode-case" ? "supported" : "Supported",
                 EvidencePath = path, EvidenceHash = fault == "evidence-hash" ? new string('c', 64) : Convert.ToHexString(SHA256.HashData(bytes)),
-                SourceRevision = Revision, ContractHash = Contract };
+                SourceRevision = Revision, ContractHash = fault == "missing-contract-hash" ? null : Contract };
             if (fault == "missing-evidence") File.Delete(path);
+            if (fault == "missing-receipt") File.Delete(Path.Combine(directory, "native.xml"));
             var selected = ProjectsReadRouteSelection.Create(options);
             selected.Mode.ShouldBe("Unavailable");
             selected.RefusalReason.ShouldBe(reason);

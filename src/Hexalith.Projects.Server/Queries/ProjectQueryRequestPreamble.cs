@@ -61,7 +61,7 @@ public static partial class ProjectsDomainServiceEndpoints
             : null;
     }
 
-    private static async Task<(ProjectDetailItem? Detail, TenantAccessAuthorizationResult? TenantAccess, IResult? Rejection)> AuthorizeContextQueryAsync(
+    private static async Task<(ProjectDetailItem? Detail, TenantAccessAuthorizationResult? TenantAccess, IResult? Rejection, LegacyContextAuthority? Authority)> AuthorizeContextQueryAsync(
         string projectId,
         HttpContext httpContext,
         IProjectTenantContextAccessor tenantContext,
@@ -72,7 +72,7 @@ public static partial class ProjectsDomainServiceEndpoints
     {
         if (!IsCanonicalIdentifier(projectId))
         {
-            return (null, null, SafeDenial(correlationId, null));
+            return (null, null, SafeDenial(correlationId, null), null);
         }
 
         ProjectAuthorizationResult authorization = await authorizationGate
@@ -83,39 +83,64 @@ public static partial class ProjectsDomainServiceEndpoints
             IResult rejection = authorization.Retryable
                 ? ReadModelUnavailable(correlationId, null)
                 : SafeDenial(correlationId, null, authorization);
-            return (null, null, rejection);
+            return (null, null, rejection, null);
         }
 
         if (authorization.TenantAccessResult is null)
         {
-            return (null, null, SafeDenial(correlationId, null));
+            return (null, null, SafeDenial(correlationId, null), null);
         }
 
         if (!HasCurrentLegacyReadAuthority(authorization))
         {
-            return (null, null, ReadModelUnavailable(correlationId, null));
+            return (null, null, ReadModelUnavailable(correlationId, null), null);
         }
 
         if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
-            return (null, null, validationProblem);
+            return (null, null, validationProblem, null);
         }
 
         if (authorization.ProjectDetail.Lifecycle == Hexalith.Projects.Contracts.Ui.ProjectLifecycle.Active
             && (authorization.ProjectDetail.ProjectFolder is null
                 || authorization.ProjectDetail.ProjectFolder.ReferenceState != Hexalith.Projects.Contracts.Ui.ReferenceState.Included))
-            return (null, null, ReadModelUnavailable(correlationId, null));
+            return (null, null, ReadModelUnavailable(correlationId, null), null);
 
         if (!await HasCurrentLegacyMembershipAsync(projectId, httpContext, tenantContext,
             correlationId, cancellationToken).ConfigureAwait(false))
-            return (null, null, ReadModelUnavailable(correlationId, null));
+            return (null, null, ReadModelUnavailable(correlationId, null), null);
 
         // An allowed result without its tenant evidence is an upstream regression. Retain the
         // existing safe-denial collapse instead of assembling a response from incomplete authority.
         return authorization.TenantAccessResult is { } tenantAccess
-            ? (authorization.ProjectDetail, tenantAccess, null)
-            : (null, null, SafeDenial(correlationId, null));
+            ? (authorization.ProjectDetail, tenantAccess, null, new LegacyContextAuthority(authorization,
+                System.Text.Json.JsonSerializer.Serialize(authorization.ProjectDetail, ResponseJsonOptions),
+                tenantContext.AuthoritativeTenantId!, tenantContext.PrincipalId!))
+            : (null, null, SafeDenial(correlationId, null), null);
     }
+
+    // Retained context reads disclose only after re-reading Project, Tenant and EventStore authority
+    // once their last owner await has completed, mirroring the supported executor and legacy open.
+    private static async Task<IResult?> ConfirmLegacyContextDisclosureAsync(
+        string projectId,
+        LegacyContextAuthority authority,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        string correlationId,
+        string? taskId,
+        CancellationToken cancellationToken)
+    {
+        ProjectAuthorizationResult disclosure = await authorizationGate
+            .AuthorizeReadAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (disclosure.Retryable || disclosure.IsAllowed && !HasCurrentLegacyReadAuthority(disclosure))
+            return ReadModelUnavailable(correlationId, null);
+        return HasStableLegacyReadEvidence(authority.Initial, disclosure, authority.ObservedDetail,
+            authority.TenantId, authority.ActorId, tenantContext) ? null : SafeDenial(correlationId, null);
+    }
+
+    private sealed record LegacyContextAuthority(ProjectAuthorizationResult Initial, string ObservedDetail, string TenantId, string ActorId);
 
     private static async Task<bool> HasCurrentLegacyMembershipAsync(string projectId, HttpContext context,
         IProjectTenantContextAccessor tenant, string correlationId, CancellationToken cancellationToken)

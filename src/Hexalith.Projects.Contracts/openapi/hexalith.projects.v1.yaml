@@ -498,6 +498,7 @@ paths:
         the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is
         rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and
         ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        Requires the named Conversation current authorized same-Tenant native Project membership. Missing or unusable membership returns 503 without usable context. Session fallback is deferred.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"

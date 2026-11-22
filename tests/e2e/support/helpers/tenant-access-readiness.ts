@@ -118,7 +118,8 @@ export async function ensureProjectsTenantAccess(options: {
   async function probe(): Promise<{ listStatus: number; listCategory: string | null }> {
     if (Date.now() >= deadline) return { listStatus: 504, listCategory: null };
     try {
-      const response = await options.projects.get('/api/v1/projects', {
+      // Story 6.7: the retained list answers 200 only to explicit, audited descriptive inspection.
+      const response = await options.projects.get('/api/v1/projects?inspectDescriptiveMetadata=true', {
         headers: {
           Authorization: `Bearer ${options.authToken}`,
           'X-Hexalith-Tenant-Id': authority.tenantId,

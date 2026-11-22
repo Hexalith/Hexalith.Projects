@@ -2142,7 +2142,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 ToWireReferenceState(folderState),
                 detail.ProjectFolder.FolderId,
                 folderState == ReferenceState.Included ? detail.ProjectFolder.DisplayName : null,
-                folderState == ReferenceState.Included ? null : "ReferenceUnavailable",
+                folderState == ReferenceState.Included ? null : "reference_unavailable",
                 ToFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)));
         }
 
@@ -2153,7 +2153,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 ToWireReferenceState(ReferenceState.Unavailable),
                 file.FileReferenceId,
                 null,
-                "OwnerReadUnverified",
+                "owner_read_unverified",
                 ToFreshness(file.ObservedAt, detail.Sequence)));
         }
 
@@ -2164,7 +2164,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 ToWireReferenceState(ReferenceState.Unavailable),
                 memory.MemoryReferenceId,
                 null,
-                "OwnerReadUnverified",
+                "owner_read_unverified",
                 ToFreshness(memory.ObservedAt, detail.Sequence)));
         }
 

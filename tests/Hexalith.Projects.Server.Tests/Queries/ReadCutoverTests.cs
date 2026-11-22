@@ -99,12 +99,21 @@ public sealed class ReadCutoverTests
         ProjectsReadRouteSelection.Create(new ProjectsReadRoutingOptions { Mode = "Supported" }).Mode.ShouldBe("Unavailable");
     }
 
+    [Theory]
+    [InlineData("reference_unavailable", "ReferenceUnavailable")]
+    [InlineData("owner_read_unverified", "OwnerReadUnverified")]
+    [InlineData("ReferenceUnavailable", "ReferenceUnavailable")]
+    [InlineData("folder_create_external_unavailable", "folder_create_external_unavailable")]
+    [InlineData(null, null)]
+    public void V4MapsOnlyTheTwoRetainedReferenceReasonSpellings(string? legacy, string? supported)
+        => ReadCutoverComparator.SupportedReferenceReasonCode(legacy).ShouldBe(supported);
+
     [Fact]
     public void V2KeepsOriginalGlobalPositionsSeparateFromAggregateVersions()
     {
         var legacy = Observation() with { Positions = [101], SourceGlobalPositions = [101], SourceSequenceNumbers = [2], ProjectVersions = null };
         var supported = legacy with { ProjectVersions = [2] };
-        ReadCutoverComparator.NormalizationRevision.ShouldBe("story67-read-normalization-2026-11-16-v3");
+        ReadCutoverComparator.NormalizationRevision.ShouldBe("story67-read-normalization-2026-11-22-v4");
         ReadCutoverComparator.Compare(legacy, supported).ShouldBeEmpty();
         ReadCutoverComparator.Compare(legacy, supported with { Positions = [2] }).ShouldNotBeEmpty();
         ReadCutoverComparator.Compare(legacy, supported with { SourceGlobalPositions = null }).ShouldNotBeEmpty();

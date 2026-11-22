@@ -106,6 +106,9 @@ public static partial class ProjectsDomainServiceEndpoints
             return SafeDenial(correlationId, null);
         }
 
+        if (await ConfirmLegacyContextDisclosureAsync(projectId, prepared.Authority!, httpContext, tenantContext,
+            authorizationGate, correlationId, taskId, cancellationToken).ConfigureAwait(false) is { } authorityChanged) return authorityChanged;
+
         ConversationStartSetup body = ConversationStartSetupProjector.Project(assembled.Context);
 
         httpContext.Response.Headers[FreshnessHeaderName] = body.Freshness.ToString();

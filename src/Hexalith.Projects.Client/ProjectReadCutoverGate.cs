@@ -6,7 +6,7 @@ using System.Text.Json;
 public static class ProjectReadCutoverGate
 {
     /// <summary>The sole approved normalization revision for this cutover.</summary>
-    public const string NormalizationRevision = "story67-read-normalization-2026-11-16-v3";
+    public const string NormalizationRevision = "story67-read-normalization-2026-11-22-v4";
 
     /// <summary>The seven delivered reads, excluding retained legacy-only operations.</summary>
     public static IReadOnlyList<string> Operations { get; } = Array.AsReadOnly(new[]

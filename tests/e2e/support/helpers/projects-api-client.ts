@@ -341,6 +341,8 @@ export async function getProject(
   const { status, body } = await apiRequest<ProjectDetail>({
     method: 'GET',
     path: `/api/v1/projects/${projectId}`,
+    // Story 6.7: retained v1 open discloses names only to explicit, audited descriptive inspection.
+    params: { inspectDescriptiveMetadata: 'true' },
     headers,
     // 404 is an expected safe-denial outcome, not a transport failure — don't retry it.
     retryConfig: { maxRetries: 0 },
@@ -364,7 +366,8 @@ export async function listProjects(
   const { status, body } = await apiRequest<ProjectListResponse>({
     method: 'GET',
     path: '/api/v1/projects',
-    params: lifecycle ? { lifecycle } : undefined,
+    // Story 6.7: retained v1 list discloses names only to explicit, audited descriptive inspection.
+    params: { inspectDescriptiveMetadata: 'true', ...(lifecycle ? { lifecycle } : {}) },
     headers,
     retryConfig: { maxRetries: 0 },
   });

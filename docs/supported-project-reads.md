@@ -280,9 +280,9 @@ NoMatch guidance above. Retained advisory responses withhold candidate names and
 protected exclusion details. Unsupported File inputs or degraded coverage return
 the already-declared 503 response; the supported Gateway continues returning its
 explicit incomplete result. Retained cutover reads now require current Tenant
-authority. Stale authority returns safe 404 on list/open; context/setup/explain and advisory retain the approved 503 versus explicit supported Unavailable/incomplete pairs. Conversation-start preserves Partial
-admission and optional omission evidence, and its retained freshness header carries
-actual Fresh/Stale plus the exact authorized sequence watermark. Existing v1 method
+authority. Stale authority returns safe 404 on list/open; context/setup/explain and advisory retain the approved 503 versus explicit supported Unavailable/incomplete pairs. Supported Conversation-start preserves Partial
+admission and optional omission evidence; the retained ConversationStartSetup DTO is
+unchanged (DW-66), and its retained freshness header carries actual Fresh/Stale plus the exact authorized sequence watermark. Existing v1 method
 and model signatures remain. These repairs do not accept read equivalence or
 production readiness. The [cutover inventory and accepted v3 source evidence](read-cutover.md)
 record the explicit selection and verified rollback gates; historical blocked receipts remain retained.

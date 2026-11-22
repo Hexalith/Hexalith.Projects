@@ -7,7 +7,18 @@ using Hexalith.Projects.Contracts.Ui;
 public static class ReadCutoverComparator
 {
     /// <summary>The approved rules, independent of any passing acceptance receipt.</summary>
-    public const string NormalizationRevision = "story67-read-normalization-2026-11-16-v3";
+    public const string NormalizationRevision = "story67-read-normalization-2026-11-22-v4";
+
+    /// <summary>The v4 closed spelling mapping for retained v1 reference-summary reason codes; no other value is mapped.</summary>
+    /// <param name="legacyReasonCode">The retained v1 reference-summary reason code.</param>
+    /// <returns>The supported spelling of the same reason, or the unchanged value.</returns>
+    public static string? SupportedReferenceReasonCode(string? legacyReasonCode)
+        => legacyReasonCode switch
+        {
+            "reference_unavailable" => "ReferenceUnavailable",
+            "owner_read_unverified" => "OwnerReadUnverified",
+            _ => legacyReasonCode,
+        };
 
     /// <summary>Compares output, exact keys/positions, cursor behavior and independent supported assertions.</summary>
     /// <param name="legacy">The authenticated legacy observation.</param>

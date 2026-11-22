@@ -29,7 +29,8 @@ public sealed class ProjectsReadRouteSelection
         if (options.Mode == "Unavailable") return new("Unavailable", "configured-unavailable");
         if (options.Mode is not ("Supported" or "LegacyRollback")) return new("Unavailable", "invalid-mode");
         if (string.IsNullOrWhiteSpace(options.EvidencePath) || string.IsNullOrWhiteSpace(options.EvidenceHash)
-            || string.IsNullOrWhiteSpace(options.SourceRevision)) return new("Unavailable", "missing-evidence-configuration");
+            || string.IsNullOrWhiteSpace(options.SourceRevision)
+            || options.Mode == "Supported" && string.IsNullOrWhiteSpace(options.ContractHash)) return new("Unavailable", "missing-evidence-configuration");
         try
         {
             using FileStream file = File.OpenRead(options.EvidencePath);
@@ -72,6 +73,7 @@ public sealed class ProjectsReadRouteSelection
             if (string.IsNullOrWhiteSpace(relative) || Path.IsPathRooted(relative) || string.IsNullOrWhiteSpace(hash)) return false;
             string path = Path.GetFullPath(Path.Combine(directory, relative));
             if (!path.StartsWith(directory + Path.DirectorySeparatorChar, StringComparison.Ordinal)) return false;
+            if (!File.Exists(path)) return false;
             using FileStream file = File.OpenRead(path);
             if (file.Length > 16_777_216) return false;
             byte[] bytes;
