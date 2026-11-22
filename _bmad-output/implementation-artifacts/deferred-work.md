@@ -789,6 +789,16 @@ removal_condition: Stories 8.4 and 8.5 and the UX spec are specified against the
 status: resolved
 resolution: 2026-11-21. Stories 8.4 and 8.5, the terminal release criteria and UX Journey 4 require refusal on both public heads. UX navigation names the four enrolled inspection operations. PRD A-7 preserves Platform AD-14. See sprint-change-proposal-2026-11-21.md.
 
+### DW-85: Supported context Refresh and Reference Trust Index
+
+origin: Story 6.3 implementation decision and Epic 6 retrospective, reconciled 2026-11-22
+owner: Projects maintainer with the Folders, Conversations and Memories contract owners. Product Owner and Solution Architect accept scope and approved G-2 contracts.
+location: Story 6.3 and evidence rows fr-16, fr-17 and fr-18
+reason: Supported Get and Explain use Project-owned persisted detail. A later Folder revocation reaches context, setup and explain when their persisted evidence refreshes. Refresh runs on retained v1. Supported Refresh and owner-backed trust require the approved G-2 batch contracts and index schema.
+removal_condition: Demonstrate bounded original-actor owner batches for supported read-only Refresh, Tenant-scoped index ingestion and rebuild, and Refresh shadow equivalence on authorized comparable inputs. Verify persisted outcomes, subsequent Folder revocation, stale and unavailable evidence, cross-Tenant denial, payload safety and zero writes by Get, Explain and Refresh. Keep ingestion writes separate from query execution. Record exact revisions and authenticated evidence with the FR rows.
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.
@@ -1421,7 +1431,7 @@ resolution: 2026-11-21. Stories 8.4 and 8.5, the terminal release criteria and U
   evidence: The source-only gate compares receipt identity with operator-supplied startup configuration; retaining both an old receipt and its old configuration after binary replacement can still qualify. Current local proof verifies exact source hashes, and no deployed acceptance is claimed.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
-  summary: Deliver current Folder owner/RTI admission for context/setup/explain under the planned Refresh/RTI ownership.
+  summary: DW-85 owns current Folder owner/RTI admission for context/setup/explain together with supported Refresh.
   evidence: Baseline c6541a3 consumes persisted Included Folder evidence; delivered 6.2/6.3 explicitly defer sibling ACL fan-out. A later owner revocation is not observed by those persisted reads until owner-backed evidence is integrated.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`

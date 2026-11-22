@@ -280,9 +280,9 @@ _The current production-authority owner is the AC-bearing story in **Epics 6–8
 | FR-13 | Resolve From Attachments | **6.4** | 4.3 | AD-7, AD-11, AD-14, AD-32 |
 | FR-14 | Confirm Ambiguous Project | **7.11** (candidates read 6.4) | 4.4 | AD-5, AD-13, AD-32 |
 | FR-15 | Propose New Project | **7.12** | 4.5 | AD-5, AD-8, AD-13, AD-31 |
-| FR-16 | Get Project Context | **6.3** | 3.2 | AD-11, AD-14, AD-32 |
-| FR-17 | Explain Context Selection | **6.3** / **6.4** | 3.3 | AD-7, AD-14 |
-| FR-18 | Refresh Project Context (read-only) | **6.3** | 3.4 | AD-7, AD-14, AD-32 |
+| FR-16 | Get Project Context | **6.3** (persisted detail), **DW-85** (owner-backed trust) | 3.2 | AD-11, AD-14, AD-32 |
+| FR-17 | Explain Context Selection | **6.3** / **6.4**, **DW-85** (context trust evidence) | 3.3 | AD-7, AD-14 |
+| FR-18 | Refresh Project Context (read-only) | **DW-85** (supported Refresh) | 3.4 | AD-7, AD-14, AD-32 |
 | FR-19 | Validate Setup & Metadata Classification | **7.1** (contract cutover 6.7) | 1.4/1.8 | AD-31, AD-16 |
 | FR-20 | Retrieve Conversation-Start Setup | **6.2** | 3.5 | AD-14, AD-32 |
 | FR-21 | Record Project Audit Events | **8.1** | 5.1 | AD-21, AD-26, AD-30 |
@@ -1320,10 +1320,11 @@ and every critical NFR-11/AD-30 release category.
 ## Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
 
 Deliver authorization-filtered list/open/context/resolution **reads** over named incremental
-EventStore DomainService read models and the rebuildable Reference Trust Index, exposed through
-authenticated FrontComposer and CLI read surfaces, and cut supported reads over shadow-read-first
-with reversible routing. This is the read/query side of the vertical slice; no consequential writes
-(those are Epic 7). It closes the read-side of ARCH-001/ARCH-002/API-001/CLIENT-001/ID-001 and
+EventStore DomainService read models through authenticated FrontComposer and CLI surfaces.
+Story 6.3 serves Get and Explain over Project-owned persisted detail. DW-85 owns supported
+Refresh and the rebuildable Reference Trust Index. Epic 6 requires authenticated source-mode
+comparison and an executed rollback drill before declaring reversible read cutover. Epic 7 owns
+consequential writes. Epic 6 closes the read-side of ARCH-001/ARCH-002/API-001/CLIENT-001/ID-001 and
 establishes the identity, contract, and platform boundary every later epic depends on.
 
 **Epic 6 entry gate (approved correction, 2026-11-02).** For 6.1, the only capability prerequisites are (1) usable authenticated SDK query handlers with persisted incremental/rebuild models and platform cursors, and (2) usable fail-closed Tenant/original actor/workload/delegation authority through gateway → Projects → Folders. Current Folder read authorization filters before paging; Safe Metadata and distinct durable inspection audit remain mandatory. Controlled Development composition with real JWT/workload/owner/store behavior proves these capabilities; handler-only stubs or a service-only grant do not.
@@ -1445,23 +1446,23 @@ So that **Chatbot can start or resume that Conversation from durable setup truth
 ### Story 6.3: Retrieve assembled Project Context through supported read models
 
 As a **Project User on Chatbot**,
-I want **to retrieve the allowlist-assembled Project Context for the Conversation I named, a read-only refresh, and a per-reference inclusion/exclusion explanation**,
-So that **Chatbot grounds that Conversation in current, authorized, metadata-only context (FR-16, FR-17, FR-18) and cannot inject another Project's context**.
+I want **to retrieve the allowlist-assembled Project Context for the Conversation I named and a per-reference inclusion/exclusion explanation**,
+So that **Chatbot grounds that Conversation in current, authorized, metadata-only context (FR-16, FR-17) and cannot inject another Project's context**.
 
-- **Traceability:** FR-16, FR-17, FR-18; NFR-1, NFR-5, NFR-8; AD-7, AD-11, AD-14, AD-32; UJ-1, UJ-4; evidence rows `fr-16`, `fr-17`, `fr-18`.
+- **Traceability:** FR-16 and FR-17 for delivered reads, FR-18 through DW-85; NFR-1, NFR-5, NFR-8; AD-7, AD-11, AD-14, AD-32; UJ-1, UJ-4; evidence rows `fr-16`, `fr-17`, `fr-18`.
 
 **Acceptance Criteria:**
 
-**Given** a named Conversation, **when** serving `GetProjectContext` or explaining its selection, **then** Conversations must return current native membership for the named Conversation in the requested Project and Tenant under the original actor and any delegation. Project and Folder authorization are checked independently. Refresh preserves the applicable context authorization.
+**Given** a named Conversation, **when** serving `GetProjectContext` or explaining its selection, **then** Conversations must return current native membership for the named Conversation in the requested Project and Tenant under the original actor and any delegation. Project and Folder authorization are checked independently using the evidence available to the route. A later Folder revocation reaches the delivered context reads when their persisted evidence refreshes. DW-85 owns current Folder owner evidence.
 
-**Given** an authorized Active Project under that rule and the Reference Trust Index, **When** assembly runs, **Then** a reference is included only after same-Tenant + project + lifecycle + owner-system read + freshness all pass; titles/names appear only when owner-system read is current; exclusions carry a shared-vocabulary state + reason code; Setup-marked references join the required set and optional omissions use `ExcludedBySetupPolicy`; the result is metadata-only and carries the AD-32 snapshot; refresh is a **read-only recompute** that never mutates.
+**Given** an authorized Active Project under that rule, **when** assembly reads Project-owned persisted detail, **then** it applies the Tenant, Project, lifecycle, access evidence and freshness allowlist. Titles or names require current read evidence. Exclusions carry the shared state and reason code. Setup-marked references join the required set and optional omissions use `ExcludedBySetupPolicy`. The metadata-only result carries the AD-32 snapshot.
 
 **Given** `ExplainContextSelection`, **When** it runs, **Then** it returns current transient inclusion/exclusion evidence with Safe Metadata only (opaque surrogates, no secrets/payloads/titles) and no persisted trace identity.
 
-**Given** an unauthorized/denied reference or stale index, **When** assembly runs, **Then** the reference is excluded fail-closed-clean with a reason code, never silently dropped, and index staleness surfaces as `Partial`.
+**Given** denied, stale or unavailable evidence, **when** assembly runs, **then** withhold undisclosable references, report safe optional omissions as `Partial`, and return `Unavailable` when required evidence cannot establish admission.
 
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.3`. **Evidence:** `evidence/epic6/6.3-project-context.{trx,json}` + `NoPayloadLeakage` scan. **Estimate:** L. **Completion boundary:** assembled context + refresh + explanation served read-only with allowlist + leakage evidence.
-- **Specification-readiness condition:** Story 6.3 remains one story only if its implementation specification proves one cohesive read-only slice with no forward dependencies, shared implementation fixtures, and separately testable evidence for retrieval, refresh/freshness, explanation, authorization, and payload leakage. If the specification cannot meet that condition, a separate approved correction must split retrieval from refresh/explanation before either slice becomes `ready-for-dev`, while preserving FR/NFR/evidence coverage and prior-only sequencing.
+- **Completion boundary:** Supported Get and Explain run read-only over persisted detail. Story 6.3 records allowlist, authorization, freshness and payload-leakage verification at its accepted revision. Story 6.7 adds the native membership boundary. The planned Story 6.3 verification lane is `dotnet tool run hexalith-module test --profile reads --filter Story=6.3` (estimate L), with `evidence/epic6/6.3-project-context.{trx,json}` and the `NoPayloadLeakage` scan. FR-18 Refresh remains on retained v1. The additive supported Refresh query has no registered handler. [Story 6.3 decision and verification](../implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md)
+- **Remaining FR-16/17/18 work:** The Projects maintainer owns supported Refresh and the Tenant-scoped Reference Trust Index with the G-2 owner-contract teams. DW-85 defines how to accept owner-batched Refresh, index ingestion and rebuild, and current Folder revocation across the context reads. [DW-85](../implementation-artifacts/deferred-work.md#dw-85-supported-context-refresh-and-reference-trust-index)
 
 ### Story 6.4: Resolve authorized advisory Project suggestions
 

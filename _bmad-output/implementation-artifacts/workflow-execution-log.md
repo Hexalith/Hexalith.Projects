@@ -83,3 +83,7 @@
 - Next sequence: correct current-state planning observations, select exact EventStore source/package coordinates, align and qualify Builds, obtain four-owner P1R acceptance, update Architecture and close only P1R, then publish/consume/qualify G-4 through P0 before continuing the Story 6.1 chain
 - Story state: 6.1-P1R and 6.1-P0 remain open; P2, P3, P4, and Story 6.1 remain blocked; 3.88.0 remains a superseded unaccepted candidate and 3.70.1 remains the last accepted rollback baseline
 - Release state: Blocked; published Builds tools 4.23.0 embed EventStore 3.70.1 and no Projects G-4 consumer or P0 acceptance record exists
+
+## 2026-11-22 — Epic 6 retrospective course correction
+
+Jerome approved the moderate-scope batch proposal and its planning edits. The runbook correction and Story 6.3 scope reconciliation are complete. DW-85 records the remaining owner-backed context work. The Projects maintainer and Test Architect own v4 source-mode cutover and rollback qualification. The Projects UI maintainer owns the initial authentication-provider fault. Reassess Epic 6 on the new receipts. Production readiness remains `NOT_READY`. [Approved proposal](../planning-artifacts/sprint-change-proposal-2026-11-22.md) · [Sprint tracker](sprint-status.yaml)

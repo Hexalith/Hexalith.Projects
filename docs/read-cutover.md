@@ -1,12 +1,8 @@
 # Supported read cutover and rollback
 
-Story 6.7 adds an executable selection boundary. The [final source acceptance packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json)
-binds all 77 passing authenticated comparisons to actual native xUnit XML. The
-[explicit rollback proof](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/rollback-final-proof-1.json)
-executes all seven retained HTTP reads after the production selector verifies the packet.
-Primary Web reads still default to Unavailable; selecting Supported or LegacyRollback
-requires explicit startup configuration. Historical readiness remains NOT_READY;
-Epic 7/8 and AD-25 pins are unchanged. This source acceptance does not publish or deploy.
+**Current operator state, 22 November 2026.** Keep the affected primary Web reads in `Unavailable` pending v4 qualification. On Projects `6e9fc722`, a startup configured for `Supported` with the verified v3 packet logged `supported-gate-rejected`. A request to `/projects` returned HTTP 200 with **Workspace unavailable**. [Epic 6 retrospective](../_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md)
+
+The historical v3 run produced 77 passing authenticated comparisons and seven retained HTTP reads after explicit rollback. Both receipts apply to the source manifest recorded with that run. [v3 packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json) · [v3 rollback proof](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/rollback-final-proof-1.json)
 
 ## Inventory
 
@@ -110,6 +106,8 @@ no-domain-write behavior; a passing summary cannot replace that field. Every cel
 test and an actual hash-verified native xUnit XML receipt with no failures or skips.
 Native receipt paths are relative to the evidence file. Synthetic unit controls
 are labeled as controls and never copied into the acceptance matrix as proof.
+
+For a new v4 qualification, build the source-mode fixture at the intended Projects commit and its pinned dependencies. Verify the packet SHA-256, source revision and contract hash against that candidate. Confirm all 77 distinct cells meet the checks above, then observe the production selector choose `Supported`. Configure the fixture’s routing-proof input, explicitly select `LegacyRollback`, and capture one actual authenticated retained HTTP read for each of the seven operations. Check that the separate rollback result names the new packet’s SHA-256 and records seven executed, passing reads. A matrix-only run can finish without executing this step. Keep the affected reads `Unavailable` if the required evidence is missing. [Matrix fixture](../tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.CutoverMatrix.cs) · [Rollback fixture](../tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.RollbackProof.cs)
 
 Explicit LegacyRollback requires separate current security receipts for all seven
 legacy slices: current authority, Safe Metadata, indistinguishable denial and
@@ -285,9 +283,9 @@ use, including original-actor enforcement on its existing transport, with unboun
 callers unavailable; otherwise the owner must name an existing session/opened-Project
 proof contract and transport. No upstream source is changed by this proposal.
 
-## Independent review verification
+## Historical v3 review verification
 
-The reviewed source passes 2909 full-suite tests, all 77 authenticated comparison cells and seven configured rollback reads. Current receipts are under `evidence/epic6/6.7/review-pass2-fixes`; prior packets remain historical. Valid-empty collection results are separate from genuine missing resources, unavailable evidence and denials. Storage evidence distinguishes the physical legacy journal container from logical aggregate keys, and each transport retains its own cursor proof.
+The pass-2 source recorded 2,909 full-suite passes, 77 authenticated comparison cells and seven configured rollback reads under v3. Its receipts are in `evidence/epic6/6.7/review-pass2-fixes`. See the selection and rollback instructions above for the active v4 requirements. Valid-empty collection results are separate from genuine missing resources, unavailable evidence and denials. Storage evidence distinguishes the physical legacy journal container from logical aggregate keys, and each transport retains its own cursor proof.
 
 Legacy list refuses retryable or stale row evidence and rechecks final authority. Legacy quarantine matches supported inspection, and diagnostics reload safely when the named Conversation changes. Pre-registering a configured generated Folders client retains the v1 read transport; explicit custom directory overrides remain effective. Successful stale v1 lifecycle/permission responses cannot advertise Included Folder evidence or its label.
 

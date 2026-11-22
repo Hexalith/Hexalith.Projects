@@ -52,7 +52,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 11-22-2026 16:44
+last_updated: 11-22-2026 17:24
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -677,21 +677,26 @@ action_items:
     owner: "Projects maintainer / Test Architect"
     status: open
     ref: "_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md"
+    plan: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md"
   - id: "epic-6-retro-correct-cutover-runbook"
     epic: 6
     action: "Mark the v3 receipts as historical in the cutover runbook and identify
       the evidence required before an operator can select Supported on v4."
     owner: "Projects maintainer / Technical Writer"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md"
+    plan: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md"
+    resolution: "Updated docs/read-cutover.md to distinguish historical v3 receipts, observed v4 refusal, and required v4 selection and rollback evidence."
   - id: "epic-6-retro-reconcile-context-scope"
     epic: 6
     action: "Reconcile the Story 6.3 epic wording with the delivered Get and Explain
       routes, the legacy-only Refresh route and deferred Reference Trust Index work.
       Record the owner and acceptance route for remaining scope."
     owner: "Product Owner / Solution Architect"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md"
+    plan: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md"
+    resolution: "Reconciled Story 6.3, the Epic 6 context and FR-16/17/18 traceability. DW-85 owns supported Refresh and the Reference Trust Index."
   - id: "epic-6-retro-handle-web-auth-unavailability"
     epic: 6
     action: "Handle a fault from the initial authentication-state lookup in supported
@@ -700,3 +705,4 @@ action_items:
     owner: "Projects UI maintainer"
     status: open
     ref: "_bmad-output/implementation-artifacts/epic-6-retro-2026-11-22.md"
+    plan: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md"

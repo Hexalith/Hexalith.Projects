@@ -3,13 +3,14 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-11-21
-generated_by: "November 21 sprint reconciliation; bmad-correct-course — E-31 approved by Jerome on 2026-09-08; prior P1R 2026-08-03 and G4-P0 2026-08-04 remain historical"
+generated: 2026-11-22
+generated_by: "November 22 Epic 6 retrospective reconciliation after the November 21 sprint correction; bmad-correct-course — E-31 approved by Jerome on 2026-09-08; prior P1R 2026-08-03 and G4-P0 2026-08-04 remain historical"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
   prd: _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
   prd_addendum: _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
+  epic_6_retrospective_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md
   sprint_reconciliation: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-21.md
   architecture: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
   epics: _bmad-output/planning-artifacts/epics.md
@@ -322,7 +323,7 @@ rows:
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
     evidence_artifact: evidence/epic6/6.3-project-context.trx
     estimate: L
-    notes: "Story 6.7 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission."
+    notes: "Historical Story 6.7 v3 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission. Story 6.3 reads Project-owned persisted detail. DW-85 owns index-backed evidence and subsequent Folder revocation."
   - key: fr-17
     category: fr
     ids: [FR-17]
@@ -336,19 +337,23 @@ rows:
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
     evidence_artifact: evidence/epic6/6.3-project-context.trx
     estimate: L
-    notes: "Story 6.7 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission."
+    notes: "Historical Story 6.7 v3 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission. Story 6.3 reads Project-owned persisted detail. DW-85 owns index-backed evidence and subsequent Folder revocation."
   - key: fr-18
     category: fr
     ids: [FR-18]
-    description: "Refresh Project Context — read-only recompute; surfaces stale/unavailable refs; never mutates"
+    description: "Supported read-only Refresh with bounded owner batches under DW-85. Retained v1 Refresh remains available."
     architecture_decisions: [AD-7, AD-14, AD-32]
-    primary_story: "6.3"
-    supporting_stories: []
-    entry_gates: [Epic-6-gate]
+    primary_story: "DW-85"
+    supporting_stories: ["6.3"]
+    entry_gates: [Epic-6-gate, G-2]
     fixture: epic6/6.3-project-context
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
     evidence_artifact: evidence/epic6/6.3-project-context.trx
     estimate: L
+    owner: "Projects maintainer with Folders, Conversations and Memories contract owners"
+    status: blocked-external
+    blocker: "Approved G-2 batch contracts and Reference Trust Index schema for DW-85."
+    notes: "Extend the context fixture and reads-profile lane for DW-85. Require native evidence of supported Refresh, index ingestion and rebuild, revocation, safe stale/denied outcomes, zero query writes and Refresh shadow equivalence. Existing 6.3 receipts cover supported Get and Explain."
   - key: fr-19
     category: fr
     ids: [FR-19]
@@ -377,7 +382,7 @@ rows:
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.2"
     evidence_artifact: evidence/epic6/6.2-conversation-start-setup.trx
     estimate: S
-    notes: "Story 6.7 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission."
+    notes: "Historical Story 6.7 v3 source evidence: evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json. Test unbound membership after an explicit open and a stale advisory link independently. With readable Project and unavailable membership, withhold context, Setup, references and first-response admission."
   - key: fr-21
     category: fr
     ids: [FR-21]
@@ -595,6 +600,7 @@ rows:
     fixture: epic6/6.7-read-cutover
     verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner."
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
+    notes: "Epic 6 v4 qualification is open. Record the intended source and gitlinks, 77 passing source-mode comparisons, positive Supported selection, and seven executed retained reads after explicit LegacyRollback bound to the same new packet SHA-256. The pass-2 v3 packet is historical."
     estimate: L
     status: blocked-external
     blocker: "6.7 must consume supported list/open output and existing comparator, prove exhaustive legacy output/key/watermark/cursor equivalence with finite approved normalization, consumer compatibility and reversible routing; Epic 8 retains package/rollback qualification. 6.1 only requires additive compatibility and retained routing."
