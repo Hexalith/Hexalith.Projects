@@ -1816,8 +1816,10 @@ public static partial class ProjectsDomainServiceEndpoints
                 correlationId, null, cancellationToken).ConfigureAwait(false);
             if (item.Retryable) return ReadModelUnavailable(correlationId, null);
             if (!item.IsAllowed) continue;
-            if (item.ProjectDetail is not { } detail || !HasCurrentLegacyReadAuthority(item))
+            if (item.ProjectDetail is not { } detail || detail.ProjectId != row.ProjectId || !HasCurrentLegacyReadAuthority(item)
+                || !ProjectPersistedDetailValidator.IsHeaderValid(detail))
                 return ReadModelUnavailable(correlationId, null);
+            if (lifecycleFilter is { } requested && detail.Lifecycle != requested) continue;
             string observedDetail = JsonSerializer.Serialize(detail, ResponseJsonOptions);
             if (caller.Chatbot)
             {
@@ -1827,8 +1829,9 @@ public static partial class ProjectsDomainServiceEndpoints
             }
             if (IsLegacyQuarantined(detail) == includeQuarantined)
             {
-                visible.Add(row);
-                observations.Add(row.ProjectId, (item, observedDetail));
+                visible.Add(new ProjectListItem(detail.TenantId, detail.ProjectId, detail.Name, detail.Lifecycle,
+                    detail.Sequence, detail.CreatedAt, detail.UpdatedAt));
+                observations.Add(detail.ProjectId, (item, observedDetail));
             }
         }
         rows = visible;

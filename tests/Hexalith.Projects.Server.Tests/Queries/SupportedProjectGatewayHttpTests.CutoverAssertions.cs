@@ -119,7 +119,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 && component.Reason == (references ? "Current" : "OptionalReferencesOmitted") && component.LastVerifiedAt == (references ? persisted : null),
             _ => false,
         }) && snapshot.RecoveryActions.SequenceEqual(pending ? [AdmissionRecoveryAction.ResolveNeedsAttention]
-            : snapshot.ResponseState == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
+            : snapshot.ResponseState == AdmissionResponseState.Unavailable ? [AdmissionRecoveryAction.Retry] : [AdmissionRecoveryAction.None]);
     }
 }
 #endif

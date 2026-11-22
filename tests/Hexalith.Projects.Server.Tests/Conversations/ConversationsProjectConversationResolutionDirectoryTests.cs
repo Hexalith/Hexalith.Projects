@@ -162,6 +162,7 @@ public sealed class ConversationsProjectConversationResolutionDirectoryTests
     [InlineData(HttpStatusCode.NotFound, ReferenceState.Unauthorized)]
     [InlineData(HttpStatusCode.InternalServerError, ReferenceState.Unavailable)]
     [InlineData(HttpStatusCode.BadGateway, ReferenceState.Unavailable)]
+    [InlineData(HttpStatusCode.ServiceUnavailable, ReferenceState.Unavailable)]
     public async Task ReadConversationMetadata_UpstreamFailure_FailsClosedWithoutLinkOrLabel(
         HttpStatusCode statusCode,
         ReferenceState expectedReferenceState)

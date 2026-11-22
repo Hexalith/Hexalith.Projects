@@ -82,11 +82,12 @@ public sealed class SupportedProjectReadSourceTests
     }
 
     [Theory]
-    [InlineData(401)]
-    [InlineData(403)]
-    [InlineData(404)]
-    [InlineData(503)]
-    public async Task DeniedAbsentForeignAndUnverifiableOpenReturnIdenticalSafeAbsence(int status)
+    [InlineData(401, "safe_denial")]
+    [InlineData(403, "safe_denial")]
+    [InlineData(404, "safe_denial")]
+    [InlineData(503, "data_unavailable")]
+    [InlineData(504, "data_unavailable")]
+    public async Task OpenFailurePreservesSafeGatewayFeedbackWithoutDiagnosticFanout(int status, string reason)
     {
         SupportedReadTestContext scope = new();
         scope.Client.SubmitQueryAsync<GetProjectResponse>(Arg.Any<SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
@@ -95,8 +96,29 @@ public sealed class SupportedProjectReadSourceTests
         result.Open.ShouldBeNull();
         result.Context.ShouldBeNull();
         result.Start.ShouldBeNull();
-        result.Feedback!.SafeReasonCode.ShouldBe("safe_denial");
+        result.Feedback!.SafeReasonCode.ShouldBe(reason);
         JsonSerializer.Serialize(result).ShouldNotContain("private");
+        scope.Client.ReceivedCalls().Count().ShouldBe(1);
+    }
+
+    [Theory]
+    [InlineData(null, AdmissionResponseState.Complete, "data_unavailable")]
+    [InlineData("different-target", AdmissionResponseState.Complete, "safe_denial")]
+    [InlineData("protected-target", AdmissionResponseState.Denied, "safe_denial")]
+    public async Task OpenWithoutUsablePayloadStopsBeforeDependentReads(string? target, AdmissionResponseState state, string reason)
+    {
+        SupportedReadTestContext scope = new();
+        GetProjectResponse? payload = target is null ? null : new(target, null, null, ProjectLifecycle.Active,
+            default, default, null, null, [], Snapshot(state, 1));
+        scope.Client.SubmitQueryAsync<GetProjectResponse>(Arg.Any<SubmitQueryRequest>(), null, Arg.Any<CancellationToken>())
+            .Returns(new EventStoreQueryResult<GetProjectResponse>(null, payload, false, null));
+
+        ProjectDetailLoadResult result = await new ProjectDetailSource(scope.Queries).GetProjectDetailAsync(
+            "protected-target", TestContext.Current.CancellationToken);
+        result.Open.ShouldBeNull();
+        result.Context.ShouldBeNull();
+        result.Start.ShouldBeNull();
+        result.Feedback!.SafeReasonCode.ShouldBe(reason);
         scope.Client.ReceivedCalls().Count().ShouldBe(1);
     }
 

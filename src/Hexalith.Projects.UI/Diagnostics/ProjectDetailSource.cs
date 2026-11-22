@@ -26,7 +26,9 @@ public sealed class ProjectDetailSource(ProjectReadQueryClient queries) : IProje
         var initialAuthority = queries.CurrentContext;
         ProjectReadResult<GetProjectResponse> opened = await queries.QueryAsync<GetProjectResponse>(projectId,
             GetProjectQuery.QueryType, new GetProjectQuery(descriptive, quarantined), cancellationToken).ConfigureAwait(false);
-        if (opened.Value is null || opened.Value.ProjectId != projectId || opened.Value.Snapshot.ResponseState == AdmissionResponseState.Denied)
+        if (opened.Value is null)
+            return ProjectDetailLoadResult.FromFeedback(opened.Feedback ?? ProjectConsoleFeedback.FailClosed("safe_denial"));
+        if (opened.Value.ProjectId != projectId || opened.Value.Snapshot.ResponseState == AdmissionResponseState.Denied)
             return ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"));
         ProjectReadResult<ProjectContextReadResponse> context = await queries.QueryAsync<ProjectContextReadResponse>(projectId,
             "Hexalith.Projects.Queries.GetProjectContext.v1", new GetProjectContextQuery(projectId) { ConversationId = conversationId }, cancellationToken).ConfigureAwait(false);

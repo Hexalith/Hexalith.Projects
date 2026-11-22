@@ -67,6 +67,62 @@ public sealed partial class SupportedProjectReadHttpTests
     }
 
     [Theory]
+    [InlineData("current")]
+    [InlineData("wrong-project")]
+    [InlineData("invalid-metadata")]
+    public async Task ReviewLegacyListUsesOnlyMetadataFromTheAuthorizedProject(string observation)
+    {
+        using RSA rsa = RSA.Create(2048);
+        var key = new RsaSecurityKey(rsa);
+        Hexalith.Projects.Infrastructure.DaprProjectProjectionStore? journal = null;
+        DateTimeOffset updated = SupportedProjectReadFixture.EventTime.AddDays(1);
+        var details = new CutoverReviewDetailReadModel(async (tenant, id, token) =>
+        {
+            var detail = await journal!.GetDetailAsync(tenant, id, token).ConfigureAwait(false);
+            return detail?.ProjectId == "project-a" ? detail with
+            {
+                ProjectId = observation == "wrong-project" ? "project-other" : detail.ProjectId,
+                Name = observation == "invalid-metadata" ? " " : "Authorized detail name",
+                Lifecycle = ProjectLifecycle.Archived,
+                UpdatedAt = updated,
+                Sequence = 999,
+            } : detail;
+        });
+        var fixture = await CutoverRuntimeAsync(key, configure: services =>
+        {
+            services.RemoveAll<IProjectDetailReadModel>();
+            services.AddSingleton<IProjectDetailReadModel>(details);
+        });
+        journal = fixture.Journal;
+        await using var lifetime = fixture.App.ConfigureAwait(true);
+        using HttpClient client = CutoverClient(fixture.App, key);
+        using var response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", TestContext.Current.CancellationToken);
+        string raw = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        raw.ShouldNotContain("Project project-a");
+        raw.ShouldNotContain("project-other");
+        if (observation != "current")
+        {
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            raw.ShouldNotContain("Authorized detail name");
+        }
+        else
+        {
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument body = JsonDocument.Parse(raw);
+            JsonElement row = body.RootElement.GetProperty("items").EnumerateArray().Single(item => item.GetProperty("projectId").GetString() == "project-a");
+            row.GetProperty("name").GetString().ShouldBe("Authorized detail name");
+            row.GetProperty("lifecycleState").GetString().ShouldBe("archived");
+            row.GetProperty("updatedAt").GetDateTimeOffset().ShouldBe(updated);
+            row.GetProperty("freshness").GetProperty("projectionWatermark").GetString().ShouldBe("watermark_00000999");
+
+            using var active = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=active", TestContext.Current.CancellationToken);
+            active.StatusCode.ShouldBe(HttpStatusCode.OK);
+            (await active.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain("project-a");
+        }
+        await fixture.App.StopAsync(TestContext.Current.CancellationToken);
+    }
+
+    [Theory]
     [InlineData("projects:role")]
     [InlineData("role")]
     [InlineData("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")]

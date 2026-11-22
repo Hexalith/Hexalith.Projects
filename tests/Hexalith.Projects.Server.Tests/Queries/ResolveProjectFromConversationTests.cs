@@ -403,6 +403,88 @@ public sealed class ResolveProjectFromConversationTests
         }
     }
 
+    [Theory]
+    [InlineData(ReferenceState.Unavailable, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ReferenceState.Stale, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ReferenceState.Unauthorized, HttpStatusCode.NotFound)]
+    [InlineData(ReferenceState.Excluded, HttpStatusCode.NotFound)]
+    public async Task Resolve_ConversationOwnerEvidenceDistinguishesUnavailableFromDenial(ReferenceState ownerState, HttpStatusCode expected)
+    {
+        ProjectReadTestFolders folders = new();
+        WebApplication app = await StartAppAsync(
+            metadata: new(ConversationIdValue, ProjectAId, "Private label", ownerState),
+            rows: [Row(ProjectAId, "Private label")], folderDirectory: folders).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = Request();
+            using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(expected);
+            string raw = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            using JsonDocument body = JsonDocument.Parse(raw);
+            body.RootElement.TryGetProperty("candidates", out _).ShouldBeFalse();
+            if (expected == HttpStatusCode.ServiceUnavailable)
+            {
+                body.RootElement.GetProperty("code").GetString().ShouldBe("read_model_unavailable");
+                body.RootElement.GetProperty("retryable").GetBoolean().ShouldBeTrue();
+            }
+            raw.ShouldNotContain("Private label");
+            raw.ShouldNotContain(ProjectAId);
+            ((StubProjectListReadModel)app.Services.GetRequiredService<IProjectListReadModel>()).Reads.ShouldBe(0);
+            folders.Reads.ShouldBe(0);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Resolve_ScoresAndFiltersUsingTheFinalAuthorizedDetail(bool wrongProject)
+    {
+        int observations = 0;
+        WebApplication app = await StartAppAsync(
+            metadata: new(ConversationIdValue, ProjectAId, "Stale label", ReferenceState.Included),
+            rows: [Row(ProjectAId, "Stale label")],
+            detailOverride: detail => Interlocked.Increment(ref observations) % 2 == 1 ? detail : detail with
+            {
+                ProjectId = wrongProject ? ProjectBId : detail.ProjectId,
+                Name = "New label",
+                Lifecycle = ProjectLifecycle.Archived,
+            }).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage ordinaryRequest = Request();
+            using HttpResponseMessage ordinary = await client.SendAsync(ordinaryRequest, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            using JsonDocument ordinaryBody = JsonDocument.Parse(await ordinary.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            observations.ShouldBe(2);
+            if (wrongProject)
+            {
+                ordinary.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+                ordinaryBody.RootElement.TryGetProperty("candidates", out _).ShouldBeFalse();
+                return;
+            }
+            ordinary.StatusCode.ShouldBe(HttpStatusCode.OK);
+            ordinaryBody.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
+
+            using HttpRequestMessage archiveRequest = Request($"/api/v1/projects/resolution/from-conversation?conversationId={ConversationIdValue}&includeArchived=true");
+            using HttpResponseMessage archive = await client.SendAsync(archiveRequest, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            archive.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument archiveBody = JsonDocument.Parse(await archive.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            JsonElement candidate = archiveBody.RootElement.GetProperty("candidates").EnumerateArray().Single();
+            candidate.GetProperty("projectId").GetString().ShouldBe(ProjectAId);
+            candidate.GetProperty("reasonCodes").EnumerateArray().Select(code => code.GetString()).ShouldBe(["ConversationLinked"]);
+            observations.ShouldBe(4);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     [Fact]
     public async Task Resolve_ResponseBody_HasNoLeakageAcrossOutcomes()
     {
@@ -503,7 +585,7 @@ public sealed class ResolveProjectFromConversationTests
     }
 
     [Fact]
-    public async Task MissingCommittedFolderBindingUsesExactProjectAuthority()
+    public async Task ActiveFolderlessProjectIsOutsideRetainedResolution()
     {
         var folders = new ProjectReadTestFolders();
         WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], folderDirectory: folders, seedFolder: false);
@@ -513,8 +595,9 @@ public sealed class ResolveProjectFromConversationTests
             using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
-            body.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
-            body.RootElement.GetProperty("candidates")[0].GetProperty("projectId").GetString().ShouldBe(ProjectAId); folders.Reads.ShouldBe(0);
+            body.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
+            body.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
+            folders.Reads.ShouldBe(0);
         }
         finally { await StopAsync(app); }
     }
@@ -610,7 +693,8 @@ public sealed class ResolveProjectFromConversationTests
         string? principalId = PrincipalA,
         bool seedTenantAccess = true,
         bool listThrows = false, ProjectReadTestAuthorization? projectAuthorization = null,
-        ProjectReadTestFolders? folderDirectory = null, bool seedFolder = true)
+        ProjectReadTestFolders? folderDirectory = null, bool seedFolder = true,
+        Func<ProjectDetailItem, ProjectDetailItem>? detailOverride = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -636,7 +720,14 @@ public sealed class ResolveProjectFromConversationTests
             if (seedFolder) details.Project(row.TenantId, new ProjectFolderSet(row.TenantId, row.ProjectId,
                 "folder-" + row.ProjectId, new ProjectFolderMetadata("Folder"), PrincipalA, "folder", "task", "folder", "folder", DateTimeOffset.UtcNow));
         }
-        builder.Services.RemoveAll<IProjectDetailReadModel>(); builder.Services.AddSingleton<IProjectDetailReadModel>(details);
+        IProjectDetailReadModel detailReadModel = details;
+        if (detailOverride is not null)
+        {
+            detailReadModel = new CutoverReviewDetailReadModel(async (tenant, id, token) =>
+                await details.GetAsync(tenant, id, token).ConfigureAwait(false) is { } detail ? detailOverride(detail) : null);
+        }
+        builder.Services.RemoveAll<IProjectDetailReadModel>();
+        builder.Services.AddSingleton(detailReadModel);
         WebApplication app = builder.Build();
         if (seedTenantAccess && !string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
         {
@@ -694,12 +785,19 @@ public sealed class ResolveProjectFromConversationTests
 
     private sealed class StubProjectListReadModel(IReadOnlyList<ProjectListItem> rows, bool throws) : IProjectListReadModel
     {
+        private int _reads;
+
+        public int Reads => Volatile.Read(ref _reads);
+
         public Task<IReadOnlyList<ProjectListItem>> ListAsync(
             string authoritativeTenantId,
             ProjectLifecycle? lifecycleFilter,
             CancellationToken cancellationToken = default)
-            => throws
+        {
+            Interlocked.Increment(ref _reads);
+            return throws
                 ? Task.FromException<IReadOnlyList<ProjectListItem>>(new InvalidOperationException("list read model unavailable"))
                 : Task.FromResult(rows);
+        }
     }
 }

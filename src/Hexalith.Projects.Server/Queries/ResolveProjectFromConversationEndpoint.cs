@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 using ConversationTenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
+using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
@@ -149,15 +150,12 @@ public static partial class ProjectsDomainServiceEndpoints
             if (authorization.IsAllowed && !HasCurrentLegacyReadAuthority(authorization)) return ReadModelUnavailable(correlationId, taskId);
             if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
-            List<ConversationResolutionProjectCandidate> candidateProjects = new(rows.Count);
-            foreach (ProjectListItem row in rows.Where(row => allowedProjects.ContainsKey(row.ProjectId)))
-            {
-                candidateProjects.Add(new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle));
-            }
-
+            if (allowedProjects.Values.Any(detail => !ProjectPersistedDetailValidator.IsAdvisoryHeaderValid(detail)))
+                return ReadModelUnavailable(correlationId, taskId);
             IReadOnlyList<ProjectResolutionCandidateEvidence> candidates = ConversationResolutionEvidenceMapper.Map(
                 conversationMetadata,
-                candidateProjects,
+                allowedProjects.Values.Select(detail => new ConversationResolutionProjectCandidate(
+                    detail.ProjectId, detail.Name, detail.Lifecycle)).ToArray(),
                 now);
 
             ProjectResolutionContext context = new(

@@ -116,6 +116,8 @@ public sealed partial class SupportedProjectReadTests
             fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken));
         opened.LifecycleState.ShouldBe(ProjectLifecycle.Archived);
         opened.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        opened.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.SelectAlternative]);
+        ordinary.Items.Single().Snapshot.RecoveryActions.ShouldBe(opened.Snapshot.RecoveryActions);
         ProjectListPage inventory = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
             fixture.Query(new ListProjectsQuery(IncludeQuarantined: true)), TestContext.Current.CancellationToken));
         inventory.Items.ShouldBeEmpty();

@@ -231,7 +231,8 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
             || !ProjectPersistedDetailValidator.IsAdvisoryHeaderValid(detail) || model.Sequence <= 0 || detail.Sequence != model.Sequence
             || !Enum.IsDefined(model.Freshness) || model.Freshness is EvidenceFreshnessState.Unavailable or EvidenceFreshnessState.Rebuilding)
         { omitted(); return null; }
-        return detail.Lifecycle == ProjectLifecycle.Archived && !includeArchived ? null : detail;
+        return ProjectReadQueryExecutor.IsQuarantined(detail) || detail.Lifecycle == ProjectLifecycle.Archived && !includeArchived
+            ? null : detail;
     }
 
     private async Task<bool> ScopeAsync(QueryEnvelope query, CancellationToken token)

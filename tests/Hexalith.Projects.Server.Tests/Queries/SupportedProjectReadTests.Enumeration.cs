@@ -79,8 +79,8 @@ public sealed partial class SupportedProjectReadTests
             GetProjectResponse opened = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
                 fixture.Query(new GetProjectQuery(), ids[index]), TestContext.Current.CancellationToken));
             JsonSerializer.Serialize(rows[index].Snapshot).ShouldBe(JsonSerializer.Serialize(opened.Snapshot));
-            rows[index].Snapshot.RecoveryActions.ShouldBe(states[index] == AdmissionResponseState.Complete
-                ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
+            rows[index].Snapshot.RecoveryActions.ShouldBe(states[index] == AdmissionResponseState.Unavailable
+                ? [AdmissionRecoveryAction.Retry] : [AdmissionRecoveryAction.None]);
             ReadModelEntry<ProjectReadModel> after = await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName,
                 ProjectReadModelKeys.Detail("tenant-a", ids[index]), TestContext.Current.CancellationToken);
             JsonSerializer.Serialize(after.Value).ShouldBe(JsonSerializer.Serialize(before[index].Value));

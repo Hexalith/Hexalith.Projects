@@ -221,7 +221,7 @@ public sealed partial class ProjectAdvisoryQueryTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public async Task FolderlessSuggestionStillRequiresFinalProjectAuthority(bool pending, bool revoke)
+    public async Task ArchivedFolderlessSuggestionStillRequiresFinalProjectAuthority(bool pending, bool revoke)
     {
         var f = await SupportedProjectReadFixture.CreateAsync();
         await f.SeedAsync("project-a", folder: false);
@@ -229,13 +229,14 @@ public sealed partial class ProjectAdvisoryQueryTests
         var model = f.Store.Snapshot<ProjectReadModel>("statestore", key)!;
         f.Store.SeedRaw("statestore", key, model with { Detail = model.Detail! with
         {
+            Lifecycle = ProjectLifecycle.Archived,
             ProjectFolder = pending ? new ProjectFolderReference(null, null, ReferenceState.Pending, null, f.Clock.GetUtcNow()) : null,
         } });
         var unchanged = await CapturePolicyStateAsync(f);
         int checks = 0;
         f.Authorization.Decision = request => request.ProjectId == "project-a" && Interlocked.Increment(ref checks) == 2 && revoke
             ? EventStoreAuthorizationValidationResult.Denied() : EventStoreAuthorizationValidationResult.Allowed("policy-current");
-        var result = await Executor(f).FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken);
+        var result = await Executor(f).FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation", IncludeArchived: true)), TestContext.Current.CancellationToken);
         var response = Read(result);
         response.Result.ShouldBe(revoke ? ResolutionResult.NoMatch : ResolutionResult.SingleCandidate);
         response.Candidates.Count.ShouldBe(revoke ? 0 : 1);

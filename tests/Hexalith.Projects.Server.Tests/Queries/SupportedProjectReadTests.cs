@@ -254,6 +254,7 @@ public sealed partial class SupportedProjectReadTests
         GetProjectResponse response = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken));
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         response.Snapshot.Components.Single(component => component.Name == "Project").Freshness.ShouldBe(freshness);
+        response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.Retry]);
     }
 
     [Fact]
@@ -281,7 +282,7 @@ public sealed partial class SupportedProjectReadTests
         page.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         page.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
         page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
-        page.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        page.Items.Single().Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         page.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "References" && !component.Included);
     }
 
@@ -386,17 +387,19 @@ public sealed partial class SupportedProjectReadTests
     }
 
     [Theory]
-    [InlineData(ProjectFolderValidationOutcome.Stale, ReferenceState.Stale)]
-    [InlineData(ProjectFolderValidationOutcome.Unavailable, ReferenceState.Unavailable)]
-    [InlineData(ProjectFolderValidationOutcome.Denied, ReferenceState.Unauthorized)]
-    public async Task CurrentFolderEvidenceControlsEnumerationAndOpen(ProjectFolderValidationOutcome outcome, ReferenceState expected)
+    [InlineData(ProjectFolderValidationOutcome.Stale, ReferenceState.Stale, AdmissionRecoveryAction.Retry)]
+    [InlineData(ProjectFolderValidationOutcome.Unavailable, ReferenceState.Unavailable, AdmissionRecoveryAction.Retry)]
+    [InlineData(ProjectFolderValidationOutcome.Denied, ReferenceState.Unauthorized, AdmissionRecoveryAction.ContactAdministrator)]
+    [InlineData(ProjectFolderValidationOutcome.Archived, ReferenceState.Archived, AdmissionRecoveryAction.SelectAlternative)]
+    public async Task CurrentFolderEvidenceControlsEnumerationAndOpen(ProjectFolderValidationOutcome outcome, ReferenceState expected, string recovery)
     {
         SupportedProjectReadFixture chatbot = await SupportedProjectReadFixture.CreateAsync(chatbot: true);
         await chatbot.SeedAsync("project-a"); chatbot.Folders.Outcomes["folder-project-a"] = outcome;
         ProjectListPage filtered = SupportedProjectReadFixture.Payload<ProjectListPage>(await chatbot.Executor.ListAsync(chatbot.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
         filtered.Items.ShouldBeEmpty();
-        filtered.Snapshot.ResponseState.ShouldBe(outcome == ProjectFolderValidationOutcome.Denied ? AdmissionResponseState.Complete : AdmissionResponseState.Unavailable);
-        if (outcome != ProjectFolderValidationOutcome.Denied) { filtered.Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry); }
+        bool ownerExcludedFolder = outcome is ProjectFolderValidationOutcome.Denied or ProjectFolderValidationOutcome.Archived;
+        filtered.Snapshot.ResponseState.ShouldBe(ownerExcludedFolder ? AdmissionResponseState.Complete : AdmissionResponseState.Unavailable);
+        filtered.Snapshot.RecoveryActions.ShouldBe([ownerExcludedFolder ? AdmissionRecoveryAction.None : AdmissionRecoveryAction.Retry]);
         SupportedProjectReadFixture tenant = await SupportedProjectReadFixture.CreateAsync(inspection: true);
         await tenant.SeedAsync("project-a"); tenant.Folders.Outcomes["folder-project-a"] = outcome;
         GetProjectResponse opened = SupportedProjectReadFixture.Payload<GetProjectResponse>(await tenant.Executor.GetAsync(tenant.Query(new GetProjectQuery(true), "project-a"), TestContext.Current.CancellationToken));
@@ -407,7 +410,8 @@ public sealed partial class SupportedProjectReadTests
         page.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
         page.Snapshot.Components.Single().Name.ShouldBe("Enumeration");
         page.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
-        page.Items.Single().Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        page.Items.Single().Snapshot.RecoveryActions.ShouldBe([recovery]);
+        opened.Snapshot.RecoveryActions.ShouldBe([recovery]);
         page.Items.Single().Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
     }
 

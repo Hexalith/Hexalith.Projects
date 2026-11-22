@@ -45,7 +45,7 @@ public sealed partial class ProjectAdvisoryQueryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls(bool pending)
+    public async Task ActiveFolderlessProjectsAreExcludedWithoutOwnerCalls(bool pending)
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a", folder: false);
         string key = ProjectReadModelKeys.Detail("tenant-a", "project-a");
@@ -53,11 +53,37 @@ public sealed partial class ProjectAdvisoryQueryTests
         f.Store.SeedRaw("statestore", key, model with { Detail = model.Detail! with
             { ProjectFolder = pending ? new ProjectFolderReference(null, null, ReferenceState.Pending, null, f.Clock.GetUtcNow()) : null } });
         var conversation = Read(await Executor(f).FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken));
-        conversation.Result.ShouldBe(ResolutionResult.SingleCandidate); conversation.Incomplete.ShouldBeFalse();
-        conversation.Candidates.Single().ProjectId.ShouldBe("project-a"); f.Folders.Reads.ShouldBe(0);
+        conversation.Result.ShouldBe(ResolutionResult.NoMatch);
+        conversation.Incomplete.ShouldBeFalse();
+        conversation.Candidates.ShouldBeEmpty();
+        f.Folders.Reads.ShouldBe(0);
         var attachments = Read(await Executor(f).FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery([new("folder", "unmatched")])), TestContext.Current.CancellationToken));
         attachments.Incomplete.ShouldBeFalse(); attachments.Result.ShouldBe(ResolutionResult.NoMatch);
         f.Folders.Arguments.ShouldAllBe(argument => argument.ProjectId == "projects" && argument.FolderId == "unmatched");
+    }
+
+    [Fact]
+    public async Task FinalAdvisoryReadExcludesProjectThatBecameQuarantined()
+    {
+        var fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync("project-a");
+        string key = ProjectReadModelKeys.Detail("tenant-a", "project-a");
+        fixture.Folders.OnRead = _ =>
+        {
+            var model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
+            fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, model with
+            {
+                Detail = model.Detail! with { ProjectFolder = null },
+            });
+            return Task.CompletedTask;
+        };
+
+        var result = Read(await Executor(fixture).FromConversationAsync(
+            Query(fixture, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken));
+        result.Result.ShouldBe(ResolutionResult.NoMatch);
+        result.Incomplete.ShouldBeFalse();
+        result.Candidates.ShouldBeEmpty();
+        fixture.Folders.Reads.ShouldBe(1);
     }
 
     [Fact]

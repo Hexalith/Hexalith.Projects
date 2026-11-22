@@ -33,7 +33,13 @@ public static partial class ProjectsDomainServiceEndpoints
         {
             var decision = await gate.AuthorizeReadAsync(id, tenant, http, correlationId, taskId, ct).ConfigureAwait(false);
             if (decision.Retryable) Interlocked.Exchange(ref unavailable, 1);
-            if (!decision.IsAllowed || decision.ProjectDetail is not { } detail) return;
+            if (!decision.IsAllowed) return;
+            if (decision.ProjectDetail is not { } detail || detail.ProjectId != id)
+            {
+                Interlocked.Exchange(ref unavailable, 1);
+                return;
+            }
+            if (ProjectReadQueryExecutor.IsQuarantined(detail)) return;
             if (folders is not null && detail.ProjectFolder is { } binding
                 && binding is not { ReferenceState: ReferenceState.Pending, FolderId: null })
             {

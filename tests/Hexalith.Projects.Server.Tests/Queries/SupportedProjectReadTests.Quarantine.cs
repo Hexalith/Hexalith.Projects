@@ -85,6 +85,35 @@ public sealed partial class SupportedProjectReadTests
         fixture.Store.Count.ShouldBe(before + 6);
     }
 
+    [Theory]
+    [InlineData(EvidenceFreshnessState.Current, ReferenceState.Pending, "pending", AdmissionRecoveryAction.ResolveNeedsAttention)]
+    [InlineData(EvidenceFreshnessState.Current, ReferenceState.Pending, "folder_create_external_unavailable", AdmissionRecoveryAction.Retry)]
+    [InlineData(EvidenceFreshnessState.Stale, ReferenceState.Pending, "pending", AdmissionRecoveryAction.Retry)]
+    [InlineData(EvidenceFreshnessState.Current, ReferenceState.Stale, null, AdmissionRecoveryAction.Retry)]
+    [InlineData(EvidenceFreshnessState.Current, ReferenceState.Unavailable, null, AdmissionRecoveryAction.Retry)]
+    public async Task QuarantineRecoveryDistinguishesPendingCreationAndNoncurrentEvidence(
+        EvidenceFreshnessState freshness, ReferenceState folderState, string? reason, string expected)
+    {
+        var fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true, administrator: true);
+        await fixture.SeedAsync("project-a", folder: false);
+        string key = ProjectReadModelKeys.Detail("tenant-a", "project-a");
+        var model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, key)!;
+        fixture.Store.SeedRaw(ProjectReadModelKeys.StoreName, key, model with
+        {
+            Freshness = freshness,
+            Detail = model.Detail! with
+            {
+                ProjectFolder = new ProjectFolderReference(null, null, folderState, reason, SupportedProjectReadFixture.EventTime),
+            },
+        });
+        var page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
+            fixture.Query(new ListProjectsQuery(IncludeQuarantined: true)), TestContext.Current.CancellationToken));
+        var opened = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
+            fixture.Query(new GetProjectQuery(InspectQuarantined: true), "project-a", "recovery-open"), TestContext.Current.CancellationToken));
+        page.Items.Single().Snapshot.RecoveryActions.ShouldBe([expected]);
+        opened.Snapshot.RecoveryActions.ShouldBe([expected]);
+    }
+
     [Fact]
     public async Task PendingHistoricalFolderIdIsNotAnAcceptedBindingForOrdinaryReads()
     {

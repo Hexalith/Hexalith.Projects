@@ -313,6 +313,17 @@ public sealed class ProjectReadQueryExecutor(
         DateTimeOffset? verifiedAt = observation && model.LastVerifiedAt != default ? model.LastVerifiedAt : null;
         AdmissionResponseState state = !project || !folderCurrent ? AdmissionResponseState.Unavailable
             : references ? AdmissionResponseState.Complete : AdmissionResponseState.Partial;
+        string recovery = (project, IsQuarantined(detail), folderState) switch
+        {
+            (false, _, _) or (_, _, ReferenceState.Stale or ReferenceState.Unavailable) => AdmissionRecoveryAction.Retry,
+            (_, true, ReferenceState.Pending) when detail.ProjectFolder is { FolderId: null, ReasonCode: "folder_create_external_unavailable" }
+                => AdmissionRecoveryAction.Retry,
+            (_, true, _) => AdmissionRecoveryAction.ResolveNeedsAttention,
+            (_, _, ReferenceState.Included) => AdmissionRecoveryAction.None,
+            (_, _, ReferenceState.Unauthorized) => AdmissionRecoveryAction.ContactAdministrator,
+            (_, _, ReferenceState.Archived or ReferenceState.Pending) => AdmissionRecoveryAction.SelectAlternative,
+            _ => AdmissionRecoveryAction.Retry,
+        };
         DateTimeOffset observedAt = clock.GetUtcNow();
         return new(state, observedAt, header ? model.Sequence : 0,
         [
@@ -323,8 +334,7 @@ public sealed class ProjectReadQueryExecutor(
             Component("Authorization", true, EvidenceFreshnessState.Current, "Current", observedAt),
             Component("References", references, references ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
                 references ? "Current" : "OptionalReferencesOmitted", references ? verifiedAt : null),
-        ], IsQuarantined(detail) ? [AdmissionRecoveryAction.ResolveNeedsAttention]
-            : state == AdmissionResponseState.Complete ? [AdmissionRecoveryAction.None] : [AdmissionRecoveryAction.Retry]);
+        ], [recovery]);
     }
 
     private static IReadOnlyList<ProjectReadReference> References(ProjectDetailItem detail, bool descriptive, ReferenceState folderState, bool linksValid)

@@ -1282,6 +1282,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Report Conversation-owner unavailability on the retained `GET /api/v1/projects/resolution/from-conversation` route instead of NoMatch.
   evidence: Fourth-pass chunk-1 AA4b. This is pre-existing, documented fail-closed behavior: the legacy `IProjectConversationResolutionDirectory` returns degraded metadata, and the endpoint maps it to NoMatch (200). The legacy `ProjectResolution` response has no coverage field. Address it when the CLI and UI move to `/query` and the legacy routes are retired.
+  status: resolved
+  resolution: 2026-11-22. spec-five-deferred-project-read-outcomes.md. The retained route and typed owner adapter already map unavailable Conversation evidence to a retryable 503. Regression checks verify the mapping, safe 404 for denied evidence, and zero discovery or Folder reads on failure.
 
 ## Deferred from: renderer snapshot hardening review (2026-10-23)
 
@@ -1384,10 +1386,14 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Exclude quarantined Active folderless Projects from advisory resolution candidates.
   evidence: `src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:168` admits a candidate when `detail.ProjectFolder?.FolderId is null`. `ProjectAdvisoryQueryTests.Review4.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls` asserts `SingleCandidate` for folderless and Pending-folder Projects. This contradicts PRD §2.4 and NFR-4 (quarantined Projects are excluded from resolution) and the Story 6.1 Dev Notes. Story 6.1 list/open now applies quarantine; resolution does not. The behavior predates the Story 6.1 diff (last change ded1e70) and belongs to Story 6.4 resolution scope. Verification Gap layer, medium.
+  status: resolved
+  resolution: 2026-11-22. spec-five-deferred-project-read-outcomes.md. Supported and retained advisory reads exclude Active quarantined Projects at initial and final detail checks. Regression coverage exercises folderless and Pending evidence, a change before the final read, and allowed Archived history.
 
 - source_spec: `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Map supported-read recovery actions per cause instead of advertising `Retry` for every non-Complete snapshot outside quarantine.
   evidence: Second-pass review of `a6c415f..19a0548`. `src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs:321` returns `[Retry]` for every non-Complete, non-quarantined snapshot. That includes Archived folderless Projects (FolderState Pending), Folders refreshed as `Unauthorized` or `Archived`, and Partial snapshots whose references are owner-unverified or bound to another Folder after a confirmed replacement. Retrying fixes none of these. The new tests `ArchivedFolderlessProjectRemainsOrdinaryAndOutsideQuarantineInventory` and `ConfirmedFolderReplacementKeepsEnumerationCompleteAndReadsPartial` assert no recovery actions. The rule predates this diff (517976e). AD-32 offers `None`, `ResolveNeedsAttention`, `ContactAdministrator` and `SelectAlternative` as cause-specific codes. Raised by Blind Hunter, Acceptance Auditor and Edge Case Hunter; medium. Jerome decided on 2026-11-05 to include the quarantine branch at `:320` as well. It also returns `ResolveNeedsAttention` alone for in-flight creations, since `CreateProject` always emits `ProjectFolderCreationPending` with `Retryable: true`, and for stale quarantined snapshots. Only the Administrator inventory is affected.
+  status: resolved
+  resolution: 2026-11-22. spec-five-deferred-project-read-outcomes.md. List item and Open snapshots map required evidence, explicit Folder outcomes, automatically pending creation, and historical quarantine to cause-specific recovery actions. Optional-only omissions carry None.
 
 - source_spec: `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Confirm the package-mode Server.Tests build once a compatible EventStore/Tenants package graph exists.
@@ -1446,6 +1452,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Preserve existing Open timeout/unavailable feedback in ProjectDetailSource.
   evidence: The baseline and current source replace any missing Open payload with safe_denial even when ProjectReadQueryClient supplied more precise safe feedback.
+  status: resolved
+  resolution: 2026-11-22. spec-five-deferred-project-read-outcomes.md. The detail source preserves the read client feedback on an absent Open payload. Tests cover unavailable and timeout responses, empty success, denied or mismatched payloads, and no dependent reads.
 
 ## Deferred from: code review of spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md (2026-11-16)
 
@@ -1484,6 +1492,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Use a consistent authorized detail version for retained list/advisory discovery metadata.
   evidence: R2-B2; Original-baseline list and Conversation resolver authorize detail separately but still emit discovery-row name/lifecycle. The current cutover retains that pre-existing behavior; reject or refresh inconsistent versions in follow-up.
+  status: resolved
+  resolution: 2026-11-22. spec-five-deferred-project-read-outcomes.md. The retained list audits and returns metadata and freshness from the authorized detail and rechecks the lifecycle against that snapshot. Retained Conversation scoring uses the final authorized detail. Both paths withhold mismatched or invalid detail. Discovery coverage remains separately tracked.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Define retained versus supported advisory equivalence above the supported 200-Project discovery limit.
@@ -1506,3 +1516,9 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-read-cutover-followups.md`
   summary: Establish a coherent Project detail and authorization observation for retained attachment disclosure.
   evidence: The final authorization pass captures Project detail before EventStore and Dapr policy validation. A later commit to the detail projection can leave that snapshot behind the owner state at response time. The resolver now checks the observed final Folder and lifecycle; a stronger cross-store guarantee needs its own design and deadline evidence.
+
+## Deferred from: code review of spec-five-deferred-project-read-outcomes.md (2026-11-22)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-project-read-outcomes.md`
+  summary: Align retained discovery coverage with the authorized Project detail when projections disagree.
+  evidence: The retained list prefilters candidates by discovery lifecycle. The retained Conversation route prefilters by explicit linkage or discovery name to keep exact authorization and owner reads bounded. A newly matching Project whose discovery row has lagged can remain outside either candidate set. A coverage repair must preserve the existing owner budget and the exact-authorization boundary.
