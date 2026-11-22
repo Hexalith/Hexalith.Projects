@@ -37,6 +37,9 @@ companions: []
 
 # Architecture Spine — Hexalith.Projects
 
+> **Current McpCli disposition (Story 5.11 candidate):** Current McpCli source enrolls published Projects.Contracts 2.0.0 and discovers four reads: projects.list, projects.describe, projects.trace-conversation and projects.trace-attachments. The published McpCli 2.0.1 tool predates Projects enrollment. Independent Gateway authorization, native live qualification and release evidence remain required. Readiness/setup/task-control and audit operations must not be inferred from those reads. Preserve 6.7 cutover, K12 confidential UI and Payload paging versus AD-20 gates. Tenant selection is envelope-owned; actor attribution and independent Gateway authorization remain separate.
+
+
 ## Implementation boundaries on November 20, 2026
 
 | Boundary | What implementers can rely on |
