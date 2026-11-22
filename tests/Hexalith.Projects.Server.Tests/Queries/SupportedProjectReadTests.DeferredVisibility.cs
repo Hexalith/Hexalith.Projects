@@ -47,7 +47,7 @@ public sealed partial class SupportedProjectReadTests
         ordinary.Success.ShouldBeFalse();
         SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
             fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken)).Items.ShouldBeEmpty();
-        fixture.Store.Count.ShouldBe(count + 1);
+        fixture.Store.Count.ShouldBe(count + 2);
 
         GetProjectResponse inspected = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
             fixture.Query(new GetProjectQuery(InspectQuarantined: true), "legacy-project", "inspect-history"), TestContext.Current.CancellationToken));
@@ -72,7 +72,7 @@ public sealed partial class SupportedProjectReadTests
 
         fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(beforeBytes);
         (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(before.ETag);
-        fixture.Store.Count.ShouldBe(count + 2);
+        fixture.Store.Count.ShouldBe(count + 3);
         fixture.AuditStore.Keys.Count.ShouldBe(2);
         fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName,
             fixture.AuditStore.Keys.Single(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!.Outcome == "Inspection"))!.FieldClass.ShouldBe("ProjectName");
@@ -224,7 +224,7 @@ public sealed partial class SupportedProjectReadTests
             (await fixture.Store.GetAsync<object>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(before[key].ETag);
         }
         fixture.AuditStore.Keys.Count.ShouldBe(1);
-        fixture.Store.Count.ShouldBe(count + fixture.AuditStore.Keys.Count);
+        fixture.Store.Count.ShouldBe(count + fixture.AuditStore.Keys.Count + (open || inspectionPermission ? 1 : 0));
         string auditKey = fixture.AuditStore.Keys.Single();
         auditKey.ShouldStartWith("projects:read-audit:v1:");
         ProjectReadAuditRecord record = fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, auditKey)!;
@@ -233,7 +233,7 @@ public sealed partial class SupportedProjectReadTests
         QueryResult retry = open ? await fixture.Executor.GetAsync(inspected, TestContext.Current.CancellationToken)
             : await fixture.Executor.ListAsync(inspected, TestContext.Current.CancellationToken);
         retry.Success.ShouldBe(inspectionPermission);
-        fixture.Store.Count.ShouldBe(count + 1);
+        fixture.Store.Count.ShouldBe(count + 1 + (open || inspectionPermission ? 1 : 0));
         foreach (string key in protectedKeys)
         {
             fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(before[key].Bytes);

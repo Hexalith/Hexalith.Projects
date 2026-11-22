@@ -93,7 +93,7 @@ public sealed partial class SupportedProjectReadHttpTests
 
     private static Dictionary<string, string> Snapshot(InMemoryReadModelStore store)
         => new[] { ProjectReadModelKeys.StoreName, ConversationStartSetupProjectionHandler.StoreName }
-            .SelectMany(name => store.SnapshotRawEntries(name).Where(entry => !entry.Key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal)).Select(entry => new KeyValuePair<string, string>(name + "/" + entry.Key, Convert.ToHexString(SHA256.HashData(entry.Value)))))
+            .SelectMany(name => store.SnapshotRawEntries(name).Where(entry => !ProjectAuditStorageKeys.IsAuditKey(entry.Key)).Select(entry => new KeyValuePair<string, string>(name + "/" + entry.Key, Convert.ToHexString(SHA256.HashData(entry.Value)))))
             .OrderBy(entry => entry.Key, StringComparer.Ordinal)
             .ToDictionary(entry => entry.Key, entry => entry.Value, StringComparer.Ordinal);
 }

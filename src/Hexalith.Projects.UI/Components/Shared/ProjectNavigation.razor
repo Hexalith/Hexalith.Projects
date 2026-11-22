@@ -1,10 +1,16 @@
 @using Hexalith.Projects.Contracts.Ui
 @using Hexalith.Projects.UI.Diagnostics
+@inject Microsoft.Extensions.Options.IOptions<ProjectOperatorPreviewOptions> OperatorPreview
 @inject IProjectInventorySource InventorySource
 @implements IDisposable
 
 <nav class="project-navigation" data-testid="project-navigation" aria-label="Projects">
     <FluentLink role="link" class="project-navigation__home" data-testid="project-navigation-home" aria-label="Projects" Href="/inspect/projects">Projects</FluentLink>
+
+    @if (OperatorPreview.Value.Enabled)
+    {
+        <FluentLink role="link" Href="/inspect/tasks" data-testid="project-navigation-tasks">Durable Tasks</FluentLink>
+    }
 
     @if (_loading)
     {

@@ -310,6 +310,8 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         {
             ListProjectsQuery query => List(query),
             GetProjectQuery query => Open(query, project),
+            GetProjectTaskStatusQuery query => new(tenant, "projects", project, GetProjectTaskStatusQuery.QueryType, Payload: JsonSerializer.SerializeToElement(query, JsonSerializerOptions.Web)),
+            GetProjectAuditQuery query => new(tenant, "projects", project, GetProjectAuditQuery.QueryType, Payload: JsonSerializer.SerializeToElement(query, JsonSerializerOptions.Web)),
             ResolveProjectFromConversationQuery query => SuggestConversation(query.ConversationId),
             ResolveProjectFromAttachmentsQuery query => SuggestAttachments(query.Attachments.ToArray()),
             _ => throw new InvalidOperationException("Unsupported Web fixture query."),
@@ -573,6 +575,8 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:4"] = ProjectsServerModule.GetProjectContextQueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:5"] = ProjectsServerModule.GetConversationStartSetupQueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:6"] = ProjectsServerModule.ExplainContextSelectionQueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:7"] = GetProjectAuditQuery.QueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:8"] = GetProjectTaskStatusQuery.QueryType;
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;

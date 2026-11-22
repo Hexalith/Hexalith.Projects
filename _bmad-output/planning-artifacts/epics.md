@@ -2217,6 +2217,8 @@ an unavailable environment records "not verified," never `passed`._
 
 ### Story 8.1: Inspect task, audit, and reconciliation truth
 
+Story 8.1 may enter development before Epic 7 completes. Its prior workflow dependencies, Epic 8 entry fixtures and required evidence still apply at acceptance. [22 November scheduling change](sprint-change-proposal-2026-11-22-schedule-story-8-1.md)
+
 As a **Tenant Operator or Tenant Project Administrator**,
 I want **to inspect Durable Task status, metadata-only audit timeline, and reconciliation outcomes through authorized read surfaces**,
 So that **operators have truthful operational visibility (FR-21) with correct retention and no payload leakage (NFR-8)**.

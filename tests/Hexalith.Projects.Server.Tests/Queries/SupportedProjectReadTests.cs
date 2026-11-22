@@ -163,7 +163,7 @@ public sealed partial class SupportedProjectReadTests
         GetProjectResponse detail = SupportedProjectReadFixture.Payload<GetProjectResponse>(inspectedResult);
         detail.Name.ShouldBe("Project project-a");
         detail.Setup.ShouldNotBeNull();
-        fixture.Store.Count.ShouldBe(count + 1);
+        fixture.Store.Count.ShouldBe(count + 2);
         ProjectReadAuditRecord record = fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName,
             fixture.AuditStore.Keys.Single())!;
         record.ProjectCount.ShouldBe(1); record.FieldClass.ShouldBe("ProjectNameDescriptionSetupReferenceLabels");
@@ -171,7 +171,7 @@ public sealed partial class SupportedProjectReadTests
         string auditJson = JsonSerializer.Serialize(record);
         auditJson.ShouldNotContain("project-a"); auditJson.ShouldNotContain("actor-1"); auditJson.ShouldNotContain("Safe description");
         (await fixture.Executor.GetAsync(inspected, TestContext.Current.CancellationToken)).Success.ShouldBeTrue();
-        fixture.Store.Count.ShouldBe(count + 1);
+        fixture.Store.Count.ShouldBe(count + 2);
         JsonSerializer.Serialize(fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))).ShouldBe(JsonSerializer.Serialize(before));
     }
 
@@ -438,8 +438,8 @@ public sealed partial class SupportedProjectReadTests
         page.Items.Count.ShouldBe(2); page.Items.ShouldAllBe(row => row.Name != null);
         ProjectReadAuditRecord record = fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, fixture.AuditStore.Keys.Single())!;
         record.ProjectCount.ShouldBe(2); record.FieldClass.ShouldBe("ProjectName"); record.Outcome.ShouldBe("Inspection");
-        fixture.Store.Count.ShouldBe(count + 1);
-        (await fixture.Executor.ListAsync(query, TestContext.Current.CancellationToken)).Success.ShouldBeTrue(); fixture.Store.Count.ShouldBe(count + 1);
+        fixture.Store.Count.ShouldBe(count + 3);
+        (await fixture.Executor.ListAsync(query, TestContext.Current.CancellationToken)).Success.ShouldBeTrue(); fixture.Store.Count.ShouldBe(count + 3);
         fixture.Store.ConcurrentWriteBeforeTrySave = () => throw new IOException("Audit unavailable");
         QueryResult denied = await fixture.Executor.ListAsync(query with { CorrelationId = "failed-audit" }, TestContext.Current.CancellationToken);
         denied.Success.ShouldBeFalse(); denied.ErrorMessage.ShouldBe("safe-denial"); denied.PayloadBytes.ShouldBeNull();

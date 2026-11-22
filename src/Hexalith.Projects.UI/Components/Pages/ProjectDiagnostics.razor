@@ -3,6 +3,7 @@
 @using Hexalith.Projects.Contracts.Queries
 @using Hexalith.Projects.UI.Diagnostics
 @inject IProjectDetailSource Details
+@inject Microsoft.Extensions.Options.IOptions<ProjectOperatorPreviewOptions> OperatorPreview
 @implements IDisposable
 
 <section class="project-detail-inspector" data-testid="project-detail-inspector" aria-labelledby="project-detail-heading" aria-busy="@_loading.ToString().ToLowerInvariant()">
@@ -66,8 +67,15 @@
                 <FluentText>Context requires a named Conversation with current native Project membership. Session fallback is unavailable. Owner evidence and first-response authorization retain their delivered limits. Open and context observations do not grant Conversation-start authority.</FluentText>
             </FluentAccordionItem>
             <FluentAccordionItem Header="Project suggestions"><ProjectResolutionTraceWorkbench ProjectId="opened.ProjectId" /></FluentAccordionItem>
+            <FluentAccordionItem Header="Audit history">
+                <ProjectAuditHistory @key="opened.ProjectId" ProjectId="@opened.ProjectId" Tenant="@_result.TenantScope" />
+            </FluentAccordionItem>
             <FluentAccordionItem Header="Capabilities">
-                <FluentText>Audit history is unavailable on this read surface. Recovery guidance is informational. Re-read uses supported Get operations; Refresh is unavailable.</FluentText>
+                @if (OperatorPreview.Value.Enabled)
+                {
+                    <FluentLink role="link" Href="/inspect/tasks">Inspect a Durable Task</FluentLink>
+                }
+                <FluentText>Reconciliation is unavailable until the durable transition authority is connected.</FluentText>
             </FluentAccordionItem>
         </FluentAccordion>
     }

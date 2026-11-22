@@ -44,6 +44,8 @@ public sealed class ProjectReadQueryClient(IEventStoreGatewayClient client, IEnu
             AuthenticationState current = await provider!.GetAuthenticationStateAsync().ConfigureAwait(false);
             if (contexts.First().Revalidate(authority, "projects-read").Succeeded != true
                 || current.User.Identity?.IsAuthenticated != true
+                || current.User.FindFirst("sub")?.Value != authority.UserId
+                || current.User.FindFirst(ProjectsUiSecurity.TenantClaimType)?.Value != authority.TenantId
                 || current.User.FindFirst(FrontComposerTokenSession.ClaimType)?.Value != state.User.FindFirst(FrontComposerTokenSession.ClaimType)?.Value)
             {
                 return new(default, ProjectConsoleFeedback.FailClosed("safe_denial"), "server-derived tenant");

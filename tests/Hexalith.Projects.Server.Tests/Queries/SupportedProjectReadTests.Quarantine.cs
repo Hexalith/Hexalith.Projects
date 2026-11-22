@@ -63,7 +63,7 @@ public sealed partial class SupportedProjectReadTests
         second.Items.Single().Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         second.Items.Single().Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ResolveNeedsAttention]);
         fixture.AuditStore.Keys.Count.ShouldBe(2);
-        fixture.Store.Count.ShouldBe(before + 2);
+        fixture.Store.Count.ShouldBe(before + 4);
         fixture.AuditStore.Keys.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)
             .ShouldAllBe(record => record.Outcome == "Inspection" && record.ProjectCount == 1 && record.FieldClass == "ProjectName");
         JsonSerializer.Serialize(fixture.AuditStore.Keys.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!))
@@ -71,7 +71,7 @@ public sealed partial class SupportedProjectReadTests
 
         (await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(Cursor: first.Cursor, PageSize: 1)),
             TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
-        fixture.Store.Count.ShouldBe(before + 2);
+        fixture.Store.Count.ShouldBe(before + 4);
         string[] priorAudits = fixture.AuditStore.Keys.ToArray();
         ProjectListPage multi = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
             fixture.Query(new ListProjectsQuery(PageSize: 2, IncludeQuarantined: true), correlation: "inventory-multirow"),
@@ -82,7 +82,7 @@ public sealed partial class SupportedProjectReadTests
         added.Distinct(StringComparer.Ordinal).Count().ShouldBe(2);
         added.Select(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!)
             .ShouldAllBe(record => record.Outcome == "Inspection" && record.ProjectCount == 1 && record.FieldClass == "ProjectName");
-        fixture.Store.Count.ShouldBe(before + 4);
+        fixture.Store.Count.ShouldBe(before + 6);
     }
 
     [Fact]

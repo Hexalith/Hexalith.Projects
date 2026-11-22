@@ -1,0 +1,74 @@
+@using Hexalith.Projects.Contracts.Queries
+@using Hexalith.Projects.UI.Diagnostics
+@inject IProjectDetailSource Source
+@inject Microsoft.Extensions.Options.IOptions<ProjectOperatorPreviewOptions> OperatorPreview
+@implements IDisposable
+
+@if (!OperatorPreview.Value.Enabled)
+{
+    <FluentText role="status">Audit history is not yet available.</FluentText>
+}
+else
+{
+    <FluentButton role="button" OnClick="FirstAsync" Disabled="_loading" data-testid="project-audit-load">Read audit history</FluentButton>
+    @if (_loading) { <FluentText role="status">Reading audit history</FluentText> }
+    else if (_feedback is not null) { <ProjectFeedbackView Feedback="_feedback" /> }
+    else if (_page is { } page)
+    {
+        <FluentText role="status" data-testid="project-audit-state">Coverage @(page.State)</FluentText>
+        @if (page.State == "Partial") { <FluentText>Historical inspection and workflow records may be unavailable.</FluentText> }
+        @foreach (var fact in page.Items)
+        {
+            <FluentCard data-testid="project-audit-row" @key="fact.AuditEventId">
+                <FluentText>@fact.OccurredAt.ToString("O") · @fact.Operation · @fact.Outcome</FluentText>
+                <FluentText>Audit ID @fact.AuditEventId</FluentText>
+                @if (fact.ReceiptId is not null) { <FluentText>Receipt @fact.ReceiptId</FluentText> }
+                @if (fact.ProjectCount is not null) { <FluentText>Projects inspected @fact.ProjectCount · @fact.FieldClass</FluentText> }
+            </FluentCard>
+        }
+        @if (page.Cursor is not null)
+        {
+            <FluentButton role="button" OnClick="NextAsync" data-testid="project-audit-next">Next audit page</FluentButton>
+        }
+    }
+}
+
+@code {
+    [Parameter, EditorRequired] public string ProjectId { get; set; } = "";
+    [Parameter, EditorRequired] public string Tenant { get; set; } = "";
+    private CancellationTokenSource? _request;
+    private ProjectAuditPage? _page;
+    private ProjectConsoleFeedback? _feedback;
+    private bool _loading;
+
+    protected override void OnParametersSet()
+    {
+        _request?.Cancel();
+        _page = null;
+        _feedback = null;
+        _loading = false;
+    }
+
+    private Task FirstAsync() => ReadAsync(null);
+    private Task NextAsync() => ReadAsync(_page?.Cursor);
+    private async Task ReadAsync(string? cursor)
+    {
+        _request?.Cancel();
+        _request?.Dispose();
+        var request = _request = new CancellationTokenSource();
+        _feedback = null;
+        _page = null;
+        _loading = true;
+        try
+        {
+            var result = await Source.ReadAuditAsync(ProjectId, new(cursor), request.Token);
+            if (request.IsCancellationRequested) return;
+            if (result.TenantScope != Tenant) _feedback = ProjectConsoleFeedback.FailClosed("safe_denial");
+            else { _page = result.Value; _feedback = result.Feedback; }
+        }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
+        finally { if (!request.IsCancellationRequested) _loading = false; }
+    }
+
+    public void Dispose() { _request?.Cancel(); _request?.Dispose(); }
+}

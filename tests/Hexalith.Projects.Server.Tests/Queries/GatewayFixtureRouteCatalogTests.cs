@@ -12,9 +12,9 @@ using Xunit;
 /// <summary>Verifies that fixture operation schemas describe the actual owner contracts.</summary>
 public sealed class GatewayFixtureRouteCatalogTests
 {
-    /// <summary>Exports each of the six request/result contracts without substituting transport envelopes.</summary>
+    /// <summary>Exports the operator and owner request/result contracts without substituting transport envelopes.</summary>
     [Fact]
-    public async Task OperationsDescribeTheSixActualQueryAndResultPairs()
+    public async Task OperationsDescribeTheActualQueryAndResultPairs()
     {
         var catalog = new GatewayFixtureRouteCatalog("tenant-a", includeAdvisoryQueries: true);
         var lease = await catalog.AcquireAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
@@ -24,6 +24,8 @@ public sealed class GatewayFixtureRouteCatalogTests
         [
             ("projects-list", typeof(ListProjectsQuery), typeof(ProjectListPage)),
             ("projects-open", typeof(GetProjectQuery), typeof(GetProjectResponse)),
+            ("projects-audit", typeof(GetProjectAuditQuery), typeof(ProjectAuditPage)),
+            ("projects-task-status", typeof(GetProjectTaskStatusQuery), typeof(ProjectTaskStatusResponse)),
             ("projects-suggest-conversation", typeof(ResolveProjectFromConversationQuery), typeof(ProjectAdvisoryResolutionResponse)),
             ("projects-suggest-attachments", typeof(ResolveProjectFromAttachmentsQuery), typeof(ProjectAdvisoryResolutionResponse)),
             ("folders-owner-read", typeof(FolderOwnerReadQuery), typeof(FolderOwnerReadResult)),

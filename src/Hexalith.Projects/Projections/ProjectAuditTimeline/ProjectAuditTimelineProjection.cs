@@ -14,6 +14,8 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Queries;
+using System.Text.Json;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectList;
 
@@ -78,6 +80,8 @@ public sealed record ProjectAuditTimelineProjection
                 FileReferenceUnlinked unlinked => Item(envelope, unlinked, unlinked.ActorPrincipalId, "file_reference.unlinked", FileReferenceKind, unlinked.FileReferenceId, ReferenceState.Included.ToString(), ReferenceState.Excluded.ToString(), null, null, null),
                 MemoryLinked linked => Item(envelope, linked, linked.ActorPrincipalId, "memory.linked", MemoryReferenceKind, linked.MemoryReferenceId, null, ReferenceState.Included.ToString(), null, null, null),
                 MemoryUnlinked unlinked => Item(envelope, unlinked, unlinked.ActorPrincipalId, "memory.unlinked", MemoryReferenceKind, unlinked.MemoryReferenceId, ReferenceState.Included.ToString(), ReferenceState.Excluded.ToString(), null, null, null),
+                ProjectChatBotAuthorityGranted granted => Item(envelope, granted, granted.ActorPrincipalId, "chatbot.authority_granted", null, null, null, "Granted", null, null, null),
+                ProjectChatBotAuthorityRevoked revoked => Item(envelope, revoked, revoked.ActorPrincipalId, "chatbot.authority_revoked", null, null, null, "Revoked", null, null, null),
                 ProjectResolutionConfirmed confirmed => Item(envelope, confirmed, confirmed.ActorPrincipalId, "project.resolution_confirmed", ConversationReferenceKind, confirmed.ConversationId, null, "Confirmed", null, confirmed.ConversationId, confirmed.SourceProjectId),
                 _ => throw new InvalidOperationException(
                     $"ProjectAuditTimelineProjection received an unsupported event type "
@@ -123,6 +127,32 @@ public sealed record ProjectAuditTimelineProjection
         }
 
         return query.ToArray();
+    }
+
+    /// <summary>Maps committed mutation facts to the supported Safe Metadata contract.</summary>
+    public static ProjectAuditFact? ToSupportedFact(ProjectAuditTimelineItem row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        string? outcome = row.OperationType switch
+        {
+            "project.created" or "project.restored" => "Active",
+            "project.archived" => "Archived",
+            "project.setup_updated" => "Updated",
+            "project.folder_set" or "file_reference.linked" or "memory.linked" => "Included",
+            "file_reference.unlinked" or "memory.unlinked" => "Excluded",
+            "project.resolution_confirmed" => "Confirmed",
+            "chatbot.authority_granted" => "Granted",
+            "chatbot.authority_revoked" => "Revoked",
+            _ => null,
+        };
+        if (outcome is null) return null;
+        // Aggregate idempotency is scoped by identity and operation. Delivery positions can change on replay.
+        string id = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new[]
+        {
+            row.TenantId, row.ProjectId, row.ActorPrincipalId, row.OperationType,
+            string.IsNullOrWhiteSpace(row.IdempotencyKey) ? row.AuditEventId : row.IdempotencyKey,
+        })));
+        return new("audit_" + id, row.OperationType, outcome, row.OccurredAt);
     }
 
     private static ProjectAuditTimelineItem Item(

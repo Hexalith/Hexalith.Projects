@@ -16,7 +16,7 @@ internal sealed class ProjectReadTestAuditStore(IReadModelStore inner) : IReadMo
         if (BeforeWrite is not null) await BeforeWrite().WaitAsync(cancellationToken).ConfigureAwait(false);
         if (FailWrites) throw new IOException("Audit store unavailable");
         bool saved = await inner.TrySaveAsync(storeName, key, value, etag, cancellationToken).ConfigureAwait(false);
-        if (saved) Keys.Add(key);
+        if (saved && key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal)) Keys.Add(key);
         return saved;
     }
 }

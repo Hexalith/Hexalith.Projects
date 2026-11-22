@@ -271,6 +271,26 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
       const inspected = await observe();
       expect(inspected.domain).toEqual(before.domain);
       expect(Object.keys(inspected.audit).length).toBeGreaterThan(Object.keys(after.audit).length);
+      await page.getByRole('button', { name: 'Audit history', exact: true }).click();
+      await page.getByTestId('project-audit-load').click();
+      await expect(page.getByTestId('project-audit-state')).toContainText('Partial');
+      const inspectionRow = page.getByTestId('project-audit-row').filter({ hasText: 'ProjectNameDescriptionSetupReferenceLabels' }).first();
+      await expect(inspectionRow).toContainText('metadata.inspected');
+      const stableId = /audit_[0-9A-F]{64}/.exec(await inspectionRow.innerText())?.[0];
+      expect(stableId).toBeTruthy();
+      const auditText = (await page.getByTestId('project-audit-row').allTextContents()).join(' ');
+      for (const marker of [...protectedText, 'Synthetic project project-a', 'folder-project-a']) {
+        expect(auditText.includes(marker), 'audit timeline disclosed protected data').toBe(false);
+      }
+      await page.getByTestId('project-audit-load').click();
+      await expect(page.getByTestId('project-audit-row').filter({ hasText: stableId! })).toHaveCount(1);
+      expect(await observe()).toEqual(inspected);
+      for (const taskId of ['preview-task-a', 'preview-task-b']) {
+        await page.goto('/inspect/tasks/' + taskId);
+        await expect(page.getByTestId('project-task-state')).toHaveText('Unavailable · TaskAuthorityUnavailable');
+        await expect(page.getByText('Recovery guidance Retry', { exact: true })).toBeVisible();
+      }
+      expect(await observe()).toEqual(inspected);
       const concurrentObservations = [];
       const foreignContext = await browser.newContext({ baseURL: process.env.BASE_URL, ignoreHTTPSErrors: true, storageState: { cookies: [], origins: [] } });
       try {
@@ -284,6 +304,8 @@ if (process.env.E2E_SUPPORTED_READ_APPHOST === '1') {
         await expect(foreignPage.getByTestId('project-navigation-project').filter({ hasText: 'foreign-project-a' })).toBeVisible();
         await Promise.all([page.goto('/inspect/projects/project-a'), foreignPage.goto('/inspect/projects/project-a')]);
         concurrentObservations.push(await observeConcurrentPrimary('concurrent-foreign-navigation'));
+        await expect(foreignPage.getByTestId('project-audit-row')).toHaveCount(0);
+        await expect(foreignPage.getByTestId('project-audit-load')).toHaveCount(0);
         const denied = foreignPage.getByTestId('project-feedback-fail-closed');
         await expect(denied).toContainText('safe_denial');
         const foreignAbsence = await denied.innerText();

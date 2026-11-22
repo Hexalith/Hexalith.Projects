@@ -661,6 +661,39 @@ internal sealed partial class SupportedProjectReadDistributedFixture : IDisposab
         }
     }
 
+    /// <summary>Verifies that a persisted inspection appears in the scoped operator query and survives repeated reads.</summary>
+    internal async Task VerifyRetainedInspectionAsync(string[] before, string project)
+    {
+        string[] added = (await AuditKeysAsync().ConfigureAwait(false)).Except(before, StringComparer.Ordinal).ToArray();
+        Require(added.Length == 1, "Expected one persisted inspection for this target.");
+        string id = added[0]["projects:read-audit:v1:".Length..];
+        string partition = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new[] { Tenant, project })));
+        string indexKey = "projects:audit-index:v1:" + partition + ":0";
+        using JsonDocument index = JsonDocument.Parse((await StateAsync(indexKey).ConfigureAwait(false)).Bytes);
+        Require(index.RootElement.GetProperty("surrogates").EnumerateArray().Count(value => value.GetString() == id) == 1,
+            "The Project index must point to the durable inspection exactly once.");
+        Require((await RedisAsync("TTL", indexKey).ConfigureAwait(false)).Trim() == "-1", "The index would expire before the retained fact.");
+
+        var request = new SubmitQueryRequest(Tenant, "projects", project, GetProjectAuditQuery.QueryType,
+            Payload: JsonSerializer.SerializeToElement(new GetProjectAuditQuery(), Json));
+        for (int read = 0; read < 2; read++)
+        {
+            using HttpResponseMessage response = await SendHumanAsync("api/v1/queries", request, HumanToken(Tenant, chatbot: false)).ConfigureAwait(false);
+            Require(response.StatusCode == HttpStatusCode.OK, "Operator audit query failed.");
+            var envelope = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
+            var page = envelope!.Payload.Deserialize<ProjectAuditPage>(Json)!;
+            Require(page.Items.Count(row => row.AuditEventId == "audit_" + id && row.Outcome == "Inspection"
+                && row.ProjectCount == 1 && row.FieldClass == "ProjectNameDescriptionSetupReferenceLabels") == 1,
+                "The timeline must expose the committed inspection exactly once under its stable audit ID.");
+        }
+        using var absent = await SendHumanAsync("api/v1/queries", request with { AggregateId = "absent" },
+            HumanToken(Tenant, chatbot: false)).ConfigureAwait(false);
+        using var foreign = await SendHumanAsync("api/v1/queries", request with { Tenant = ForeignTenant },
+            HumanToken(Tenant, chatbot: false, foreignTransportGrant: true)).ConfigureAwait(false);
+        Require(await SafeProblemAsync(absent).ConfigureAwait(false) == await SafeProblemAsync(foreign).ConfigureAwait(false),
+            "Absent and inaccessible audit targets must have the same refusal.");
+    }
+
     /// <summary>Checks metadata values and exclusions without putting protected data in assertion messages.</summary>
     internal static bool IsSafeAudit(JsonElement audit, DateTimeOffset earliest, DateTimeOffset latest, IEnumerable<string> protectedValues)
     {

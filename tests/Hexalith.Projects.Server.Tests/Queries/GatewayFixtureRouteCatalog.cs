@@ -75,6 +75,8 @@ internal sealed class GatewayFixtureRouteCatalog(string tenant, bool includeAdvi
         ];
         if (includeAdvisoryQueries)
         {
+            queries.Add(("projects-audit", "projects", GetProjectAuditQuery.QueryType, typeof(GetProjectAuditQueryHandler), typeof(GetProjectAuditQuery), typeof(ProjectAuditPage), false));
+            queries.Add(("projects-task-status", "projects", GetProjectTaskStatusQuery.QueryType, typeof(GetProjectTaskStatusQueryHandler), typeof(GetProjectTaskStatusQuery), typeof(ProjectTaskStatusResponse), false));
             queries.Add(("projects-context", "projects", ProjectsServerModule.GetProjectContextQueryType, typeof(GetProjectContextQueryHandler), typeof(GetProjectContextQuery), typeof(ProjectContextReadResponse), false));
             queries.Add(("projects-start", "projects", ProjectsServerModule.GetConversationStartSetupQueryType, typeof(GetConversationStartSetupQueryHandler), typeof(GetConversationStartSetupQuery), typeof(ConversationStartSetupResponse), false));
             queries.Add(("projects-explain", "projects", ProjectsServerModule.ExplainContextSelectionQueryType, typeof(ExplainContextSelectionQueryHandler), typeof(ExplainContextSelectionQuery), typeof(ExplainContextSelectionResponse), false));

@@ -116,6 +116,7 @@ public sealed class SupportedProjectReadDistributedTests(ITestOutputHelper outpu
         GetProjectResponse inspected = await fixture.ReadAsync<GetProjectResponse>(open: true, chatbot: false, inspection: true);
         Assert.True(inspected.Name is not null, "Authorized inspection control failed.");
         await fixture.VerifyDurableAuditDeltaAsync(auditBeforeOpen, open: true, count: 1);
+        await fixture.VerifyRetainedInspectionAsync(auditBeforeOpen, "project-a");
         string[] auditBeforeList = await fixture.AuditKeysAsync();
         ProjectListPage inspectedList = await fixture.ReadAsync<ProjectListPage>(chatbot: false, inspection: true);
         inspectedList.Items.Count.ShouldBe(2);

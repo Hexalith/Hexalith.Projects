@@ -7,6 +7,10 @@ using Hexalith.Projects.UI.Rendering;
 public sealed class ProjectDetailSource(ProjectReadQueryClient queries) : IProjectDetailSource
 {
     /// <inheritdoc/>
+    public Task<ProjectReadResult<ProjectAuditPage>> ReadAuditAsync(string projectId, GetProjectAuditQuery query, CancellationToken cancellationToken)
+        => queries.QueryAsync<ProjectAuditPage>(projectId, GetProjectAuditQuery.QueryType, query, cancellationToken);
+
+    /// <inheritdoc/>
     public Task<ProjectDetailLoadResult> GetProjectDetailAsync(string projectId, CancellationToken cancellationToken)
         => InspectAsync(projectId, false, false, cancellationToken);
 

@@ -8,7 +8,7 @@ using Hexalith.Projects.Contracts.Queries;
 /// <param name="gateway">The platform transport with caller-owned authentication.</param>
 public sealed class ProjectsSupportedReadClient(IEventStoreGatewayClient gateway)
 {
-    /// <summary>Submits one of the seven declared reads without a transport fallback.</summary>
+    /// <summary>Submits a declared read without a transport fallback.</summary>
     /// <typeparam name="T">The exact declared result type.</typeparam>
     /// <param name="tenantId">The authenticated Tenant.</param>
     /// <param name="target">The opaque query target.</param>
@@ -22,6 +22,10 @@ public sealed class ProjectsSupportedReadClient(IEventStoreGatewayClient gateway
         object response = payload switch
         {
             ListProjectsQuery query when queryType == ListProjectsQuery.QueryType && typeof(T) == typeof(ProjectListPage)
+                => await gateway.QueryAsync(tenantId, target, query, cancellationToken).ConfigureAwait(false),
+            GetProjectAuditQuery query when queryType == GetProjectAuditQuery.QueryType && typeof(T) == typeof(ProjectAuditPage)
+                => await gateway.QueryAsync(tenantId, target, query, cancellationToken).ConfigureAwait(false),
+            GetProjectTaskStatusQuery query when queryType == GetProjectTaskStatusQuery.QueryType && typeof(T) == typeof(ProjectTaskStatusResponse)
                 => await gateway.QueryAsync(tenantId, target, query, cancellationToken).ConfigureAwait(false),
             GetProjectQuery query when queryType == GetProjectQuery.QueryType && typeof(T) == typeof(GetProjectResponse)
                 => await gateway.QueryAsync(tenantId, target, query, cancellationToken).ConfigureAwait(false),

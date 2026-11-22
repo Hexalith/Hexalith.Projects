@@ -37,6 +37,15 @@ SCHEDULED_STORY_STATUSES = {"backlog", "blocked", "ready-for-dev", "in-progress"
 STORY_6_7_KEY = "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback"
 # Approved 2026-11-16 unpin: 6.7 may progress like 6.8. Grants no readiness, P1R, Epic 7/8
 # or release acceptance.
+STORY_8_1_KEY = "8-1-inspect-task-audit-and-reconciliation-truth"
+# Story 8.1 may start before the Epic 7 workflows and Epic 8 evidence are accepted.
+# Its parent can open at story creation or at the first BMAD implementation sync.
+STORY_8_1_EPIC_STATUSES = {
+    "backlog": {"backlog"},
+    "ready-for-dev": {"backlog", "in-progress"},
+    "in-progress": {"in-progress"},
+    "blocked": {"backlog", "in-progress"},
+}
 ACCEPTANCE_SCHEMA = "hexalith.projects.p1r-acceptance.v1"
 ACCEPTANCE_RECORD_RELATIVE_PATH = Path(
     "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
@@ -106,8 +115,6 @@ TRANSITIVE_EPIC_STATUSES = {
     "7-15-reconcile-legacy-and-interrupted-workflows": "backlog",
     "7-16-select-an-association-target": "backlog",
     "epic-7-retrospective": "optional",
-    "epic-8": "backlog",
-    "8-1-inspect-task-audit-and-reconciliation-truth": "backlog",
     "8-2-create-a-bounded-safe-diagnostic-export": "backlog",
     "8-3-integrate-conformant-project-maintenance-in-the-web-console": "backlog",
     "8-4-operate-projects-through-a-deterministic-cli-contract": "backlog",
@@ -295,6 +302,13 @@ def _validate_scheduling(
         if status not in SCHEDULED_STORY_STATUSES:
             raise GuardViolation(f"Story {story} scheduled status is missing or invalid")
         expected[key] = status
+    audit_status = production.get(STORY_8_1_KEY)
+    if audit_status not in STORY_8_1_EPIC_STATUSES:
+        raise GuardViolation("Story 8.1 exceeds its early development scheduling boundary")
+    if production.get("epic-8") not in STORY_8_1_EPIC_STATUSES[audit_status]:
+        raise GuardViolation("Epic 8 status must match Story 8.1 development")
+    expected[STORY_8_1_KEY] = audit_status
+    expected["epic-8"] = production["epic-8"]
     if deferred_work is not None:
         _validate_read_dependencies(sprint, deferred_work)
         _validate_cli_read_dependencies(sprint, deferred_work)

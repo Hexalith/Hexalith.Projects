@@ -5,11 +5,16 @@
 
 namespace Hexalith.Projects.UI.Diagnostics;
 
+using Hexalith.Projects.Contracts.Queries;
+
 /// <summary>
 /// Generated-client backed source for the read-only Project detail inspector.
 /// </summary>
 public interface IProjectDetailSource
 {
+    /// <summary>Reads the requested page of committed safe Project facts.</summary>
+    Task<ProjectReadResult<ProjectAuditPage>> ReadAuditAsync(string projectId, GetProjectAuditQuery query, CancellationToken cancellationToken);
+
     /// <summary>Requests explicit separately authorized descriptive or quarantine inspection.</summary>
     Task<ProjectDetailLoadResult> InspectAsync(string projectId, bool descriptive, bool quarantined, CancellationToken cancellationToken);
 

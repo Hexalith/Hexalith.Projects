@@ -143,7 +143,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                     (Name: "conversations", Store: conversations.Services.GetRequiredService<ProjectMcpCliReadStore>()) };
                 foreach (var observed in stores) observed.Store.Writes.Clear();
                 string[] UnexpectedWrites() => stores.SelectMany(observed => observed.Store.Writes.Keys
-                    .Where(key => observed.Name != "projects" || !key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal))
+                    .Where(key => observed.Name != "projects" || !ProjectAuditStorageKeys.IsAuditKey(key))
                     .Select(key => observed.Name + ":" + key)).ToArray();
                 var request = new SubmitQueryRequest(requestTenant, "projects", target, type,
                     Payload: JsonSerializer.SerializeToElement(payload, payload.GetType(), JsonSerializerOptions.Web));
@@ -755,7 +755,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                     projects.Services.GetRequiredService<IUtcClock>(), new Hexalith.Projects.Authorization.TenantAccessOptions()).AuthorizeDiagnosticReadAsync(new(tenant, "actor-1", null), TestContext.Current.CancellationToken).ConfigureAwait(false);
                 bool currentAuthority = authority.IsAllowed && authority.FreshnessStatus == Hexalith.Projects.Authorization.TenantProjectionFreshnessStatus.Fresh;
                 string[] unexpected = new[] { projects, folders, conversations }.SelectMany(app => app.Services.GetRequiredService<ProjectMcpCliReadStore>().Writes.Keys
-                    .Where(key => !ReferenceEquals(app, projects) || !key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal))).ToArray();
+                    .Where(key => !ReferenceEquals(app, projects) || !ProjectAuditStorageKeys.IsAuditKey(key))).ToArray();
                 bool readOnly = unexpected.Length == 0 && (await SnapshotAsync().ConfigureAwait(false)).OrderBy(item => item.Key).SequenceEqual(before.OrderBy(item => item.Key));
                 string correlation = supported.DefaultRequestHeaders.GetValues("X-Correlation-Id").Single();
                 bool safeContract = MatrixCanonical(operation, old, body, retained.StatusCode, current.StatusCode, correlation, histories,

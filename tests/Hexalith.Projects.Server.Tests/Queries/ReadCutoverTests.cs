@@ -33,7 +33,7 @@ public sealed class ReadCutoverTests
             .Select(type => (Type: type, Contract: type.GetCustomAttributes(typeof(Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute), false)
                 .Cast<Hexalith.EventStore.Contracts.Queries.QueryResultContractAttribute>().SingleOrDefault()))
             .Where(item => item.Contract is not null).ToArray();
-        declared.Length.ShouldBe(7);
+        declared.Length.ShouldBe(9);
         foreach (var item in declared)
         {
             var route = ProjectsRuntimeCatalogDeclarations.Routes.Single(route => route.MessageType == item.Contract!.QueryType);

@@ -31,7 +31,8 @@ public static class SupportedProjectBrowserFixtureProfile
         string secret = builder.Configuration["Projects:SupportedReads:Browser:ClientSecret"]
             ?? throw new InvalidOperationException("The private OIDC client credential is required.");
         IResourceBuilder<ParameterResource> clientSecret = builder.AddParameter("browser-ui-client-secret", secret, secret: true);
-        _ = ui.WithEnvironment("Authentication__OpenIdConnect__Authority", authority)
+        _ = ui.WithEnvironment("Projects__OperatorReadPreview__Enabled", "true")
+            .WithEnvironment("Authentication__OpenIdConnect__Authority", authority)
             .WithEnvironment("Authentication__OpenIdConnect__ClientId", "hexalith-projects-ui")
             .WithEnvironment("Authentication__OpenIdConnect__ClientSecret", clientSecret)
             .WithEnvironment("SSL_CERT_FILE", builder.Configuration["Projects:SupportedReads:TrustBundle"]!);

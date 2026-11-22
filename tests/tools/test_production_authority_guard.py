@@ -95,6 +95,8 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             GUARD.STORY_6_6_KEY: "backlog",
             GUARD.STORY_6_8_KEY: "backlog",
             GUARD.STORY_6_7_KEY: "backlog",
+            GUARD.STORY_8_1_KEY: "backlog",
+            "epic-8": "backlog",
         }
         for key, baseline in baselines.items():
             current = f"  {key}: {index['development_status'][key]}"
@@ -791,9 +793,9 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 "open boundary",
             ),
             (
-                "Epic 8",
+                "Epic 8 opened with Story 8.1 still in backlog",
                 self.replace_once(accepted, "  epic-8: backlog", "  epic-8: in-progress"),
-                "open boundary",
+                "Epic 8 status must match Story 8.1",
             ),
         )
         for name, sprint, error in cases:
@@ -981,6 +983,37 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     index = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
                     self.assertEqual("blocked", index["development_status"][story_7_1])
                     self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
+
+    def test_early_audit_development_keeps_acceptance_and_other_stories_gated(self) -> None:
+        cases = (
+            ("backlog", "backlog"), ("ready-for-dev", "backlog"),
+            ("ready-for-dev", "in-progress"), ("in-progress", "in-progress"),
+            ("blocked", "backlog"), ("blocked", "in-progress"),
+        )
+        for story, epic in cases:
+            with self.subTest(story=story, epic=epic):
+                index = GUARD.yaml.safe_load(self.sprint)
+                status = index["development_status"]
+                status.update({GUARD.STORY_8_1_KEY: story, "epic-8": epic})
+                GUARD._validate_scheduling(index)
+
+        for key, value in (
+            (GUARD.STORY_8_1_KEY, "review"), (GUARD.STORY_8_1_KEY, "done"),
+            (GUARD.STORY_8_1_KEY, "unknown"), (GUARD.STORY_8_1_KEY, None),
+            ("epic-8", "backlog"), ("epic-8", "done"),
+            ("8-2-create-a-bounded-safe-diagnostic-export", "in-progress"),
+            ("7-1-activate-a-project-with-exactly-one-authorized-folder", "in-progress"),
+        ):
+            with self.subTest(key=key, value=value):
+                index = GUARD.yaml.safe_load(self.sprint)
+                status = index["development_status"]
+                status.update({GUARD.STORY_8_1_KEY: "in-progress", "epic-8": "in-progress"})
+                if value is None:
+                    del status[key]
+                else:
+                    status[key] = value
+                with self.assertRaises(GUARD.GuardViolation):
+                    GUARD._validate_scheduling(index)
 
     def test_scheduled_story_keys_and_statuses_fail_closed(self) -> None:
         for key in (GUARD.STORY_6_6_KEY, GUARD.STORY_6_8_KEY, GUARD.STORY_6_7_KEY):

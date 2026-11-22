@@ -1834,7 +1834,7 @@ public static partial class ProjectsDomainServiceEndpoints
         rows = visible;
         if (!await AuthorizeLegacyInspectionAsync(httpContext, tenantContext, correlationId,
             Hexalith.Projects.Contracts.Queries.ListProjectsQuery.QueryType, "projects", rows.Count,
-            System.Text.Json.JsonSerializer.Serialize(rows, ResponseJsonOptions), cancellationToken).ConfigureAwait(false))
+            System.Text.Json.JsonSerializer.Serialize(rows, ResponseJsonOptions), cancellationToken, rows.Select(row => row.ProjectId).ToArray()).ConfigureAwait(false))
             return SafeDenial(correlationId, null);
 
         foreach (ProjectListItem row in rows)

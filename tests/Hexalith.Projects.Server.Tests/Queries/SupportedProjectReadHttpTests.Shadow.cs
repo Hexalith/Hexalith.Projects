@@ -158,8 +158,8 @@ public sealed partial class SupportedProjectReadHttpTests
                 filtered.Items.Single().LifecycleState.ShouldBe(lifecycle);
             }
 
-            // Supported and retained inspected reads add only metadata audit records.
-            store.Count.ShouldBe(storedKeysBefore + 11);
+            // Eleven immutable inspections share one index page for each of the two Projects.
+            store.Count.ShouldBe(storedKeysBefore + 11 + projectIds.Length);
             store.SnapshotRaw(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Index("tenant-a")).ShouldBe(indexBefore);
             foreach (string id in projectIds)
             {

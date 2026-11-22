@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-11-21
+# last_updated: 2026-11-22
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -52,7 +52,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-11-21
+last_updated: 2026-11-22
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -316,8 +316,10 @@ development_status:
   epic-7-retrospective: optional
 
   # Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
-  epic-8: backlog
-  8-1-inspect-task-audit-and-reconciliation-truth: backlog
+  epic-8: in-progress
+  # 8.1 may start before Epic 7 finishes. Acceptance still requires the Epic 8 evidence.
+  # The internal read implementation is awaiting 7.1-P2, 7.15 and the governed acceptance evidence.
+  8-1-inspect-task-audit-and-reconciliation-truth: blocked
   8-2-create-a-bounded-safe-diagnostic-export: backlog
   8-3-integrate-conformant-project-maintenance-in-the-web-console: backlog
   8-4-operate-projects-through-a-deterministic-cli-contract: backlog

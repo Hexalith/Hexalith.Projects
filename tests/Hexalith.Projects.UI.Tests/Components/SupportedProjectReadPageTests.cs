@@ -111,7 +111,9 @@ public sealed class SupportedProjectReadPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-start-snapshot']").TextContent.ShouldContain("Complete");
         cut.Find("[data-testid='project-start-snapshot']").TextContent.ShouldContain("33");
         cut.Markup.ShouldContain("Not disclosed");
-        cut.Markup.ShouldContain("Audit history is unavailable");
+        cut.Markup.ShouldContain("Audit history is not yet available");
+        cut.FindAll("[data-testid='project-audit-load']").ShouldBeEmpty();
+        source.ReceivedCalls().ShouldNotContain(call => call.GetMethodInfo().Name == nameof(IProjectDetailSource.ReadAuditAsync));
         cut.FindAll("[data-testid='maintenance-action-panel']").ShouldBeEmpty();
         cut.FindAll("[data-testid='audit-timeline']").ShouldBeEmpty();
         cut.Markup.ShouldNotContain("Context activation");

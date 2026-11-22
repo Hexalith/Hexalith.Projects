@@ -234,6 +234,8 @@ public static class SupportedProjectReadFixtureProfile
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__3", "Hexalith.Projects.Queries.GetConversationStartSetup.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__4", "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1")
             .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__5", "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__6", "Hexalith.Projects.Queries.GetProjectAudit.v1")
+            .WithEnvironment("Authentication__QueryAuthority__RequiredQueries__projects__7", "Hexalith.Projects.Queries.GetProjectTaskStatus.v1")
             .WithEnvironment("Authentication__DaprInternal__AllowedCallers__0", "projects")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__AppId", "tenants")
             .WithEnvironment("EventStore__DomainServices__Registrations__system|global-administrators|v1__Domain", "global-administrators")

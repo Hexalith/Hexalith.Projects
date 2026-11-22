@@ -13,7 +13,7 @@ using Xunit;
 public sealed class ProjectMcpCliDecorationTests
 {
     [Fact]
-    public void OnlyFourSupportedQueriesAreEnrolledWithExistingWebRouting()
+    public void SupportedReadDecorationsMatchTheirWebRouting()
     {
         Assembly assembly = typeof(ListProjectsQuery).Assembly;
         HexalithModuleAttribute module = assembly.GetCustomAttribute<HexalithModuleAttribute>()!;
@@ -23,6 +23,8 @@ public sealed class ProjectMcpCliDecorationTests
         var expected = new Dictionary<Type, (string Name, string WireType, string? AggregateId)>
         {
             [typeof(ListProjectsQuery)] = ("list", ListProjectsQuery.QueryType, "projects"),
+            [typeof(GetProjectAuditQuery)] = ("audit", GetProjectAuditQuery.QueryType, null),
+            [typeof(GetProjectTaskStatusQuery)] = ("task-status", GetProjectTaskStatusQuery.QueryType, null),
             [typeof(GetProjectQuery)] = ("describe", GetProjectQuery.QueryType, null),
             [typeof(ResolveProjectFromConversationQuery)] = ("trace-conversation", ResolveProjectFromConversationQuery.QueryType, "projects"),
             [typeof(ResolveProjectFromAttachmentsQuery)] = ("trace-attachments", ResolveProjectFromAttachmentsQuery.QueryType, "projects"),
@@ -45,7 +47,7 @@ public sealed class ProjectMcpCliDecorationTests
                 property.GetCustomAttribute<DescriptionAttribute>()!.Description.ShouldNotBeNullOrWhiteSpace();
             }
         }
-        // Exact enumeration also protects setup, context, audit and all command types from enrollment.
+        // Exact enumeration also protects setup, context and all command types from enrollment.
         assembly.GetTypes().Where(type => type.IsDefined(typeof(HexalithCommandAttribute))).ShouldBeEmpty();
         typeof(ResolveProjectFromConversationQuery).GetProperty("ConversationId")!.IsDefined(typeof(HexalithIdentifierAttribute)).ShouldBeTrue();
         typeof(ProjectAdvisoryAttachment).GetProperty("ReferenceId")!.IsDefined(typeof(HexalithIdentifierAttribute)).ShouldBeTrue();
@@ -59,6 +61,8 @@ public sealed class ProjectMcpCliDecorationTests
     public void PayloadKeysExactlyMatchTheServerAllowlistsWithDefaultAndWebSerialization()
     {
         AssertKeys(new ListProjectsQuery(), ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata", "includeQuarantined"]);
+        AssertKeys(new GetProjectAuditQuery(), ["cursor", "pageSize"]);
+        AssertKeys(new GetProjectTaskStatusQuery(), []);
         AssertKeys(new GetProjectQuery(), ["inspectDescriptiveMetadata", "inspectQuarantined"]);
         AssertKeys(new ResolveProjectFromConversationQuery("conversation-a"), ["conversationId", "includeArchived"]);
         AssertKeys(new ResolveProjectFromAttachmentsQuery([new("folder", "folder-a")]), ["attachments", "includeArchived"]);

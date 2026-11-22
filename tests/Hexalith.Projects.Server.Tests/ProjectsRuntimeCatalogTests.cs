@@ -48,7 +48,7 @@ public sealed class ProjectsRuntimeCatalogTests
         app.MapProjectsServerEndpoints();
 
         var declarations = CompiledRouteCatalogDeclarations.Read([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]);
-        declarations.Count.ShouldBe(23);
+        declarations.Count.ShouldBe(25);
         var processor = app.Services.GetRequiredKeyedService<IDomainProcessor>("projects")
             .ShouldBeAssignableTo<IDomainCommandPayloadInventory>();
         processor.CommandPayloadTypes.Select(type => type.FullName).Order(StringComparer.Ordinal)
@@ -58,8 +58,8 @@ public sealed class ProjectsRuntimeCatalogTests
         app.Services.GetServices<IAsyncDomainProjectionHandler>().Select(handler => handler.ProjectionType).Order(StringComparer.Ordinal)
             .ShouldBe(new[] { "conversation-start-setup", "project-reads" });
         var routes = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints).ToArray();
-        DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(23);
-        CompiledRouteCatalogDeclarations.ReadOperations([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]).Count.ShouldBe(23);
+        DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(25);
+        CompiledRouteCatalogDeclarations.ReadOperations([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]).Count.ShouldBe(25);
         EventStoreDomainServiceEndpointInventory.Validate(routes, fallbackPolicy: null).ShouldBeEmpty();
         foreach (RouteEndpoint endpoint in routes.OfType<RouteEndpoint>().Where(endpoint =>
             EventStoreDomainServiceRoutes.TryGet(endpoint.RoutePattern.RawText, out _)))
@@ -80,7 +80,7 @@ public sealed class ProjectsRuntimeCatalogTests
         var input = new RouteCatalogGenerationInput(1, "Development", declarations, operations, bindings, policies);
         RouteCatalogEnvelope catalog = VersionedRouteCatalogBuilder.Build(input);
         RouteCatalogValidator.Validate(catalog);
-        RouteCatalogCodec.Decode(RouteCatalogCodec.Encode(catalog), RouteCatalogCodec.ComputeRootDigest(catalog)).Routes.Count.ShouldBe(23);
+        RouteCatalogCodec.Decode(RouteCatalogCodec.Encode(catalog), RouteCatalogCodec.ComputeRootDigest(catalog)).Routes.Count.ShouldBe(25);
         var incorrectlyInternal = declarations.Select(route => route.MessageType == ListProjectsQuery.QueryType
             ? route with { Execution = route.Execution! with { RequiresDelegatedContext = true } } : route).ToArray();
         Should.Throw<RouteCatalogValidationException>(() => VersionedRouteCatalogBuilder.Build(input with { Declarations = incorrectlyInternal }));

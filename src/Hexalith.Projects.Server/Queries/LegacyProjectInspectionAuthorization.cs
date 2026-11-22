@@ -11,7 +11,7 @@ public static partial class ProjectsDomainServiceEndpoints
 {
     private static async Task<bool> AuthorizeLegacyInspectionAsync(HttpContext context,
         IProjectTenantContextAccessor tenant, string correlationId, string queryType, string target,
-        int count, string observedRevision, CancellationToken cancellationToken)
+        int count, string observedRevision, CancellationToken cancellationToken, IReadOnlyCollection<string>? projectIds = null)
     {
         if (context.Request.Query["inspectDescriptiveMetadata"] is not { Count: 1 } optIn || optIn[0] != "true"
             || !context.User.HasClaim("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission)
@@ -25,7 +25,17 @@ public static partial class ProjectsDomainServiceEndpoints
             Scopes = identity.Scopes, Audience = identity.Audience,
         };
         ProjectReadAudit? audit = context.RequestServices.GetService<ProjectReadAudit>();
-        return audit is not null && await audit.RecordAsync(query, true, count,
-            observedRevision, context.Request.Query["inspectQuarantined"] == "true" || context.Request.Query["includeQuarantined"] == "true", cancellationToken).ConfigureAwait(false);
+        if (audit is null) return false;
+        if (context.Request.Query["includeQuarantined"] == "true" && projectIds is not null)
+        {
+            foreach (string project in projectIds)
+            {
+                string observation = System.Text.Json.JsonSerializer.Serialize(new[] { observedRevision, project });
+                if (!await audit.RecordAsync(query, true, 1, observation, true, cancellationToken, [project]).ConfigureAwait(false)) return false;
+            }
+            return true;
+        }
+        return await audit.RecordAsync(query, true, count, observedRevision, context.Request.Query["inspectQuarantined"] == "true",
+            cancellationToken, projectIds ?? [target]).ConfigureAwait(false);
     }
 }

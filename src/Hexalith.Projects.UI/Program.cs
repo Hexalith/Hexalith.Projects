@@ -23,6 +23,7 @@ IHttpClientBuilder gatewayClient = builder.Services.AddEventStoreGatewayClient(o
     options.BaseAddress = new Uri(builder.Configuration["EventStore:GatewayAddress"] ?? "http://eventstore"));
 builder.Services.AddProjectsSupportedReads();
 builder.Services.AddProjectsReadRouting();
+builder.Services.Configure<ProjectOperatorPreviewOptions>(builder.Configuration.GetSection("Projects:OperatorReadPreview"));
 builder.Services.AddScoped<ProjectReadQueryClient>();
 builder.Services.AddScoped<ILegacyProjectInventorySource, LegacyProjectInventorySource>();
 builder.Services.AddScoped<ILegacyProjectWarningsDashboardSource, LegacyProjectWarningsDashboardSource>();

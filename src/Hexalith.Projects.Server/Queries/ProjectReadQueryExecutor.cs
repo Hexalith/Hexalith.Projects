@@ -146,13 +146,13 @@ public sealed class ProjectReadQueryExecutor(
                 {
                     (ProjectReadModel inspected, ProjectAuthorizationResult authority, ReferenceState folder) = observations[row.ProjectId];
                     if (!await audit.RecordAsync(query, true, 1,
-                        OpenObservation(inspected, scope, authority, folder), cancellationToken).ConfigureAwait(false))
+                        OpenObservation(inspected, scope, authority, folder), true, cancellationToken, [row.ProjectId]).ConfigureAwait(false))
                     {
                         return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
-            else if (descriptive && !await audit.RecordAsync(query, true, rows.Length, cursorScope, cancellationToken).ConfigureAwait(false))
+            else if (descriptive && !await audit.RecordAsync(query, true, rows.Length, cursorScope, false, cancellationToken, rows.Select(row => row.ProjectId).ToArray()).ConfigureAwait(false))
             {
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
@@ -223,7 +223,7 @@ public sealed class ProjectReadQueryExecutor(
             !valid ? [] : quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState, referencesValid),
             Snapshot(model, folderState));
         if (descriptive && !await audit.RecordAsync(query, true, 1,
-            OpenObservation(model, scope, projectAuthorization, folderState), quarantined, cancellationToken).ConfigureAwait(false))
+            OpenObservation(model, scope, projectAuthorization, folderState), quarantined, cancellationToken, [model.ProjectId]).ConfigureAwait(false))
         {
             return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
         }
@@ -247,7 +247,7 @@ public sealed class ProjectReadQueryExecutor(
         => !chatbot && ProjectReadQueryAdmission.IsTenantProjectAdministrator(binding)
             && binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;
 
-    private static bool IsQuarantined(ProjectDetailItem detail)
+    internal static bool IsQuarantined(ProjectDetailItem detail)
         => detail.Lifecycle == ProjectLifecycle.Active
             && detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: not null };
 
@@ -358,7 +358,7 @@ public sealed class ProjectReadQueryExecutor(
 
     private static string? SafeReason(ReferenceState state) => state == ReferenceState.Included ? null : "ReferenceUnavailable";
 
-    private static bool TryPayload<T>(QueryEnvelope query, IReadOnlyList<string> fields, out T? input)
+    internal static bool TryPayload<T>(QueryEnvelope query, IReadOnlyList<string> fields, out T? input)
     {
         input = default;
         if (query.Payload.Length > 8192) { return false; }
@@ -416,7 +416,7 @@ public sealed class ProjectReadQueryExecutor(
     private static bool SameModel(ProjectReadModel left, ProjectReadModel? right)
         => right is not null && JsonSerializer.Serialize(left, JsonOptions) == JsonSerializer.Serialize(right, JsonOptions);
 
-    private static bool SafeIdentity(string tenant, string value)
+    internal static bool SafeIdentity(string tenant, string value)
     {
         try { _ = new AggregateIdentity(tenant, ProjectsServerModule.DomainName, value); return true; }
         catch (ArgumentException) { return false; }
@@ -436,7 +436,9 @@ public sealed class ProjectReadQueryExecutor(
 
     private async Task<QueryResult> DenyAsync(QueryEnvelope query, CancellationToken cancellationToken)
     {
-        _ = await audit.RecordAsync(query, false, 0, cancellationToken).ConfigureAwait(false);
+        string[] targets = query.QueryType == GetProjectQuery.QueryType && binding.TryBind(query, out _)
+            && SafeIdentity(query.TenantId, query.AggregateId) ? [query.AggregateId] : [];
+        _ = await audit.RecordAsync(query, false, 0, null, false, cancellationToken, targets).ConfigureAwait(false);
         return QueryResult.Failure("safe-denial");
     }
 

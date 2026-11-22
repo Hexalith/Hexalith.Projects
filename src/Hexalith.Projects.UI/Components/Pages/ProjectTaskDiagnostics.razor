@@ -1,0 +1,65 @@
+@page "/inspect/tasks"
+@page "/inspect/tasks/{TaskId}"
+@using Hexalith.Projects.Contracts.Queries
+@using Hexalith.Projects.UI.Diagnostics
+@inject ProjectReadQueryClient Queries
+@inject Microsoft.Extensions.Options.IOptions<ProjectOperatorPreviewOptions> OperatorPreview
+@implements IDisposable
+
+<h1>Durable Task status</h1>
+@if (!OperatorPreview.Value.Enabled)
+{
+    <FluentText role="status">Task status is not yet available.</FluentText>
+}
+else
+{
+    <FluentTextInput Label="Task ID" Immediate="true" ImmediateDelay="0" @bind-Value="_target" @bind-Value:after="Reset" data-testid="project-task-id" />
+    <FluentButton role="button" OnClick="PollAsync" Disabled="@(_loading || string.IsNullOrWhiteSpace(_target))" data-testid="project-task-poll">Read task status</FluentButton>
+    @if (_loading) { <FluentText role="status">Reading task status</FluentText> }
+    else if (_result?.Feedback is { } feedback) { <ProjectFeedbackView Feedback="feedback" /> }
+    else if (_result?.Value is { } task)
+    {
+        <FluentText role="status" data-testid="project-task-state">@(task.Status ?? task.State) · @task.Reason</FluentText>
+        @if (task.TaskId is not null) { <FluentText>Task @task.TaskId</FluentText> }
+        @if (task.CreatedAt is { } created) { <FluentText>Admitted @created.ToString("O")</FluentText> }
+        @if (task.UpdatedAt is { } updated) { <FluentText>Updated @updated.ToString("O")</FluentText> }
+        @if (task.ExpiresAt is { } expires) { <FluentText>Expires @expires.ToString("O")</FluentText> }
+        @if (task.ReconciliationOutcome is { } outcome) { <FluentText>Reconciliation outcome @outcome</FluentText> }
+        <FluentText>Recovery guidance @string.Join(", ", task.RecoveryActions)</FluentText>
+    }
+    <FluentText>Reconciliation is unavailable until the durable transition authority is connected.</FluentText>
+}
+
+@code {
+    [Parameter] public string? TaskId { get; set; }
+    private string? _target;
+    private CancellationTokenSource? _request;
+    private ProjectReadResult<ProjectTaskStatusResponse>? _result;
+    private bool _loading;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Reset();
+        _target = TaskId;
+        if (OperatorPreview.Value.Enabled && !string.IsNullOrWhiteSpace(TaskId)) await PollAsync();
+    }
+
+    private void Reset() { _request?.Cancel(); _result = null; _loading = false; }
+    private async Task PollAsync()
+    {
+        Reset();
+        if (string.IsNullOrWhiteSpace(_target)) return;
+        _request?.Dispose();
+        var request = _request = new CancellationTokenSource();
+        _loading = true;
+        try
+        {
+            var result = await Queries.QueryAsync<ProjectTaskStatusResponse>(_target, GetProjectTaskStatusQuery.QueryType, new GetProjectTaskStatusQuery(), request.Token);
+            if (!request.IsCancellationRequested) _result = result;
+        }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
+        finally { if (!request.IsCancellationRequested) _loading = false; }
+    }
+
+    public void Dispose() { _request?.Cancel(); _request?.Dispose(); }
+}

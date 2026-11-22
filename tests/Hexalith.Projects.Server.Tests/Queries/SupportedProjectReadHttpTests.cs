@@ -122,6 +122,24 @@ public sealed partial class SupportedProjectReadHttpTests
             OriginalActorId = "actor-1", AuthenticatedWorkloadId = "operator-web", IsDelegated = true, DelegationId = "delegation-1",
             Scopes = ["projects.read", "projects.list"], Audience = [Audience],
         };
+        async Task<ProjectAuditFact> ReadInspectionAsync(HttpClient client)
+        {
+            QueryEnvelope auditQuery = query with
+            {
+                QueryType = GetProjectAuditQuery.QueryType,
+                Payload = JsonSerializer.SerializeToUtf8Bytes(new GetProjectAuditQuery(), SupportedProjectReadFixture.Json),
+            };
+            using HttpResponseMessage response = await client.PostAsJsonAsync("/query", auditQuery, TestContext.Current.CancellationToken).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            QueryResult result = (await response.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken).ConfigureAwait(false))!;
+            ProjectAuditPage page = SupportedProjectReadFixture.Payload<ProjectAuditPage>(result);
+            ProjectAuditFact inspection = page.Items.Single(item => item.Operation == "metadata.inspected");
+            inspection.ProjectCount.ShouldBe(1);
+            inspection.FieldClass.ShouldBe("ProjectNameDescriptionSetupReferenceLabels");
+            return inspection;
+        }
+
+        ProjectAuditFact beforeRestart;
         ProjectionRequest projection = SupportedProjectReadFixture.Request(project, 20000);
         string? fingerprint;
         string? before;
@@ -147,6 +165,7 @@ public sealed partial class SupportedProjectReadHttpTests
             opened.EnsureSuccessStatusCode();
             QueryResult result = (await opened.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!;
             SupportedProjectReadFixture.Payload<GetProjectResponse>(result).Name.ShouldBe("Project " + project);
+            beforeRestart = await ReadInspectionAsync(client);
             QueryEnvelope list = query with { AggregateId = "projects", QueryType = ListProjectsQuery.QueryType,
                 Payload = JsonSerializer.SerializeToUtf8Bytes(new ListProjectsQuery(PageSize: 200), SupportedProjectReadFixture.Json) };
             using HttpResponseMessage listed = await client.PostAsJsonAsync("/query", list, TestContext.Current.CancellationToken);
@@ -169,9 +188,11 @@ public sealed partial class SupportedProjectReadHttpTests
         {
             using HttpClient client = new() { BaseAddress = new Uri(restarted.Urls.Single()) };
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(key));
+            (await ReadInspectionAsync(client)).ShouldBe(beforeRestart);
             using HttpResponseMessage opened = await client.PostAsJsonAsync("/query", query, TestContext.Current.CancellationToken);
             opened.EnsureSuccessStatusCode();
             SupportedProjectReadFixture.Payload<GetProjectResponse>((await opened.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!).Name.ShouldBe("Project " + project);
+            (await ReadInspectionAsync(client)).ShouldBe(beforeRestart);
             (await DispatchAsync(restarted, new(projection, ["project-reads"], "dispatch-" + project, fingerprint!))).Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.AlreadyCompleted);
             (await DispatchAsync(restarted, new(projection, ["project-reads"], "rebuild-" + project, fingerprint!), rebuild: true)).Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.Completed);
             IReadModelStore store = restarted.Services.GetRequiredService<IReadModelStore>();

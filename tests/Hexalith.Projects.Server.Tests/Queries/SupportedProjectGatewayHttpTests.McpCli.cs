@@ -35,7 +35,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
             byte[][] persistedAfter = await storeBytes().ConfigureAwait(false);
             for (int i = 0; i < persistedBefore.Length; i++) persistedAfter[i].ShouldBe(persistedBefore[i]);
             foreach (ProjectMcpCliReadStore owner in owners) owner.Writes.ShouldBeEmpty();
-            store.Writes.Keys.ShouldAllBe(key => key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal));
+            store.Writes.Keys.ShouldAllBe(key => ProjectAuditStorageKeys.IsAuditKey(key));
             return result;
         }
         async Task<JsonObject> EqualReadAsync(object input, HttpStatusCode status, string project = "project-a")
@@ -49,7 +49,8 @@ public sealed partial class SupportedProjectGatewayHttpTests
         {
             HashSet<string> previous = store.Writes.Keys.ToHashSet(StringComparer.Ordinal);
             JsonObject result = await EqualReadAsync(input, HttpStatusCode.OK).ConfigureAwait(false);
-            string[] added = store.Writes.Keys.Except(previous, StringComparer.Ordinal).ToArray();
+            string[] added = store.Writes.Keys.Except(previous, StringComparer.Ordinal)
+                .Where(key => key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal)).ToArray();
             added.Length.ShouldBe(2); // One durable record per independently submitted CLI/Web read.
             foreach (string key in added)
             {
@@ -85,6 +86,23 @@ public sealed partial class SupportedProjectGatewayHttpTests
         JsonObject inspected = await InspectedReadAsync(new GetProjectQuery(true), 1, "ProjectNameDescriptionSetupReferenceLabels").ConfigureAwait(false);
         inspected["payload"]!["name"]!.GetValue<string>().ShouldBe("Project project-a");
         await InspectedReadAsync(new ListProjectsQuery(InspectDescriptiveMetadata: true), 2, "ProjectName").ConfigureAwait(false);
+        JsonObject auditPage = (await EqualReadAsync(new GetProjectAuditQuery(), HttpStatusCode.OK).ConfigureAwait(false))["payload"]!.AsObject();
+        auditPage["state"]!.GetValue<string>().ShouldBe("Partial");
+        JsonObject[] auditRows = auditPage["items"]!.AsArray().Select(row => row!.AsObject()).ToArray();
+        auditRows.ShouldContain(row => row["fieldClass"] != null && row["fieldClass"]!.GetValue<string>() == "ProjectNameDescriptionSetupReferenceLabels");
+        auditRows.Select(row => row["auditEventId"]!.GetValue<string>()).Distinct(StringComparer.Ordinal).Count().ShouldBe(auditRows.Length);
+        string[] allowed = ["auditEventId", "operation", "outcome", "occurredAt", "receiptId", "projectCount", "fieldClass"];
+        foreach (JsonObject row in auditRows) row.Select(field => field.Key).Except(allowed, StringComparer.Ordinal).ShouldBeEmpty();
+        var absentAudit = await EqualReadAsync(new GetProjectAuditQuery(), HttpStatusCode.NotFound, "missing").ConfigureAwait(false);
+        var foreignAudit = await EqualReadAsync(new GetProjectAuditQuery(), HttpStatusCode.NotFound, "foreign-only-project").ConfigureAwait(false);
+        absentAudit.ToJsonString().ShouldBe(foreignAudit.ToJsonString());
+        var firstTask = await EqualReadAsync(new GetProjectTaskStatusQuery(), HttpStatusCode.OK, "task-a").ConfigureAwait(false);
+        var otherTask = await EqualReadAsync(new GetProjectTaskStatusQuery(), HttpStatusCode.OK, "task-b").ConfigureAwait(false);
+        firstTask["payload"]!.ToJsonString().ShouldBe(otherTask["payload"]!.ToJsonString());
+        var task = firstTask["payload"]!.Deserialize<ProjectTaskStatusResponse>(JsonSerializerOptions.Web)!;
+        task.State.ShouldBe("Unavailable");
+        task.TaskId.ShouldBeNull();
+        task.Status.ShouldBeNull();
         store.FailAuditWrites = true;
         try
         {
@@ -167,8 +185,8 @@ public sealed partial class SupportedProjectGatewayHttpTests
         owners[1].Reads.Keys.ShouldContain(item => item.Key.StartsWith("projection:conversations-resolution:", StringComparison.Ordinal));
         foreach (ProjectMcpCliReadStore owner in owners) owner.Writes.ShouldBeEmpty();
         store.Writes.Keys.ShouldNotBeEmpty();
-        store.Writes.Keys.ShouldAllBe(key => key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal));
-        foreach (string key in store.Writes.Keys)
+        store.Writes.Keys.ShouldAllBe(key => ProjectAuditStorageKeys.IsAuditKey(key));
+        foreach (string key in store.Writes.Keys.Where(key => key.StartsWith("projects:read-audit:v1:", StringComparison.Ordinal)))
         {
             ProjectReadAuditRecord record = (await store.GetAsync<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key,
                 TestContext.Current.CancellationToken).ConfigureAwait(false)).Value!;
@@ -206,7 +224,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
         partialBytesAfter.ShouldBe(partialBytesBefore);
         (await store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, detailKey,
             TestContext.Current.CancellationToken).ConfigureAwait(false)).ETag.ShouldBe(partialETagBefore);
-        output.WriteLine("Story 6.6 real Gateway matrix: four attribute-derived routes equal Web; safe/descriptive/audit failure/404/401/Partial/Unavailable and persisted audit-only delta verified.");
+        output.WriteLine("Authenticated gateway verified Web and attribute-derived request parity for enrolled reads and the Story 8.1 preview.");
     }
 
     private static SubmitQueryRequest McpCliRequest(string tenant, object input, string project = "project-a")

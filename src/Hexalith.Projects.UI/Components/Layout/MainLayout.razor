@@ -16,11 +16,14 @@
 
 @code {
     [CascadingParameter] public Task<AuthenticationState>? Authentication { get; set; }
-    private string _scope = string.Empty;
+    private (string? Actor, string? Tenant, string? Session) _scope;
     protected override async Task OnParametersSetAsync()
     {
-        AuthenticationState? state = Authentication is null ? null : await Authentication;
-        _scope = string.Join("|", state?.User.FindFirst("sub")?.Value,
+        var request = Authentication;
+        if (request is not { IsCompletedSuccessfully: true }) _scope = default;
+        AuthenticationState? state = request is null ? null : await request;
+        if (!ReferenceEquals(request, Authentication)) return;
+        _scope = (state?.User.FindFirst("sub")?.Value,
             state?.User.FindFirst("eventstore:current-tenant")?.Value,
             state?.User.FindFirst("hexalith:frontcomposer:token-session")?.Value);
     }

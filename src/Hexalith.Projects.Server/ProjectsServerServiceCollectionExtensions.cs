@@ -172,6 +172,9 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddSingleton<IDomainQueryHandler, ResolveProjectFromConversationQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ResolveProjectFromAttachmentsQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ListProjectsQueryHandler>();
+        services.AddSingleton<ProjectOperatorQueryExecutor>();
+        services.AddSingleton<IDomainQueryHandler, GetProjectAuditQueryHandler>();
+        services.AddSingleton<IDomainQueryHandler, GetProjectTaskStatusQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, GetProjectQueryHandler>();
 
         return services;
