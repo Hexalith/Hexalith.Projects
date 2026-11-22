@@ -237,6 +237,20 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_ConversationStartSetup_DeclaresOnlyHandlerResponses()
+    {
+        YamlMappingNode paths = RequiredMapping(LoadYamlMapping(OpenApiPath), "paths");
+        YamlMappingNode operation = RequiredMapping(RequiredMapping(paths, "/api/v1/projects/{projectId}/setup/conversation-start"), "get");
+        YamlMappingNode responses = RequiredMapping(operation, "responses");
+
+        responses.Children.Keys.Cast<YamlScalarNode>()
+            .Select(key => key.Value).OrderBy(code => code, StringComparer.Ordinal)
+            .ShouldBe(new[] { "200", "400", "404", "503" });
+        GetScalar(RequiredMapping(responses, "404"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial404");
+        GetScalar(RequiredMapping(responses, "503"), "$ref").ShouldBe("#/components/responses/ReadModelUnavailable");
+    }
+
+    [Fact]
     public void Spine_GetProject_IsExpandedOpenProjectQuery()
     {
         YamlMappingNode get = SeedQuery();

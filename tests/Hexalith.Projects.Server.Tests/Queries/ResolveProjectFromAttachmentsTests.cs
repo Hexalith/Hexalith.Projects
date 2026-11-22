@@ -489,6 +489,73 @@ public sealed class ResolveProjectFromAttachmentsTests
     }
 
     [Fact]
+    public async Task FinalProjectFolderMustStillMatchTheDiscoveredReference()
+    {
+        const string ReplacementFolderId = "folder-002";
+        InMemoryProjectDetailReadModel details = new();
+        int originalFolderReads = 0;
+        ProjectReadTestFolders folders = new()
+        {
+            OnRead = id =>
+            {
+                if (id == FolderId && Interlocked.Increment(ref originalFolderReads) == 2)
+                {
+                    SetFolder(details, TenantA, ProjectAId, ReplacementFolderId);
+                }
+
+                return Task.CompletedTask;
+            },
+        };
+
+        var stillLinkedRow = new ProjectReferenceIndexCandidateRow(TenantA, ProjectBId, "Project B", ProjectLifecycle.Active,
+        [
+            Reference(AttachmentKind.Folder, FolderId, projectId: ProjectBId),
+            Reference(AttachmentKind.Folder, ReplacementFolderId, ReferenceState.Stale, ProjectBId),
+        ]);
+
+        EndpointResponse result = await SendAsync(
+            url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}&folderId={ReplacementFolderId}",
+            rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId)), stillLinkedRow],
+            folderDirectory: folders,
+            projectDetails: details);
+
+        originalFolderReads.ShouldBe(2);
+        result.StatusCode.ShouldBe(HttpStatusCode.OK);
+        using JsonDocument body = JsonDocument.Parse(result.Body);
+        body.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
+        body.RootElement.GetProperty("candidates").EnumerateArray()
+            .Select(candidate => candidate.GetProperty("projectId").GetString()).ShouldBe([ProjectBId]);
+        result.Body.ShouldNotContain(ProjectAId);
+    }
+
+    [Fact]
+    public async Task FinalProjectLifecycleControlsTheArchivedCandidateFilter()
+    {
+        InMemoryProjectDetailReadModel details = new();
+        ProjectReadTestFolders folders = new();
+        folders.OnRead = _ =>
+        {
+            if (folders.Reads == 2)
+            {
+                details.Project(TenantA, new ProjectArchived(TenantA, ProjectAId, ProjectLifecycle.Archived,
+                    PrincipalA, "archive", "task", "archive", "archive", DateTimeOffset.UtcNow));
+            }
+
+            return Task.CompletedTask;
+        };
+
+        EndpointResponse result = await SendAsync(
+            rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))],
+            folderDirectory: folders,
+            projectDetails: details);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.OK);
+        using JsonDocument body = JsonDocument.Parse(result.Body);
+        body.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
+        body.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
+    }
+
+    [Fact]
     public async Task MixedLegacyInputsNeverIncludeAFileOnlyMatchedProject()
     {
         var result = await SendAsync(url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}&fileId={FileId}",
@@ -506,7 +573,8 @@ public sealed class ResolveProjectFromAttachmentsTests
         bool seedTenantAccess = true,
         bool referenceIndexThrows = false,
         IReadOnlyDictionary<string, string>? headers = null,
-        ProjectReadTestAuthorization? projectAuthorization = null, ProjectReadTestFolders? folderDirectory = null, bool correlationHeader = true)
+        ProjectReadTestAuthorization? projectAuthorization = null, ProjectReadTestFolders? folderDirectory = null,
+        bool correlationHeader = true, InMemoryProjectDetailReadModel? projectDetails = null)
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         FixedProjectTenantContext tenantContext = new(tenantId, principalId);
@@ -526,9 +594,14 @@ public sealed class ResolveProjectFromAttachmentsTests
         services.AddSingleton<IProjectReferenceIndexReadModel>(readModel);
         services.RemoveAll<IProjectFolderDirectory>();
         services.AddSingleton<IProjectFolderDirectory>(folderDirectory ?? new ProjectReadTestFolders());
-        InMemoryProjectDetailReadModel details = new();
-        foreach (var row in rows ?? []) details.Project(row.TenantId, new ProjectCreated(row.TenantId, row.ProjectId,
-            "Project", null, null, row.Lifecycle, PrincipalA, "create", "task", "create", "create", DateTimeOffset.UtcNow));
+        InMemoryProjectDetailReadModel details = projectDetails ?? new();
+        foreach (var row in rows ?? [])
+        {
+            details.Project(row.TenantId, new ProjectCreated(row.TenantId, row.ProjectId,
+                "Project", null, null, row.Lifecycle, PrincipalA, "create", "task", "create", "create", DateTimeOffset.UtcNow));
+            SetFolder(details, row.TenantId, row.ProjectId, FolderId);
+        }
+
         services.RemoveAll<IProjectDetailReadModel>(); services.AddSingleton<IProjectDetailReadModel>(details);
 
         using ServiceProvider provider = services.BuildServiceProvider();
@@ -590,6 +663,10 @@ public sealed class ResolveProjectFromAttachmentsTests
             await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false),
             httpContext.Response.Headers.ToDictionary(static header => header.Key, static header => header.Value.ToString(), StringComparer.OrdinalIgnoreCase));
     }
+
+    private static void SetFolder(InMemoryProjectDetailReadModel details, string tenantId, string projectId, string folderId)
+        => details.Project(tenantId, new ProjectFolderSet(tenantId, projectId, folderId, new ProjectFolderMetadata("Folder"),
+            PrincipalA, "folder", "task", folderId, folderId, DateTimeOffset.UtcNow));
 
     private static ProjectReferenceIndexCandidateRow Row(
         string projectId,

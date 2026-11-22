@@ -3,6 +3,7 @@ namespace Hexalith.Projects.Server;
 using System.Collections.Concurrent;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Server.Queries;
 
@@ -21,26 +22,21 @@ public static partial class ProjectsDomainServiceEndpoints
         => resolution.Excluded.Any(exclusion => exclusion.ReferenceState is not
             (ReferenceState.Unauthorized or ReferenceState.Excluded or ReferenceState.Archived));
 
-    private static async Task<HashSet<string>?> AuthorizeLegacyResolutionCandidatesAsync(IEnumerable<string> projectIds,
+    private static async Task<IReadOnlyDictionary<string, ProjectDetailItem>?> AuthorizeLegacyResolutionCandidatesAsync(IEnumerable<string> projectIds,
         ProjectAuthorizationGate gate, IProjectTenantContextAccessor tenant, HttpContext http,
         string? correlationId, string? taskId, CancellationToken token, IProjectFolderDirectory? folders = null)
     {
-        ConcurrentBag<string> allowed = [];
+        ConcurrentDictionary<string, ProjectDetailItem> allowed = new(StringComparer.Ordinal);
         int unavailable = 0;
         await Parallel.ForEachAsync(projectIds.Distinct(StringComparer.Ordinal), new ParallelOptions
         { MaxDegreeOfParallelism = ProjectAdvisoryQueryExecutor.MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
         {
             var decision = await gate.AuthorizeReadAsync(id, tenant, http, correlationId, taskId, ct).ConfigureAwait(false);
             if (decision.Retryable) Interlocked.Exchange(ref unavailable, 1);
-            if (!decision.IsAllowed) return;
-            if (folders is not null)
+            if (!decision.IsAllowed || decision.ProjectDetail is not { } detail) return;
+            if (folders is not null && detail.ProjectFolder is { } binding
+                && binding is not { ReferenceState: ReferenceState.Pending, FolderId: null })
             {
-                var binding = decision.ProjectDetail?.ProjectFolder;
-                if (binding is null || binding is { ReferenceState: ReferenceState.Pending, FolderId: null })
-                {
-                    allowed.Add(id);
-                    return;
-                }
                 if (binding is not { ReferenceState: ReferenceState.Included, FolderId: { } folderId }
                     || !IsCanonicalIdentifier(folderId)) return;
                 var folder = await folders.RefreshFolderReferenceAsync(new ProjectId(id), folderId,
@@ -51,9 +47,9 @@ public static partial class ProjectsDomainServiceEndpoints
                     return;
                 }
             }
-            allowed.Add(id);
+            allowed.TryAdd(id, detail);
         }).ConfigureAwait(false);
-        return unavailable == 0 ? allowed.ToHashSet(StringComparer.Ordinal) : null;
+        return unavailable == 0 ? allowed : null;
     }
 
     private static async Task<string[]?> AuthorizeLegacyResolutionFoldersAsync(IReadOnlyList<string> folderIds,

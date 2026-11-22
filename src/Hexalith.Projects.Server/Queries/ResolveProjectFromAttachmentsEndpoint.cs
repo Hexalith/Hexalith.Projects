@@ -101,14 +101,14 @@ public static partial class ProjectsDomainServiceEndpoints
                 return ReadModelUnavailable(correlationId, taskId);
             }
 
-            HashSet<string>? allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(projectedRows
+            var allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(projectedRows
                 .Where(row => row.TenantId == authoritativeTenantId).Select(row => row.ProjectId), authorizationGate,
                 tenantContext, httpContext, correlationId, taskId, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             acceptedFolders = await AuthorizeLegacyResolutionFoldersAsync(acceptedFolders, folderDirectory, correlationId ?? httpContext.TraceIdentifier, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
             if (acceptedFolders is null) return ReadModelUnavailable(correlationId, taskId);
-            allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects, authorizationGate,
+            allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects.Keys, authorizationGate,
                 tenantContext, httpContext, correlationId, taskId, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
@@ -120,36 +120,35 @@ public static partial class ProjectsDomainServiceEndpoints
             List<AttachmentResolutionProjectCandidate> candidateProjects = new(projectedRows.Count);
             foreach (ProjectReferenceIndexCandidateRow row in projectedRows)
             {
-                if (!string.Equals(row.TenantId, authoritativeTenantId, StringComparison.Ordinal) || !allowedProjects.Contains(row.ProjectId))
+                if (!string.Equals(row.TenantId, authoritativeTenantId, StringComparison.Ordinal)
+                    || !allowedProjects.TryGetValue(row.ProjectId, out var detail)
+                    || !string.Equals(detail.TenantId, authoritativeTenantId, StringComparison.Ordinal)
+                    || !string.Equals(detail.ProjectId, row.ProjectId, StringComparison.Ordinal)
+                    || detail.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: { } currentFolderId }
+                    || !acceptedFolders.Contains(currentFolderId, StringComparer.Ordinal))
                 {
                     continue;
                 }
 
                 List<AttachmentResolutionReference> folders = [];
-                List<AttachmentResolutionReference> files = [];
                 foreach (ProjectReferenceIndexItem reference in row.MatchedReferences)
                 {
-                    if (string.IsNullOrWhiteSpace(reference.ReferenceId))
-                    {
-                        continue;
-                    }
-
                     if (string.Equals(reference.ReferenceKind, AttachmentResolutionEvidenceMapper.FolderReferenceKind, StringComparison.Ordinal)
-                        && acceptedFolders.Contains(reference.ReferenceId, StringComparer.Ordinal))
+                        && string.Equals(reference.ReferenceId, currentFolderId, StringComparison.Ordinal))
                     {
                         folders.Add(new AttachmentResolutionReference(
                             AttachmentResolutionEvidenceMapper.FolderReferenceKind,
-                            reference.ReferenceId,
+                            currentFolderId,
                             reference.ReferenceState));
                     }
                 }
 
                 candidateProjects.Add(new AttachmentResolutionProjectCandidate(
                     row.ProjectId,
-                    row.DisplayName,
-                    row.Lifecycle,
+                    DisplayName: null,
+                    detail.Lifecycle,
                     folders,
-                    files));
+                    []));
             }
 
             DateTimeOffset now = timeProvider.GetUtcNow();

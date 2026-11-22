@@ -374,7 +374,7 @@ public sealed partial class GetConversationStartSetupTests
     [Fact]
     public async Task GetConversationStartSetup_ResponseHeaders_HaveCorrelationAndFreshness()
     {
-        WebApplication app = await StartAppAsync(tenantId: "tenant-a", principalId: "principal-a", setup: null).ConfigureAwait(true);
+        WebApplication app = await StartAppAsync(tenantId: "tenant-a", principalId: "principal-a", setup: null, projectSequence: 47).ConfigureAwait(true);
         try
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
@@ -383,7 +383,7 @@ public sealed partial class GetConversationStartSetupTests
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             response.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
             response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("Fresh");
-            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldBe("1");
+            response.Headers.GetValues("X-Hexalith-Projection-Watermark").Single().ShouldBe("47");
         }
         finally
         {
@@ -658,21 +658,44 @@ public sealed partial class GetConversationStartSetupTests
         }
     }
 
-    [Fact]
-    public async Task RetryableAuthorizationWithNonUnavailableReasonReturns503WithoutDisclosure()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RetryableAuthorizationWithNonUnavailableReasonReturns503WithoutDisclosure(bool afterMembership)
     {
+        bool membershipChecked = false;
+        var membership = new CurrentProjectConversationMembership(() =>
+        {
+            membershipChecked = true;
+            return true;
+        });
         ProjectReadTestAuthorization validator = new()
         {
-            Decision = _ => new EventStoreAuthorizationValidationResult(
-                EventStoreAuthorizationValidationStatus.Denied, "transient-private-reason", null, "fresh", Retryable: true),
+            Decision = _ => !afterMembership || membershipChecked
+                ? new EventStoreAuthorizationValidationResult(
+                    EventStoreAuthorizationValidationStatus.Denied, "transient-private-reason", null, "fresh", Retryable: true)
+                : EventStoreAuthorizationValidationResult.Allowed("test"),
         };
-        WebApplication app = await StartAppAsync("tenant-a", "principal-a", null, eventStoreValidator: validator).ConfigureAwait(true);
+        ProjectSetup setup = new(["private setup goal"], ["private setup instruction"], [], [], null);
+        WebApplication app = await StartAppAsync("tenant-a", "principal-a", setup,
+            eventStoreValidator: validator, membership: membership).ConfigureAwait(true);
         try
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             using HttpResponseMessage response = await client.SendAsync(StartSetupRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
             response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
-            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldNotContain("transient-private-reason");
+            membershipChecked.ShouldBe(afterMembership);
+            response.Headers.Contains("X-Hexalith-Freshness").ShouldBeFalse();
+            response.Headers.Contains("X-Hexalith-Projection-Watermark").ShouldBeFalse();
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            body.ShouldNotContain("transient-private-reason");
+            body.ShouldNotContain("private setup goal");
+            body.ShouldNotContain("private setup instruction");
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("category").GetString().ShouldBe("read_model_unavailable");
+            document.RootElement.GetProperty("retryable").GetBoolean().ShouldBeTrue();
+            document.RootElement.TryGetProperty("goals", out _).ShouldBeFalse();
+            document.RootElement.TryGetProperty("userInstructions", out _).ShouldBeFalse();
         }
         finally { await StopAsync(app).ConfigureAwait(true); }
     }
@@ -744,7 +767,8 @@ public sealed partial class GetConversationStartSetupTests
         bool allowList = false,
         IProjectEventStoreAuthorizationValidator? eventStoreValidator = null,
         Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory? membership = null,
-        IProjectTenantContextAccessor? tenantContextOverride = null)
+        IProjectTenantContextAccessor? tenantContextOverride = null,
+        long projectSequence = 1)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -812,7 +836,7 @@ public sealed partial class GetConversationStartSetupTests
             Lifecycle: lifecycle,
             CreatedAt: DateTimeOffset.UnixEpoch,
             UpdatedAt: DateTimeOffset.UnixEpoch,
-            Sequence: 1);
+            Sequence: projectSequence);
         builder.Services.RemoveAll<IProjectDetailReadModel>();
         builder.Services.AddSingleton<IProjectDetailReadModel>(new StubProjectDetailReadModel(detail));
 

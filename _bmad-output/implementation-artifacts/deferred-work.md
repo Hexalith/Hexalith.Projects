@@ -501,7 +501,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The header is written unconditionally as eventually_consistent while OpenAPI declares freshnessBehavior returns-projection-watermark-when-available, so a stale or unavailable read is indistinguishable from a fresh one at the header and no watermark is ever returned. Deferred to Story 6.7 rather than patched now because changing legacy response headers moves the baseline the shadow comparison is specified against.
-status: open
+status: done 2026-11-22
+resolution: spec-five-deferred-read-cutover-followups.md. The retained header mirrors the Setup freshness and discloses the exact authorized Project position on success. The response check distinguishes the Project position from the Tenant watermark and withholds both headers on stale authority.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-58: Reject Idempotency-Key supplied as a query parameter, not only as a header.
@@ -522,7 +523,8 @@ location: src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml:584
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The operation declares 401 and 403 and the generated client throws distinct typed exceptions for both, but the handler only ever emits 200, 400, 404 and 503 because all denial outcomes collapse to a safe 404. Either the declaration is wrong or the collapse is under-specified, and Story 6.2 AC3 needs an agreed baseline status set to compare against. Deferred to Story 6.7 because editing the spine requires client regeneration and a fingerprint update, and it changes the published contract.
-status: open
+status: done 2026-11-22
+resolution: spec-five-deferred-read-cutover-followups.md. The retained OpenAPI operation and generated client declare 200, 400, safe 404 and retryable 503. Gateway authentication is independent. The spine check pins the exact handler status set and shared denial and unavailable responses.
 decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
 decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
@@ -534,7 +536,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The branch requires both Retryable and Reason == ReferenceState.Unavailable, so a retryable outcome carrying a different reason collapses to a permanent 404 and the caller never retries. ProjectDaprPolicyEvidenceResult.Unavailable sets Retryable true with reason dapr_policy_unavailable, so reachability depends on the gate's reason mapping and should be confirmed before the fix. Deferred to Story 6.7 because it changes legacy status-code behavior.
-status: open
+status: done 2026-11-22
+resolution: spec-five-deferred-read-cutover-followups.md. The retained request preamble returns safe 503 for retryable authorization failures at initial authorization and the final disclosure check. Both paths have coverage with a different denial reason and no Setup or freshness headers.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-61: Enforce the declared bounded-collection limits on the conversation-start response.
@@ -610,7 +613,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHan
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
 severity: medium
 reason: ConversationStartResponseState.Partial is declared and is a required scenario in the spec's own I/O matrix ("Required evidence current; optional values explicitly omitted" -> Partial), but responseState is a binary hasFolder ? Complete : Unavailable -- no branch ever yields Partial. Needs a design decision on what counts as "optional" evidence distinct from the required Project/Folder/Setup set before this can be implemented; deferred to resolve alongside the cutover/shadow-comparison work.
-status: open
+status: done 2026-11-22
+resolution: spec-five-deferred-read-cutover-followups.md. The supported snapshot preserves AD-32 Partial when required evidence is current and an optional source is omitted. The check verifies usable Setup and exact References omission metadata and recovery.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-67: Distinguish Folder `ReferenceState` outcomes instead of collapsing them to one generic "Unavailable".
@@ -1437,6 +1441,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Recheck retained attachment candidate linkage against the final authorized Project Folder.
   evidence: The unchanged retained attachment path scores original reference-index matches after rereading detail, whereas supported advisory rechecks the new Folder relationship. A change between discovery and final authorization can retain an obsolete suggestion.
+  resolution: 2026-11-22. spec-five-deferred-read-cutover-followups.md. The retained resolver requires the finally authorized Project Folder to match the discovery row and the reauthorized attachment input. The regression changes the binding during the last Folder owner read and verifies that only the still-matching Project is returned.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Preserve existing Open timeout/unavailable feedback in ProjectDetailSource.
@@ -1497,3 +1502,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Restore managed AppHost E2E UI coverage under the read cutover.
   evidence: Pass 3, decision 4; the scheduled "Run managed AppHost E2E suite" step failed on 2026-11-21 and 2026-11-22. The readiness probe and list/open helpers now opt into audited descriptive inspection. Most UI specs (maintenance, lifecycle, reference health, resolution trace, console shell, audit, inventory detail, accessibility) exercise the legacy inspector, which only the LegacyRollback page renders; the supported `/inspect/` pages lack those sections, and the lane cannot select LegacyRollback or Supported without evidence bound to its exact revision. Severity medium. Owner: the work that gives the managed lane a real read mode or retires the legacy inspector (Epic 8).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-read-cutover-followups.md`
+  summary: Establish a coherent Project detail and authorization observation for retained attachment disclosure.
+  evidence: The final authorization pass captures Project detail before EventStore and Dapr policy validation. A later commit to the detail projection can leave that snapshot behind the owner state at response time. The resolver now checks the observed final Folder and lifecycle; a stronger cross-store guarantee needs its own design and deadline evidence.

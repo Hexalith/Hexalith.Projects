@@ -66,8 +66,8 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     public async Task ExecuteAsync_OptionalContextOmission_PreservesPartialAdmission()
     {
         ProjectSetup setup = new(
-            [],
-            [],
+            ["retain the current Project goal"],
+            ["follow the current Project instruction"],
             [],
             [ProjectContextSourceKind.Memory],
             null);
@@ -85,10 +85,15 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             JsonOptions)!;
 
         response.Setup.ShouldNotBeNull();
+        response.Setup.Goals.ShouldBe(setup.Goals);
+        response.Setup.UserInstructions.ShouldBe(setup.UserInstructions);
+        response.Setup.ExcludedSourceKinds.ShouldBe([ProjectContextSourceKind.Memory]);
         response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Partial);
         response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
             ["Project", "Folder", "Setup", "FirstResponseAuthorization", "References"]);
-        response.Snapshot.RecoveryActions.ShouldNotBeEmpty();
+        response.Snapshot.Components[^1].ShouldBe(
+            new ConversationStartComponent("References", true, EvidenceFreshnessState.Current, "optional-omission"));
+        response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
     }
 
     [Fact]

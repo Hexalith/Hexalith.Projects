@@ -10,6 +10,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -119,14 +120,39 @@ public sealed class GetConversationStartSetupClientTests
         result.ObservedAt.ShouldBe(new DateTimeOffset(2026, 8, 26, 9, 30, 15, TimeSpan.Zero));
     }
 
-    private sealed class StubHandler(string body) : HttpMessageHandler
+    [Theory]
+    [InlineData(HttpStatusCode.NotFound, typeof(HexalithProjectsApiException<ProblemDetails>))]
+    [InlineData(HttpStatusCode.ServiceUnavailable, typeof(HexalithProjectsApiException<ProblemDetails>))]
+    [InlineData(HttpStatusCode.Unauthorized, typeof(HexalithProjectsApiException))]
+    [InlineData(HttpStatusCode.Forbidden, typeof(HexalithProjectsApiException))]
+    public async Task GeneratedClient_DistinguishesHandlerErrorsFromGatewayAuthentication(HttpStatusCode statusCode, Type expectedException)
+    {
+        bool retryable = statusCode == HttpStatusCode.ServiceUnavailable;
+        string body = JsonSerializer.Serialize(new { status = (int)statusCode, retryable });
+        using StubHandler handler = new(body, statusCode);
+        using HttpClient httpClient = new(handler) { BaseAddress = new Uri("http://localhost/") };
+        Client client = new(httpClient);
+
+        HexalithProjectsApiException exception = await Assert.ThrowsAnyAsync<HexalithProjectsApiException>(() => client
+            .GetConversationStartSetupAsync("01HZ9K8YQ3W6V2N4R7T5P0X1AB", null, null, TestContext.Current.CancellationToken));
+
+        exception.GetType().ShouldBe(expectedException);
+        exception.StatusCode.ShouldBe((int)statusCode);
+        if (exception is HexalithProjectsApiException<ProblemDetails> handlerError)
+        {
+            handlerError.Result.Status.ShouldBe((int)statusCode);
+            handlerError.Result.Retryable.ShouldBe(retryable);
+        }
+    }
+
+    private sealed class StubHandler(string body, HttpStatusCode statusCode = HttpStatusCode.OK) : HttpMessageHandler
     {
         public Uri? RequestUri { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestUri = request.RequestUri;
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            return Task.FromResult(new HttpResponseMessage(statusCode)
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json"),
             });

@@ -137,10 +137,10 @@ public static partial class ProjectsDomainServiceEndpoints
             DateTimeOffset now = timeProvider.GetUtcNow();
             IReadOnlyList<ProjectResolutionCandidateEvidence> observedCandidates = ConversationResolutionEvidenceMapper.Map(
                 conversationMetadata, rows.Select(row => new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle)).ToArray(), now);
-            HashSet<string>? allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(observedCandidates.Select(row => row.ProjectId),
+            var allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(observedCandidates.Select(row => row.ProjectId),
                 authorizationGate, tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
-            allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects, authorizationGate,
+            allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects.Keys, authorizationGate,
                 tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
@@ -150,7 +150,7 @@ public static partial class ProjectsDomainServiceEndpoints
             if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
             List<ConversationResolutionProjectCandidate> candidateProjects = new(rows.Count);
-            foreach (ProjectListItem row in rows.Where(row => allowedProjects.Contains(row.ProjectId)))
+            foreach (ProjectListItem row in rows.Where(row => allowedProjects.ContainsKey(row.ProjectId)))
             {
                 candidateProjects.Add(new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle));
             }
