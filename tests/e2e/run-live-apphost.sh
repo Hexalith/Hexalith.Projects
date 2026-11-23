@@ -18,7 +18,6 @@ fi
 describe_file=$(mktemp)
 start_file=$(mktemp)
 source_workspace=$(mktemp -d "${TMPDIR:-/tmp}/projects-live-fixtures-source-XXXXXXXX")
-mapping_file="$source_workspace/preparation.json"
 browser_session_file="$repository_root/tests/e2e/.auth/projects-ui-browser-session.json"
 started=0
 
@@ -77,43 +76,15 @@ fi
 export Projects__E2E__LiveFixtures=1
 export E2E_LIVE_APPHOST=1
 export KEYCLOAK_REALM="${KEYCLOAK_REALM:-hexalith}"
-# Sibling source builds resolve Commons through the root-declared checkout, never a nested submodule.
-export HexalithCommonsRoot="${HexalithCommonsRoot:-$repository_root/references/Hexalith.Commons}"
-for module_name in EventStore Tenants Folders Conversations Memories FrontComposer Parties McpCli Builds Platform; do
-    export "Hexalith${module_name}Root=$repository_root/references/Hexalith.$module_name"
-done
-export HexalithTenantsBasePath="$repository_root/references/Hexalith.Tenants/src"
+source "$repository_root/scripts/prepare-projects-source.sh"
 # Ports are always assigned by Aspire and read from the single describe capture below.
 unset BASE_URL API_URL EVENTSTORE_API_URL KEYCLOAK_URL FIXTURE_API_URL TEST_TENANT_ID TEST_PRINCIPAL_ID
 
 cd "$repository_root"
 if test "${CI:-false}" != true; then
-    # Reuse the supported Projects qualifier's Platform-owned source preparation. Local execution
-    # always uses Debug and source references; an unavailable source graph remains a prerequisite.
-    unset CustomBeforeDirectoryBuildProps CustomAfterMicrosoftCommonProps CustomBeforeDirectoryBuildTargets
-    unset CustomAfterDirectoryBuildTargets AfterMicrosoftNETSdkTargets HEXALITH_SOURCE_MAPPING_HASH
-    export Configuration=Debug UseHexalithProjectReferences=true UseNuGetDeps=false
-    if ! dotnet run --project "$HexalithBuildsRoot/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj" \
-        -- prepare-build --manifest module/hexalith.module-manifest.v2.json \
-        --mode source --workspace "$source_workspace/prepared" --output json >"$mapping_file"; then
-        echo '[run-live-apphost] supported Debug source preparation failed.' >&2
-        if jq -e . "$mapping_file" >/dev/null 2>&1; then
-            jq '{status, outcome, diagnostics: [.diagnostics[]? | {ruleId, phase, category, message}]}' "$mapping_file" >&2
-        else
-            tail -n 20 "$mapping_file" >&2
-        fi
-        exit 2
-    fi
-    jq -e '.status == "prepared" and .buildPreparation.environment.Configuration == "Debug" and
-        (.buildPreparation.environment | keys | sort) ==
-        (["AfterMicrosoftNETSdkTargets", "Configuration", "CustomAfterDirectoryBuildTargets",
-          "CustomAfterMicrosoftCommonProps", "CustomBeforeDirectoryBuildProps",
-          "CustomBeforeDirectoryBuildTargets", "HEXALITH_SOURCE_MAPPING_HASH"] | sort) and
-        all(.buildPreparation.environment[]; type == "string" and all(explode[]; . >= 32))' \
-        "$mapping_file" >/dev/null || { echo '[run-live-apphost] supported Debug source preparation failed.' >&2; exit 2; }
-    while IFS= read -r -d '' mapping_assignment; do
-        export "$mapping_assignment"
-    done < <(jq -j '.buildPreparation.environment | to_entries[] | .key + "=" + .value + "\u0000"' "$mapping_file")
+    projects_prepare_source "$repository_root" "$source_workspace" || exit 2
+else
+    projects_reference_roots "$repository_root"
 fi
 # Never adopt an AppHost this runner did not start: a running instance would be stopped by this run's
 # teardown and could mask a broken start. `aspire describe` exits 0 with empty JSON when nothing runs,

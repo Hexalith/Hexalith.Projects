@@ -22,20 +22,30 @@ that the backup can be restored. This workload-credential change adds a containe
 [Aspire can recreate persistent containers when configuration changes](https://aspire.dev/app-host/resource-lifetimes/).
 The current Keycloak helper has no data volume, so the old container's identity data would be lost on
 recreation. Do not restart that instance with the upgraded AppHost until its data has been preserved.
-For validation, use a separate isolated session with persistence explicitly disabled:
-`KeycloakPersistent=false aspire start --apphost "$PWD/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj" --isolated --non-interactive`.
-This is validation of a fresh realm, not migration of the existing identity data.
-
-From the repository root, start the topology through the Aspire CLI. The explicit Commons root keeps
-nested sibling project resolution on the root-declared checkout:
+From the Projects root, prepare the Platform-selected Debug source mapping in Bash.
+This requires PowerShell 7 (`pwsh`) to build the mapper and `jq` to read its output.
+Keep the mapping directory until the AppHost has stopped. Aspire uses the mapped
+checkout when you run `aspire run` or start the host in the background.
 
 ```bash
 APPHOST="$PWD/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
-export HexalithCommonsRoot="$PWD/references/Hexalith.Commons"
-aspire start --apphost "$APPHOST" --format Json --non-interactive
-cleanup_apphost() { aspire stop --apphost "$APPHOST" --non-interactive >/dev/null 2>&1 || true; }
-trap cleanup_apphost EXIT
+source scripts/prepare-projects-source.sh
+mapping_directory=$(mktemp -d)
+projects_prepare_source "$PWD" "$mapping_directory"
+```
+
+After source preparation succeeds, start the host and wait for the UI.
+
+```bash
+cleanup_apphost() { aspire stop --apphost "$APPHOST" --non-interactive && rm -rf -- "$mapping_directory"; }
+aspire start --apphost "$APPHOST" --format Json --non-interactive && trap cleanup_apphost EXIT
 aspire wait projects-ui --apphost "$APPHOST" --timeout 180 --non-interactive
+```
+
+To validate a fresh realm in the prepared shell, start an isolated host with persistence disabled:
+
+```bash
+KeycloakPersistent=false aspire start --apphost "$APPHOST" --isolated --non-interactive
 ```
 
 Start without the shared security resource when working on non-auth local plumbing:
@@ -47,8 +57,7 @@ EnableKeycloak=false aspire start --apphost "$APPHOST" --format Json --non-inter
 Stop only this topology by selecting its AppHost explicitly:
 
 ```bash
-aspire stop --apphost "$APPHOST" --non-interactive
-trap - EXIT
+cleanup_apphost && trap - EXIT
 ```
 
 Do not use `aspire stop --all` when other workspaces may have active AppHosts.
