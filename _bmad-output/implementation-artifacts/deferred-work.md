@@ -668,7 +668,8 @@ origin: restored independent obligation from the pre-minimal P1R ledger
 location: qualification-evidence manifest validation
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
 reason: No executable repository check re-hashes each retained `artifact-manifest.sha256` entry and confirms that every referenced artifact is tracked.
-status: open
+status: done
+resolution: 2026-11-23. The committed-manifest verifier checks each artifact against its Git blob. Of 270 entries, 247 matched and 23 logs were missing from the three 3.97 bundles. Recovering those bytes remains open in DW-70. [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md)
 
 ### DW-72: Define the command-ledger policy for retained qualification evidence.
 
@@ -1146,38 +1147,56 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Bind the recovered P1R final-isolation importer to literal container creation and actual image inspection for all three pinned tools.
   evidence: B1: the exact reviewed proposed-successor fixture imports without create/image inspection records or a Python-tools container; independently reproduced on 2026-10-16. Pre-existing in recovery commit b7a1917cec2a59ffe80dc3ee977cf3aa31376b14; changing the frozen 23-path recovery is excluded.
+  status: resolved
+  resolution: 2026-11-23. The importer checks creation and image inspection for all three tool containers. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Bind the recovered P1R final-isolation importer to the actual SDK launch, complete arguments and selected input hash.
   evidence: B2: deleting --inputs from both retained command fields still imports successfully; literal SDK docker exec evidence is not required. Independently reproduced with temporary receipts; pre-existing reviewed source, separate hardening required.
+  status: resolved
+  resolution: 2026-11-23. The importer binds the SDK launch arguments and the selected input file and digest. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Reject unrelated outer Docker mutations when importing P1R final-isolation journals.
   evidence: B3: adding a correctly hashed docker rm -f unowned-id journal entry still imports as passed; probe never executes Docker. The exact reviewed validator predates this recovery and must be hardened separately before future reliance.
+  status: resolved
+  resolution: 2026-11-23. The importer rejects a correctly hashed journal entry that mutates an unrelated container. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Validate private supervisor, owned process identities and cleanup observations in recovered P1R final-isolation imports.
   evidence: B4: a temporary proposed-successor fixture imports after supervisor, owned-process and cleanup observation fields are absent. This pre-existing reviewed validator gap requires separate source rebinding and tests.
+  status: resolved
+  resolution: 2026-11-23. The importer verifies the supervisor, process ownership and timed cleanup observations. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Bind all measured Docker and dotnet tool identities and versions in recovered P1R final-isolation imports.
   evidence: B5: arbitrary dotnet/Docker paths and hashes plus dotnet version 0.0.0 still import; only Python is checked. Independently reproduced with temporary receipts; no operational qualification is claimed by recovery.
+  status: resolved
+  resolution: 2026-11-23. Tool and namespace regression cases verify the measured Docker and dotnet identities and versions. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Require distinct ordered repeated absence observations in recovered P1R final-isolation imports.
   evidence: B6: replacing each second inspect command with an exact copy of the first still imports. Independently reproduced with temporary receipts; pre-existing in the exact reviewed source, requiring separate hardening.
+  status: resolved
+  resolution: 2026-11-23. The importer requires two distinct ordered absence observations, including when timestamps tie. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Qualify or explicitly refuse TLS-authenticated remote outer Docker controllers in the recovered P1R isolation wrapper.
   evidence: B7: p1r_isolation.py strips DOCKER_TLS_VERIFY/certificate/configuration inputs while accepting tcp://. Source-only recovery retains the exact pre-existing code and the historical local-Unix-only qualification boundary.
+  status: resolved
+  resolution: 2026-11-23. The controller refuses remote endpoints before provisioning and keeps credentials out of its diagnostic output. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Bound private Docker startup with an overall deadline and short probe timeouts in the recovered P1R isolation wrapper.
   evidence: B8: 120 readiness attempts each inherit a 300-second Docker timeout, allowing roughly ten hours before startup refusal. This control flow already exists in the exact recovery commit; adjust it in separately rebound source.
+  status: resolved
+  resolution: 2026-11-23. Readiness probes share a monotonic deadline and have short per-probe timeouts. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Test the recovered P1R controller published-run receipt finalization through its real caller after outer cleanup.
   evidence: V1: an in-memory mutation disabling IsolatedRunner._run finalization left all 228 existing Python tests passing. Direct finalizer tests and generic controller tests miss this call site. Add a controlled published-run test whose persisted receipts pass the real importer; exact recovered runner/test hashes remain unchanged here.
+  status: resolved
+  resolution: 2026-11-23. The real controller finalizes persisted receipts after outer cleanup. Removing finalization makes the positive control fail. Historical EventStore replay and verification in [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-7.md`
   summary: Story 6.1 cannot serve successful production callbacks until EventStore verifies originating query authority and Folders supports its delegated owner reads.

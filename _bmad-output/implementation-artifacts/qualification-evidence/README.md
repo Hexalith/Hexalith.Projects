@@ -5,6 +5,20 @@ This directory retains historical evidence that is outside the retired EventStor
 runtime/toolchain packet remain historical inputs; they do not accept the current
 P1R baseline.
 
+## Check the retained manifests
+
+From the Projects repository, run the following command to check every retained
+`artifact-manifest.sha256` under this directory.
+
+```bash
+python3 tools/qualification/verify_retained_manifests.py
+```
+
+The command reads the manifests and artifact bytes from the same Git commit
+(`HEAD`). It reports verified entries per bundle and exits nonzero for missing
+files, malformed entries, or digest mismatches. DW-70 tracks the missing logs
+from the three EventStore 3.97 bundles.
+
 ## Current P1R Boundary
 
 The selected coordinates are:
