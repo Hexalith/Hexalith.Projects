@@ -162,14 +162,14 @@ jobs:
       - name: Run fresh exact-source G-6 qualifier
         run: >-
           python3 tools/qualification/run_g6_current.py
-          --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
+          --policy tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json
           --output "$G6_OUTPUT"
           --execution-scope release
       - name: Validate fresh exact-source G-6 evidence
         run: >-
           python3 references/Hexalith.Builds/Tools/g6_current.py validate
           --workspace .
-          --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
+          --policy tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json
           --evidence "$G6_OUTPUT/result.json"
           --release
       - name: Upload exact-source G-6 evidence

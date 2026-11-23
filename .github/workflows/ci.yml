@@ -287,7 +287,7 @@ jobs:
               # packages while the rest of this source graph is restored.
               env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false
             fi
-          done < <(jq -r '.resolvedProjects[]' tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json)
+          done < <(jq -r '.resolvedProjects[]' tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json)
 
       - name: Audit and qualify current G-6 when required
         env:
@@ -297,7 +297,7 @@ jobs:
           python3 tests/tools/run_g6_ci_gate.py
           --event "$G6_EVENT_NAME"
           --base-sha "$G6_BASE_SHA"
-          --policy tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json
+          --policy tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json
           --output "$G6_OUTPUT"
 
       - name: Upload G-6 result and diagnostics

@@ -15,8 +15,8 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILDS = ROOT / "references/Hexalith.Builds"
-PRODUCER = "6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b"
-RELATIVE = "tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json"
+PRODUCER = "b80f3e85fc803f71bf7b2809965db0aceafdc3c5"
+RELATIVE = "tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json"
 SPEC = importlib.util.spec_from_file_location("owning_g6_policy_contract", BUILDS / "Tools/g6_current.py")
 assert SPEC is not None and SPEC.loader is not None
 CURRENT = importlib.util.module_from_spec(SPEC)
@@ -35,6 +35,8 @@ class OwningCurrentPolicyTests(unittest.TestCase):
             with self.subTest(package=package):
                 self.assertEqual("1.19.1", selected[package])
                 self.assertEqual(selected[package], policy["tuple"]["daprDotnetPackages"])
+        toolkit_version = catalog.findtext(".//HexalithAspireHostingDaprVersion")
+        self.assertEqual(toolkit_version, policy["tuple"]["communityToolkitAspireDapr"])
         self.assertEqual("Current user authorization", policy["approval"]["approvedBy"])
         self.assertTrue(policy["exceptions"]["sourceModeOnly"])
         self.assertFalse(policy["reuseEnabled"])
@@ -52,13 +54,13 @@ class OwningCurrentPolicyTests(unittest.TestCase):
         policy = CURRENT.policy_document(ROOT / RELATIVE)
         self.assertEqual(original["resolvedProjects"], policy["resolvedProjects"])
         self.assertEqual(original["materialPrefixes"], policy["materialPrefixes"])
-        self.assertEqual(original["materialFiles"] + [RELATIVE], policy["materialFiles"])
+        self.assertEqual(original["materialFiles"] + ["tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json", RELATIVE], policy["materialFiles"])
         self.assertEqual(21, CURRENT.SUPPORT_SELECTORS)
         self.assertEqual(33, CURRENT.SUPPORT_CASES)
         expected = copy.deepcopy(original["tuple"])
         expected["aspireSdk"] = "17.0.0"
         expected["aspireCli"] = "17.0.0"
-        expected["communityToolkitAspireDapr"] = "17.0.0-beta.1078"
+        expected["communityToolkitAspireDapr"] = "17.0.0-preview.1.261120-0454"
         expected["daprDotnetPackages"] = "1.19.1"
         expected["fluentUi"] = "5.1.0"
         self.assertEqual(expected, policy["tuple"])
