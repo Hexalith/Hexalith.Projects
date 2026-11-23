@@ -953,6 +953,12 @@ public sealed class SupportedProjectReadEvidenceTests
         })!.AsObject();
         bool Accept(JsonObject value) => SupportedProjectReadDistributedFixture.IsRestartProcessEvidence(JsonSerializer.SerializeToElement(value));
         Assert.True(Accept(valid));
+        JsonObject direct = valid.DeepClone().AsObject();
+        foreach (string phase in new[] { "before", "after" })
+            direct[phase]!["launcherPid"] = direct[phase]!["pid"]!.GetValue<int>();
+        Assert.True(PackageReadFixture.IsRestartProcessEvidence(JsonSerializer.SerializeToElement(direct)));
+        direct["after"]!["launcherStartTicks"] = "999";
+        Assert.False(PackageReadFixture.IsRestartProcessEvidence(JsonSerializer.SerializeToElement(direct)));
         foreach (string field in new[] { "before", "after", "completed", "oldProcessExited", "endpointsRediscovered" })
         {
             JsonObject invalid = valid.DeepClone().AsObject();

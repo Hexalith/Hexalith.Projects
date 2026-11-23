@@ -94,6 +94,34 @@ public static class ProjectsAspireModule
         string daprResourcesPath,
         string? daprPlacementHostAddress = null,
         string? daprSchedulerHostAddress = null)
+        => new(AddHexalithProjects<ProjectResource>(builder, eventStore, tenants, projects, projectsWorkers,
+            redisEndpoint, daprConfigPath, daprResourcesPath, daprPlacementHostAddress, daprSchedulerHostAddress));
+
+    /// <summary>Registers the Projects topology resources and attaches Dapr sidecars.</summary>
+    /// <typeparam name="TProject">The type of .NET application resource.</typeparam>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="eventStore">The EventStore project resource.</param>
+    /// <param name="tenants">The Tenants project resource.</param>
+    /// <param name="projects">The Projects API project resource.</param>
+    /// <param name="projectsWorkers">The Projects Workers project resource.</param>
+    /// <param name="redisEndpoint">The Redis endpoint reference used by Dapr components.</param>
+    /// <param name="daprConfigPath">The Dapr access-control configuration file path.</param>
+    /// <param name="daprResourcesPath">The Dapr resources directory containing resiliency.yaml.</param>
+    /// <param name="daprPlacementHostAddress">The optional local Dapr placement service address.</param>
+    /// <param name="daprSchedulerHostAddress">The optional local Dapr scheduler service address.</param>
+    /// <returns>The resource record used by structural tests and future topology extensions.</returns>
+    public static HexalithProjectsResources<TProject> AddHexalithProjects<TProject>(
+        this IDistributedApplicationBuilder builder,
+        IResourceBuilder<TProject> eventStore,
+        IResourceBuilder<TProject> tenants,
+        IResourceBuilder<TProject> projects,
+        IResourceBuilder<TProject> projectsWorkers,
+        EndpointReference redisEndpoint,
+        string daprConfigPath,
+        string daprResourcesPath,
+        string? daprPlacementHostAddress = null,
+        string? daprSchedulerHostAddress = null)
+        where TProject : class, IDotnetProgramResource, IResourceWithEnvironment, IResourceWithServiceDiscovery, IResourceWithWaitSupport
     {
         ArgumentNullException.ThrowIfNull(redisEndpoint);
 
@@ -137,6 +165,34 @@ public static class ProjectsAspireModule
         string daprResourcesPath,
         string? daprPlacementHostAddress = null,
         string? daprSchedulerHostAddress = null)
+        => new(AddHexalithProjects<ProjectResource>(builder, eventStore, tenants, projects, projectsWorkers,
+            redisHost, daprConfigPath, daprResourcesPath, daprPlacementHostAddress, daprSchedulerHostAddress));
+
+    /// <summary>Registers the Projects topology resources and attaches Dapr sidecars.</summary>
+    /// <typeparam name="TProject">The type of .NET application resource.</typeparam>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="eventStore">The EventStore project resource.</param>
+    /// <param name="tenants">The Tenants project resource.</param>
+    /// <param name="projects">The Projects API project resource.</param>
+    /// <param name="projectsWorkers">The Projects Workers project resource.</param>
+    /// <param name="redisHost">The Redis host used by Dapr components.</param>
+    /// <param name="daprConfigPath">The Dapr access-control configuration file path.</param>
+    /// <param name="daprResourcesPath">The Dapr resources directory containing resiliency.yaml.</param>
+    /// <param name="daprPlacementHostAddress">The optional local Dapr placement service address.</param>
+    /// <param name="daprSchedulerHostAddress">The optional local Dapr scheduler service address.</param>
+    /// <returns>The resource record used by structural tests and future topology extensions.</returns>
+    public static HexalithProjectsResources<TProject> AddHexalithProjects<TProject>(
+        this IDistributedApplicationBuilder builder,
+        IResourceBuilder<TProject> eventStore,
+        IResourceBuilder<TProject> tenants,
+        IResourceBuilder<TProject> projects,
+        IResourceBuilder<TProject> projectsWorkers,
+        string redisHost,
+        string daprConfigPath,
+        string daprResourcesPath,
+        string? daprPlacementHostAddress = null,
+        string? daprSchedulerHostAddress = null)
+        where TProject : class, IDotnetProgramResource, IResourceWithEnvironment, IResourceWithServiceDiscovery, IResourceWithWaitSupport
     {
         (IResourceBuilder<IDaprComponentResource> stateStore, IResourceBuilder<IDaprComponentResource> pubSub) =
             builder.AddProjectsSharedDaprComponents(redisHost);
@@ -155,18 +211,19 @@ public static class ProjectsAspireModule
             daprSchedulerHostAddress);
     }
 
-    private static HexalithProjectsResources AddHexalithProjectsCore(
+    private static HexalithProjectsResources<TProject> AddHexalithProjectsCore<TProject>(
         IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> eventStore,
-        IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects,
-        IResourceBuilder<ProjectResource> projectsWorkers,
+        IResourceBuilder<TProject> eventStore,
+        IResourceBuilder<TProject> tenants,
+        IResourceBuilder<TProject> projects,
+        IResourceBuilder<TProject> projectsWorkers,
         IResourceBuilder<IDaprComponentResource> stateStore,
         IResourceBuilder<IDaprComponentResource> pubSub,
         string daprConfigPath,
         string daprResourcesPath,
         string? daprPlacementHostAddress,
         string? daprSchedulerHostAddress)
+        where TProject : class, IDotnetProgramResource, IResourceWithEnvironment, IResourceWithServiceDiscovery, IResourceWithWaitSupport
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(eventStore);
@@ -227,7 +284,7 @@ public static class ProjectsAspireModule
             daprPlacementHostAddress,
             daprSchedulerHostAddress);
 
-        return new HexalithProjectsResources(stateStore, pubSub, eventStore, tenants, projects, projectsWorkers);
+        return new HexalithProjectsResources<TProject>(stateStore, pubSub, eventStore, tenants, projects, projectsWorkers);
     }
 
     private static (IResourceBuilder<IDaprComponentResource> StateStore, IResourceBuilder<IDaprComponentResource> PubSub)
@@ -248,8 +305,8 @@ public static class ProjectsAspireModule
         return (stateStore, pubSub);
     }
 
-    private static void AttachDaprSidecar(
-        IResourceBuilder<ProjectResource> project,
+    private static void AttachDaprSidecar<TProject>(
+        IResourceBuilder<TProject> project,
         string appId,
         string daprConfigPath,
         string daprResourcesPath,
@@ -257,12 +314,14 @@ public static class ProjectsAspireModule
         IResourceBuilder<IDaprComponentResource> pubSub,
         string? daprPlacementHostAddress,
         string? daprSchedulerHostAddress)
+        where TProject : class, IDotnetProgramResource, IResourceWithEnvironment, IResourceWithServiceDiscovery, IResourceWithWaitSupport
     {
         _ = project.WithDaprSidecar(sidecar => sidecar
             .WithOptions(new DaprSidecarOptions
             {
                 AppId = appId,
                 Config = daprConfigPath,
+                RuntimePath = project.ApplicationBuilder.Configuration["HEXALITH_DAPR_HOME"],
                 ResourcesPaths = [daprResourcesPath],
                 AppHealthCheckPath = "/alive",
                 EnableAppHealthCheck = true,

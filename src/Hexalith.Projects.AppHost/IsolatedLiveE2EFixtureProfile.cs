@@ -7,6 +7,7 @@ using System.Text.Json;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 using CommunityToolkit.Aspire.Hosting.Dapr;
 using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.Aspire;
@@ -83,9 +84,9 @@ public static class IsolatedLiveE2EFixtureProfile
 
     /// <summary>Uses generic SDK catalog composition, Platform mTLS and a private workload authority.</summary>
     public static DevelopmentRouteCatalogComposition AddResources(IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> gateway, IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects, IResourceBuilder<ProjectResource> workers,
-        IResourceBuilder<ProjectResource> ui, string resourcesPath)
+        IResourceBuilder<DotnetProjectResource> gateway, IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> projects, IResourceBuilder<DotnetProjectResource> workers,
+        IResourceBuilder<DotnetProjectResource> ui, string resourcesPath)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(gateway);
@@ -105,7 +106,7 @@ public static class IsolatedLiveE2EFixtureProfile
             => builder.AddParameter("isolated-fixture-" + name, () => Value(key), secret: true);
         var certificatePassword = Secret("certificate-password", "CertificatePassword");
         var receipt = Secret("receipt", "ReceiptKey");
-        var authority = builder.AddProject<global::Projects.Hexalith_Projects_ReadAuthority>("live-fixture-authority")
+        var authority = builder.AddDotnetProject("live-fixture-authority", new global::Projects.Hexalith_Projects_ReadAuthority().ProjectPath)
             .WithHttpsEndpoint(name: "https").WithHttpEndpoint(name: "http").WithHttpHealthCheck("/alive")
             .WithEnvironment("Kestrel__Certificates__Default__Path", Value("CertificatePath"))
             .WithEnvironment("Kestrel__Certificates__Default__Password", certificatePassword);
@@ -165,7 +166,7 @@ public static class IsolatedLiveE2EFixtureProfile
             .Where(resource => resource.Name is "dapr-sentry" or "dapr-placement-mtls" or "dapr-scheduler-mtls"))
             _ = builder.CreateResourceBuilder(resource).WithContainerRuntimeArgs("--label", "hexalith.supported-reads=" + isolation);
         int ordinal = 0;
-        void Client(IResourceBuilder<ProjectResource> resource, string key)
+        void Client(IResourceBuilder<DotnetProjectResource> resource, string key)
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("Authentication__WorkloadIssuer__Workload", name)
@@ -236,9 +237,9 @@ public static class IsolatedLiveE2EFixtureProfile
         _ = workers.WithReference(gateway).WithReference(tenants);
         _ = projects.WithEnvironment("Projects__IsolatedLiveFixtures__Enabled", "true");
         _ = workers.WithEnvironment("Projects__IsolatedLiveFixtures__Enabled", "true");
-        DevelopmentRouteCatalogInvocation[] Calls(params string[] methods) => methods.Select(method =>
-            new DevelopmentRouteCatalogInvocation(gateway, method, ["POST"])).ToArray();
-        DevelopmentRouteCatalogReceiver[] receivers =
+        DevelopmentRouteCatalogInvocation<DotnetProjectResource>[] Calls(params string[] methods) => methods.Select(method =>
+            new DevelopmentRouteCatalogInvocation<DotnetProjectResource>(gateway, method, ["POST"])).ToArray();
+        DevelopmentRouteCatalogReceiver<DotnetProjectResource>[] receivers =
         [
             new(gateway, [new(tenants, "api/v1/commands/bound/workload", ["POST"]),
                 new(tenants, "api/v1/streams/read/workload", ["POST"]),

@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 
 using CommunityToolkit.Aspire.Hosting.Dapr;
 
@@ -111,10 +112,10 @@ public static class PackageActualOwnerComposition
     /// <summary>Adds real Folder hosts, Dapr discovery, platform broker grants and distinct receiver trust.</summary>
     public static void AddResources(
         IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> eventStore,
-        IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects,
-        IResourceBuilder<ProjectResource> projectsWorkers,
+        IResourceBuilder<DotnetProjectResource> eventStore,
+        IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> projects,
+        IResourceBuilder<DotnetProjectResource> projectsWorkers,
         string resourcesPath)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -128,10 +129,8 @@ public static class PackageActualOwnerComposition
         string ownerResources = AddQualificationResiliency(configuration, resourcesPath, "eventstore");
         string projectResources = AddQualificationResiliency(configuration, resourcesPath, "projects");
         string root = ResolveProjectRoot(configuration["HexalithFoldersRoot"] ?? builder.AppHostDirectory);
-        IResourceBuilder<ProjectResource> folders = builder.AddProject<PrebuiltMetadata<global::Projects.Hexalith_Folders_Server>>("folders",
-            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
-        IResourceBuilder<ProjectResource> folderWorkers = builder.AddProject<PrebuiltMetadata<global::Projects.Hexalith_Folders_Workers>>("folders-workers",
-            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
+        IResourceBuilder<DotnetProjectResource> folders = builder.AddPrebuiltProject("folders", new global::Projects.Hexalith_Folders_Server().ProjectPath).WithHttpHealthCheck("/alive");
+        IResourceBuilder<DotnetProjectResource> folderWorkers = builder.AddPrebuiltProject("folders-workers", new global::Projects.Hexalith_Folders_Workers().ProjectPath).WithHttpHealthCheck("/alive");
 
         var (state, pubsub) = builder.AddProjectsSharedDaprComponents(Required(configuration, "Dapr:RedisHost"));
         var conversationStartStore = builder.AddDaprComponent("projects-conversation-start-setup", "state.redis")
@@ -143,16 +142,14 @@ public static class PackageActualOwnerComposition
         IResourceBuilder<ParameterResource> eventStoreSecret = Secret("gateway-secret", "EventStoreSecret");
         IResourceBuilder<ParameterResource> projectsSecret = Secret("projects-secret", "ProjectsSecret");
         IResourceBuilder<ParameterResource> ownerKey = Secret("owner-key", "OwnerPrivateKey");
-        IResourceBuilder<ProjectResource> authority = builder.AddProject<PrebuiltMetadata<global::Projects.Hexalith_Projects_PackageFixtures>>("supported-read-authority", options => options.ExcludeLaunchProfile = true)
+        IResourceBuilder<DotnetProjectResource> authority = builder.AddPrebuiltProject("supported-read-authority", new global::Projects.Hexalith_Projects_PackageFixtures().ProjectPath, withHttps: true)
             .WithArgs("--authority")
 
-            .WithHttpsEndpoint(name: "https")
-            .WithHttpEndpoint(name: "http")
             .WithEnvironment("Kestrel__Certificates__Default__Path", Required(configuration, Prefix + "CertificatePath"))
             .WithEnvironment("Kestrel__Certificates__Default__Password", certificatePassword);
         _ = authority.WithHttpHealthCheck(() => authority.GetEndpoint("http"), path: "/alive");
         ReferenceExpression issuer = ReferenceExpression.Create($"{authority.GetEndpoint("https")}/workload-authority");
-        foreach (IResourceBuilder<ProjectResource> resource in new[] { eventStore, tenants, projects, projectsWorkers, folders, folderWorkers })
+        foreach (IResourceBuilder<DotnetProjectResource> resource in new[] { eventStore, tenants, projects, projectsWorkers, folders, folderWorkers })
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
@@ -191,7 +188,11 @@ public static class PackageActualOwnerComposition
                     EnableAppHealthCheck = true, AppHealthCheckPath = "/alive",
                 }).WithReference(state).WithReference(pubsub);
                 if (name == "projects") _ = sidecar.WithReference(conversationStartStore);
-                sidecar.Resource.Annotations.Add(new EnvironmentCallbackAnnotation(context => context.EnvironmentVariables["NAMESPACE"] = isolation));
+                sidecar.Resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+                {
+                    context.EnvironmentVariables["NAMESPACE"] = isolation;
+                    context.EnvironmentVariables["DAPR_HOST_IP"] = "127.0.0.1";
+                }));
             }).WithEventStoreAppChannelToken(channel);
         }
         _ = authority.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
@@ -301,7 +302,7 @@ public static class PackageActualOwnerComposition
 
         IResourceBuilder<ParameterResource> Secret(string name, string key)
             => builder.AddParameter("supported-reads-" + name, () => Required(configuration, Prefix + key), secret: true);
-        void ConfigureClient(IResourceBuilder<ProjectResource> resource, string workload, IResourceBuilder<ParameterResource> secret)
+        void ConfigureClient(IResourceBuilder<DotnetProjectResource> resource, string workload, IResourceBuilder<ParameterResource> secret)
         {
             _ = resource.WithEnvironment("Authentication__WorkloadIssuer__Workload", workload)
                 .WithEnvironment("Authentication__WorkloadIssuer__ClientId", workload + "-fixture")

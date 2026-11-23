@@ -2,6 +2,7 @@ namespace Hexalith.Projects.Integration.Tests;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 using global::Aspire.Hosting.Eventing;
 using global::Aspire.Hosting.Lifecycle;
 using CommunityToolkit.Aspire.Hosting.Dapr;
@@ -121,11 +122,11 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         inputs["Projects:SupportedReads:Scenario"] = scenario;
         builder.Configuration.AddInMemoryCollection(inputs);
         string fixture = Path.Combine(TestRepositoryRoot.Find(), "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
-        var projects = builder.AddProject("projects", fixture)
+        var projects = builder.AddDotnetProject("projects", fixture)
             .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", "7.00:00:00")
             .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", "7.00:00:00");
-        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddProject("eventstore", fixture), builder.AddProject("tenants", fixture),
-            projects, builder.AddProject("projects-workers", fixture), Path.Combine(TestRepositoryRoot.Find(), "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddDotnetProject("eventstore", fixture), builder.AddDotnetProject("tenants", fixture),
+            projects, builder.AddDotnetProject("projects-workers", fixture), Path.Combine(TestRepositoryRoot.Find(), "src", "Hexalith.Projects.AppHost", "DaprComponents"));
         IReadOnlyDictionary<string, object> environment = await EnvironmentAsync(projects.Resource, builder.ExecutionContext);
         environment["Projects__TenantAccess__MutationFreshnessBudget"].ShouldBe(recovery
             ? SupportedProjectReadFixtureProfile.TenantAccessRecoveryFreshnessBudget : "7.00:00:00");
@@ -141,18 +142,18 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         Dictionary<string, string?> inputs = ValidInputs();
         builder.Configuration.AddInMemoryCollection(inputs);
         string fixtureProject = Path.Combine(TestRepositoryRoot.Find(), "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
-        var gateway = builder.AddProject("eventstore", fixtureProject);
-        var tenants = builder.AddProject("tenants", fixtureProject);
-        var projects = builder.AddProject("projects", fixtureProject);
-        var workers = builder.AddProject("projects-workers", fixtureProject);
+        var gateway = builder.AddDotnetProject("eventstore", fixtureProject);
+        var tenants = builder.AddDotnetProject("tenants", fixtureProject);
+        var projects = builder.AddDotnetProject("projects", fixtureProject);
+        var workers = builder.AddDotnetProject("projects-workers", fixtureProject);
         string components = Path.Combine(TestRepositoryRoot.Find(), "src", "Hexalith.Projects.AppHost", "DaprComponents");
         SupportedProjectReadFixtureProfile.AddResources(builder, gateway, tenants, projects, workers, components);
-        ProjectResource folders = builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == "folders");
+        DotnetProjectResource folders = builder.Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == "folders");
         IDaprComponentResource conversationStore = builder.Resources.OfType<IDaprComponentResource>()
             .Single(resource => resource.Name == Hexalith.Projects.Server.Projections.ConversationStartSetup.ConversationStartSetupProjectionHandler.StoreName);
         conversationStore.Type.ShouldBe("state.redis");
         folders.GetProjectMetadata().ProjectPath.ShouldEndWith("Hexalith.Folders.Server.csproj");
-        builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == "folders-workers")
+        builder.Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == "folders-workers")
             .GetProjectMetadata().ProjectPath.ShouldEndWith("Hexalith.Folders.Workers.csproj");
         builder.Resources.OfType<ParameterResource>().ShouldAllBe(parameter => parameter.Secret);
         IReadOnlyDictionary<string, object> environment = await EnvironmentAsync(gateway.Resource, builder.ExecutionContext);
@@ -161,7 +162,7 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         environment["Authentication__JwtBearer__Issuer"].ShouldBe("https://127.0.0.1:54321/users");
         environment["Authentication__WorkloadJwtBearer__Issuer"].ShouldBeOfType<ReferenceExpression>();
         environment["Authentication__WorkloadIssuer__ClientSecret"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
-        ProjectResource authority = builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == "supported-read-authority");
+        DotnetProjectResource authority = builder.Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == "supported-read-authority");
         environment = await EnvironmentAsync(authority, builder.ExecutionContext);
         environment["Authentication__WorkloadAuthority__SigningCertificatePassword"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
         environment["Authentication__WorkloadAuthority__Grants__0__AllowQueryAuthorityDigest"].ShouldBe("true");
@@ -219,7 +220,7 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
             TenantEnvironmentEntries = tenantEnvironment.Count,
             GatewayEnvironmentEntries = gatewayEnvironment.Count,
         }));
-        foreach (ProjectResource resource in builder.Resources.OfType<ProjectResource>().Where(resource => resource.Name != "supported-read-authority"))
+        foreach (DotnetProjectResource resource in builder.Resources.OfType<DotnetProjectResource>().Where(resource => resource.Name != "supported-read-authority"))
         {
             (await EnvironmentAsync(resource, builder.ExecutionContext))["EventStore__RouteCatalog__ScopedDecodeReuse"].ShouldBe("true");
             (await EnvironmentAsync(resource, builder.ExecutionContext))["EventStore__RouteCatalog__SerializeLocalLeaseRelease"].ShouldBe("false");
@@ -308,16 +309,16 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         inputs["Dapr:Mtls:CertificateDirectory"] = Path.Combine(privateDirectory, "mtls");
         builder.Configuration.AddInMemoryCollection(inputs);
         string fixture = Path.Combine(root, "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
-        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddProject("eventstore", fixture), builder.AddProject("tenants", fixture),
-            builder.AddProject("projects", fixture), builder.AddProject("projects-workers", fixture), Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddDotnetProject("eventstore", fixture), builder.AddDotnetProject("tenants", fixture),
+            builder.AddDotnetProject("projects", fixture), builder.AddDotnetProject("projects-workers", fixture), Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents"));
         var owned = DaprSelfHostedMtls.AddLocalApplicationInfrastructure(builder, root,
             Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents", "sentry.yaml"), inputs["Projects:SupportedReads:IsolationId"]!);
         _directories.Add(owned.RunDirectory);
         foreach (string file in new[] { "ca.crt", "issuer.crt", "issuer.key" }) File.WriteAllText(Path.Combine(owned.CertificateDirectory, file), "structural-" + file);
         builder.Resources.OfType<ContainerResource>().Select(resource => resource.Name).Order().ShouldBe(["dapr-placement-mtls", "dapr-scheduler-mtls", "dapr-sentry"]);
-        ProjectResource[] applications = builder.Resources.OfType<ProjectResource>().Where(resource => resource.Annotations.OfType<DaprSidecarAnnotation>().Any()).ToArray();
+        DotnetProjectResource[] applications = builder.Resources.OfType<DotnetProjectResource>().Where(resource => resource.Annotations.OfType<DaprSidecarAnnotation>().Any()).ToArray();
         applications.Length.ShouldBe(6);
-        foreach (ProjectResource application in applications)
+        foreach (DotnetProjectResource application in applications)
         {
             var sidecar = application.Annotations.OfType<DaprSidecarAnnotation>().Single().Sidecar;
             DaprSidecarOptions options = sidecar.Annotations.OfType<DaprSidecarOptionsAnnotation>().Single().Options;
@@ -348,14 +349,14 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         string modeledCli = Path.Combine(directory, "dapr");
         builder.AddDapr(options => options.DaprPath = modeledCli);
         string fixture = Path.Combine(root, "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj");
-        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddProject("eventstore", fixture), builder.AddProject("tenants", fixture),
-            builder.AddProject("projects", fixture), builder.AddProject("projects-workers", fixture), Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+        SupportedProjectReadFixtureProfile.AddResources(builder, builder.AddDotnetProject("eventstore", fixture), builder.AddDotnetProject("tenants", fixture),
+            builder.AddDotnetProject("projects", fixture), builder.AddDotnetProject("projects-workers", fixture), Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents"));
         string runtimeHome = Path.Combine(directory, "structural-runtime-not-executed");
         string nativePath = Path.Combine(runtimeHome, ".dapr", "bin", OperatingSystem.IsWindows() ? "daprd.exe" : "daprd");
         Directory.CreateDirectory(Path.GetDirectoryName(nativePath)!);
         await File.WriteAllTextAsync(nativePath, "structural placeholder; never executed", TestContext.Current.CancellationToken);
         var peers = new[] { "tenants", "eventstore", "projects", "projects-workers", "folders", "folders-workers" }.Select(name =>
-            builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == name))).ToArray();
+            builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == name))).ToArray();
         foreach (var peer in peers)
         {
             var sidecar = peer.Resource.Annotations.OfType<DaprSidecarAnnotation>().Single().Sidecar;

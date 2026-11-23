@@ -1,4 +1,5 @@
 using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Dotnet;
 
 using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.AppHost;
@@ -27,7 +28,7 @@ string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModu
     builder.Configuration[AspireDaprLocalServiceEndpoints.SchedulerHostAddressKey]);
 HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity();
 
-IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
+IResourceBuilder<DotnetProjectResource> eventStore = builder.AddDotnetProject(ProjectsAspireModule.EventStoreAppId, new Projects.Hexalith_EventStore().ProjectPath);
 ConfigureProjectsEventStoreDomainRegistrations(eventStore);
 if (ProjectsLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
 {
@@ -39,7 +40,7 @@ if (ProjectsLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
         "250");
 }
 
-IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith_Tenants>(ProjectsAspireModule.TenantsAppId);
+IResourceBuilder<DotnetProjectResource> tenants = builder.AddDotnetProject(ProjectsAspireModule.TenantsAppId, new Projects.Hexalith_Tenants().ProjectPath);
 _ = eventStore
     .WithReference(tenants)
     .WaitFor(tenants);
@@ -48,16 +49,16 @@ _ = eventStore
 // projection goes "stale" once a few minutes pass without new tenant events, so project create/list
 // start failing (safe-denial / read-model-unavailable) even though access is valid. Production keeps
 // the tight defaults; here we set a generous budget so a seeded tenant stays usable.
-IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId)
+IResourceBuilder<DotnetProjectResource> projects = builder.AddDotnetProject(ProjectsAspireModule.ProjectsAppId, new Projects.Hexalith_Projects_Server().ProjectPath)
     .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", "7.00:00:00")
     .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", "7.00:00:00");
-IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexalith_Projects_UI>(ProjectsAspireModule.ProjectsUiAppId);
+IResourceBuilder<DotnetProjectResource> projectsUi = builder.AddDotnetProject(ProjectsAspireModule.ProjectsUiAppId, new Projects.Hexalith_Projects_UI().ProjectPath);
 // The workers host is a Dapr pub/sub subscriber (tenant + project event projections). It must expose
 // an HTTP endpoint so Aspire assigns it a managed port and wires the Dapr sidecar's --app-port; without
 // a declared endpoint the sidecar runs with app-port 0, never calls /dapr/subscribe, and no events are
 // delivered (the tenant-access + projection-journal read models stay empty). The explicit endpoint also
 // avoids the framework default :5000 (which collided with other locally-running apps).
-IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId)
+IResourceBuilder<DotnetProjectResource> projectsWorkers = builder.AddDotnetProject(ProjectsAspireModule.ProjectsWorkersAppId, new Projects.Hexalith_Projects_Workers().ProjectPath)
     .WithHttpEndpoint();
 
 _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
@@ -148,7 +149,7 @@ finally
     if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
 }
 
-static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<ProjectResource> eventStore)
+static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<DotnetProjectResource> eventStore)
 {
     string[] sampleRegistrationKeys =
     [
@@ -185,7 +186,7 @@ static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<Proj
     SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
 }
 
-static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<ProjectResource> eventStore, string registrationKey)
+static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<DotnetProjectResource> eventStore, string registrationKey)
 {
     _ = eventStore
         .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__AppId", string.Empty)
@@ -193,7 +194,7 @@ static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<Project
 }
 
 static void SuppressEventStoreOperationalIndexMetadataRegistration(
-    IResourceBuilder<ProjectResource> eventStore,
+    IResourceBuilder<DotnetProjectResource> eventStore,
     string registrationKey)
 {
     _ = eventStore.WithEnvironment(

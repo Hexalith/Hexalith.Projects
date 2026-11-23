@@ -6,7 +6,6 @@
     <AspireUseCliBundle>true</AspireUseCliBundle>
     <SkipAddAspireDefaultReferences>true</SkipAddAspireDefaultReferences>
     <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS0618</WarningsNotAsErrors>
     <IsPackable>false</IsPackable>
     <IsPublishable>false</IsPublishable>
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>
@@ -27,6 +26,7 @@
   <ItemGroup>
     <!-- SkipAddAspireDefaultReferences avoids the SDK's implicit versioned reference, which CPM rejects. -->
     <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" />
     <PackageReference Include="YamlDotNet" />
@@ -38,4 +38,16 @@
     <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtls.cs" Link="Platform/DaprSelfHostedMtls.cs" />
     <Compile Include="$(HexalithPlatformRoot)/DaprSelfHostedMtlsSubscriber.cs" Link="Platform/DaprSelfHostedMtlsSubscriber.cs" />
   </ItemGroup>
+  <Target Name="RecordPackageFixtureTargets" BeforeTargets="GetAssemblyAttributes">
+    <ItemGroup>
+      <_FixtureProject Include="@(ProjectReference)" Condition="'%(ProjectReference.IsAspireProjectResource)' != 'false'" />
+    </ItemGroup>
+    <MSBuild Projects="@(_FixtureProject)" Targets="GetTargetPath"
+             Properties="Configuration=Release;UseHexalithProjectReferences=false;UseNuGetDeps=true">
+      <Output TaskParameter="TargetOutputs" ItemName="_FixtureTarget" />
+    </MSBuild>
+    <ItemGroup>
+      <AssemblyMetadata Include="PackageFixtureTarget:%(_FixtureTarget.MSBuildSourceProjectFile)" Value="%(_FixtureTarget.FullPath)" />
+    </ItemGroup>
+  </Target>
 </Project>

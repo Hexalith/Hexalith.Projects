@@ -1,4 +1,5 @@
 using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Dotnet;
 using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.PackageFixtures.AppHost;
 using Microsoft.Extensions.Hosting;
@@ -11,9 +12,9 @@ if (!PackageCompatibilityComposition.IsEnabled(builder.Configuration))
     throw new InvalidOperationException("Private package fixture inputs are required.");
 string root = builder.Configuration["Projects:PackageFixtures:Root"]!;
 string resources = Path.Combine(root, "src", "Hexalith.Projects.AppHost", "DaprComponents");
-IResourceBuilder<ProjectResource> Add<T>(string name, string health = "/alive") where T : IProjectMetadata, new()
-    => builder.AddProject<PrebuiltMetadata<T>>(name, options => options.ExcludeLaunchProfile = true)
-        .WithHttpEndpoint().WithHttpHealthCheck(health).WithEnvironment("DOTNET_WATCH", "false");
+IResourceBuilder<DotnetProjectResource> Add<T>(string name, string health = "/alive") where T : IProjectMetadata, new()
+    => builder.AddPrebuiltProject(name, new T().ProjectPath)
+        .WithHttpHealthCheck(health).WithEnvironment("DOTNET_WATCH", "false");
 var gateway = Add<Projects.Hexalith_EventStore>("eventstore");
 var tenants = Add<Projects.Hexalith_Tenants>("tenants");
 var projects = Add<Projects.Hexalith_Projects_Server>("projects");
@@ -24,13 +25,12 @@ ConfigureProjectsEventStoreDomainRegistrations(gateway);
 bool actualOwners = builder.Configuration["Projects:PackageFixtures:Mode"] == "actual-owner";
 if (!actualOwners)
 {
-    var roles = new Dictionary<string, IResourceBuilder<ProjectResource>>();
+    var roles = new Dictionary<string, IResourceBuilder<DotnetProjectResource>>();
     foreach (string role in new[] { "conversations", "folders", "memories", "live-fixtures" })
     {
-        var fixture = builder.AddProject<PrebuiltMetadata<Projects.Hexalith_Projects_E2E_Fixtures>>(role,
-                options => options.ExcludeLaunchProfile = true)
+        var fixture = builder.AddPrebuiltProject(role, new Projects.Hexalith_Projects_E2E_Fixtures().ProjectPath)
             .WithEnvironment("FixtureRole", role == "live-fixtures" ? "control" : role)
-            .WithEnvironment("DOTNET_WATCH", "false").WithHttpEndpoint().WithHttpHealthCheck("/health");
+            .WithEnvironment("DOTNET_WATCH", "false").WithHttpHealthCheck("/health");
         roles.Add(role, fixture);
     }
     foreach (string role in new[] { "conversations", "folders", "memories" })
@@ -48,9 +48,8 @@ else
         .WithEnvironment("Authentication__OpenIdConnect__ClientId", "hexalith-projects-ui")
         .WithEnvironment("Authentication__OpenIdConnect__ClientSecret", secret)
         .WithEnvironment("SSL_CERT_FILE", builder.Configuration["Projects:PackageFixtures:TrustBundle"]!);
-    var observer = builder.AddProject<PrebuiltMetadata<Projects.Hexalith_Projects_E2E_Fixtures>>("browser-read-observer",
-        options => options.ExcludeLaunchProfile = true).WithEnvironment("FixtureRole", "control")
-        .WithEnvironment("FixtureStateStore__Enabled", "true").WithHttpEndpoint().WithHttpHealthCheck("/health");
+    var observer = builder.AddPrebuiltProject("browser-read-observer", new Projects.Hexalith_Projects_E2E_Fixtures().ProjectPath).WithEnvironment("FixtureRole", "control")
+        .WithEnvironment("FixtureStateStore__Enabled", "true").WithHttpHealthCheck("/health");
     foreach (string key in new[] { "IsolationId", "Tenant", "ForeignTenant" })
         _ = observer.WithEnvironment("FixtureStateStore__" + key, builder.Configuration["Projects:PackageFixtures:" + key]!);
     foreach (string key in new[] { "PrimaryActor", "ForeignActor" })
@@ -67,13 +66,13 @@ DevelopmentRouteCatalogComposition catalog = actualOwners
 PackageHostingStartupComposition.Add(root, Path.GetDirectoryName(builder.Configuration["Projects:PackageFixtures:CertificatePath"]!)!, gateway, tenants, projects);
 if (actualOwners)
     PackageHostingStartupComposition.Add(root, Path.GetDirectoryName(builder.Configuration["Projects:PackageFixtures:CertificatePath"]!)!,
-        builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>().Single(resource => resource.Name == "folders")));
+        builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>().Single(resource => resource.Name == "folders")));
 await using var catalogCleanup = catalog.ConfigureAwait(false);
 DistributedApplication application = builder.Build();
 await using var applicationCleanup = application.ConfigureAwait(false);
 await application.RunAsync().ConfigureAwait(false);
 
-static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<ProjectResource> eventStore)
+static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<DotnetProjectResource> eventStore)
 {
     string[] sampleRegistrationKeys =
     [
@@ -110,7 +109,7 @@ static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<Proj
     SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
 }
 
-static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<ProjectResource> eventStore, string registrationKey)
+static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<DotnetProjectResource> eventStore, string registrationKey)
 {
     _ = eventStore
         .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__AppId", string.Empty)
@@ -118,7 +117,7 @@ static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<Project
 }
 
 static void SuppressEventStoreOperationalIndexMetadataRegistration(
-    IResourceBuilder<ProjectResource> eventStore,
+    IResourceBuilder<DotnetProjectResource> eventStore,
     string registrationKey)
 {
     _ = eventStore.WithEnvironment(

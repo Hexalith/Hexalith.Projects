@@ -7,6 +7,7 @@ using System.Text.Json;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 using CommunityToolkit.Aspire.Hosting.Dapr;
 using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.Aspire;
@@ -79,9 +80,9 @@ public static class PackageCompatibilityComposition
 
     /// <summary>Uses generic SDK catalog composition, Platform mTLS and a private workload authority.</summary>
     public static DevelopmentRouteCatalogComposition AddResources(IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> gateway, IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects, IResourceBuilder<ProjectResource> workers,
-        IResourceBuilder<ProjectResource> ui, string resourcesPath)
+        IResourceBuilder<DotnetProjectResource> gateway, IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> projects, IResourceBuilder<DotnetProjectResource> workers,
+        IResourceBuilder<DotnetProjectResource> ui, string resourcesPath)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(gateway);
@@ -98,9 +99,8 @@ public static class PackageCompatibilityComposition
             => builder.AddParameter("isolated-fixture-" + name, () => Value(key), secret: true);
         var certificatePassword = Secret("certificate-password", "CertificatePassword");
         var receipt = Secret("receipt", "ReceiptKey");
-        var authority = builder.AddProject<PrebuiltMetadata<global::Projects.Hexalith_Projects_PackageFixtures>>("live-fixture-authority", options => options.ExcludeLaunchProfile = true)
+        var authority = builder.AddPrebuiltProject("live-fixture-authority", new global::Projects.Hexalith_Projects_PackageFixtures().ProjectPath, withHttps: true)
             .WithArgs("--authority")
-            .WithHttpsEndpoint(name: "https").WithHttpEndpoint(name: "http")
             .WithEnvironment("Kestrel__Certificates__Default__Path", Value("CertificatePath"))
             .WithEnvironment("Kestrel__Certificates__Default__Password", certificatePassword);
         _ = authority.WithHttpHealthCheck(() => authority.GetEndpoint("http"), path: "/alive");
@@ -150,7 +150,11 @@ public static class PackageCompatibilityComposition
                         PlacementHostAddress = Required(configuration, "Dapr:PlacementHostAddress"),
                         SchedulerHostAddress = Required(configuration, "Dapr:SchedulerHostAddress"),
                     }).WithReference(state).WithReference(pubsub);
-                    sidecar.Resource.Annotations.Add(new EnvironmentCallbackAnnotation(context => context.EnvironmentVariables["NAMESPACE"] = isolation));
+                    sidecar.Resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+                    {
+                        context.EnvironmentVariables["NAMESPACE"] = isolation;
+                        context.EnvironmentVariables["DAPR_HOST_IP"] = "127.0.0.1";
+                    }));
                 });
         }
         builder.Configuration["Dapr:Mtls:CertificateDirectory"] = Path.Combine(directory, "mtls");
@@ -162,7 +166,7 @@ public static class PackageCompatibilityComposition
             .Where(resource => resource.Name is "dapr-sentry" or "dapr-placement-mtls" or "dapr-scheduler-mtls"))
             _ = builder.CreateResourceBuilder(resource).WithContainerRuntimeArgs("--label", "hexalith.supported-reads=" + isolation);
         int ordinal = 0;
-        void Client(IResourceBuilder<ProjectResource> resource, string key)
+        void Client(IResourceBuilder<DotnetProjectResource> resource, string key)
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("Authentication__WorkloadIssuer__Workload", name)
@@ -233,9 +237,9 @@ public static class PackageCompatibilityComposition
         _ = workers.WithReference(gateway).WithReference(tenants);
         _ = projects.WithEnvironment("Projects__IsolatedLiveFixtures__Enabled", "true");
         _ = workers.WithEnvironment("Projects__IsolatedLiveFixtures__Enabled", "true");
-        DevelopmentRouteCatalogInvocation[] Calls(params string[] methods) => methods.Select(method =>
-            new DevelopmentRouteCatalogInvocation(gateway, method, ["POST"])).ToArray();
-        DevelopmentRouteCatalogReceiver[] receivers =
+        DevelopmentRouteCatalogInvocation<DotnetProjectResource>[] Calls(params string[] methods) => methods.Select(method =>
+            new DevelopmentRouteCatalogInvocation<DotnetProjectResource>(gateway, method, ["POST"])).ToArray();
+        DevelopmentRouteCatalogReceiver<DotnetProjectResource>[] receivers =
         [
             new(gateway, [new(tenants, "api/v1/commands/bound/workload", ["POST"]),
                 new(tenants, "api/v1/streams/read/workload", ["POST"]),
@@ -249,8 +253,8 @@ public static class PackageCompatibilityComposition
         Assembly Load(string project, string assembly)
         {
             string path = project == "Hexalith.Projects.Server"
-                ? new PrebuiltMetadata<global::Projects.Hexalith_Projects_Server>().ProjectPath
-                : new PrebuiltMetadata<global::Projects.Hexalith_Tenants>().ProjectPath;
+                ? projects.Resource.GetProjectMetadata().ProjectPath
+                : tenants.Resource.GetProjectMetadata().ProjectPath;
             string release = Path.Combine(Path.GetDirectoryName(path)!, "bin", "Release");
             if (!ownerContexts.TryGetValue(project, out PackageOwnerLoadContext? context))
             {

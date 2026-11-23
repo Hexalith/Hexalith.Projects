@@ -7,7 +7,6 @@
     <IsPublishable>true</IsPublishable>
     <NoWarn>$(NoWarn);ASPIRE012</NoWarn>
     <SuppressAspireAppHostSdkObsoleteWarning>true</SuppressAspireAppHostSdkObsoleteWarning>
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS0618</WarningsNotAsErrors>
     <UserSecretsId>hexalith-projects</UserSecretsId>
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\references\Hexalith.Platform</HexalithPlatformRoot>
     <HexalithPlatformRoot Condition="'$(HexalithPlatformRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform\DaprSelfHostedMtls.cs')">$(MSBuildThisFileDirectory)..\..\..\Hexalith.Platform</HexalithPlatformRoot>
@@ -38,6 +37,7 @@
   <ItemGroup>
     <!-- SkipAddAspireDefaultReferences avoids the SDK's implicit versioned reference, which CPM rejects. -->
     <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>

@@ -887,52 +887,19 @@ def resource_endpoint(graph: dict, resource: str, name: str = "http") -> str:
 
 
 def projects_process_identity(owned: dict, graph: dict, *, run=execute) -> dict:
-    """Bind the actual Debug server, not merely Aspire's dotnet run wrapper, to this fixture."""
+    """Bind Aspire's launched process and the actual Debug server to this fixture, including direct launches."""
     matches = [item for item in graph["resources"] if item.get("displayName") == "projects"]
-    project = ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
     if len(matches) != 1 or matches[0].get("resourceType") != "Project":
         raise RuntimeError("Projects resource identity is missing or ambiguous.")
     resource = matches[0]
-    properties = resource.get("properties", {})
-    wrapper = properties.get("executable.pid")
-    if properties.get("project.path") != str(project) or type(wrapper) is not int or wrapper <= 0:
-        raise RuntimeError("Projects resource is not the owned source project.")
-    wrapper_start = process_start(wrapper)
-    if wrapper_start is None:
-        raise RuntimeError("Projects resource launcher is absent.")
-    target, _ = project_build_paths(project, run)
-    binary = target.with_suffix("")
-    pending, candidates, seen = [wrapper], [], set()
-    while pending:
-        pid = pending.pop()
-        if pid in seen:
-            raise RuntimeError("Projects process ancestry is ambiguous.")
-        seen.add(pid)
-        process = Path("/proc", str(pid))
-        executable = process.joinpath("exe").readlink()
-        arguments = process.joinpath("cmdline").read_bytes().split(b"\0")
-        if executable == binary or executable.name == "dotnet" and str(Path(str(binary) + ".dll")).encode() in arguments:
-            candidates.append(pid)
-        pending.extend(process_children(pid))
-    if len(candidates) != 1:
-        raise RuntimeError("The actual Projects server process is missing or ambiguous.")
-    pid = candidates[0]
-    started = process_start(pid)
-    environment = dict(item.split(b"=", 1) for item in Path("/proc", str(pid), "environ").read_bytes().split(b"\0") if b"=" in item)
-    expected = {b"NAMESPACE": owned["_isolation"].encode(), b"EventStore__DomainService__AppId": b"projects",
-                b"XDG_DATA_HOME": str(Path(owned["_configuration"]).parent / "data-projects").encode(),
-                b"ASPNETCORE_ENVIRONMENT": b"Development"}
-    if started is None or any(environment.get(key) != value for key, value in expected.items()):
-        raise RuntimeError("Projects server does not belong to this isolated Development fixture.")
-    if process_start(wrapper) != wrapper_start or process_start(pid) != started:
-        raise RuntimeError("Projects process identity changed during observation.")
     mode = observe_runtime_modes(graph, owned, apps=("projects",), run=run)["projects"]
-    if (mode["pid"], mode["startTicks"], mode["wrapperPid"], mode["wrapperStartTicks"]) != (pid, started, wrapper, wrapper_start):
-        raise RuntimeError("Projects process changed during runtime mode rebinding.")
-    return {"runtimeMode": mode, "resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
-            "pid": pid, "startTicks": started,
-            "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
-            "assemblySha256": hashlib.sha256(Path(str(binary) + ".dll").read_bytes()).hexdigest()}
+    pid, wrapper = mode["pid"], mode["wrapperPid"]
+    binary_digest = hashlib.sha256(Path("/proc", str(pid), "exe").read_bytes()).hexdigest()
+    if process_start(wrapper) != mode["wrapperStartTicks"] or process_start(pid) != mode["startTicks"]:
+        raise RuntimeError("Projects process identity changed during observation.")
+    return {"runtimeMode": mode, "resourceName": resource["name"], "launcherPid": wrapper,
+            "launcherStartTicks": mode["wrapperStartTicks"], "pid": pid, "startTicks": mode["startTicks"],
+            "binarySha256": binary_digest, "assemblySha256": mode["assemblySha256"]}
 
 
 def projects_processes_gone(identity: dict) -> bool:
@@ -1844,6 +1811,31 @@ def source_dependency_graph(observations: dict) -> dict:
     return result
 
 
+def runs_project_assembly(process: Path, target: Path) -> bool:
+    """Match the native apphost or the muxer's entry assembly before application arguments."""
+    executable = (process / "exe").readlink()
+    if executable == target.with_suffix(""):
+        return True
+    if executable.name != "dotnet":
+        return False
+    arguments = (process / "cmdline").read_bytes().split(b"\0")
+    index = 1
+    # hostfxr consumes only its leading option/value pairs. --depsfile and --runtimeconfig require exec.
+    host_options = {b"--additionalprobingpath", b"--additional-deps", b"--fx-version", b"--roll-forward",
+                    b"--roll-forward-on-no-candidate-fx"}
+    if len(arguments) > index and arguments[index].lower() == b"exec":
+        index += 1
+        host_options.update((b"--depsfile", b"--runtimeconfig"))
+    while index < len(arguments) and arguments[index].lower() in host_options:
+        index += 2
+    if index >= len(arguments) or not arguments[index].lower().endswith((b".dll", b".exe")):
+        return False
+    entry = Path(os.fsdecode(arguments[index]))
+    if not entry.is_absolute():
+        entry = (process / "cwd").readlink() / entry
+    return entry.resolve() == target
+
+
 def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -> dict:
     """Read finite options only from each exact owned native server, preserving its process identity."""
     result = {}
@@ -1855,11 +1847,14 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -
         properties = resource[0].get("properties", {})
         wrapper = properties.get("executable.pid")
         project = ROOT / relative
-        if type(wrapper) is not int or properties.get("project.path") != str(project) or process_start(wrapper) is None:
+        if type(wrapper) is not int or wrapper <= 0 or properties.get("project.path") != str(project):
             raise RuntimeError("A native scenario peer is not its actual source project.")
         before = process_start(wrapper)
+        if before is None:
+            raise RuntimeError("The native scenario launcher is absent.")
         target, _ = project_build_paths(project, run)
-        binary = target.with_suffix("")
+        if properties.get("project.targetPath") not in (None, str(target)):
+            raise RuntimeError("The Aspire launch target differs from the evaluated Debug assembly.")
         pending, candidates, seen = [wrapper], [], set()
         while pending:
             pid = pending.pop()
@@ -1867,9 +1862,7 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -
                 raise RuntimeError("A native scenario peer ancestry is ambiguous.")
             seen.add(pid)
             process = Path("/proc", str(pid))
-            executable = process.joinpath("exe").readlink()
-            arguments = process.joinpath("cmdline").read_bytes().split(b"\0")
-            if executable == binary or executable.name == "dotnet" and str(Path(str(binary) + ".dll")).encode() in arguments:
+            if runs_project_assembly(process, target):
                 candidates.append(pid)
             pending.extend(process_children(pid))
         if len(candidates) != 1:
@@ -1882,11 +1875,12 @@ def observe_runtime_modes(graph: dict, owned: dict, *, apps=None, run=execute) -
                     "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "true" if app == "folders" else "false"}
         if any(environment.get(key.encode()) != value.encode() for key, value in expected.items()):
             raise RuntimeError("A native scenario peer has changed namespace, source ownership or private options.")
+        assembly_digest = hashlib.sha256(target.read_bytes()).hexdigest()
         if started is None or process_start(wrapper) != before or process_start(pid) != started:
             raise RuntimeError("A native scenario peer changed during option observation.")
         result[app] = {"wrapperPid": wrapper, "wrapperStartTicks": before, "pid": pid, "startTicks": started,
                        "environment": "Development", "options": {key: expected[key] for key in (*RUNTIME_FLAGS, "EventStore__RouteCatalog__ReuseHeldMetadataDispatch")},
-                       "assemblySha256": hashlib.sha256(Path(str(binary) + ".dll").read_bytes()).hexdigest()}
+                       "assemblySha256": assembly_digest}
     return result
 
 

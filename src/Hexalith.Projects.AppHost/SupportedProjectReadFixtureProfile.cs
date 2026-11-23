@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 
 using CommunityToolkit.Aspire.Hosting.Dapr;
 
@@ -126,10 +127,10 @@ public static class SupportedProjectReadFixtureProfile
     /// <summary>Adds real Folder hosts, Dapr discovery, platform broker grants and distinct receiver trust.</summary>
     public static void AddResources(
         IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> eventStore,
-        IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects,
-        IResourceBuilder<ProjectResource> projectsWorkers,
+        IResourceBuilder<DotnetProjectResource> eventStore,
+        IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> projects,
+        IResourceBuilder<DotnetProjectResource> projectsWorkers,
         string resourcesPath)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -144,14 +145,14 @@ public static class SupportedProjectReadFixtureProfile
         string projectResources = AddQualificationResiliency(configuration, resourcesPath, "projects");
         string root = ResolveProjectRoot(configuration["HexalithFoldersRoot"] ?? builder.AppHostDirectory);
 #if SUPPORTED_PROJECT_READ_SOURCE
-        IResourceBuilder<ProjectResource> folders = builder.AddProject<global::Projects.Hexalith_Folders_Server>("folders",
+        IResourceBuilder<DotnetProjectResource> folders = builder.AddDotnetProject("folders", new global::Projects.Hexalith_Folders_Server().ProjectPath,
             options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
-        IResourceBuilder<ProjectResource> folderWorkers = builder.AddProject<global::Projects.Hexalith_Folders_Workers>("folders-workers",
+        IResourceBuilder<DotnetProjectResource> folderWorkers = builder.AddDotnetProject("folders-workers", new global::Projects.Hexalith_Folders_Workers().ProjectPath,
             options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
 #else
         string foldersRoot = configuration["HexalithFoldersRoot"] ?? Path.Combine(root, "references", "Hexalith.Folders");
-        IResourceBuilder<ProjectResource> folders = builder.AddProject("folders", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj")).WithHttpEndpoint();
-        IResourceBuilder<ProjectResource> folderWorkers = builder.AddProject("folders-workers", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Workers", "Hexalith.Folders.Workers.csproj")).WithHttpEndpoint();
+        IResourceBuilder<DotnetProjectResource> folders = builder.AddDotnetProject("folders", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj")).WithHttpEndpoint();
+        IResourceBuilder<DotnetProjectResource> folderWorkers = builder.AddDotnetProject("folders-workers", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Workers", "Hexalith.Folders.Workers.csproj")).WithHttpEndpoint();
 #endif
         var (state, pubsub) = builder.AddProjectsSharedDaprComponents(Required(configuration, "Dapr:RedisHost"));
         var conversationStartStore = builder.AddDaprComponent("projects-conversation-start-setup", "state.redis")
@@ -164,9 +165,9 @@ public static class SupportedProjectReadFixtureProfile
         IResourceBuilder<ParameterResource> projectsSecret = Secret("projects-secret", "ProjectsSecret");
         IResourceBuilder<ParameterResource> ownerKey = Secret("owner-key", "OwnerPrivateKey");
 #if SUPPORTED_PROJECT_READ_SOURCE
-        IResourceBuilder<ProjectResource> authority = builder.AddProject<global::Projects.Hexalith_Projects_ReadAuthority>("supported-read-authority")
+        IResourceBuilder<DotnetProjectResource> authority = builder.AddDotnetProject("supported-read-authority", new global::Projects.Hexalith_Projects_ReadAuthority().ProjectPath)
 #else
-        IResourceBuilder<ProjectResource> authority = builder.AddProject("supported-read-authority", Path.Combine(root, "tests", "Hexalith.Projects.ReadAuthority", "Hexalith.Projects.ReadAuthority.csproj"))
+        IResourceBuilder<DotnetProjectResource> authority = builder.AddDotnetProject("supported-read-authority", Path.Combine(root, "tests", "Hexalith.Projects.ReadAuthority", "Hexalith.Projects.ReadAuthority.csproj"))
 #endif
             .WithHttpsEndpoint(name: "https")
             .WithHttpEndpoint(name: "http")
@@ -174,7 +175,7 @@ public static class SupportedProjectReadFixtureProfile
             .WithEnvironment("Kestrel__Certificates__Default__Path", Required(configuration, Prefix + "CertificatePath"))
             .WithEnvironment("Kestrel__Certificates__Default__Password", certificatePassword);
         ReferenceExpression issuer = ReferenceExpression.Create($"{authority.GetEndpoint("https")}/workload-authority");
-        foreach (IResourceBuilder<ProjectResource> resource in new[] { eventStore, tenants, projects, projectsWorkers, folders, folderWorkers })
+        foreach (IResourceBuilder<DotnetProjectResource> resource in new[] { eventStore, tenants, projects, projectsWorkers, folders, folderWorkers })
         {
             string name = resource.Resource.Name;
             _ = resource.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
@@ -313,7 +314,7 @@ public static class SupportedProjectReadFixtureProfile
 
         IResourceBuilder<ParameterResource> Secret(string name, string key)
             => builder.AddParameter("supported-reads-" + name, () => Required(configuration, Prefix + key), secret: true);
-        void ConfigureClient(IResourceBuilder<ProjectResource> resource, string workload, IResourceBuilder<ParameterResource> secret)
+        void ConfigureClient(IResourceBuilder<DotnetProjectResource> resource, string workload, IResourceBuilder<ParameterResource> secret)
         {
             _ = resource.WithEnvironment("Authentication__WorkloadIssuer__Workload", workload)
                 .WithEnvironment("Authentication__WorkloadIssuer__ClientId", workload + "-fixture")

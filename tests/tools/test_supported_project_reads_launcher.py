@@ -4,6 +4,7 @@ import base64
 import hashlib
 import importlib.util
 import io
+import itertools
 import os
 import socket
 import sqlite3
@@ -966,26 +967,64 @@ class SupportedReadProjectsRestartControls(unittest.TestCase):
         expected = {"NAMESPACE": "scope", "EventStore__DomainService__AppId": "projects", "XDG_DATA_HOME": "/private/data-projects",
                     "ASPNETCORE_ENVIRONMENT": "Development", **LAUNCHER.RUNTIME_FLAGS,
                     "EventStore__RouteCatalog__ReuseHeldMetadataDispatch": "false"}
-        for changed in (None, *expected):
-            environment = {**expected, **({changed: "foreign"} if changed else {})}
+        assembly = Path(str(binary) + ".dll")
+        def exercise(launcher, executable, arguments, changed=None, rejected=False):
+            env = dict(expected)
+            if changed in env:
+                env[changed] = "foreign"
+            resource["properties"]["executable.pid"] = launcher
+            resource["properties"]["project.targetPath"] = "/foreign/Peer.dll" if changed == "target" else str(assembly)
+            assembly_reads = []
+
             def contents(path):
+                if path == assembly:
+                    assembly_reads.append(path)
+                    return b"selected-debug-assembly"
                 if path.name == "environ":
-                    return b"\0".join((key + "=" + value).encode() for key, value in environment.items())
+                    return b"\0".join((key + "=" + value).encode() for key, value in env.items())
                 if path.name == "cmdline":
-                    return b"dotnet\0run\0" if path.parts[2] == "201" else str(binary).encode()
-                return b"synthetic-binary"
-            with self.subTest(changed=changed), contextlib.ExitStack() as stack:
-                stack.enter_context(patch.object(LAUNCHER, "project_build_paths", return_value=(Path(str(binary) + ".dll"), project.parent / "obj/project.assets.json")))
+                    return b"dotnet\0run\0" if path.parts[2] == "201" else b"\0".join(arguments)
+                if path.name == "exe":
+                    return b"running-process-image"
+                self.fail(f"Unexpected file read: {path}")
+
+            def proc_link(path):
+                if path.name == "cwd":
+                    return binary.parent
+                return Path("/tools/dotnet") if path.parts[2] == "201" else executable
+
+            with self.subTest(launcher=launcher, arguments=arguments, changed=changed), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(LAUNCHER, "project_build_paths", return_value=(assembly, project.parent / "obj/project.assets.json")))
                 stack.enter_context(patch.object(LAUNCHER, "process_start", return_value="100"))
-                stack.enter_context(patch.object(Path, "readlink", autospec=True, side_effect=lambda path: Path("/tools/dotnet") if path.parts[2] == "201" else binary))
-                stack.enter_context(patch.object(Path, "read_text", autospec=True, side_effect=lambda path: "301" if path.parts[2] == "201" else ""))
+                stack.enter_context(patch.object(LAUNCHER, "process_children", side_effect=lambda pid: [301] if pid == 201 else []))
+                stack.enter_context(patch.object(Path, "readlink", autospec=True, side_effect=proc_link))
                 stack.enter_context(patch.object(Path, "read_bytes", autospec=True, side_effect=contents))
-                if changed:
+                owned = {"_configuration": "/private/fixture.json", "_isolation": "scope"}
+                graph = {"resources": [resource]}
+                if changed or rejected:
                     with self.assertRaises(RuntimeError):
-                        LAUNCHER.projects_process_identity({"_configuration": "/private/fixture.json", "_isolation": "scope"}, {"resources": [resource]})
-                else:
-                    identity = LAUNCHER.projects_process_identity({"_configuration": "/private/fixture.json", "_isolation": "scope"}, {"resources": [resource]})
-                    self.assertEqual((identity["pid"], identity["launcherPid"]), (301, 201))
+                        LAUNCHER.projects_process_identity(owned, graph)
+                    return
+                identity = LAUNCHER.projects_process_identity(owned, graph)
+                self.assertEqual((identity["pid"], identity["launcherPid"]), (301, launcher))
+                self.assertEqual(identity["binarySha256"], hashlib.sha256(b"running-process-image").hexdigest())
+                self.assertEqual(assembly_reads, [assembly])
+                self.assertEqual(identity["assemblySha256"], identity["runtimeMode"]["assemblySha256"])
+                self.assertEqual(identity["assemblySha256"], hashlib.sha256(b"selected-debug-assembly").hexdigest())
+
+        dll = os.fsencode(assembly)
+        dotnet = Path("/tools/dotnet")
+        for launcher, changed in itertools.product((201, 301), (None, *expected, "target")):
+            exercise(launcher, binary, [os.fsencode(binary)], changed)
+            exercise(launcher, dotnet, [b"dotnet", dll], changed)
+        for launcher in (201, 301):
+            exercise(launcher, dotnet, [b"dotnet", b"--roll-forward", b"Major", dll])
+            exercise(launcher, dotnet, [b"dotnet", b"EXEC", b"--RUNTIMECONFIG", b"a.json", os.fsencode(assembly.name)])
+            exercise(launcher, dotnet, [b"dotnet", b"exec", dll, b"argument"])
+            exercise(launcher, dotnet, [b"dotnet", b"exec", b"--runtimeconfig", b"a.json", b"--depsfile", b"b.json", dll])
+            for args in ([b"foreign.dll", dll], [b"exec", b"foreign.dll", dll], [b"exec", b"--depsfile", dll, b"foreign.dll"],
+                         [b"run", b"--", dll], [b"--runtimeconfig", b"a.json", dll], [b"exec", b"--runtimeconfig"]):
+                exercise(launcher, dotnet, [b"dotnet", *args], rejected=True)
 
     def test_unchanged_process_or_wrapper_and_changed_binary_are_refused(self):
         before = self.identity()

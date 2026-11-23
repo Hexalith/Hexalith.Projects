@@ -9,6 +9,7 @@ using System.Text.Json;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 
 using CommunityToolkit.Aspire.Hosting.Dapr;
 
@@ -71,6 +72,26 @@ public sealed class AspireTopologyTests
         appHost.ShouldNotContain("redis.GetEndpoint(\"tcp\")");
     }
 
+    /// <summary>All standard sidecars honor the selected Dapr home or use the CLI default.</summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData("custom-dapr-runtime")]
+    public void StandardSidecarsUseConfiguredDaprRuntime(string? directory)
+    {
+        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { DisableDashboard = true });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["HEXALITH_DAPR_HOME"] = directory });
+        string fixture = FixtureProjectPath();
+        var applications = new[] { "eventstore", "tenants", "projects", "projects-workers" }
+            .Select(name => builder.AddDotnetProject(name, fixture)).ToArray();
+        builder.AddHexalithProjects(applications[0], applications[1], applications[2], applications[3],
+            "localhost:6379", "accesscontrol.yaml", "DaprComponents");
+        foreach (var application in applications)
+        {
+            var sidecar = application.Resource.Annotations.OfType<DaprSidecarAnnotation>().Single().Sidecar;
+            sidecar.Annotations.OfType<DaprSidecarOptionsAnnotation>().Single().Options.RuntimePath.ShouldBe(directory);
+        }
+    }
+
     /// <summary>Verifies the AppHost resolves and forwards the platform-supported local Dapr service ports.</summary>
     [Fact]
     public void AppHostShouldResolveLocalDaprPlacementAndSchedulerEndpoints()
@@ -120,9 +141,10 @@ public sealed class AspireTopologyTests
             [ProjectsLiveE2EFixtureProfile.EnabledConfigurationKey] = "false",
         });
         string fixtureProject = FixtureProjectPath();
-        IResourceBuilder<ProjectResource> projects = builder.AddProject("projects", fixtureProject);
+        IResourceBuilder<DotnetProjectResource> projects = builder.AddDotnetProject("projects", fixtureProject);
 
-        IResourceBuilder<ProjectResource>? control = ProjectsLiveE2EFixtureProfile.AddResources(
+        IResourceAnnotation[] originalAnnotations = [.. projects.Resource.Annotations];
+        IResourceBuilder<DotnetProjectResource>? control = ProjectsLiveE2EFixtureProfile.AddResources(
             builder,
             projects,
             fixtureProject);
@@ -136,8 +158,7 @@ public sealed class AspireTopologyTests
 
         // Fail closed: Projects keeps its production sibling bindings, with no wait on or reference to
         // a fixture role, and the topology exposes no external ingress.
-        projects.Resource.Annotations.OfType<WaitAnnotation>().ShouldBeEmpty();
-        projects.Resource.Annotations.OfType<ResourceRelationshipAnnotation>().ShouldBeEmpty();
+        projects.Resource.Annotations.ShouldBe(originalAnnotations);
         projects.Resource.Annotations.OfType<EndpointAnnotation>().ShouldAllBe(static endpoint => !endpoint.IsExternal);
     }
 
@@ -176,9 +197,9 @@ public sealed class AspireTopologyTests
             [ProjectsLiveE2EFixtureProfile.EnabledConfigurationKey] = "true",
         });
         string fixtureProject = FixtureProjectPath();
-        IResourceBuilder<ProjectResource> projects = builder.AddProject("projects", fixtureProject);
+        IResourceBuilder<DotnetProjectResource> projects = builder.AddDotnetProject("projects", fixtureProject);
 
-        IResourceBuilder<ProjectResource>? control = ProjectsLiveE2EFixtureProfile.AddResources(
+        IResourceBuilder<DotnetProjectResource>? control = ProjectsLiveE2EFixtureProfile.AddResources(
             builder,
             projects,
             fixtureProject);

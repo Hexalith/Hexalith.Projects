@@ -434,7 +434,12 @@ internal sealed partial class PackageReadFixture : IDisposable
     internal async Task<T> ReadAsync<T>(bool open = false, bool chatbot = true, bool inspection = false, ListProjectsQuery? list = null, string project = "project-a", string? tenant = null, bool tenantActor = false, bool projectAdministrator = false, bool quarantine = false)
     {
         using HttpResponseMessage response = await QueryAsync(open, chatbot, inspection, list, project, tenant, tenantActor: tenantActor, projectAdministrator: projectAdministrator, quarantine: quarantine).ConfigureAwait(false);
-        Require(response.StatusCode == HttpStatusCode.OK, "Supported read returned HTTP " + (int)response.StatusCode + ".");
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            string selection = open ? "open" : list?.Cursor is null ? "list" : "continuation";
+            Console.Error.WriteLine($"[package-native] read-failed selection={selection} status={(int)response.StatusCode}");
+            Require(false, "Supported read returned HTTP " + (int)response.StatusCode + ".");
+        }
         SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
         T value = result!.Payload.Deserialize<T>(Json)!;
         if (value is ProjectListPage diagnostic)
@@ -569,6 +574,9 @@ internal sealed partial class PackageReadFixture : IDisposable
                 || !after.TryGetProperty(started, out JsonElement newStart) || newStart.ValueKind != JsonValueKind.String || !long.TryParse(newStart.GetString(), out long newTicks) || newTicks <= 0
                 || oldId == newId && oldTicks == newTicks) return false;
         }
+        foreach (JsonElement receipt in new[] { before, after })
+            if (receipt.GetProperty("pid").GetInt32() == receipt.GetProperty("launcherPid").GetInt32()
+                && receipt.GetProperty("startTicks").GetString() != receipt.GetProperty("launcherStartTicks").GetString()) return false;
         foreach (string field in new[] { "resourceName", "binarySha256", "assemblySha256" })
             if (!before.TryGetProperty(field, out JsonElement previous) || previous.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(previous.GetString())
                 || !after.TryGetProperty(field, out JsonElement current) || current.ValueKind != JsonValueKind.String || current.GetString() != previous.GetString()) return false;
@@ -909,13 +917,15 @@ internal sealed partial class PackageReadFixture : IDisposable
     internal async Task ResourceAsync(string command, string resource = "folders")
     {
         Require(resource is "projects" or "folders" && command is "start" or "stop" or "restart", "Resource control is outside the owned finite selection.");
-        JsonElement before = await ProcessReceiptAsync(resource).ConfigureAwait(false);
-        Require(before.GetProperty("resourceName").GetString() == resource, "The process receipt names a different owned resource.");
-        string selected = command switch { "start" => KnownResourceCommands.StartCommand, "stop" => KnownResourceCommands.StopCommand, _ => KnownResourceCommands.RestartCommand };
-        ExecuteCommandResult result = await _application.ResourceCommands.ExecuteCommandAsync(resource, selected, Cancellation).ConfigureAwait(false);
-        Require(result.Success, "The actual owned resource command failed.");
         using CancellationTokenSource transition = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
         transition.CancelAfter(TimeSpan.FromSeconds(30));
+        JsonElement before = await ProcessReceiptAsync(resource, transition.Token).ConfigureAwait(false);
+        Require(before.GetProperty("resourceName").GetString() == resource, "The process receipt names a different owned resource.");
+        if (command != "start")
+            await MatchAspireProcessAsync(before).ConfigureAwait(false);
+        string selected = command switch { "start" => KnownResourceCommands.StartCommand, "stop" => KnownResourceCommands.StopCommand, _ => KnownResourceCommands.RestartCommand };
+        ExecuteCommandResult result = await _application.ResourceCommands.ExecuteCommandAsync(resource, selected, transition.Token).ConfigureAwait(false);
+        Require(result.Success, "The actual owned resource command failed.");
         if (command == "stop")
         {
             while (!ProcessExited(before)) await Task.Delay(100, transition.Token).ConfigureAwait(false);
@@ -924,14 +934,15 @@ internal sealed partial class PackageReadFixture : IDisposable
         JsonElement after;
         while (true)
         {
-            after = await ProcessReceiptAsync(resource).ConfigureAwait(false);
+            after = await ProcessReceiptAsync(resource, transition.Token).ConfigureAwait(false);
             if (after.GetProperty("pid").GetInt32() != before.GetProperty("pid").GetInt32()
                 || after.GetProperty("startTicks").GetString() != before.GetProperty("startTicks").GetString()) break;
             await Task.Delay(100, transition.Token).ConfigureAwait(false);
         }
         Require(ProcessExited(before), "The previous owned application process has not exited.");
         await _application.ResourceNotifications.WaitForResourceHealthyAsync(resource, transition.Token).ConfigureAwait(false);
-        after = await ProcessReceiptAsync(resource).ConfigureAwait(false);
+        after = await ProcessReceiptAsync(resource, transition.Token).ConfigureAwait(false);
+        await MatchAspireProcessAsync(after).ConfigureAwait(false);
         Require(!ProcessExited(after)
             && (after.GetProperty("pid").GetInt32() != before.GetProperty("pid").GetInt32()
                 || after.GetProperty("startTicks").GetString() != before.GetProperty("startTicks").GetString()),
@@ -942,21 +953,28 @@ internal sealed partial class PackageReadFixture : IDisposable
         await File.WriteAllTextAsync(Path.Combine(Evidence, resource + "-restart-process.json"), JsonSerializer.Serialize(new
         { completed = true, oldProcessExited = true, endpointsRediscovered = true, resource, action = command, before, after }, Json), Cancellation).ConfigureAwait(false);
 
+        async Task MatchAspireProcessAsync(JsonElement receipt)
+        {
+            int pid = receipt.GetProperty("pid").GetInt32();
+            Require(receipt.GetProperty("launcherPid").GetInt32() == pid
+                && receipt.GetProperty("launcherStartTicks").GetString() == receipt.GetProperty("startTicks").GetString() && !ProcessExited(receipt),
+                "The selected prebuilt process and its launcher identity differ.");
+            await _application.ResourceNotifications.WaitForResourceAsync(resource, update =>
+                update.Snapshot.Properties.Any(property => property.Name == "executable.pid"
+                    && int.TryParse(property.Value?.ToString(), out int managedPid) && managedPid == pid),
+                transition.Token).ConfigureAwait(false);
+        }
+
         static bool ProcessExited(JsonElement receipt)
         {
-            try
-            {
-                using Process prior = Process.GetProcessById(receipt.GetProperty("pid").GetInt32());
-                return prior.HasExited || prior.StartTime.ToUniversalTime().Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture) != receipt.GetProperty("startTicks").GetString();
-            }
-            catch (ArgumentException) { return true; }
-            catch (InvalidOperationException) { return true; } // The associated process exited while StartTime was being read.
+            string? liveStart = PackageProcessReceipt.ReadStartTicks(receipt.GetProperty("pid").GetInt32());
+            return liveStart is null || liveStart != receipt.GetProperty("startTicks").GetString();
         }
     }
 
-    private async Task<JsonElement> ProcessReceiptAsync(string resource)
+    private async Task<JsonElement> ProcessReceiptAsync(string resource, CancellationToken cancellationToken)
     {
-        using JsonDocument document = JsonDocument.Parse(await File.ReadAllBytesAsync(_scratch.File(resource + "-process.json"), Cancellation).ConfigureAwait(false));
+        using JsonDocument document = JsonDocument.Parse(await File.ReadAllBytesAsync(_scratch.File(resource + "-process.json"), cancellationToken).ConfigureAwait(false));
         return document.RootElement.Clone();
     }
 

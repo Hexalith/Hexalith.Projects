@@ -9,7 +9,8 @@ Prerequisites:
 
 - .NET SDK `11.0.100`.
 - Aspire CLI `17.0.0` (matching the AppHost SDK/hosting/orchestration stack).
-- Dapr CLI `1.18.0` with runtime `1.18.2` initialized for local sidecars.
+- Dapr CLI and runtime `1.19.1`, initialized for local sidecars. For a custom installation,
+  set `HEXALITH_DAPR_HOME` to the directory containing `.dapr/bin/daprd`.
 - `jq` for JSON endpoint extraction and `curl` for health probes.
 - Docker-compatible container runtime for Aspire-managed infrastructure.
 - The Dapr-initialized Redis backing endpoint must be reachable from the host. By default the AppHost uses

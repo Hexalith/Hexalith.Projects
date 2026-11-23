@@ -5,6 +5,7 @@ using System.Text.Json;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 
 using Hexalith.EventStore.Aspire;
 
@@ -13,12 +14,12 @@ internal static class PackageActualOwnerInfrastructure
 {
     /// <summary>Composes real owners after the six application sidecars have been declared.</summary>
     internal static DevelopmentRouteCatalogComposition Add(IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> gateway, IResourceBuilder<ProjectResource> tenants,
-        IResourceBuilder<ProjectResource> projects)
+        IResourceBuilder<DotnetProjectResource> gateway, IResourceBuilder<DotnetProjectResource> tenants,
+        IResourceBuilder<DotnetProjectResource> projects)
     {
-        var ownerContexts = new Dictionary<ProjectResource, PackageOwnerLoadContext>();
+        var ownerContexts = new Dictionary<DotnetProjectResource, PackageOwnerLoadContext>();
 
-        Assembly Load(ProjectResource project, string artifact)
+        Assembly Load(DotnetProjectResource project, string artifact)
         {
             string projectPath = project.GetProjectMetadata().ProjectPath;
             string release = Path.Combine(Path.GetDirectoryName(projectPath)!, "bin", "Release");
@@ -53,11 +54,11 @@ internal static class PackageActualOwnerInfrastructure
                 "--label", "hexalith.supported-reads=" + isolation);
         }
 
-        IResourceBuilder<ProjectResource> folders = builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>()
+        IResourceBuilder<DotnetProjectResource> folders = builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>()
             .Single(resource => resource.Name == "folders"));
-        IResourceBuilder<ProjectResource> projectsWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>()
+        IResourceBuilder<DotnetProjectResource> projectsWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>()
             .Single(resource => resource.Name == "projects-workers"));
-        IResourceBuilder<ProjectResource> foldersWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<ProjectResource>()
+        IResourceBuilder<DotnetProjectResource> foldersWorkers = builder.CreateResourceBuilder(builder.Resources.OfType<DotnetProjectResource>()
             .Single(resource => resource.Name == "folders-workers"));
         Assembly projectOwner = Load(projects.Resource, "Hexalith.Projects.Server.dll");
         Assembly folderOwner = Load(folders.Resource, "Hexalith.Folders.Server.dll");
@@ -79,9 +80,9 @@ internal static class PackageActualOwnerInfrastructure
                 new { name = "actorStateStore", value = "true" }, new { name = "keyPrefix", value = "none" },
             } },
         });
-        DevelopmentRouteCatalogInvocation[] DomainCalls(params string[] methods) => methods.Select(method =>
-            new DevelopmentRouteCatalogInvocation(gateway, method, ["POST"])).ToArray();
-        DevelopmentRouteCatalogReceiver[] receivers =
+        DevelopmentRouteCatalogInvocation<DotnetProjectResource>[] DomainCalls(params string[] methods) => methods.Select(method =>
+            new DevelopmentRouteCatalogInvocation<DotnetProjectResource>(gateway, method, ["POST"])).ToArray();
+        DevelopmentRouteCatalogReceiver<DotnetProjectResource>[] receivers =
         [
             new(gateway,
             [

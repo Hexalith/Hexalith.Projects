@@ -7,6 +7,7 @@ namespace Hexalith.Projects.AppHost;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 
 using Microsoft.Extensions.Configuration;
 
@@ -35,9 +36,9 @@ public static class ProjectsLiveE2EFixtureProfile
     /// <param name="projects">The Projects server resource that consumes sibling public contracts.</param>
     /// <param name="fixtureProjectPath">Optional explicit fixture project path for structural hosts and tests.</param>
     /// <returns>The runner control resource, or <see langword="null"/> when the profile is disabled.</returns>
-    public static IResourceBuilder<ProjectResource>? AddResources(
+    public static IResourceBuilder<DotnetProjectResource>? AddResources(
         IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> projects,
+        IResourceBuilder<DotnetProjectResource> projects,
         string? fixtureProjectPath = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -56,9 +57,9 @@ public static class ProjectsLiveE2EFixtureProfile
             throw new FileNotFoundException("The live E2E fixture project was not found.", resolvedFixtureProjectPath);
         }
 
-        IResourceBuilder<ProjectResource> conversations = AddRole(builder, resolvedFixtureProjectPath, "conversations");
-        IResourceBuilder<ProjectResource> folders = AddRole(builder, resolvedFixtureProjectPath, "folders");
-        IResourceBuilder<ProjectResource> memories = AddRole(builder, resolvedFixtureProjectPath, "memories");
+        IResourceBuilder<DotnetProjectResource> conversations = AddRole(builder, resolvedFixtureProjectPath, "conversations");
+        IResourceBuilder<DotnetProjectResource> folders = AddRole(builder, resolvedFixtureProjectPath, "folders");
+        IResourceBuilder<DotnetProjectResource> memories = AddRole(builder, resolvedFixtureProjectPath, "memories");
 
         _ = projects
             .WithReference(conversations)
@@ -69,7 +70,7 @@ public static class ProjectsLiveE2EFixtureProfile
             .WaitFor(memories);
 
         return builder
-            .AddProject(ControlResourceName, resolvedFixtureProjectPath)
+            .AddDotnetProject(ControlResourceName, resolvedFixtureProjectPath)
             .WithEnvironment("FixtureRole", "control")
             .WithEnvironment("FixtureEndpoints__Conversations", conversations.GetEndpoint("http"))
             .WithEnvironment("FixtureEndpoints__Folders", folders.GetEndpoint("http"))
@@ -85,12 +86,12 @@ public static class ProjectsLiveE2EFixtureProfile
             .WaitFor(memories);
     }
 
-    private static IResourceBuilder<ProjectResource> AddRole(
+    private static IResourceBuilder<DotnetProjectResource> AddRole(
         IDistributedApplicationBuilder builder,
         string fixtureProjectPath,
         string role)
         => builder
-            .AddProject(role, fixtureProjectPath)
+            .AddDotnetProject(role, fixtureProjectPath)
             .WithEnvironment("FixtureRole", role)
             .WithHttpEndpoint()
             .WithHttpHealthCheck("/health");

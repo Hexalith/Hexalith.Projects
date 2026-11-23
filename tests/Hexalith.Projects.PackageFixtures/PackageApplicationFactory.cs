@@ -72,7 +72,7 @@ internal sealed class PackageApplicationFactory(Type entryPoint, string[] argume
         applicationBuilder.Eventing.Subscribe<BeforeResourceStartedEvent>((resourceEvent, _) =>
         {
             if (resourceEvent.Resource is IResourceWithEnvironment resource
-                && (resource is ProjectResource || resource.Name == "aspire-dashboard")
+                && (resource is IDotnetProgramResource || resource.Name == "aspire-dashboard")
                 && _privateProfiles.TryAdd(resource.Name, 0))
                 resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
                     context.EnvironmentVariables["LOCALAPPDATA"] = Path.Combine(privateDirectory, "profiles", resource.Name)));

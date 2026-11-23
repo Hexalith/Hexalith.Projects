@@ -1,36 +1,37 @@
 namespace Hexalith.Projects.PackageFixtures.AppHost;
 
+using System.Reflection;
 using global::Aspire.Hosting;
 
-/// <summary>Launches one previously compiled project; missing Release output always fails closed.</summary>
-/// <typeparam name="TProject">The generated resource-specific project metadata.</typeparam>
-public sealed class PrebuiltMetadata<TProject> : IProjectMetadata where TProject : IProjectMetadata, new()
+/// <summary>Identifies the selected package project and its evaluated Release output.</summary>
+internal sealed class PrebuiltMetadata(string projectPath, string targetPath) : IProjectMetadata
 {
-    private readonly TProject _project = new();
-
-    /// <summary>Gets the original project path only after its exact Release output is present.</summary>
-    public string ProjectPath
+    internal static PrebuiltMetadata ForProject(string projectPath)
     {
-        get
-        {
-            string path = _project.ProjectPath;
-            string output = Path.Combine(Path.GetDirectoryName(path)!, "bin", "Release");
-            string assembly = Path.GetFileNameWithoutExtension(path) + ".dll";
-            if (!Directory.Exists(output) || Directory.GetFiles(output, assembly, SearchOption.AllDirectories).Length != 1)
-                throw new InvalidOperationException("Missing or ambiguous prebuilt Release output for " + path);
-            return path;
-        }
+        string key = "PackageFixtureTarget:" + Path.GetFullPath(projectPath);
+        string? target = typeof(PrebuiltMetadata).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+            .SingleOrDefault(metadata => metadata.Key == key)?.Value;
+        return new(projectPath, target ?? throw new InvalidOperationException("No evaluated Release target for " + projectPath));
     }
 
-    /// <summary>Gets the mandatory no-build launch policy.</summary>
+    public string ProjectPath => projectPath;
     public bool SuppressBuild => true;
+    public string BuildWorkingDirectory => Path.GetDirectoryName(projectPath)!;
 
-    /// <summary>Gets the build context of the shared package build.</summary>
     public IReadOnlyDictionary<string, string> BuildEnvironment => new Dictionary<string, string>
     {
         ["Configuration"] = "Release", ["UseHexalithProjectReferences"] = "false", ["DOTNET_WATCH"] = "false",
     };
 
-    /// <summary>Gets the original project directory for SDK selection.</summary>
-    public string BuildWorkingDirectory => Path.GetDirectoryName(_project.ProjectPath)!;
+    internal string ResolveReleaseAssembly()
+    {
+        string output = Path.Combine(BuildWorkingDirectory, "bin", "Release");
+        string assembly = Path.GetFileName(targetPath);
+        if (!File.Exists(targetPath) || !File.Exists(Path.ChangeExtension(targetPath, "runtimeconfig.json"))
+            || !File.Exists(Path.ChangeExtension(targetPath, "deps.json")) || !Directory.Exists(output)
+            || Directory.EnumerateFiles(output, assembly, SearchOption.AllDirectories).Take(2).Count() != 1)
+            throw new InvalidOperationException("Missing or ambiguous prebuilt Release output for " + projectPath);
+        _ = AssemblyName.GetAssemblyName(targetPath);
+        return targetPath;
+    }
 }

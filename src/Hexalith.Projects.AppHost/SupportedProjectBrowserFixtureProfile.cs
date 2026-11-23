@@ -2,6 +2,7 @@ namespace Hexalith.Projects.AppHost;
 
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
+using global::Aspire.Hosting.Dotnet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -16,7 +17,7 @@ public static class SupportedProjectBrowserFixtureProfile
     }
 
     /// <summary>Composes only UI security and test observation; SDK owner trust remains unchanged.</summary>
-    public static void Add(IDistributedApplicationBuilder builder, IResourceBuilder<ProjectResource> ui)
+    public static void Add(IDistributedApplicationBuilder builder, IResourceBuilder<DotnetProjectResource> ui)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(ui);
@@ -37,7 +38,7 @@ public static class SupportedProjectBrowserFixtureProfile
             .WithEnvironment("Authentication__OpenIdConnect__ClientSecret", clientSecret)
             .WithEnvironment("SSL_CERT_FILE", builder.Configuration["Projects:SupportedReads:TrustBundle"]!);
         string root = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "../.."));
-        _ = builder.AddProject("browser-read-observer", Path.Combine(root, "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj"))
+        _ = builder.AddDotnetProject("browser-read-observer", Path.Combine(root, "tests", "Hexalith.Projects.E2E.Fixtures", "Hexalith.Projects.E2E.Fixtures.csproj"))
             .WithEnvironment("FixtureRole", "control")
             .WithEnvironment("FixtureStateStore__Enabled", "true")
             .WithEnvironment("FixtureStateStore__IsolationId", builder.Configuration["Projects:SupportedReads:IsolationId"]!)

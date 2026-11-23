@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 
 using global::Aspire.Hosting;
+using global::Aspire.Hosting.ApplicationModel;
 
 using Hexalith.Projects.PackageFixtures;
 using PackageHost = PackageFixtureHost::Hexalith.Projects.PackageFixtures.AppHost;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 using Shouldly;
@@ -23,6 +25,22 @@ using Xunit;
 /// <summary>Checks fixture refusal, bounded readiness and owned cleanup without a live backend.</summary>
 public sealed class PackageFixtureSafetyTests
 {
+    /// <summary>Receipts use the same Linux start identity as the external process supervisor.</summary>
+    [Fact]
+    public async Task ProcessReceiptMatchesTheKernelStartTicks()
+    {
+        if (!OperatingSystem.IsLinux()) return;
+        FixtureScratch scratch = new(actualOwners: true);
+        await using var cleanup = scratch.ConfigureAwait(false);
+        PackageProcessReceipt.Write(scratch.Directory, "projects");
+        using JsonDocument receipt = JsonDocument.Parse(await File.ReadAllBytesAsync(scratch.File("projects-process.json"), TestContext.Current.CancellationToken));
+        string stat = await File.ReadAllTextAsync("/proc/self/stat", TestContext.Current.CancellationToken);
+        string expected = stat[(stat.LastIndexOf(')') + 2)..].Split(' ')[19];
+        receipt.RootElement.GetProperty("pid").GetInt32().ShouldBe(Environment.ProcessId);
+        receipt.RootElement.GetProperty("startTicks").GetString().ShouldBe(expected);
+        receipt.RootElement.GetProperty("launcherStartTicks").GetString().ShouldBe(expected);
+    }
+
     /// <summary>Transport diagnostics expose a finite status without raw private details.</summary>
     [Theory]
     [InlineData("Status(StatusCode=\"Unavailable\", Detail=\"private-token\")", "Unavailable")]
@@ -259,9 +277,63 @@ public sealed class PackageFixtureSafetyTests
     [Fact]
     public void MissingReleaseOutputIsRefused()
     {
-        PackageHost.PrebuiltMetadata<MissingPackageFixtureMetadata> metadata = new();
+        var metadata = new PackageHost.PrebuiltMetadata("Fixture.csproj", Path.Combine(AppContext.BaseDirectory, "missing-package-output", "Fixture.dll"));
         metadata.SuppressBuild.ShouldBeTrue();
-        Should.Throw<InvalidOperationException>(() => _ = metadata.ProjectPath).Message.ShouldContain("Release output");
+        Should.Throw<InvalidOperationException>(() => metadata.ResolveReleaseAssembly()).Message.ShouldContain("Release output");
+    }
+
+    /// <summary>The fixture launches only its selected Release assembly and preserves application arguments.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PrebuiltLaunchUsesOneReleaseAssemblyAndRejectsAmbiguity(bool withHttps)
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            string project = Path.Combine(directory.FullName, "Fixture.csproj");
+            File.WriteAllText(project, "<Project Sdk=\"Microsoft.NET.Sdk\" />");
+            string release = Directory.CreateDirectory(Path.Combine(directory.FullName, "bin", "Release", "net11.0")).FullName;
+            string assembly = Path.Combine(release, "Fixture.dll");
+            File.Copy(typeof(PackageFixtureSafetyTests).Assembly.Location, assembly);
+            File.WriteAllText(Path.ChangeExtension(assembly, "runtimeconfig.json"), "{}");
+            File.WriteAllText(Path.ChangeExtension(assembly, "deps.json"), "{}");
+            var metadata = new PackageHost.PrebuiltMetadata(project, assembly);
+            var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { DisableDashboard = true });
+            var fixture = PackageHost.PrebuiltProjectExtensions.AddPrebuiltProject(builder, "fixture", metadata, withHttps)
+                .WithArgs("--authority");
+            foreach (var endpoint in fixture.Resource.Annotations.OfType<EndpointAnnotation>())
+            {
+                bool https = endpoint.UriScheme == "https";
+                endpoint.AllocatedEndpoint = new AllocatedEndpoint(endpoint, "127.0.0.1", https ? 46102 : 46101,
+                    targetPortExpression: https ? "46202" : "46201");
+            }
+            var execution = await ExecutionConfigurationBuilder.Create(fixture.Resource)
+                .WithEnvironmentVariablesConfig()
+                .BuildAsync(builder.ExecutionContext, NullLogger.Instance, TestContext.Current.CancellationToken);
+            var environment = execution.EnvironmentVariables.ToDictionary();
+            environment["ASPNETCORE_URLS"].ShouldBe(withHttps
+                ? "http://127.0.0.1:46201;https://127.0.0.1:46202" : "http://127.0.0.1:46201");
+            if (withHttps) environment["ASPNETCORE_HTTPS_PORT"].ShouldBe("46102");
+            else environment.ContainsKey("ASPNETCORE_HTTPS_PORT").ShouldBeFalse();
+            fixture.Resource.WorkingDirectory.ShouldBe(directory.FullName);
+            fixture.Resource.GetProjectMetadata().SuppressBuild.ShouldBeTrue();
+            var arguments = new List<object>();
+            foreach (var annotation in fixture.Resource.Annotations.OfType<CommandLineArgsCallbackAnnotation>())
+                await annotation.Callback(new CommandLineArgsCallbackContext(arguments, fixture.Resource, TestContext.Current.CancellationToken));
+            arguments.ShouldBe(new object[] { assembly, "--authority" });
+            builder.Resources.ShouldNotContain(resource => resource.Name == "__dotnet-project-build");
+            string duplicate = Directory.CreateDirectory(Path.Combine(release, "duplicate")).FullName;
+            File.Copy(assembly, Path.Combine(duplicate, "Fixture.dll"));
+            Should.Throw<InvalidOperationException>(() => PackageHost.PrebuiltProjectExtensions.AddPrebuiltProject(builder, "ambiguous", metadata))
+                .Message.ShouldContain("ambiguous");
+            File.Delete(assembly);
+            Should.Throw<InvalidOperationException>(() => metadata.ResolveReleaseAssembly()).Message.ShouldContain("Missing");
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
     }
 
     /// <summary>Unready resources terminate within the selected deadline and identify the failed stage.</summary>

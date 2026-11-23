@@ -24,4 +24,10 @@ public sealed record HexalithProjectsResources(
     IResourceBuilder<ProjectResource> EventStore,
     IResourceBuilder<ProjectResource> Tenants,
     IResourceBuilder<ProjectResource> Projects,
-    IResourceBuilder<ProjectResource> ProjectsWorkers);
+    IResourceBuilder<ProjectResource> ProjectsWorkers)
+{
+    internal HexalithProjectsResources(HexalithProjectsResources<ProjectResource> resources)
+        : this(resources.StateStore, resources.PubSub, resources.EventStore, resources.Tenants, resources.Projects, resources.ProjectsWorkers)
+    {
+    }
+}

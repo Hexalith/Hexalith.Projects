@@ -150,11 +150,12 @@ internal static class PackageFixtureRun
         }
         catch (Exception failure)
         {
-            foreach (string stage in (new System.Diagnostics.StackTrace(failure, true).GetFrames() ?? [])
-                .Select(frame => frame.GetMethod()).Where(method => method?.DeclaringType?.FullName?.StartsWith(
-                    "Hexalith.Projects.Integration.Tests.PackageRead", StringComparison.Ordinal) == true)
-                .Select(method => method!.DeclaringType!.FullName + "." + method.Name).Distinct(StringComparer.Ordinal).Take(8))
-                Console.Error.WriteLine("[package-native] failure-stage=" + stage);
+            foreach (string stage in FixtureDiagnostics.FailureStages(failure))
+            {
+                string label = stage.StartsWith("Hexalith.Projects.Integration.Tests.PackageRead", StringComparison.Ordinal)
+                    ? "[package-native]" : "[package-fixtures]";
+                Console.Error.WriteLine(label + " failure-stage=" + stage);
+            }
             await FixtureDiagnostics.ResourcesAsync(application ?? factory.Application, inputs.ProtectedValues).ConfigureAwait(false);
             failureCategory = scenario + ":" + failure.GetType().Name;
             Console.Error.WriteLine("[package-fixtures] phase-failed=" + scenario + " failure-type=" + failure.GetType().Name);
