@@ -165,5 +165,32 @@ class LiveRunnerMapperBuildBoundaryTests(MapperBuildBoundaryTests):
             return result, retained
 
 
+class McpCliQualificationTests(unittest.TestCase):
+    def test_commands_use_the_consumer_policy_and_refuse_mixed_versions(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            wrapper = root / "tools/qualification/g6_mcpcli_dotnet.sh"
+            wrapper.parent.mkdir(parents=True)
+            wrapper.write_bytes((ROOT / wrapper.relative_to(root)).read_bytes())
+            policy = root / "references/Hexalith.McpCli/tools/dependency-policy.json"
+            policy.parent.mkdir(parents=True)
+            dotnet = root / "dotnet"
+            dotnet.write_text(f"#!{sys.executable}\nimport json, sys\nprint(json.dumps(sys.argv[1:]))\n")
+            dotnet.chmod(0o755)
+            env = {**os.environ, "PATH": str(root) + os.pathsep + os.environ["PATH"]}
+            packages = {"Hexalith.EventStore.Client": "5.4.0", "Hexalith.EventStore.Contracts": "5.4.0"}
+            policy.write_text(json.dumps({"baselinePackages": packages}))
+            for verb in ("restore", "build"):
+                args = [verb, "a project.csproj", "-p:UseHexalithProjectReferences=true"]
+                result = subprocess.run(["bash", str(wrapper), *args], cwd=root, env=env, capture_output=True,
+                                        text=True, check=True)
+                self.assertEqual([*args, "-p:HexalithEventStoreVersion=5.4.0"], json.loads(result.stdout))
+            packages["Hexalith.EventStore.Contracts"] = "5.5.1"
+            policy.write_text(json.dumps({"baselinePackages": packages}))
+            refused = subprocess.run(["bash", str(wrapper), "restore"], cwd=root, env=env, capture_output=True)
+            self.assertNotEqual(0, refused.returncode)
+            self.assertEqual(b"", refused.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

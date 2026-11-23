@@ -282,7 +282,8 @@ def main(arguments: list[str] | None = None) -> int:
             f"--artifacts-path={scratch / 'platform-artifacts'}"], platform.parent)
         apphosts.append({"path": platform.relative_to(ROOT).as_posix(), "exitCode": code, "dependencyMode": "source"})
         mcp = ROOT / "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj"
-        run.run("McpCli transitive Dapr consumer", ["dotnet", "build", str(mcp), *build], mcp.parent)
+        mcpcli_dotnet = ROOT / "tools/qualification/g6_mcpcli_dotnet.sh"
+        run.run("McpCli transitive Dapr consumer", ["bash", str(mcpcli_dotnet), "build", str(mcp), *build], mcp.parent)
     except Exception as error:
         errors.append(run.sanitize(str(error)))
         print("G6-CURRENT-FAILED: " + errors[-1], file=sys.stderr, flush=True)

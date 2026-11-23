@@ -282,6 +282,8 @@ jobs:
             # This dedicated Debug source proof retains the normal package-only CI guard.
             if [[ "$project" == references/Hexalith.Conversations/* ]]; then
               env -u CI "${mapping_args[@]}" dotnet restore "$project" -p:UseHexalithProjectReferences=true
+            elif [[ "$project" == references/Hexalith.McpCli/* ]]; then
+              env -u CI bash tools/qualification/g6_mcpcli_dotnet.sh restore "$project" -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false
             else
               # Conversations source projects require their own mapping. Keep that module on
               # packages while the rest of this source graph is restored.
