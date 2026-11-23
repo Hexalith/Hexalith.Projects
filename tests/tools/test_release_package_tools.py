@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
 import os
@@ -22,6 +23,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = REPOSITORY_ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+import _pack_release_packages as packer  # noqa: E402
 from _nuget import (  # noqa: E402
     ManifestPackage,
     expected_dependencies,
@@ -180,6 +182,38 @@ class ReleasePackageToolTests(unittest.TestCase):
     def assert_invalid(self, expected: str) -> None:
         with self.assertRaisesRegex(ValueError, expected):
             validate_packages(self.directory, VERSION, SOURCE_SHA)
+
+    def test_all_pack_commands_inherit_nuget_audit_policy(self) -> None:
+        output = self.directory / "pack"
+        arguments = argparse.Namespace(output_directory=output, version=VERSION)
+
+        def pack_fixture(command: list[str], *, check: bool) -> None:
+            self.assertEqual(["dotnet", "pack"], command[:2])
+            self.assertTrue(check)
+            self.assertIn("-warnaserror", command)
+            self.assertFalse(any("nugetaudit=false" in arg.casefold() for arg in command))
+            shutil.copy(self.candidate(Path(command[2]).stem), output)
+
+        with (
+            mock.patch.object(packer, "validate_manifest_projects"),
+            mock.patch.object(packer, "current_source_sha", return_value=SOURCE_SHA),
+            mock.patch.object(packer.subprocess, "run", side_effect=pack_fixture) as run,
+        ):
+            self.assertEqual(0, packer.main(arguments))
+        self.assertEqual(len(load_manifest().packages), run.call_count)
+
+    def test_pack_stops_on_first_command_failure(self) -> None:
+        arguments = argparse.Namespace(output_directory=self.directory / "pack", version=VERSION)
+        failure = subprocess.CalledProcessError(1, ["dotnet", "pack"])
+        with (
+            mock.patch.object(packer, "validate_manifest_projects"),
+            mock.patch.object(packer, "current_source_sha", return_value=SOURCE_SHA),
+            mock.patch.object(packer.subprocess, "run", side_effect=failure) as run,
+            self.assertRaises(subprocess.CalledProcessError) as raised,
+        ):
+            packer.main(arguments)
+        self.assertIs(failure, raised.exception)
+        run.assert_called_once()
 
     def test_exact_candidates_pass(self) -> None:
         packages, version, source = validate_packages(self.directory, VERSION, SOURCE_SHA)

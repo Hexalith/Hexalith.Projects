@@ -1398,6 +1398,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Confirm the package-mode Server.Tests build once a compatible EventStore/Tenants package graph exists.
   evidence: The story's open verification item says the CI-mode Release `Server.Tests` restore fails with 3 NU1109 errors: Tenants.Client 7.0.0 requires EventStore Client/Contracts >=4.0.4, while `Directory.Packages.props:7` selects 3.133.0. The source-only worker test gate (G1 patch) has therefore never been confirmed in package mode. Under the approved E1–E7 readiness this is a package/platform gate, not a Story 6.1 acceptance criterion, and it was not tracked anywhere else. Raised by Acceptance Auditor; medium.
+  status: resolved
+  resolution: 2026-11-23. spec-five-deferred-release-package-checks.md. The package-only Release Server.Tests project built with zero warnings and errors against EventStore 5.4.0 and Tenants.Client 8.0.3. The package-mode ProjectsWorkerCatalogTests ran its production bootstrap guard successfully.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
   summary: Investigate actual-owner Folder advisory reads that exhaust the existing two-second dependency budget before supported OIDC browser verification can start.
@@ -1431,10 +1433,14 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Regenerate the `tools/release-packages.json` EventStore.Contracts expectations after the merged EventStore 5.1.1 pin.
   evidence: `Directory.Packages.props:9` selects `HexalithEventStoreVersion` 5.1.1 (from `f9ec093e`, merged at `e228f185`). `tools/release-packages.json:27,44,63,78` still expect `Hexalith.EventStore.Contracts` 5.1.0, so a pack of the committed tree fails the exact dependency comparison. `e228f185` main CI is already red at "Validate package consumer references". This predates Story 6.6 and is the same drift class as DW-83. Every 6.6 receipt and the retained 2.0.0-story66.3 candidate were produced under 5.1.0. Owner: Projects build hygiene. Not a Story 6.6 gate.
+  status: resolved
+  resolution: 2026-11-23. spec-five-deferred-release-package-checks.md. The four packed nuspecs that depend on EventStore.Contracts match the current 5.4.0 expectation. The same pack exposed stale Commons.UniqueIds expectations in those four entries. They now match the emitted 3.0.2 dependency.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-6-inspect-projects-through-an-authenticated-cli-read-surface.md`
   summary: Align the Folders.Client and McpCli.Abstractions package cohort so Projects Server.Tests restores in Release/package mode.
   evidence: Story 6.6 resumed verification at Projects bf9f98969efa036fd60700c627e712b4375e654a fails before compilation with NU1109: Hexalith.Folders.Client 2.0.0 requires Hexalith.McpCli.Abstractions >=3.0.0, while Projects centrally pins 2.0.1. Exact command and raw result are retained in `evidence/epic6/6.6/review-pass4/verification.json` and `server-package-build.log`. The unchanged production cohort is separate from the seven test/documentation corrections; Debug/source build and all four new admission cases pass. Owner: Projects package/release maintenance (DW-82/DW-83 prerequisites). No package-mode success is asserted.
+  status: resolved
+  resolution: 2026-11-23. spec-five-deferred-release-package-checks.md. Audited Release restore resolved Folders.Client 2.0.1 with McpCli.Abstractions 3.0.0 from packages, and Server.Tests built with that pair.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Bind released read-cutover evidence to intrinsic running application, contract and dependency fingerprints before production adoption.
@@ -1464,6 +1470,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Publish the EventStore and Conversations owner APIs that Story 6.7 consumes before Projects package-mode (CI/Release) builds.
   evidence: `QueryResultContractAttribute` and `TypedGatewayQueryEmitter` exist only at untagged EventStore `0be0c922` (`git describe`: `v5.2.0-6-g0be0c9228`); cached 5.1.1 and 5.2.0 Contracts DLLs lack the type, and `Directory.Packages.props:9` pins 5.1.1. Projects.Contracts queries (`GetProjectQuery.cs:15` etc.), `ProjectsSupportedReadClient` and `ProjectsRuntimeCatalogDeclarations.QueryResultType` therefore cannot compile with `UseHexalithProjectReferences=false`. Server also needs the Conversations `f1a2b3da` APIs (`GetConversationQuery.NativeMembershipOnly`/`AdvisoryMetadataOnly`, `NativeMembershipPurpose`, `ConversationDetailResult.ReadPurpose`). Main CI run 43945387197 stopped earlier at the workflow-policy step, so the build job did not observe it. Severity high. Owners: EventStore and Conversations release maintainers with Projects release maintenance (DW-82/DW-83 cohort). Publication is outside the 6.7 scope.
+  status: resolved
+  resolution: 2026-11-23. spec-five-deferred-release-package-checks.md. The owner APIs have shipped in EventStore 5.4.0 and Conversations 2.1.0. Restored client and contract archives matched NuGet.org bytes. The production Server and Server.Tests compiled against these packages, and the 39 ReadCutoverTests cases passed in Release.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Replace the hand-mirrored Folders v1 read DTOs with an owner-generated v1 read client.
@@ -1502,6 +1510,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Remove the pre-existing dependency-audit suppression from the release-packaging helper.
   evidence: R2-B7; scripts/_pack_release_packages.py already passes NuGetAudit=false in committed release-tooling work. The Story 6.7 Debug verification preserves audits; release-tooling repair must remove that override and retain actual audit failures.
+  status: resolved
+  resolution: 2026-11-23. spec-five-deferred-release-package-checks.md. The pack helper now inherits the repository audit policy. A regression exercises the generated pack command and verifies that the first pack failure stops the helper.
 
 ## Deferred from: code review of spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md (2026-11-22)
 

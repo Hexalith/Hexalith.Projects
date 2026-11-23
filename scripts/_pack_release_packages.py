@@ -64,7 +64,6 @@ def main(arguments: argparse.Namespace | None = None) -> int:
             "--no-restore",
             "-noAutoResponse",
             "-warnaserror",
-            "-p:NuGetAudit=false",
             f"-p:RestoreConfigFile={ROOT / 'references/Hexalith.Builds/NuGet.ci.Config'}",
             "--configuration",
             "Release",
