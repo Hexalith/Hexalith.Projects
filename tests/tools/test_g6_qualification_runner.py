@@ -69,7 +69,9 @@ class QualificationEnvironmentTests(unittest.TestCase):
                 RUNNER, "shared_snapshot", return_value=SHARED
             ):
                 run = RUNNER.Qualification(output, scratch, {})
-            command = ["dotnet", "msbuild", str(ROOT / "references/Hexalith.Commons/src/libraries/Hexalith.Commons/Hexalith.Commons.csproj"),
+            commons = ROOT / "references/Hexalith.Commons"
+            project = commons / "src/libraries/Hexalith.Commons/Hexalith.Commons.csproj"
+            command = ["dotnet", "msbuild", str(project),
                        "-p:Configuration=Debug", "-p:UseHexalithProjectReferences=true",
                        "-getProperty:CI,GITHUB_ACTIONS,TF_BUILD,IDEBuild,CIBuild,ContinuousIntegrationBuild,IsPackable,GeneratePackageOnBuild,UseHexalithProjectReferences,DesignTimeBuild,BuildProjectReferences,ProjectRoot",
                        "-getItem:None"]
@@ -84,13 +86,12 @@ class QualificationEnvironmentTests(unittest.TestCase):
             for field in ("CI", "TF_BUILD", "IDEBuild", "DesignTimeBuild"):
                 self.assertEqual("", properties[field], field)
             self.assertEqual("true", properties["BuildProjectReferences"])
-            commons = ROOT / "references/Hexalith.Commons"
             self.assertEqual(commons, Path(properties["ProjectRoot"].replace("[workspace]", str(ROOT))).resolve())
             root_readmes = [item for item in evaluation["Items"]["None"]
                             if item.get("Pack", "").lower() == "true" and item.get("Filename", "").lower() == "readme"
                             and item.get("Extension", "").lower() == ".md" and "PackagePath" in item
                             and item["PackagePath"] in ("", "/", "\\")]
-            self.assertEqual([commons / "README.md"],
+            self.assertEqual([project.with_name("README.md")],
                              [Path(item["FullPath"].replace("[workspace]", str(ROOT))) for item in root_readmes])
             self.assertNotIn("protected-marker", text)
 
