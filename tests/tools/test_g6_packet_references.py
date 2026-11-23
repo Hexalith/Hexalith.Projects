@@ -1,4 +1,4 @@
-"""Check archived attempt-16 provenance without comparing it to today's checkout.
+"""Check historical G-6 records against the evidence from their own captures.
 
 Current qualification is governed by g6_current.py and the selected current policy.
 The archive keeps its own packet/README bindings; fixtures exercise rejection paths
@@ -11,6 +11,7 @@ import copy
 import hashlib
 import json
 import re
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -132,6 +133,50 @@ class ArchivedPacketReferenceTests(unittest.TestCase):
         for status in ("rejected", None, "Pending"):
             with self.subTest(status=status), self.assertRaises(AssertionError):
                 reviewed_packet_sha256(dict(self.packet, status=status))
+
+
+class SeptemberOq8ProvenanceTests(unittest.TestCase):
+    def test_checkout_origin_matches_the_committed_capture(self) -> None:
+        capture = ROOT / "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929"
+        sidecar = capture / "eventstore/test-binary-provenance.json"
+        provenance = json.loads(sidecar.read_bytes())
+        records = {}
+        for key, path in (("packet", "../packet.json"), ("commandRecord", "../commands.json"),
+                          ("observations", "observations.json")):
+            self.assertEqual(path, provenance[key]["path"])
+            repo_path = (sidecar.parent / path).resolve().relative_to(ROOT).as_posix()
+            # Check the archived bytes independently of checkout line-ending filters.
+            raw = subprocess.check_output(["git", "cat-file", "blob", f"HEAD:{repo_path}"], cwd=ROOT)
+            self.assertEqual(hashlib.sha256(raw).hexdigest(), provenance[key]["sha256"], path)
+            records[key] = json.loads(raw)
+
+        packet = records["packet"]
+        source = provenance["testBinarySourceRevision"]
+        self.assertEqual("https://github.com/Hexalith/Hexalith.EventStore", provenance["sourceRepository"])
+        self.assertEqual([source], [row["revision"] for row in packet["repositories"]
+                                    if row["name"] == "Hexalith.EventStore"])
+        self.assertEqual(packet["capturedUtc"], provenance["captureUtc"])
+        artifacts = {row["kind"]: row["sha256"] for row in packet["artifacts"]}
+        self.assertEqual(artifacts["command-record"], provenance["commandRecord"]["sha256"])
+        self.assertEqual(artifacts["eventstore-observations"], provenance["observations"]["sha256"])
+        scope = provenance["scope"]
+        entry = scope["shippedReleaseEntryAssemblies"]
+        self.assertEqual("checkout-build", entry["origin"])
+        self.assertIs(entry["value"], True)
+        self.assertIs(records["observations"]["executionConfiguration"]["shippedReleaseEntryAssemblies"],
+                      entry["value"])
+        outcomes = {row["purpose"]: row for row in records["commandRecord"]["commands"]}
+        qualifier = outcomes["real PostgreSQL two-sidecar stop/restart qualifier"]
+        self.assertEqual(0, qualifier["exitCode"])
+        self.assertIn(f"built from EventStore checkout source {source}", qualifier["outcome"])
+        support = outcomes["21 exact deterministic support selectors"]
+        self.assertEqual(0, support["exitCode"])
+        self.assertIn("built from the same EventStore checkout source", support["outcome"])
+        release = outcomes["Projects restore and release build"]
+        packages = scope["projectsReleaseBuild"]
+        self.assertEqual(0, release["exitCode"])
+        self.assertEqual("published-packages", packages["origin"])
+        self.assertIn(f"consuming published EventStore {packages['eventStoreVersion']},", release["outcome"])
 
 
 if __name__ == "__main__":

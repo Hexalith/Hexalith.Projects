@@ -941,6 +941,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Record the test-binary source commit in the EventStore OQ8 capture artifacts, and state when `shippedReleaseEntryAssemblies` means checkout-built rather than published binaries.
   evidence: The hash-bound `eventstore/observations.json` omits the source commit, so the bound packet alone can be misread as evidence for the published release (review R4-BH-09).
+  status: resolved
+  resolution: 2026-11-23. The detached capture record binds the September packet, command log and observations to the checkout-built tests. The archive regression checks their hashes and source revision. [Capture record](qualification-evidence/g-6-runtime-toolchain-20260929/eventstore/test-binary-provenance.json) [Verification](spec-five-deferred-qualification-provenance.md)
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Require a named G-6 decision record (reviewed hash, allowlisted approver, owner roles, date on or after capture) whenever the packet status is `accepted`, and define its `sprint-status.yaml` keys and follow-up fields.
   evidence: A bare status flip turns both G-6 jobs green today; the validator has never checked a decision record (review R5-BH-01/02, R5-EC-10).
@@ -1098,6 +1100,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Parent gitlinks other than the EventStore verification commit, and later EventStore commits after that verification commit, need their own provenance check.
   evidence: Since `cbcf54fa` the Projects diff moves Conversations, Folders, FrontComposer, Memories, Parties, Tenants, and Builds, and EventStore HEAD `ff7f07d1` is many commits after the verification commits. The verifier SOURCES still bind the approved comparison coordinates. Those pointer moves are not produced by the fixture runner.
+  status: resolved
+  resolution: 2026-11-23. Verified the eight owner ranges against the two historical Projects pointer updates. The last 25 EventStore commits retained the verifier script and evidence tree. The comparison contract identifies the qualified source coordinates. [Verification](spec-five-deferred-qualification-provenance.md)
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Story 6.1 non-frozen acceptance text was condensed to "full frozen scope" while the test task still names Folder filtering and inspection audit.
@@ -1130,6 +1134,8 @@ status: open
 - source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-31190-requalification.md`
   summary: P1R published-executor restore receipts bind recovery steps to `self.commands[-1]`, so the `create-database` and `backup` steps cite the wrong command.
   evidence: In `restore_case`, `create-database` records the last `pg_isready` probe instead of `docker create`/`docker start`, and `backup` records the `docker cp` copy-out instead of `pg_dump`. Baseline 785260fa had the same pattern on its Redis path, where these steps bound the `docker inspect` and `docker cp` rows. No check depends on the step label, but owners reading restore receipts are misled. Fix: return command ids from `container`/`postgres_backup` and pass them to `recovery_command`.
+  status: resolved
+  resolution: 2026-11-23. The historical restore fixture verified the container start and PostgreSQL dump witnesses for both candidate versions, including command timing, exit and backup digest. [Verification](spec-five-deferred-qualification-provenance.md)
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-restore-receipt-command-attribution.md`
   summary: Bind both the PostgreSQL dump and its Docker copy-out to the P1R restore receipt's backup provenance.
@@ -1142,6 +1148,8 @@ status: open
 - source_spec: `spec-6-1-p1r-successor-enrollment-publication-readiness.md`
   summary: Qualify or explicitly refuse TLS-authenticated remote outer Docker controllers in the P1R isolation wrapper.
   evidence: Independent review B8 found the pre-existing controller strips DOCKER_TLS_VERIFY/certificate/configuration inputs; this task uses the observed local Unix outer endpoint and does not qualify the separate remote TLS profile.
+  status: resolved
+  resolution: 2026-11-23. Reconciled the original report with the recovered-wrapper B7 closure below. The replay confirmed that the controller refused remote endpoints before provisioning and omitted credentials from its failure receipt. [Verification](spec-five-deferred-qualification-provenance.md)
 
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
@@ -1268,6 +1276,8 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Bind portable immutable references for P0 receipts currently named only by external absolute checkout paths.
   evidence: NH-B10; the existing owner proposal and continuation receipt paths resolve outside this Projects checkout. A reviewer or CI consumer needs owner-controlled repository/artifact identities and hashes; no P0 acceptance or receipt is fabricated by this source change.
+  status: resolved
+  resolution: 2026-11-23. The P0 handoff now links three immutable owner records at Builds 92fd7a37. Verified the proposal hash against both the approval and the continuation. [Verification](spec-five-deferred-qualification-provenance.md)
 
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Add behavioral verification of G-6 placement and scheduler immutable image identities.

@@ -66,11 +66,15 @@ Status: handed-off
 
 The user approved the current-catalog preparation tuple with “I approve”. This
 supersedes the historical 4.29.1/3.110.0 preparation target for this continuation;
-it does not replace historical acceptance or accept unseen results. The original
-proposal is retained unchanged in the owning Builds documentation checkout at
-`/home/administrator/projects/hexalith/builds/_bmad-output/implementation-artifacts/6-1-p0-tool-runtime-tuple-proposal-20261020.md`.
-Execution and exact artifact identities are recorded in
-`/home/administrator/projects/hexalith/builds/evidence/g4/approved-tuple-20261020/continuation-state.json`.
+it does not replace historical acceptance or accept unseen results.
+The approval and continuation receipt both identify the proposal by its SHA-256.
+These links resolve the exact bytes in the Builds owner repository.
+
+| Record | SHA-256 of the Git blob contents |
+| --- | --- |
+| [Preparation proposal](https://github.com/Hexalith/Hexalith.Builds/blob/92fd7a37b632f713833705c91ff35a373af997cc/_bmad-output/implementation-artifacts/6-1-p0-tool-runtime-tuple-proposal-20261020.md) | `ecfcf399e23d79e4a4594d08feaf986273cc3c2d6e4734049b0d90a0a657c32f` |
+| [Approval](https://github.com/Hexalith/Hexalith.Builds/blob/92fd7a37b632f713833705c91ff35a373af997cc/evidence/g4/approved-tuple-20261020/approval.json) | `2020d5e314d211f48fa1b6ebbf9620b956edbcfa8a3334e79863d60234590ad1` |
+| [Continuation receipt](https://github.com/Hexalith/Hexalith.Builds/blob/92fd7a37b632f713833705c91ff35a373af997cc/evidence/g4/approved-tuple-20261020/continuation-state.json) | `24b85ff2b58d8d7111537c2eaef4de01f3083fe71bcba16512ced870c9309778` |
 
 Both local tools `4.33.2-p0.20261020.1` passed the source/package contract gate
 from Builds `e40ed9c7110d56a2f38c9291627728aea2f205cb`, embedding EventStore
