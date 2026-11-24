@@ -1,0 +1,857 @@
+{
+  "schema": "hexalith.projects.creation-contract-fixtures.v1",
+  "package": "7.1-P1",
+  "baselineCommit": "9dadd65c350145c651bf1d1defc5fc83f255bae5",
+  "contract": "POST /api/v1/projects (PRD addendum section 4.1; Story 6.7 creation-contract baseline)",
+  "request": {
+    "tenantId": "tenant-a",
+    "principalId": "principal-a",
+    "correlationId": "corr-a",
+    "taskId": "task-a",
+    "contentType": "application/json"
+  },
+  "behaviorDelta": [
+    "A duplicate or non-string projectMetadata.metadataClass returns 400 projectMetadata.metadataClass (was 202 last-value or 400 body).",
+    "A versioned request without projectMetadata returns 400 projectMetadata.",
+    "Any create body with duplicate properties returns 400; a legacy body with duplicate keys moves from 202 to 400."
+  ],
+  "metadataClassDecisionTable": {
+    "accepted": [
+      {
+        "value": "public_metadata",
+        "createCase": "canonical-tier-1"
+      },
+      {
+        "value": "tenant_sensitive",
+        "createCase": "canonical-tier-2"
+      },
+      {
+        "value": "credential_sensitive",
+        "createCase": "canonical-tier-3"
+      },
+      {
+        "value": "secret",
+        "createCase": "canonical-tier-4"
+      }
+    ],
+    "rejected": [
+      {
+        "id": "missing",
+        "metadataClassJson": null,
+        "createCase": "class-missing"
+      },
+      {
+        "id": "null",
+        "metadataClassJson": "null",
+        "createCase": "class-null"
+      },
+      {
+        "id": "blank",
+        "metadataClassJson": "\"\"",
+        "createCase": "class-blank"
+      },
+      {
+        "id": "whitespace",
+        "metadataClassJson": "\"   \"",
+        "createCase": "class-whitespace"
+      },
+      {
+        "id": "control-whitespace",
+        "metadataClassJson": "\"\\t\\r\\n\"",
+        "createCase": "class-control-whitespace"
+      },
+      {
+        "id": "case-title",
+        "metadataClassJson": "\"Tenant_sensitive\"",
+        "createCase": "class-case-title"
+      },
+      {
+        "id": "case-upper",
+        "metadataClassJson": "\"PUBLIC_METADATA\"",
+        "createCase": "class-case-upper"
+      },
+      {
+        "id": "padded",
+        "metadataClassJson": "\" tenant_sensitive \"",
+        "createCase": "class-padded"
+      },
+      {
+        "id": "unknown",
+        "metadataClassJson": "\"unsupported_metadata\"",
+        "createCase": "class-unknown"
+      },
+      {
+        "id": "unknown-restricted",
+        "metadataClassJson": "\"restricted\"",
+        "createCase": "class-unknown-restricted"
+      }
+    ],
+    "note": "Validator-level vocabulary shared by direct create and proposal confirmation (SensitiveMetadataTierValidator). metadataClassJson null means the property is absent. Parse-level variants (non-string and duplicate values) are create-only cases with scenario bad-class-parse."
+  },
+  "echoProbes": [
+    "Tracer Bullet",
+    "Other Name",
+    "A safe description",
+    "Safe setup note",
+    "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+    "unsupported_metadata",
+    "restricted",
+    "Tenant_sensitive",
+    "PUBLIC_METADATA",
+    "public_metadata",
+    "tenant_sensitive",
+    "credential_sensitive",
+    "secret",
+    "unexpected",
+    "not valid json"
+  ],
+  "cases": [
+    {
+      "id": "legacy-name-only",
+      "scenario": "legacy",
+      "idempotencyKey": "p1-case-01",
+      "body": "{\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        }
+      }
+    },
+    {
+      "id": "legacy-with-project-id",
+      "scenario": "legacy",
+      "idempotencyKey": "p1-case-02",
+      "body": "{\"projectId\":\"01HZ9K8YQ3W6V2N4R7T5P0X1AB\",\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        }
+      }
+    },
+    {
+      "id": "legacy-full",
+      "scenario": "legacy",
+      "idempotencyKey": "p1-case-03",
+      "body": "{\"projectId\":\"01HZ9K8YQ3W6V2N4R7T5P0X1AB\",\"name\":\"Tracer Bullet\",\"description\":\"A safe description\",\"setupMetadata\":\"Safe setup note\"}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+          "name": "Tracer Bullet",
+          "description": "A safe description",
+          "setupMetadata": "Safe setup note"
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        }
+      }
+    },
+    {
+      "id": "legacy-padded-name",
+      "scenario": "legacy",
+      "idempotencyKey": "p1-case-04",
+      "body": "{\"name\":\"  Tracer Bullet  \"}",
+      "note": "The command carries the raw name; the processor persists the trimmed canonical name.",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "  Tracer Bullet  ",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        }
+      }
+    },
+    {
+      "id": "canonical-tier-1",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-05",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"public_metadata\"}}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "public_metadata"
+      }
+    },
+    {
+      "id": "canonical-tier-2",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-06",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "tenant_sensitive"
+      }
+    },
+    {
+      "id": "canonical-tier-3",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-07",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"credential_sensitive\"}}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "credential_sensitive"
+      }
+    },
+    {
+      "id": "canonical-tier-4",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-08",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"secret\"}}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "secret"
+      }
+    },
+    {
+      "id": "canonical-full",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-09",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectId\":\"01HZ9K8YQ3W6V2N4R7T5P0X1AB\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"},\"description\":\"A safe description\",\"setupMetadata\":\"Safe setup note\"}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+          "name": "Tracer Bullet",
+          "description": "A safe description",
+          "setupMetadata": "Safe setup note"
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "tenant_sensitive"
+      }
+    },
+    {
+      "id": "canonical-matching-legacy-name",
+      "scenario": "canonical",
+      "idempotencyKey": "p1-case-10",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"},\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 202,
+        "command": {
+          "projectId": null,
+          "name": "Tracer Bullet",
+          "description": null,
+          "setupMetadata": null
+        },
+        "events": [
+          "ProjectCreated",
+          "ProjectFolderCreationPending"
+        ],
+        "projectCreated": {
+          "name": "Tracer Bullet",
+          "lifecycle": "Active",
+          "idempotencyFingerprint": "sha256:7d9b6ec5f3caa002fb20a7d3e31c04cfdc0f4d57ef49fc1cd2f3162bd495e7a5"
+        },
+        "projectFolderCreationPending": {
+          "displayNameIntent": "Tracer Bullet",
+          "idempotencyKeySuffix": "-project-folder-create",
+          "idempotencyFingerprint": "sha256:97ccffe6f16b08602fb5384f366095c9b5441f7ad3aaa886fa92532967c713eb"
+        },
+        "metadataClass": "tenant_sensitive"
+      }
+    },
+    {
+      "id": "class-missing",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-11",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-null",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-12",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":null}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-blank",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-13",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-whitespace",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-14",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"   \"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-control-whitespace",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-15",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"\\t\\r\\n\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-case-title",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-16",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"Tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-case-upper",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-17",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"PUBLIC_METADATA\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-padded",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-18",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\" tenant_sensitive \"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-unknown",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-19",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"unsupported_metadata\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-unknown-restricted",
+      "scenario": "bad-class",
+      "idempotencyKey": "p1-case-20",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"restricted\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-non-string-number",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-21",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":42}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-non-string-boolean",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-22",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":true}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-non-string-object",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-23",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":{}}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-non-string-array",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-24",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":[\"tenant_sensitive\"]}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-non-string-case-variant-key",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-25",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"MetadataClass\":42}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-duplicate-invalid-then-valid",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-26",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"unsupported_metadata\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-duplicate-valid-then-invalid",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-27",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\",\"metadataClass\":\"unsupported_metadata\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-duplicate-same-value",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-28",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "class-duplicate-case-variant-key",
+      "scenario": "bad-class-parse",
+      "idempotencyKey": "p1-case-29",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\",\"MetadataClass\":\"secret\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.metadataClass"
+      }
+    },
+    {
+      "id": "versioned-name-only",
+      "scenario": "versioned-no-metadata",
+      "idempotencyKey": "p1-case-30",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata"
+      }
+    },
+    {
+      "id": "versioned-null-metadata",
+      "scenario": "versioned-no-metadata",
+      "idempotencyKey": "p1-case-31",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":null,\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata"
+      }
+    },
+    {
+      "id": "versioned-version-only",
+      "scenario": "versioned-no-metadata",
+      "idempotencyKey": "p1-case-32",
+      "body": "{\"requestSchemaVersion\":\"v1\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata"
+      }
+    },
+    {
+      "id": "malformed-json",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-33",
+      "body": "{ not valid json",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "empty-body",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-34",
+      "body": "",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "json-null-literal",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-35",
+      "body": "null",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "json-array",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-36",
+      "body": "[]",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "unknown-top-level-property",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-37",
+      "body": "{\"name\":\"Tracer Bullet\",\"unexpected\":\"value\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "unknown-nested-property",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-38",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\",\"unexpected\":\"value\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "duplicate-legacy-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-39",
+      "body": "{\"name\":\"Tracer Bullet\",\"name\":\"Other Name\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "duplicate-request-schema-version",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-40",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "duplicate-project-metadata",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-41",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"},\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "duplicate-display-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-42",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"displayName\":\"Other Name\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "wrong-version-canonical",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-43",
+      "body": "{\"requestSchemaVersion\":\"v2\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "requestSchemaVersion"
+      }
+    },
+    {
+      "id": "wrong-version-legacy",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-44",
+      "body": "{\"requestSchemaVersion\":\"v2\",\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "requestSchemaVersion"
+      }
+    },
+    {
+      "id": "version-case-variant",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-45",
+      "body": "{\"requestSchemaVersion\":\"V1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "requestSchemaVersion"
+      }
+    },
+    {
+      "id": "metadata-without-version",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-46",
+      "body": "{\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "requestSchemaVersion"
+      }
+    },
+    {
+      "id": "legacy-missing-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-47",
+      "body": "{}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "name"
+      }
+    },
+    {
+      "id": "legacy-blank-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-48",
+      "body": "{\"name\":\"   \"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "name"
+      }
+    },
+    {
+      "id": "canonical-missing-display-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-49",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.displayName"
+      }
+    },
+    {
+      "id": "canonical-null-display-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-50",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":null,\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.displayName"
+      }
+    },
+    {
+      "id": "canonical-blank-display-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-51",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"   \",\"metadataClass\":\"tenant_sensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "projectMetadata.displayName"
+      }
+    },
+    {
+      "id": "canonical-conflicting-legacy-name",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-52",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sensitive\"},\"name\":\"Other Name\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "name"
+      }
+    },
+    {
+      "id": "project-id-non-string",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-53",
+      "body": "{\"projectId\":42,\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "project-id-object",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-54",
+      "body": "{\"projectId\":{},\"name\":\"Tracer Bullet\"}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "name-non-string",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-55",
+      "body": "{\"name\":42}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    }
+  ]
+}

@@ -46,7 +46,7 @@ using Xunit;
 /// with freshness after the projection updates. Uses an in-memory fake submitter / in-memory read
 /// model — a real boundary stand-in, not real Dapr/infra.
 /// </summary>
-public sealed class CreateProjectEndpointTests
+public sealed partial class CreateProjectEndpointTests
 {
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
     private const string FileRefId = "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1";
@@ -2735,7 +2735,8 @@ public sealed class CreateProjectEndpointTests
         bool listReadUnavailable = false,
         IProjectFolderDirectory? folderDirectory = null,
         IProjectFileReferenceDirectory? fileReferenceDirectory = null,
-        IProjectMemoryDirectory? memoryDirectory = null)
+        IProjectMemoryDirectory? memoryDirectory = null,
+        Action<WebApplication>? configurePipeline = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -2790,6 +2791,10 @@ public sealed class CreateProjectEndpointTests
                 tenantEnabled,
                 lastTenantAccessTimestamp ?? DateTimeOffset.UtcNow).ConfigureAwait(true);
         }
+
+        // Optional test-only pipeline hook (for example a request-body read counter) installed ahead of
+        // the fixture identity middleware and the mapped endpoints.
+        configurePipeline?.Invoke(app);
 
         app.Use(async (context, next) =>
         {

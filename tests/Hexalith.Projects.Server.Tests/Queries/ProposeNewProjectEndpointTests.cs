@@ -720,6 +720,62 @@ public sealed class ProposeNewProjectEndpointTests
         submitter.Created.ShouldBeEmpty();
     }
 
+    public static TheoryData<string, string> CreationContractDecisionTableRows()
+    {
+        TheoryData<string, string> rows = new();
+        JsonElement table = CreationContractDecisionTable();
+        foreach (JsonElement row in table.GetProperty("accepted").EnumerateArray())
+        {
+            rows.Add("accepted", row.GetProperty("value").GetString()!);
+        }
+
+        foreach (JsonElement row in table.GetProperty("rejected").EnumerateArray())
+        {
+            rows.Add("rejected", row.GetProperty("id").GetString()!);
+        }
+
+        return rows;
+    }
+
+    [Theory]
+    [Trait("Package", "7.1-P1")]
+    [MemberData(nameof(CreationContractDecisionTableRows))]
+    public async Task Confirm_CreationContractDecisionTable_SharesTheCreateClassificationValidator(string outcome, string row)
+    {
+        ArgumentNullException.ThrowIfNull(outcome);
+        ArgumentNullException.ThrowIfNull(row);
+
+        // Validator parity only: confirmation reuses SensitiveMetadataTierValidator and reports
+        // projectMetadata; its own parse order and request options are unchanged.
+        bool accepted = string.Equals(outcome, "accepted", StringComparison.Ordinal);
+        string? metadataClassJson = accepted
+            ? JsonSerializer.Serialize(row)
+            : CreationContractDecisionTable().GetProperty("rejected").EnumerateArray()
+                .Single(item => string.Equals(item.GetProperty("id").GetString(), row, StringComparison.Ordinal))
+                .GetProperty("metadataClassJson").GetString();
+        CapturingProjectCommandSubmitter submitter = new();
+        CapturingAssignmentDirectory assignment = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter, assignmentDirectory: assignment).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBodyWithMetadataClassJson(metadataClassJson)).ConfigureAwait(true);
+
+        if (accepted)
+        {
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            submitter.Created.Count.ShouldBe(1);
+            assignment.Confirmed.Count.ShouldBe(1);
+            return;
+        }
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        using JsonDocument document = JsonDocument.Parse(response.Body);
+        document.RootElement.GetProperty("details").GetProperty("rejectedField").GetString().ShouldBe("projectMetadata");
+        submitter.Created.ShouldBeEmpty();
+        submitter.Folders.ShouldBeEmpty();
+        submitter.Files.ShouldBeEmpty();
+        assignment.Confirmed.ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task Confirm_NoFolderNoFiles_SubmitsOnlyCreateAndAssignment()
     {
@@ -1041,6 +1097,29 @@ public sealed class ProposeNewProjectEndpointTests
               },
               "fileReferences": {{fileReferencesJson}},
               "fileReferenceIds": {{fileReferenceIdsJson}}
+            }
+            """;
+    }
+
+    private static JsonElement CreationContractDecisionTable()
+    {
+        string path = Path.Combine(AppContext.BaseDirectory, "Fixtures", "CreationContract", "creation-contract-fixtures.v1.json");
+        using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
+        return document.RootElement.GetProperty("metadataClassDecisionTable").Clone();
+    }
+
+    private static string ConfirmBodyWithMetadataClassJson(string? metadataClassJson)
+    {
+        string metadataClass = metadataClassJson is null ? string.Empty : ", \"metadataClass\": " + metadataClassJson;
+        return $$"""
+            {
+              "requestSchemaVersion": "v1",
+              "operation": "confirmNewProjectProposal",
+              "resolutionResult": "NoMatch",
+              "confirmed": true,
+              "projectId": "{{ProjectIdValue}}",
+              "conversationId": "{{ConversationIdValue}}",
+              "projectMetadata": { "displayName": "Suggested Project"{{metadataClass}} }
             }
             """;
     }
