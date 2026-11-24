@@ -13,6 +13,9 @@ using System.Text.Json.Nodes;
 using System.Threading;
 
 using FoldersGeneratedClient = Hexalith.Folders.Client.Generated.Client;
+#if HEXALITH_SOURCE_FIXTURE
+using Hexalith.Folders.Queries.FileContext;
+#endif
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Server.Folders;
 
@@ -47,6 +50,36 @@ public sealed class ProjectFileReferenceDirectoryTests
         path.GetProperty("pathPolicyClass").GetString().ShouldBe("metadata_only");
         path.GetProperty("unicodeNormalization").GetString().ShouldBe("NFC");
     }
+
+#if HEXALITH_SOURCE_FIXTURE
+    /// <summary>Passes the adapter's wire metadata through the owning Folders policy.</summary>
+    /// <param name="filePath">A synthetic exact path subject to different owner policies.</param>
+    /// <param name="classification">The classification the owner must enforce.</param>
+    [Theory]
+    [InlineData("docs/allowed.md", "content_allowed")]
+    [InlineData("docs/excluded/note.md", "excluded")]
+    [InlineData("docs/restricted/note.md", "restricted")]
+    [InlineData("docs/metadata/note.md", "metadata_only")]
+    [InlineData("outside/note.md", "excluded")]
+    public async Task ValidateLink_MetadataRequestDoesNotOverrideOwnerPathPolicy(string filePath, string classification)
+    {
+        RecordingHandler handler = new(JsonResponse(HttpStatusCode.NotFound, ProblemJson()));
+        ProjectFileReferenceValidationResult result = await Directory(handler).ValidateLinkFileReferenceAsync(
+            ProjectId(), FolderId, WorkspaceId, filePath, "corr-a", "task-a", TestContext.Current.CancellationToken).ConfigureAwait(true);
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Denied);
+        using JsonDocument request = JsonDocument.Parse(handler.RequestBodies.ShouldHaveSingleItem());
+        JsonElement path = request.RootElement.GetProperty("paths")[0];
+        string normalizedPath = path.GetProperty("normalizedPath").GetString()!;
+        string requestedClass = path.GetProperty("pathPolicyClass").GetString()!;
+        normalizedPath.ShouldBe(filePath);
+        requestedClass.ShouldBe("metadata_only");
+        WorkspaceFilePolicySnapshot ownerPolicy = new("1.1.0", ["docs/**"], ["docs/excluded/**"],
+            ["docs/restricted/**"], "non_confidential", ["docs/metadata/**"]);
+
+        ownerPolicy.Classify(new(normalizedPath, path.GetProperty("displayName").GetString()!,
+            requestedClass, path.GetProperty("unicodeNormalization").GetString()!)).ShouldBe(classification);
+    }
+#endif
 
     [Fact]
     public async Task ValidateLink_RedactedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()

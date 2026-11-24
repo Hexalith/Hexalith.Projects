@@ -826,6 +826,8 @@ status: open
 ## Deferred from: code review of spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md (2026-09-20)
 
 - Folders file-reference linking now sends `PathPolicyClass.Metadata_only` instead of `tenant_sensitive_document`. This is maybe-false: production harm exists only if Folders treats `Metadata_only` as a weaker ACL class than the previous value. Settle it against the Folders path-policy contract before keeping or reverting `src/Hexalith.Projects.Server/Folders/FoldersProjectFileReferenceDirectory.cs:62`.
+  status: done 2026-11-24
+  resolution: Passed five mapped Debug HTTP-adapter and owner classifier cases. The exact metadata_only request preserves the owner classifications for allowed, excluded, restricted, metadata-only, and outside-allowlist paths. The adapter continues to deny the owner 404. The Folders contract defines the owner policy as authoritative.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Require an all-absent package inventory before unrelated NuGet `--skip-duplicate` release publication.
   evidence: The release workflow can invoke Semantic Release while its NuGet command tolerates duplicate packages, so a partially occupied version can yield a mixed or incomplete public release; this release-hardening defect predates Story 6.3.
