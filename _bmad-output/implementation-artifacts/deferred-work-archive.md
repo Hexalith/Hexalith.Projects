@@ -465,3 +465,160 @@ reason: Review could not establish whether readiness rows are required to use th
 status: done 2026-09-06
 archived: 2026-10-23
 resolution: already resolved: Commit d0049833f2ac0416075eed37f173712f3ac90e56; references/Hexalith.Builds/README.md:288-298 defines the accepted canonical space-delimited readiness command grammar, references/Hexalith.Builds/test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs:158-202 rejects noncanonical identity forms, and references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs:205-247 pins producer serialization.
+
+### DW-47: Derive dual-principal authority (delegation, workload, scopes, audience) for Conversation-start reads.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:350
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: HttpContextProjectTenantContextAccessor resolves only a tenant claim and a NameIdentifier/sub principal; no delegation, scope or audience is derived anywhere in Hexalith.Projects.Server. A delegated Chatbot workload is authorized as if it were the original actor, which is the exact distinction first-response admission rests on.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: spec-five-deferred-conversation-start-safety.md; The supported query already binds actor, user, Tenant, workload, delegation, scopes and audience and reauthorizes exact projects:read authority. Eight new Conversation-start mutations deny without payload while the matching control succeeds. Missing-primary-permission controls reject supplementary grants before protected reads; a validator-bound final-pass revocation proves exact Tenant, actor, Project and literal projects:read authority with unchanged persisted state. This closes the supported-path obligation; legacy route cutover and production qualification are unchanged.
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-49: Generate a correlation id when the caller supplies none, or correct the declared adapter behavior.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:141
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: OpenAPI declares caller-provided-or-generated-correlation but nothing in the module generates one; a caller that omits or malforms the header gets no X-Correlation-Id back. Systemic across ResolveProjectFromAttachments, ResolveProjectFromConversation, GetProjectContextExplanation and eight sites in ProjectsDomainServiceEndpoints, so fixing one endpoint alone would be inconsistent.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; The shared legacy query preamble preserves canonical caller correlation IDs and generates a platform ULID for absent or malformed values across all eleven read operations. HTTP and owner-hop regressions verify generation, preservation, uniqueness and matching owner-call identity.
+
+### DW-50: Echo X-Correlation-Id on error responses, not only on 200.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:141
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The correlation header assignment sits after every SafeDenial, ReadModelUnavailable and ValidationProblem return, so 400/404/503 carry no correlation id — the exact responses where a caller most needs one. Systemic across the module, and no test asserts headers on any error response.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; Correlation response headers are set before route validation and authorization, so handler-generated 400/404/503 responses carry the same ID as Problem Details. HTTP outcome coverage and both resolution dependency/deadline branches plus proposal failures verify the contract.
+
+### DW-51: Produce persisted before/after zero-write evidence for the Conversation-start read.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: tests/Hexalith.Projects.Server.Tests/Queries/GetConversationStartSetupTests.cs
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The strongest existing assertion is sibling-scoped call counts in GetConversationStartSetup_DoesNotCallSiblingAcls. The path does appear write-free, but no state-store end-state assertion exists, so there is no evidence artifact to carry into AC4.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: spec-five-deferred-conversation-start-safety.md; Five Conversation-start end-state controls now compare serialized persisted bytes, ETags and total key count across two repeated successful, unavailable, Archived, foreign-Tenant and wrong-workload reads. A second Tenant sentinel is preserved as well. The actual Tenant-access projection, including its concurrency Version, is also serialized before/after. Evidence uses the SDK serialized InMemoryReadModelStore, not only mock call counts; live persisted-runner qualification and Story acceptance remain separate.
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-53: Extract the shared query-handler request preamble.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: Correlation and task id reads, the IsCanonicalIdentifier guard, the Idempotency-Key check, the X-Hexalith-Freshness strict-equality check and the TenantAccessResult defensive collapse are duplicated across at least four query handlers, so any fix to them must be applied N times. The Story 3.5 handler documents itself as a port of Story 3.2.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; Extracted private helpers for correlation/task normalization, post-authorization idempotency/freshness validation, and the four context/setup handlers' canonical Project ID, authorization, detail and TenantAccessResult preamble. All eleven read operations reuse the appropriate boundary; mutation admission and existing task-disclosure rules are preserved.
+
+### DW-56: Give the supported Conversation-start response structural equality over its bounded collections.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: ConversationStartSetup.FromContext aliases the caller-owned collections held by ProjectContext.Setup rather than copying them, so the bounded subset is a live view of caller state when the source is a mutable list. The obvious fix was attempted during the 2026-08-26 review and reverted: ConversationStartSetup is a record in a packable assembly and record equality compares IReadOnlyList<T> members by reference, so defensive copying makes two projections of the same context unequal and breaks Project_IsPureFunction_SameInputProducesSameOutput. Copying therefore changes public DTO equality semantics for every consumer and must not be done to the legacy type in isolation. Resolve it on the Story 6.2 supported response wrapper by using a collection type with structural equality (for example ImmutableArray<T> with an explicit equality contract) from the start, then align the legacy type at the Story 6.7 cutover.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: spec-five-deferred-conversation-start-safety.md; The dedicated supported ConversationStartSetupResponse value boundary now owns read-only copies of all four setup collections and both snapshot collections, including with-expression assignments, and implements structural equality and hashing across every scalar and ordered collection. Legacy ConversationStartSetup, its constructor and its equality semantics remain unchanged. New contract tests cover mutation, hash membership, independent instances, JSON round trips, null setup and every unequal field; the existing constructor/wire compatibility tests remain.
+decision: 2026-09-06 Dedicated supported value — Keep the legacy DTO unchanged and introduce a supported setup value that defensively copies bounded collections and explicitly implements structural equality and hashing, then update the supported response, serialization, and contract tests.
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-57: Make the conversation-start freshness response header reflect actual freshness.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:144
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The header is written unconditionally as eventually_consistent while OpenAPI declares freshnessBehavior returns-projection-watermark-when-available, so a stale or unavailable read is indistinguishable from a fresh one at the header and no watermark is ever returned. Deferred to Story 6.7 rather than patched now because changing legacy response headers moves the baseline the shadow comparison is specified against.
+status: done 2026-11-22
+archived: 2026-11-24
+resolution: spec-five-deferred-read-cutover-followups.md. The retained header mirrors the Setup freshness and discloses the exact authorized Project position on success. The response check distinguishes the Project position from the Tenant watermark and withholds both headers on stale authority.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-58: Reject Idempotency-Key supplied as a query parameter, not only as a header.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:93
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The operation description states that Idempotency-Key is not a query parameter and is rejected if present, but only HasHeader is checked, and GetConversationStartSetup_ExtraQueryParameters_AreIgnoredNotFailed makes the query form pass silently. Deferred to Story 6.7 because it changes legacy request-validation behavior.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; All retained reads reject Idempotency-Key supplied in headers or query strings only after authorization, including empty, repeated, encoded and case-varied query keys. Unknown query parameters remain compatible. The intentional legacy-baseline change is documented for Story 6.7; cutover acceptance and normalization approval remain gated.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-59: Reconcile the declared 401 and 403 responses with the safe-denial collapse.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml:584
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The operation declares 401 and 403 and the generated client throws distinct typed exceptions for both, but the handler only ever emits 200, 400, 404 and 503 because all denial outcomes collapse to a safe 404. Either the declaration is wrong or the collapse is under-specified, and Story 6.2 AC3 needs an agreed baseline status set to compare against. Deferred to Story 6.7 because editing the spine requires client regeneration and a fingerprint update, and it changes the published contract.
+status: done 2026-11-22
+archived: 2026-11-24
+resolution: spec-five-deferred-read-cutover-followups.md. The retained OpenAPI operation and generated client declare 200, 400, safe 404 and retryable 503. Gateway authentication is independent. The spine check pins the exact handler status set and shared denial and unavailable responses.
+decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
+decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-60: Widen the retryable collapse so transient authorization failures return 503, not a permanent 404.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:87
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The branch requires both Retryable and Reason == ReferenceState.Unavailable, so a retryable outcome carrying a different reason collapses to a permanent 404 and the caller never retries. ProjectDaprPolicyEvidenceResult.Unavailable sets Retryable true with reason dapr_policy_unavailable, so reachability depends on the gate's reason mapping and should be confirmed before the fix. Deferred to Story 6.7 because it changes legacy status-code behavior.
+status: done 2026-11-22
+archived: 2026-11-24
+resolution: spec-five-deferred-read-cutover-followups.md. The retained request preamble returns safe 503 for retryable authorization failures at initial authorization and the final disclosure check. Both paths have coverage with a different denial reason and no Setup or freshness headers.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-62: Add cache directives to the tenant-sensitive conversation-start read.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-26
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:145
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: goals and userInstructions are tagged x-hexalith-sensitive-metadata-tier tenant_sensitive, yet the response is emitted with no Cache-Control no-store and no Vary handling. This is the fast-path endpoint called at every conversation start, so it is the one intermediaries are most likely to cache. Deferred to Story 6.7 because it changes legacy response headers and therefore the shadow baseline.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; All retained reads set Cache-Control no-store and preserve Vary while adding missing Authorization/Cookie fields case-insensitively; wildcard Vary is preserved. Success, denial, validation, dependency and deadline controls pass. The repaired legacy baseline is documented without accepting Story 6.7 or claiming live qualification.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-66: Implement the `Partial` branch of the AD-32 admission matrix for Conversation-start setup.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md, 2026-09-05
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:389-391
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
+severity: medium
+reason: ConversationStartResponseState.Partial is declared and is a required scenario in the spec's own I/O matrix ("Required evidence current; optional values explicitly omitted" -> Partial), but responseState is a binary hasFolder ? Complete : Unavailable -- no branch ever yields Partial. Needs a design decision on what counts as "optional" evidence distinct from the required Project/Folder/Setup set before this can be implemented; deferred to resolve alongside the cutover/shadow-comparison work.
+status: done 2026-11-22
+archived: 2026-11-24
+resolution: spec-five-deferred-read-cutover-followups.md. The supported snapshot preserves AD-32 Partial when required evidence is current and an optional source is omitted. The check verifies usable Setup and exact References omission metadata and recovery.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-67: Distinguish Folder `ReferenceState` outcomes instead of collapsing them to one generic "Unavailable".
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md, 2026-09-05
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:385
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
+severity: medium
+reason: hasFolder = detail.ProjectFolder?.ReferenceState == ReferenceState.Included treats Pending, Excluded, Unauthorized, Unavailable, Stale, Archived, Ambiguous, TenantMismatch, Conflict, and InvalidReference identically. An authorization-denied folder reference (Unauthorized, fail-closed) receives the same RefreshContext/ContactAdministrator recovery guidance as a folder simply never linked, masking a genuine access denial as a transient/recoverable condition. Deferred: same admission-matrix design work as DW-66 (Partial); resolve together in Story 6.7.
+status: done 2026-10-24
+archived: 2026-11-24
+resolution: spec-five-deferred-conversation-start-safety.md; The supported shared admission assembler already maps Folder causes to distinct recovery actions. Ten new Conversation-start state controls verify Pending/PollTask, Stale or Unavailable/RefreshContext, Archived or Ambiguous/SelectAlternative, and protected or invalid states/ContactAdministrator, with null Setup and no Folder identifier. Missing-Folder and Included controls remain. Legacy comparison routes and the separate DW-66 Partial cutover remain unchanged.
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
