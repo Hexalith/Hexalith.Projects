@@ -71,6 +71,8 @@ command, repair a projection, confirm a suggestion, or mutate an event stream.
 
 ### Cursors
 
+Retained v1 list is unpaged and checks at most 200 Tenant-scoped discovery rows per request. If the projection supplies more rows, an authorized inspection request receives the standard metadata-only HTTP 503 before per-Project checks or an audit write. A complete response still requires an inspection audit and final authority checks.
+
 Supported list pages default to 50 and cap at 200; authority filters precede
 pagination. The platform IQueryCursorCodec protects a ProjectReadCursorPosition
 containing the Project boundary and original 15-minute expiry. Its independent

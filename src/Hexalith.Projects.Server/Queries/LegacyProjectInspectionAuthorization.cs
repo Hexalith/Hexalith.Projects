@@ -9,18 +9,22 @@ using Microsoft.Extensions.DependencyInjection;
 /// <summary>Retains required v1 names only after explicit, separately authorized durable inspection.</summary>
 public static partial class ProjectsDomainServiceEndpoints
 {
+    private static bool HasLegacyInspectionAuthority(HttpContext context, IProjectTenantContextAccessor tenant)
+        => context.Request.Query["inspectDescriptiveMetadata"] is { Count: 1 } optIn && optIn[0] == "true"
+            && context.User.HasClaim("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission)
+            && !string.IsNullOrWhiteSpace(tenant.PrincipalId) && !string.IsNullOrWhiteSpace(tenant.AuthoritativeTenantId);
+
     private static async Task<bool> AuthorizeLegacyInspectionAsync(HttpContext context,
         IProjectTenantContextAccessor tenant, string correlationId, string queryType, string target,
         int count, string observedRevision, CancellationToken cancellationToken, IReadOnlyCollection<string>? projectIds = null)
     {
-        if (context.Request.Query["inspectDescriptiveMetadata"] is not { Count: 1 } optIn || optIn[0] != "true"
-            || !context.User.HasClaim("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission)
-            || string.IsNullOrWhiteSpace(tenant.PrincipalId) || string.IsNullOrWhiteSpace(tenant.AuthoritativeTenantId)) return false;
-        var identity = DualPrincipalClaimsHelper.Extract(context.User, tenant.PrincipalId);
-        var query = new QueryEnvelope(tenant.AuthoritativeTenantId, "projects", target, queryType,
-            "{\"inspectDescriptiveMetadata\":true}"u8.ToArray(), correlationId, tenant.PrincipalId)
+        if (!HasLegacyInspectionAuthority(context, tenant)) return false;
+        string principalId = tenant.PrincipalId!;
+        var identity = DualPrincipalClaimsHelper.Extract(context.User, principalId);
+        var query = new QueryEnvelope(tenant.AuthoritativeTenantId!, "projects", target, queryType,
+            "{\"inspectDescriptiveMetadata\":true}"u8.ToArray(), correlationId, principalId)
         {
-            OriginalActorId = tenant.PrincipalId, AuthenticatedWorkloadId = identity.AuthenticatedWorkloadId,
+            OriginalActorId = principalId, AuthenticatedWorkloadId = identity.AuthenticatedWorkloadId,
             IsDelegated = identity.IsDelegated, DelegationId = identity.DelegationId,
             Scopes = identity.Scopes, Audience = identity.Audience,
         };

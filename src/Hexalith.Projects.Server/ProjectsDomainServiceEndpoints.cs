@@ -1792,7 +1792,9 @@ public static partial class ProjectsDomainServiceEndpoints
         string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
         string actorId = tenantContext.PrincipalId!;
         var caller = LegacyReadCaller(httpContext, actorId);
-        if (!caller.IsAllowed) return SafeDenial(correlationId, null);
+        if (!caller.IsAllowed || !HasLegacyInspectionAuthority(httpContext, tenantContext)) return SafeDenial(correlationId, null);
+        bool includeQuarantined = httpContext.Request.Query["includeQuarantined"] == "true";
+        if (includeQuarantined && !MayInspectLegacyQuarantine(httpContext)) return SafeDenial(correlationId, null);
         IProjectFolderDirectory? folders = caller.Chatbot ? httpContext.RequestServices.GetRequiredService<IProjectFolderDirectory>() : null;
         IReadOnlyList<ProjectListItem> projectedRows;
         try
@@ -1806,8 +1808,11 @@ public static partial class ProjectsDomainServiceEndpoints
             return ReadModelUnavailable(correlationId, null);
         }
         IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
-        bool includeQuarantined = httpContext.Request.Query["includeQuarantined"] == "true";
-        if (includeQuarantined && !MayInspectLegacyQuarantine(httpContext)) return SafeDenial(correlationId, null);
+        // An unpaged legacy response cannot represent incomplete rows safely.
+        if (rows.Count > Hexalith.Projects.Contracts.Queries.ListProjectsQuery.MaximumPageSize)
+        {
+            return ReadModelUnavailable(correlationId, null);
+        }
         List<ProjectListItem> visible = [];
         var observations = new Dictionary<string, (ProjectAuthorizationResult Authority, string Detail)>(StringComparer.Ordinal);
         foreach (ProjectListItem row in rows)

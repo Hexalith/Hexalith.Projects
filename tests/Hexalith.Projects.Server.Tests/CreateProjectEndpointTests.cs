@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Projections.ProjectDetail;
@@ -2193,6 +2194,74 @@ public sealed class CreateProjectEndpointTests
         }
     }
 
+    [Theory]
+    [InlineData(ListProjectsQuery.MaximumPageSize, 1)]
+    [InlineData(ListProjectsQuery.MaximumPageSize + 1, 0)]
+    public async Task ListProjects_BoundsPerRowAuthorization(int rowCount, int expectedDetailReads)
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a",
+            detailReadUnavailable: true).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectListReadModel readModel = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            for (int index = 0; index < rowCount; index++)
+            {
+                readModel.Project("tenant-a", CreatedEvent("tenant-a", projectId: $"project-{index:D3}"));
+            }
+
+            var details = (ThrowingProjectDetailReadModel)app.Services.GetRequiredService<IProjectDetailReadModel>();
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+            using HttpResponseMessage denied = await client.GetAsync("/api/v1/projects", cancellationToken).ConfigureAwait(true);
+            denied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            details.ReadCount.ShouldBe(0);
+
+            using HttpResponseMessage response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", cancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+            body.ShouldNotContain("project-000");
+            details.ReadCount.ShouldBe(expectedDetailReads);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_AtAuthorizationLimit_ReturnsEveryAuthorizedRow()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectListReadModel rows = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            InMemoryProjectDetailReadModel details = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            string[] expected = Enumerable.Range(0, ListProjectsQuery.MaximumPageSize).Select(index => $"project-{index:D3}").ToArray();
+            foreach (string id in expected)
+            {
+                ProjectCreated created = CreatedEvent("tenant-a", ProjectLifecycle.Archived, id);
+                rows.Project("tenant-a", created);
+                details.Project("tenant-a", created);
+            }
+
+            rows.Project("tenant-b", CreatedEvent("tenant-b", ProjectLifecycle.Archived, "foreign-project"));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+            using HttpResponseMessage response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", cancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true));
+            body.RootElement.GetProperty("items").EnumerateArray().Select(item => item.GetProperty("projectId").GetString()!)
+                .Order(StringComparer.Ordinal).ShouldBe(expected);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     private static ProjectCreated CreatedEvent(
         string tenant,
         ProjectLifecycle lifecycle = ProjectLifecycle.Active,
@@ -2937,8 +3006,13 @@ public sealed class CreateProjectEndpointTests
 
     private sealed class ThrowingProjectDetailReadModel : IProjectDetailReadModel
     {
+        internal int ReadCount { get; private set; }
+
         public Task<ProjectDetailItem?> GetAsync(string authoritativeTenantId, string projectId, CancellationToken cancellationToken = default)
-            => throw new InvalidOperationException("Synthetic projection unavailable.");
+        {
+            ReadCount++;
+            throw new InvalidOperationException("Synthetic projection unavailable.");
+        }
     }
 
     private sealed class ThrowingProjectListReadModel : IProjectListReadModel

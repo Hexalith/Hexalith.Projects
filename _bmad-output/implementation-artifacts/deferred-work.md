@@ -1525,6 +1525,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Remove the 2N+1 unbounded authorization fan-out from the retained legacy list.
   evidence: `ProjectsDomainServiceEndpoints.cs:1793-1821` calls `AuthorizeReadAsync` (Tenant-access authorization plus detail read) per row before and after the inspection audit, then `AuthorizeListAsync` again; the legacy list is unpaged. Suggested design: one fresh list-level Tenant authority with per-row detail/final checks, or a row cap failing Unavailable. Severity medium. Decision 2026-11-16 (Jerome): defer. Reason: Rollback-only legacy path; the per-row recheck preserves the E2 stale-authority guarantee; optimize before any production rollback drill.
+  status: done 2026-11-24
+  resolution: Bound retained list authorization to 200 Tenant-scoped discovery rows. Explicit inspection authority is checked before discovery. Above the limit the standard metadata-only 503 is returned before any detail check or audit. Eight HTTP list regression cases passed, including the complete authorized 200-row list and no detail lookup for 201 rows.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Use a consistent authorized detail version for retained list/advisory discovery metadata.
