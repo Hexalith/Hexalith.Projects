@@ -2329,6 +2329,9 @@ def coordinate_scenarios(args, evidence: Path) -> int:
     return 0 if report["result"] == "passed" else 1
 
 
+ISSUER_TLS_HANDSHAKE_TIMEOUT = 1.0
+
+
 def issuer_server(directory: Path, issuer: str, bootstrap_password: str) -> tuple[http.server.HTTPServer, threading.Thread]:
     modulus = execute(["openssl", "rsa", "-in", str(directory / "user.pem"), "-modulus", "-noout"])
     number = int(modulus.strip().split("=", 1)[1], 16)
@@ -2391,10 +2394,20 @@ def issuer_server(directory: Path, issuer: str, bootstrap_password: str) -> tupl
         def log_message(self, *_args: object) -> None:
             pass
 
-    server = http.server.HTTPServer(("127.0.0.1", int(issuer.split(":")[2].split("/")[0])), MetadataHandler)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(directory / "certificate.pem", directory / "certificate.key")
-    server.socket = context.wrap_socket(server.socket, server_side=True)
+
+    class TlsIssuerServer(http.server.HTTPServer):
+        def get_request(self) -> tuple[socket.socket, tuple[str, int]]:
+            connection, address = super().get_request()
+            try:
+                connection.settimeout(ISSUER_TLS_HANDSHAKE_TIMEOUT)
+                return context.wrap_socket(connection, server_side=True), address
+            except OSError:
+                connection.close()
+                raise
+
+    server = TlsIssuerServer(("127.0.0.1", int(issuer.split(":")[2].split("/")[0])), MetadataHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     return server, thread

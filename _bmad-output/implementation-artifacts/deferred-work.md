@@ -1396,6 +1396,8 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
   summary: Bound the synthetic issuer TLS handshake so an idle TCP peer cannot block owned launcher shutdown.
   evidence: Review BR-09 reproduced the hang; baseline47a1ffd02cb3e1cde80bd7697ac1b46fdefda8cc already has the same HTTPServer/listening-socket TLS wrapping/server.shutdown sequence. This is pre-existing lifecycle work, not a new story6.1 regression.
+  status: done 2026-11-24
+  resolution: The synthetic issuer applies a one-second TLS handshake deadline to the accepted socket. The real HTTPS fixture verifies an idle peer is disconnected, discovery still works, and the existing signed token checks pass.
 
 ## Deferred from: code review of 6-1-list-and-open-projects-through-supported-authenticated-paths.md (2026-11-05)
 

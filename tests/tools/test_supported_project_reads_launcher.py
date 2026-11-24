@@ -1678,6 +1678,12 @@ class SupportedReadDelegatedIssuerTests(unittest.TestCase):
             self.addCleanup(server.server_close)
             self.addCleanup(server.shutdown)
             context = ssl.create_default_context(cafile=str(private / "certificate.pem"))
+            # A peer that connects before TLS starts must be released under the
+            # accept-side deadline so the next HTTPS request can proceed.
+            with socket.create_connection(server.server_address, timeout=3) as peer:
+                self.assertEqual(b"", peer.recv(1))
+            with urllib.request.urlopen(issuer + "/.well-known/openid-configuration", context=context, timeout=3) as response:
+                self.assertEqual(issuer, json.load(response)["issuer"])
             valid = {"grant_type": "password", "client_id": "supported-read-bootstrap", "username": "actor-1", "password": password}
             def request(form, path="/token", content_type="application/x-www-form-urlencoded"):
                 body = urllib.parse.urlencode(form).encode() if isinstance(form, dict) else form
