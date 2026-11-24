@@ -1480,7 +1480,7 @@ As a **Project User on Chatbot**, I want unselected Project suggestions from Con
 
 **Verification:** individual Debug project builds and built xUnit test assemblies; retain native XML plus an actual authenticated composition test. Existing common-runner and deployed release gates remain separate and unclaimed. **Completion boundary:** advisory reads and transient reasons; unsupported File identity remains explicitly partial until real mapping exists.
 
-**Consumer impact:** Stories 6.5, 6.6 and 8.5 display advisory/incomplete coverage without preselection. Stories 7.11/7.12 never accept suggestions as authority. Story 6.7 migration and 8.9/8.11 production gates remain independent.
+**Consumer impact:** Stories 6.5, 6.6 and 8.5 display advisory/incomplete coverage without preselection. Stories 7.11/7.12 never accept suggestions as authority. Story 8.9 owns NFR-5 latency qualification for the authenticated Conversation and supported Folder advisory reads described here. Story 6.7 migration and Story 8.11 release acceptance follow their own criteria.
 
 ### Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
 
@@ -2806,6 +2806,8 @@ So that **scale/performance (NFR-5), pagination/export bounds (NFR-6), and back-
 **Acceptance Criteria:**
 
 **Given** supported scale (10,000 Projects/Tenant, 5,000 refs/Project, 100,000 audit records), **When** the performance lane runs, **Then** metadata reads meet p95 < 500 ms (at 1,000 Projects / 500 refs) and < 1 s at max, and task admission p95 < 500 ms warm, at small/median/max shapes.
+
+**Given** authorized Conversation, single-Folder and multiple-Folder inputs with known matching Projects, **When** the managed performance lane exercises each at the NFR-5 data shapes, **Then** require the expected disclosable candidates and report p95 separately for each path and shape. Require p95 below 500 ms at 1,000 Projects per Tenant and 500 Context References per Project, excluding its Folder, and below 1 s at the supported maximum. Report sample counts, incomplete or unavailable outcomes and timeouts alongside p95. An HTTP success without the expected candidates fails the positive check.
 
 **Given** cursor paging, **When** exercised, **Then** default 50 / cap 200 holds with opaque scoped cursors; Safe Diagnostic Export bounds (8.2) are enforced.
 

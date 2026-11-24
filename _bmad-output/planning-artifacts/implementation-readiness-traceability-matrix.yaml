@@ -527,14 +527,14 @@ rows:
     description: "Performance & scale — 10k Projects/Tenant, 5k refs/Project, 100k audit; reads p95 <500ms (<1s max); admission p95 <500ms warm"
     architecture_decisions: [AD-14, AD-15, AD-27]
     primary_story: "8.9"
-    supporting_stories: ["6.1", "6.7"]
+    supporting_stories: ["6.1", "6.4", "6.7"]
     entry_gates: [Epic-8-gate, "6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2"]
     fixture: epic8/8.9-performance
     verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9"
     evidence_artifact: evidence/epic8/8.9-performance.json
     estimate: L
     status: blocked-external
-    blocker: "Epic 8 scale/back-pressure and package/runner qualification remain open for 8.9. 6.1 proves bounded paging and reports observed measurements using the existing lane; no 10k/p95 release claim or feature entry dependency follows from this row."
+    blocker: "Epic 8 scale/back-pressure and package/runner qualification remain open for 8.9. Story 8.9 will measure the authenticated Conversation and supported Folder advisory reads delivered by 6.4 against NFR-5. 6.1 proves bounded paging and reports observed measurements using the existing lane; no 10k/p95 release claim or feature entry dependency follows from this row."
   - key: nfr-6
     category: nfr
     ids: [NFR-6]
