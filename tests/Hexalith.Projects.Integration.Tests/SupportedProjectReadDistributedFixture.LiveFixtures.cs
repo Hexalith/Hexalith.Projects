@@ -70,7 +70,7 @@ internal sealed partial class SupportedProjectReadDistributedFixture
             new { ArchiveIntent = "archive", RequestSchemaVersion = "v1" }, Tenant).ConfigureAwait(false);
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(Cancellation);
         budget.CancelAfter(TimeSpan.FromSeconds(45));
-        string token = HumanToken(Tenant, chatbot: false, administrator: true);
+        string token = HumanToken(Tenant, chatbot: false, inspection: true, administrator: true);
         HashSet<int> statuses = [];
         string? lastLifecycle = null;
         bool archived = false;
@@ -79,7 +79,8 @@ internal sealed partial class SupportedProjectReadDistributedFixture
         {
             while (true)
             {
-                using var request = new HttpRequestMessage(HttpMethod.Get, _endpoints["projects"] + "/api/v1/projects/" + project);
+                using var request = new HttpRequestMessage(HttpMethod.Get,
+                    _endpoints["projects"] + "/api/v1/projects/" + project + "?inspectDescriptiveMetadata=true");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 request.Headers.Add("X-Hexalith-Tenant-Id", Tenant);
                 using var response = await _http.SendAsync(request, budget.Token).ConfigureAwait(false);
