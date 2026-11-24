@@ -1344,6 +1344,8 @@ status: open
 - source_spec: `spec-release-maintenance-2026-11-01.md`
   summary: Verify build/runtime project selection for a deliberately partial direct dependency checkout (unverified medium).
   evidence: Runtime sibling fallback uses requested-project existence while existing MSBuild roots use Contracts-directory existence; actual workspace dependencies are complete or deinitialized, so a partial-checkout source-build reproduction is needed to establish a reachable mismatch.
+  status: done 2026-11-24
+  resolution: A disposable .NET 11.0.100 probe at Memories 667fbf2564ee2a1a30487e24cba20b37eebb76d0 reproduced the mismatch with and without the direct EventStore Aspire csproj. MSBuild selects the partial direct root and switches its source flag according to the Aspire file. The compiled runtime resolver selects the declared sibling host in both cases. [Reproduction](spec-next-ten-deferred-work-items.md#partial-direct-dependency-checkout)
 
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Extend the preexisting readiness polling regression matrix for non-serving, wrong-root and temporarily unavailable catalog observations.
