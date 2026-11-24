@@ -1100,6 +1100,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Unverified whether a null `CommandEnvelope` body reaches the verification host lambda or is rejected by minimal-API binding.
   evidence: `host/Program.cs` maps `/command` to a non-null `CommandEnvelope` parameter and dereferences `command.AggregateIdentity` immediately. Confirm with a null-body request whether ASP.NET returns 400 before the lambda. If the lambda runs, the host turns a null body into an unstructured failure.
+  status: done 2026-11-24
+  resolution: Restored the exact historical host from EventStore b7ba9bb1fdff85fb47817d35506bd6ca81b23d70 and matched its sealed SHA-256 6a5b7e24e9b431c9b32baa9eb062ca004b556b344b3af594cfbeb896be3ed5a7. The published EventStore 3.110.0 host built with zero warnings/errors. Kestrel returned 400 and made zero actor calls for empty and JSON-null bodies. A valid envelope returned 200 and made one SDK remoting call to the isolated synthetic actor.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
   summary: The CI workflow gate does not stop the root from overriding the catalog's `HexalithConversationsVersion`/`HexalithFoldersVersion` version-set properties.
