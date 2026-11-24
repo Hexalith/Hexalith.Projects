@@ -21,6 +21,22 @@ variable of that process. See the official
 [NuGet Trusted Publishing documentation](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
 and the pinned [`NuGet/login` v1.2.0 source](https://github.com/NuGet/login/commit/8d196754b4036150537f80ac539e15c2f1028841).
 
+## Builds identities
+
+The release workflow runs the initialization action from its explicit immutable
+Builds checkout under `.hexalith/builds-execution`. Release preflight checks
+that checkout's HEAD against the approved execution SHA. The Projects
+`references/Hexalith.Builds` gitlink supplies the package catalog and
+qualification tools to the exact Projects source checkout. These coordinates
+are independently pinned and audited.
+
+At Projects `b4a2818340a6cb9f54911f65e49f04d10124f280`, the approved workflow
+execution SHA is `6ad5854aa14a9950e1fbfc32d7e27953a1c4b82b` and the source
+gitlink is `bf8a28b4bbcec619e8d9764d335f786f2bafb69e`. The release execution
+checkout is explicitly exempt from matching the source gitlink. The
+current-source G-6 receipt records both identities and validates each for its
+own purpose.
+
 ## Required GitHub configuration
 
 Keep the existing `production` environment and confirm all of these controls

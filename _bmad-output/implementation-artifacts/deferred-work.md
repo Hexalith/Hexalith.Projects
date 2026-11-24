@@ -897,6 +897,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Align or explicitly exempt the Projects `release.yml` Builds execution SHA from the root Builds gitlink.
   evidence: `release.yml` runs Builds `a07078ad…` while the gitlink and G-6 bindings use another revision (review R2-BH-11/R2-EC-04).
+  status: done 2026-11-24
+  resolution: The NuGet Trusted Publishing runbook explicitly exempts the separately checked release execution SHA from equality with the dependency gitlink. It records the exact observed coordinates and their independent validation.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Add a release containment rule for Projects `main` while it builds against an unaccepted EventStore tuple, and name the rollback pin target.
   evidence: Package builds consume EventStore 3.109.0 while the accepted P1R tuple is 3.106.0; semantic-release could publish from that state (review R2-BH-12).
