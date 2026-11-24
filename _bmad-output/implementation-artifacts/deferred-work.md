@@ -436,7 +436,8 @@ location: src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: AuthorizeAsync returns at six different depths, each skipping the remaining awaited calls. Status, headers and body are uniform because SafeDenial discards the reason, so timing is the only residual discriminator against AC3's requirement that every caller-visible category including timing be indistinguishable. Currently untested.
-status: open
+status: done 2026-11-24
+resolution: Extended the approved shared EventStore 50 ms safe-404 mitigation proof to Conversation-start Setup. Two gateway dispatch controls and a real Projects/Conversations/Folders fixture passed. Three requests for a missing Project and three requests denied at Tenant authority all crossed the floor and matched in caller-visible response and recorded diagnostic categories. The approved mitigation allows timing variation above the floor.
 decision: 2026-08-27 Mitigate and test — Design a bounded safe-denial indistinguishability strategy, implement it at the shared authorization boundary, and add stable timing-distribution tests without exposing protected outcomes.
 decision: 2026-08-27 Mitigate and test — Design a bounded safe-denial indistinguishability strategy, implement it at the shared authorization boundary, and add stable timing-distribution tests without exposing protected outcomes.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth

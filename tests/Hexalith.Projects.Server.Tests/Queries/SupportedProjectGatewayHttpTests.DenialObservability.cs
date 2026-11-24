@@ -240,8 +240,10 @@ public sealed partial class SupportedProjectGatewayHttpTests
     }
 
     /// <summary>Exercises the actual SDK HTTP boundary independently of Dapr and domain authority fixtures.</summary>
-    [Fact]
-    public async Task SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SupportedHandlerDenialsHaveSameHeadersSdkLogsAndHttpTelemetryCategories(bool conversationStart)
     {
         const string tenant = "denial-observability";
         using ProjectReadDenialObserver observer = new();
@@ -252,10 +254,10 @@ public sealed partial class SupportedProjectGatewayHttpTests
         receiverBuilder.Logging.AddFilter<ProjectReadDenialLogProvider>(static (_, _) => true);
         WebApplication receiver = receiverBuilder.Build();
         await using var receiverLifetime = receiver.ConfigureAwait(true);
-        List<string> received = [];
+        List<QueryEnvelope> received = [];
         receiver.MapPost("/query", (QueryEnvelope query) =>
         {
-            received.Add(query.AggregateId);
+            received.Add(query);
             // The owner outcomes have already been canonicalized; this control tests the downstream SDK boundary.
             return QueryResult.Failure("safe-denial");
         });
@@ -268,17 +270,30 @@ public sealed partial class SupportedProjectGatewayHttpTests
         gateway.Services.GetRequiredService<IQueryRouter>().ShouldBeOfType<Hexalith.EventStore.Queries.HandlerAwareQueryRouter>();
         using HttpClient client = new() { BaseAddress = new(gateway.Urls.Single()) };
         client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false));
-        SubmitQueryRequest Open(string project) => new(tenant, "projects", project, GetProjectQuery.QueryType,
-            Payload: JsonSerializer.SerializeToElement(new GetProjectQuery(), JsonSerializerOptions.Web));
-        var absent = await ObserveDenialAsync(client, Open("absent"), observer);
-        var denied = await ObserveDenialAsync(client, Open("denied"), observer);
+        string queryType = conversationStart ? ProjectsServerModule.GetConversationStartSetupQueryType : GetProjectQuery.QueryType;
+        SubmitQueryRequest Query(string project) => new(tenant, "projects", project, queryType,
+            Payload: conversationStart
+                ? JsonSerializer.SerializeToElement(new GetConversationStartSetupQuery(project) { ConversationId = "bound-conversation" }, JsonSerializerOptions.Web)
+                : JsonSerializer.SerializeToElement(new GetProjectQuery(), JsonSerializerOptions.Web));
+        var absent = await ObserveDenialAsync(client, Query("absent"), observer);
+        var denied = await ObserveDenialAsync(client, Query("denied"), observer);
         AssertSameDenialObservations(absent, denied);
         output.WriteLine("Actual SDK denial observations: " + JsonSerializer.Serialize(new
         {
             FirstTrace = absent.Trace.ToString(), SecondTrace = denied.Trace.ToString(),
             absent.Headers, absent.Logs, MetricCategory = absent.Metric, ServerActivity = absent.Activity,
         }));
-        received.ShouldBe(["absent", "denied"]);
+        received.Select(query => (query.AggregateId, query.QueryType)).ShouldBe([("absent", queryType), ("denied", queryType)]);
+        if (conversationStart)
+        {
+            foreach (QueryEnvelope query in received)
+            {
+                using JsonDocument forwarded = JsonDocument.Parse(query.Payload);
+                JsonElement payload = forwarded.RootElement;
+                payload.GetProperty("projectId").GetString().ShouldBe(query.AggregateId);
+                payload.GetProperty("conversationId").GetString().ShouldBe("bound-conversation");
+            }
+        }
         routes.TransportResponses.ShouldBe(["projects:query:200", "projects:query:200"]);
         routes.HumanBearerForwarded.ShouldBeFalse();
     }

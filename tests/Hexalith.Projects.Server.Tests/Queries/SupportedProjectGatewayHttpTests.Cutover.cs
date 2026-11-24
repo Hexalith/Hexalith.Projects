@@ -58,15 +58,16 @@ public sealed partial class SupportedProjectGatewayHttpTests
         string tenant = "cutover-native-" + Guid.NewGuid().ToString("N");
         DateTimeOffset now = DateTimeOffset.UtcNow;
         using RSA key = RSA.Create(2048);
+        using ProjectReadDenialObserver denialObserver = new();
         var routes = new GatewayFixtureLocalRoutes(); var heads = new GatewayFixtureOwnerHeads();
-        WebApplication folders = await StartFoldersAsync(http!, grpc!, routes, heads, now, "*");
+        WebApplication folders = await StartFoldersAsync(http!, grpc!, routes, heads, now, "*", denialObserver);
         await using var foldersLifetime = folders.ConfigureAwait(true); routes.Add("folders", folders);
-        WebApplication conversations = await StartConversationsAsync(http!, grpc!, routes);
+        WebApplication conversations = await StartConversationsAsync(http!, grpc!, routes, denialObserver);
         await using var conversationsLifetime = conversations.ConfigureAwait(true); routes.Add("conversations", conversations);
-        WebApplication projects = await StartProjectsAsync(http!, grpc!, routes, key, now);
+        WebApplication projects = await StartProjectsAsync(http!, grpc!, routes, key, now, denialObserver);
         await using var projectsLifetime = projects.ConfigureAwait(true); routes.Add("projects", projects);
         Exception? gatewayFailure = null;
-        WebApplication gateway = await StartGatewayAsync(http!, grpc!, routes, key, "*", exceptionObserver: exception => gatewayFailure = exception);
+        WebApplication gateway = await StartGatewayAsync(http!, grpc!, routes, key, "*", denialObserver, exception => gatewayFailure = exception);
         await using var gatewayLifetime = gateway.ConfigureAwait(true); routes.Add("eventstore", gateway);
         var projectTenant = new ProjectTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
             ProjectionWatermark = tenant + ":1", LastEventTimestamp = now };
@@ -99,6 +100,23 @@ public sealed partial class SupportedProjectGatewayHttpTests
             context.GetProperty("snapshot").GetProperty("responseState").GetString().ShouldBe("Complete");
             raw.ShouldNotContain("private-native-");
         }
+        SubmitQueryRequest Setup(string projectId) => new(tenant, "projects", projectId, ProjectsServerModule.GetConversationStartSetupQueryType,
+            Payload: JsonSerializer.SerializeToElement(new GetConversationStartSetupQuery(projectId) { ConversationId = "bound-conversation" }, JsonSerializerOptions.Web));
+        int dispatchesBeforeDenials = routes.ProjectQueries.Count;
+        for (int round = 0; round < 3; round++)
+        {
+            client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false));
+            var absent = await ObserveDenialAsync(client, Setup("missing-project"), denialObserver).ConfigureAwait(true);
+            client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, actorId: "denied-actor"));
+            var denied = await ObserveDenialAsync(client, Setup("project-a"), denialObserver).ConfigureAwait(true);
+            AssertSameDenialObservations(absent, denied);
+        }
+
+        routes.ProjectQueries.Skip(dispatchesBeforeDenials)
+            .Where(query => query.QueryType == ProjectsServerModule.GetConversationStartSetupQueryType)
+            .Select(query => (query.AggregateId, query.OriginalActorId ?? string.Empty))
+            .ShouldBe(Enumerable.Repeat(new[] { ("missing-project", "actor-1"), ("project-a", "denied-actor") }, 3).SelectMany(pair => pair));
+
         routes.OwnerQueries.ShouldBeGreaterThanOrEqualTo(3);
         routes.HumanBearerForwarded.ShouldBeFalse();
         await ObserveCutoverMatrixAsync(gateway, projects, folders, conversations, routes, heads, tenant, now, history, http!);
