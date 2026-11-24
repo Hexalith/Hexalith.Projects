@@ -1139,6 +1139,8 @@ status: open
 - source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-current-ci-repair.md`
   summary: Add isolated public projection-only domain diagnostics discovery coverage in EventStore.
   evidence: Both public projection fixtures use widget, already contributed by an aggregate, so the exact diagnostics-domain assertion cannot detect omitted synchronous or asynchronous projection-domain enumeration; this existing gap predates the P1R CI fixture repair.
+  status: done 2026-11-24
+  resolution: The EventStore host diagnostics independently discover the synchronous and asynchronous projection-only domains. The complete extension test class passed all 105 cases. Local Hexalith.EventStore commit 9a51ddd4c36c36e618f1213b4039f31fff3f35df.
 
 - source_spec: `spec-6-1-p1r-successor-enrollment-publication-readiness.md`
   summary: Qualify or explicitly refuse TLS-authenticated remote outer Docker controllers in the P1R isolation wrapper.
