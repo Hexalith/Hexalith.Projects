@@ -1345,6 +1345,8 @@ status: open
 - source_spec: `spec-6-4-owner-host-qualification.md`
   summary: Support and qualify synchronous OTLP HTTP/protobuf export through the SDK route-catalog HTTP wrapper.
   evidence: The new actual-host export probe reached synchronous HttpClient.Send, while RouteCatalogInvocationHandler overrides only SendAsync; the exporter reports an unsupported synchronous send. Retained failed execution distinguishes this SDK producer limitation from the owner-defaults startup fix. Do not claim export delivery from the provider-startup test.
+  status: done 2026-11-24
+  resolution: The actual Folders composition delivered traces, metrics and logs over OTLP HTTP/protobuf. The collector observed the marker from each guarded named exporter client. Local Hexalith.Folders commit b85ab9d05c75522ababcaa78c88043b154d72100.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-release-maintenance-2026-11-01.md`
   summary: Verify the updated axe and Playwright dependencies against the real managed Projects AppHost accessibility and application lanes.
