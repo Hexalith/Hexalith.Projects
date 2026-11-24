@@ -9,7 +9,7 @@ using System.Text.Json;
 
 /// <summary>
 /// Metadata-only Conversations role. Routes, headers, and wire shapes follow the published
-/// <c>Hexalith.Conversations.Client</c> 1.0.0 contract (<c>api/v1/conversations</c>, tenant in
+/// <c>Hexalith.Conversations.Client</c> contract (<c>api/v1/conversations</c>, tenant in
 /// <c>X-Tenant-Id</c>, prefixed identifiers). Conversations never carry message or transcript content.
 /// The graph's degraded Project lists three conversations whose trust is deterministically Stale,
 /// Forbidden, and Unavailable; reading the Unavailable one is also slow, so loading states are observable.
@@ -68,12 +68,12 @@ internal static class ConversationsFixtureEndpoints
             if (string.Equals(conversationId, graph.UnavailableConversationId, StringComparison.Ordinal))
             {
                 await Task.Delay(UnavailableReadDelay, cancellationToken).ConfigureAwait(false);
-                return Results.Ok(HiddenDetail(Unavailable, readPurpose));
+                return Results.Json(HiddenDetail(Unavailable), statusCode: StatusCodes.Status503ServiceUnavailable);
             }
 
             if (string.Equals(conversationId, graph.ForbiddenConversationId, StringComparison.Ordinal))
             {
-                return Results.Ok(HiddenDetail(Forbidden, readPurpose));
+                return Results.Json(HiddenDetail(Forbidden), statusCode: StatusCodes.Status404NotFound);
             }
 
             ConversationFixtureTrust trust = string.Equals(conversationId, graph.StaleConversationId, StringComparison.Ordinal) ? Stale : Current;
@@ -82,7 +82,7 @@ internal static class ConversationsFixtureEndpoints
                 schemaVersion = 1,
                 freshnessState = trust.State,
                 reasonCode = trust.ReasonCode,
-                details = Conversation(graph, conversationId, LinkedProject(graph, conversationId), trust),
+                details = Conversation(graph, conversationId, LinkedProject(graph, conversationId), trust, advisory),
                 safeNextAction = trust.SafeNextAction,
                 readPurpose,
             });
@@ -140,14 +140,13 @@ internal static class ConversationsFixtureEndpoints
         }
     }
 
-    private static object HiddenDetail(ConversationFixtureTrust trust, string? readPurpose) => new
+    private static object HiddenDetail(ConversationFixtureTrust trust) => new
     {
         schemaVersion = 1,
         freshnessState = trust.State,
         reasonCode = trust.ReasonCode,
         details = (object?)null,
         safeNextAction = trust.SafeNextAction,
-        readPurpose,
     };
 
     // Only the existing conversation is assigned; the unlinked and ambiguous conversations carry folder
@@ -157,7 +156,7 @@ internal static class ConversationsFixtureEndpoints
             ? graph.ProjectId
             : string.Equals(conversationId, graph.StaleConversationId, StringComparison.Ordinal) ? graph.DegradedProjectId : null;
 
-    private static object Conversation(LiveFixtureGraph graph, string conversationId, string? projectId, ConversationFixtureTrust trust)
+    private static object Conversation(LiveFixtureGraph graph, string conversationId, string? projectId, ConversationFixtureTrust trust, bool advisory = false)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
         return new
@@ -180,10 +179,11 @@ internal static class ConversationsFixtureEndpoints
             lifecycleState = "Open",
             label = $"Fixture conversation {graph.Scenario}",
             projectId = projectId is null ? null : $"project:{projectId}",
-            folderId = $"folder:{graph.FolderId}",
+            folderId = advisory ? null : $"folder:{graph.FolderId}",
             participantPartyIds = Array.Empty<string>(),
             messageCount = 0,
-            fileReferenceCount = 1,
+            messages = Array.Empty<object>(),
+            fileReferenceCount = advisory ? 0 : 1,
             partyHydration = Array.Empty<object>(),
         };
     }
