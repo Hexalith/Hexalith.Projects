@@ -1387,6 +1387,8 @@ status: open
 - source_spec: `spec-tenant-flow-disposal-2026-11-01.md`
   summary: Harden retained-flow cleanup against an authorization cancellation callback that throws before unsubscribe/detach.
   evidence: InvalidateAdmission precedes unsubscribe/detach in the unchanged baseline Dispose ordering. The current five-flow fix removes proven disposed-provider lookups; callback-exception cleanup is a preexisting distinct hardening case.
+  status: done 2026-11-24
+  resolution: All five retained flows detach ownership when authorization cancellation throws. Create Tenant also cancels its separate refresh and authorization operations while preserving the first callback failure. The post-review disposal run passed all 16 focused cases. Local Hexalith.Tenants commit d58f24d8d6909d7498ecec34955e7f17720c1ba0.
 
 - source_spec: `spec-tenant-domain-invocation-budget-2026-11-01.md`
   summary: Align standalone Tenants gateway and production Dapr invocation policies with bounded native authority verification.
