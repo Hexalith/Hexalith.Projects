@@ -1316,6 +1316,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-ci-qualification-items.md`
   summary: Extend catalog property ownership validation to the effective local props import closure.
   evidence: Independent review reproduced a pre-existing bypass: root Directory.Build.props imports override.props, which declares HexalithFoldersVersion=9.9.9; the static direct-file gate passes while dotnet msbuild reports 9.9.9. This slice checks direct root declarations and literal workflow/environment inputs without initializing submodules; import evaluation needs a separately bounded resolver or an effective-MSBuild gate.
+  status: done 2026-11-24
+  resolution: The policy gate follows nested, literal Projects-local MSBuild imports from both root props files, checks catalog properties and package items in each, and rejects imports it cannot resolve. It preserves the three exact Builds owner catalog paths. Regression fixtures cover benign nested imports, case-insensitive property overrides, package redefinitions, catalog redirection, and unevaluable imports.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Make EventStore Admin source edges compatible with producer-owned mapping without per-edge EventStore version overrides.

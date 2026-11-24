@@ -1039,28 +1039,120 @@ if ($catalogImports.Count -ne 1 -or
     $catalogPaths[0].InnerText.Trim() -cne '$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/Directory.Packages.props') {
     $failures.Add('Directory.Packages.props must import the root-declared Hexalith.Builds package catalog.')
 }
-$rootPackageVersionIds = @($directoryPackagesXml.SelectNodes('//PackageVersion') |
-    ForEach-Object { $_.GetAttribute('Include'), $_.GetAttribute('Update'), $_.GetAttribute('Remove') } |
-    Where-Object { $_ } |
-    ForEach-Object { $_ -split ';' } |
-    ForEach-Object { $_.Trim() })
-foreach ($packageId in @('Hexalith.Conversations.Client', 'Hexalith.Conversations.Contracts', 'Hexalith.Folders.Client', 'Hexalith.Folders.Contracts')) {
-    if ($rootPackageVersionIds -contains $packageId) {
-        $failures.Add("$packageId version must be owned by the Hexalith.Builds package catalog, not root Directory.Packages.props.")
+# Follow imports from both root props files. Check every local branch because
+# conditions can select different imports in a consumer build. The only
+# nonlocal exceptions are the three explicit owner catalog lookup paths.
+$catalogPathsByProperty = @{
+    Hexalith1BuildPackageProps = '$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/Directory.Packages.props'
+    Hexalith2BuildPackageProps = '$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/Directory.Packages.props'
+    Hexalith3BuildPackageProps = '$(MSBuildThisFileDirectory)../../Hexalith.Builds/Props/Directory.Packages.props'
+}
+$catalogImportsAllowed = @{}
+foreach ($property in $catalogPathsByProperty.Keys) {
+    $definitions = @($directoryPackagesXml.SelectNodes('//*[local-name()="PropertyGroup"]/*') |
+        Where-Object { $_.LocalName -ieq $property })
+    if ($definitions.Count -eq 1 -and $definitions[0].InnerText.Trim() -ceq $catalogPathsByProperty[$property]) {
+        $catalogImportsAllowed['$(' + $property + ')'] = $true
     }
 }
 
-# MSBuild property names and environment imports are case-insensitive. Reject
-# declarations even under conditions so catalog ownership cannot vary by lane.
+$propsToCheck = [System.Collections.Generic.Queue[string]]::new()
+$propsToCheck.Enqueue($directoryBuildPropsPath)
+$propsToCheck.Enqueue($directoryPackagesPath)
+$comparison = if ($IsWindows) { [System.StringComparer]::OrdinalIgnoreCase } else { [System.StringComparer]::Ordinal }
+$visitedProps = [System.Collections.Generic.HashSet[string]]::new($comparison)
+$localProps = [System.Collections.Generic.Dictionary[string, System.Xml.XmlDocument]]::new($comparison)
+while ($propsToCheck.Count -gt 0) {
+    $propsPath = $propsToCheck.Dequeue()
+    if (-not $visitedProps.Add($propsPath)) {
+        continue
+    }
+    $relativeProps = [System.IO.Path]::GetRelativePath($repositoryRoot, $propsPath)
+    try {
+        $partPath = $repositoryRoot
+        foreach ($part in ($relativeProps -split '[/\\]')) {
+            $partPath = Join-Path $partPath $part
+            $attributes = [System.IO.File]::GetAttributes($partPath)
+            if ($attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+                throw 'linked props paths are not supported'
+            }
+        }
+        [xml] $propsXml = Get-Content -LiteralPath $propsPath -Raw
+        if ($propsXml.DocumentElement.LocalName -ne 'Project') {
+            throw 'expected an MSBuild Project root'
+        }
+    }
+    catch {
+        $failures.Add("Cannot inspect local MSBuild import '$relativeProps': $($_.Exception.Message)")
+        continue
+    }
+    $localProps[$relativeProps] = $propsXml
+    foreach ($import in $propsXml.SelectNodes('//*[local-name()="Import"]')) {
+        $project = $import.GetAttribute('Project').Trim()
+        if ($import.HasAttribute('Sdk')) {
+            $failures.Add("Cannot resolve SDK-relative MSBuild import in '$relativeProps': $project")
+            continue
+        }
+        if ($propsPath -ceq $directoryPackagesPath -and $catalogImportsAllowed.ContainsKey($project)) {
+            continue
+        }
+        $directory = Split-Path -Parent $propsPath
+        $thisDirectory = '$(MSBuildThisFileDirectory)'
+        if ($project.StartsWith($thisDirectory, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $project = $project.Substring($thisDirectory.Length)
+        }
+        if (-not $project -or $project -match '[\$@%*?;:]' -or [System.IO.Path]::IsPathRooted($project)) {
+            $failures.Add("Cannot resolve local MSBuild import in '$relativeProps': $project")
+            continue
+        }
+        $target = [System.IO.Path]::GetFullPath(($project -replace '\\', '/'), $directory)
+        $relativeTarget = [System.IO.Path]::GetRelativePath($repositoryRoot, $target)
+        if ([System.IO.Path]::IsPathRooted($relativeTarget) -or $relativeTarget -match '^\.\.([/\\]|$)') {
+            $failures.Add("Local MSBuild import in '$relativeProps' leaves the Projects checkout: $project")
+            continue
+        }
+        $propsToCheck.Enqueue($target)
+    }
+}
+
+$catalogPackageIds = @('Hexalith.Conversations.Client', 'Hexalith.Conversations.Contracts', 'Hexalith.Folders.Client', 'Hexalith.Folders.Contracts')
+foreach ($propsName in $localProps.Keys) {
+    if ($propsName -cne 'Directory.Packages.props') {
+        foreach ($declaration in $localProps[$propsName].SelectNodes('//*[local-name()="PropertyGroup"]/*')) {
+            if ($catalogPathsByProperty.ContainsKey($declaration.LocalName)) {
+                $failures.Add("$propsName must not redirect the Builds catalog through $($declaration.LocalName).")
+            }
+        }
+    }
+    $catalogGuards = @($localProps[$propsName].SelectNodes('//*[local-name()="PropertyGroup"]/*') |
+        Where-Object { $_.LocalName -ieq 'HexalithVersionsLoaded' })
+    if ($catalogGuards.Count -gt 0) {
+        $failures.Add("$propsName must not suppress the Builds catalog through HexalithVersionsLoaded.")
+    }
+    $versionIds = @($localProps[$propsName].SelectNodes('//*[local-name()="PackageVersion"]') |
+        ForEach-Object { $_.GetAttribute('Include'), $_.GetAttribute('Update'), $_.GetAttribute('Remove') } |
+        Where-Object { $_ } |
+        ForEach-Object { $_ -split ';' } |
+        ForEach-Object { $_.Trim() })
+    foreach ($selector in $versionIds) {
+        if ($selector -match '[\$@%*?]') {
+            $failures.Add("Cannot establish ownership of dynamic PackageVersion selector in '$propsName': $selector")
+        }
+    }
+    foreach ($packageId in $catalogPackageIds) {
+        if ($versionIds -contains $packageId) {
+            $failures.Add("$packageId version must be owned by the Hexalith.Builds package catalog; $propsName changes it.")
+        }
+    }
+}
+
+# MSBuild property names and environment imports are case-insensitive.
 foreach ($versionProperty in @('HexalithConversationsVersion', 'HexalithFoldersVersion')) {
-    foreach ($props in @(
-        @{ Name = 'Directory.Build.props'; Xml = $directoryBuildPropsXml },
-        @{ Name = 'Directory.Packages.props'; Xml = $directoryPackagesXml }
-    )) {
-        $declarations = @($props.Xml.SelectNodes('//*[local-name()="PropertyGroup"]/*') |
+    foreach ($propsName in $localProps.Keys) {
+        $declarations = @($localProps[$propsName].SelectNodes('//*[local-name()="PropertyGroup"]/*') |
             Where-Object { $_.LocalName -ieq $versionProperty })
         if ($declarations.Count -gt 0) {
-            $failures.Add("$versionProperty must remain owned by the Hexalith.Builds package catalog; $($props.Name) declares it.")
+            $failures.Add("$versionProperty must remain owned by the Hexalith.Builds package catalog; $propsName declares it.")
         }
     }
     $propertyPattern = [regex]::Escape($versionProperty)

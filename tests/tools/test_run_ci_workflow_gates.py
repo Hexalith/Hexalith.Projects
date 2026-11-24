@@ -254,6 +254,39 @@ class WorkflowGateTests(unittest.TestCase):
                     path.write_text(original)
 
 
+    def test_nested_props_imports_cannot_override_catalog(self) -> None:
+        self.replace("Directory.Build.props", "</Project>", '<Import Project="build/local.props" /></Project>')
+        local = self.root / "build/local.props"
+        local.parent.mkdir()
+        local.write_text('<Project><Import Project="$(MSBuildThisFileDirectory)versions.props" /></Project>')
+        versions = local.with_name("versions.props")
+        versions.write_text('<Project><PropertyGroup><UnrelatedVersion>1.0</UnrelatedVersion></PropertyGroup></Project>')
+        result = self.run_gate()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+        for change, diagnostic in (
+            ('<PropertyGroup><hexalithfoldersversion>9.9.9</hexalithfoldersversion></PropertyGroup>',
+             'HexalithFoldersVersion must remain owned'),
+            ('<ItemGroup><PackageVersion Update="Hexalith.Conversations.Client" Version="9.9.9" /></ItemGroup>',
+             'Hexalith.Conversations.Client version must be owned'),
+            ('<PropertyGroup><Hexalith1BuildPackageProps>unreviewed.props</Hexalith1BuildPackageProps></PropertyGroup>',
+             'must not redirect the Builds catalog'),
+            ('<PropertyGroup><HexalithVersionsLoaded>true</HexalithVersionsLoaded></PropertyGroup>',
+             'must not suppress the Builds catalog'),
+            ('<ItemGroup><PackageVersion Update="Hexalith.Folders.*" Version="9.9.9" /></ItemGroup>',
+             'Cannot establish ownership of dynamic PackageVersion selector'),
+            ('<PropertyGroup><Other>Hexalith.Folders.Client</Other></PropertyGroup>'
+             '<ItemGroup><PackageVersion Update="$(Other)" Version="9.9.9" /></ItemGroup>',
+             'Cannot establish ownership of dynamic PackageVersion selector'),
+        ):
+            with self.subTest(change=change):
+                versions.write_text(f'<Project>{change}</Project>')
+                self.assert_rejected(diagnostic)
+
+    def test_unevaluable_props_import_fails_closed(self) -> None:
+        self.replace("Directory.Build.props", "</Project>", '<Import Project="$(LocalProps)" /></Project>')
+        self.assert_rejected("Cannot resolve local MSBuild import in 'Directory.Build.props'")
+
     def test_inherited_version_set_overrides_are_rejected_case_insensitively(self) -> None:
         for property_name in VERSION_PROPERTIES:
             with self.subTest(property_name=property_name):
