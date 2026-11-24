@@ -13,8 +13,14 @@ internal static class PackageReadSetupReadiness
     internal static async Task WaitAsync(Func<CancellationToken, Task<(HttpStatusCode Status, ProjectListPage? Page)>> query,
         string[] expected, TimeSpan timeout, TimeSpan interval, CancellationToken cancellation)
     {
-        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
-        budget.CancelAfter(timeout);
+        using CancellationTokenSource deadline = new(timeout);
+        await WaitAsync(query, expected, interval, cancellation, deadline.Token).ConfigureAwait(false);
+    }
+
+    internal static async Task WaitAsync(Func<CancellationToken, Task<(HttpStatusCode Status, ProjectListPage? Page)>> query,
+        string[] expected, TimeSpan interval, CancellationToken cancellation, CancellationToken deadline)
+    {
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(cancellation, deadline);
         string last = "no-response";
         try
         {

@@ -57,12 +57,18 @@ public sealed class PackageReadSetupReadinessTests
     public async Task PersistentUnavailableTimesOutWithLastSafeObservation()
     {
         int calls = 0;
+        using CancellationTokenSource deadline = new();
         InvalidOperationException failure = await Should.ThrowAsync<InvalidOperationException>(() => PackageReadSetupReadiness.WaitAsync(_ =>
         {
-            calls++;
+            if (++calls == 2)
+            {
+                deadline.Cancel();
+            }
+
+            calls.ShouldBeLessThanOrEqualTo(2);
             return Task.FromResult((HttpStatusCode.OK, (ProjectListPage?)Unavailable()));
-        }, ["project-a", "project-b"], TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(1), TestContext.Current.CancellationToken));
-        calls.ShouldBeGreaterThan(1);
+        }, ["project-a", "project-b"], TimeSpan.Zero, TestContext.Current.CancellationToken, deadline.Token));
+        calls.ShouldBe(2);
         failure.Message.ShouldContain("setup budget");
         failure.Message.ShouldContain("FolderVisibility");
         failure.Message.ShouldContain("FolderUnavailable");
@@ -92,6 +98,27 @@ public sealed class PackageReadSetupReadinessTests
                 ["project-a", "project-b"], TimeSpan.FromMilliseconds(10), TimeSpan.Zero, TestContext.Current.CancellationToken));
         }
         finally { reply.SetResult((HttpStatusCode.OK, Complete())); }
+    }
+
+    /// <summary>Caller cancellation wins while the setup deadline remains active.</summary>
+    [Fact]
+    public async Task CallerCancellationStopsAnInFlightRead()
+    {
+        using CancellationTokenSource caller = new();
+        using CancellationTokenSource deadline = new();
+        TaskCompletionSource<(HttpStatusCode, ProjectListPage?)> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        try
+        {
+            Task waiting = PackageReadSetupReadiness.WaitAsync(_ => pending.Task,
+                ["project-a", "project-b"], TimeSpan.Zero, caller.Token, deadline.Token);
+            caller.Cancel();
+            await Should.ThrowAsync<OperationCanceledException>(() => waiting.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+            deadline.IsCancellationRequested.ShouldBeFalse();
+        }
+        finally
+        {
+            pending.TrySetResult((HttpStatusCode.OK, Complete()));
+        }
     }
 
     private static ProjectListPage Complete()
