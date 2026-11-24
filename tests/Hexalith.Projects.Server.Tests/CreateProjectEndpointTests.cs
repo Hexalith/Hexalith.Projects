@@ -311,7 +311,7 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
-    public async Task PostProject_NonStringCanonicalMetadataClass_RetainsGenericMalformedBodyResponse()
+    public async Task PostProject_NonStringCanonicalMetadataClass_ReturnsMetadataClass400WithoutSubmitting()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
         WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
@@ -338,7 +338,8 @@ public sealed class CreateProjectEndpointTests
             using JsonDocument document = JsonDocument.Parse(body);
             JsonElement details = document.RootElement.GetProperty("details");
             details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
-            details.GetProperty("rejectedField").GetString().ShouldBe("body");
+            details.GetProperty("rejectedField").GetString().ShouldBe("projectMetadata.metadataClass");
+            details.EnumerateObject().Count().ShouldBe(2);
             Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
         }
         finally
@@ -348,7 +349,7 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
-    public async Task PostProject_DuplicateCanonicalMetadataClass_RetainsLastValueSemantics()
+    public async Task PostProject_DuplicateCanonicalMetadataClass_ReturnsMetadataClass400WithoutSubmitting()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
         WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
@@ -368,11 +369,55 @@ public sealed class CreateProjectEndpointTests
                 """,
                 "idem-key-duplicate-metadata-class");
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
-            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-            CreateProject submitted = submitter.Submitted.Single();
-            submitted.TenantId.ShouldBe("tenant-a");
-            submitted.Name.ShouldBe("Tracer Bullet");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Submitted.ShouldBeEmpty();
+
+            using JsonDocument document = JsonDocument.Parse(body);
+            JsonElement details = document.RootElement.GetProperty("details");
+            details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
+            details.GetProperty("rejectedField").GetString().ShouldBe("projectMetadata.metadataClass");
+            details.EnumerateObject().Count().ShouldBe(2);
+            body.ShouldNotContain("unsupported_metadata", Case.Sensitive);
+            body.ShouldNotContain("tenant_sensitive", Case.Sensitive);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_VersionedRequestWithoutProjectMetadata_ReturnsProjectMetadata400WithoutSubmitting()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = RawCreateRequest(
+                """
+                {
+                  "requestSchemaVersion": "v1",
+                  "name": "Tracer Bullet"
+                }
+                """,
+                "idem-key-versioned-without-metadata");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Submitted.ShouldBeEmpty();
+
+            using JsonDocument document = JsonDocument.Parse(body);
+            JsonElement details = document.RootElement.GetProperty("details");
+            details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
+            details.GetProperty("rejectedField").GetString().ShouldBe("projectMetadata");
+            details.EnumerateObject().Count().ShouldBe(2);
+            body.ShouldNotContain("Tracer Bullet", Case.Sensitive);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
         }
         finally
         {

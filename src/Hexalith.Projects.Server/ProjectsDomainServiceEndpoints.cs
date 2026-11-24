@@ -64,6 +64,13 @@ public static partial class ProjectsDomainServiceEndpoints
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     };
 
+    // Create-only copy: the canonical create contract rejects duplicate properties (PRD addendum section 4.1)
+    // without changing the shared request options used by the other mutation endpoints.
+    private static readonly JsonSerializerOptions CreateRequestJsonOptions = new(RequestJsonOptions)
+    {
+        AllowDuplicateProperties = false,
+    };
+
     [GeneratedRegex("^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$", RegexOptions.CultureInvariant)]
     private static partial Regex CanonicalIdentifierRegex();
 
@@ -571,12 +578,19 @@ public static partial class ProjectsDomainServiceEndpoints
         try
         {
             body = await httpContext.Request
-                .ReadFromJsonAsync<CreateProjectHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ReadFromJsonAsync<CreateProjectHttpRequest>(CreateRequestJsonOptions, cancellationToken)
                 .ConfigureAwait(false);
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
-            return ValidationProblem(correlationId, taskId, "body");
+            // A duplicate or non-string classification is a classification failure, reported by field
+            // name only; every other parse failure keeps the generic body rejection.
+            return ValidationProblem(
+                correlationId,
+                taskId,
+                string.Equals(ex.Path, "$.projectMetadata.metadataClass", StringComparison.OrdinalIgnoreCase)
+                    ? "projectMetadata.metadataClass"
+                    : "body");
         }
 
         if (body is null)
@@ -594,6 +608,14 @@ public static partial class ProjectsDomainServiceEndpoints
             && !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal))
         {
             return ValidationProblem(correlationId, taskId, "requestSchemaVersion");
+        }
+
+        // The versioned (canonical) shape requires projectMetadata; only the historical unversioned
+        // shape receives the v1 name-only compatibility treatment.
+        if (body.ProjectMetadata is null
+            && string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "projectMetadata");
         }
 
         if (body.ProjectMetadata is not null
