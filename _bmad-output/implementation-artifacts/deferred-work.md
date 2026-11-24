@@ -657,7 +657,8 @@ origin: restored independent obligation from the pre-minimal P1R ledger
 location: qualification-evidence binary packages
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
 reason: Preserved `.nupkg` and `.snupkg` artifacts have no bounded retention, pruning, or Git LFS policy, so historical evidence growth remains unbounded.
-status: open
+status: done 2026-11-24
+resolution: The qualification evidence README defines archive inventories, 90-day candidate retention, durable current and rollback retention, pruning review, and ordinary Git preservation of the eight historical package blobs.
 
 ### DW-74: Resolve the Builds release-tooling npm audit findings.
 

@@ -22,6 +22,32 @@ counts are 10 for [the first bundle](6-1-p1r-397-20260824/artifact-manifest.sha2
 18 for [attempt 2](6-1-p1r-397-20260824-attempt2/artifact-manifest.sha256), and
 27 for [attempt 3](6-1-p1r-397-20260824-attempt3/artifact-manifest.sha256).
 
+## Package retention
+
+Record the package ID, normalized version, byte length, SHA-256 digest, and
+immutable download coordinate for each archive used to qualify a candidate.
+Keep this inventory with the result even after the archive expires.
+
+- For published packages, use the exact registry package coordinate and verify
+  its downloaded bytes against the inventory. Treat symbol packages separately
+  because a download location for the matching `.nupkg` does not establish
+  availability of its `.snupkg`.
+- Keep unpublished qualification archives in an owner-controlled artifact store
+  with a 90-day retention period. Before accepting one as a current or rollback
+  input, move it to durable storage and record that coordinate. Retain it while
+  any acceptance or rollback record requires it, and for 90 days after the
+  last such record is superseded.
+- Review expired archives before pruning. Prune only when no active decision
+  requires the bytes and the checked-in inventory records the retired status
+  or a verified replacement coordinate. Local build and download copies are
+  disposable after the inventory and required durable copies are verified.
+- Use Git for inventories and verification records. The eight historical
+  package blobs already tracked here are retained with their original
+  manifests. Keep new archives in the registry or artifact store. Keep the
+  historical blobs in ordinary Git, where the manifest verifier reads and
+  hashes their contents directly. Git LFS pointers change those blob bytes and
+  are outside this evidence format.
+
 ## Current P1R Boundary
 
 The selected coordinates are:
