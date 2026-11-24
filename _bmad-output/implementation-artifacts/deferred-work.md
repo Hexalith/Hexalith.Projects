@@ -846,6 +846,8 @@ status: open
 - source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
   summary: Verify RunTopology endpoint handling for consumer module projects whose launch profiles expose only https (unverified, would be medium).
   evidence: Settle by composing a module whose launchSettings declares only an https endpoint and checking RunEndpoints.TryGet (Stage 3 review R18).
+  status: done 2026-11-24
+  resolution: Executed the actual Builds bf8a28b4bbcec619e8d9764d335f786f2bafb69e RunTopology.Compose and RunEndpoints.TryGet in an isolated Aspire 17 model. An HTTPS-only launch profile acquired a separate direct HTTP endpoint at the reserved port. TryGet was null before synthetic allocation and returned the allocated HTTP URL afterward. No AppHost process was started.
 - source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
   summary: Replace the stale "candidate" XML doc wording on SupportedPlatformPins.EventStoreVersion at the next G-6 re-seal.
   evidence: The file is G-6-bound source state; editing it now would invalidate the accepted packet (Stage 3 review R19).
