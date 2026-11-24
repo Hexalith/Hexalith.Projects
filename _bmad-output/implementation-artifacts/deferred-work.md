@@ -1361,6 +1361,8 @@ status: open
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Extend the preexisting readiness polling regression matrix for non-serving, wrong-root and temporarily unavailable catalog observations.
   evidence: Existing bootstrap polling rejects these states and retries inside a linked deadline, but focused tests cover ready, blocked, expired and cancelled observations rather than a transient sequence; no runtime defect was demonstrated.
+  status: done 2026-11-24
+  resolution: The real bound command waits through non-serving, wrong-root and temporarily unavailable observations and dispatches once on the correct serving observation. The mapped Debug bootstrap suite passed all 365 cases. Local Hexalith.Tenants commit 5733cd363f96b987841bfe066a67ce7311fd70e1.
 
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Bound the preexisting bootstrap transport response buffer while preserving the SDK resilience and body-read cancellation policy.
