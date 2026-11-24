@@ -1377,6 +1377,8 @@ status: open
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Pin the SDK inside the existing temporary Tenants packed-consumer workspace.
   evidence: The existing verifier creates a temporary project without global.json. Current direct observation selects10.0.403, equal to the repository pin, with only older alternatives installed; a later newer installed SDK could change this selection. Copying or otherwise explicitly binding the pin and exercising a conflicting installed-SDK case would settle the follow-up.
+  status: done 2026-11-24
+  resolution: The consumer workspace copies the exact Tenants global.json. All 15 verifier tests passed, and the published 8.0.4 pair restored, built and discovered declarations under SDK 11.0.100 despite an incompatible ancestor pin. Local Hexalith.Tenants commit e5f1dbb162f0f4c8d8f7fd076a6504a6379712cd.
 
 - source_spec: `spec-durable-projection-command-response-2026-11-01.md`
   summary: Preserve durable projection activation for ambiguous actor commits whose RPC result is lost and whose caller never reconciles.
