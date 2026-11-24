@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 
 using FoldersGeneratedClient = Hexalith.Folders.Client.Generated.Client;
@@ -257,6 +258,32 @@ public sealed class ProjectFileReferenceDirectoryTests
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
             new RecordingHandler(JsonResponse(HttpStatusCode.OK, json)));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Unavailable);
+    }
+
+    /// <summary>Requires explicit redaction evidence in an otherwise complete metadata item.</summary>
+    /// <param name="omitRedaction">Whether to omit the property or send an explicit JSON null.</param>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ValidateLink_MissingRedactionEvidence_IsUnavailable(bool omitRedaction)
+    {
+        JsonObject response = JsonNode.Parse(MetadataJson("file", "not_redacted", stale: false))!.AsObject();
+        JsonObject item = response["items"]![0]!.AsObject();
+        if (omitRedaction)
+        {
+            item.Remove("redaction").ShouldBeTrue();
+        }
+        else
+        {
+            item["redaction"] = null;
+        }
+
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, response.ToJsonString())));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 

@@ -809,6 +809,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-cd-run-release-verify-nuget-publication.md`
   summary: Make the Folders generated redaction contract distinguish an omitted member from the explicit `Not_redacted` value in source-reference builds.
   evidence: Both the current source client and official `Hexalith.Folders.Client` `1.0.0` package generate a non-nullable enum whose zero value is `Not_redacted`, so omitted JSON defaults to an accepted value and presence cannot be recovered after deserialization. An explicit `redacted` wire value fails generated-client deserialization and the Projects adapter denies it; the remaining omission ambiguity requires an owning Folders contract change.
+  status: done 2026-11-24
+  resolution: The pinned Folders generated DTO requires explicit redaction. Added HTTP-driven Projects client controls for an otherwise valid item with absent and null redaction. Both are unavailable, while the explicit not_redacted control remains accepted. All 36 adapter cases pass in Release.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-migrate-nuget-trusted-publishing.md`
   summary: Audit the pre-existing EventStore, Folders, and FrontComposer gitlink update and repair the Folders source-reference Debug compile break.
   evidence: Baseline commit `ffa922d0f7a278da3bb02ee09769564df02d5f01` advanced all three gitlinks before this implementation began; the current Folders client exposes a four-argument cancellation overload while `FoldersProjectFolderDirectory` still calls it with five arguments, producing CS1501 in source-reference Debug builds.
