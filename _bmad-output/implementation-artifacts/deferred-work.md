@@ -1534,6 +1534,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Test the EventStore correlation-header restore after an exception handler clears headers.
   evidence: `references/Hexalith.EventStore/src/Hexalith.EventStore/Middleware/CorrelationIdMiddleware.cs:32-35` (commit `0be0c922`) restores `X-Correlation-Id` via `Response.OnStarting`; `CorrelationIdMiddlewareTests` has no started-response or cleared-header case. Severity low. Owner: Hexalith.EventStore test suite.
+  status: done 2026-11-24
+  resolution: Actual Kestrel exception handling clears response headers and the middleware restores the supplied or generated correlation ID at response start. All seven targeted Release/package cases passed. Local Hexalith.EventStore commit 204cc0eb990e3bfa7d806eeb9a84fcdfd9252d9f.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Migrate or retire the in-repo Hexalith.Projects.Cli and Hexalith.Projects.Mcp v1 read consumers broken by the Story 6.7 cutover.
