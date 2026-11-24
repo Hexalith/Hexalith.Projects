@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectReferenceIndex;
 using Hexalith.Projects.Resolution;
 
@@ -35,6 +36,7 @@ public static partial class ProjectsDomainServiceEndpoints
         HttpContext httpContext,
         IProjectTenantContextAccessor tenantContext,
         ProjectAuthorizationGate authorizationGate,
+        IProjectDetailReadModel detailReadModel,
         IProjectReferenceIndexReadModel referenceIndexReadModel,
         IProjectFolderDirectory folderDirectory,
         ProjectResolutionEngine resolutionEngine,
@@ -175,6 +177,15 @@ public static partial class ProjectsDomainServiceEndpoints
 
             ProjectResolution resolution = resolutionEngine.Resolve(context, candidates);
 
+            // Exact Project authorization loads detail before awaiting EventStore and Dapr.
+            // Check the disclosure inputs again for only the Projects that will be returned.
+            var disclosedDetails = resolution.Candidates.Select(candidate => allowedProjects[candidate.ProjectId]);
+            if (!await AttachmentDetailsAreStableAsync(authoritativeTenantId, disclosedDetails, detailReadModel, cancellationToken)
+                .WaitAsync(cancellationToken).ConfigureAwait(false))
+            {
+                return ReadModelUnavailable(correlationId, taskId);
+            }
+
             httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
             return IsLegacyResolutionIncomplete(resolution)
                 ? ReadModelUnavailable(correlationId, taskId)
@@ -182,6 +193,31 @@ public static partial class ProjectsDomainServiceEndpoints
         }
         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
         catch (Exception) { return ReadModelUnavailable(correlationId, taskId); }
+    }
+
+    private static async Task<bool> AttachmentDetailsAreStableAsync(
+        string tenantId,
+        IEnumerable<ProjectDetailItem> authorizedDetails,
+        IProjectDetailReadModel detailReadModel,
+        CancellationToken cancellationToken)
+    {
+        int changed = 0;
+        await Parallel.ForEachAsync(authorizedDetails, new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Queries.ProjectAdvisoryQueryExecutor.MaximumConcurrency,
+            CancellationToken = cancellationToken,
+        }, async (authorized, token) =>
+        {
+            ProjectDetailItem? current = await detailReadModel.GetAsync(tenantId, authorized.ProjectId, token).ConfigureAwait(false);
+            if (current is null || current.TenantId != tenantId || current.ProjectId != authorized.ProjectId
+                || current.Sequence != authorized.Sequence || current.Lifecycle != authorized.Lifecycle
+                || current.ProjectFolder?.FolderId != authorized.ProjectFolder?.FolderId
+                || current.ProjectFolder?.ReferenceState != authorized.ProjectFolder?.ReferenceState)
+            {
+                Interlocked.Exchange(ref changed, 1);
+            }
+        }).ConfigureAwait(false);
+        return changed == 0;
     }
 
     private static bool TryReadAttachmentIds(

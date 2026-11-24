@@ -1578,6 +1578,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-read-cutover-followups.md`
   summary: Establish a coherent Project detail and authorization observation for retained attachment disclosure.
   evidence: The final authorization pass captures Project detail before EventStore and Dapr policy validation. A later commit to the detail projection can leave that snapshot behind the owner state at response time. The resolver now checks the observed final Folder and lifecycle; a stronger cross-store guarantee needs its own design and deadline evidence.
+  status: done 2026-11-24
+  resolution: Only the Projects selected for disclosure are reread after the final authority checks under the original deadline. Changes to identity, sequence, lifecycle or Folder binding produce retryable Unavailable. Focused HTTP tests cover detail changes during final Project and Tenant authorization, the final Folder recheck and a blocked last read.
 
 ## Deferred from: code review of spec-five-deferred-project-read-outcomes.md (2026-11-22)
 

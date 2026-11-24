@@ -528,6 +528,63 @@ public sealed class ResolveProjectFromAttachmentsTests
         result.Body.ShouldNotContain(ProjectAId);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DetailChangedDuringFinalAuthorizationReturnsUnavailable(bool duringTenantCheck)
+    {
+        InMemoryProjectDetailReadModel details = new();
+        int authorizationReads = 0;
+        ProjectReadTestAuthorization validator = new()
+        {
+            Decision = request =>
+            {
+                if ((request.ProjectId is null) == duringTenantCheck && Interlocked.Increment(ref authorizationReads) == 2)
+                {
+                    SetFolder(details, TenantA, ProjectAId, "folder-002");
+                }
+
+                return EventStoreAuthorizationValidationResult.Allowed("test");
+            },
+        };
+
+        EndpointResponse response = await SendAsync(
+            rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))],
+            projectAuthorization: validator,
+            projectDetails: details);
+
+        authorizationReads.ShouldBe(2);
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        response.Body.ShouldNotContain(ProjectAId);
+        response.Body.ShouldNotContain("folder-002");
+    }
+
+    [Fact]
+    public async Task SlowFinalDetailReadCannotDelayTheBoundedUnavailableResponse()
+    {
+        InMemoryProjectDetailReadModel details = new();
+        TaskCompletionSource<ProjectDetailItem?> blocked = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int detailReads = 0;
+        CutoverReviewDetailReadModel readModel = new((tenant, id, token) => Interlocked.Increment(ref detailReads) < 3
+            ? details.GetAsync(tenant, id, token)
+            : blocked.Task);
+        try
+        {
+            EndpointResponse response = await SendAsync(
+                rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))],
+                projectDetails: details,
+                detailOverride: readModel).WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+
+            detailReads.ShouldBe(3);
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            response.Body.ShouldNotContain(ProjectAId);
+        }
+        finally
+        {
+            blocked.TrySetResult(null);
+        }
+    }
+
     [Fact]
     public async Task FinalProjectLifecycleControlsTheArchivedCandidateFilter()
     {
@@ -574,7 +631,8 @@ public sealed class ResolveProjectFromAttachmentsTests
         bool referenceIndexThrows = false,
         IReadOnlyDictionary<string, string>? headers = null,
         ProjectReadTestAuthorization? projectAuthorization = null, ProjectReadTestFolders? folderDirectory = null,
-        bool correlationHeader = true, InMemoryProjectDetailReadModel? projectDetails = null)
+        bool correlationHeader = true, InMemoryProjectDetailReadModel? projectDetails = null,
+        IProjectDetailReadModel? detailOverride = null)
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         FixedProjectTenantContext tenantContext = new(tenantId, principalId);
@@ -602,7 +660,8 @@ public sealed class ResolveProjectFromAttachmentsTests
             SetFolder(details, row.TenantId, row.ProjectId, FolderId);
         }
 
-        services.RemoveAll<IProjectDetailReadModel>(); services.AddSingleton<IProjectDetailReadModel>(details);
+        services.RemoveAll<IProjectDetailReadModel>();
+        services.AddSingleton<IProjectDetailReadModel>(detailOverride ?? details);
 
         using ServiceProvider provider = services.BuildServiceProvider();
         if (seedTenantAccess && !string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
@@ -647,6 +706,7 @@ public sealed class ResolveProjectFromAttachmentsTests
                 httpContext,
                 tenantContext,
                 provider.GetRequiredService<ProjectAuthorizationGate>(),
+                provider.GetRequiredService<IProjectDetailReadModel>(),
                 readModel,
                 provider.GetRequiredService<IProjectFolderDirectory>(),
                 provider.GetRequiredService<ProjectResolutionEngine>(),
