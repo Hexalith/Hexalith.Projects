@@ -1367,6 +1367,8 @@ status: open
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Bound the preexisting bootstrap transport response buffer while preserving the SDK resilience and body-read cancellation policy.
   evidence: Default HttpClient.SendAsync buffers the full response before the existing8KiB diagnostic probe runs; the new classifier bounds only parsed input. A transport completion-mode change needs its own timeout and byte-consumption coverage.
+  status: done 2026-11-24
+  resolution: The named bootstrap client stops socket draining, skips accepted and oversized bodies, bounds unknown-length diagnostics, and propagates deadline and shutdown cancellation. All 31 focused transport cases passed after review. Local Hexalith.Tenants commit bc88a458d374087d86340490d0bbdf760da6e39f.
 
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Harden the existing Tenants package-consumer verifier against exclusive/minimum-only SDK ranges and mismatched resolved EventStore cohorts.
