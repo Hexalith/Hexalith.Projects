@@ -1543,6 +1543,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Account for the Story 6.7 feature and approved legacy behavior change in release versioning and notes.
   evidence: Pass 3; the Story 6.7 source landed only in `e8fe8141` and `329ddd1e` ("build: sync local changes via /pushall"). They add public IClient metadata overloads and change retained v1 list/open (explicit audited inspection) and context reads (named Conversation). Conventional-Commit release tooling will neither bump the minor version nor record the behavior break from these commits. Severity medium. Owner: the release that first ships the cutover.
+  status: done 2026-11-24
+  resolution: Projects v2.0.0 already contains both Story 6.7 source commits. Added version-specific upgrade notes for the typed supported client and the retained inspection and named-Conversation requirements, including the Context Refresh overload. Verified the behavior against the generated IClient in the published tag.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Restore managed AppHost E2E UI coverage under the read cutover.

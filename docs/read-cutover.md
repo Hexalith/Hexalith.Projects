@@ -4,6 +4,12 @@
 
 The historical v3 run produced 77 passing authenticated comparisons and seven retained HTTP reads after explicit rollback. Both receipts apply to the source manifest recorded with that run. [v3 packet](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/read-cutover-final-1.json) · [v3 rollback proof](../_bmad-output/implementation-artifacts/evidence/epic6/6.7/review-pass2-fixes/rollback-final-proof-1.json)
 
+## Upgrading from 1.2.x to 2.0.0
+
+Projects 2.0.0 shipped the Story 6.7 supported read contracts and client bindings. The retained v1 list and open routes now require `inspectDescriptiveMetadata=true` and separate inspection permission. Descriptive reads also require a successful inspection audit. Update REST callers to opt in explicitly, or use the supported list and open queries for safe metadata. The `IClient` list and open overloads now accept the inspection flag. [Projects 2.0.0 release](https://github.com/Hexalith/Hexalith.Projects/releases/tag/v2.0.0)
+
+The retained Context, Explain, Context Refresh (`GET /api/v1/projects/{projectId}/context/refresh`), and Conversation-start routes now require the exact `conversationId` of a Conversation bound to the Project. Pass it through the corresponding `IClient` overload, including `RefreshProjectContextAsync`, or REST query parameter. When membership is missing or unavailable, these retained reads return HTTP 503 without usable context. The supported Context, Explain, and Conversation-start queries report unavailable evidence in their response snapshot when Project authorization succeeds.
+
 ## Inventory
 
 The public supported reads use the existing EventStore Gateway and its authenticated
