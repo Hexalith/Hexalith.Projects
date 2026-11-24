@@ -625,17 +625,29 @@ action_items:
     routed_to: "Story 8.8"
   - epic: 8
     id: "8.8-P3"
-    action: "Accept an approved, immutable owner-pinned Chatbot companion UX specification and authenticated candidate/proposal/confirmation/recovery/task/first-response evidence."
+    action: "Accept the complete authenticated Chatbot companion journey using the shipped Story 7.16 component and applicable accepted journey capabilities."
     repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
     owner: "Chatbot Presentation Owner / Chatbot Test Owner / Product Owner / Test Architect"
     status: blocked-external
     target_date: uncommitted
-    depends_on: ["Approved Chatbot companion artifact"]
-    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage. Cover unbound membership after explicit open and stale advisory linkage as separate first-response denial cases."
+    depends_on: ["8.8-P3-H", "Story 7.16", "Applicable accepted Chatbot candidate, proposal, confirmation, task, recovery and response-admission capabilities"]
+    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; accepted host pin and digest; immutable Projects component and compatible Chatbot revisions; applicable journey capability revisions; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage. Cover unbound membership after explicit open and stale advisory linkage as separate first-response denial cases."
     projects_evidence_pin: "evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#46-require-and-pin-the-external-chatbot-companion-ux-artifact"
-    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#45-reconcile-package-tracking-and-traceability-without-claiming-acceptance"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-24.md#42-88-p3-host-prerequisite-and-full-journey"
     routed_to: "Story 8.8"
+    host_prerequisite:
+      id: "8.8-P3-H"
+      action: "Accept the confidential Chatbot component mount and authenticated session binding with an inert probe."
+      repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
+      owner: "Chatbot Presentation Owner / Chatbot Test Owner"
+      projects_recorders: "Product Owner / Test Architect"
+      status: blocked-external
+      target_date: uncommitted
+      depends_on: ["Pinned confidential host registration and mount/session contract", "Compatible FrontComposer and Platform Identity bindings", "Authenticated host probe fixture"]
+      expected_evidence: "Immutable host manifest and digest; pinned host, mount/session and dependency revisions; dated owner approvals and binding attestations; exact authenticated commands, fixture, artifact paths and hashes, isolation/refusal results, drift containment and exercised rollback. The probe creates zero Selection Evidence, Confirmation Artifacts, tasks or Project effects."
+      projects_evidence_pin: "evidence/epic8/8.8-P3-H-chatbot-host-pin.json"
+      routed_to: "Story 7.16"
   - epic: 8
     id: "8.11-P1"
     action: "Acquire pinned deployment/topology identity, truthful health/readiness, and authenticated smoke evidence."

@@ -81,7 +81,7 @@ internal static class SupportedProjectReadDevelopmentInfrastructure
                 new(folders, "api/v1/streams/read/workload", ["POST"]),
             ]) { TechnicalHttp = true },
             new(tenants, DomainCalls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
-            new(projects, DomainCalls("process", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
+            new(projects, DomainCalls("process", "replay-state", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
             new(folders, DomainCalls("process", "query", "project", "project/v2", "admin/operational-index-metadata")),
             new(projectsWorkers, []), new(foldersWorkers, []),
         ];

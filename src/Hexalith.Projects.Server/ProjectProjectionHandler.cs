@@ -8,36 +8,32 @@ namespace Hexalith.Projects.Server;
 using System;
 using System.Text.Json;
 
-using Hexalith.EventStore.Contracts.Events;
 using Hexalith.EventStore.Contracts.Projections;
+using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Aggregates.Project;
-using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 
 /// <summary>
 /// Rebuilds the canonical Project aggregate state for EventStore's stateless full-replay projection callback.
 /// </summary>
-internal static class ProjectProjectionHandler
+internal sealed class ProjectProjectionHandler : IDomainProjectionHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    private static readonly IReadOnlyDictionary<string, Type> ProjectEventTypes = typeof(IProjectEvent).Assembly
-        .GetTypes()
-        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IProjectEvent).IsAssignableFrom(type))
-        .ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
+    /// <inheritdoc/>
+    public string Domain => ProjectsServerModule.DomainName;
 
-    // EventStore persists rejection results as ordinary stream events; they occupy a sequence number
-    // but never change Project state.
-    private static readonly IReadOnlySet<string> ProjectRejectionEventTypes = typeof(IProjectEvent).Assembly
-        .GetTypes()
-        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IRejectionEvent).IsAssignableFrom(type))
-        .Select(static type => type.FullName!)
-        .ToHashSet(StringComparer.Ordinal);
+    ProjectionResponse IDomainProjectionHandler.Project(ProjectionRequest request) => Project(request);
+
+    ProjectionResponse IDomainProjectionHandler.Project(ProjectionRequest request, CancellationToken cancellationToken)
+        => Project(request, cancellationToken);
 
     /// <summary>Rebuilds a Project aggregate from the complete ordered event sequence.</summary>
     /// <param name="request">The authoritative aggregate identity and full event history.</param>
     /// <returns>The stable projection type and rebuilt aggregate state.</returns>
-    public static ProjectionResponse Project(ProjectionRequest request)
+    public static ProjectionResponse Project(ProjectionRequest request) => Project(request, CancellationToken.None);
+
+    private static ProjectionResponse Project(ProjectionRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -53,6 +49,7 @@ internal static class ProjectProjectionHandler
 
         foreach (ProjectionEventDto eventEnvelope in request.Events)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (eventEnvelope.SequenceNumber != expectedSequence)
             {
                 throw new InvalidOperationException("Project projection history is not a complete ordered sequence.");
@@ -63,20 +60,7 @@ internal static class ProjectProjectionHandler
                 throw new InvalidOperationException("Project projection history contains an unsupported event.");
             }
 
-            if (ProjectRejectionEventTypes.Contains(eventEnvelope.EventTypeName))
-            {
-                expectedSequence++;
-                continue;
-            }
-
-            if (!ProjectEventTypes.TryGetValue(eventEnvelope.EventTypeName, out Type? eventType))
-            {
-                throw new InvalidOperationException("Project projection history contains an unsupported event.");
-            }
-
-            IProjectEvent projectEvent = JsonSerializer.Deserialize(eventEnvelope.Payload, eventType, JsonOptions) as IProjectEvent
-                ?? throw new InvalidOperationException("Project projection history contains an invalid event payload.");
-            state = ProjectStateApply.Apply(state, projectEvent, identity);
+            state = ProjectsDomainProcessor.ApplyStoredEvent(state, eventEnvelope.EventTypeName, eventEnvelope.Payload, identity);
             expectedSequence++;
         }
 

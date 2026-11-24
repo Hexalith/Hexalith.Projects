@@ -425,14 +425,17 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         Folders.Services.GetRequiredService<EventStoreDomainServiceEndpointSource>().Capture(Folders);
         await Folders.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); Routes.Add("folders", Folders);
         var projectsBuilder = Builder("projects");
-        projectsBuilder.Services.AddProjectsAuthentication(projectsBuilder.Configuration, projectsBuilder.Environment);
         projectsBuilder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(_ownerKey.ExportPkcs8PrivateKey());
-        projectsBuilder.Services.AddProjectsServer(); projectsBuilder.Services.AddProjectsServerRuntimeInfrastructure();
+        projectsBuilder.AddProjectsDomainService();
+        GatewayFixtureCatalogComposition.AddProjectsReceiver(projectsBuilder, Tenant,
+            createLoopback: () => new ProjectAuthorityLoopbackHandler(Routes, Channel));
         projectsBuilder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(Now.AddSeconds(1)));
         projectsBuilder.Services.AddSingleton<TimeProvider>(new ProjectReadTestClock(Now.AddSeconds(1)));
         projectsBuilder.Services.AddSingleton(sp => new ProjectAuthorityAuditObserver(sp.GetRequiredService<IReadModelStore>()));
         projectsBuilder.Services.AddSingleton(sp => new ProjectReadAudit(sp.GetRequiredService<ProjectAuthorityAuditObserver>(), sp.GetRequiredService<TimeProvider>()));
-        Projects = projectsBuilder.Build(); _hosts.Add(Projects); Projects.UseAuthentication(); Projects.UseAuthorization(); Projects.MapProjectsServerEndpoints();
+        Projects = projectsBuilder.Build(); _hosts.Add(Projects);
+        Projects.UseEventStoreDomainService();
+        Projects.MapProjectsHumanEndpoints();
         await Projects.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); Routes.Add("projects", Projects);
         Audit = Projects.Services.GetRequiredService<ProjectAuthorityAuditObserver>();
         await StartGatewayAsync().ConfigureAwait(false);

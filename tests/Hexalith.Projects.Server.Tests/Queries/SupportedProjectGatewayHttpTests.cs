@@ -66,7 +66,7 @@ using Xunit;
 [Collection("ProjectReadTelemetry")]
 public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper output)
 {
-    private const string Issuer = "story61-bound-signing";
+    private const string Issuer = "https://story61.example/bound-signing";
     private const string Audience = "configured-read-audience";
     private const string Channel = "story61-owned-local-channel";
     private static readonly string SigningKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
@@ -182,7 +182,7 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport, denialObserver).ConfigureAwait(true);
         await using var conversationsLifetime = conversations.ConfigureAwait(true);
         transport.Add("conversations", conversations);
-        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now, denialObserver).ConfigureAwait(true);
+        WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now, tenant, denialObserver).ConfigureAwait(true);
         await using var projectsLifetime = projects.ConfigureAwait(true);
         transport.Add("projects", projects);
         WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant, denialObserver).ConfigureAwait(true);
@@ -469,14 +469,36 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         return builder;
     }
 
-    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now,
+    private static async Task<WebApplication> StartProjectsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, DateTimeOffset now, string tenant,
         ProjectReadDenialObserver? observer = null)
     {
         var builder = Builder("projects", http, grpc, routes, observer);
         builder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
-        builder.Services.AddProjectsServer(); builder.Services.AddProjectsServerRuntimeInfrastructure();
-        AddCutoverHumanAuthentication(builder);
+        builder.Configuration["Authentication:JwtBearer:Authority"] = Issuer;
+        builder.Configuration["Authentication:JwtBearer:SigningKey"] = null;
+        builder.Configuration["Authentication:WorkloadJwtBearer:Issuer"] = Issuer;
+        builder.Configuration["Authentication:WorkloadJwtBearer:Audience"] = "projects";
+        builder.Configuration["Authentication:WorkloadJwtBearer:SigningKey"] = SigningKey;
+        builder.Configuration["Authentication:WorkloadJwtBearer:AllowedAlgorithms:0"] = "HS256";
+        builder.Configuration["Authentication:WorkloadJwtBearer:RequireHttpsMetadata"] = "false";
+        builder.AddProjectsDomainService();
+        builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+        {
+            var configuration = new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration { Issuer = Issuer };
+            configuration.SigningKeys.Add(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SigningKey)));
+            options.ConfigurationManager = new Microsoft.IdentityModel.Protocols.StaticConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>(configuration);
+        });
+        GatewayFixtureCatalogComposition.AddProjectsReceiver(builder, tenant, includeAdvisoryQueries: true,
+            () => new GatewayFixtureLoopbackHandler(routes));
+        // Owner fault injection is scoped to individual comparison cells.
         builder.Services.AddHttpClient(nameof(Hexalith.Conversations.Client.IConversationClient))
+            .ConfigureAdditionalHttpMessageHandlers(static (handlers, _) =>
+            {
+                foreach (var resilience in handlers.OfType<Microsoft.Extensions.Http.Resilience.ResilienceHandler>().ToArray())
+                {
+                    handlers.Remove(resilience);
+                }
+            })
             .ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
         builder.Services.AddHttpClient("projects-retained-folder-v1-reads")
             .ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
@@ -491,7 +513,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         // real Gateway protocol clock so a long evidence/rollback run cannot expire every new proof.
         builder.Services.RemoveAll<DelegatedOwnerQueryClient>();
         builder.Services.AddScoped(sp => ActivatorUtilities.CreateInstance<DelegatedOwnerQueryClient>(sp, TimeProvider.System));
-        WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapProjectsServerEndpoints();
+        WebApplication app = builder.Build();
+        app.UseEventStoreDomainService();
+        app.MapProjectsHumanEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         return app;
     }
@@ -602,7 +626,9 @@ public sealed partial class SupportedProjectGatewayHttpTests(ITestOutputHelper o
         builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
-        builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
+        builder.Services.AddHttpClient(Options.DefaultName)
+            .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
+            .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddHttpClient(DaprDomainQueryInvoker.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new GatewayFixtureLoopbackHandler(routes)))
             .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();

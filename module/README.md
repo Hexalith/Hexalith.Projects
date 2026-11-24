@@ -2,21 +2,20 @@
 
 `hexalith.module-manifest.v2.json` declares the existing Projects executable domain server. It is a normal owner declaration using the supported v2 schema, independent of Story 6.4 verification. The root `projects` module identity lets public Builds `prepare-build` generate a mapping containing `Hexalith.Projects` and its declared direct references. Builds owns the generated mapping and imports.
 
-The declaration inventories the internal EventStore workload surface; it does not complete Platform runtime migration, supply a qualified release, or activate CI, ingress or a new host. The source candidate is based on Projects `22c99ad1ae0aa88cd563f2d85346c9d680acc2ca`.
+The declaration inventories the internal EventStore workload surface of the Projects executable.
 
 ## Contract provenance
 
-- `src/Hexalith.Projects.Server/Program.cs` starts the existing executable and registers `AddProjectsServer`, runtime infrastructure and endpoint mapping.
+- `src/Hexalith.Projects.Server/Program.cs` starts the executable with the EventStore domain-service SDK. Projects registers its existing keyed processor, aggregate replay, full-replay projection, named projections and queries before SDK discovery.
 - `ProjectsServerModule.DomainName` is `projects`; runtime registration defaults the projection app identity and workload audience to `projects`, and the allowed workload caller to `eventstore`.
-- `ProjectsServerServiceCollectionExtensions.MapProjectsServerEndpoints` maps `POST /process`, `/project`, `/query` and `/admin/operational-index-metadata`, protected in the runtime host by `EventStoreDomainServicePolicies.Process`, `.Project`, `.Query` and `.Metadata` respectively.
-- `Projections/ProjectReads/ProjectReadPlatformEndpoints.cs` additionally maps `POST /project/v2` and `/project/rebuild/v1` under the same `.Project` policy. No other SDK callback is declared.
-- `src/Hexalith.Projects.ServiceDefaults/ProjectsServiceDefaults.cs` maps `/ready` in the executable host.
+- The SDK maps `POST /process`, `/replay-state`, `/query`, `/project`, `/project/v2`, `/project/rebuild/v1` and `/admin/operational-index-metadata`. The declaration grants EventStore these exact callbacks. Each requires its workload policy, app-channel token, and a peer binding to the admitted catalog. Additional SDK projection protocols carry no invocation grant in this declaration.
+- The SDK maps `/health`, `/alive` and `/ready`. Catalog readiness requires the committed authority.
 - `src/Hexalith.Projects.Infrastructure/ProjectsStateStoreOptions.cs` binds `Projects:StateStore:StateStoreName`. The shared state component uses conservative `authoritative-restore` classification, matching the shared EventStore state capability. Projects projection rows being derived does not make that shared component disposable or establish an implemented restore hook.
 - Dependencies follow existing EventStore, Tenants, Parties, Conversations, Folders and Memories contract/client/runtime references and registration. `ProjectsDomainProcessor` delegates grant/revoke bootstrap to `ProjectOwnerBootstrapVerifier`, which requires the Parties authority query through EventStore. This declaration does not invent missing dependency declarations.
 
 `runtime.extensions` is empty because this executable does not declare an extension package. `Hexalith.Projects.Server.csproj` has `IsPackable=false`; it is not represented as a released package. Resource requests/limits, pub/sub subscriptions, workers, lifecycle hooks and external-provider bindings are not invented.
 
-The existing `MapProjectsDomainServiceEndpoints` compatibility routes under `/api/v1/projects` retain their own tenant, resource and action checks. They include list/detail, operator diagnostics, context/setup, advisory resolution, proposal/confirmation and reference/setup/lifecycle mutations. They are outside this selected internal workload surface: no Platform ingress or Dapr invocation permission is declared for those routes. Query operations supported through `/query` keep their handler-side authorization. This declaration does not change endpoint implementations or authorization.
+The retained `/api/v1/projects` routes use the SDK's explicit human bearer policy and keep their tenant, resource and action checks. The internal `/query` receiver keeps handler-side authorization and uses the Projects response policy for its existing 400 and 404 outcomes.
 
 ## Public preparation
 
@@ -27,6 +26,12 @@ hexalith-module prepare-build --manifest module/hexalith.module-manifest.v2.json
 ```
 
 Use every emitted `buildPreparation.environment` value unchanged for local Debug builds. Never reuse Conversations' mapping for Projects or edit emitted imports. Source preparation can warn about Platform identity/release or catalog mismatches; it cannot qualify package mode.
+
+## Ordinary local catalog
+
+Set `Projects:DevelopmentRouteCatalog` in AppHost user secrets. Supply the owner-held `CustodyDirectory`, `AuthorityComponentName`, `AuthorityStateKey`, `ActiveDigestKeyGeneration`, `DigestKeys` and `SecretMapGeneration` for the selected Redis backend. A newly provisioned digest ring is appropriate only for a new isolated business backend. The ordinary AppHost admits the compiled Projects and Tenants declarations through the SDK and uses the Platform's local Dapr mTLS control plane to bind peer identities.
+
+Supply `Projects:DevelopmentRouteCatalog:Workload` settings `Authority`, `Issuer`, `TokenEndpoint`, `GatewayClientId` and `GatewayClientSecret` for the bound workload issuer. The workload issuer grants EventStore the exact operation and audience required by each callback and signs the authenticated originating caller binding for Projects queries. Keycloak supplies the separate local human bearer contract. The private read and isolated live profiles continue to use their own custody and issuer.
 
 ## Remaining runtime prerequisites
 

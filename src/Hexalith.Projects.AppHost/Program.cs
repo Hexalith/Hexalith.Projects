@@ -64,6 +64,8 @@ IResourceBuilder<DotnetProjectResource> projectsWorkers = builder.AddDotnetProje
 _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
 
 DevelopmentRouteCatalogComposition? supportedReadCatalog = null;
+string? daprRunDirectory = null;
+string? daprCertificateDirectory = null;
 if (IsolatedLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
 {
     supportedReadCatalog = IsolatedLiveE2EFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, projectsUi, daprComponentsPath);
@@ -87,6 +89,12 @@ else
         daprComponentsPath,
         daprPlacementHostAddress,
         daprSchedulerHostAddress);
+
+    if (builder.ExecutionContext.IsRunMode)
+    {
+        (supportedReadCatalog, daprRunDirectory, daprCertificateDirectory) = ProjectsLocalDevelopmentCatalog.Add(
+            builder, eventStore, tenants, projects, redisHost, daprComponentsPath);
+    }
 }
 
 SupportedProjectBrowserFixtureProfile.Add(builder, projectsUi);
@@ -113,7 +121,10 @@ if (security is not null)
         secret: true,
         persist: persistWorkloadSecret);
     _ = security.Keycloak.WithEnvironment("HEXALITH_EVENTSTORE_WORKLOAD_CLIENT_SECRET", workloadClientSecret);
-    _ = eventStore.WithEventStoreWorkloadClientCredentials("eventstore", workloadClientSecret);
+    if (daprRunDirectory is null)
+    {
+        _ = eventStore.WithEventStoreWorkloadClientCredentials("eventstore", workloadClientSecret);
+    }
 
     _ = eventStore.WithJwtBearerSecurity(security);
     _ = tenants.WithJwtBearerSecurity(security);
@@ -147,6 +158,10 @@ try
 finally
 {
     if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
+    if (daprCertificateDirectory is not null && Directory.Exists(daprCertificateDirectory))
+        Directory.Delete(daprCertificateDirectory, recursive: true);
+    if (daprRunDirectory is not null && Directory.Exists(daprRunDirectory))
+        Directory.Delete(daprRunDirectory, recursive: true);
 }
 
 static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<DotnetProjectResource> eventStore)

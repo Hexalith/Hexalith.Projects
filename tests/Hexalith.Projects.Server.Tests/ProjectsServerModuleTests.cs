@@ -91,7 +91,7 @@ public sealed class ProjectsServerModuleTests
         };
 
         AdminOperationalIndexMetadata.Response response =
-            ProjectsServerServiceCollectionExtensions.CreateOperationalIndexMetadata(request).ShouldNotBeNull();
+            ProjectsCompatibilityTestEndpoints.CreateOperationalIndexMetadata(request).ShouldNotBeNull();
         AdminOperationalIndexMetadata.DomainMetadata domain = response.Domains.ShouldHaveSingleItem();
         domain.Domain.ShouldBe(ProjectsServerModule.DomainName);
         domain.QueryTypes.ShouldContain(ResolveProjectChatBotAuthority.QueryType);
@@ -119,7 +119,7 @@ public sealed class ProjectsServerModuleTests
             ServiceVersion = version,
         };
 
-        ProjectsServerServiceCollectionExtensions.CreateOperationalIndexMetadata(request).ShouldBeNull();
+        ProjectsCompatibilityTestEndpoints.CreateOperationalIndexMetadata(request).ShouldBeNull();
     }
 
     /// <summary>Verifies runtime metadata route requires the EventStore metadata operation policy.</summary>
@@ -128,10 +128,10 @@ public sealed class ProjectsServerModuleTests
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.Services.AddProjectsServer();
-        builder.Services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
+        builder.AddEventStoreDomainService(typeof(ProjectsDomainProcessor).Assembly);
         WebApplication app = builder.Build();
 
-        app.MapProjectsServerEndpoints();
+        app.UseEventStoreDomainService();
 
         RouteEndpoint endpoint = ((IEndpointRouteBuilder)app).DataSources
             .SelectMany(static source => source.Endpoints)

@@ -6,8 +6,8 @@ using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 
-using Hexalith.EventStore.Client.Discovery;
 using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Client.Aggregates;
 using Hexalith.EventStore.Client.Routing;
 using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.EventStore.DomainService;
@@ -15,7 +15,6 @@ using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Hexalith.Projects.Contracts.Queries;
-using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Server;
 
 using Microsoft.AspNetCore.Builder;
@@ -36,16 +35,10 @@ public sealed class ProjectsRuntimeCatalogTests
     public void CompiledOwnerMatchesActualProcessorQueriesAndProjectionReceivers()
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        builder.Services.AddProjectsServer();
-        builder.Services.AddSingleton<ProjectsDevelopmentCatalogProfile>();
-        builder.Services.AddEventStoreDomainServiceSecurity(builder.Configuration);
-        builder.Services.AddProjectsServerRuntimeInfrastructure();
-        builder.Services.AddSingleton(new DiscoveryResult(
-            [new(typeof(ProjectsDomainProcessor), "projects", typeof(ProjectState), DomainKind.Aggregate)], []));
-        builder.Services.AddSingleton(new LegacyProjectionCatalogRegistration(ProjectsRuntimeCatalogDeclarations.Routes
-            .Where(route => route.Kind == "projection" && route.ProjectionType == "project").ToArray()));
+        builder.AddProjectsDomainService();
         using WebApplication app = builder.Build();
-        app.MapProjectsServerEndpoints();
+        app.UseEventStoreDomainService();
+        app.MapProjectsHumanEndpoints();
 
         var declarations = CompiledRouteCatalogDeclarations.Read([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]);
         declarations.Count.ShouldBe(25);
@@ -57,12 +50,18 @@ public sealed class ProjectsRuntimeCatalogTests
             .ShouldBe(declarations.Where(route => route.Kind == "query").Select(route => route.MessageType!).Order(StringComparer.Ordinal));
         app.Services.GetServices<IAsyncDomainProjectionHandler>().Select(handler => handler.ProjectionType).Order(StringComparer.Ordinal)
             .ShouldBe(new[] { "conversation-start-setup", "project-reads" });
+        app.Services.GetServices<IDomainProjectionHandler>().ShouldHaveSingleItem().ShouldBeOfType<ProjectProjectionHandler>();
+        app.Services.GetKeyedServices<IAsyncAggregateReplay>("projects").ShouldHaveSingleItem().ShouldBeOfType<ProjectsDomainProcessor>();
         var routes = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints).ToArray();
         DevelopmentDomainRouteCatalog.Targets(app.Services, routes, declarations).Count.ShouldBe(25);
         CompiledRouteCatalogDeclarations.ReadOperations([typeof(ProjectsRuntimeCatalogDeclarations).Assembly]).Count.ShouldBe(25);
         EventStoreDomainServiceEndpointInventory.Validate(routes, fallbackPolicy: null).ShouldBeEmpty();
-        foreach (RouteEndpoint endpoint in routes.OfType<RouteEndpoint>().Where(endpoint =>
-            EventStoreDomainServiceRoutes.TryGet(endpoint.RoutePattern.RawText, out _)))
+        var canonicalReceivers = routes.OfType<RouteEndpoint>()
+            .Where(endpoint => EventStoreDomainServiceRoutes.TryGet(endpoint.RoutePattern.RawText, out _)).ToArray();
+        canonicalReceivers.Select(endpoint => endpoint.RoutePattern.RawText).Distinct(StringComparer.Ordinal).Count()
+            .ShouldBe(canonicalReceivers.Length);
+        canonicalReceivers.Select(endpoint => endpoint.RoutePattern.RawText).ShouldContain("/replay-state");
+        foreach (RouteEndpoint endpoint in canonicalReceivers)
         {
             endpoint.Metadata.ShouldContain(metadata => metadata.GetType().Name == "DomainRouteCatalogGuardMetadata");
         }
@@ -194,7 +193,6 @@ public sealed class ProjectsRuntimeCatalogTests
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Production });
         builder.AddProjectsDevelopmentCatalog().ShouldBeFalse();
-        builder.Services.ShouldNotContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
     }
 
     /// <summary>Private receiver enrollment requires exactly one selected profile.</summary>
@@ -223,13 +221,11 @@ public sealed class ProjectsRuntimeCatalogTests
         if (accepted)
         {
             builder.AddProjectsDevelopmentCatalog().ShouldBeTrue();
-            builder.Services.ShouldContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
         }
         else
         {
             Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentCatalog());
-            builder.Services.ShouldNotContain(service => service.ServiceType == typeof(ProjectsDevelopmentCatalogProfile));
-        }
+            }
     }
 
     private static IdempotencyIntentCommand Command(string payload) => new(ProjectsServerModule.CreateProjectCommandType,

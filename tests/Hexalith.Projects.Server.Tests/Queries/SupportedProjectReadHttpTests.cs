@@ -10,10 +10,16 @@ using System.Text.Json;
 using Dapr.Client;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
+using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.Contracts.Replay;
+using Hexalith.EventStore.Contracts.Results;
+using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.EventStore.Testing.Fakes;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Queries;
@@ -226,15 +232,30 @@ public sealed partial class SupportedProjectReadHttpTests
             }
             client.DefaultRequestHeaders.Add(DaprAppChannelToken.HeaderName, "story61-isolated-channel-fixture");
             client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceMetadata));
+            var metadataRequest = new AdminOperationalIndexMetadata.Request(["projects"]) { AppId = "projects", ServiceVersion = "v1" };
+            using HttpResponseMessage unbound = await client.PostAsJsonAsync("/admin/operational-index-metadata", metadataRequest, TestContext.Current.CancellationToken);
+            unbound.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            RouteCatalogGenerationReadback catalog = await app.Services.GetRequiredService<IRouteCatalogAuthority>()
+                .ReadbackAsync(TestContext.Current.CancellationToken);
+            client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.RootHeader, catalog.RootDigest);
+            client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.EpochHeader, catalog.Epoch.ToString(System.Globalization.CultureInfo.InvariantCulture));
             using HttpResponseMessage metadata = await client.PostAsJsonAsync("/admin/operational-index-metadata", new AdminOperationalIndexMetadata.Request(["projects"]) { AppId = "projects", ServiceVersion = "v1" }, TestContext.Current.CancellationToken);
             metadata.EnsureSuccessStatusCode();
             string fingerprint = (await metadata.Content.ReadFromJsonAsync<AdminOperationalIndexMetadata.Response>(TestContext.Current.CancellationToken))!.CatalogFingerprint!;
             client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
             client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProject));
             string project = "workload-" + Guid.NewGuid().ToString("N");
-            using HttpResponseMessage dispatch = await client.PostAsJsonAsync("/project/v2", new ProjectionDispatchRequest(SupportedProjectReadFixture.Request(project, 30000), ["project-reads"], "dispatch-" + project, fingerprint), TestContext.Current.CancellationToken);
+            var delivery = new ProjectionDispatchRequest(SupportedProjectReadFixture.Request(project, 30000), ["project-reads"], "dispatch-" + project, fingerprint);
+            using HttpResponseMessage dispatch = await client.PostAsJsonAsync("/project/v2", delivery, TestContext.Current.CancellationToken);
             dispatch.EnsureSuccessStatusCode();
             (await dispatch.Content.ReadFromJsonAsync<ProjectionDispatchResponse>(TestContext.Current.CancellationToken))!.Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.Completed);
+            string detailKey = ProjectReadModelKeys.Detail("tenant-a", project);
+            var persisted = await store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, detailKey, TestContext.Current.CancellationToken);
+            persisted.Value.ShouldNotBeNull().GlobalPosition.ShouldBe(30001);
+            using HttpResponseMessage duplicate = await client.PostAsJsonAsync("/project/v2", delivery, TestContext.Current.CancellationToken);
+            duplicate.EnsureSuccessStatusCode();
+            var after = await store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, detailKey, TestContext.Current.CancellationToken);
+            after.ETag.ShouldBe(persisted.ETag);
             client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
             client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceQuery));
             QueryEnvelope query = new("tenant-a", "projects", project, GetProjectQuery.QueryType, "{}"u8.ToArray(), "runtime-read", "actor-1")
@@ -246,6 +267,87 @@ public sealed partial class SupportedProjectReadHttpTests
             using HttpResponseMessage ambiguous = await client.PostAsJsonAsync("/query", query, TestContext.Current.CancellationToken);
             ambiguous.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
             await app.StopAsync(TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task CanonicalCommandReceiverPreservesLegacyWireAndRefusesUnadmittedCalls()
+    {
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-command-fixture" };
+        WebApplication app = await StartAsync(null, null, key, workload: true);
+        await using (app.ConfigureAwait(true))
+        {
+            CancellationToken token = TestContext.Current.CancellationToken;
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.Single()) };
+            var command = new CommandEnvelope("command", "tenant-a", "projects", "exact-project",
+                ProjectsServerModule.CreateProjectCommandType, "{\"name\":\"Project\"}"u8.ToArray(), "correlation", null, "actor-1", null);
+            var input = new DomainServiceRequest(command, null);
+            using HttpResponseMessage anonymous = await client.PostAsJsonAsync("/process", input, token);
+            anonymous.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            client.DefaultRequestHeaders.Add(DaprAppChannelToken.HeaderName, "incorrect-channel");
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProcess));
+            using HttpResponseMessage wrongSidecar = await client.PostAsJsonAsync("/process", input, token);
+            wrongSidecar.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            client.DefaultRequestHeaders.Remove(DaprAppChannelToken.HeaderName);
+            client.DefaultRequestHeaders.Add(DaprAppChannelToken.HeaderName, "story61-isolated-channel-fixture");
+            using HttpResponseMessage missingCatalog = await client.PostAsJsonAsync("/process", input, token);
+            missingCatalog.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            var readback = await app.Services.GetRequiredService<IRouteCatalogAuthority>().ReadbackAsync(token);
+            client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.RootHeader, readback.RootDigest);
+            client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.EpochHeader, readback.Epoch.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProject));
+            using HttpResponseMessage wrongOperation = await client.PostAsJsonAsync("/process", input, token);
+            wrongOperation.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+            client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProcess));
+            using HttpResponseMessage foreign = await client.PostAsJsonAsync("/process", input with { Command = command with { TenantId = "foreign" } }, token);
+            foreign.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+
+            IDomainProcessor baseline = app.Services.GetRequiredKeyedService<IDomainProcessor>("projects");
+            DomainServiceWireResult expected = DomainServiceWireResult.FromDomainResult(await baseline.ProcessAsync(command, null));
+            expected.Events.Count.ShouldBe(2);
+            await CompareWireAsync(input, expected);
+
+            ProjectionEventDto[] history = expected.Events.Select((item, index) =>
+                new ProjectionEventDto(item.EventTypeName, item.Payload, item.SerializationFormat,
+                    index + 1, SupportedProjectReadFixture.EventTime, "state-parity")).ToArray();
+            ProjectionResponse projection = ProjectProjectionHandler.Project(new("tenant-a", "projects", "exact-project", history));
+            var snapshot = new DomainServiceCurrentState(new DomainServiceCurrentState(projection.State, [], 2, 2), [], 2, 2);
+            DomainServiceWireResult noOp = DomainServiceWireResult.FromDomainResult(await baseline.ProcessAsync(command, snapshot));
+            noOp.Events.ShouldBeEmpty();
+            await CompareWireAsync(new(command, snapshot), noOp);
+            var changedCommand = command with { MessageId = "different-command" };
+            DomainServiceWireResult rejection = DomainServiceWireResult.FromDomainResult(await baseline.ProcessAsync(changedCommand, snapshot));
+            rejection.IsRejection.ShouldBeTrue();
+            await CompareWireAsync(new(changedCommand, snapshot), rejection);
+
+            client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName,
+                WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceReplayState));
+            ReplayEventEnvelope[] events = history.Select(item =>
+                new ReplayEventEnvelope(item.SequenceNumber, item.EventTypeName, item.Payload, item.SerializationFormat,
+                    1, "event-" + item.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture), null, null)).ToArray();
+            var replay = new AggregateReconstructionRequest("tenant-a", "projects", "projects", "exact-project",
+                events.Length, events, true, "state-parity");
+            using HttpResponseMessage replayed = await client.PostAsJsonAsync("/replay-state", replay, token);
+            replayed.EnsureSuccessStatusCode();
+            var replayedState = (await replayed.Content.ReadFromJsonAsync<AggregateReconstructionResult>(token)).ShouldNotBeNull();
+            replayedState.Status.ShouldBe(AggregateReconstructionStatus.Succeeded);
+            replayedState.LastAppliedSequenceNumber.ShouldBe(2);
+            JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(replayedState.StateJson!), projection.State).ShouldBeTrue();
+            app.Services.GetRequiredService<InMemoryReadModelStore>().Count.ShouldBe(0);
+            await app.StopAsync(token);
+
+            async Task CompareWireAsync(DomainServiceRequest request, DomainServiceWireResult wire)
+            {
+                using HttpResponseMessage admitted = await client.PostAsJsonAsync("/process", request, token).ConfigureAwait(false);
+                admitted.EnsureSuccessStatusCode();
+                string actual = await admitted.Content.ReadAsStringAsync(token).ConfigureAwait(false);
+                JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(actual),
+                    JsonSerializer.SerializeToElement(wire, JsonSerializerOptions.Web)).ShouldBeTrue();
+            }
         }
     }
 
@@ -264,7 +366,8 @@ public sealed partial class SupportedProjectReadHttpTests
         {
             Issuer = Issuer, Audience = "projects", IssuedAt = DateTime.UtcNow, NotBefore = DateTime.UtcNow.AddSeconds(-1), Expires = DateTime.UtcNow.AddSeconds(120),
             SigningCredentials = new(key, SecurityAlgorithms.RsaSha256),
-            Subject = new ClaimsIdentity([new("azp", "eventstore"), new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, operation)]),
+            Subject = new ClaimsIdentity([new("azp", "eventstore"), new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, operation),
+                new(RouteCatalogSurfacePolicy.ClaimType, "service")]),
         });
     }
 
@@ -279,7 +382,16 @@ public sealed partial class SupportedProjectReadHttpTests
             ["APP_API_TOKEN"] = "story61-isolated-channel-fixture",
             ["Authentication:JwtBearer:Audience"] = Audience, ["Authentication:JwtBearer:RequireHttpsMetadata"] = "true",
         });
-        builder.Services.AddProjectsServer();
+        if (workload)
+        {
+            builder.AddProjectsDomainService();
+            GatewayFixtureCatalogComposition.AddProjectsReceiver(builder, "tenant-a");
+        }
+        else
+        {
+            builder.Services.AddProjectsServer();
+            builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
+        }
         builder.Services.RemoveAll<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory>();
         builder.Services.AddSingleton<Hexalith.Projects.Server.Conversations.IProjectConversationMembershipDirectory, CurrentProjectConversationMembership>();
         if (conversations is not null)
@@ -287,7 +399,6 @@ public sealed partial class SupportedProjectReadHttpTests
             builder.Services.RemoveAll<IProjectAdvisoryConversationDirectory>();
             builder.Services.AddSingleton(conversations);
         }
-        if (workload) { builder.Services.AddProjectsServerRuntimeInfrastructure(); }
         builder.Services.RemoveAll<IProjectTenantAccessProjectionStore>();
         builder.Services.AddSingleton<IProjectTenantAccessProjectionStore, InMemoryProjectTenantAccessProjectionStore>();
         builder.Services.RemoveAll<IReadModelStore>();
@@ -312,7 +423,6 @@ public sealed partial class SupportedProjectReadHttpTests
         ProjectReadTestClock clock = new(SupportedProjectReadFixture.EventTime.AddSeconds(5));
         builder.Services.AddSingleton<TimeProvider>(clock);
         builder.Services.AddSingleton<IUtcClock>(clock);
-        builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
         builder.Services.PostConfigureAll<JwtBearerOptions>(options =>
         {
             OpenIdConnectConfiguration oidc = new() { Issuer = Issuer }; oidc.SigningKeys.Add(key);
@@ -323,7 +433,17 @@ public sealed partial class SupportedProjectReadHttpTests
         ProjectTenantAccessProjection tenant = new() { TenantId = "tenant-a", Enabled = true, Watermark = 1, ProjectionWatermark = "tenant-a:1", LastEventTimestamp = clock.Now };
         tenant.Principals["actor-1"] = new("actor-1", "TenantOwner");
         await app.Services.GetRequiredService<IProjectTenantAccessProjectionStore>().SaveAsync(tenant, TestContext.Current.CancellationToken).ConfigureAwait(false);
-        app.UseAuthentication(); app.UseAuthorization(); app.MapProjectsServerEndpoints();
+        if (workload)
+        {
+            app.UseEventStoreDomainService();
+            app.MapProjectsHumanEndpoints();
+        }
+        else
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapProjectsServerEndpoints();
+        }
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         return app;
     }

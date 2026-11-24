@@ -197,6 +197,9 @@ The authenticated matrix writes diagnostics before requiring every one of its 77
 to pass. Its Partial row uses original MemoryLinked and ProjectSetupUpdated exclusion events,
 with actual Partial admission, exact omission evaluations and recovery evidence; advisory
 rows prove incomplete coverage, including mixed current Folder/unsupported File input.
+The comparison fixture delivers injected Conversation owner responses directly so a failure
+in one cell cannot open a shared HTTP circuit for a later cell. The executable retains
+the SDK resilience defaults. The distributed Aspire lane exercises that live transport.
 Physical and logical persisted records, source envelopes, exact positions, ETags and
 unexpected SDK writes are checked throughout cursor and rollback sequences. Rich native
 Conversation detail with pending isolated advisory metadata is retained as a negative control.

@@ -330,9 +330,9 @@ public sealed class AspireTopologyTests
         appHost.ShouldContain("\"250\"");
     }
 
-    /// <summary>Verifies only the explicitly named diagnostic profile enables anonymous startup.</summary>
+    /// <summary>Verifies the executable launch profiles require authenticated callers.</summary>
     [Fact]
-    public void ServerLaunchProfilesShouldKeepDefaultOidcCapableAndNameTheAnonymousDiagnosticProfile()
+    public void ServerLaunchProfilesShouldRequireAuthenticatedCallers()
     {
         string launchSettingsPath = Path.Combine(
             ProjectRoot(),
@@ -348,12 +348,7 @@ public sealed class AspireTopologyTests
             .GetProperty("environmentVariables")
             .TryGetProperty("Authentication__JwtBearer__AllowAnonymousDevelopment", out _)
             .ShouldBeFalse();
-        profiles
-            .GetProperty("anonymous-diagnostics")
-            .GetProperty("environmentVariables")
-            .GetProperty("Authentication__JwtBearer__AllowAnonymousDevelopment")
-            .GetString()
-            .ShouldBe("true");
+        profiles.TryGetProperty("anonymous-diagnostics", out _).ShouldBeFalse();
     }
 
     /// <summary>Verifies the resource record remains a complete topology contract.</summary>

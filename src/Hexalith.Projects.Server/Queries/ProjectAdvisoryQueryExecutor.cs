@@ -69,7 +69,7 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
             return QueryResult.FromPayload(JsonSerializer.SerializeToElement(
                 new ProjectAdvisoryResolutionResponse(null, [], clock.GetUtcNow(), true, []), Json));
         }
-        if (query.AggregateId != "projects" || query.Paging is not null || query.IsGlobalAdmin
+        if (query.AggregateId != "projects" || query.Paging is not null || binding.GetOriginalQuery(query).IsGlobalAdmin
             || query.EntityId is not null && query.EntityId != query.AggregateId) return Invalid();
         string? conversationId = null;
         bool includeArchived;

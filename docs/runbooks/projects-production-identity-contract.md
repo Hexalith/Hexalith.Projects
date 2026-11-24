@@ -10,10 +10,9 @@ Authentication__JwtBearer__Audience
 Authentication__JwtBearer__RequireHttpsMetadata=true
 ```
 
-`Authentication__JwtBearer__AllowAnonymousDevelopment=true` is permitted only
-for an explicitly named Development diagnostic process. It is rejected outside
-Development. Production must not use the symmetric signing-key path, anonymous
-startup, or credentials committed to this repository.
+The SDK-hosted Projects executable requires authenticated callers in every
+environment and rejects the anonymous Development setting. Production requires
+asymmetric signing and deployment-managed credentials.
 
 The Projects host validates the exact configured issuer, audience, token lifetime,
 signature, and HTTPS metadata before serving protected routes. Discovery metadata
@@ -145,14 +144,9 @@ replaces the earlier restore-timeout observation for startup only. Neither
 startup health nor in-process fixtures constitutes authenticated persisted
 Keycloak/G-4 acceptance evidence.
 
-The default `http` server launch profile expects OIDC configuration. Anonymous
-startup is available only through the explicitly named Development diagnostic
-profile:
-
-```bash
-dotnet run --configuration Debug --project src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj \
-  --launch-profile anonymous-diagnostics
-```
+The default `http` server launch profile requires OIDC configuration. The
+ordinary AppHost provisions the local SDK catalog with owner-held custody and
+bound workload issuer settings. [Local catalog configuration](../../module/README.md#ordinary-local-catalog)
 
 For executable live setup, use the [managed AppHost fixture procedure](../../tests/e2e/README.md#live-apphost-route).
 The managed runner derives tenant/principal identity from a real signed Keycloak

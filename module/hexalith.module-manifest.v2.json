@@ -60,6 +60,11 @@
                 "authorizationPolicy": "EventStoreWorkload:domain-service:process"
               },
               {
+                "name": "replay-state",
+                "kind": "administration",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:replay-state"
+              },
+              {
                 "name": "query",
                 "kind": "query",
                 "authorizationPolicy": "EventStoreWorkload:domain-service:query"
@@ -89,6 +94,13 @@
               {
                 "caller": "eventstore",
                 "path": "/process",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/replay-state",
                 "verbs": [
                   "POST"
                 ]

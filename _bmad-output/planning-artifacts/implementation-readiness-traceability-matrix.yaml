@@ -3,8 +3,8 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-11-22
-generated_by: "November 22 Epic 6 retrospective reconciliation after the November 21 sprint correction; bmad-correct-course — E-31 approved by Jerome on 2026-09-08; prior P1R 2026-08-03 and G4-P0 2026-08-04 remain historical"
+generated: 2026-11-24
+generated_by: "November 24 Chatbot host prerequisite course correction"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -26,6 +26,7 @@ sources:
   course_correction_g4_p0: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md
   entry_gate_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md
   course_correction_e31: _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
+  course_correction_chatbot_host: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-24.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -71,7 +72,8 @@ containment:
     - "E-9: FR-19 metadata classification (row fr-19)"
     - "Story 7.1: blocked by accepted 7.1-P1 contracts/validator evidence and 7.1-P2 task/Folder capability evidence"
     - "Story 8.8: blocked by accepted 8.8-P1 authenticated parity/isolation/privacy, 8.8-P2 operator accessibility, and 8.8-P3 owner-pinned Chatbot companion evidence"
-    - "8.8-P3: blocked-external until the Chatbot Presentation Owner and Chatbot Test Owner supply and approve the immutable source manifest with repository, revision, contract version, approval authority/date, authenticated commands, deterministic fixtures, expected artifacts/hashes/results/disposition, drift containment/rollback, complete journey coverage, and NFR-9 evidence, and Projects records evidence/epic8/8.8-P3-chatbot-companion-pin.json"
+    - "8.8-P3-H: blocked-external pending independent Chatbot owner approval of the authenticated host probe and immutable host manifest, and Projects recording evidence/epic8/8.8-P3-H-chatbot-host-pin.json. This is entry evidence for Story 7.16."
+    - "8.8-P3: blocked-external pending the accepted host pin, delivered Story 7.16 and applicable journey capabilities, independently approved immutable full Chatbot journey manifest with authenticated NFR-9 evidence, and Projects recording evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys; acceptance requires epic8/8.3-p1-web-foundation plus evidence/epic8/8.3-p1-foundation-manifest.json, epic8/8.3-p2-lifecycle-journeys plus evidence/epic8/8.3-p2-lifecycle-manifest.json, and epic8/8.3-p3-association-journeys plus evidence/epic8/8.3-p3-association-manifest.json"
     - "Story 8.11: blocked by accepted 8.11-P1 deployment/smoke, 8.11-P2 KMS/encryption, and 8.11-P3 rollback evidence plus every preceding Epic 8 story"
 
@@ -454,13 +456,14 @@ rows:
     user_journeys: [UJ-1, UJ-2]
     primary_story: "7.16"
     supporting_stories: ["7.1", "7.3", "7.7", "7.9", "7.14"]
-    entry_gates: [Epic-7-gate, G-2, G-3, G-5]
+    entry_gates: [Epic-7-gate, G-2, G-3, G-5, "8.8-P3-H"]
     fixture: epic7/7.16-selection
     verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.16"
     evidence_artifact: evidence/epic7/7.16-selection.trx
     estimate: L
     status: blocked-external
-    blocker: "Epic 7 gate + G-2 Folders manage check + 8.8-P3 Chatbot companion pin; Web/MCP hosting out of v1"
+    blocker: "Epic 7 gate, G-2 Folders manage, G-3, G-5, the accepted 7.1 Folder-first writer capability and 8.8-P3-H Chatbot host pin evidence/epic8/8.8-P3-H-chatbot-host-pin.json. Web/MCP hosting out of v1."
+    notes: "The host pin establishes prerequisite provenance. This row requires executed evidence from the real Story 7.16 component. Full 8.8-P3 journey qualification follows 7.16."
 
   # ═══════════════════════ NON-FUNCTIONAL REQUIREMENTS (NFR-1..NFR-11) ═══════════════════════
   - key: nfr-1
@@ -587,7 +590,7 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending the separately owned approved immutable Chatbot companion manifest and Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json; G-3 FrontComposer adapters"
+    blocker: "8.8-P2 operator accessibility, G-3 FrontComposer adapters, and full 8.8-P3 acceptance with the delivered 7.16 component, owner-approved authenticated NFR-9 results and Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     notes: "Story 8.8 integrates accepted package manifests only. The 8.3-P2/P3 component-accessibility results are inputs to Story 8.3 and do not substitute for full authenticated NFR-9 evidence. A missing, mutable, unapproved, incomplete, or contract-drifted Chatbot companion artifact or Projects pin blocks release; unresolved critical or serious accessibility violations also block."
   - key: nfr-10
     category: nfr
@@ -959,7 +962,7 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot manifest plus Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json; G-3"
+    blocker: "8.8-P2 operator accessibility, G-3, and full 8.8-P3 acceptance with the delivered 7.16 component, owner-approved authenticated NFR-9 results and Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     notes: "8.3-P2/P3 component-accessibility results remain bounded Story 8.3 inputs and do not satisfy this authenticated operator-and-Chatbot release row."
   - key: release-privacy
     category: release

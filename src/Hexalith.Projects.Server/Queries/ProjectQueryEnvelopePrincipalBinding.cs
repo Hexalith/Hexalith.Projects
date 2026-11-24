@@ -61,6 +61,12 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
     public bool AllowsAnonymousDevelopment
         => ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(_configuration, _environment);
 
+    /// <summary>Returns the authenticated wire envelope before SDK administrator normalization.</summary>
+    internal QueryEnvelope GetOriginalQuery(QueryEnvelope query)
+        => VerifiedQueryCaller.Get(_httpContextAccessor.HttpContext) is { } verified && ReferenceEquals(verified.Query, query)
+            ? verified.OriginalQuery
+            : query;
+
     /// <summary>Validates principal-to-envelope identity and returns the authority context to evaluate.</summary>
     /// <param name="query">The immutable EventStore query envelope.</param>
     /// <param name="tenantContext">The authenticated or explicit Development authority context.</param>

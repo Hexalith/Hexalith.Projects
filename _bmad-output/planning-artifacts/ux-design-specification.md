@@ -1002,7 +1002,16 @@ requires a separately owned and approved companion UX artifact pinned by owner r
 revision, contract version, approval date, and approving authority. Projects artifacts reference that
 pin; they do not manufacture or assume authority over the companion artifact.
 
-The companion artifact must specify and verify:
+**Host prerequisite (8.8-P3-H).** The Chatbot owners qualify the registered confidential host
+using an authenticated inert component probe before the Projects-owned Story 7.16 component is
+available. Verify the Project User session and surface, dual-principal and Tenant bindings, and
+component credential isolation on the actual host path. The probe performs no selection or
+admission. Story 7.16 consumes the accepted host pin at
+`evidence/epic8/8.8-P3-H-chatbot-host-pin.json`. Keep selection disabled for an unavailable or
+drifted host. An attempted association without valid Selection Evidence returns `RequestPreview`.
+[Host acceptance contract](epics.md#88-p3-h-confidential-chatbot-host-prerequisite)
+
+The full companion artifact (8.8-P3) must exercise the shipped 7.16 component and specify and verify:
 
 - candidate presentation without preselection, proposal presentation, the FR-25 selection step,
   sole-candidate accept/decline, resumption only on current authorized native membership for the named Conversation and Project, `ReadOnlyCandidate`, Folder-read
@@ -1020,13 +1029,14 @@ The companion artifact must specify and verify:
   artifact paths and hashes, results, and terminal disposition; and
 - accountable owner, containment, and executable rollback treatment for companion-contract drift.
 
-Story package 8.8-P3 accepts and pins this companion evidence before Story 8.8 integrates the
-cross-surface result. A missing, unapproved, mutable, or contract-drifted companion artifact blocks
-Stories 8.8 and 8.11.
+Story package 8.8-P3 accepts and pins this companion evidence after Story 7.16 delivers the component.
+Story 8.8 integrates the complete journey, including manual and automated NFR-9 evidence. A missing,
+unapproved, mutable, contract-drifted, or host-only companion input blocks Stories 8.8 and 8.11.
 
 Package 8.8-P3 must record the Chatbot owner repository, immutable revision, companion contract
-version, approval date and authority, accountable owners, authenticated commands and deterministic
-fixtures, artifact paths and hashes, results, terminal disposition, and containment/rollback.
+version, approval date and authority, accountable owners, accepted host pin and digest, tested
+immutable Projects component and compatible Chatbot revisions, authenticated commands and
+deterministic fixtures, artifact paths and hashes, results, terminal disposition, and containment/rollback.
 Hexalith.Projects records only the accepted immutable pin at
 `evidence/epic8/8.8-P3-chatbot-companion-pin.json`; it does not author, infer, or substitute the
 Chatbot-owned package.

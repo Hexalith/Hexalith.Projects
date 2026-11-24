@@ -11,19 +11,14 @@ using System.Linq;
 using Hexalith.Conversations.Client;
 using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
-using Hexalith.EventStore.Client.Discovery;
+using Hexalith.EventStore.Client.Aggregates;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.EventStore.Client.Streams;
-using Hexalith.EventStore.Contracts.Commands;
-using Hexalith.EventStore.Contracts.Projections;
-using Hexalith.EventStore.Contracts.Results;
-using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
-using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
@@ -39,12 +34,9 @@ using Hexalith.Projects.Server.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
 
@@ -53,6 +45,40 @@ using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
 /// </summary>
 public static class ProjectsServerServiceCollectionExtensions
 {
+    /// <summary>Registers the Projects executable with the canonical EventStore receiver.</summary>
+    /// <param name="builder">The Projects host builder.</param>
+    /// <returns>The same host builder.</returns>
+    public static WebApplicationBuilder AddProjectsDomainService(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        if (ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(builder.Configuration, builder.Environment))
+        {
+            throw new InvalidOperationException("The Projects domain service requires authenticated human callers.");
+        }
+
+        builder.Services.AddProjectsServer();
+        builder.Services.AddProjectsServerRuntimeInfrastructure();
+        builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
+        builder.AddEventStoreDomainService(typeof(ProjectsDomainProcessor).Assembly);
+        builder.Services.AddSingleton<IDomainQueryResponsePolicy, ProjectsQueryResponsePolicy>();
+        builder.Services.AddSingleton(new LegacyProjectionCatalogRegistration(ProjectsRuntimeCatalogDeclarations.Routes
+            .Where(route => route.Kind == "projection" && route.ProjectionType == ProjectsServerModule.ProjectionType).ToArray()));
+        builder.AddProjectsDevelopmentCatalog();
+        return builder;
+    }
+
+    /// <summary>Maps the retained Projects REST surface for authenticated human callers.</summary>
+    /// <param name="app">The Projects host.</param>
+    /// <returns>The same host.</returns>
+    public static WebApplication MapProjectsHumanEndpoints(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        app.MapGroup(string.Empty)
+            .RequireAuthorization(EventStoreHttpHostSecurityExtensions.HumanPolicy)
+            .MapProjectsDomainServiceEndpoints();
+        return app;
+    }
+
     /// <summary>
     /// Registers the Projects domain processor, the in-memory detail read model, and a
     /// <see cref="TimeProvider"/> for the command-async + minimal-read endpoints. The production
@@ -143,9 +169,13 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
-        services.TryAddTransient<IDomainProcessor, ProjectsDomainProcessor>();
+        services.TryAddTransient<ProjectsDomainProcessor>();
+        services.TryAddTransient<IDomainProcessor>(provider => provider.GetRequiredService<ProjectsDomainProcessor>());
         services.AddKeyedTransient<IDomainProcessor>(ProjectsServerModule.DomainName,
             (provider, _) => provider.GetRequiredService<IDomainProcessor>());
+        services.AddKeyedTransient<IAsyncAggregateReplay>(ProjectsServerModule.DomainName,
+            (provider, _) => provider.GetRequiredService<ProjectsDomainProcessor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDomainProjectionHandler, ProjectProjectionHandler>());
         services.AddOptions<ProjectionDispatchOptions>().BindConfiguration("EventStore:ProjectionDispatch");
         services.AddOptions<DomainProjectionIdentityOptions>().BindConfiguration("EventStore:DomainService")
             .PostConfigure(options =>
@@ -190,24 +220,6 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
-        if (!services.Any(descriptor => descriptor.ServiceType == typeof(ProjectsDevelopmentCatalogProfile)))
-        {
-            services.AddAuthentication().AddEventStoreWorkloadScheme(
-                EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
-                "Authentication:Workload",
-                static (options, _) =>
-                {
-                    options.Audience ??= "projects";
-                    if (options.AllowedCallers.Count == 0) { options.AllowedCallers.Add("eventstore"); }
-                });
-            services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
-                [EventStoreWorkloadOperations.DomainServiceProcess,
-                    EventStoreWorkloadOperations.DomainServiceQuery,
-                    EventStoreWorkloadOperations.DomainServiceProject,
-                    EventStoreWorkloadOperations.DomainServiceMetadata]);
-        }
-        services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
-        services.AddEventStoreWorkloadAssertionIssuer();
         string authorityDaprEndpoint = Environment.GetEnvironmentVariable("DAPR_HTTP_ENDPOINT")
             ?? $"http://127.0.0.1:{Environment.GetEnvironmentVariable("DAPR_HTTP_PORT") ?? "3500"}";
         services.AddHttpClient<ProjectChatBotAuthorityGateway>(client => client.BaseAddress = new Uri(
@@ -279,123 +291,4 @@ public static class ProjectsServerServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>Maps the Projects Server endpoints (the command-async POST + minimal-read GET).</summary>
-    /// <param name="endpoints">The endpoint route builder.</param>
-    /// <returns>The same route builder for chaining.</returns>
-    public static IEndpointRouteBuilder MapProjectsServerEndpoints(this IEndpointRouteBuilder endpoints)
-    {
-        ArgumentNullException.ThrowIfNull(endpoints);
-
-        RouteHandlerBuilder processEndpoint = endpoints.MapPost(ProjectsServerModule.ProcessRoute, async (
-            DomainServiceRequest request,
-            IDomainProcessor processor) =>
-        {
-            DomainResult result = await processor
-                .ProcessAsync(request.Command, request.CurrentState)
-                .ConfigureAwait(false);
-            return Results.Ok(DomainServiceWireResult.FromDomainResult(result));
-        });
-        RouteHandlerBuilder projectEndpoint = endpoints.MapPost(ProjectsServerModule.ProjectRoute, static (ProjectionRequest request) =>
-            string.Equals(request.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
-                ? Results.Ok(ProjectProjectionHandler.Project(request))
-                : Results.NotFound());
-        RouteHandlerBuilder queryEndpoint = endpoints.MapPost(
-            "/query",
-            async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
-            {
-                QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
-                if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType
-                    or GetProjectAuditQuery.QueryType or GetProjectTaskStatusQuery.QueryType
-                    or ResolveProjectFromConversationQuery.QueryType or ResolveProjectFromAttachmentsQuery.QueryType))
-                {
-                    return result.Success ? Results.Ok(result) : Results.NotFound(result);
-                }
-                return result.Success ? Results.Ok(result)
-                    : result.ErrorMessage is QueryAdapterFailureReason.InvalidEnvelope or QueryAdapterFailureReason.InvalidCursor
-                        ? Results.BadRequest(result)
-                        : Results.NotFound(QueryResult.Failure("safe-denial"));
-            });
-        RouteHandlerBuilder metadataEndpoint = endpoints.MapPost(
-            "/admin/operational-index-metadata",
-            static (AdminOperationalIndexMetadata.Request request, IServiceProvider services) =>
-                CreateOperationalIndexMetadata(request, services) is { } response
-                    ? Results.Ok(response)
-                    : Results.BadRequest());
-        IConfiguration configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
-        IHostEnvironment environment = endpoints.ServiceProvider.GetRequiredService<IHostEnvironment>();
-        if (endpoints.ServiceProvider.GetService<ProjectAuthorityRuntimeSecurity>() is not null)
-        {
-            if (endpoints.ServiceProvider.GetService<ProjectsDevelopmentCatalogProfile>() is not null)
-            {
-                processEndpoint.RequireEventStoreDomainServicePolicy(ProjectsServerModule.ProcessRoute);
-                projectEndpoint.RequireEventStoreDomainServicePolicy(ProjectsServerModule.ProjectRoute);
-                queryEndpoint.RequireEventStoreDomainServicePolicy("/query");
-                metadataEndpoint.RequireEventStoreDomainServicePolicy("/admin/operational-index-metadata");
-            }
-            else
-            {
-                _ = processEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Process);
-                _ = projectEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Project);
-                _ = queryEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Query);
-                _ = metadataEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Metadata);
-            }
-        }
-        else if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
-        {
-            _ = queryEndpoint.RequireAuthorization();
-            _ = metadataEndpoint.RequireAuthorization();
-        }
-
-        IEndpointRouteBuilder publicEndpoints = endpoints;
-        if (endpoints.ServiceProvider.GetService<ProjectsDevelopmentCatalogProfile>() is not null)
-        {
-            publicEndpoints = endpoints.MapGroup(string.Empty).RequireAuthorization(EventStoreHttpHostSecurityExtensions.HumanPolicy);
-        }
-        publicEndpoints.MapProjectsDomainServiceEndpoints();
-        endpoints.MapProjectReadPlatformEndpoints();
-        return endpoints;
-    }
-
-    internal static AdminOperationalIndexMetadata.Response? CreateOperationalIndexMetadata(
-        AdminOperationalIndexMetadata.Request request, IServiceProvider? services = null)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        if (request.Domains is not { Count: 1 } ||
-            !string.Equals(request.Domains[0], ProjectsServerModule.DomainName, StringComparison.Ordinal) ||
-            !string.Equals(request.AppId, ProjectsServerModule.DomainName, StringComparison.Ordinal) ||
-            !string.Equals(request.ServiceVersion, "v1", StringComparison.Ordinal))
-        {
-            return null;
-        }
-
-        if (services is not null && services.GetServices<IAsyncDomainProjectionHandler>().Any())
-        {
-            DomainProjectionIdentityOptions identity = services.GetRequiredService<IOptions<DomainProjectionIdentityOptions>>().Value;
-            if (request.AppId != identity.AppId || request.ServiceVersion != identity.ServiceVersion) { return null; }
-            AdminOperationalIndexMetadata.Response response = AdminOperationalIndexMetadata.Create(services.GetService<DiscoveryResult>() ?? new DiscoveryResult([], []), request.Domains,
-                services.GetServices<IDomainQueryHandler>(), services.GetServices<IAsyncDomainProjectionHandler>(),
-                identity.AppId, identity.ServiceVersion, services.GetRequiredService<IOptions<ProjectionDispatchOptions>>().Value,
-                [ProjectsServerModule.DomainName]);
-            return LegacyProjectionCatalogRegistration.Bind(response, services.GetServices<LegacyProjectionCatalogRegistration>());
-        }
-
-        // Projects uses its own processor rather than an EventStoreAggregate<TState>. Advertise the
-        // exact handler routes so EventStore dispatches these reads to /query instead of a projection actor.
-        return new AdminOperationalIndexMetadata.Response(
-        [
-            new AdminOperationalIndexMetadata.DomainMetadata(
-                ProjectsServerModule.DomainName,
-                [], [], [], [], [],
-                [
-                    ProjectsServerModule.GetConversationStartSetupQueryType,
-                    ProjectsServerModule.GetProjectContextQueryType,
-                    ProjectsServerModule.ExplainContextSelectionQueryType,
-                    ResolveProjectChatBotAuthority.QueryType,
-                    ListProjectsQuery.QueryType,
-                    GetProjectQuery.QueryType,
-                    ProjectsServerModule.ResolveProjectFromConversationQueryType,
-                    ProjectsServerModule.ResolveProjectFromAttachmentsQueryType,
-                ]),
-        ]);
-    }
 }

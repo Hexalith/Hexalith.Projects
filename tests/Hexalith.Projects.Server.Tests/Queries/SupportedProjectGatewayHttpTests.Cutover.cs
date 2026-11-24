@@ -64,7 +64,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
         await using var foldersLifetime = folders.ConfigureAwait(true); routes.Add("folders", folders);
         WebApplication conversations = await StartConversationsAsync(http!, grpc!, routes, denialObserver);
         await using var conversationsLifetime = conversations.ConfigureAwait(true); routes.Add("conversations", conversations);
-        WebApplication projects = await StartProjectsAsync(http!, grpc!, routes, key, now, denialObserver);
+        WebApplication projects = await StartProjectsAsync(http!, grpc!, routes, key, now, "*", denialObserver);
         await using var projectsLifetime = projects.ConfigureAwait(true); routes.Add("projects", projects);
         Exception? gatewayFailure = null;
         WebApplication gateway = await StartGatewayAsync(http!, grpc!, routes, key, "*", denialObserver, exception => gatewayFailure = exception);

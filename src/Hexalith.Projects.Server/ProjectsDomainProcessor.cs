@@ -13,8 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Client.Aggregates;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Events;
+using Hexalith.EventStore.Contracts.Replay;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Server.Authorization;
@@ -37,7 +39,8 @@ using Hexalith.Projects.Contracts.Ui;
 public sealed class ProjectsDomainProcessor(
     TimeProvider timeProvider,
     IProjectEventStoreAuthorizationValidator authorizationValidator,
-    ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor, Hexalith.EventStore.DomainService.IDomainCommandPayloadInventory
+    ProjectOwnerBootstrapVerifier? bootstrap = null)
+    : IDomainProcessor, IAsyncAggregateReplay, Hexalith.EventStore.DomainService.IDomainCommandPayloadInventory
 {
     private static readonly JsonSerializerOptions PayloadJsonOptions = ProjectCommandPayloadJson.Options;
 
@@ -69,6 +72,88 @@ public sealed class ProjectsDomainProcessor(
         typeof(UnlinkFileReferencePayload), typeof(LinkMemoryPayload), typeof(UnlinkMemoryPayload),
         typeof(ConfirmProjectResolutionPayload), typeof(GrantProjectChatBotAuthority), typeof(RevokeProjectChatBotAuthority),
     ];
+
+    /// <inheritdoc/>
+    public bool CanReplayAggregateType(string aggregateType)
+        => string.IsNullOrEmpty(aggregateType)
+            || string.Equals(aggregateType, ProjectsServerModule.DomainName, StringComparison.Ordinal)
+            || string.Equals(aggregateType, nameof(ProjectAggregate), StringComparison.OrdinalIgnoreCase)
+            || string.Equals(aggregateType, "project", StringComparison.OrdinalIgnoreCase);
+
+    /// <inheritdoc/>
+    public Task<AggregateReconstructionResult> ReplayAsync(
+        AggregateReconstructionRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        return Task.FromResult(Replay(request, cancellationToken));
+    }
+
+    private AggregateReconstructionResult Replay(AggregateReconstructionRequest request, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (request.Domain != ProjectsServerModule.DomainName || !CanReplayAggregateType(request.AggregateType))
+        {
+            return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.UnknownAggregateType,
+                "The replay request does not target a Project aggregate.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.TenantId) || string.IsNullOrWhiteSpace(request.AggregateId)
+            || request.Events is null || request.UpToSequence < 0 || request.PagedContext is not null)
+        {
+            return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
+                "The replay request has invalid Project identity or history.");
+        }
+
+        ProjectIdentity identity = new(request.TenantId, new ProjectId(request.AggregateId));
+        ProjectState state = ProjectState.Empty;
+        List<AggregateReconstructionTimelineEntry>? timeline = request.IncludeTimeline ? [] : null;
+        long lastApplied = 0;
+        foreach (ReplayEventEnvelope item in request.Events)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (item.SequenceNumber > request.UpToSequence)
+            {
+                break;
+            }
+
+            if (item.SequenceNumber != lastApplied + 1)
+            {
+                return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
+                    "The replay request has incomplete Project history.");
+            }
+
+            if (!string.Equals(item.SerializationFormat, "json", StringComparison.OrdinalIgnoreCase))
+            {
+                return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.UnsupportedVersion,
+                    "The Project event serialization format is unsupported.", item.SequenceNumber, item.EventTypeName);
+            }
+
+            try
+            {
+                state = ApplyStoredEvent(state, item.EventTypeName, item.Payload, identity);
+            }
+            catch (JsonException)
+            {
+                return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.DeserializationFailed,
+                    "The Project event payload is invalid.", item.SequenceNumber, item.EventTypeName);
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or ArgumentException)
+            {
+                return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.ApplyFailed,
+                    "The Project event could not be applied.", item.SequenceNumber, item.EventTypeName);
+            }
+
+            lastApplied = item.SequenceNumber;
+            timeline?.Add(new(lastApplied, item.EventTypeName, JsonSerializer.Serialize(state, StateJsonOptions)));
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        return lastApplied == request.UpToSequence
+            ? AggregateReconstructionResult.Succeeded(JsonSerializer.Serialize(state, StateJsonOptions), lastApplied, timeline)
+            : AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
+                "The replay request has incomplete Project history.");
+    }
 
     /// <inheritdoc/>
     public async Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
@@ -843,22 +928,28 @@ public sealed class ProjectsDomainProcessor(
                 throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
             }
 
-            if (ProjectRejectionEventTypes.Contains(metadata.EventTypeName))
-            {
-                continue;
-            }
-
-            if (!ProjectEventTypes.TryGetValue(metadata.EventTypeName, out Type? eventType))
-            {
-                throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
-            }
-
-            IProjectEvent projectEvent = JsonSerializer.Deserialize(eventEnvelope.Payload, eventType, StateJsonOptions) as IProjectEvent
-                ?? throw new InvalidOperationException("Project aggregate history contains an invalid event payload.");
-            state = ProjectStateApply.Apply(state, projectEvent, identity);
+            state = ApplyStoredEvent(state, metadata.EventTypeName, eventEnvelope.Payload, identity);
         }
 
         return state;
+    }
+
+    /// <summary>Applies a persisted Project event through the same fold used for snapshot reconstruction.</summary>
+    internal static ProjectState ApplyStoredEvent(ProjectState state, string eventTypeName, ReadOnlySpan<byte> payload, ProjectIdentity identity)
+    {
+        if (ProjectRejectionEventTypes.Contains(eventTypeName))
+        {
+            return state;
+        }
+
+        if (!ProjectEventTypes.TryGetValue(eventTypeName, out Type? eventType))
+        {
+            throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
+        }
+
+        IProjectEvent projectEvent = JsonSerializer.Deserialize(payload, eventType, StateJsonOptions) as IProjectEvent
+            ?? throw new InvalidOperationException("Project aggregate history contains an invalid event payload.");
+        return ProjectStateApply.Apply(state, projectEvent, identity);
     }
 
     // EventStore snapshots the whole snapshot-aware current state, so a snapshot can itself carry an

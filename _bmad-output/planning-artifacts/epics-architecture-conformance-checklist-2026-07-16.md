@@ -2,7 +2,7 @@
 title: "Solution-Architect Conformance Checklist — Corrective Epics 6–8"
 project: Hexalith.Projects
 created: 2026-07-16
-purpose: "Conformance review of the 35 corrective stories and explicit prerequisite/evidence work packages against the Architecture Spine (AD-1..34) and external entry gates (G-1..G-6)."
+purpose: "Conformance review of the 35 corrective stories and prerequisite/evidence packages, with an exact-baseline Epic 8 decision packet in Section G."
 authority: architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
 reviews:
   - prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -15,11 +15,18 @@ reviews:
   - implementation-readiness-report-2026-08-02-rerun-4.md
   - sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
   - sprint-change-proposal-2026-09-08.md
+  - sprint-change-proposal-2026-11-24.md
   - ../implementation-artifacts/sprint-status.yaml
-status: review-executed-conforms-with-notes-signature-pending
+updated: 2026-11-24
+status: corrected-planning-reviewed-owner-decisions-pending
 ---
 
 # Solution-Architect Conformance Checklist — Corrective Epics 6–8
+
+The current review and Epic 8 owner decision record are in [Section G](#section-g--human-signoff-packet).
+The baseline tables above Section A, Sections A–F and the archived Section G preserve the August
+review and September E-31 re-baseline. Use the current Section G for present-day dependency,
+qualification, and governance status.
 
 **Reviewer role (per SCP-07-16 / -rerun §5):** verify every corrective story conforms to its
 applicable ADs and G-1…G-6 entry gates, and **prevent** implicit sibling/platform authority, event
@@ -433,6 +440,90 @@ AI-assisted review.
 ---
 
 ## Section G — Human signoff packet
+
+### Current packet — 2026-11-24
+
+**Reviewed baseline:** Projects base commit `5f1d955b13c69a9c24b6a6c2d185770da2197355`
+and the applied planning file bytes identified by the SHA-256 digests below. The commit anchors
+the review and the digests identify the exact working-tree planning baseline for owner decisions.
+
+**Recommendation for the Epic 8 structure: RETAIN.** The 8.1–8.6 operator track delivers
+independently consumable internal capabilities after each story’s own entry and acceptance gates.
+The 8.7–8.11 track takes accepted capability and evidence into qualification and the terminal
+release decision. An operator story does not require a later release story to complete. The
+shared qualification inputs are separately owned prerequisites. Story 8.11 remains the sole
+terminal release decision under AD-30. Retaining the two tracks preserves stable story, package,
+and evidence identities while honoring their shared release boundary. [Epic 8 cohesion exception](epics.md#epic-8-cohesion-exception) · [Story 8.11](epics.md#story-811-record-the-terminal-production-release-decision)
+
+**Planning dependency check: PASS WITH OPEN NOTES. Implementation readiness: NOT READY.** The
+applied sequence is `8.8-P3-H → 7.16 → 8.8-P3 → 8.8 → 8.11`. The host probe depends on
+registration, session and identity bindings and can qualify before the component exists.
+Story 7.16 also depends on the separately accepted Folder-first writer capability under AD-35.
+Full P3 binds the delivered component and the accepted host and applicable journey capabilities.
+Story 8.8 rejects host-only evidence in the full P3 slot. The A4 dependency and B gate-alignment
+findings on this seam are corrected. AD-2, AD-5, AD-13, AD-20, AD-29, AD-30, AD-33 and AD-34
+continue to govern authority and qualification. The authorized Solution Architect’s conformance
+clearance and the Epic 8 cohesion decisions remain pending. [Applied correction](sprint-change-proposal-2026-11-24.md) · [Readiness rerun](implementation-readiness-report-2026-11-24-rerun.md)
+
+#### Baseline artifacts
+
+| Artifact | SHA-256 |
+|---|---|
+| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `573b924eca9d62feb1836635320f34cc8308750ecda283695de8a1f9a5b41135` |
+| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `5a4aff9731cff36fab819b66ea6e8c13e3a155e2f01f2cf6ebbed293bf9c7979` |
+| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `80378a8e184fa4534fae0c044abaab0f0fdfda5dd808e263ad9b979928f84e23` |
+| [UX specification](ux-design-specification.md) | `243adfc3df33c5822a20262a6385e97a660a56e87be960d0dd197b7d3430da56` |
+| [Epics](epics.md) | `603a44752a80015fb89b364f700a17cbbd76264f90b335fe135ff08ecb05f5ff` |
+| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `f13e2815b2fae0387f46dddfc59016214fadb00ef43aca29384964bc143a2ed2` |
+| [Matrix view](implementation-readiness-traceability-matrix.md) | `5b553d34df05efee7e2ede5b5b4cc490e2c412a51dc17937f33c79c4db56b0a6` |
+| [Sprint tracker](../implementation-artifacts/sprint-status.yaml) | `d3d58063c5eaef36c4218c7a195dfea353657a297482f10543780adfb6fdb423` |
+| [Deferred-work ledger](../implementation-artifacts/deferred-work.md) | `f5cd5251d8f806b256959bbada8ae68bd3b6076a85c413fc42a91fa61937570b` |
+| [Story 8.1 scheduling decision](sprint-change-proposal-2026-11-22-schedule-story-8-1.md) | `9b9ccd47b0b461bb25abcc5e69ad37d9fb6de20e0c1bc7e512d590af02cef303` |
+| [Story 8.1 specification](../implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md) | `2f9a02c0712d8200bb3d86ce15ae744852eb3f7894bccbf8cea6c7e28515c2f3` |
+| [Applied Chatbot host correction](sprint-change-proposal-2026-11-24.md) | `5a2cb0107c33c5725210f9549689dfe9bc1faa54082d170b2d049580dd3a63f8` |
+| [Read cutover runbook](../../docs/read-cutover.md) | `fae0a27d76c755a14ec58aa46f20383b509c046c4d29a29e0d83542cf39cf2c3` |
+| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `3c0c0c261412ff2f607aa591c8de93ee7660774f9717b2c2c678cd27be6cb356` |
+| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `850c3324ba7caf9468bf18ddb849ee7f5d7db7426c539fb602bd7089a9774590` |
+
+The [working-tree readiness report](implementation-readiness.md) records the review trigger
+and has SHA-256 `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb9`.
+
+#### Evidence and open gates on this baseline
+
+| Check | Result |
+|---|---|
+| Production authority | The production-authority guard returned `[6, 7, 8]` for the isolated candidate and the published active index. The candidate validation supplied the tracker, deferred-work ledger, P0 artifact and isolated workspace root, with the existing P1R record in its expected location. All development statuses and top-level action statuses match the trigger baseline. |
+| Architecture Spine structure | The bmad-architecture `lint_spine.py` check exited 0 with zero findings. The current AD-35 contract names a durable generation-fenced Projects claim and Folders-owned resource and actor authorization. |
+| Evidence coverage | The YAML and Markdown contain the same 64 unique stable keys, including all 25 FRs and 11 NFRs. The YAML records 20 pending, 42 blocked-external, one failed and one blocked. Zero rows record a pass. |
+| Epic 6 — v4 qualification | All eight stories are `done`. Epic 6 remains `in-progress`. The Projects maintainer and Test Architect own the open `epic-6-retro-requalify-v4` action for 77 comparison cells at the intended pinned source and seven separately executed authenticated retained reads after explicit `LegacyRollback`, bound to the new packet hash. P4 is `superseded`. [Tracker](../implementation-artifacts/sprint-status.yaml) · [Runbook](../../docs/read-cutover.md#selection-and-rollback) |
+| Epic 7 — first writer | Story 7.1 is `blocked`. DW-63 SDK-host work is in progress and its governed acceptance is open. Projects and EventStore own the integration and SDK proof. Projects must produce AD-17 equivalence, fencing and executable rollback and AD-35 persisted two-replica claim, restart/lost-reply and legacy-incumbent proof. 7.1-P1/P2 remain open. EventStore, Platform and Folders supply the pinned task and provisioning/authorization contracts, deterministic idempotency, receipts/status and compensation evidence for 7.1-P2. The Solution and Test Architects review their applicability. [Story 7.1](epics.md#story-71-activate-a-project-with-exactly-one-authorized-folder) · [DW-63](../implementation-artifacts/deferred-work.md) |
+| Epic 7 / Epic 8 — selection | 7.16 is `backlog`. 8.8-P3-H and full 8.8-P3 are `blocked-external`. Their Chatbot owner manifests and corresponding Projects pins are outstanding. `fr-25`, `nfr-9` and `release-accessibility` remain blocked externally. [Host and journey contracts](epics.md#story-88-prerequisite-evidence-packages) |
+| Epic 8 — operator evidence | 8.1 is `blocked` at acceptance after the internal preview. It still requires 7.1-P2, 7.15, Epic 8 authenticated fixtures and blocking CI. `fr-21` and `nfr-8` are pending. `finding-test-001` and `release-authenticated-persisted-boundary` are blocked externally. The Story 8.1 record reports a managed-browser fixture failure before Playwright, unsupported runner filters in the direct Builds 6.6.1 invocation and evidence-validator exit 6. Test Architect and the platform/Builds owners must supply and validate the governed evidence. [Story 8.1 implementation notes](../implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md#implementation-notes) |
+| Epic 8 — platform and release evidence | G-4/G-5 acceptance and the current persisted qualification remain open. The tracker scopes G-6 qualification to the recorded checkout `0f03582b3457a6d9212d60e2f9146a6043af5f7e`. Its preserved pending candidate is marked unusable. This packet records no exact-source G-6 qualification for the reviewed commit. `release-smoke` remains `failed` (historical 19 passed / 56 failed). 8.8 and 8.11 are blocked. 8.11 requires all preceding Epic 8 stories, immutable deployment/smoke, KMS and rollback evidence, and dated terminal decisions from Jerome and John. [Canonical matrix](implementation-readiness-traceability-matrix.yaml) · [Story 8.11](epics.md#story-811-record-the-terminal-production-release-decision) |
+
+#### Owner decision record
+
+**Decision requested.** Accept or reject retaining both Epic 8 tracks against the exact reviewed
+baseline. Either rejection triggers a separate structural course correction that reconciles
+every affected story and matrix reference and preserves stable story, package and evidence
+identities pending an approved migration. Revisit retention if the tracks acquire independent
+release cadences, the scope gains unrelated product capability, a forward story dependency
+appears, or qualification can move to a platform-owned epic while preserving stable evidence
+identity. The cohesion disposition covers Epic 8 structure. Acceptance of owner prerequisites,
+readiness, deployment, and the Story 8.11 release decision each require their own recorded proof.
+[Epic 8 cohesion exception](epics.md#epic-8-cohesion-exception)
+
+| Authorized role | Identity and authority | Decision (ACCEPT / REJECT) | Date (YYYY-MM-DD) | Baseline and rationale or conditions |
+|---|---|---|---|---|
+| Product Owner | Pending | Pending | Pending | Pending |
+| Authorized Solution Architect | Pending | Pending | Pending | Pending |
+
+Record the base commit and applied digest set with each decision. The authorized Solution
+Architect also records the conformance verdict and date against those bytes. Refresh the
+digest set and reverify the affected checks if the planning baseline changes before signing.
+Sprint regeneration requires a passing independent implementation-readiness gate.
+
+### Archived Section G — August review and September E-31 re-baseline
 
 **Packet status:** `e31-hashes-rebaselined-signature-pending`
 

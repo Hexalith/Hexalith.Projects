@@ -13,6 +13,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Contracts.Commands;
+using Hexalith.EventStore.Contracts.Projections;
+using Hexalith.EventStore.Contracts.Replay;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
@@ -36,6 +38,42 @@ public sealed class ProjectsDomainProcessorTests
 {
     private const string Tenant = "tenant-a";
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
+
+    [Fact]
+    public async Task ReplayPreservesFullProjectionStateAndPendingFolderHistory()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        DomainResult written = await processor.ProcessAsync(Envelope(), currentState: null).ConfigureAwait(true);
+        DomainServiceWireResult wire = DomainServiceWireResult.FromDomainResult(written);
+        ProjectionEventDto[] projectionEvents = wire.Events.Select((item, index) =>
+            new ProjectionEventDto(item.EventTypeName, item.Payload, item.SerializationFormat,
+                index + 1, DateTimeOffset.UnixEpoch, "replay-parity")).ToArray();
+        ReplayEventEnvelope[] replayEvents = projectionEvents.Select(item =>
+            new ReplayEventEnvelope(item.SequenceNumber, item.EventTypeName, item.Payload, item.SerializationFormat,
+                1, "project-event-" + item.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture), null, null)).ToArray();
+        var request = new AggregateReconstructionRequest(Tenant, ProjectsServerModule.DomainName, "projects",
+            ProjectIdValue, replayEvents.Length, replayEvents, true, "replay-parity");
+
+        ProjectionResponse projection = ProjectProjectionHandler.Project(new(Tenant, request.Domain, ProjectIdValue, projectionEvents));
+        AggregateReconstructionResult replay = await processor.ReplayAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        replay.Status.ShouldBe(AggregateReconstructionStatus.Succeeded);
+        replay.LastAppliedSequenceNumber.ShouldBe(2);
+        JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(replay.StateJson!), projection.State).ShouldBeTrue();
+        replay.Timeline!.Select(entry => entry.EventTypeName)
+            .ShouldBe([typeof(ProjectCreated).FullName!, typeof(ProjectFolderCreationPending).FullName!]);
+        var retry = await processor.ProcessAsync(Envelope(), JsonSerializer.Deserialize<JsonElement>(replay.StateJson!)).ConfigureAwait(true);
+        DomainServiceWireResult.FromDomainResult(retry).Events.ShouldBeEmpty();
+
+        AggregateReconstructionResult foreign = await processor.ReplayAsync(request with { TenantId = "foreign-tenant" },
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        foreign.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+        foreign.StateJson.ShouldBeNull();
+        AggregateReconstructionResult incomplete = await processor.ReplayAsync(request with { Events = [replayEvents[0]] },
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        incomplete.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+        incomplete.StateJson.ShouldBeNull();
+    }
 
     [Fact]
     public async Task ProcessCreate_NewAggregate_YieldsSuccessDomainResultWithProjectCreated()

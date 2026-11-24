@@ -1691,6 +1691,16 @@ So that **the Project becomes caller-visible and Active only after exactly one a
 - **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. At the first writer gate, Projects must prove the AD-35 claim against pinned Folders authorization under G-2. Open DW-63 must also be accepted before writer cutover, with SDK-host compatibility and AD-17 evidence as specified in the Epic 7 prerequisite above.
 - **Persona note:** A Tenant Project Administrator is **not** a creation persona.
 
+**Selection sequencing.** The Projects Owner, Solution Architect and Test Architect record the
+independently accepted Folder-first writer capability at
+`evidence/epic7/7.1-folder-first-writer-capability.json`. Bind the immutable candidate and
+dependency revisions, dated decisions and artifacts for the existing first-writer gates,
+the create-only no-Folder path, and persisted claim-and-commit proof under pinned Folders
+authorization. Story 7.16 consumes that capability record independently of whole-story status.
+The `RequestPreview` behavior for supplied-Folder requests without valid Selection Evidence
+applies from the first writer. Verify positive actor-selected supplied-Folder integration with
+the delivered 7.16 component before recording complete integrated FR-1/FR-25 coverage.
+
 **Acceptance Criteria** (plus shared invariants 1–8):
 
 **Given** an authorized request accepted through 7.1-P1, **When** admission runs, **Then** the task reserves one hidden ProjectId, invokes the accepted 7.1-P2 Folder contract using a deterministic task-step key and expected owner version, and persists the owner receipt before advancing.
@@ -2130,8 +2140,8 @@ I want **to pick the target of an additive association inside the Projects-owned
 So that **actor-selected links and initial Folder binding are distinguishable from Inferred Associations (FR-25, §4, §9 A-6) without a mint or confirm API**.
 
 - **Traceability:** FR-25; NFR-1, NFR-8; AD-2, AD-5, AD-13, AD-20, AD-33; UJ-1, UJ-2 (PRD Realizes claim; story journeys also exercise UJ-3); evidence row `fr-25`.
-- **Entry gate:** Epic 7 gate, G-2, G-3, G-5 and the accepted 8.8-P3 companion pin for the Chatbot host. Only a registered confidential Project User component may mint Selection Evidence. Story 7.16 delivers the Chatbot component.
-- **Prior-only deps:** Stories 6.1 (permitted-set enumeration) and 7.1 (creation/initial Folder). Stories 7.3, 7.7, 7.9, and 7.14 consume this story’s evidence contract.
+- **Entry gate:** Epic 7 gate, G-2, G-3, G-5 and the independently accepted `8.8-P3-H` confidential Chatbot host pin. Only a registered confidential Project User component may mint Selection Evidence. Story 7.16 delivers the Projects-owned component and its executable `fr-25` evidence. Full 8.8-P3 journey qualification follows.
+- **Prior capabilities:** Story 6.1 permitted-set enumeration and Story 7.1’s independently accepted immutable Folder-first writer capability record. Stories 7.3, 7.7, 7.9, and 7.14 retain their own admission and acceptance contracts. Their positive Chatbot selection composition uses the delivered 7.16 component.
 
 **Acceptance Criteria** (plus shared invariants 1–8):
 
@@ -2756,9 +2766,44 @@ change the Chatbot repository.
 |---|---|---|---|---|
 | 8.8-P1 | Projects/platform adapters + Identity platform | Authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and `NoPayloadLeakage` evidence over the accepted live topology | Test Architect + Platform Adapter Owners + Identity/Security Owner | open; blocked by Stories 8.3–8.5, G-4, G-5, and the current implementation-readiness freeze |
 | 8.8-P2 | FrontComposer/Web presentation | Operator WCAG 2.2 AA automated and authenticated manual keyboard, focus, live-region, screen-reader, 200%-zoom, and 320px evidence at small, median, and maximum shapes | FrontComposer/Web Owner + Test Architect | open; blocked by Story 8.3, G-3, G-6, and the current implementation-readiness freeze |
-| 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Version-pinned Chatbot companion UX specification and authenticated candidate, proposal, confirm/cancel, expiry/staleness, lost-response, task-status, recovery, and first-response-admission evidence | Chatbot Presentation Owner + Chatbot Test Owner | blocked-external; external owner and approved immutable revision required; absence blocks Story 8.8 and release |
+| 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Authenticated companion journey including the shipped 7.16 component, candidate and proposal presentation, confirm/cancel, expiry/staleness, lost response, task status, recovery, first-response admission and NFR-9 | Chatbot Presentation Owner + Chatbot Test Owner | blocked-external pending accepted 8.8-P3-H, delivered 7.16, applicable journey capabilities and the full owner-approved manifest and pin. Full acceptance gates Story 8.8 and release. |
 
 For 8.8-P1, exercise the ordinary Release Workers and Server executables. Both worker callbacks require the platform sidecar identity. Server authorization decisions require verified EventStore and Dapr policy evidence. Record successful authorized delivery, denial when either authority is missing or denies, and unchanged persisted rows on denial. The deployment owner supplies the effective ingress and workload-identity policy.
+
+#### 8.8-P3-H confidential Chatbot host prerequisite
+
+The Chatbot Presentation Owner and Chatbot Test Owner independently accept 8.8-P3-H under the
+existing 8.8-P3 action. It depends on pinned confidential host registration, mount and session
+contracts, compatible FrontComposer and Platform Identity bindings, and authenticated host
+fixtures. Acceptance can run before Story 7.16, the full Epic 8 entry gate or the completed
+Chatbot journey.
+
+Use an inert component probe on the actual confidential host path. Verify mounting only for a
+registered confidential Project User session bound to the server-derived Tenant, original actor,
+authenticated workload, interactive session and surface. A Projects fixture authority issues a
+session-bound test credential confined to the probe. Verify refusal on missing or mismatched
+registration, noninteractive or Tenant-role identities, wrong workload or audience, and changed,
+revoked or cross-Tenant, cross-actor, cross-session or cross-surface bindings. The probe creates
+zero Selection Evidence, Confirmation Artifacts, tasks or Project effects.
+
+The host manifest records its owner repository, immutable revision and digest, pinned host and
+mount/session contracts and dependencies, environment, exact authenticated commands, deterministic
+fixture, artifact paths and hashes, results, exercised rollback and drift containment, and dated
+owner approvals. FrontComposer and Platform Identity owners attest their bindings. The Projects
+Owner verifies compatibility, then the Product Owner and Test Architect record only the
+accepted reference at `evidence/epic8/8.8-P3-H-chatbot-host-pin.json`. Missing, invalid or drifted
+host acceptance keeps selection disabled. Rollback disables selection or restores an independently
+reverified compatible host binding. An association without valid Selection Evidence returns
+`RequestPreview` and any subsequent confirmation requires its own registered authority.
+
+#### 8.8-P3 full Chatbot companion journey
+
+Full 8.8-P3 requires accepted 8.8-P3-H and the delivered 7.16 component with the applicable
+accepted candidate, proposal, confirmation, task, recovery and response-admission capabilities.
+Its authenticated run exercises the real component and owner/platform paths. The manifest binds
+the accepted host pin and digest, the immutable Projects component revision, the tested compatible
+Chatbot revision and the versions of the exercised capabilities. Changed material bindings
+require retesting and applicable owner reapproval before reuse.
 
 8.8-P3 acceptance requires an owner-supplied manifest containing the Chatbot owner repository and
 immutable revision, companion contract version, approval date, approving authority, accountable
@@ -2770,9 +2815,10 @@ the FR-25 selection step, sole-candidate accept/decline, current authorized nati
 every task state, cancellation, recovery, authoritative completion re-query, response-state
 admission, and NFR-9 accessibility. SM-7 / SM-8 / SM-C4 companion feed follows A-1; SM-2 and SM-3
 are release-acceptance checks, not outcome metrics. After
-independent acceptance, Projects records only the immutable pin and evidence-row binding at
-`evidence/epic8/8.8-P3-chatbot-companion-pin.json`; it does not create or approve the Chatbot-owned
-artifact. Absence of either the owner manifest or the Projects pin remains `blocked-external`.
+independent acceptance by the Chatbot Presentation and Test Owners, the Product Owner and
+Test Architect in Projects record the immutable pin and evidence-row binding at
+`evidence/epic8/8.8-P3-chatbot-companion-pin.json`. The full package remains `blocked-external`
+until the owner manifest and this full Projects reference pass.
 
 ### Story 8.8: Integrate authenticated isolation, privacy, parity, and accessibility evidence
 
@@ -2786,6 +2832,8 @@ So that **NFR-1, NFR-9, NFR-11, AD-34, and SM-5 are proven without one cross-rep
 **Acceptance Criteria:**
 
 **Given** the three accepted package manifests, **When** integration validation runs, **Then** every package owner, repository, immutable revision, environment, command, artifact hash, rollback/containment, evidence-row identity, and release disposition is present and consistent.
+
+**Given** a host-only 8.8-P3-H pin, **When** it is submitted as the 8.8-P3 input, **Then** reject it and retain the full Chatbot journey blocker.
 
 **Given** 8.8-P1, **When** its evidence is integrated, **Then** Web/CLI/MCP facts are semantically equivalent and every cross-Tenant, authorization-freshness, and payload-leakage critical case passes.
 

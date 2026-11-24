@@ -31,11 +31,12 @@ public sealed class GatewayFixtureRouteCatalogTests
             ("folders-owner-read", typeof(FolderOwnerReadQuery), typeof(FolderOwnerReadResult)),
             ("conversations-advisory-metadata", typeof(GetConversationAdvisoryMetadataQuery), typeof(ConversationAdvisoryMetadataResult)),
         ];
-        envelope.Operations!.Count.ShouldBe(expected.Length + 4);
+        var operations = envelope.Operations.ShouldNotBeNull();
+        operations.Count(operation => operation.Kind == "query").ShouldBe(expected.Length + 4);
         foreach (var pair in expected)
         {
             RouteContractDeclaration declaration = envelope.Declarations.Single(item => item.RouteId == pair.Route);
-            RouteOperationContract actual = envelope.Operations.Single(item => item.RouteId == pair.Route);
+            RouteOperationContract actual = operations.Single(item => item.RouteId == pair.Route);
             RouteOperationContract exported = RouteOperationSchema.Create(declaration, pair.Request, pair.Result,
                 actual.Ingress, actual.Eligibility, JsonSerializerOptions.Web);
             JsonElement.DeepEquals(actual.RequestSchema, exported.RequestSchema).ShouldBeTrue();
