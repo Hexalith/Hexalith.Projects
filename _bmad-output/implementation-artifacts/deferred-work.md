@@ -934,6 +934,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Audit and bind the Builds `Github/dapr-init/action.yml` defaults, whose runtime falls back to 1.18.0 when callers omit `runtime-version`.
   evidence: The action is outside the 2026-09-29 `pinAudit` and source-state (review R5-BH-05).
+  status: done 2026-11-24
+  resolution: The active Projects G-6 policy binds the direct Builds action to its material fingerprint. The topology runbook records its current input precedence and defaults alongside the explicit CI tuple. Tests prove changed and missing action bytes invalidate the material observation; historical packets are preserved.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Make the Builds execution-SHA check follow nested Builds action refs, or narrow its message to direct `ci.yml` references.
   evidence: `domain-ci.yml` pins `dapr-init@410bd595…`, which is neither the gitlink nor bound; latent while byte-identical (review R5-BH-06).

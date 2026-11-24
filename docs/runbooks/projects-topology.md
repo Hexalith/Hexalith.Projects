@@ -161,6 +161,15 @@ fixture, not production. Domain state remains in PostgreSQL through Dapr.
 Exact process groups/container IDs and shared-resource comparisons are retained
 with the current result.
 
+The current G-6 input fingerprint includes the root-declared Builds
+`Github/dapr-init/action.yml`. Its CLI input takes precedence over the CLI
+fallback, and runtime selection uses the explicit runtime input, then an
+explicit CLI version, then the action's runtime fallback. At Builds
+`bf8a28b4bbcec619e8d9764d335f786f2bafb69e`, the default CLI is 1.19.1 and
+the runtime fallback is 1.19.2. Projects CI supplies both 1.19.1 values
+explicitly for its managed lane, and the G-6 qualifier uses its approved
+tuple independently. Compare these inputs when reviewing catalog updates.
+
 The checkout-source proof is distinct from published EventStore `3.110.0`
 archives. Platform’s Works/mTLS `1.18.3` development preview remains
 unselected and unqualified; Dapr.Workflow remains unselected. Attempt 16 has

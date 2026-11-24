@@ -21,6 +21,7 @@ from check_conversations_toolkit import CONVERSATIONS_APPHOST, TOOLKIT_PACKAGE, 
 BUILDS = ROOT / "references/Hexalith.Builds"
 PRODUCER = "b80f3e85fc803f71bf7b2809965db0aceafdc3c5"
 RELATIVE = "tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json"
+DAPR_ACTION = "references/Hexalith.Builds/Github/dapr-init/action.yml"
 SPEC = importlib.util.spec_from_file_location("owning_g6_policy_contract", BUILDS / "Tools/g6_current.py")
 assert SPEC is not None and SPEC.loader is not None
 CURRENT = importlib.util.module_from_spec(SPEC)
@@ -58,7 +59,7 @@ class OwningCurrentPolicyTests(unittest.TestCase):
         policy = CURRENT.policy_document(ROOT / RELATIVE)
         self.assertEqual(original["resolvedProjects"], policy["resolvedProjects"])
         self.assertEqual(original["materialPrefixes"], policy["materialPrefixes"])
-        self.assertEqual(original["materialFiles"] + ["tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json", RELATIVE], policy["materialFiles"])
+        self.assertEqual(original["materialFiles"] + ["tools/qualification/g6-current-policy-2026-11-12-dapr-net1191.json", RELATIVE, DAPR_ACTION], policy["materialFiles"])
         self.assertEqual(21, CURRENT.SUPPORT_SELECTORS)
         self.assertEqual(33, CURRENT.SUPPORT_CASES)
         expected = copy.deepcopy(original["tuple"])
@@ -95,6 +96,29 @@ class OwningCurrentPolicyTests(unittest.TestCase):
             missing_toolkit = {"resolvedPackages": [{"path": project, "packages": []}],
                                "effectiveTuple": policy["tuple"]}
             self.assertIn("must restore", toolkit_issue(missing_toolkit))
+
+    def test_dapr_action_defaults_are_material_to_current_qualification(self) -> None:
+        policy = CURRENT.policy_document(ROOT / RELATIVE)
+        self.assertIn(DAPR_ACTION, policy["materialFiles"])
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            builds = workspace / "references/Hexalith.Builds"
+            builds.mkdir(parents=True)
+            for repository in (workspace, builds):
+                subprocess.run(["git", "init", "-q", str(repository)], check=True, capture_output=True)
+            (workspace / ".gitmodules").write_text('[submodule "Builds"]\n    path = references/Hexalith.Builds\n')
+            action = workspace / DAPR_ACTION
+            action.parent.mkdir(parents=True)
+            action.write_bytes((ROOT / DAPR_ACTION).read_bytes())
+            fixture = {"materialFiles": [DAPR_ACTION], "materialPrefixes": []}
+            before = CURRENT.tracked_material(workspace, fixture)
+            self.assertEqual(1, before["fileCount"])
+            with action.open("ab") as stream:
+                stream.write(b"\n# changed Dapr setup action\n")
+            self.assertNotEqual(before["fingerprint"], CURRENT.tracked_material(workspace, fixture)["fingerprint"])
+            action.unlink()
+            with self.assertRaisesRegex(CURRENT.G6Error, "required material files are missing"):
+                CURRENT.tracked_material(workspace, fixture)
 
     def test_changed_tuple_without_exact_new_authorization_is_refused(self) -> None:
         policy = CURRENT.policy_document(ROOT / RELATIVE)
