@@ -815,6 +815,8 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-migrate-nuget-trusted-publishing.md`
   summary: Audit the pre-existing EventStore, Folders, and FrontComposer gitlink update and repair the Folders source-reference Debug compile break.
   evidence: Baseline commit `ffa922d0f7a278da3bb02ee09769564df02d5f01` advanced all three gitlinks before this implementation began; the current Folders client exposes a four-argument cancellation overload while `FoldersProjectFolderDirectory` still calls it with five arguments, producing CS1501 in source-reference Debug builds.
+  status: done 2026-11-24
+  resolution: Audited the three gitlink changes in ffa922d0f7a278da3bb02ee09769564df02d5f01 independently from the current direct pins. The earlier Projects permissions-client repair 10aba2537c097b6d60906f279775a533f2a72f3a removed the split task-ID call. The current mapped source Server.Tests build compiled the generated Folders caller with zero warnings/errors and all 47 ProjectFolderDirectoryTests cases passed.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Hermetically execute the release exact-green-source preflight across its accepted and rejected source states.
   evidence: The release workflow has source-text checks but no execution coverage for a green SHA, stale main, malformed API data, or missing successful push CI; this is a real release-verification gap unrelated to Story 6.3.
