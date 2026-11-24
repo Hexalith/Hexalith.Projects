@@ -1,0 +1,12 @@
+id: bld-align-001-static-parity
+repository: Hexalith.Builds
+revision: WORKTREE_BASE_2f46aaee2ecb0b3f121d50ab8cc58601901046f4
+cwd: /tmp/hexalith-p1r-397-candidate.qDs2Ig
+started_utc: 2026-08-24T16:32:36.405779774Z
+environment_overrides: none
+command: set -euo pipefail; test "$(grep -c '<PackageVersion Include="Hexalith.EventStore' Props/Directory.Packages.props)" -eq 13; test "$(grep -c '3.97.0' Props/Directory.Packages.props)" -ge 1; test "$(grep -c '3.97.0' src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs)" -eq 1; test "$(grep -c '"const": "3.97.0"' schemas/hexalith.module-manifest.v1.json)" -eq 1; test "$(grep -c '"eventStoreVersion": "3.88.0"' test/fixtures/module/negative/superseded-platform-pin.json)" -eq 1; test "$(grep -c '"eventStoreVersion": "3.70.1"' test/fixtures/module/negative/tampered-platform-pin.json)" -eq 1; test "$(jq -r '.ruleIds | join("|")' test/fixtures/module/negative/invalid-profile.expected.json)" = HXM009; test "$(grep -c 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' test/fixtures/evidence/negative/artifact-hash-mismatch.yaml)" -eq 1; expected=$(sha256sum test/fixtures/evidence/positive/evidence/release-passed.json | cut -d' ' -f1); test "$(grep -R "artifact_sha256: $expected" test/fixtures/evidence/positive/readiness.yaml test/fixtures/evidence/negative/coverage-shortfall.yaml test/fixtures/evidence/negative/outcome-mismatch.yaml test/fixtures/evidence/negative/policy-controls.yaml | wc -l)" -eq 5; find test/fixtures -type f -name '*.json' -print0 | xargs -0 -n1 jq empty; git -c core.whitespace=cr-at-eol diff --check
+
+
+ended_utc: 2026-08-24T16:32:37.033167184Z
+exit: 0
+result: PASS

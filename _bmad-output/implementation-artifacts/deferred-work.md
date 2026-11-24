@@ -630,8 +630,9 @@ resolution: 2026-10-06 Approved sprint-change-proposal-2026-10-06-epic-6-trackin
 origin: restored independent obligation from the pre-minimal P1R ledger
 location: qualification-evidence/6-1-p1r-397-20260824*/logs
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
-reason: The three preserved 3.97 evidence roots contain untracked log files that remain vulnerable to workspace cleaning; this obligation concerns only preserved historical evidence and does not authorize another 3.106 attempt.
-status: open
+reason: The three preserved 3.97 evidence roots originally contained untracked log files vulnerable to workspace cleaning. This obligation concerns only preserved historical evidence.
+status: done 2026-11-24
+resolution: Tracked all 23 original logs from the three 3.97 bundles. All 55 entries in those manifests match their recorded SHA-256 digests.
 
 ### DW-71: Verify retained qualification manifests against tracked artifacts.
 
@@ -640,7 +641,7 @@ location: qualification-evidence manifest validation
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
 reason: No executable repository check re-hashes each retained `artifact-manifest.sha256` entry and confirms that every referenced artifact is tracked.
 status: done
-resolution: 2026-11-23. The committed-manifest verifier checks each artifact against its Git blob. Of 270 entries, 247 matched and 23 logs were missing from the three 3.97 bundles. Recovering those bytes remains open in DW-70. [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md)
+resolution: 2026-11-23. The committed-manifest verifier checks each artifact against its Git blob. Of 270 entries, 247 matched and 23 logs were missing from the three 3.97 bundles. DW-70 subsequently recovered those exact bytes. [spec-ten-deferred-qualification-evidence-items.md](spec-ten-deferred-qualification-evidence-items.md)
 
 ### DW-72: Define the command-ledger policy for retained qualification evidence.
 

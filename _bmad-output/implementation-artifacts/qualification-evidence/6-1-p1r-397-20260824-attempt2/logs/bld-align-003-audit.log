@@ -1,0 +1,15 @@
+id: bld-align-003-audit
+repository: Hexalith.Builds
+revision: fb05dd84625abdcd1a62d2664e8557379fd631bb
+cwd: /tmp/hexalith-p1r397-attempt2-builds-candidate
+started_utc: 2026-08-24T17:41:57.677410217Z
+environment_overrides: none
+command: set -euo pipefail
+pwsh -NoProfile -File ./Tools/validate-package-version-audit.ps1
+test -z "$(git status --porcelain=v1)"
+
+Package version audit validation passed for 284 packages, 139 families, and 1 source(s).
+
+ended_utc: 2026-08-24T17:42:08.022291584Z
+exit: 0
+result: PASS

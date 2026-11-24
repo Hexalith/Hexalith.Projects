@@ -1,0 +1,15 @@
+id: bld-align-002-catalog
+repository: Hexalith.Builds
+revision: fb05dd84625abdcd1a62d2664e8557379fd631bb
+cwd: /tmp/hexalith-p1r397-attempt2-builds-candidate
+started_utc: 2026-08-24T17:41:54.973961256Z
+environment_overrides: none
+command: set -euo pipefail
+pwsh -NoProfile -File ./Tools/test-authoritative-package-catalog.ps1
+test -z "$(git status --porcelain=v1)"
+
+Authoritative package catalog tests passed for 49 approved package identities and 3 shared package versions.
+
+ended_utc: 2026-08-24T17:41:57.632924849Z
+exit: 0
+result: PASS

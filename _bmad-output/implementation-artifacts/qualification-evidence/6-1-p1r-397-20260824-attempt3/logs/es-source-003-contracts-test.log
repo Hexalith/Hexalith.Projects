@@ -1,0 +1,435 @@
+id: es-source-003-contracts-test
+repository: Hexalith.EventStore
+revision: 94591f3539ce30372db58e5fdd3ba017ea8c07b8
+cwd: /tmp/hexalith-p1r397-attempt3/source/EventStore
+started_utc: 2026-08-24T18:22:22.543299647Z
+environment_overrides: NUGET_PACKAGES=/tmp/hexalith-p1r397-attempt3/source/cache/nuget;DOTNET_CLI_HOME=/tmp/hexalith-p1r397-attempt3/source/cache/dotnet-home;TMPDIR=/tmp/hexalith-p1r397-attempt3/source/cache/tmp;MSBUILDDISABLENODEREUSE=1
+command: set -euo pipefail
+dotnet test tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
+
+  Hexalith.EventStore.Contracts -> /tmp/hexalith-p1r397-attempt3/source/EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll
+  Hexalith.EventStore.Client -> /tmp/hexalith-p1r397-attempt3/source/EventStore/src/Hexalith.EventStore.Client/bin/Debug/net10.0/Hexalith.EventStore.Client.dll
+  Hexalith.EventStore.Server -> /tmp/hexalith-p1r397-attempt3/source/EventStore/src/Hexalith.EventStore.Server/bin/Debug/net10.0/Hexalith.EventStore.Server.dll
+  Hexalith.EventStore.Testing -> /tmp/hexalith-p1r397-attempt3/source/EventStore/src/Hexalith.EventStore.Testing/bin/Debug/net10.0/Hexalith.EventStore.Testing.dll
+  Hexalith.EventStore.Contracts.Tests -> /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.Tests.dll
+Test run for /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.78]     Hexalith.EventStore.Contracts.Tests.Packaging.PackageOwnershipGovernanceTests.TenantsGatewayAndDomainServiceUseComplementaryModeEdges [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.PackageOwnershipGovernanceTests.TenantsGatewayAndDomainServiceUseComplementaryModeEdges [4 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize)
+   at System.Xml.XmlDownloadManager.GetStream(Uri uri, ICredentials credentials, IWebProxy proxy)
+   at System.Xml.XmlTextReaderImpl.FinishInitUriString()
+   at System.Xml.XmlReaderSettings.CreateReader(String inputUri, XmlParserContext inputContext)
+   at System.Xml.Linq.XDocument.Load(String uri, LoadOptions options)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.PackageOwnershipGovernanceTests.TenantsGatewayAndDomainServiceUseComplementaryModeEdges() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/PackageOwnershipGovernanceTests.cs:line 116
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.82]     Hexalith.EventStore.Contracts.Tests.Packaging.CommitMessagePolicyTests.CopilotInstructionsDelegateCommitlintContractToSharedInstructions [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.CommitMessagePolicyTests.CopilotInstructionsDelegateCommitlintContractToSharedInstructions [157 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : File.Exists(sharedLlmInstructionsPath)
+    should be
+True
+    but was
+False
+
+Additional Info:
+    The Copilot entry point must delegate to an initialized shared LLM instruction file.
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.CommitMessagePolicyTests.CopilotInstructionsDelegateCommitlintContractToSharedInstructions() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/CommitMessagePolicyTests.cs:line 60
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:05.85]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.SharedBuildsToolIdentityIsRehashedFromPinnedGitBytes [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.SharedBuildsToolIdentityIsRehashedFromPinnedGitBytes [10 ms]
+  Error Message:
+   System.IO.InvalidDataException : Shared Builds tool verification failed: fatal: path 'Github/publish-containers/smoke_container_platforms.py' does not exist in 'a53166539bf4441d5e33d04281b14c2d59e950c3'
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.ComputePinnedBuildsToolSha256(String repositoryRoot, String toolPath, String buildsSha) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 9021
+   at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.ComputePinnedBuildsToolSha256(String repositoryRoot, String toolPath) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 8969
+   at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.SharedBuildsToolIdentityIsRehashedFromPinnedGitBytes() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 2434
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:06.48]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "full-server-tests") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "full-server-tests") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:06.48]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "release-coupling-project") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "runtime-uses-cli-pin") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "full-history-checkout") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-runtime-tag") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "misplaced-shallow-depth") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "release-coupling-workflow") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "checkout-env-shallow-depth") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "category-filter") [FAIL]
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-cli-tag") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "release-coupling-project") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "runtime-uses-cli-pin") [1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "full-history-checkout") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-runtime-tag") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "misplaced-shallow-depth") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "release-coupling-workflow") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "checkout-env-shallow-depth") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "category-filter") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-cli-tag") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:06.49]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-legacy-fallback") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(mutation: "missing-legacy-fallback") [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 729
+   at InvokeStub_ReleasePackageManifestTests.Live_sidecar_workflow_guardrail_rejects_forbidden_mutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:07.70]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "nested/stray-evidence.json") [FAIL]
+[xUnit.net 00:00:07.75]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "acceptances/other-subject/unbound.json") [FAIL]
+[xUnit.net 00:00:07.79]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "stray-evidence.json") [FAIL]
+[xUnit.net 00:00:07.83]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: ".hidden-note") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "nested/stray-evidence.json") [78 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : EvaluateClosure(
+                crosswalk,
+                crosswalkBytes,
+                subjectBytes,
+                root,
+                evidence,
+                coreBytes,
+                proofBytes,
+                packageManifestSha256)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(String strayFileName) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1701
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "acceptances/other-subject/unbound.json") [45 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : EvaluateClosure(
+                crosswalk,
+                crosswalkBytes,
+                subjectBytes,
+                root,
+                evidence,
+                coreBytes,
+                proofBytes,
+                packageManifestSha256)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(String strayFileName) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1701
+   at InvokeStub_DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "stray-evidence.json") [38 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : EvaluateClosure(
+                crosswalk,
+                crosswalkBytes,
+                subjectBytes,
+                root,
+                evidence,
+                coreBytes,
+                proofBytes,
+                packageManifestSha256)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(String strayFileName) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1701
+   at InvokeStub_DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: ".hidden-note") [41 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : EvaluateClosure(
+                crosswalk,
+                crosswalkBytes,
+                subjectBytes,
+                root,
+                evidence,
+                coreBytes,
+                proofBytes,
+                packageManifestSha256)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(String strayFileName) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1701
+   at InvokeStub_DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:07.87]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "smoke-linux-amd64.log.bak") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(strayFileName: "smoke-linux-amd64.log.bak") [39 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : EvaluateClosure(
+                crosswalk,
+                crosswalkBytes,
+                subjectBytes,
+                root,
+                evidence,
+                coreBytes,
+                proofBytes,
+                packageManifestSha256)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(String strayFileName) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1701
+   at InvokeStub_DeployedRuntimeParityClosureTests.UnlistedEvidenceDirectoryFileFailsClosed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:08.35]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsConfigArchitectureMismatch [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsConfigArchitectureMismatch [18 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, rebound)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsConfigArchitectureMismatch() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1584
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:08.50]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "third-child") [FAIL]
+[xUnit.net 00:00:08.51]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "nested-index") [FAIL]
+[xUnit.net 00:00:08.52]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "unknown-platform") [FAIL]
+[xUnit.net 00:00:08.54]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "duplicate-platform") [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "third-child") [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1526
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "nested-index") [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1526
+   at InvokeStub_DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "unknown-platform") [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1526
+   at InvokeStub_DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(mutation: "duplicate-platform") [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(String mutation) in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1526
+   at InvokeStub_DeployedRuntimeParityClosureTests.OciGraphRejectsPlatformSetMutations(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:09.17]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.CompleteDerivedLineagePassesAndMissingChecksOrBlockersFail [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.CompleteDerivedLineagePassesAndMissingChecksOrBlockersFail [34 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.CompleteDerivedLineagePassesAndMissingChecksOrBlockersFail() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 998
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:09.35]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciProvenanceRejectsSensitiveConfigRawValues [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciProvenanceRejectsSensitiveConfigRawValues [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.OciProvenanceRejectsSensitiveConfigRawValues() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 2409
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:09.68]     Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.MutableTagOnlyIdentityFailsClosed [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.MutableTagOnlyIdentityFailsClosed [11 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : ValidateOciGraph(crosswalk, root, evidence)
+    should be
+True
+    but was
+False
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.DeployedRuntimeParityClosureTests.MutableTagOnlyIdentityFailsClosed() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs:line 1485
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:29.65]     Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_targets_live_project_outside_release_gate [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_targets_live_project_outside_release_gate [< 1 ms]
+  Error Message:
+   System.IO.DirectoryNotFoundException : Could not find a part of the path '/tmp/hexalith-p1r397-attempt3/source/EventStore/references/Hexalith.Builds/Github/dapr-init/action.yml'.
+  Stack Trace:
+     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, String path, Boolean isDirError)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, UnixFileMode openPermissions, Int64& fileLength, UnixFileMode& filePermissions, Boolean failForSymlink, Boolean& wasSymlink, Func`4 createOpenException)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.ReadAllText(String path)
+   at Hexalith.EventStore.Contracts.Tests.Packaging.ReleasePackageManifestTests.Live_sidecar_workflow_targets_live_project_outside_release_gate() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/ReleasePackageManifestTests.cs:line 626
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:43.03]     Hexalith.EventStore.Contracts.Tests.Packaging.CorrectiveOciProvenanceReleaseTests.PublicationAuthorityFixturesPassWithoutSkippedCases [FAIL]
+  Failed Hexalith.EventStore.Contracts.Tests.Packaging.CorrectiveOciProvenanceReleaseTests.PublicationAuthorityFixturesPassWithoutSkippedCases [5 ms]
+  Error Message:
+   Shouldly.ShouldAssertException : snapshot.ExitCode
+    should be
+0
+    but was
+128
+
+Additional Info:
+    fatal: not a tree object: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
+
+  Stack Trace:
+     at Hexalith.EventStore.Contracts.Tests.Packaging.CorrectiveOciProvenanceReleaseTests.PublicationAuthorityFixturesPassWithoutSkippedCases() in /tmp/hexalith-p1r397-attempt3/source/EventStore/tests/Hexalith.EventStore.Contracts.Tests/Packaging/CorrectiveOciProvenanceReleaseTests.cs:line 719
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    29, Passed:  1503, Skipped:     0, Total:  1532, Duration: 1 m 24 s - Hexalith.EventStore.Contracts.Tests.dll (net10.0)
+
+ended_utc: 2026-08-24T18:23:51.038975740Z
+exit: 1
+result: FAIL

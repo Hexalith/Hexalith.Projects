@@ -16,8 +16,11 @@ python3 tools/qualification/verify_retained_manifests.py
 
 The command reads the manifests and artifact bytes from the same Git commit
 (`HEAD`). It reports verified entries per bundle and exits nonzero for missing
-files, malformed entries, or digest mismatches. DW-70 tracks the missing logs
-from the three EventStore 3.97 bundles.
+files, malformed entries, or digest mismatches. The three EventStore 3.97
+bundles include their original command logs (DW-70). Their manifest entry
+counts are 10 for [the first bundle](6-1-p1r-397-20260824/artifact-manifest.sha256),
+18 for [attempt 2](6-1-p1r-397-20260824-attempt2/artifact-manifest.sha256), and
+27 for [attempt 3](6-1-p1r-397-20260824-attempt3/artifact-manifest.sha256).
 
 ## Current P1R Boundary
 

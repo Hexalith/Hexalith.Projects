@@ -1,0 +1,50 @@
+id: history-001-preserve
+repository: Hexalith.Projects
+revision: 028410069ff21e5fbaa68ebf8c5d4ab44b3a7676
+cwd: /home/administrator/projects/hexalith/projects
+started_utc: 2026-08-24T18:18:29.680823643Z
+environment_overrides: none
+command: set -euo pipefail
+(
+    cd _bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824
+    sha256sum -c artifact-manifest.sha256
+)
+(
+    cd _bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2
+    sha256sum -c artifact-manifest.sha256
+)
+git -C references/Hexalith.Builds merge-base --is-ancestor fb82c0caedfa4a98b413164dc630e122b50b2970 0942bcb351c82dd46c0aa6c02b503992eff90fdf
+test -z "$(git -C references/Hexalith.Builds show --format= --name-only 0942bcb351c82dd46c0aa6c02b503992eff90fdf | grep -v '^_bmad-output/implementation-artifacts/6-1-p1r-eventstore-source-architecture-runner-revalidation-record.md$')"
+
+README.md: OK
+command-ledger.jsonl: OK
+eventstore-release-packages-v3.97.0.json: OK
+logs/bld-align-001-static-parity.log: OK
+logs/bld-align-002-catalog.log: OK
+logs/bld-align-003-audit.log: OK
+logs/bld-candidate-commitlint-post.log: OK
+logs/bld-candidate-commitlint-pre.log: OK
+logs/es-001-coordinates.log: OK
+run-ledger-command.sh: OK
+./README.md: OK
+./command-ledger.jsonl: OK
+./commands/bld-align-001-static-parity.sh: OK
+./commands/bld-align-002-catalog.sh: OK
+./commands/bld-align-003-audit.sh: OK
+./commands/es-001-coordinates.sh: OK
+./commands/es-002-api-blobs.sh: OK
+./commands/es-source-001-restore.sh: OK
+./commands/es-source-post-failure-state.sh: OK
+./eventstore-release-packages-v3.97.0.json: OK
+./logs/bld-align-001-static-parity.log: OK
+./logs/bld-align-002-catalog.log: OK
+./logs/bld-align-003-audit.log: OK
+./logs/es-001-coordinates.log: OK
+./logs/es-002-api-blobs.log: OK
+./logs/es-source-001-restore.log: OK
+./logs/es-source-post-failure-state.log: OK
+./run-ledger-command.sh: OK
+
+ended_utc: 2026-08-24T18:18:30.175676652Z
+exit: 0
+result: PASS

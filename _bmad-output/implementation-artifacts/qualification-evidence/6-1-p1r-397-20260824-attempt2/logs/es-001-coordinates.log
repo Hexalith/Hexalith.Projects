@@ -1,0 +1,81 @@
+id: es-001-coordinates
+repository: Hexalith.EventStore
+revision: 94591f3539ce30372db58e5fdd3ba017ea8c07b8
+cwd: /tmp/hexalith-p1r397-attempt2-eventstore-source
+started_utc: 2026-08-24T17:41:00.269354149Z
+environment_overrides: none
+command: set -euo pipefail
+test -z "$(git status --porcelain=v1)"
+git rev-parse HEAD
+git describe --tags --always --dirty
+git remote get-url origin
+git rev-parse "v3.97.0^{commit}"
+git show v3.97.0:tools/release-packages.json > /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/eventstore-release-packages-v3.97.0.json
+sha256sum /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/eventstore-release-packages-v3.97.0.json
+jq -r '.packages[].id' /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/eventstore-release-packages-v3.97.0.json
+test "$(jq '.packages | length' /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/eventstore-release-packages-v3.97.0.json)" -eq 14
+printf '%s\n' '--- unselected HEAD ---'
+git rev-parse da52e2c85ecc5909fa8ce2547e626f3968c056ef
+git describe --tags --always da52e2c85ecc5909fa8ce2547e626f3968c056ef
+printf '%s\n' '--- package..HEAD src diff ---'
+git diff --name-status 94591f3539ce30372db58e5fdd3ba017ea8c07b8..da52e2c85ecc5909fa8ce2547e626f3968c056ef -- src
+test -z "$(git diff --name-only 94591f3539ce30372db58e5fdd3ba017ea8c07b8..da52e2c85ecc5909fa8ce2547e626f3968c056ef -- src)"
+printf '%s\n' '--- v3.97 dependency gitlinks ---'
+git ls-tree 94591f3539ce30372db58e5fdd3ba017ea8c07b8:references
+printf '%s\n' '--- HEAD dependency gitlinks ---'
+git ls-tree da52e2c85ecc5909fa8ce2547e626f3968c056ef:references
+printf '%s\n' '--- v3.70.1 dependency gitlinks ---'
+git ls-tree f13f9925fdca53efa2ab8c90d396ab106f91bb9c:references
+test -z "$(git status --porcelain=v1)"
+
+94591f3539ce30372db58e5fdd3ba017ea8c07b8
+v3.97.0
+https://github.com/Hexalith/Hexalith.EventStore.git
+94591f3539ce30372db58e5fdd3ba017ea8c07b8
+6b0b70b856839d4117bcd969f6a2de0093c477c109cb79f3f2882b1f05effcae  /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/eventstore-release-packages-v3.97.0.json
+Hexalith.EventStore.Contracts
+Hexalith.EventStore.Client
+Hexalith.EventStore.Server
+Hexalith.EventStore.SignalR
+Hexalith.EventStore.Testing
+Hexalith.EventStore.Testing.Integration
+Hexalith.EventStore.Aspire
+Hexalith.EventStore.ServiceDefaults
+Hexalith.EventStore.DomainService
+Hexalith.EventStore.RestApi.Generators
+Hexalith.EventStore.Gateway
+Hexalith.EventStore.Admin.Abstractions
+Hexalith.EventStore.Admin.Cli
+Hexalith.EventStore.Admin.Server
+--- unselected HEAD ---
+da52e2c85ecc5909fa8ce2547e626f3968c056ef
+v3.97.0-5-gda52e2c8
+--- package..HEAD src diff ---
+--- v3.97 dependency gitlinks ---
+160000 commit de38f78ef7672df2a0997ddc60bf35ba0d02fa25	Hexalith.AI.Tools
+160000 commit 307a043efac96208494ce8e9651920fe236d6d47	Hexalith.Builds
+160000 commit 5ff390a46685c72145de2337893f71ec8bc6a62c	Hexalith.Commons
+160000 commit 7a337a21d4ba261bf27aeb3feedde47789f0160a	Hexalith.FrontComposer
+160000 commit 003fd21488d60307cd932a3139f69319a25cea66	Hexalith.Memories
+160000 commit 93bcc44a65cd42fcc4558de8f8a8e4d523486157	Hexalith.PolymorphicSerializations
+160000 commit 24c978d4d24dfebd1ad00e5f0451c83306d89ae6	Hexalith.Tenants
+--- HEAD dependency gitlinks ---
+160000 commit de38f78ef7672df2a0997ddc60bf35ba0d02fa25	Hexalith.AI.Tools
+160000 commit 2f46aaee2ecb0b3f121d50ab8cc58601901046f4	Hexalith.Builds
+160000 commit 5ff390a46685c72145de2337893f71ec8bc6a62c	Hexalith.Commons
+160000 commit c4df029050cb241f74cafd04a01f7718eae1ec0c	Hexalith.FrontComposer
+160000 commit 647093889d2231d13b9d8c9544670ffc8c174843	Hexalith.Memories
+160000 commit 93bcc44a65cd42fcc4558de8f8a8e4d523486157	Hexalith.PolymorphicSerializations
+160000 commit 09c746b3d03cd6c0b51221ab0506ceffe27fc921	Hexalith.Tenants
+--- v3.70.1 dependency gitlinks ---
+160000 commit 991e8ea1b39bfb8170aea9a6857c25c7c69176c1	Hexalith.AI.Tools
+160000 commit cfafcbf1e904138b435b63ba4fd79f86b8dda069	Hexalith.Builds
+160000 commit 05f0d9f4f6360bef9c33f14396b0c0c74cbd6864	Hexalith.Commons
+160000 commit 0e6abe9ec33e11e8725ea764d4596169a4354269	Hexalith.FrontComposer
+160000 commit ce66d4cad9e36eaddba0708e12551863d2b57a9d	Hexalith.Memories
+160000 commit 30312d8cc7b15adf477bf5fbab3e852393086ec0	Hexalith.PolymorphicSerializations
+160000 commit 211b4d4ae59d85cdbeb0cddf99bf3ad86b361f30	Hexalith.Tenants
+
+ended_utc: 2026-08-24T17:41:00.894299722Z
+exit: 0
+result: PASS

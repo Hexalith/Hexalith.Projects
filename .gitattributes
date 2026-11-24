@@ -41,3 +41,8 @@ _bmad-output/implementation-artifacts/evidence/epic6/6.6-cli-read-surface.trx -t
 _bmad-output/implementation-artifacts/evidence/epic6/6.7/** -text -whitespace
 _bmad-output/implementation-artifacts/evidence/epic6/6.7-read-cutover.json -text -whitespace
 _bmad-output/implementation-artifacts/evidence/epic6/6.7-rollback.log -text -whitespace
+
+# Preserve hash-bound EventStore 3.97 command logs byte for byte.
+_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824/logs/*.log -text -whitespace
+_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt2/logs/*.log -text -whitespace
+_bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-397-20260824-attempt3/logs/*.log -text -whitespace

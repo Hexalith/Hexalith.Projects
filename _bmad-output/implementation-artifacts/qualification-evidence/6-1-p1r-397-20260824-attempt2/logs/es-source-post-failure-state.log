@@ -1,0 +1,18 @@
+id: es-source-post-failure-state
+repository: Hexalith.EventStore
+revision: 94591f3539ce30372db58e5fdd3ba017ea8c07b8
+cwd: /tmp/hexalith-p1r397-attempt2-eventstore-source
+started_utc: 2026-08-24T17:44:48.081677866Z
+environment_overrides: none
+command: set -euo pipefail
+git status --porcelain=v1
+git rev-parse HEAD
+git describe --tags --always --dirty
+test -z "$(git status --porcelain=v1)"
+
+94591f3539ce30372db58e5fdd3ba017ea8c07b8
+v3.97.0
+
+ended_utc: 2026-08-24T17:44:48.627254573Z
+exit: 0
+result: PASS
