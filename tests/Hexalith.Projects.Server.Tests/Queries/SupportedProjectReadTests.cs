@@ -43,7 +43,8 @@ public sealed partial class SupportedProjectReadTests
         };
         int acquisitions = fixture.Gateway.Services.GetRequiredService<GatewayFixtureRouteCatalog>().AcquisitionCount;
         using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries", request, TestContext.Current.CancellationToken);
-        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+        // The fixture Gateway uses the production bounded refusal for catalog authority.
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
         string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         foreach (string sensitive in new[] { fixture.Tenant, "project-a", "actor-1", "uncommitted-actor", request.QueryType })
             body.ShouldNotContain(sensitive);

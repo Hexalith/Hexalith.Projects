@@ -301,6 +301,16 @@ public sealed partial class SupportedProjectReadHttpTests
             using HttpResponseMessage wrongOperation = await client.PostAsJsonAsync("/process", input, token);
             wrongOperation.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
             client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName,
+                WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProcess, audience: "tenants"));
+            using HttpResponseMessage wrongAudience = await client.PostAsJsonAsync("/process", input, token);
+            wrongAudience.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
+            client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName,
+                WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProcess, caller: "tenants"));
+            using HttpResponseMessage wrongCaller = await client.PostAsJsonAsync("/process", input, token);
+            wrongCaller.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            client.DefaultRequestHeaders.Remove(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName);
             client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, WorkloadToken(key, EventStoreWorkloadOperations.DomainServiceProcess));
             using HttpResponseMessage foreign = await client.PostAsJsonAsync("/process", input with { Command = command with { TenantId = "foreign" } }, token);
             foreign.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
@@ -359,14 +369,14 @@ public sealed partial class SupportedProjectReadHttpTests
             app.Services.GetRequiredService<IOptions<ProjectionDispatchOptions>>().Value,
             app.Services.GetRequiredService<IOptions<DomainProjectionIdentityOptions>>().Value, TestContext.Current.CancellationToken);
 
-    private static string WorkloadToken(SecurityKey key, string operation)
+    private static string WorkloadToken(SecurityKey key, string operation, string audience = "projects", string caller = "eventstore")
     {
         JwtSecurityTokenHandler handler = new(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor
         {
-            Issuer = Issuer, Audience = "projects", IssuedAt = DateTime.UtcNow, NotBefore = DateTime.UtcNow.AddSeconds(-1), Expires = DateTime.UtcNow.AddSeconds(120),
+            Issuer = Issuer, Audience = audience, IssuedAt = DateTime.UtcNow, NotBefore = DateTime.UtcNow.AddSeconds(-1), Expires = DateTime.UtcNow.AddSeconds(120),
             SigningCredentials = new(key, SecurityAlgorithms.RsaSha256),
-            Subject = new ClaimsIdentity([new("azp", "eventstore"), new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, operation),
+            Subject = new ClaimsIdentity([new("azp", caller), new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, operation),
                 new(RouteCatalogSurfacePolicy.ClaimType, "service")]),
         });
     }

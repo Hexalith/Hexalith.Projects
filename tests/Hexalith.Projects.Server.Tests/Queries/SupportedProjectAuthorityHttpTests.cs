@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Server.Queries;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -116,11 +117,13 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
             "audience" => query with { Audience = ["other-audience"] },
             _ => throw new InvalidOperationException(),
         };
-        await fixture.RefusedAsync(fixture.Open(), HttpStatusCode.NotFound); await fixture.RefusedAsync(fixture.Open(), HttpStatusCode.NotFound);
-        var rejected = fixture.Routes.Hops.Last(hop => hop.Target == target);
-        // The finite Folder catalog refuses an unenrolled tenant before the envelope dispatcher.
+        // Each finite receiver catalog refuses an unenrolled tenant before the envelope dispatcher. The Gateway reports
+        // its direct Projects receiver's refusal as the bounded catalog 503; Projects maps the Folder refusal to safe 404.
         // The public refusal, signed digest mismatch and unchanged persisted state remain required.
-        rejected.Status.ShouldBe(target == "folders" && fault == "tenant" ? 503 : 404);
+        HttpStatusCode refusal = target == "projects" && fault == "tenant" ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.NotFound;
+        await fixture.RefusedAsync(fixture.Open(), refusal); await fixture.RefusedAsync(fixture.Open(), refusal);
+        var rejected = fixture.Routes.Hops.Last(hop => hop.Target == target);
+        rejected.Status.ShouldBe(fault == "tenant" ? 503 : 404);
         await fixture.VerifyHopAsync(rejected, exact: false);
         var token = new JsonWebToken(rejected.Assertion);
         token.GetClaim(QueryCallerAuthorityBinding.DigestClaim).Value.ShouldNotBe(QueryCallerAuthorityBinding.Bind(rejected.Query)[QueryCallerAuthorityBinding.DigestClaim]);
@@ -301,6 +304,10 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         using HttpClient receiver = new() { BaseAddress = new(fixture.Projects.Urls.Single()) };
         receiver.DefaultRequestHeaders.Add(DaprAppChannelToken.HeaderName, fixture.Channel);
         receiver.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, previous.Assertion);
+        // The SDK receiver also requires the committed catalog lease that the Gateway transport supplies.
+        var catalog = await fixture.Projects.Services.GetRequiredService<IRouteCatalogAuthority>().ReadbackAsync(TestContext.Current.CancellationToken);
+        receiver.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.RootHeader, catalog.RootDigest);
+        receiver.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.EpochHeader, catalog.Epoch.ToString(System.Globalization.CultureInfo.InvariantCulture));
         using HttpResponseMessage response = await receiver.PostAsJsonAsync("/query", previous.Query, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var payload = await response.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken);

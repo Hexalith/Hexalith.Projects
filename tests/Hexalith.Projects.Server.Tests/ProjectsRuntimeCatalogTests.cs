@@ -195,16 +195,20 @@ public sealed class ProjectsRuntimeCatalogTests
         builder.AddProjectsDevelopmentCatalog().ShouldBeFalse();
     }
 
-    /// <summary>Private receiver enrollment requires exactly one selected profile.</summary>
+    /// <summary>Development receiver enrollment requires exactly one selected private or ordinary profile.</summary>
     /// <param name="reads">Whether the real-owner read profile is selected.</param>
     /// <param name="fixtures">Whether the separate compatibility profile is selected.</param>
+    /// <param name="ordinary">Whether the ordinary local topology profile is selected.</param>
     /// <param name="accepted">Whether enrollment must be accepted.</param>
     [Theory]
-    [InlineData(false, false, false)]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(true, true, false)]
-    public void PrivateBootstrapRequiresExactlyOneProfile(bool reads, bool fixtures, bool accepted)
+    [InlineData(false, false, false, false)]
+    [InlineData(true, false, false, true)]
+    [InlineData(false, true, false, true)]
+    [InlineData(false, false, true, true)]
+    [InlineData(true, true, false, false)]
+    [InlineData(true, false, true, false)]
+    [InlineData(false, true, true, false)]
+    public void PrivateBootstrapRequiresExactlyOneProfile(bool reads, bool fixtures, bool ordinary, bool accepted)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
@@ -217,6 +221,7 @@ public sealed class ProjectsRuntimeCatalogTests
             ["EventStore:RouteCatalog:DevelopmentBootstrap:RequiredHostIds:1"] = "eventstore",
             ["Projects:SupportedReads:Enabled"] = reads.ToString(),
             ["Projects:IsolatedLiveFixtures:Enabled"] = fixtures.ToString(),
+            ["Projects:DevelopmentRouteCatalog:Enabled"] = ordinary.ToString(),
         });
         if (accepted)
         {
@@ -225,7 +230,7 @@ public sealed class ProjectsRuntimeCatalogTests
         else
         {
             Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentCatalog());
-            }
+        }
     }
 
     private static IdempotencyIntentCommand Command(string payload) => new(ProjectsServerModule.CreateProjectCommandType,

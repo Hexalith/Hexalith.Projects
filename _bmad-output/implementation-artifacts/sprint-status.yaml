@@ -542,10 +542,10 @@ action_items:
     id: "7.1-P1"
     action: "Accept the canonical/legacy creation contracts, authorization-before-parsing behavior, exact metadata classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and rollback."
     repository_authority: "Hexalith.Projects Contracts and Server owners"
-    owner: "Projects Contracts Owner / Projects Server Owner / Test Architect"
+    owner: "Projects Contracts Owner / Projects Server Owner / Product Owner / Test Architect"
     status: open
     target_date: uncommitted
-    depends_on: ["Epic-7-gate"]
+    depends_on: ["Accepted Story 6.7 creation-contract baseline"]
     expected_evidence: "Owner-approved contract pin; canonical and legacy fixtures; auth-before-parse negative controls; metadata classifier parity; no-command rejection; compatibility fingerprint; clean-checkout command and rollback record"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1"
@@ -553,13 +553,13 @@ action_items:
     id: "7.1-P2"
     action: "Accept the pinned Durable Task admission and Folder provisioning capabilities required by folder-first Project activation."
     repository_authority: "EventStore/platform and Folders owner repositories"
-    owner: "EventStore-Platform Owner / Folders Owner / Solution Architect / Test Architect"
+    owner: "EventStore Owner / Platform Owner / Folders Owner / Solution Architect / Test Architect"
     status: open
     target_date: uncommitted
-    depends_on: ["Epic-7-gate"]
+    depends_on: ["Pinned G-1 Durable Task and applicable G-2 Folders owner records at package acceptance"]
     expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback. Include Folders authorization and its owner receipt/status lookup after provisioning. Story 7.1 separately verifies the Projects-owned AD-35 claim, fencing and recovery using those owner inputs."
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
-    routed_to: "Story 7.1"
+    routed_to: "Story 7.1 first writer and Story 8.1 durable task and reconciliation acceptance"
   - epic: 8
     id: "8.3-P1"
     action: "Accept the finite cross-repository Web presentation foundation defined by the 8.3-P1 package contract, preserving canonical admission, Confirmation Artifact, eight-state task truth, recovery/control, authoritative re-query, accessibility, privacy, and ownership boundaries."

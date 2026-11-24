@@ -98,7 +98,7 @@ internal static class PackageActualOwnerInfrastructure
                 new(foldersWorkers, "api/v1/streams/scan/workload", ["POST"]),
             ]) { TechnicalHttp = true },
             new(tenants, DomainCalls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
-            new(projects, DomainCalls("process", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
+            new(projects, DomainCalls("process", "replay-state", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
             new(folders, DomainCalls("process", "query", "project", "project/v2", "admin/operational-index-metadata")),
             new(projectsWorkers, []), new(foldersWorkers, []),
         ];

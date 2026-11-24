@@ -518,10 +518,14 @@ readiness, deployment, and the Story 8.11 release decision each require their ow
 | Product Owner | Pending | Pending | Pending | Pending |
 | Authorized Solution Architect | Pending | Pending | Pending | Pending |
 
-Record the base commit and applied digest set with each decision. The authorized Solution
-Architect also records the conformance verdict and date against those bytes. Refresh the
-digest set and reverify the affected checks if the planning baseline changes before signing.
-Sprint regeneration requires a passing independent implementation-readiness gate.
+The November 24 follow-up verified fourteen listed digests and identified a working-tree
+change in docs/read-cutover.md. The table above preserves the applied Chatbot correction's
+baseline. Before signing, record a superseding byte manifest of the exact reviewed candidate,
+including the current runbook and any applied planning changes. Reverify the affected checks.
+Each owner records name, authority, decision, date, shared base commit and digest set, and
+rationale or conditions. The authorized Solution Architect also records a separate conformance
+verdict and date against those bytes. Sprint regeneration requires a passing independent
+implementation-readiness gate. [Follow-up proposal](sprint-change-proposal-2026-11-24-readiness-blockers.md)
 
 ### Archived Section G — August review and September E-31 re-baseline
 

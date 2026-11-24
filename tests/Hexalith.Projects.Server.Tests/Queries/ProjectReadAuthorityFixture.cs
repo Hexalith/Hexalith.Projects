@@ -185,13 +185,23 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     /// <summary>Requires one scenario-specific safe closed Problem Details response and returns its canonical stable outcome.</summary>
     public async Task<string> RefusedAsync(SubmitQueryRequest query, HttpStatusCode expected)
     {
-        expected.ShouldBeOneOf(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
+        expected.ShouldBeOneOf(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError, HttpStatusCode.ServiceUnavailable);
         using HttpResponseMessage response = await Client.PostAsJsonAsync("/api/v1/queries", query, TestContext.Current.CancellationToken).ConfigureAwait(false);
         string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         response.StatusCode.ShouldBe(expected, body);
         response.Content.Headers.ContentType!.MediaType.ShouldBe("application/problem+json");
         using JsonDocument document = JsonDocument.Parse(body);
         JsonElement problem = document.RootElement;
+        if (expected == HttpStatusCode.ServiceUnavailable)
+        {
+            // The Gateway's bounded receiver-catalog refusal discloses no catalog, target or resource existence.
+            problem.EnumerateObject().Select(property => property.Name).Order().ShouldBe(new[] { "detail", "status", "title", "type" });
+            problem.GetProperty("type").GetString().ShouldBe(ProblemTypeUris.ServiceUnavailable);
+            problem.GetProperty("detail").GetString().ShouldBe("Catalog authority cannot safely admit this operation.");
+            AssertNoProtectedValues(body);
+            return JsonSerializer.Serialize(problem);
+        }
+
         string[] fields = ["type", "title", "status", "detail", "instance", "correlationId", "reasonCode"];
         if (expected == HttpStatusCode.InternalServerError) fields = [.. fields, "retryAfter", "degradation", "reason"];
         problem.EnumerateObject().Select(property => property.Name).Order().ShouldBe(fields.Order());
@@ -211,11 +221,15 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             problem.GetProperty("reason").GetString().ShouldBe("Projection query could not be completed safely. Retry after the advised interval.");
             response.Headers.RetryAfter!.Delta.ShouldBe(TimeSpan.FromSeconds(30));
         }
+        AssertNoProtectedValues(body);
+        return JsonSerializer.Serialize(problem.EnumerateObject().Where(property => property.Name != "correlationId")
+            .OrderBy(property => property.Name, StringComparer.Ordinal).ToDictionary(property => property.Name, property => property.Value));
+    }
+    private void AssertNoProtectedValues(string body)
+    {
         foreach (string sensitive in new[] { Tenant, ForeignTenant, "actor-1", "foreign-actor", "project-a", "project-b", "folder-project",
             "Project project", "Foreign project", "Safe description", "Foreign secret", "Owner label", "Foreign owner", "delegation-1",
             "operator-web", "issuing-client", "synthetic-client", "projects.read", Issuer, UserIssuer, Channel, _directory }) body.ShouldNotContain(sensitive);
-        return JsonSerializer.Serialize(problem.EnumerateObject().Where(property => property.Name != "correlationId")
-            .OrderBy(property => property.Name, StringComparer.Ordinal).ToDictionary(property => property.Name, property => property.Value));
     }
     private string[] DomainKeys => new[] { Tenant, ForeignTenant }.SelectMany(tenant => new[]
     {
@@ -427,6 +441,11 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         var projectsBuilder = Builder("projects");
         projectsBuilder.Configuration["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(_ownerKey.ExportPkcs8PrivateKey());
         projectsBuilder.AddProjectsDomainService();
+        // Faults are injected per request. The SDK's outbound resilience would retry or delay them across requests.
+        projectsBuilder.Services.ConfigureHttpClientDefaults(static http => http.ConfigureAdditionalHttpMessageHandlers(static (handlers, _) =>
+        {
+            foreach (var resilience in handlers.OfType<Microsoft.Extensions.Http.Resilience.ResilienceHandler>().ToArray()) handlers.Remove(resilience);
+        }));
         GatewayFixtureCatalogComposition.AddProjectsReceiver(projectsBuilder, Tenant,
             createLoopback: () => new ProjectAuthorityLoopbackHandler(Routes, Channel));
         projectsBuilder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(Now.AddSeconds(1)));
@@ -516,6 +535,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             .ConfigurePrimaryHttpMessageHandler(services => GatewayFixtureCatalogComposition.QueryTransport(services, () => new ProjectAuthorityLoopbackHandler(Routes, Channel)))
             .AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddProblemDetails(); builder.Services.AddExceptionHandler<QueryNotFoundExceptionHandler>(); builder.Services.AddExceptionHandler<QueryExecutionFailedExceptionHandler>();
+        builder.Services.AddExceptionHandler<RouteCatalogUnavailableExceptionHandler>();
         Gateway = builder.Build(); _hosts.Add(Gateway); Gateway.UseMiddleware<Hexalith.EventStore.Middleware.CorrelationIdMiddleware>(); Gateway.UseExceptionHandler(); Gateway.UseAuthentication(); Gateway.UseAuthorization(); Gateway.MapControllers();
         await Gateway.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); Routes.Add("eventstore", Gateway);
         if (Environment.GetEnvironmentVariable("STORY61_OWNER_BOUNDARY_DIAGNOSTICS") == "1")

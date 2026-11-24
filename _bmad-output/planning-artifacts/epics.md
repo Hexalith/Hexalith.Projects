@@ -1672,14 +1672,17 @@ the terminal release gate._
 
 ### Story 7.1 prerequisite work packages
 
-These packages are independently accepted enablement, not user-value stories or Story 7.1
-implementation subtasks. Neither package delivers FR-1 or exposes a Project. Any external repository
-change requires its own repository-local authorization and validation.
+These packages are independently accepted enablement. While implementation readiness is NOT READY,
+owners may prepare and qualify only the pinned 7.1-P1 and 7.1-P2 inputs in isolated fixtures. For
+7.1-P2, the G-1/G-2 owners may create and qualify the capability records that the package requires
+for acceptance. Any external repository change requires its own repository-local authorization and
+validation. The work produces prerequisite evidence only. FR-1 delivery, Project exposure,
+story scheduling, production routing and release require their existing gates.
 
 | ID | Repository authority | Required accepted outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
-| 7.1-P1 | Hexalith.Projects Contracts/Server | Canonical and legacy creation shapes, authorization-before-parsing, exact Metadata Classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and executable rollback | Projects Owner + Product Owner + Test Architect | open; blocked by Story 6.7 contract cutover and the current implementation-readiness freeze |
-| 7.1-P2 | EventStore/platform + Hexalith.Folders | Pinned task-admission and Folder-provisioning contracts with expected versions, deterministic step idempotency, durable receipt/status lookup, explicit compensation behavior, clean-checkout commands, and executable rollback | EventStore Owner + Platform Owner + Folders Owner + Solution Architect + Test Architect | open; blocked by accepted G-1/G-2 capability records and the current implementation-readiness freeze |
+| 7.1-P1 | Hexalith.Projects Contracts/Server | Canonical and legacy creation shapes, authorization-before-parsing, exact Metadata Classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and executable rollback | Projects Owner + Product Owner + Test Architect | open; qualify against the accepted Story 6.7 creation-contract baseline under the bounded prerequisite scope above |
+| 7.1-P2 | EventStore/platform + Hexalith.Folders | Pinned task-admission and Folder-provisioning contracts with expected versions, deterministic step idempotency, durable receipt/status lookup, explicit compensation behavior, clean-checkout commands, and executable rollback | EventStore Owner + Platform Owner + Folders Owner + Solution Architect + Test Architect | open; prepare and qualify the relevant G-1/G-2 owner inputs under the bounded prerequisite scope above; package acceptance requires the pinned owner capability records |
 
 ### Story 7.1: Activate a Project with exactly one authorized Folder
 
@@ -1688,7 +1691,7 @@ I want **an accepted creation request to activate through the proven Folder-firs
 So that **the Project becomes caller-visible and Active only after exactly one authorized Folder is bound and the authoritative read model confirms completion (FR-1, FR-19), with no observable folderless-Active interval**.
 
 - **Traceability:** FR-1, FR-19, FR-25 (when a Folder is supplied); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31, AD-33, AD-35; UJ-2, UJ-3; findings REL-001, E-9; §9 A-2, A-3; canonical evidence rows `fr-1`, `fr-19`.
-- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. At the first writer gate, Projects must prove the AD-35 claim against pinned Folders authorization under G-2. Open DW-63 must also be accepted before writer cutover, with SDK-host compatibility and AD-17 evidence as specified in the Epic 7 prerequisite above.
+- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. After those inputs and DW-63 SDK-host acceptance, Projects may qualify the Folder-first writer in an isolated persisted fixture under the bounded prerequisite scope. Cutover requires accepted DW-63, the pinned contracts, AD-17 historical replay and command equivalence with old ingress drained and fenced, and AD-35 persisted exclusive claim, replica recovery, legacy-incumbent fencing and executable rollback proof. Before opening an affected writer slice, resolve its applicable legacy partial-record obligations under AD-17. If the retained writer cannot replay and write compliantly, keep mutations fenced and execute the approved forward recovery. Production routing and release remain governed by their existing approvals.
 - **Persona note:** A Tenant Project Administrator is **not** a creation persona.
 
 **Selection sequencing.** The Projects Owner, Solution Architect and Test Architect record the
@@ -2115,7 +2118,7 @@ As a **Solution Architect / platform operator**,
 I want **compensating durable tasks that detect and reconcile folderless, pending-Folder, and in-flight legacy records without rewriting committed history**,
 So that **legacy partial records reach a safe terminal disposition before their value slice cuts over (NFR-4, NFR-10)**.
 
-- **Traceability:** NFR-4, NFR-10; FR-1/FR-4/FR-23 (reconciliation evidence); AD-12, AD-17, AD-22; findings REL-001; evidence row `nfr-4-reconcile`.
+- **Traceability:** NFR-4, NFR-10; FR-1/FR-4/FR-23 (reconciliation evidence); AD-12, AD-17, AD-22; findings REL-001; reconciliation evidence contribution to canonical row `nfr-4`.
 
 **Acceptance Criteria** (plus shared invariants 1, 3–8):
 
@@ -2231,7 +2234,7 @@ an unavailable environment records "not verified," never `passed`._
 
 ### Story 8.1: Inspect task, audit, and reconciliation truth
 
-Story 8.1 may enter development before Epic 7 completes. Its prior workflow dependencies, Epic 8 entry fixtures and required evidence still apply at acceptance. [22 November scheduling change](sprint-change-proposal-2026-11-22-schedule-story-8-1.md)
+Story 8.1 may enter development before Epic 7 completes. Review and completion require accepted 7.1-P2 task admission, committed status and receipt lookups, and Story 7.15's durable reconciliation capability. The Test Architect verifies `fr-21`, `nfr-8`, `finding-test-001` and `release-authenticated-persisted-boundary` with the Epic 8 authenticated fixtures, blocking CI and the governed evidence validator. Verify both eligible heads on the same persisted fixture. The Product Owner records story acceptance after the Test Architect records evidence and the Solution Architect confirms AD/G conformance. [22 November scheduling change](sprint-change-proposal-2026-11-22-schedule-story-8-1.md)
 
 As a **Tenant Operator or Tenant Project Administrator**,
 I want **to inspect Durable Task status, metadata-only audit timeline, and reconciliation outcomes through authorized read surfaces**,
@@ -2815,8 +2818,9 @@ the FR-25 selection step, sole-candidate accept/decline, current authorized nati
 every task state, cancellation, recovery, authoritative completion re-query, response-state
 admission, and NFR-9 accessibility. SM-7 / SM-8 / SM-C4 companion feed follows A-1; SM-2 and SM-3
 are release-acceptance checks, not outcome metrics. After
-independent acceptance by the Chatbot Presentation and Test Owners, the Product Owner and
-Test Architect in Projects record the immutable pin and evidence-row binding at
+independent acceptance by the Chatbot Presentation and Test Owners, the Projects Owner verifies
+compatibility of the tested host, component and journey inputs. The Product Owner and Test Architect
+in Projects then record the immutable full-journey pin and evidence-row binding at
 `evidence/epic8/8.8-P3-chatbot-companion-pin.json`. The full package remains `blocked-external`
 until the owner manifest and this full Projects reference pass.
 

@@ -127,8 +127,7 @@ public sealed class ProjectsServerModuleTests
     public void OperationalIndexMetadataRouteRequiresEventStoreMetadataPolicy()
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        builder.Services.AddProjectsServer();
-        builder.AddEventStoreDomainService(typeof(ProjectsDomainProcessor).Assembly);
+        builder.AddProjectsDomainService();
         WebApplication app = builder.Build();
 
         app.UseEventStoreDomainService();

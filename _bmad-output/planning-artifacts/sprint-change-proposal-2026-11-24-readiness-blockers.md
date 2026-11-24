@@ -3,8 +3,10 @@ title: Qualify the remaining implementation-readiness inputs for Epics 6–8
 project: Hexalith.Projects
 date: 2026-11-24
 mode: batch
-status: proposed
-application_status: pending-approval
+status: approved
+application_status: applied
+approved_date: 2026-11-24
+approval_scope: planning correction and bounded prerequisite qualification
 classification: moderate
 baseline_commit: 5f1d955b13c69a9c24b6a6c2d185770da2197355
 ---
@@ -249,3 +251,15 @@ When the host and writer capability pins and remaining 7.16 entry gates are acce
 - [x] Matched the proposed before text to the current targets. The staged dependency model orders the Chatbot chain and detects cycles when either prerequisite again waits for readiness or when 7.16 again waits for full P3.
 - [!] Governed validation is open. `run-with-temp dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` exited 1 with “Cannot find a tool in the manifest file that has a command named 'hexalith-evidence'.”
 - [!] Requester approval, artifact application, evidence execution and acceptance, exact-baseline owner sign-off, readiness rerun and any sprint regeneration are pending. This document is the batch approval packet.
+
+## 6. Approval and application record
+
+The requester approved this proposal on November 24. Projects applied the §4.1–4.6 edits on top of
+`0db832099dcaa91c515d1a432e1a55b2b2a4a2a3`: the Story 7.1 prerequisite scope and entry gate, the
+7.15 evidence reference, the 8.1 acceptance handoff, the 8.8-P3 recorder clause, the 7.1-P1/P2
+tracker metadata, the matrix freeze text and the Section G signing paragraph. The production-authority
+guard accepted the isolated candidate and the published tracker. All story, action and evidence IDs
+and statuses keep their recorded values.
+
+The §5 owner evidence, the superseding Section G byte manifest, both Epic 8 owner decisions and an
+independent readiness rerun remain pending. Sprint regeneration stays paused until readiness passes.
