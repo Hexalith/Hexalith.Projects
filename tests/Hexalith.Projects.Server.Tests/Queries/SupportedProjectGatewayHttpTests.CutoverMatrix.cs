@@ -161,15 +161,17 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 bool isolation = scenario is not ("absent-denied" or "foreign-tenant")
                     || supportedResponse.StatusCode == HttpStatusCode.NotFound && legacyResponse.StatusCode == HttpStatusCode.NotFound
                         && !supportedRaw.Contains("Project project-", StringComparison.Ordinal) && !legacyRaw.Contains("Project project-", StringComparison.Ordinal);
-                bool cursorProof = scenario != "cursor-scope-continuation-expiry";
                 object legacyCursorEvidence = new { transport = "retained-v1", pagingRequested = false,
                     hasCursorProperty = legacyBody.TryGetProperty("cursor", out var oldCursor), actualCursor = oldCursor.ValueKind == JsonValueKind.Undefined ? (JsonElement?)null : oldCursor };
                 object supportedCursorEvidence = new { transport = "supported-Gateway", pagingRequested = request.Paging is not null,
                     hasCursorProperty = supportedBody.TryGetProperty("cursor", out var newCursor), actualCursor = newCursor.ValueKind == JsonValueKind.Undefined ? (JsonElement?)null : newCursor };
+                bool legacyCursorProof = oldCursor.ValueKind == JsonValueKind.Undefined;
+                bool supportedCursorProof = request.Paging is null && newCursor.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null;
                 if (scenario == "cursor-scope-continuation-expiry")
                 {
-                    (cursorProof, legacyCursorEvidence, supportedCursorEvidence) = await CursorControlsAsync(operation, request, route).ConfigureAwait(false);
+                    (legacyCursorProof, supportedCursorProof, legacyCursorEvidence, supportedCursorEvidence) = await CursorControlsAsync(operation, request, route).ConfigureAwait(false);
                 }
+                bool cursorProof = legacyCursorProof && supportedCursorProof;
                 object? missingTargetEvidence = null;
                 bool missingTargetProof = true;
                 if (scenario == "absent-denied")
@@ -253,7 +255,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 }
                 transport &= auditCorrelation;
                 string? approvedPair = scenario == "historical-pending-folderless" && operation is "context" or "explain" or "conversation-start" ? "pending-folder-materialization"
-                    : scenario == "stale-authority" ? "stale-tenant"
+                    : scenario == "stale-authority" && operation is not ("list" or "open") ? "stale-tenant"
                     : unsupported ? "unsupported-file" : (scenario == "unavailable" && operation.StartsWith("resolve-", StringComparison.Ordinal) || scenario == "partial" && operation == "resolve-conversation") ? "degraded-advisory"
                     : scenario is "conversation-binding" or "unavailable" && operation is "context" or "explain" or "conversation-start" ? "native-binding-unavailable" : null;
                 bool causeProof = approvedPair switch
@@ -263,12 +265,23 @@ public sealed partial class SupportedProjectGatewayHttpTests
                     "stale-tenant" => sourceAuthority.IsAllowed && sourceAuthority.FreshnessStatus == Hexalith.Projects.Authorization.TenantProjectionFreshnessStatus.Stale,
                     "unsupported-file" => currentAuthority && unsupported,
                     "degraded-advisory" => currentAuthority && (routes.OwnerStatusOverride == HttpStatusCode.ServiceUnavailable || scenario == "partial" && await IsAdvisoryPendingAsync().ConfigureAwait(false)),
+                    null when scenario == "stale-authority" => sourceAuthority.IsAllowed
+                        && sourceAuthority.FreshnessStatus == Hexalith.Projects.Authorization.TenantProjectionFreshnessStatus.Stale,
                     null => true,
                     _ => false,
                 };
                 if (approvedPair is not null)
-                    canonical |= causeProof && ReadCutoverComparator.IsApprovedUnavailablePair(operation, approvedPair, (int)legacyResponse.StatusCode,
-                        legacyBody, (int)supportedResponse.StatusCode, supportedBody, isolation && sourcePositions && unchanged, snapshots);
+                {
+                    JsonElement safeProblem = JsonSerializer.SerializeToElement(new
+                    {
+                        type = "https://hexalith.dev/errors/projects/read_model_unavailable", title = "Read model unavailable", status = 503,
+                        category = "read_model_unavailable", code = "read_model_unavailable", message = "The read model is temporarily unavailable.",
+                        correlationId = correlation, retryable = true, clientAction = "retry", details = new { visibility = "metadata_only" },
+                    });
+                    canonical = causeProof && ReadCutoverComparator.IsApprovedUnavailablePair(operation, approvedPair, (int)legacyResponse.StatusCode,
+                        legacyBody, (int)supportedResponse.StatusCode, supportedBody,
+                        JsonElement.DeepEquals(legacyBody, safeProblem) && isolation && sourcePositions && unchanged, snapshots);
+                }
                 unexpectedWrites = UnexpectedWrites();
                 unchanged &= unexpectedWrites.Length == 0 && (await SnapshotAsync().ConfigureAwait(false)).OrderBy(item => item.Key).SequenceEqual(before.OrderBy(item => item.Key));
                 long[] globals = histories.Values.Select(history => history.Events.Max(item => item.GlobalPosition)).ToArray();
@@ -288,13 +301,19 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 string[] legacyAddresses = before.Keys.Where(key => key.StartsWith("statestore/projects:projection-journal:", StringComparison.Ordinal)).ToArray();
                 string[] supportedAddresses = before.Keys.Where(key => key.StartsWith("statestore/projects:reads:v1:", StringComparison.Ordinal)
                     || key.StartsWith(ConversationStartSetupProjectionHandler.StoreName + "/", StringComparison.Ordinal)).ToArray();
+                string[] expectedLegacyAddresses = [$"statestore/projects:projection-journal:{tenant}"];
+                string[] expectedSupportedAddresses = [$"statestore/projects:reads:v1:{tenant.Length}:{tenant}:index",
+                    .. histories.Keys.Select(id => $"statestore/projects:reads:v1:{tenant.Length}:{tenant}:{id.Length}:{id}"),
+                    .. histories.Keys.Select(id => $"projects-conversation-start-setup/{tenant}:projects:{id}")];
+                bool physicalAddressProof = legacyAddresses.ToHashSet(StringComparer.Ordinal).SetEquals(expectedLegacyAddresses)
+                    && supportedAddresses.ToHashSet(StringComparer.Ordinal).SetEquals(expectedSupportedAddresses);
                 // Physical containers and logical aggregate keys are distinct; both identities come from independently read stored records.
                 var oldObservation = new ReadCutoverObservation(legacyCanonical, oldKeys, legacyIdentities, legacyStored.Select(row => row.Sequence).ToArray(),
                     JsonSerializer.SerializeToElement(legacyCursorEvidence), true)
-                    { PhysicalAddresses = legacyAddresses, TransportCursorAssertions = cursorProof, SourceGlobalPositions = globals, SourceSequenceNumbers = sequences };
+                    { PhysicalAddresses = legacyAddresses, TransportCursorAssertions = legacyCursorProof, SourceGlobalPositions = globals, SourceSequenceNumbers = sequences };
                 var currentObservation = new ReadCutoverObservation(supportedCanonical, currentKeys, supportedIdentities, supportedStored.Select(row => row.GlobalPosition).ToArray(),
                     JsonSerializer.SerializeToElement(supportedCursorEvidence), snapshots)
-                    { PhysicalAddresses = supportedAddresses, TransportCursorAssertions = cursorProof, SourceGlobalPositions = globals, SourceSequenceNumbers = sequences, ProjectVersions = supportedStored.Select(row => row.Sequence).ToArray() };
+                    { PhysicalAddresses = supportedAddresses, TransportCursorAssertions = supportedCursorProof, SourceGlobalPositions = globals, SourceSequenceNumbers = sequences, ProjectVersions = supportedStored.Select(row => row.Sequence).ToArray() };
                 IReadOnlyList<string> comparisonDifferences = ReadCutoverComparator.Compare(oldObservation, currentObservation);
                 // A finite explicitly authorized wire pair is represented only after its complete independent proof.
                 if (canonical && approvedPair is not null)
@@ -303,13 +322,13 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 var cell = new Dictionary<string, object?>
                 {
                     ["operation"] = operation, ["scenario"] = scenario, ["correlationId"] = correlation, ["executed"] = true, ["skipped"] = false,
-                    ["passed"] = canonical && sourcePositions && snapshots && cursorProof && isolation && unchanged && transport && missingTargetProof,
+                    ["passed"] = canonical && sourcePositions && physicalAddressProof && snapshots && cursorProof && isolation && unchanged && transport && missingTargetProof,
                     ["partialEvidence"] = scenario == "partial" ? operation == "list" ? "Partial row component; complete enumeration" : operation.StartsWith("resolve-", StringComparison.Ordinal) ? "Incomplete observed coverage" : "Partial admission with original Setup exclusion" : null,
                     ["canonicalOutput"] = canonical, ["legacyCanonical"] = legacyCanonical, ["supportedCanonical"] = supportedCanonical,
                     ["legacyConversationStartHeaders"] = legacySetupHeaders, ["transportCorrelation"] = transport, ["causeSourceProof"] = causeProof,
                     ["currentProjectAuthority"] = currentAuthority, ["nativeMembershipRead"] = new { status = nativeRead.StatusCode,
                         native?.ReadPurpose, nativeMember, native?.Details?.ProjectId, native?.FreshnessState },
-                    ["pendingFolderSourceProof"] = pendingFolder, ["currentEmptySetupSourceProof"] = emptySetup, ["independentKeys"] = sourcePositions, ["exactPositions"] = sourcePositions,
+                    ["pendingFolderSourceProof"] = pendingFolder, ["currentEmptySetupSourceProof"] = emptySetup, ["independentKeys"] = sourcePositions && physicalAddressProof, ["exactPositions"] = sourcePositions,
                     ["cursorScope"] = cursorProof, ["isolation"] = isolation, ["supportedOnlyAssertions"] = snapshots,
                     ["noDomainWrites"] = unchanged, ["unexpectedSdkWriteKeys"] = unexpectedWrites, ["legacyStatus"] = (int)legacyResponse.StatusCode, ["supportedStatus"] = (int)supportedResponse.StatusCode,
                     ["legacyRawResponse"] = legacyRaw, ["supportedRawResponse"] = supportedRaw, ["approvedOutcomePair"] = approvedPair,
@@ -550,7 +569,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
             return result;
         }
 
-        async Task<(bool Passed, object Legacy, object Supported)> CursorControlsAsync(string operation, SubmitQueryRequest request, string route)
+        async Task<(bool LegacyPassed, bool SupportedPassed, object Legacy, object Supported)> CursorControlsAsync(string operation, SubmitQueryRequest request, string route)
         {
             using var legacyRejected = await legacy.GetAsync(route + "&cursor=unsupported-cursor", TestContext.Current.CancellationToken).ConfigureAwait(false);
             string legacyRejectedRaw = await legacyRejected.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
@@ -558,7 +577,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
             {
                 using var rejected = await supported.PostAsJsonAsync("/api/v1/queries", request with { Paging = new QueryPagingOptions(Cursor: "unsupported-cursor") }, TestContext.Current.CancellationToken).ConfigureAwait(false);
                 int expected = operation is "context" or "explain" or "conversation-start" ? 404 : 400;
-                return ((int)rejected.StatusCode == expected && legacyRejected.StatusCode == HttpStatusCode.BadRequest,
+                return (legacyRejected.StatusCode == HttpStatusCode.BadRequest, (int)rejected.StatusCode == expected,
                     new { transport = "retained-v1", pagingSupported = false, requestCursor = "unsupported-cursor", rejectedStatus = (int)legacyRejected.StatusCode, rawResponse = legacyRejectedRaw },
                     new { transport = "supported-Gateway", pagingSupported = false, requestCursor = "unsupported-cursor", expectedStatus = expected, rejectedStatus = (int)rejected.StatusCode });
             }
@@ -573,7 +592,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
             var clock = (ProjectReadTestClock)projects.Services.GetRequiredService<TimeProvider>();
             DateTimeOffset expectedExpiry = clock.Now.AddMinutes(15);
             ProjectListPage first = await ReadAsync<ProjectListPage>(supported, firstRequest).ConfigureAwait(false);
-            if (first.Cursor is null) return (false, new { legacyProof }, new { missingContinuation = true });
+            if (first.Cursor is null) return (legacyProof, false, new { legacyProof }, new { missingContinuation = true });
             QueryEnvelope transported = routes.ProjectQueries.Last(query => query.QueryType == ListProjectsQuery.QueryType);
             transported.TenantId.ShouldBe(tenant); transported.OriginalActorId.ShouldBe("actor-1");
             transported.AuthenticatedWorkloadId.ShouldBe("operator-web"); transported.DelegationId.ShouldBe("delegation-1");
@@ -657,7 +676,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                 && continuedExpiry == expiry && third.Items.Select(row => row.ProjectId).SequenceEqual(expectedProjects.Skip(2))
                 && !third.HasMore && third.Cursor is null && authorityReplays.Count == 4
                 && rejectionStatuses.Values.All(status => status == 400) && expired.StatusCode == HttpStatusCode.BadRequest && expiryReadOnly;
-            return (legacyProof && supportedProof,
+            return (legacyProof, supportedProof,
                 new { transport = "retained-v1", pagingSupported = false, expectedProjects, actualProjects = legacyProjects,
                     status = (int)legacyPage.StatusCode, rawResponse = legacyPageRaw, rejectedStatus = (int)legacyRejected.StatusCode, rejectedRawResponse = legacyRejectedRaw, passed = legacyProof },
                 new { transport = "supported-Gateway", decoded, expectedScope, exactScope, expectedProjects, boundary,

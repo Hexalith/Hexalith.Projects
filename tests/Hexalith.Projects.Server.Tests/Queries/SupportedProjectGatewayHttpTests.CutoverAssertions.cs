@@ -66,7 +66,7 @@ public sealed partial class SupportedProjectGatewayHttpTests
                         || reason != (authorized ? "envelope-authorized" : "stale")) return false;
                 }
                 if (unavailable && name == "References" && (included || freshness != "Unavailable" || reason != (scenario == "historical-pending-folderless" ? "materialization-in-progress"
-                    : scenario == "stale-authority" ? "required-evidence-unavailable" : "corruption-or-authorization-uncertain"))) return false;
+                    : "required-evidence-unavailable"))) return false;
             }
             if (scenario == "partial")
             {

@@ -1510,6 +1510,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Confirm the CutoverMatrix callers independently prove what ReadCutoverComparator delegates (unverified, medium).
   evidence: `ReadCutoverComparator.Compare` replaces cursor-evidence comparison with two caller-supplied `TransportCursorAssertions == true` flags, skips physical-address validation when both sides are null, and assumes D2 mappings are already applied; `IsApprovedUnavailablePair` relies on caller booleans for nondisclosure and D6 conditions. Settle in code review pass 2 (tests) by checking `SupportedProjectGatewayHttpTests.CutoverMatrix.cs` sets those flags only after independent scope/boundary/expiry and address assertions.
+  status: done 2026-11-24
+  resolution: The native fixture now derives per-transport cursor outcomes, checks exact persisted physical addresses independently of the key builders, and requires the exact approved unavailable pair with the closed retained problem body. The assertion uses the existing required-evidence-unavailable reason for missing or unavailable native membership. All 77 authenticated comparison cells passed with no skips.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Test the Conversations owner refusal of ambiguous tenant/subject claims.
