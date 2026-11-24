@@ -55,8 +55,8 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
         callerToken.ThrowIfCancellationRequested();
         if (query.QueryType != (conversation ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType)) return Denied();
         // One linked dependency budget begins with scope authorization, before validating caller input.
-        using CancellationTokenSource deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
-        deadline.CancelAfter(TimeSpan.FromSeconds(2));
+        using CancellationTokenSource budget = new(TimeSpan.FromSeconds(2), clock);
+        using CancellationTokenSource deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken, budget.Token);
         CancellationToken token = deadline.Token;
         try
         {

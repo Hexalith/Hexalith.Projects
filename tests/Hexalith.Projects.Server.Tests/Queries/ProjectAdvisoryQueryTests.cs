@@ -361,6 +361,7 @@ public sealed partial class ProjectAdvisoryQueryTests
     public async Task LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots()
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
+        f.Clock.PauseTimers = true;
         int enumerated = 0;
         var guard = new AdvisoryGuardedReadStore(f.Store) { IndexIdentities = new AdvisoryIndexIdentities(200000,
             index => $"p{(199999 - index) / 2:000000}", _ => enumerated++) };
