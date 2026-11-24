@@ -1528,6 +1528,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Test the Conversations owner refusal of ambiguous tenant/subject claims.
   evidence: `references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Api/ConversationReadApi.cs:454-456` (commit `f1a2b3da`) now refuses conflicting `tid`/`tenant_id` or `NameIdentifier`/`sub` values and accepts `sub` alone; no Conversations or Projects test covers it. Severity medium. Owner: Hexalith.Conversations test suite.
+  status: done 2026-11-24
+  resolution: Actual native HTTP accepts sub without a caller header, refuses conflicting tenant or subject claims, and refuses caller-header-only identity before owner or projection reads. All seven focused admission cases passed. Local Hexalith.Conversations commit 5af2eda3b08694b480505168d333c72aa2d03204.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback.md`
   summary: Test the EventStore correlation-header restore after an exception handler clears headers.
