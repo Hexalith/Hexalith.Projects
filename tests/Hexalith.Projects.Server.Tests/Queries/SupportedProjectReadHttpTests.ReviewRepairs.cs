@@ -118,6 +118,12 @@ public sealed partial class SupportedProjectReadHttpTests
             using var active = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=active", TestContext.Current.CancellationToken);
             active.StatusCode.ShouldBe(HttpStatusCode.OK);
             (await active.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain("project-a");
+
+            using var archived = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true&lifecycle=archived", TestContext.Current.CancellationToken);
+            archived.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument archivedBody = JsonDocument.Parse(await archived.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            archivedBody.RootElement.GetProperty("items").EnumerateArray()
+                .Select(item => item.GetProperty("projectId").GetString()).ShouldContain("project-a");
         }
         await fixture.App.StopAsync(TestContext.Current.CancellationToken);
     }

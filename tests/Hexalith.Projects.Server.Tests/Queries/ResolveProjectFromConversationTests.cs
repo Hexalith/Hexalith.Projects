@@ -620,6 +620,96 @@ public sealed class ResolveProjectFromConversationTests
     }
 
     [Fact]
+    public async Task AuthorizedDetailCanMatchDespiteAnOlderDiscoveryName()
+    {
+        const string MatchingName = "Matching name";
+        ProjectReadTestFolders folders = new();
+        ProjectReadTestAuthorization validator = new()
+        {
+            Decision = request => request.ProjectId == ProjectBId
+                ? EventStoreAuthorizationValidationResult.Denied()
+                : EventStoreAuthorizationValidationResult.Allowed("test"),
+        };
+        WebApplication app = await StartAppAsync(
+            metadata: new(ConversationIdValue, null, MatchingName, ReferenceState.Included),
+            rows: [Row(ProjectAId, "Previous name"), Row(ProjectBId, MatchingName), Row("nonmatch", "Different name")],
+            projectAuthorization: validator,
+            folderDirectory: folders,
+            detailOverride: detail => detail.ProjectId == ProjectAId ? detail with { Name = MatchingName } : detail);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            body.RootElement.GetProperty("candidates").EnumerateArray()
+                .Select(candidate => candidate.GetProperty("projectId").GetString()).ShouldBe([ProjectAId]);
+            folders.Reads.ShouldBe(2);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task LinkedProjectIsDiscoveredBeforeItsListRowExists()
+    {
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [], detailRows: [Row(ProjectAId, "Linked Project")]);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            JsonElement candidate = body.RootElement.GetProperty("candidates").EnumerateArray().Single();
+            candidate.GetProperty("projectId").GetString().ShouldBe(ProjectAId);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Theory]
+    [InlineData(200, HttpStatusCode.OK)]
+    [InlineData(201, HttpStatusCode.ServiceUnavailable)]
+    public async Task NameDiscoveryChecksTheExactAuthorizationLimit(int rows, HttpStatusCode expected)
+    {
+        const string MatchingName = "Matching name";
+        int exact = 0;
+        ProjectReadTestAuthorization validator = new()
+        {
+            Decision = request =>
+            {
+                if (request.ProjectId is not null) Interlocked.Increment(ref exact);
+                return EventStoreAuthorizationValidationResult.Allowed("test");
+            },
+        };
+        ProjectReadTestFolders folders = new();
+        WebApplication app = await StartAppAsync(
+            metadata: new(ConversationIdValue, null, MatchingName, ReferenceState.Included),
+            rows: Enumerable.Range(0, rows).Select(index => Row($"p{index}", "Previous name")).ToArray(),
+            projectAuthorization: validator,
+            folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(expected);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            if (expected == HttpStatusCode.OK)
+            {
+                using JsonDocument parsed = JsonDocument.Parse(body);
+                parsed.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
+                exact.ShouldBe(rows);
+            }
+            else
+            {
+                body.ShouldNotContain("candidates");
+                exact.ShouldBe(0);
+            }
+
+            folders.Reads.ShouldBe(0);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
     public async Task OnlySignaledLegacyProjectsSpendTheFourWorkerOwnerBudget()
     {
         int active = 0, maximum = 0, exact = 0;
@@ -694,7 +784,8 @@ public sealed class ResolveProjectFromConversationTests
         bool seedTenantAccess = true,
         bool listThrows = false, ProjectReadTestAuthorization? projectAuthorization = null,
         ProjectReadTestFolders? folderDirectory = null, bool seedFolder = true,
-        Func<ProjectDetailItem, ProjectDetailItem>? detailOverride = null)
+        Func<ProjectDetailItem, ProjectDetailItem>? detailOverride = null,
+        IReadOnlyList<ProjectListItem>? detailRows = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -713,7 +804,7 @@ public sealed class ResolveProjectFromConversationTests
         builder.Services.AddSingleton<IProjectListReadModel>(new StubProjectListReadModel(rows, listThrows));
 
         InMemoryProjectDetailReadModel details = new();
-        foreach (var row in rows)
+        foreach (ProjectListItem row in detailRows ?? rows)
         {
             details.Project(row.TenantId, new ProjectCreated(row.TenantId, row.ProjectId,
                 row.Name, null, null, row.Lifecycle, PrincipalA, "create", "task", "create", "create", DateTimeOffset.UtcNow));

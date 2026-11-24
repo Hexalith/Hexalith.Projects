@@ -1802,7 +1802,7 @@ public static partial class ProjectsDomainServiceEndpoints
         try
         {
             projectedRows = await listReadModel
-                .ListAsync(authoritativeTenantId, lifecycleFilter, cancellationToken)
+                .ListAsync(authoritativeTenantId, lifecycleFilter: null, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

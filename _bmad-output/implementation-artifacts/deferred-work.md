@@ -1586,3 +1586,5 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-project-read-outcomes.md`
   summary: Align retained discovery coverage with the authorized Project detail when projections disagree.
   evidence: The retained list prefilters candidates by discovery lifecycle. The retained Conversation route prefilters by explicit linkage or discovery name to keep exact authorization and owner reads bounded. A newly matching Project whose discovery row has lagged can remain outside either candidate set. A coverage repair must preserve the existing owner budget and the exact-authorization boundary.
+  status: done 2026-11-24
+  resolution: Retained List applies lifecycle to authorized detail after bounded Tenant discovery. Retained Conversation evaluates the authoritative link or authorized detail name within the 200-Project cap and reserves Folder owner checks for matches. Focused HTTP tests cover reverse projection disagreement, a missing linked list row, denied or nonmatching Projects, and 200/201-row limits.

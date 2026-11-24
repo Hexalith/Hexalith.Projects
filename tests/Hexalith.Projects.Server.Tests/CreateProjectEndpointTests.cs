@@ -2195,9 +2195,10 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Theory]
-    [InlineData(ListProjectsQuery.MaximumPageSize, 1)]
-    [InlineData(ListProjectsQuery.MaximumPageSize + 1, 0)]
-    public async Task ListProjects_BoundsPerRowAuthorization(int rowCount, int expectedDetailReads)
+    [InlineData(ListProjectsQuery.MaximumPageSize, 1, "")]
+    [InlineData(ListProjectsQuery.MaximumPageSize + 1, 0, "")]
+    [InlineData(ListProjectsQuery.MaximumPageSize + 1, 0, "&lifecycle=archived")]
+    public async Task ListProjects_BoundsPerRowAuthorization(int rowCount, int expectedDetailReads, string lifecycleQuery)
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
         WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a",
@@ -2217,7 +2218,7 @@ public sealed class CreateProjectEndpointTests
             denied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
             details.ReadCount.ShouldBe(0);
 
-            using HttpResponseMessage response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true", cancellationToken).ConfigureAwait(true);
+            using HttpResponseMessage response = await client.GetAsync("/api/v1/projects?inspectDescriptiveMetadata=true" + lifecycleQuery, cancellationToken).ConfigureAwait(true);
             response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
             string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true);
             Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));

@@ -24,7 +24,8 @@ public static partial class ProjectsDomainServiceEndpoints
 
     private static async Task<IReadOnlyDictionary<string, ProjectDetailItem>?> AuthorizeLegacyResolutionCandidatesAsync(IEnumerable<string> projectIds,
         ProjectAuthorizationGate gate, IProjectTenantContextAccessor tenant, HttpContext http,
-        string? correlationId, string? taskId, CancellationToken token, IProjectFolderDirectory? folders = null)
+        string? correlationId, string? taskId, CancellationToken token, IProjectFolderDirectory? folders = null,
+        Predicate<ProjectDetailItem>? matches = null)
     {
         ConcurrentDictionary<string, ProjectDetailItem> allowed = new(StringComparer.Ordinal);
         int unavailable = 0;
@@ -39,7 +40,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 Interlocked.Exchange(ref unavailable, 1);
                 return;
             }
-            if (ProjectReadQueryExecutor.IsQuarantined(detail)) return;
+            if (ProjectReadQueryExecutor.IsQuarantined(detail) || matches?.Invoke(detail) == false) return;
             if (folders is not null && detail.ProjectFolder is { } binding
                 && binding is not { ReferenceState: ReferenceState.Pending, FolderId: null })
             {

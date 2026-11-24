@@ -17,6 +17,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Resolution;
 using Hexalith.Projects.Server.Conversations;
@@ -135,14 +136,33 @@ public static partial class ProjectsDomainServiceEndpoints
             }
 
             IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
+            bool nameCanMatch = !string.IsNullOrWhiteSpace(conversationMetadata.SafeLabel);
+            const int maximumCandidates = Queries.ProjectAdvisoryQueryExecutor.MaximumCandidates;
+            IEnumerable<string> discoveredIds = nameCanMatch ? rows.Select(row => row.ProjectId) : [];
+            if (conversationMetadata.LinkedProjectId is { } linked && IsCanonicalIdentifier(linked))
+            {
+                discoveredIds = discoveredIds.Prepend(linked);
+            }
+
+            string[] candidateIds = discoveredIds.Distinct(StringComparer.Ordinal)
+                .Take(maximumCandidates + 1)
+                .ToArray();
+            if (candidateIds.Length > maximumCandidates)
+            {
+                return ReadModelUnavailable(correlationId, taskId);
+            }
+
             DateTimeOffset now = timeProvider.GetUtcNow();
-            IReadOnlyList<ProjectResolutionCandidateEvidence> observedCandidates = ConversationResolutionEvidenceMapper.Map(
-                conversationMetadata, rows.Select(row => new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle)).ToArray(), now);
-            var allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(observedCandidates.Select(row => row.ProjectId),
-                authorizationGate, tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory).WaitAsync(cancellationToken).ConfigureAwait(false);
+            bool MatchesConversation(ProjectDetailItem detail) => ConversationResolutionEvidenceMapper.Map(
+                conversationMetadata, [new(detail.ProjectId, detail.Name, detail.Lifecycle)], now).Count != 0;
+
+            var allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(candidateIds,
+                authorizationGate, tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory,
+                MatchesConversation).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects.Keys, authorizationGate,
-                tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory).WaitAsync(cancellationToken).ConfigureAwait(false);
+                tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory,
+                MatchesConversation).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
