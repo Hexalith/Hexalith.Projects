@@ -8,12 +8,16 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools/qualification"))
+from check_conversations_toolkit import CONVERSATIONS_APPHOST, TOOLKIT_PACKAGE, toolkit_issue
+
 BUILDS = ROOT / "references/Hexalith.Builds"
 PRODUCER = "b80f3e85fc803f71bf7b2809965db0aceafdc3c5"
 RELATIVE = "tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json"
@@ -64,6 +68,33 @@ class OwningCurrentPolicyTests(unittest.TestCase):
         expected["daprDotnetPackages"] = "1.19.1"
         expected["fluentUi"] = "5.1.0"
         self.assertEqual(expected, policy["tuple"])
+
+    def test_conversations_apphost_restore_uses_catalog_toolkit_version(self) -> None:
+        project = CONVERSATIONS_APPHOST
+        toolkit = TOOLKIT_PACKAGE
+        policy = CURRENT.policy_document(ROOT / RELATIVE)
+        self.assertIn(project, policy["resolvedProjects"])
+        version = policy["tuple"]["communityToolkitAspireDapr"]
+
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            assets = (workspace / project).parent / "obj/project.assets.json"
+            assets.parent.mkdir(parents=True)
+            for resolved, accepted in ((version, True), ("13.6.0-beta.910", False)):
+                with self.subTest(resolved=resolved):
+                    assets.write_text(json.dumps({"libraries": {f"{toolkit}/{resolved}": {"type": "package"}}}))
+                    graph, issues = CURRENT.resolved_graph(workspace, {"resolvedProjects": [project]}, policy["tuple"])
+                    self.assertEqual([{"path": project, "packages": [{"id": toolkit, "version": resolved}]}], graph)
+                    expected = [] if accepted else [
+                        f"resolved package differs from effective communityToolkitAspireDapr: {project}::{toolkit} {resolved}"
+                    ]
+                    self.assertEqual(expected, issues)
+                    audit = {"resolvedPackages": graph, "effectiveTuple": policy["tuple"]}
+                    self.assertEqual(accepted, toolkit_issue(audit) is None)
+
+            missing_toolkit = {"resolvedPackages": [{"path": project, "packages": []}],
+                               "effectiveTuple": policy["tuple"]}
+            self.assertIn("must restore", toolkit_issue(missing_toolkit))
 
     def test_changed_tuple_without_exact_new_authorization_is_refused(self) -> None:
         policy = CURRENT.policy_document(ROOT / RELATIVE)

@@ -20,6 +20,7 @@ import uuid
 from pathlib import Path
 
 import run_g6_qualification as historical
+from check_conversations_toolkit import toolkit_issue
 from install_g6_current_tools import install_current_tools
 
 
@@ -296,6 +297,8 @@ def main(arguments: list[str] | None = None) -> int:
             cleanup = {}
     historical.write(output / "cleanup.json", cleanup)
     after = audit(output / "audit-after.json", policy_path)
+    if issue := toolkit_issue(after):
+        errors.append(issue)
     if before.get("materialInputs", {}).get("fingerprint") != after.get("materialInputs", {}).get("fingerprint"):
         errors.append("Material runtime inputs changed during qualification")
     if before.get("source") != after.get("source"):

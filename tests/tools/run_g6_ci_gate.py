@@ -11,6 +11,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools/qualification"))
+from check_conversations_toolkit import CONVERSATIONS_APPHOST, toolkit_issue
+
 POLICY = Path("tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json")
 AUDITOR = Path("references/Hexalith.Builds/Tools/g6_current.py")
 RUNNER = Path("tools/qualification/run_g6_current.py")
@@ -78,6 +81,10 @@ def main(arguments: list[str] | None = None) -> int:
                    "--policy", str(policy_path), "--out", str(audit_path)]
         subprocess.run(command, check=True)
         audit = json.loads(audit_path.read_text(encoding="utf-8"))
+        issue = toolkit_issue(audit) if CONVERSATIONS_APPHOST in policy.get("resolvedProjects", []) else None
+        if issue:
+            audit["issues"].append(issue)
+            audit["tupleApproved"] = False
         required, reason = selection(options.event, options.base_sha, policy)
         (output / "selection.json").write_text(json.dumps({"status": "required" if required else "not required by this change",
             "reason": reason, "source": audit["source"], "materialFingerprint": audit["materialInputs"]["fingerprint"],
@@ -87,6 +94,8 @@ def main(arguments: list[str] | None = None) -> int:
             print("G6-CURRENT-NOT-REQUIRED-BY-THIS-CHANGE: " + reason
                   + f"; current tuple approved={audit['tupleApproved']}; issues={len(audit['issues'])}")
             return 0
+        if issue:
+            raise RuntimeError(issue)
         print("G6-CURRENT-REQUIRED: " + reason, flush=True)
         subprocess.run([sys.executable, str(ROOT / RUNNER), "--policy", str(policy_path),
                         "--output", str(output), "--execution-scope", "ci"], check=True)

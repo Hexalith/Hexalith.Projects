@@ -874,6 +874,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Add a Conversations check that the AppHost restores the catalog-pinned `CommunityToolkit.Aspire.Hosting.Dapr` version.
   evidence: Removing the direct reference added in Conversations `62ddb9e` falls back to `.757` with no failing test (review VG-03).
+  status: done 2026-11-24
+  resolution: The local and CI G-6 audits require the Conversations AppHost restored graph to contain exactly the approved Toolkit version. The policy fixtures cover the approved version, retired fallback, and missing package with project-specific diagnostics.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Bind the G-6 limitation files (source closure, AppHost builds, Toolkit resolution, pin audit, control-plane restoration) into the packet hash.
   evidence: The validator's fixed `EXPECTED_ARTIFACT_KINDS` leaves them unbound, so owner acceptance of a packet hash does not cover them (review R2-BH-01).
