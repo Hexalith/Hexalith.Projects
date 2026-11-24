@@ -826,6 +826,8 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Require an all-absent package inventory before unrelated NuGet `--skip-duplicate` release publication.
   evidence: The release workflow can invoke Semantic Release while its NuGet command tolerates duplicate packages, so a partially occupied version can yield a mixed or incomplete public release; this release-hardening defect predates Story 6.3.
+  status: done 2026-11-24
+  resolution: Semantic Release checks all five manifest package IDs in the NuGet flat-container index before tagging and again before upload and fails on an occupied coordinate or an invalid observation. The upload no longer tolerates duplicates. Four preflight fixture groups pass.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md`
   summary: Document all companion-path and workspace-root arguments required to validate an atomic P1R candidate set in the repository agent context.
   evidence: The current `_bmad-output/project-context.md` candidate command names only `--sprint-status`, while accepted closure spans sprint status, deferred work, the P0 artifact, and the acceptance record under a candidate workspace root; review policy defers agent-context edits.

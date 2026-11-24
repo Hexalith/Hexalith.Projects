@@ -10,6 +10,8 @@ const packCommands = packageProjects.map((project) =>
   `dotnet pack ${project} --no-build --configuration Release --output ./nupkgs -p:HexalithProjectsPackageVersion=\${nextRelease.version} -p:HexalithCommonsRoot="$PWD/references/Hexalith.Commons" /m:1 /nr:false`,
 );
 
+const checkReleaseAvailability = 'python3 scripts/check-release-version-available.py ${nextRelease.version}';
+
 module.exports = {
   branches: ['main'],
   plugins: [
@@ -18,6 +20,7 @@ module.exports = {
     [
       '@semantic-release/exec',
       {
+        verifyReleaseCmd: checkReleaseAvailability,
         prepareCmd: [
           'dotnet restore Hexalith.Projects.CI.slnx',
           'rm -rf ./nupkgs',
@@ -27,7 +30,8 @@ module.exports = {
         ].join(' && '),
         publishCmd: [
           'test "$(find ./nupkgs -maxdepth 1 -name \'*.nupkg\' ! -name \'*.symbols.*\' | wc -l)" -eq 5',
-          'dotnet nuget push ./nupkgs/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate',
+          checkReleaseAvailability,
+          'dotnet nuget push ./nupkgs/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json',
         ].join(' && '),
       },
     ],

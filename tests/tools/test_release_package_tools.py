@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
@@ -164,6 +165,58 @@ def metadata(root: ET.Element) -> ET.Element:
     """Return the fixture metadata element."""
 
     return root.find("metadata")  # type: ignore[return-value]
+
+
+class ReleaseAvailabilityTests(unittest.TestCase):
+    """Check the real publication gate with NuGet index response fixtures."""
+
+    def setUp(self) -> None:
+        spec = importlib.util.spec_from_file_location("availability", SCRIPTS / "check-release-version-available.py")
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        self.gate = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.gate)
+        self.ids = {package.package_id.lower() for package in load_manifest().packages}
+        self.observed: set[str] = set()
+
+    def require(self, overrides: dict[str, bytes | int]) -> None:
+        def respond(request, *, timeout):
+            self.assertEqual(20, timeout)
+            root, package, name = request.full_url.rsplit("/", 2)
+            self.assertEqual(self.gate.PACKAGE_BASE_ADDRESS, root)
+            self.assertEqual("index.json", name)
+            self.observed.add(package)
+            result = overrides.get(package, b'{"versions":["1.2.3"]}')
+            if isinstance(result, int):
+                raise urllib.error.HTTPError(request.full_url, result, "fixture error", {}, None)
+            response = mock.MagicMock()
+            response.__enter__.return_value = response
+            response.status = 200
+            response.geturl.return_value = request.full_url
+            response.read.return_value = result
+            return response
+
+        with mock.patch.object(self.gate.urllib.request, "urlopen", side_effect=respond):
+            self.gate.require_available(VERSION)
+
+    def test_absence_in_all_indexes_or_an_unknown_id_allows_release(self) -> None:
+        self.require({"hexalith.projects": 404})
+        self.assertEqual(self.ids, self.observed)
+
+    def test_one_occupied_coordinate_blocks_the_whole_release(self) -> None:
+        with self.assertRaisesRegex(ValueError, r"already occupied for: Hexalith.Projects.Client"):
+            self.require({"hexalith.projects.client": json.dumps({"versions": [VERSION.upper()]}).encode()})
+        self.assertEqual(self.ids, self.observed)
+
+    def test_malformed_index_is_not_evidence_of_absence(self) -> None:
+        for body in (b"{", b"{}", b'{"versions":[]}', b'{"versions":[null]}', b'{"versions":["bogus"]}'):
+            with self.subTest(body=body), self.assertRaises(ValueError):
+                self.require({"hexalith.projects": body})
+
+    def test_transport_failure_is_not_evidence_of_absence(self) -> None:
+        for status in (401, 403, 429, 500):
+            with self.subTest(status=status), self.assertRaises(urllib.error.HTTPError):
+                self.require({"hexalith.projects": status})
 
 
 class ReleasePublicationTests(unittest.TestCase):
