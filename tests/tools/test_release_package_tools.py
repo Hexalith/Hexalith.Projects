@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -163,6 +164,132 @@ def metadata(root: ET.Element) -> ET.Element:
     """Return the fixture metadata element."""
 
     return root.find("metadata")  # type: ignore[return-value]
+
+
+class ReleasePublicationTests(unittest.TestCase):
+    """Verify public identities and packages without using real credentials or registries."""
+
+    def setUp(self) -> None:
+        spec = importlib.util.spec_from_file_location("verify_publication", SCRIPTS / "verify-release-publication.py")
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        self.verifier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.verifier)
+        temporary = tempfile.TemporaryDirectory(prefix="projects-publication-fixtures-")
+        self.addCleanup(temporary.cleanup)
+        self.directory = Path(temporary.name)
+        self.fixtures = self.directory / "source-assets"
+        self.fixtures.mkdir()
+        self.evidence = self.directory / "verification"
+        write_candidates(self.fixtures)
+        self.tag = f"v{VERSION}"
+        self.names = sorted(path.name for path in self.fixtures.iterdir())
+        self.run = {
+            "id": 42, "head_sha": SOURCE_SHA, "head_branch": "main",
+            "path": ".github/workflows/release.yml", "event": "workflow_dispatch",
+            "status": "completed", "conclusion": "success", "run_attempt": 1,
+        }
+        self.step = {
+            "name": "Semantic Release", "conclusion": "success",
+            "started_at": "2026-11-24T09:00:00Z", "completed_at": "2026-11-24T09:05:00Z",
+        }
+        self.ref = {"ref": f"refs/tags/{self.tag}", "object": {"type": "commit", "sha": SOURCE_SHA}}
+        self.release = {
+            "tag_name": self.tag, "draft": False, "published_at": "2026-11-24T09:03:00Z",
+            "assets": [
+                {"name": name, "state": "uploaded", "size": (self.fixtures / name).stat().st_size,
+                 "digest": "sha256:" + hashlib.sha256((self.fixtures / name).read_bytes()).hexdigest()}
+                for name in self.names
+            ],
+        }
+
+    def verify(
+        self, mutation: tuple[str, bytes] | None = None, invalid_signature: bool = False,
+        signature: str = "Signature type: Repository\nhttps://api.nuget.org/v3/index.json",
+    ) -> None:
+        responses = {
+            "actions/runs/42": self.run,
+            "actions/runs/42/attempts/1/jobs": {
+                "jobs": [{"name": "Release packages", "conclusion": "success", "steps": [self.step]}],
+            },
+            f"git/ref/tags/{self.tag}": self.ref,
+            f"releases/tags/{self.tag}": self.release,
+        }
+
+        def fetch_package(url: str, output: Path) -> None:
+            self.assertTrue(url.endswith("/" + output.name.lower()))
+            shutil.copyfile(self.fixtures / output.name, output)
+            rewrite_candidate(output, extra_entry=(".signature.p7s", b"fixture signature"))
+            if mutation is not None:
+                rewrite_candidate(output, extra_entry=mutation)
+
+        def execute(command: list[str], **kwargs) -> subprocess.CompletedProcess:
+            self.assertTrue(kwargs["check"])
+            if command[:3] == ["gh", "release", "download"]:
+                for path in self.fixtures.iterdir():
+                    shutil.copyfile(path, Path(command[-1]) / path.name)
+                return subprocess.CompletedProcess(command, 0)
+            self.assertEqual(["dotnet", "nuget", "verify", "--all"], command[:4])
+            if invalid_signature:
+                raise subprocess.CalledProcessError(1, command)
+            return subprocess.CompletedProcess(command, 0, signature)
+
+        with (
+            mock.patch.object(self.verifier, "github", side_effect=responses.__getitem__),
+            mock.patch.object(self.verifier, "download_package", side_effect=fetch_package),
+            mock.patch.object(self.verifier.subprocess, "run", side_effect=execute),
+        ):
+            self.verifier.verify_publication(VERSION, SOURCE_SHA, 42, self.evidence)
+
+    def test_exact_release_emits_complete_receipt(self) -> None:
+        self.verify()
+        receipt = json.loads((self.evidence / "publication-verified.json").read_text())
+        self.assertEqual(self.names, sorted(receipt["packages"]))
+        for package in receipt["packages"].values():
+            self.assertNotEqual(package["githubSha256"], package["nugetSha256"])
+
+    def test_wrong_tag_commit_is_rejected(self) -> None:
+        self.ref["object"]["sha"] = "b" * 40
+        with self.assertRaisesRegex(ValueError, "does not resolve"):
+            self.verify()
+
+    def test_wrong_workflow_is_rejected(self) -> None:
+        self.run["path"] = ".github/workflows/ci.yml"
+        with self.assertRaisesRegex(ValueError, "Workflow run"):
+            self.verify()
+
+    def test_frozen_run_cannot_claim_an_existing_release(self) -> None:
+        self.step["conclusion"] = "skipped"
+        with self.assertRaisesRegex(ValueError, "did not successfully execute"):
+            self.verify()
+
+    def test_same_source_release_from_another_attempt_is_rejected(self) -> None:
+        self.release["published_at"] = "2026-11-24T08:59:59Z"
+        with self.assertRaisesRegex(ValueError, "outside the selected workflow attempt"):
+            self.verify()
+
+    def test_extra_release_asset_is_rejected(self) -> None:
+        self.release["assets"].append({"name": "unrelated.nupkg"})
+        with self.assertRaisesRegex(ValueError, "unexpected asset inventory"):
+            self.verify()
+
+    def test_mismatched_github_asset_digest_is_rejected(self) -> None:
+        self.release["assets"][0]["digest"] = "sha256:" + "b" * 64
+        with self.assertRaisesRegex(ValueError, "differs from the published asset metadata"):
+            self.verify()
+
+    def test_author_signature_is_insufficient(self) -> None:
+        with self.assertRaisesRegex(ValueError, "verified NuGet.org repository signature"):
+            self.verify(signature="Signature type: Author")
+
+    def test_changed_payload_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "payloads differ"):
+            self.verify(mutation=("README.md", b"Different public readme"))
+
+    def test_signature_failure_never_creates_success_receipt(self) -> None:
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.verify(invalid_signature=True)
+        self.assertFalse((self.evidence / "publication-verified.json").exists())
 
 
 class ReleasePackageToolTests(unittest.TestCase):

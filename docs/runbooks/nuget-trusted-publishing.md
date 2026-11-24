@@ -81,6 +81,7 @@ activation candidate. Store the preview, source SHA, and resolved version in
 the durable repository evidence directory:
 
 ```bash
+set -euo pipefail
 export RELEASE_SHA="$(git rev-parse HEAD)"
 test "$RELEASE_SHA" = "$(gh api repos/Hexalith/Hexalith.Projects/git/ref/heads/main --jq .object.sha)"
 test -z "$(git status --porcelain=v1)"
@@ -135,36 +136,31 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
    gh variable set HEXALITH_RELEASE_PUBLISH_ENABLED --repo Hexalith/Hexalith.Projects --body false
    ```
 
-8. Record and verify the exact GitHub release and all five public packages. Set
-   `RELEASE_RUN_ID` to the completed run ID, then run:
+8. Verify the completed manual release from the reviewed source checkout.
+   Set `RELEASE_RUN_ID` to the successful dispatch run ID. The verifier checks
+   the successful publishing attempt and tag commit, downloads the exact five
+   release assets from both registries, validates their package manifest and source
+   metadata, compares every payload entry, and checks the NuGet signatures
+   with `dotnet nuget verify --all`.
 
    ```bash
    export RELEASE_RUN_ID='<completed-run-id>'
-   gh run view "$RELEASE_RUN_ID" --repo Hexalith/Hexalith.Projects --json databaseId,headSha,status,conclusion,url >"$EVIDENCE_DIR/release-run.json"
-   jq -e --arg sha "$RELEASE_SHA" '.headSha == $sha and .status == "completed" and .conclusion == "success"' "$EVIDENCE_DIR/release-run.json"
-   gh release view "v${RELEASE_VERSION}" --repo Hexalith/Hexalith.Projects --json tagName,url,assets >"$EVIDENCE_DIR/github-release.json"
+   PUBLICATION_EVIDENCE="$EVIDENCE_DIR/publication"
+   python3 scripts/verify-release-publication.py \
+     --version "$RELEASE_VERSION" --source "$RELEASE_SHA" --run-id "$RELEASE_RUN_ID" \
+     --evidence "$PUBLICATION_EVIDENCE"
+   ```
 
-   export PACKAGE_DIRECTORY="$EVIDENCE_DIR/packages"
-   mkdir -p "$PACKAGE_DIRECTORY"
-   PACKAGE_IDS=(
-     Hexalith.Projects.Contracts
-     Hexalith.Projects
-     Hexalith.Projects.Client
-     Hexalith.Projects.Testing
-     Hexalith.Projects.ServiceDefaults
-   )
-   for PACKAGE_ID in "${PACKAGE_IDS[@]}"; do
-     LOWER_ID="$(printf '%s' "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
-     INDEX_PATH="$EVIDENCE_DIR/${PACKAGE_ID}.index.json"
-     curl -fsS "https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json" -o "$INDEX_PATH"
-     jq -e --arg version "$RELEASE_VERSION" '.versions | index($version) != null' "$INDEX_PATH"
-     curl -fsS "https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/${RELEASE_VERSION}/${LOWER_ID}.${RELEASE_VERSION}.nupkg" -o "$PACKAGE_DIRECTORY/${PACKAGE_ID}.${RELEASE_VERSION}.nupkg"
-   done
-   test "$(find "$PACKAGE_DIRECTORY" -maxdepth 1 -name '*.nupkg' | wc -l)" -eq 5
-   pwsh ./tests/tools/run-package-dependency-gate.ps1 -Version "$RELEASE_VERSION" -PackageDirectory "$PACKAGE_DIRECTORY" -SkipPack | tee "$EVIDENCE_DIR/package-manifest-validation.log"
-   for PACKAGE in "$PACKAGE_DIRECTORY"/*.nupkg; do
-     dotnet nuget verify --all "$PACKAGE" | tee -a "$EVIDENCE_DIR/nuget-signature-verification.log"
-   done
+   A successful run writes `publication/publication-verified.json` with the
+   GitHub identities, both package hashes, and signature results. If the
+   registries are still converging, keep the incomplete output for diagnosis
+   and set `PUBLICATION_EVIDENCE` to a new output path before retrying.
+
+   Run the package consumer gate against the verified NuGet downloads.
+
+   ```bash
+   PACKAGE_DIRECTORY="$PUBLICATION_EVIDENCE/nuget"
+   pwsh ./tests/tools/run-package-dependency-gate.ps1 -Version "$RELEASE_VERSION" -PackageDirectory "$PACKAGE_DIRECTORY" -SkipPack
    ```
 
 9. Reopen the policy in NuGet.org. It must be active with no ownership warning.
@@ -174,7 +170,7 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
 
 Commit or attach the complete `$EVIDENCE_DIR` through the repository's normal
 reviewed evidence process. It contains the workflow run URL/SHA, predicted and
-published version, five NuGet indexes and packages, manifest/signature results,
+published version, five public packages from each registry, manifest/signature results,
 GitHub release metadata, active-run exclusion, and dry-run record. Also record
 the final repository variable value `false` and the policy activation status in
 `$EVIDENCE_DIR/operator-checks.md`.

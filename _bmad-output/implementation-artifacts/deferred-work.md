@@ -798,6 +798,8 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Harden manual release publication and exact GitHub/NuGet post-publication verification.
   evidence: Split at human request because release planning, frozen/no-op routing, duplicate preflight, strict publication, and public verification are independently shippable after package-only CI and candidate validation; exact-green-source gating keeps release blocked meanwhile.
+  status: done 2026-11-24
+  resolution: The manual release runbook uses verify-release-publication.py to bind the successful release attempt, publication timestamp, and GitHub tag to the source SHA, validate both five-package inventories, compare payload entries, and verify NuGet signatures before emitting a receipt. Ten hermetic release checks pass.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Narrow the BMad spec and sprint-planning persistent-context overrides to the Projects root context file.
   evidence: The current `**/project-context.md` glob also matches eight sibling contexts under `references/`, which can inject contradictory planning facts; review policy defers fixes to agent-context configuration.
