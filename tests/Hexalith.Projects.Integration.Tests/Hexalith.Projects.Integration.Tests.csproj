@@ -3,6 +3,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <DefineConstants Condition="'$(SupportedProjectReadDistributed)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_DISTRIBUTED</DefineConstants>
+    <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyMetadata Include="PackageFixtureTenantsRoot" Value="$([MSBuild]::NormalizePath('$(HexalithTenantsRoot)'))" />

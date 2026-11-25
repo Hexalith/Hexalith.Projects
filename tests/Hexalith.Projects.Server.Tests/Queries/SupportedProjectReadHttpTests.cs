@@ -271,6 +271,25 @@ public sealed partial class SupportedProjectReadHttpTests
     }
 
     [Fact]
+    public async Task SdkHostRetainedProjectRouteRequiresTheHumanBearer()
+    {
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-human-route-fixture" };
+        WebApplication app = await StartAsync(null, null, key, workload: true);
+        await using (app.ConfigureAwait(true))
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.Single()) };
+            using HttpResponseMessage anonymous = await client.GetAsync("/api/v1/projects/project-a", TestContext.Current.CancellationToken);
+            anonymous.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(key));
+            using HttpResponseMessage authenticated = await client.GetAsync("/api/v1/projects/project-a", TestContext.Current.CancellationToken);
+            authenticated.StatusCode.ShouldNotBe(HttpStatusCode.Unauthorized);
+            authenticated.StatusCode.ShouldNotBe(HttpStatusCode.Forbidden);
+            await app.StopAsync(TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
     public async Task CanonicalCommandReceiverPreservesLegacyWireAndRefusesUnadmittedCalls()
     {
         using RSA rsa = RSA.Create(2048);

@@ -143,7 +143,7 @@ public sealed class ProjectsServerModuleTests
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.AddProjectsDomainService();
-        WebApplication app = builder.Build();
+        using WebApplication app = builder.Build();
 
         app.UseEventStoreDomainService();
 
@@ -312,7 +312,7 @@ public sealed class ProjectsServerModuleTests
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.AddProjectsDomainService();
-        WebApplication app = builder.Build();
+        using WebApplication app = builder.Build();
         app.UseEventStoreDomainService();
         return ((IEndpointRouteBuilder)app).DataSources
             .SelectMany(static source => source.Endpoints)

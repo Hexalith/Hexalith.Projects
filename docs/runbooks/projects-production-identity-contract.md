@@ -145,8 +145,8 @@ startup health nor in-process fixtures constitutes authenticated persisted
 Keycloak/G-4 acceptance evidence.
 
 The default `http` server launch profile requires OIDC configuration. The
-ordinary AppHost provisions the local SDK catalog with owner-held custody and
-bound workload issuer settings. [Local catalog configuration](../../module/README.md#ordinary-local-catalog)
+ordinary AppHost composes the local SDK catalog from custody and bound workload
+issuer settings that the owner provisioned beforehand. [Local catalog configuration](../../module/README.md#ordinary-local-catalog)
 
 For executable live setup, use the [managed AppHost fixture procedure](../../tests/e2e/README.md#live-apphost-route).
 The managed runner derives tenant/principal identity from a real signed Keycloak

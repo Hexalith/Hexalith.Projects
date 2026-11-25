@@ -1,6 +1,7 @@
 namespace Hexalith.Projects.AppHost;
 
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 using global::Aspire.Hosting;
@@ -53,6 +54,7 @@ internal static class ProjectsLocalDevelopmentCatalog
                 new(projects, "api/v1/commands", ["POST"]),
                 new(projects, "api/v1/queries/owner-authority/workload", ["POST"]),
                 new(projects, "api/v1/streams/read/workload", ["POST"]),
+                new(tenants, "api/v1/streams/read/workload", ["POST"]),
             ]) { TechnicalHttp = true },
             new(tenants, Calls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
             new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/v2/reconcile", "project/rebuild/v1", "project/rebuild/part/v1", "admin/operational-index-metadata")),
@@ -107,8 +109,12 @@ internal static class ProjectsLocalDevelopmentCatalog
         string authority = GetRequired("Authority");
         string issuer = GetRequired("Issuer");
         string tokenEndpoint = GetRequired("TokenEndpoint");
-        string clientId = GetRequired("GatewayClientId");
-        string clientSecret = GetRequired("GatewayClientSecret");
+        (string Workload, IResourceBuilder<DotnetProjectResource> Resource, string ClientId, string ClientSecret)[] clients =
+        [
+            ("eventstore", gateway, GetRequired("GatewayClientId"), GetRequired("GatewayClientSecret")),
+            ("projects", projects, GetRequired("ProjectsClientId"), GetRequired("ProjectsClientSecret")),
+            ("tenants", tenants, GetRequired("TenantsClientId"), GetRequired("TenantsClientSecret")),
+        ];
         string receiptKey = GetRequired("HumanAuthorityReceiptSigningKey");
         var receiptSigningKey = builder.AddParameter("projects-catalog-human-authority-receipt-key", () => receiptKey, secret: true);
         _ = gateway.WithEnvironment("Authentication__HumanAuthorityReceipt__SigningKey", receiptSigningKey);
@@ -121,20 +127,48 @@ internal static class ProjectsLocalDevelopmentCatalog
                 .WithEnvironment("Authentication__WorkloadJwtBearer__AllowedAlgorithms__0", "RS256")
                 .WithEnvironment("Authentication__WorkloadJwtBearer__RequireHttpsMetadata", "true");
         }
-        _ = gateway.WithEnvironment("Authentication__WorkloadIssuer__Workload", "eventstore")
-            .WithEnvironment("Authentication__WorkloadIssuer__ClientId", clientId)
-            .WithEnvironment("Authentication__WorkloadIssuer__ClientSecret",
-                builder.AddParameter("projects-catalog-gateway-client-secret", () => clientSecret, secret: true))
-            .WithEnvironment("Authentication__WorkloadIssuer__TokenEndpoint", tokenEndpoint)
-            .WithEnvironment("Authentication__WorkloadIssuer__EnableResourceBindingRequests", "true");
+        foreach (var client in clients)
+        {
+            string secret = client.ClientSecret;
+            string parameter = client.Workload == "eventstore" ? "projects-catalog-gateway-client-secret" : $"projects-catalog-{client.Workload}-client-secret";
+            _ = client.Resource.WithEnvironment("Authentication__WorkloadIssuer__Workload", client.Workload)
+                .WithEnvironment("Authentication__WorkloadIssuer__ClientId", client.ClientId)
+                .WithEnvironment("Authentication__WorkloadIssuer__ClientSecret", builder.AddParameter(parameter, () => secret, secret: true))
+                .WithEnvironment("Authentication__WorkloadIssuer__TokenEndpoint", tokenEndpoint)
+                .WithEnvironment("Authentication__WorkloadIssuer__EnableResourceBindingRequests", "true");
+        }
+
+        // Owner source and owner-authority proofs use run-scoped keys. EventStore trusts only their public halves,
+        // for the same exact callers and owner domains as the isolated compatibility profile.
+        _ = gateway.WithEnvironment("Authentication__DaprInternal__AllowedCallers__0", "projects")
+            .WithEnvironment("Authentication__DaprInternal__AllowedCallers__1", "tenants");
+        foreach ((string workload, IResourceBuilder<DotnetProjectResource> owner, string domains) in new[]
+        {
+            ("projects", projects, "projects"),
+            ("tenants", tenants, "tenants,global-administrators"),
+        })
+        {
+            using RSA key = RSA.Create(2048);
+            string privateKey = Convert.ToBase64String(key.ExportPkcs8PrivateKey());
+            _ = owner.WithEnvironment("Authentication__BoundStreamRead__PrivateKey",
+                builder.AddParameter($"projects-catalog-{workload}-owner-key", () => privateKey, secret: true));
+            _ = gateway.WithEnvironment("Authentication__BoundStreamRead__PublicKeys__" + workload, Convert.ToBase64String(key.ExportSubjectPublicKeyInfo()))
+                .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__" + workload, domains);
+        }
     }
 
     private static Assembly Load(IResourceBuilder<DotnetProjectResource> resource, string artifact)
     {
         string projectPath = resource.Resource.GetProjectMetadata().ProjectPath;
         var appHostOutput = new DirectoryInfo(AppContext.BaseDirectory);
-        string path = appHostOutput.Parent is { Name: "Hexalith.Projects.AppHost", Parent: { } artifactsBin }
-            ? Path.Combine(artifactsBin.FullName, Path.GetFileNameWithoutExtension(projectPath), appHostOutput.Name, artifact)
+        // An artifacts layout (<artifacts>/bin/<project>/<config>) selects the owner from the same tree, including
+        // when a test assembly composes this model; the conventional Debug output remains the fallback.
+        DirectoryInfo? artifactsBin = appHostOutput.Parent?.Parent;
+        string? artifactsPath = artifactsBin is null ? null
+            : Path.Combine(artifactsBin.FullName, Path.GetFileNameWithoutExtension(projectPath), appHostOutput.Name, artifact);
+        string path = artifactsPath is not null
+            && (appHostOutput.Parent!.Name == "Hexalith.Projects.AppHost" || (artifactsBin!.Name == "bin" && File.Exists(artifactsPath)))
+            ? artifactsPath
             : Path.Combine(Path.GetDirectoryName(projectPath)!, "bin", "Debug", "net11.0", artifact);
         if (!File.Exists(path))
         {

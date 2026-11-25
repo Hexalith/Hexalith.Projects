@@ -111,7 +111,8 @@ existing dependency waits; disabling security does not verify recovery of the au
 
 Once Keycloak is healthy, EventStore requires `Authentication:WorkloadIssuer:ClientId` and
 `ClientSecret` to obtain assertions for its internal domain-service calls. In the ordinary run topology,
-the AppHost takes them from the bound workload issuer settings under `Projects:DevelopmentRouteCatalog:Workload`.
+the AppHost takes them from the bound workload issuer settings under `Projects:DevelopmentRouteCatalog:Workload`,
+which also supply the Projects and Tenants client credentials.
 A published composition instead supplies a generated secret parameter to both Keycloak's `eventstore`
 service-account client and EventStore through the platform's `WithEventStoreWorkloadClientCredentials` helper.
 Keycloak receives that secret in both modes. It follows `KeycloakPersistent`:

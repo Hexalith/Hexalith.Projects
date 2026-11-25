@@ -840,7 +840,8 @@ location: src/Hexalith.Projects.AppHost/Program.cs (run-mode branch); src/Hexali
 source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
 reason: Review findings VG-3, BH-5 and EC-15. The only AppHost model test now runs with --operation publish and no longer asserts that KeycloakPersistent=true persists the workload secret. Dropping replay-state from a receiver grant list, inverting the credential skip or removing persist: fails no test outside the live lanes. Run mode needs owner custody and Dapr mTLS before a model test can build it. Severity medium. Owner: Projects maintainer.
 removal_condition: Run-mode model tests pin the receiver grants, the workload binding environment, the credential skip and workload-secret persistence.
-status: open
+status: done 2026-11-25
+resolution: tests/Hexalith.Projects.Integration.Tests/OrdinaryRunModeCompositionTests.cs composes the actual AppHost in Development run mode with a fresh private custody profile and configuration defaults disabled. It pins the receiver grants against the manifest callbacks, the workload binding and owner proof trust, the gateway credential skip and the persisted and ephemeral Keycloak workload secret, and refuses missing Projects and Tenants client credentials. A positive run with owner custody remains DW-63 owner evidence.
 
 ### DW-93: Settle whether projects-workers must be enrolled in the ordinary catalog.
 
@@ -867,6 +868,7 @@ location: module/hexalith.module-manifest.v2.json; src/Hexalith.Projects.AppHost
 source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
 reason: Review finding BH-13. DW-63 added the /replay-state grant by hand to the manifest and to the compositions, and no test compares manifest callbacks with SDK-mapped receivers or composition grants. That drift is how replay-state was missing before this change. A cross-check is new test infrastructure. Severity medium. Owner: Projects maintainer.
 removal_condition: A test fails when the manifest callbacks, the SDK-mapped receivers and the composition grant lists disagree.
+progress: 2026-11-25, OrdinaryRunModeCompositionTests compares the ordinary run-mode Projects receiver grants with the manifest callbacks. The isolated, supported-read and package fixture compositions are not yet compared.
 status: open
 
 ### DW-96: Authorize proposal confirmation before parsing its body.
@@ -1063,6 +1065,17 @@ source_spec: _bmad-output/planning-artifacts/epics.md#story-88-integrate-authent
 reason: Story 7.17 compares SDK writer behavior with the existing grant and revoke commands. FR-26 also needs authenticated evidence of owner-only admission, exact grant scope and lifetime, current Folder authority and an unchanged permitted set.
 removal_condition: The 8.8-P1 release security package passes the DW-113 cases in Story 8.8 at an immutable revision. The safe-404 cases close under DW-112.
 gate: Epic 8 release (8.8-P1 release security evidence)
+status: open
+
+### DW-114: Run the ordinary local topology with owner catalog custody and a bound workload issuer.
+
+origin: spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md step-03 task audit (2026-11-25), human decision "close on its ACs"
+owner: Projects Owner, with Platform for the workload binding
+location: src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs; tools/qualification/run_live_project_fixtures.py (ordinary-startup phase); module/README.md
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: DW-63 closed on its acceptance criteria, which pass in the private and isolated catalog profiles. The ordinary composition supplies the Gateway, Projects and Tenants workload clients, the Tenants stream-read grant and run-scoped owner proof trust, and OrdinaryRunModeCompositionTests pins them. No ordinary run has admitted a catalog yet: it needs owner-held Redis catalog custody and an HTTPS workload issuer that the services trust through the system certificate store. The live runner's ordinary phase only accepts the custody refusal (review BH5-1, VG5-O1). The same run settles DW-93.
+removal_condition: An exact-source ordinary Debug AppHost run over owner custody and a bound issuer records the committed generation, wrong and missing credential refusals, and persisted command, query and projection deliveries, and the live runner's ordinary phase supplies fresh custody and an issuer instead of accepting the refusal.
+gate: DW-63 owner acceptance
 status: open
 
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
@@ -1890,3 +1903,13 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
   summary: Cover the advisory original-admin-flag refusal in the package-mode CI lane.
   evidence: ProjectAdvisoryQueryExecutor.cs:72 refuses an SDK-normalized envelope whose original administrator flag was true. Its only test, SupportedProjectAuthorityHttpTests.AdvisoryQueryRefusesAnUnverifiedBoundAdministratorFlag, compiles only with HEXALITH_SOURCE_FIXTURE. VerifiedQueryCaller has a private constructor, so a package-mode test needs an SDK test seam or a package-mode caller-bound host harness.
+
+## Deferred from: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md and the 7.1-P2 EventStore G-1 slice (2026-11-25)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Settle whether the Projects executable needs the human authority receipt signing key in its declared secrets.
+  evidence: Review finding B8, unverified. All three AppHost profiles pass Authentication__HumanAuthorityReceipt__SigningKey to Projects, but module/hexalith.module-manifest.v2.json integration.secrets lists only APP_API_TOKEN, WorkloadIssuer:ClientSecret and BoundStreamRead:PrivateKey. A grep finds the key read by the EventStore gateway (CommandsController) and no Projects Server source. Settle it by checking whether the Projects executable or its SDK reads the key; if it does, a deployment built from the declaration lacks it (medium), otherwise remove the Projects environment entry.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
+  summary: Verify that Durable Task rows written before the failure count existed load and resume under the new candidate.
+  evidence: Review finding VG-4 (pre-verified). DurableTaskProgress adds a persisted attempt count (Attempts) with new IsConsistent rules, and every test writes rows with the new types, so no fixture reads old-format JSON such as a WaitingForDependency row with a pending step. Belongs with the EventStore G-1 rollback item in references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md.
