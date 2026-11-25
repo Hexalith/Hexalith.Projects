@@ -905,6 +905,7 @@ owner: EventStore release owner, then Builds owner, then Projects owner for the 
 location: src/Hexalith.Projects.Server/Queries/ProjectsQueryResponsePolicy.cs:8; references/Hexalith.Builds catalog selection; EventStore 208af26a (untagged)
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
 reason: Published EventStore up to 5.5.2 lacks IDomainQueryResponsePolicy, first present in untagged 208af26a. CI builds in package mode, so build-and-test fails with CS0246 on every revision that uses the type and the downstream jobs are skipped; CI therefore supplies no DW-63 acceptance evidence. Project references in CI stay forbidden. Rechecked during the 2026-11-25 spine finalization: nuget.org still lists 5.5.2 as the latest DomainService release.
+progress: Later on 2026-11-25, NuGet published EventStore 5.6.0 and the Builds owner catalog selected it at a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2. Projects package-mode Server build and 54 focused tests passed against that catalog without overrides. At Projects 5025fde60965b77b4e7a5662b26ce31867a8b4c3, the tracked Builds gitlink still selects 5.5.1 and main CI failed with CS0246. [CI build-and-test](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45627252920/job/139253049059)
 removal_condition: EventStore publishes a release after 5.5.2 that carries the type, Builds selects it, Projects advances its Builds gitlink, and main CI build-and-test passes in package mode.
 gate: DW-63 acceptance
 status: open
@@ -1872,3 +1873,11 @@ status: open
   evidence: The retained list prefilters candidates by discovery lifecycle. The retained Conversation route prefilters by explicit linkage or discovery name to keep exact authorization and owner reads bounded. A newly matching Project whose discovery row has lagged can remain outside either candidate set. A coverage repair must preserve the existing owner budget and the exact-authorization boundary.
   status: done 2026-11-24
   resolution: Retained List applies lifecycle to authorized detail after bounded Tenant discovery. Retained Conversation evaluates the authoritative link or authorized detail name within the 200-Project cap and reserves Folder owner checks for matches. Focused HTTP tests cover reverse projection disagreement, a missing linked list row, denied or nonmatching Projects, and 200/201-row limits.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Qualify Conversation-start projection persistence in the isolated browser topology.
+  evidence: The browser fixture grants named projection callbacks but attaches only the shared state and pub/sub components. The pre-migration fixture had the same gap. Bind the named Conversation-start store to Projects in that fixture and observe its persisted result after admitted delivery.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Diagnose intermittent Folder owner unavailability during fresh paging after full Project replay.
+  evidence: The prior full-replay lane rebuilt all four Projects and rejected the stale cursor, then received FolderUnavailable on a fresh second page. The isolated rerun at 5025fde60965b77b4e7a5662b26ce31867a8b4c3 passed fresh paging and the remaining replay assertions. Retain the owner operation deadlines and distinguish a Folder dependency failure from a paging gap in the diagnostics.

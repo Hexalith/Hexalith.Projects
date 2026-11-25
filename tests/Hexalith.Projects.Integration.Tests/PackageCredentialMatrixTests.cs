@@ -50,10 +50,7 @@ public sealed class PackageCredentialMatrixTests
         string directory = scratch.Directory;
         await using (scratch.ConfigureAwait(true))
         {
-            string root = AppContext.BaseDirectory;
-            while (!File.Exists(Path.Combine(root, "Hexalith.Projects.CI.slnx")))
-                root = Directory.GetParent(root)?.FullName ?? throw new InvalidOperationException("Credential preflight repository root is missing.");
-            FixtureInputs inputs = new(scratch, root, true, "main");
+            FixtureInputs inputs = new(scratch, TestRepositoryRoot.Find(), true, "main");
             await using var inputCleanup = inputs.ConfigureAwait(true);
             await inputs.PrepareAsync(TestContext.Current.CancellationToken);
             inputs.NativeCredentials.ShouldBeTrue();

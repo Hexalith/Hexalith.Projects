@@ -52,7 +52,10 @@ To validate a fresh realm in the prepared shell, start an isolated host with per
 KeycloakPersistent=false aspire start --apphost "$APPHOST" --isolated --non-interactive
 ```
 
-Start without the shared security resource when working on non-auth local plumbing:
+To use an external human OIDC provider, configure `Authentication:JwtBearer:Authority`,
+`Authentication:JwtBearer:Issuer`, and `Authentication:JwtBearer:Audience` for Projects and
+the corresponding human bearer settings for EventStore and Tenants. Configure the UI's
+OIDC client for that provider before disabling the shared Keycloak resource.
 
 ```bash
 EnableKeycloak=false aspire start --apphost "$APPHOST" --format Json --non-interactive

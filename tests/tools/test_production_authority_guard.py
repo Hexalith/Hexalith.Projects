@@ -974,8 +974,12 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             action["projects_evidence_pin"] = link
         return GUARD.yaml.safe_dump(candidate, sort_keys=False)
 
-    def p2_fixture(self) -> tuple[dict[str, Any], dict[str, bytes]]:
+    def p2_fixture(
+        self, *, durable_task_rollback_revisions: dict[str, str] | None = None
+    ) -> tuple[dict[str, Any], dict[str, bytes]]:
         artifacts: dict[str, bytes] = {}
+        if durable_task_rollback_revisions is None:
+            durable_task_rollback_revisions = {"EventStore": "d" * 40, "Platform": "e" * 40}
 
         def artifact(name: str, data: bytes | None = None) -> dict[str, str]:
             path = f"evidence/epic7/7.1-P2-test/{name}.txt"
@@ -1007,7 +1011,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "rollback": {
                 "durableTask": {
                     **run("rollback-tasks"),
-                    "revisions": {"EventStore": "d" * 40, "Platform": "e" * 40},
+                    "revisions": durable_task_rollback_revisions,
                 },
                 "folderProvisioning": {
                     **run("rollback-folders"),
@@ -1102,6 +1106,11 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 del container[fields[-1]]
                 with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*" + error):
                     self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+    def test_p2_rollback_requires_platform_revision_even_with_matching_approvals(self) -> None:
+        pin, artifacts = self.p2_fixture(durable_task_rollback_revisions={"EventStore": "d" * 40})
+        with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*durableTask rollback revisions.*Platform"):
+            self.validate_boundary(sprint=self.p2_sprint(), p2_pin=pin, p2_artifacts=artifacts)
 
     def test_missing_or_changed_p2_artifacts_fail_closed(self) -> None:
         sprint = self.p2_sprint()

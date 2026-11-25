@@ -81,9 +81,7 @@ public sealed class PackageOwnerMetadataTests
 
     private static (string Executable, string Declarations, string Adapters) Artifacts(string owner)
     {
-        string root = AppContext.BaseDirectory;
-        while (!File.Exists(Path.Combine(root, "Hexalith.Projects.CI.slnx")))
-            root = Directory.GetParent(root)?.FullName ?? throw new InvalidOperationException("Prebuilt fixture repository root is missing.");
+        string root = TestRepositoryRoot.Find();
         (string project, string executable, string declarations, string adapters) = owner switch
         {
             "tenants" => (Path.Combine(SelectedRoot("PackageFixtureTenantsRoot"), "src/Hexalith.Tenants"), "Hexalith.Tenants.dll", "Hexalith.Tenants.Contracts.dll", "Hexalith.Tenants.Server.dll"),
@@ -92,7 +90,10 @@ public sealed class PackageOwnerMetadataTests
             _ => throw new InvalidOperationException("Unknown actual owner."),
         };
         string configuration = typeof(PackageOwnerMetadataTests).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
-        string output = Path.Combine(root, project, "bin", configuration, "net11.0");
+        var testOutput = new DirectoryInfo(AppContext.BaseDirectory);
+        string output = testOutput.Parent is { Name: "Hexalith.Projects.Integration.Tests", Parent: { } artifactsBin }
+            ? Path.Combine(artifactsBin.FullName, Path.GetFileName(project), testOutput.Name)
+            : Path.Combine(root, project, "bin", configuration, "net11.0");
         if (!Directory.Exists(output) && !string.Equals(configuration, "Debug", StringComparison.OrdinalIgnoreCase))
         {
             string debug = Path.Combine(root, project, "bin", "Debug", "net11.0");

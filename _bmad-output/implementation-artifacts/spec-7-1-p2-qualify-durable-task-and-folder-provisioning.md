@@ -76,6 +76,11 @@ context: []
 
 ## Review Triage Log
 
+| Finding | Verdict | Evidence and disposition |
+|---|---|---|
+| Receipt bytes can be arbitrary before owner review | false for approval bypass | The digest binds the actual bytes, revisions and verification commands to all five decisions. Those owners and architects verify the native results for their selected harnesses before signing. |
+| The guard suite did not isolate a missing Platform rollback revision | medium | The new regression supplies matching synthetic approval hashes and omits only Platform from the Durable Task rollback target. The guard refuses that candidate. |
+
 ## Verification
 
 - `python3 tools/planning/validate_production_authority.py --validate-index` must pass for the active index and the isolated candidate using the four project-context path overrides.
@@ -86,3 +91,4 @@ context: []
 - The isolated G-1 candidate build used the pinned owner base revisions with the working-tree changes copied into disposable checkouts. From EventStore under `run-with-temp`, build `tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj` with `dotnet build --configuration Debug --artifacts-path "$TMPDIR/artifacts" -p:UseHexalithProjectReferences=true -m:1`. Run the resulting assembly with `dotnet "$assembly" -class "*DurableTaskAdmissionTests" -class "*DurableTaskExecutionTests" -class "*CheckpointedProcessRunnerTests" -failSkips`. Build and 41 tests passed with no warnings, errors or skips.
 - Run `python3 ../Hexalith.Platform/eng/durable-task-qualification/probe_state_store.py --native-execution "$assembly" --evidence-directory "$evidence"` in the same job. Three admission tests and both execution phases passed with zero skips. Two Dapr 1.19.2 sidecars shared a Redis append-only store. The test owner committed its second receipt before losing the response. After restart, a replacement worker kept the original task and first receipt, fenced the old worker, and recovered the second receipt from the owner without invoking a duplicate effect. The fixture also checked that owner unavailability prevented advancement. Source and receipt digests and native XML are in `~/.local/state/hexalith-projects/7-1-p2-g1-8uTCXOSM/`. The fixture uses test authority and a test owner.
 - The active and isolated Projects indices passed. A separate isolated tracker candidate marked P2 done and linked the missing pin. It was rejected with exit 1. The guard suite passed 59 tests and 442 subtests. The additional test rejects a recovery receipt symlink with the approved bytes and hash.
+- The resumed active index passed. Isolated candidates passed for the open tracker and the synthetic complete pin, and failed when the pin was missing or the retained recovery receipt changed. The focused guard suite passed 60 tests and 442 subtests, including the incomplete Platform rollback target. The full owner qualification and five acceptance decisions are pending.

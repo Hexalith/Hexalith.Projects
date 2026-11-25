@@ -209,8 +209,41 @@ Loop 2 left one patch entry (BH2-3, VG2-3: the metadata theory name) and one new
 | VG3-1 | Positive full replay only exercised the static projection helper | medium | Exercise the admitted SDK callback with a historical pending Folder and inspect the returned state. |
 | VG3-2 | P2 closure did not exercise a linked receipt with matching bytes | medium | The P2 guard regression now includes the linked recovery receipt. |
 
+### Resumed review (2026-11-25)
+
+| ID | Finding | Verdict | Evidence and disposition |
+|---|---|---|---|
+| BH4-1 | Package-mode build cannot resolve the SDK policy | high | Carried BH3-1. New owner catalog passes locally. DW-99 still requires the tracked gitlink and main CI result. |
+| BH4-2 | Ordinary Projects outbound credentials and proof trust are incomplete | medium | Carried BH3-3. Projects needs its own issuer credentials and matching Gateway proof trust. Ordinary proof requires owner custody. |
+| BH4-3 | Browser fixture lacks the Conversation-start state component | medium | The baseline also attached only shared state and pub/sub while registering the handler. Deferred for the browser fixture. |
+| BH4-4 | Receiver test does not exercise actual composition grants | medium | Carried BH-13 and VG2-2. DW-95 and DW-97 track parity and callback verification. |
+| BH4-5 | Rejection validation differs between SDK replay and the legacy fold | low | SDK replay validates the supplied payload. The existing fold preserves the historical no-op disposition. |
+| BH4-6 | Timeline captures a full state for each event | maybe-false | The reviewer supplied no failing history. Large-stream timeline qualification belongs to EventStore Admin replay. |
+| BH4-7 | P1 guard does not check its pin and receipts | medium | The accepted P1 package owns its pin integrity. |
+| BH4-8 | P1 runner cannot reuse its tracked output directory | medium | The accepted P1 package owns the clean-checkout reproduction path. |
+| BH4-9 | P1 runner does not require a complete suite inventory | medium | The accepted P1 package owns its native receipt validation. |
+| BH4-10 | Arbitrary receipt bytes can bypass P2 approval | false | The guard binds receipt bytes to all five decisions. The signing owners and architects verify the results before approval. |
+| BH4-11 | Runbook suggests disabling Keycloak without a human issuer | medium | Patched the topology runbook to require external human OIDC configuration for that path. |
+| BH4-12 | Legacy-wire parity receipt is local | medium | Owner acceptance still requires immutable checkout-visible evidence. The recorded local fixtures and native results remain available. |
+| EC4-1 | Package-mode build cannot resolve the SDK policy | high | See BH4-1. |
+| EC4-2 | Staged rebuild callbacks lack grants | medium | The staged protocol predates the SDK host migration and is separate from the qualified full-prefix rebuild. |
+| EC4-3 | Named reconciliation lacks a persisted handler | medium | The SDK requires an explicit reconciliation handler. DW-97 still requires persisted reconciliation evidence. |
+| EC4-4 | Ordinary owner and stream reads lack outbound proof settings | medium | See BH4-2. |
+| EC4-5 | Replay accepts a rejection with missing payload identities | low | The legacy fold treats recognized rejections as no-op. Extra identity requirements need evidence from retained histories. |
+| EC4-6 | Arbitrary native receipts can bypass P2 approval | false | See BH4-10. |
+| VG4-1 | Hosted replay did not verify timeline state | medium | Patched the admitted HTTP test to compare both sequences with their legacy full projection prefixes. |
+| VG4-2 | No P2 negative test isolates a missing Platform rollback revision | medium | The P2 guard test now checks a candidate with matching approvals and an incomplete rollback target. |
+| VG4-3 | Actual AppHost rebuild-part and reconcile grants are unverified | medium | See BH4-4. |
+| VG4-4 | Ordinary credential selection is unverified | medium | Carried VG-3. DW-92 tracks the ordinary run proof. |
+
 ## Verification
 
 - Prepare local Debug source mapping using `hexalith-module prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace "$TMPDIR/source-mapping" --output json`. Run the focused Server tests in `ProjectsRuntimeCatalogTests`, `ProjectsDomainProcessorTests`, `SupportedProjectReadHttpTests` and `ProjectsAuthenticationContractTests`, plus the domain `ReadCutoverHistoryTests`. Use `run-with-temp` and the emitted mapping environment.
 - Run `run-with-temp python3 tools/qualification/run_supported_project_reads.py --regressions`, the exact-source 77-cell v4 matrix and seven independent retained rollback reads in `docs/read-cutover.md`. Validate the published SDK dependency through the separate Release package-mode Server lane.
 - Run `python3 tools/planning/validate_production_authority.py --validate-index` and record the new route, authorization, projection and read evidence before DW-63 review.
+
+- At Projects `5025fde60965b77b4e7a5662b26ce31867a8b4c3` with its tracked gitlinks, the isolated `--scenario full-replay --timeout 600` run exited 0. Both Tenants passed all four full-prefix rebuilds, the persisted state comparison, stale cursor invalidation and fresh paging. The runner verified removal of its AppHost and four containers and preservation of preexisting resources. The native result SHA-256 is `058c7a3e5fba0fc2d72acdffac0bfb82aeb85a17f36ea823f02cdb3ae0ffbd11`. Receipts are under `~/.local/state/hexalith-projects/dw-63-resume-live-mJ9gAJO4/full-replay/`.
+- The tracked Builds revision `bf8a28b4bbcec619e8d9764d335f786f2bafb69e` reproduced `CS0246` on `IDomainQueryResponsePolicy`. EventStore 5.6.0 and Commons 3.0.3 passed 54 focused tests with temporary version overrides. A separate Release package build with Builds owner revision `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2`, which selects EventStore 5.6.0 and Commons 3.0.4, passed without overrides. Its 54 focused tests passed. With the working-tree timeline assertion added, that selection also passed 54 focused tests and one explicit timeline test with zero skips. Receipts are under `~/.local/state/hexalith-projects/dw-63-builds-owner-HRPnTXa3/` and `~/.local/state/hexalith-projects/dw-63-timeline-zi0OdN2D/`.
+- The separate `--scenario main --regressions --timeout 600` run passed the distributed scenario. The Integration regression assembly reported 349 passes and six failures. Five tests looked for the checkout beside the disposable build artifacts. The Production adapter test inherited the launcher's Development WebHost setting. The tests now use the existing repository-root resolver and select their WebHost environment explicitly. The initial run verified cleanup. Its results are under `~/.local/state/hexalith-projects/dw-63-resume-main-8p48BuLV/main/`.
+- The live main rerun passed the distributed scenario again and verified cleanup. In the following Integration lane, three declaration checks refused mismatched SDK bytes from the separate AppHost and test builds. The metadata test now takes prebuilt owner binaries from the same MSBuild artifact tree as its SDK assemblies. It retains the existing byte-identity check and conventional output lookup.
+- A separate mapped Debug run with those fixture changes built both test projects using `--artifacts-path "$TMPDIR/artifacts" -p:SupportedProjectReadDistributed=true -m:1`. It ran the launcher's Integration regression selection against disposable build outputs and the complete Server project with an owned Dapr sidecar. Integration passed 355 and Server passed 1,721, with zero failures or skips. Native XML hashes are `146b03bb660ea884490c9060a7942314f0bd2c3096ce742c5a735a25ec9ccfa0` and `8bc9a725433a417747ed7e760047fb07ee8eee3b8fab8c946180781346907083` respectively. The separate run retained its test overlay and logs under `~/.local/state/hexalith-projects/dw-63-source-suites-epBBAxNJ/`.

@@ -347,6 +347,11 @@ public sealed partial class SupportedProjectReadHttpTests
             replayedState.Status.ShouldBe(AggregateReconstructionStatus.Succeeded);
             replayedState.LastAppliedSequenceNumber.ShouldBe(2);
             JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(replayedState.StateJson!), projection.State).ShouldBeTrue();
+            IReadOnlyList<AggregateReconstructionTimelineEntry> timeline = replayedState.Timeline.ShouldNotBeNull();
+            timeline.Select(entry => entry.SequenceNumber).ShouldBe([1L, 2L]);
+            ProjectionResponse created = ProjectProjectionHandler.Project(new("tenant-a", "projects", "exact-project", history[..1]));
+            JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(timeline[0].StateJson), created.State).ShouldBeTrue();
+            JsonElement.DeepEquals(JsonSerializer.Deserialize<JsonElement>(timeline[1].StateJson), projection.State).ShouldBeTrue();
             app.Services.GetRequiredService<InMemoryReadModelStore>().Count.ShouldBe(0);
             await app.StopAsync(token);
 

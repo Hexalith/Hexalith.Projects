@@ -85,7 +85,7 @@ public sealed class PackageFixtureSafetyTests
     {
         IHostBuilder builder = Host.CreateDefaultBuilder().UseEnvironment(environment).ConfigureWebHost(web =>
         {
-            web.UseKestrel().UseSetting("HEXALITH_PACKAGE_STARTUP", enabled).Configure(_ => { });
+            web.UseEnvironment(environment).UseKestrel().UseSetting("HEXALITH_PACKAGE_STARTUP", enabled).Configure(_ => { });
             new PackageHostingStartup().Configure(web);
         });
         Should.Throw<InvalidOperationException>(() => builder.Build()).Message.ShouldContain("private Development");
