@@ -1,0 +1,215 @@
+[
+  {
+    "purpose": "clone",
+    "cwd": "<work>",
+    "command": [
+      "git",
+      "clone",
+      "--no-checkout",
+      "--quiet",
+      "<repo>",
+      "<work>/clone"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:51:07Z",
+    "finishedUtc": "2026-11-25T06:51:08Z"
+  },
+  {
+    "purpose": "checkout",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "-c",
+      "advice.detachedHead=false",
+      "checkout",
+      "--quiet",
+      "--detach",
+      "b738fc5b1709a65982f8632534561ade459a3290"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:51:08Z",
+    "finishedUtc": "2026-11-25T06:51:31Z"
+  },
+  {
+    "purpose": "submodule-init",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "submodule",
+      "init"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:51:31Z",
+    "finishedUtc": "2026-11-25T06:51:32Z"
+  },
+  {
+    "purpose": "submodule-update",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "-c",
+      "protocol.file.allow=always",
+      "submodule",
+      "update",
+      "--quiet",
+      "--",
+      "references/Hexalith.AI.Tools",
+      "references/Hexalith.EventStore",
+      "references/Hexalith.Tenants",
+      "references/Hexalith.FrontComposer",
+      "references/Hexalith.Conversations",
+      "references/Hexalith.Folders",
+      "references/Hexalith.Parties",
+      "references/Hexalith.Commons",
+      "references/Hexalith.Builds",
+      "references/Hexalith.Memories",
+      "references/Hexalith.Platform",
+      "references/Hexalith.McpCli",
+      "references/Hexalith.CiCd"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:51:32Z",
+    "finishedUtc": "2026-11-25T06:53:34Z"
+  },
+  {
+    "purpose": "revert",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "-c",
+      "user.name=7.1-P1 rollback drill",
+      "-c",
+      "user.email=rollback-drill@invalid",
+      "revert",
+      "--no-edit",
+      "b738fc5b1709a65982f8632534561ade459a3290",
+      "a101e7cdae6918602b9d771c4fe4a18a96ebe551"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:53:34Z",
+    "finishedUtc": "2026-11-25T06:53:37Z"
+  },
+  {
+    "purpose": "builds-cli-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "<work>/builds-cli"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:53:50Z",
+    "finishedUtc": "2026-11-25T06:55:32Z"
+  },
+  {
+    "purpose": "source-mapping",
+    "cwd": "<work>/clone",
+    "command": [
+      "dotnet",
+      "<work>/builds-cli/bin/Hexalith.Builds.Module.Cli/debug/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "<work>/prepared",
+      "--output",
+      "json"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:55:32Z",
+    "finishedUtc": "2026-11-25T06:55:39Z"
+  },
+  {
+    "purpose": "Server-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CustomBeforeDirectoryBuildProps=<work>/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps=<work>/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets=<work>/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH=df77fd1002868313aa5f08ed3fab7be067564fb5508f461113bed3dd78678e47",
+      "Configuration=Debug",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "-warnaserror",
+      "-v:m",
+      "--artifacts-path",
+      "<work>/clone/artifacts/server"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:55:39Z",
+    "finishedUtc": "2026-11-25T07:00:19Z"
+  },
+  {
+    "purpose": "Server-tests",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CustomBeforeDirectoryBuildProps=<work>/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps=<work>/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets=<work>/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH=df77fd1002868313aa5f08ed3fab7be067564fb5508f461113bed3dd78678e47",
+      "Configuration=Debug",
+      "dotnet",
+      "<work>/clone/artifacts/server/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/rollback/Server.xml",
+      "-noColor",
+      "-noLogo",
+      "-class",
+      "Hexalith.Projects.Server.Tests.CreateProjectEndpointTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ProposeNewProjectEndpointTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectsDomainProcessorTests",
+      "-trait-",
+      "Package=7.1-P1"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T07:00:19Z",
+    "finishedUtc": "2026-11-25T07:00:30Z"
+  },
+  {
+    "purpose": "negative-control",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CustomBeforeDirectoryBuildProps=<work>/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps=<work>/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets=<work>/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH=df77fd1002868313aa5f08ed3fab7be067564fb5508f461113bed3dd78678e47",
+      "Configuration=Debug",
+      "dotnet",
+      "<work>/clone/artifacts/server/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/rollback/negative-control.xml",
+      "-noColor",
+      "-noLogo",
+      "-ignoreFailures",
+      "-trait",
+      "Package=7.1-P1"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T07:00:30Z",
+    "finishedUtc": "2026-11-25T07:00:37Z"
+  }
+]

@@ -779,6 +779,60 @@ removal_condition: Demonstrate bounded original-actor owner batches for supporte
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-22.md
 status: open
 
+### DW-86: Run the 7.1-P1 creation-contract tests in Projects CI once Server.Tests builds in package mode.
+
+origin: code review of spec-7-1-p1-qualify-projects-creation-contracts.md (2026-11-25)
+location: tests/Hexalith.Projects.Server.Tests (trait Package=7.1-P1, CreateProjectEndpointTests); main CI unit-test-projects lane
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: Server.Tests does not compile in CI=true package mode (CS0246, DW-63). The 77 Package=7.1-P1 tests and the flipped create tests therefore run only through the manual evidence/epic7/7.1-P1/run-qualification.sh (Debug source mode). A regression in duplicate, non-string or versioned-without-metadata create rejection could merge without a failing check. Owner: Projects build hygiene. Not a 7.1-P1 gate.
+removal_condition: Main CI builds Hexalith.Projects.Server.Tests in package mode, and its recorded results include the Package=7.1-P1 tests.
+status: open
+
+### DW-87: Reject duplicate and non-string classifications on proposal confirmation.
+
+origin: code review of spec-7-1-p1-qualify-projects-creation-contracts.md (2026-11-25)
+location: src/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs (~186, body read with the shared RequestJsonOptions)
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: Confirm still parses with the shared RequestJsonOptions, which allow duplicate properties (last value wins) and report a non-string class as a generic parse failure. A body with "metadataClass":"unsupported_metadata","metadataClass":"tenant_sensitive" is now rejected by direct create but accepted by confirm. 7.1-P1 covered confirm for validator parity only (Q2=A). Route to Story 7.12 together with the confirm parse-before-authorize entry. Owner: Projects maintainer.
+removal_condition: Confirm returns 400 projectMetadata for duplicate and non-string classifications without submitting anything, pinned by tests.
+status: open
+
+### DW-88: Return 400 for a missing or non-JSON Content-Type on POST /api/v1/projects.
+
+origin: code review of spec-7-1-p1-qualify-projects-creation-contracts.md (2026-11-25)
+location: src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs CreateProjectAsync (ReadFromJsonAsync, catch JsonException)
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: ReadFromJsonAsync throws InvalidOperationException when the Content-Type is missing or not JSON, or the charset is unsupported. The handler catches only JsonException, so an authorized caller gets an unhandled 500 instead of 400 validation_error. Present at the 6.7 baseline; not yet reproduced by a test. Owner: Projects maintainer.
+removal_condition: Authorized create requests with a missing or non-JSON Content-Type return 400 validation_error with rejectedField body and no submission, pinned by tests.
+status: open
+
+### DW-89: Decide and enforce the accepted shape of a create projectId string.
+
+origin: code review of spec-7-1-p1-qualify-projects-creation-contracts.md (2026-11-25)
+location: src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs CreateProjectAsync (projectId); src/Hexalith.Projects.Contracts/Identifiers/ProjectId.cs
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: A null, empty or whitespace projectId becomes a generated id, and ProjectId accepts any other non-whitespace string. The 400 projectId branch is therefore unreachable, and values with spaces, slashes or more than 128 characters reach the processor, while GET paths require CanonicalIdentifierRegex. Unverified: whether the EventStore gateway rejects such aggregate ids. Settle it by submitting one against a real gateway or by reading the AggregateIdentity rules. Medium if confirmed. Present at the 6.7 baseline. Owner: Projects maintainer.
+removal_condition: The create projectId rule is decided, and HTTP tests pin rejection of non-conforming ids.
+status: open
+
+### DW-90: Decide whether create replays with different optional fields are conflicts.
+
+origin: code review of spec-7-1-p1-qualify-projects-creation-contracts.md (2026-11-25)
+location: src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs (create IdempotencyFingerprint)
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: All ten accepted 7.1-P1 fixture cases share IdempotencyFingerprint sha256:7d9b6ec5…, including legacy-full with description and setupMetadata. Reusing an Idempotency-Key with a different description or setupMetadata is treated as a replay rather than a 409 conflict, and the new values are dropped. Present at the 6.7 baseline. ProjectCommandValidator.cs is a 7.1-P1 fingerprinted file, so a change moves that fingerprint. Owner: Projects maintainer with the Projects Owner.
+removal_condition: A create replay with a different description or setupMetadata returns 409, or the replay rule is accepted and documented in the create contract.
+status: open
+
+### DW-96: Authorize proposal confirmation before parsing its body.
+
+origin: spec-7-1-p1-qualify-projects-creation-contracts.md, decision Q2=A (2026-11-25)
+location: src/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs ConfirmNewProjectProposalAsync (ReadFromJsonAsync and TryValidateConfirmRequest run before AuthorizeCreateAsync)
+source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
+reason: Direct create authorizes before it reads the body, and 7.1-P1 pins that with zero body bytes read for every denial mode. Confirm still reads and validates the body first, so an unauthorized caller gets 400 validation_error with a rejectedField for a malformed or invalid body instead of the 404 safe denial. 7.1-P1 covered confirm for validator parity only (Q2=A). Route to Story 7.12 together with DW-87. Owner: Projects maintainer.
+removal_condition: Confirm authorizes before reading the body, and unauthorized callers get the 404 safe denial with zero body bytes read for valid, malformed and invalid bodies, pinned by tests.
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.

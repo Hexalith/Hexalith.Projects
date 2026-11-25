@@ -1,0 +1,105 @@
+{
+  "schema": "hexalith.projects.7-1-p1-qualification-run.v1",
+  "mode": "rollback",
+  "requestedRevision": "b738fc5b1709a65982f8632534561ade459a3290",
+  "checkedOutHead": "f74e4c5abcac0965862350bc25c1b3bbc469f981",
+  "rollbackCommits": [
+    "b738fc5b1709a65982f8632534561ade459a3290",
+    "a101e7cdae6918602b9d771c4fe4a18a96ebe551"
+  ],
+  "fingerprint": {
+    "command": "git ls-tree <rev> -- <13 files> | sha256sum",
+    "value": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684",
+    "expected": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684",
+    "matches": true,
+    "tree": [
+      "100644 blob ea0527dc49121a1602293289722746a64bf7840c\tsrc/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs",
+      "100644 blob 88a6e15848656b503a779d538b4462836cd2e0e3\tsrc/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs",
+      "100644 blob 371a13efc3e43909098c7c95c4650854c0fa378a\tsrc/Hexalith.Projects.Contracts/Commands/CreateProject.cs",
+      "100644 blob a4ef5b8c30680312f6237c8f741720be3f7e7b08\tsrc/Hexalith.Projects.Contracts/Events/ProjectCreated.cs",
+      "100644 blob 2093ead2914f80ed992f4a93ab43b28e00ab8406\tsrc/Hexalith.Projects.Contracts/Events/ProjectCreationRejected.cs",
+      "100644 blob 9f8d2fd9df12d6fef0675e4dedde9cc92997faac\tsrc/Hexalith.Projects.Contracts/Events/ProjectFolderCreationPending.cs",
+      "100644 blob e35e711986aec66b15a7b51327e83e8b7507e734\tsrc/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml",
+      "100644 blob 45bf6b10ec4311fc4ff404870dae1a6ae23e8aa0\tsrc/Hexalith.Projects.Server/CreateProjectPayload.cs",
+      "100644 blob 021bd7be6617fd6f60061b3134125c7b546df51c\tsrc/Hexalith.Projects.Server/EventStoreProjectCommandSubmitter.cs",
+      "100644 blob 63ddff1e1ece75e3e1023b970fa7cf9cd98682a9\tsrc/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs",
+      "100644 blob a73099600b06570ae6751d26dbad6c77b81987d5\tsrc/Hexalith.Projects.Server/SensitiveMetadataTierValidator.cs",
+      "100644 blob 48e09523d2c098d989cbaadc52dae1865a6a7638\tsrc/Hexalith.Projects/Aggregates/Project/ProjectAggregate.cs",
+      "100644 blob 3272ce4f77422387a1e5a6b343a02461c173dacd\tsrc/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs"
+    ]
+  },
+  "rootSubmodules": [
+    " 01e64857ab73bde74be137c675a8376c4da8cbee references/Hexalith.AI.Tools (v1.0.1)",
+    " bf8a28b4bbcec619e8d9764d335f786f2bafb69e references/Hexalith.Builds (v6.7.0-7-gbf8a28b4)",
+    " 9405c50501e7a587b677fa890700e12363f00b66 references/Hexalith.CiCd (heads/main)",
+    " ab6e29bc72c2c08a2d72d4ee09cf20dd3ae029b5 references/Hexalith.Commons (v3.0.3)",
+    " b1c94eb7452252b2ccf4fa000dc0f92e328f3112 references/Hexalith.Conversations (v2.1.0-79-gb1c94eb7)",
+    " 208af26a5817da3bfb40da0bf968fbc3b578d83a references/Hexalith.EventStore (v5.5.2-11-g208af26a5)",
+    " d56e868fd38c1c84f447180b8bfbe525235220f7 references/Hexalith.Folders (v2.0.1-105-gd56e868f)",
+    " 781a48f5e2fde9e54222670fe4989b7132faf1ca references/Hexalith.FrontComposer (v6.1.0-23-g781a48f5)",
+    " c07d09ccf2e7dbb8781b20bf093e4e65d3f14216 references/Hexalith.McpCli (mcpcli-paired-publication-started-v3.0.0-102-gc07d09cc)",
+    " 667fbf2564ee2a1a30487e24cba20b37eebb76d0 references/Hexalith.Memories (v4.1.1-14-g667fbf25)",
+    " 2851be5c79d4ccc9d98858fbeea96e11fc4ab289 references/Hexalith.Parties (v4.0.1-19-g2851be5c)",
+    " f7635b592b0499a1c0888b91d1e3be4b0a2d7f78 references/Hexalith.Platform (v2.0.0-eventstore.1-395-gf7635b59)",
+    " d58f24d8d6909d7498ecec34955e7f17720c1ba0 references/Hexalith.Tenants (v8.0.4-6-gd58f24d8)"
+  ],
+  "nestedSubmodulesInitialized": false,
+  "isolatedNugetPackages": true,
+  "dotnetSdk": "11.0.100",
+  "suites": [
+    {
+      "suite": "Server",
+      "xml": "Server.xml",
+      "sha256": "274831e3ba7e0ec92ee21e4d0d57a2f3afceb8769b4aaf263bac865a7de78363",
+      "total": 192,
+      "passed": 192,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    }
+  ],
+  "negativeControl": {
+    "xml": "negative-control.xml",
+    "sha256": "8598bade83918f8ca778ac110ae69b756659a9dc2325dad7c30b0a1984f28a67",
+    "total": 77,
+    "passed": 62,
+    "failed": 15,
+    "failedCases": [
+      "class-non-string-number",
+      "class-non-string-boolean",
+      "class-non-string-object",
+      "class-non-string-array",
+      "class-non-string-case-variant-key",
+      "class-duplicate-invalid-then-valid",
+      "class-duplicate-same-value",
+      "class-duplicate-case-variant-key",
+      "versioned-name-only",
+      "versioned-null-metadata",
+      "versioned-version-only",
+      "duplicate-legacy-name",
+      "duplicate-request-schema-version",
+      "duplicate-project-metadata",
+      "duplicate-display-name"
+    ],
+    "expectedFailedCases": [
+      "class-non-string-number",
+      "class-non-string-boolean",
+      "class-non-string-object",
+      "class-non-string-array",
+      "class-non-string-case-variant-key",
+      "class-duplicate-invalid-then-valid",
+      "class-duplicate-same-value",
+      "class-duplicate-case-variant-key",
+      "versioned-name-only",
+      "versioned-null-metadata",
+      "versioned-version-only",
+      "duplicate-legacy-name",
+      "duplicate-request-schema-version",
+      "duplicate-project-metadata",
+      "duplicate-display-name"
+    ],
+    "matches": true
+  },
+  "completedUtc": "2026-11-25T07:00:37Z"
+}

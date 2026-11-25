@@ -1,0 +1,288 @@
+[
+  {
+    "purpose": "clone",
+    "cwd": "<work>",
+    "command": [
+      "git",
+      "clone",
+      "--no-checkout",
+      "--quiet",
+      "<repo>",
+      "<work>/clone"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:35:45Z",
+    "finishedUtc": "2026-11-25T06:35:45Z"
+  },
+  {
+    "purpose": "checkout",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "-c",
+      "advice.detachedHead=false",
+      "checkout",
+      "--quiet",
+      "--detach",
+      "b738fc5b1709a65982f8632534561ade459a3290"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:35:45Z",
+    "finishedUtc": "2026-11-25T06:35:58Z"
+  },
+  {
+    "purpose": "submodule-init",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "submodule",
+      "init"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:35:58Z",
+    "finishedUtc": "2026-11-25T06:35:58Z"
+  },
+  {
+    "purpose": "submodule-update",
+    "cwd": "<work>/clone",
+    "command": [
+      "git",
+      "-c",
+      "protocol.file.allow=always",
+      "submodule",
+      "update",
+      "--quiet",
+      "--",
+      "references/Hexalith.AI.Tools",
+      "references/Hexalith.EventStore",
+      "references/Hexalith.Tenants",
+      "references/Hexalith.FrontComposer",
+      "references/Hexalith.Conversations",
+      "references/Hexalith.Folders",
+      "references/Hexalith.Parties",
+      "references/Hexalith.Commons",
+      "references/Hexalith.Builds",
+      "references/Hexalith.Memories",
+      "references/Hexalith.Platform",
+      "references/Hexalith.McpCli",
+      "references/Hexalith.CiCd"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:35:58Z",
+    "finishedUtc": "2026-11-25T06:37:47Z"
+  },
+  {
+    "purpose": "Contracts-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "--configuration",
+      "Release",
+      "-m:1",
+      "--disable-build-servers",
+      "-warnaserror",
+      "-v:m",
+      "--artifacts-path",
+      "<work>/clone/artifacts/Contracts"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:38:06Z",
+    "finishedUtc": "2026-11-25T06:38:36Z"
+  },
+  {
+    "purpose": "Contracts-tests",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "<work>/clone/artifacts/Contracts/bin/Hexalith.Projects.Contracts.Tests/release/Hexalith.Projects.Contracts.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/pin/Contracts.xml",
+      "-noColor",
+      "-noLogo"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:38:36Z",
+    "finishedUtc": "2026-11-25T06:38:43Z"
+  },
+  {
+    "purpose": "Client-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj",
+      "--configuration",
+      "Release",
+      "-m:1",
+      "--disable-build-servers",
+      "-warnaserror",
+      "-v:m",
+      "--artifacts-path",
+      "<work>/clone/artifacts/Client"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:38:43Z",
+    "finishedUtc": "2026-11-25T06:39:52Z"
+  },
+  {
+    "purpose": "Client-tests",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "<work>/clone/artifacts/Client/bin/Hexalith.Projects.Client.Tests/release/Hexalith.Projects.Client.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/pin/Client.xml",
+      "-noColor",
+      "-noLogo",
+      "-class",
+      "Hexalith.Projects.Client.Tests.ClientGenerationTests"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:39:52Z",
+    "finishedUtc": "2026-11-25T06:39:55Z"
+  },
+  {
+    "purpose": "Domain-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+      "--configuration",
+      "Release",
+      "-m:1",
+      "--disable-build-servers",
+      "-warnaserror",
+      "-v:m",
+      "--artifacts-path",
+      "<work>/clone/artifacts/Domain"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:39:55Z",
+    "finishedUtc": "2026-11-25T06:40:57Z"
+  },
+  {
+    "purpose": "Domain-tests",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CI=true",
+      "dotnet",
+      "<work>/clone/artifacts/Domain/bin/Hexalith.Projects.Tests/release/Hexalith.Projects.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/pin/Domain.xml",
+      "-noColor",
+      "-noLogo"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:40:57Z",
+    "finishedUtc": "2026-11-25T06:41:02Z"
+  },
+  {
+    "purpose": "builds-cli-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "dotnet",
+      "build",
+      "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "--artifacts-path",
+      "<work>/builds-cli"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:41:02Z",
+    "finishedUtc": "2026-11-25T06:43:08Z"
+  },
+  {
+    "purpose": "source-mapping",
+    "cwd": "<work>/clone",
+    "command": [
+      "dotnet",
+      "<work>/builds-cli/bin/Hexalith.Builds.Module.Cli/debug/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "<work>/prepared",
+      "--output",
+      "json"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:43:08Z",
+    "finishedUtc": "2026-11-25T06:43:19Z"
+  },
+  {
+    "purpose": "Server-build",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CustomBeforeDirectoryBuildProps=<work>/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps=<work>/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets=<work>/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH=6f6f8f110739c9bb796d9b62fb05d1c074a71622a5f7f65c348089b1fcd1d12f",
+      "Configuration=Debug",
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "-m:1",
+      "--disable-build-servers",
+      "-warnaserror",
+      "-v:m",
+      "--artifacts-path",
+      "<work>/clone/artifacts/server"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:43:19Z",
+    "finishedUtc": "2026-11-25T06:50:15Z"
+  },
+  {
+    "purpose": "Server-tests",
+    "cwd": "<work>/clone",
+    "command": [
+      "env",
+      "CustomBeforeDirectoryBuildProps=<work>/prepared/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps=<work>/prepared/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets=<work>/prepared/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets=<work>/prepared/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH=6f6f8f110739c9bb796d9b62fb05d1c074a71622a5f7f65c348089b1fcd1d12f",
+      "Configuration=Debug",
+      "dotnet",
+      "<work>/clone/artifacts/server/bin/Hexalith.Projects.Server.Tests/debug/Hexalith.Projects.Server.Tests.dll",
+      "-xml",
+      "<repo>/_bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/pin/Server.xml",
+      "-noColor",
+      "-noLogo",
+      "-class",
+      "Hexalith.Projects.Server.Tests.CreateProjectEndpointTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ProposeNewProjectEndpointTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectsDomainProcessorTests"
+    ],
+    "exitCode": 0,
+    "startedUtc": "2026-11-25T06:50:15Z",
+    "finishedUtc": "2026-11-25T06:51:05Z"
+  }
+]

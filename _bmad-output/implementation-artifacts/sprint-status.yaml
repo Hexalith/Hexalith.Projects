@@ -543,10 +543,13 @@ action_items:
     action: "Accept the canonical/legacy creation contracts, authorization-before-parsing behavior, exact metadata classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and rollback."
     repository_authority: "Hexalith.Projects Contracts and Server owners"
     owner: "Projects Contracts Owner / Projects Server Owner / Product Owner / Test Architect"
-    status: open
+    status: done
     target_date: uncommitted
+    authorized: "2026-11-25 by Jerome (Projects Owner, Product Owner and Test Architect)"
+    result: "Pinned at b738fc5b1709a65982f8632534561ade459a3290 on origin/main. Create rejects duplicate properties, reports duplicate and non-string classifications as projectMetadata.metadataClass, keeps malformed JSON as body, and returns 400 projectMetadata for a versioned request without metadata. Evidence: 58 fixture cases through HTTP, the EventStore submission mapping and the domain processor; auth-before-parse negative controls with zero body bytes read; confirm validator parity; compatibility fingerprint 90feea73 unchanged; an exercised rollback with a negative control. Story 7.1 stays blocked."
     depends_on: ["Accepted Story 6.7 creation-contract baseline"]
     expected_evidence: "Owner-approved contract pin; canonical and legacy fixtures; auth-before-parse negative controls; metadata classifier parity; no-command rejection; compatibility fingerprint; clean-checkout command and rollback record"
+    projects_evidence_pin: "evidence/epic7/7.1-P1-creation-contract-pin.json"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1"
   - epic: 7

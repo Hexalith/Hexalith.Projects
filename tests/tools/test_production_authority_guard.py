@@ -913,6 +913,29 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         with self.assertRaisesRegex(GUARD.GuardViolation, action):
                             self.validate_boundary(**snapshot)
 
+    def test_creation_contract_action_stays_done_without_opening_story_7_1(self) -> None:
+        story_7_1 = "7-1-activate-a-project-with-exactly-one-authorized-folder"
+        index = GUARD._load_yaml_text(self.sprint, "fixture")
+        actions = GUARD._action_map(index)
+        self.assertEqual((7, "done"), (actions["7.1-P1"]["epic"], actions["7.1-P1"]["status"]))
+        self.assertEqual((7, "open"), (actions["7.1-P2"]["epic"], actions["7.1-P2"]["status"]))
+        self.assertEqual("evidence/epic7/7.1-P1-creation-contract-pin.json", actions["7.1-P1"]["projects_evidence_pin"])
+        self.assertEqual("blocked", index["development_status"][story_7_1])
+        for accepted in (False, True):
+            for status in ("open", "in-progress"):
+                with self.subTest(accepted=accepted, status=status):
+                    snapshot = self.feature_snapshot(accepted)
+                    candidate = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
+                    GUARD._action_map(candidate)["7.1-P1"]["status"] = status
+                    snapshot["sprint"] = GUARD.yaml.safe_dump(candidate, sort_keys=False)
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P1"):
+                        self.validate_boundary(**snapshot)
+            with self.subTest(accepted=accepted, story="7.1"):
+                snapshot = self.feature_snapshot(accepted)
+                snapshot["sprint"] = self.set_story(snapshot["sprint"], story_7_1, "ready-for-dev")
+                with self.assertRaises(GUARD.GuardViolation):
+                    self.validate_boundary(**snapshot)
+
     def test_dw1_status_and_inventory_fail_closed(self) -> None:
         for candidate in (
             self.replace_after(self.deferred, "### DW-1:", "status: open", "status: accepted"),

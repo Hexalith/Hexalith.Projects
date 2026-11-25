@@ -1,0 +1,294 @@
+{
+  "schema": "hexalith.projects.7-1-p1-creation-contract-pin.v1",
+  "package": "7.1-P1",
+  "spec": "_bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md",
+  "recordedUtc": "2026-11-25T07:01:31Z",
+  "baselineCommit": {
+    "sha": "9dadd65c350145c651bf1d1defc5fc83f255bae5",
+    "meaning": "Commit that recorded Story 6.7 done: the accepted creation-contract baseline.",
+    "story67SpecBaselineCommit": "c6541a30 (start of Story 6.7 only; not the creation-contract baseline)"
+  },
+  "sourceRevision": {
+    "pin": "b738fc5b1709a65982f8632534561ade459a3290",
+    "pinSubject": "fix(server): report create JSON syntax errors at the classification as body",
+    "rollbackUnit": [
+      "a101e7cdae6918602b9d771c4fe4a18a96ebe551",
+      "b738fc5b1709a65982f8632534561ade459a3290"
+    ],
+    "rollbackUnitSubjects": [
+      "fix(server): reject duplicate and non-string create classifications",
+      "fix(server): report create JSON syntax errors at the classification as body"
+    ],
+    "fixtureCommit": "31b3563780fc4e42a04e6982780a2a38c71a7acb",
+    "fixtureCommitSubject": "test(server): pin 7.1-P1 creation-contract fixtures",
+    "parent": "280b1eedfb7b5e5b2b51d3fc52770c7bd2857080",
+    "branch": "main",
+    "pushState": "pushed: origin/main is b738fc5b1709a65982f8632534561ade459a3290. a101e7cd and 31b35637 reached origin/main on 2026-11-24 at 22:08 +0100; b738fc5b was pushed on 2026-11-25T07:01:31Z after its qualification runs passed."
+  },
+  "fingerprint": {
+    "command": "git ls-tree <rev> -- <13 files> | sha256sum",
+    "files": [
+      "src/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs",
+      "src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs",
+      "src/Hexalith.Projects.Contracts/Commands/CreateProject.cs",
+      "src/Hexalith.Projects.Contracts/Events/ProjectCreated.cs",
+      "src/Hexalith.Projects.Contracts/Events/ProjectCreationRejected.cs",
+      "src/Hexalith.Projects.Contracts/Events/ProjectFolderCreationPending.cs",
+      "src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml",
+      "src/Hexalith.Projects.Server/CreateProjectPayload.cs",
+      "src/Hexalith.Projects.Server/EventStoreProjectCommandSubmitter.cs",
+      "src/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs",
+      "src/Hexalith.Projects.Server/SensitiveMetadataTierValidator.cs",
+      "src/Hexalith.Projects/Aggregates/Project/ProjectAggregate.cs",
+      "src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs"
+    ],
+    "excluded": "ProjectsDomainServiceEndpoints.cs and ProjectsDomainProcessor.cs change for unrelated reads; the fixtures and behaviorDelta pin their create behavior instead.",
+    "baseline": {
+      "revision": "9dadd65c350145c651bf1d1defc5fc83f255bae5",
+      "value": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684"
+    },
+    "pin": {
+      "revision": "b738fc5b1709a65982f8632534561ade459a3290",
+      "value": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684"
+    },
+    "rollback": {
+      "revision": "f74e4c5abcac0965862350bc25c1b3bbc469f981",
+      "note": "local revert commit in the rollback drill clone",
+      "value": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684"
+    },
+    "allEqual": true
+  },
+  "behaviorDelta": {
+    "changedFile": "src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs (CreateProjectAsync only)",
+    "deltas": [
+      "A duplicate or non-string projectMetadata.metadataClass returns 400 projectMetadata.metadataClass (was 202 last-value or 400 body).",
+      "A versioned request without projectMetadata returns 400 projectMetadata.",
+      "Any create body with duplicate properties returns 400; a legacy body with duplicate keys moves from 202 to 400."
+    ],
+    "unchanged": [
+      "Legacy unversioned bodies without duplicate keys keep 202 and one CreateProject.",
+      "Malformed JSON keeps 400 body, including a syntax error inside the metadataClass value (unquoted, truncated, bad escape).",
+      "Authorization precedes body parsing; the Idempotency-Key header check still runs first.",
+      "Shared RequestJsonOptions, the OpenAPI spine, the generated client, ProposeNewProjectEndpoint and event shapes are unchanged."
+    ],
+    "deltaCasesDetectedOnRevertedTree": {
+      "command": "evidence/epic7/7.1-P1/run-qualification.sh rollback (negative control): Server.Tests dll -ignoreFailures -trait \"Package=7.1-P1\" on the reverted tree",
+      "revision": "f74e4c5abcac0965862350bc25c1b3bbc469f981",
+      "xml": "evidence/epic7/7.1-P1/rollback/negative-control.xml",
+      "sha256": "8598bade83918f8ca778ac110ae69b756659a9dc2325dad7c30b0a1984f28a67",
+      "total": 77,
+      "passed": 62,
+      "failed": 15,
+      "failedCases": [
+        "class-non-string-number",
+        "class-non-string-boolean",
+        "class-non-string-object",
+        "class-non-string-array",
+        "class-non-string-case-variant-key",
+        "class-duplicate-invalid-then-valid",
+        "class-duplicate-same-value",
+        "class-duplicate-case-variant-key",
+        "versioned-name-only",
+        "versioned-null-metadata",
+        "versioned-version-only",
+        "duplicate-legacy-name",
+        "duplicate-request-schema-version",
+        "duplicate-project-metadata",
+        "duplicate-display-name"
+      ],
+      "matchesExpected": true,
+      "note": "Recorded by run-qualification.sh: on the reverted tree exactly the delta cases fail and every other test keeps its pinned outcome. Reverting the rollback unit also removes the three malformed-class fixture cases, so this run has 77 tests."
+    }
+  },
+  "fixtures": {
+    "path": "tests/Hexalith.Projects.Server.Tests/Fixtures/CreationContract/creation-contract-fixtures.v1.json",
+    "schema": "hexalith.projects.creation-contract-fixtures.v1",
+    "blob": "9a4ab329c645d9a25b46fd00f6c16fc4d9522d12",
+    "sha256": "e71106a5b412adfbdef25e28d7d6f5c9748dc173daa8a6d577638e2160cb2a34",
+    "cases": 58,
+    "scenarios": {
+      "legacy": 4,
+      "canonical": 6,
+      "bad-class": 10,
+      "bad-class-parse": 9,
+      "versioned-no-metadata": 3,
+      "other-invalid": 26
+    },
+    "decisionTable": {
+      "accepted": 4,
+      "rejected": 10
+    },
+    "tests": {
+      "trait": "Package=7.1-P1",
+      "count": 80,
+      "files": [
+        "tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.CreationContract.cs",
+        "tests/Hexalith.Projects.Server.Tests/Queries/ProposeNewProjectEndpointTests.cs"
+      ],
+      "coverage": [
+        "58 fixture cases through HTTP, the production EventStoreProjectCommandSubmitter mapping and ProjectsDomainProcessor (status, rejectedField, command fields, event types, IdempotencyFingerprint, no echo, no accepted-command fields, classification never persisted)",
+        "6 denial modes x valid, malformed and invalid bodies: 404 safe denial, zero request-body bytes read, byte-identical denials, paired authorized controls read the body and return 202/400",
+        "Idempotency-Key header check runs first without reading the body",
+        "OpenAPI SensitiveMetadataTier enum equals the validator decision table",
+        "14 decision-table rows through proposal confirmation: 4 accepted, 10 rejected with 400 projectMetadata and no submission"
+      ]
+    }
+  },
+  "nativeReceipts": {
+    "run": {
+      "mode": "pin",
+      "revision": "b738fc5b1709a65982f8632534561ade459a3290",
+      "dotnetSdk": "11.0.100",
+      "isolatedNugetPackages": true,
+      "rootSubmodulesOnly": true,
+      "nestedSubmodulesInitialized": false
+    },
+    "suites": [
+      {
+        "suite": "Client",
+        "xml": "evidence/epic7/7.1-P1/pin/Client.xml",
+        "sha256": "29d6af4c8c5241db209a368b501378b6fc400e54df7cb0f16821463ed62273ad",
+        "total": 101,
+        "passed": 101,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "notRun": 0,
+        "project": "tests/Hexalith.Projects.Client.Tests",
+        "mode": "package (CI=true), Release",
+        "filter": "-class Hexalith.Projects.Client.Tests.ClientGenerationTests"
+      },
+      {
+        "suite": "Contracts",
+        "xml": "evidence/epic7/7.1-P1/pin/Contracts.xml",
+        "sha256": "28c10043206b7cb987aaea256cb0601a4fcc9040aa2f03939599c0d864eeea4d",
+        "total": 208,
+        "passed": 208,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "notRun": 0,
+        "project": "tests/Hexalith.Projects.Contracts.Tests",
+        "mode": "package (CI=true), Release",
+        "filter": "full suite"
+      },
+      {
+        "suite": "Domain",
+        "xml": "evidence/epic7/7.1-P1/pin/Domain.xml",
+        "sha256": "6f40bc621bc30c5b5962c8ad9416f3ded75887970342f99a8bdf54f264cbab14",
+        "total": 693,
+        "passed": 693,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "notRun": 0,
+        "project": "tests/Hexalith.Projects.Tests",
+        "mode": "package (CI=true), Release",
+        "filter": "full suite"
+      },
+      {
+        "suite": "Server",
+        "xml": "evidence/epic7/7.1-P1/pin/Server.xml",
+        "sha256": "65be2c7e638ac3abd308af5cf26faee03a4c43a31a9d74b33ef9f7c552dc49d2",
+        "total": 273,
+        "passed": 273,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "notRun": 0,
+        "project": "tests/Hexalith.Projects.Server.Tests",
+        "mode": "source (prepare-build buildPreparation.environment), Debug",
+        "filter": "-class CreateProjectEndpointTests -class ProposeNewProjectEndpointTests -class ProjectsDomainProcessorTests (includes the 80 Package=7.1-P1 tests)"
+      }
+    ],
+    "summary": {
+      "path": "evidence/epic7/7.1-P1/pin/summary.json",
+      "sha256": "76310f20421efa9a3f1342d1b3f48dedbb2a63474ac4e17cc57caac2d5671019"
+    }
+  },
+  "commands": {
+    "script": {
+      "path": "evidence/epic7/7.1-P1/run-qualification.sh",
+      "sha256": "d0eed9b5ba236db51490ec69fdcf1eb978c104d6195429aad6d0f747497608ad"
+    },
+    "pin": "bash _bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/run-qualification.sh pin b738fc5b1709a65982f8632534561ade459a3290",
+    "rollback": "bash _bmad-output/implementation-artifacts/evidence/epic7/7.1-P1/run-qualification.sh rollback b738fc5b1709a65982f8632534561ade459a3290",
+    "pinCommands": {
+      "path": "evidence/epic7/7.1-P1/pin/commands.json",
+      "sha256": "ef9484bbf7fd644efa5a0ca633bd8e69445b9d7d43347fba6343fccd1aa24b3d"
+    },
+    "rollbackCommands": {
+      "path": "evidence/epic7/7.1-P1/rollback/commands.json",
+      "sha256": "1bdef7514ca6b2df1c81231cf2e9e24a4cfaf87a81c60b66d574dc7fcf920cf7"
+    },
+    "buildFlags": "Contracts, Client, Domain and Server.Tests builds: -m:1 --disable-build-servers -warnaserror. The Builds module CLI build (source mapping tool): -m:1 --disable-build-servers without -warnaserror. Every build log reports 0 warnings and 0 errors."
+  },
+  "rollbackProof": {
+    "method": "Fresh clean clone at the pin, one git revert --no-edit of the rollback unit newest first (b738fc5b, then a101e7cd), existing create suites with -trait- Package=7.1-P1, then the Package=7.1-P1 negative control",
+    "revertedCommits": [
+      "b738fc5b1709a65982f8632534561ade459a3290",
+      "a101e7cdae6918602b9d771c4fe4a18a96ebe551"
+    ],
+    "revertedHead": "f74e4c5abcac0965862350bc25c1b3bbc469f981",
+    "fingerprint": "90feea73d2df1247c40a5aa624245abddc8c66447fabf8ac5df61bfc12d88684",
+    "fingerprintMatchesBaseline": true,
+    "suites": [
+      {
+        "suite": "Server",
+        "xml": "evidence/epic7/7.1-P1/rollback/Server.xml",
+        "sha256": "274831e3ba7e0ec92ee21e4d0d57a2f3afceb8769b4aaf263bac865a7de78363",
+        "total": 192,
+        "passed": 192,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "notRun": 0,
+        "mode": "source (prepare-build buildPreparation.environment), Debug",
+        "filter": "-class CreateProjectEndpointTests -class ProposeNewProjectEndpointTests -class ProjectsDomainProcessorTests -trait- Package=7.1-P1"
+      }
+    ],
+    "negativeControl": {
+      "xml": "evidence/epic7/7.1-P1/rollback/negative-control.xml",
+      "sha256": "8598bade83918f8ca778ac110ae69b756659a9dc2325dad7c30b0a1984f28a67",
+      "total": 77,
+      "failed": 15,
+      "matchesExpected": true
+    },
+    "summary": {
+      "path": "evidence/epic7/7.1-P1/rollback/summary.json",
+      "sha256": "408e105b360be986f5cc7204739dc01a0d108be6a6195af24524d2c944122f16"
+    },
+    "result": "The existing create suites pass with Story 6.7 behavior after the revert, and the Package=7.1-P1 tests fail on exactly the 15 delta cases."
+  },
+  "limits": [
+    "DW-63: Server.Tests does not compile in CI=true package mode (CS0246), so Server evidence is a Debug source-mode build and covers only CreateProjectEndpointTests, ProposeNewProjectEndpointTests and ProjectsDomainProcessorTests; no Dapr sidecar is used.",
+    "Task admission today means 202 plus one IProjectCommandSubmitter call; durable task admission belongs to 7.1-P2.",
+    "Proposal confirmation is covered for validator parity only. Its parse-before-authorize order is routed to Story 7.12 through a DW entry added with the tracker update.",
+    "Prerequisite evidence only: no FR-1 delivery, no Project exposure, no event-shape change, no Task or Folder admission, no writer cutover or routing change. Story 7.1 stays blocked.",
+    "The server create contract is wider than the spine CreateProjectRequest: it still accepts the legacy unversioned shape (name, description, setupMetadata) and an optional projectId. This pin qualifies server behavior, not spine parity.",
+    "The rollback drill reverts exist only in a scratch clone; they are not repository commits."
+  ],
+  "decisions": {
+    "Projects Owner": {
+      "decision": "accepted",
+      "approver": "Jerome",
+      "date": "2026-11-25",
+      "revision": "b738fc5b1709a65982f8632534561ade459a3290",
+      "record": "evidence/epic7/7.1-P1-creation-contract-pin.json"
+    },
+    "Product Owner": {
+      "decision": "accepted",
+      "approver": "Jerome",
+      "date": "2026-11-25",
+      "revision": "b738fc5b1709a65982f8632534561ade459a3290",
+      "record": "evidence/epic7/7.1-P1-creation-contract-pin.json"
+    },
+    "Test Architect": {
+      "decision": "accepted",
+      "approver": "Jerome",
+      "date": "2026-11-25",
+      "revision": "b738fc5b1709a65982f8632534561ade459a3290",
+      "record": "evidence/epic7/7.1-P1-creation-contract-pin.json"
+    }
+  }
+}
