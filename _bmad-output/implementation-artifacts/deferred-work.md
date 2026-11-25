@@ -908,7 +908,8 @@ reason: Published EventStore up to 5.5.2 lacks IDomainQueryResponsePolicy, first
 progress: Later on 2026-11-25, NuGet published EventStore 5.6.0 and the Builds owner catalog selected it at a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2. Projects package-mode Server build and 54 focused tests passed against that catalog without overrides. At Projects 5025fde60965b77b4e7a5662b26ce31867a8b4c3, the tracked Builds gitlink still selects 5.5.1 and main CI failed with CS0246. [CI build-and-test](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45627252920/job/139253049059)
 removal_condition: EventStore publishes a release after 5.5.2 that carries the type, Builds selects it, Projects advances its Builds gitlink, and main CI build-and-test passes in package mode.
 gate: DW-63 acceptance
-status: open
+status: done 2026-11-25
+resolution: EventStore 5.6.0 carries the type, Builds a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2 selects it, and Projects advanced its Builds gitlink at 602816fc5f3bb206beafcbf5a61eed0a43b75416. At Projects 782506aa737fadd6bf05a906ca5d47d4019c0c73, with tools/release-packages.json aligned to EventStore 5.6.0 and Commons 3.0.4, main CI build-and-test passed in package mode. [CI build-and-test](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45659737590/job/139368355600)
 
 ### DW-100: Bind each v1 request to exactly one Tenant instead of the first Tenant claim.
 
