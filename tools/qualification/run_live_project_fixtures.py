@@ -854,6 +854,21 @@ def cleanup_session(session, isolation, run, report, *, seconds=10):
         report["result"] = "failed"
 
 
+ORDINARY_CATALOG_CUSTODY_REFUSAL = "Projects:DevelopmentRouteCatalog requires owner custody for the selected Redis backend."
+
+
+def record_refused_ordinary_startup(failure, session, config_path, isolation, report):
+    """Accept only the named catalog-custody refusal, after proving the refused start left nothing owned."""
+    if ORDINARY_CATALOG_CUSTODY_REFUSAL not in getattr(failure, "command_output", ""):
+        raise failure
+    if (support.find_owned_apphost(config_path, isolation) is not None or support.owned_sidecar_census(isolation)
+            or application_census(isolation)):
+        raise RuntimeError("The refused ordinary AppHost left owned processes.")
+    session.update(captureVerified=True, ownedSidecarsAbsent=True, applicationsAbsent=True, absenceVerified=True)
+    report["cleanup"].append({"resource": "refused-ordinary-apphost", "session": session["name"], "absenceVerified": True})
+    report["normalStartupRefusedWithoutCatalogCustody"] = True
+
+
 def recover_infrastructure(private, isolation, owned, run, report):
     """Discovery failures cannot prevent cleanup of identities already captured at creation."""
     try:
@@ -1139,23 +1154,28 @@ def main():
         sessions.append(current_session)
         report["ownedSidecarsAbsent"] = False
         report["ownedApplicationsAbsent"] = False
-        owned_apphost = support.start_owned_apphost(run, config_path, isolation)
-        current_session["apphost"] = owned_apphost
-        capture_session(current_session, support.resource_graph(run))
-        for name in ("security", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS)):
-            run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
-        normal = json.loads(run(["aspire", "describe", "--apphost", str(support.APPHOST), "--format", "Json", "--non-interactive"]))
-        capture_session(current_session, normal)
-        report["normalOwnedContainers"] = list(current_session["containers"].values())
-        names = {item.get("displayName") for item in normal["resources"]}
-        if names.intersection({"conversations", "folders", "memories", "live-fixtures", "live-fixture-authority", "supported-read-authority"}):
-            raise RuntimeError("Ordinary AppHost startup exposed a fixture ingress or sibling host.")
-        report["normalDisabledProjectsProcess"] = disabled_process_bindings(normal, owned_apphost)
-        if not report["normalOwnedContainers"] or any(not isinstance(item["id"], str) or len(item["id"]) != 64 for item in report["normalOwnedContainers"]):
-            raise RuntimeError("The exact ordinary AppHost container identities are missing.")
-        report["normalDisabledResources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")}
-            for item in normal["resources"]]
-        report["normalProfileDisabledRuntimeVerified"] = True
+        try:
+            owned_apphost = support.start_owned_apphost(run, config_path, isolation)
+        except RuntimeError as failure:
+            # A source build without ordinary catalog custody refuses before any resource starts.
+            record_refused_ordinary_startup(failure, current_session, config_path, isolation, report)
+        else:
+            current_session["apphost"] = owned_apphost
+            capture_session(current_session, support.resource_graph(run))
+            for name in ("security", *APPS, "projects-ui", *(app + "-dapr-cli" for app in APPS)):
+                run(["aspire", "wait", name, "--apphost", str(support.APPHOST), "--timeout", str(args.timeout), "--non-interactive"])
+            normal = json.loads(run(["aspire", "describe", "--apphost", str(support.APPHOST), "--format", "Json", "--non-interactive"]))
+            capture_session(current_session, normal)
+            report["normalOwnedContainers"] = list(current_session["containers"].values())
+            names = {item.get("displayName") for item in normal["resources"]}
+            if names.intersection({"conversations", "folders", "memories", "live-fixtures", "live-fixture-authority", "supported-read-authority"}):
+                raise RuntimeError("Ordinary AppHost startup exposed a fixture ingress or sibling host.")
+            report["normalDisabledProjectsProcess"] = disabled_process_bindings(normal, owned_apphost)
+            if not report["normalOwnedContainers"] or any(not isinstance(item["id"], str) or len(item["id"]) != 64 for item in report["normalOwnedContainers"]):
+                raise RuntimeError("The exact ordinary AppHost container identities are missing.")
+            report["normalDisabledResources"] = [{"name": item.get("displayName"), "state": item.get("state"), "health": item.get("healthStatus")}
+                for item in normal["resources"]]
+            report["normalProfileDisabledRuntimeVerified"] = True
         if support.source_manifest() != json.loads((evidence / "source-manifest.json").read_text()):
             raise RuntimeError("Source inputs changed during verification; repeat the matrix against stable sources.")
     except BaseException as failure:

@@ -546,5 +546,40 @@ class SessionCleanupTests(unittest.TestCase):
                 self.assertTrue(Path(report["recoveryIdentity"]).exists())
                 self.assertTrue(private.exists())
 
+class RefusedOrdinaryStartupTests(unittest.TestCase):
+    def refusal(self, output):
+        failure = RuntimeError("Command failed (2): aspire start --apphost")
+        failure.command_output = output
+        return failure
+
+    def test_named_custody_refusal_with_nothing_owned_verifies_the_ordinary_session(self):
+        session, report = LAUNCHER.new_session("ordinary"), {"cleanup": []}
+        failure = self.refusal("Unhandled exception. System.InvalidOperationException: " + LAUNCHER.ORDINARY_CATALOG_CUSTODY_REFUSAL)
+        with patch.object(LAUNCHER.support, "find_owned_apphost", return_value=None), \
+                patch.object(LAUNCHER.support, "owned_sidecar_census", return_value={}), \
+                patch.object(LAUNCHER, "application_census", return_value={}):
+            LAUNCHER.record_refused_ordinary_startup(failure, session, Path("config.json"), "fixtures-owned", report)
+        self.assertTrue(session["absenceVerified"])
+        self.assertTrue(report["normalStartupRefusedWithoutCatalogCustody"])
+        self.assertEqual(report["cleanup"][-1]["resource"], "refused-ordinary-apphost")
+
+    def test_any_other_start_failure_is_not_accepted(self):
+        failure = self.refusal("AppHost process exited with code 134.")
+        with self.assertRaises(RuntimeError) as raised:
+            LAUNCHER.record_refused_ordinary_startup(failure, LAUNCHER.new_session("ordinary"), Path("config.json"), "fixtures-owned", {"cleanup": []})
+        self.assertIs(raised.exception, failure)
+
+    def test_refusal_that_leaves_an_owned_process_fails(self):
+        session, report = LAUNCHER.new_session("ordinary"), {"cleanup": []}
+        failure = self.refusal(LAUNCHER.ORDINARY_CATALOG_CUSTODY_REFUSAL)
+        with patch.object(LAUNCHER.support, "find_owned_apphost", return_value=None), \
+                patch.object(LAUNCHER.support, "owned_sidecar_census", return_value={"1": {"appId": "projects"}}), \
+                patch.object(LAUNCHER, "application_census", return_value={}):
+            with self.assertRaisesRegex(RuntimeError, "left owned processes"):
+                LAUNCHER.record_refused_ordinary_startup(failure, session, Path("config.json"), "fixtures-owned", report)
+        self.assertFalse(session["absenceVerified"])
+        self.assertNotIn("normalStartupRefusedWithoutCatalogCustody", report)
+
+
 if __name__ == "__main__":
     unittest.main()

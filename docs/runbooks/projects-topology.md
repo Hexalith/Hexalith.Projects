@@ -320,7 +320,11 @@ Chromium lane with zero skips under distinct phase identities, followed by repea
 isolation probes. A retry deliberately follows a successful setup failure and must observe prior
 Project archival and sibling removal. The runner then starts the ordinary AppHost with every fixture
 profile disabled, checks the graph and actual Projects process environment, and stops only
-the exact Projects AppHost on every exit, including failures and interruptions. Local runs use the
+the exact Projects AppHost on every exit, including failures and interruptions. That ordinary startup
+composes the SDK route catalog and needs the `Projects:DevelopmentRouteCatalog` custody and workload
+issuer settings in [the module README](../../module/README.md#ordinary-local-catalog). Without them it
+refuses at startup, and the final check accepts only that named refusal after verifying that no owned
+AppHost, sidecar or application process remains. Local runs use the
 Platform-owned supported Debug/source preparation and returned mapping, including root-declared
 sibling paths. Source failures remain blockers; setting `CI=true` does not repair them. The separate
 CI package lane needs a released EventStore snapshot-limits/Client cohort and the Tenants recovery

@@ -65,6 +65,11 @@ processes, containers, browser session, keys, mapping and build outputs on every
 cleanup fails the run and preserves a metadata-only recovery identity outside disposable scratch.
 The final check starts the ordinary AppHost with every fixture flag disabled and inspects its
 actual Projects process environment plus resource graph for fixture ingress and sibling bindings.
+In a source build that ordinary startup composes the SDK route catalog, so it needs the
+`Projects:DevelopmentRouteCatalog` custody and workload issuer settings in
+[the module README](../../module/README.md#ordinary-local-catalog). Without them the AppHost refuses at startup;
+the final check accepts only that named refusal, after verifying that no owned AppHost, sidecar or
+application process remains.
 The private gateway uses inline projections with the SDK's supported background-worker suppression
 switch during this deterministic fixture run. This lane does not qualify production background
 projection retry or parallel callback delivery. The private Projects worker sidecar also selects
