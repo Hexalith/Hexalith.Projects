@@ -74,6 +74,7 @@ context: ['{project-root}/module/README.md', '{project-root}/docs/read-cutover.m
   - those tests also need one build layout.
 
   The live narrow lane was not rerun; its Folders seeding blocker is unchanged. [Loop 2 receipts](../../artifacts/dw-63/full-suite-20261125-loop2/)
+- The [Epic 7 entry verification](evidence/epic7/entry-blockers-2026-11-25.md#dw-63--projects-sdk-host) records checks against the current gitlinks and the evidence required for Projects and EventStore owner acceptance. DW-63 remains open.
 
 ## Spec Change Log
 
