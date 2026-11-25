@@ -220,6 +220,7 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
+        services.AddEventStoreWorkloadAssertionIssuer();
         string authorityDaprEndpoint = Environment.GetEnvironmentVariable("DAPR_HTTP_ENDPOINT")
             ?? $"http://127.0.0.1:{Environment.GetEnvironmentVariable("DAPR_HTTP_PORT") ?? "3500"}";
         services.AddHttpClient<ProjectChatBotAuthorityGateway>(client => client.BaseAddress = new Uri(

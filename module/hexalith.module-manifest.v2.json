@@ -85,6 +85,16 @@
                 "authorizationPolicy": "EventStoreWorkload:domain-service:project"
               },
               {
+                "name": "project-v2-reconcile",
+                "kind": "administration",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:project"
+              },
+              {
+                "name": "project-rebuild-part-v1",
+                "kind": "administration",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:project"
+              },
+              {
                 "name": "operational-index-metadata",
                 "kind": "administration",
                 "authorizationPolicy": "EventStoreWorkload:domain-service:metadata"
@@ -128,7 +138,21 @@
               },
               {
                 "caller": "eventstore",
+                "path": "/project/v2/reconcile",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
                 "path": "/project/rebuild/v1",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/project/rebuild/part/v1",
                 "verbs": [
                   "POST"
                 ]

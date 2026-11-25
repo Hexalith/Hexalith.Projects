@@ -105,7 +105,17 @@ public sealed class ProjectsDomainProcessor(
                 "The replay request has invalid Project identity or history.");
         }
 
-        ProjectIdentity identity = new(request.TenantId, new ProjectId(request.AggregateId));
+        ProjectIdentity identity;
+        try
+        {
+            identity = new(request.TenantId, new ProjectId(request.AggregateId));
+        }
+        catch (ArgumentException)
+        {
+            return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
+                "The replay request has invalid Project identity or history.");
+        }
+
         ProjectState state = ProjectState.Empty;
         List<AggregateReconstructionTimelineEntry>? timeline = request.IncludeTimeline ? [] : null;
         long lastApplied = 0;
@@ -131,7 +141,14 @@ public sealed class ProjectsDomainProcessor(
 
             try
             {
-                state = ApplyStoredEvent(state, item.EventTypeName, item.Payload, identity);
+                if (ProjectRejectionEventTypes.Contains(item.EventTypeName))
+                {
+                    ValidateReplayRejection(item.Payload, identity);
+                }
+                else
+                {
+                    state = ApplyStoredEvent(state, item.EventTypeName, item.Payload, identity);
+                }
             }
             catch (JsonException)
             {
@@ -153,6 +170,31 @@ public sealed class ProjectsDomainProcessor(
             ? AggregateReconstructionResult.Succeeded(JsonSerializer.Serialize(state, StateJsonOptions), lastApplied, timeline)
             : AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
                 "The replay request has incomplete Project history.");
+    }
+
+    private static void ValidateReplayRejection(byte[] payload, ProjectIdentity identity)
+    {
+        using JsonDocument document = JsonDocument.Parse(payload);
+        if (document.RootElement.ValueKind != JsonValueKind.Object)
+        {
+            throw new JsonException("The Project rejection payload must be a JSON object.");
+        }
+
+        foreach (JsonProperty property in document.RootElement.EnumerateObject())
+        {
+            if (property.Name.Equals("tenantId", StringComparison.OrdinalIgnoreCase)
+                && (property.Value.ValueKind != JsonValueKind.String || !string.Equals(property.Value.GetString(), identity.TenantId, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException("The Project rejection belongs to a different Tenant.");
+            }
+
+            if (property.Name.Equals("projectId", StringComparison.OrdinalIgnoreCase)
+                && property.Value.ValueKind != JsonValueKind.Null
+                && (property.Value.ValueKind != JsonValueKind.String || property.Value.GetString() != identity.ProjectId.Value))
+            {
+                throw new InvalidOperationException("The Project rejection belongs to a different Project.");
+            }
+        }
     }
 
     /// <inheritdoc/>
@@ -949,6 +991,13 @@ public sealed class ProjectsDomainProcessor(
 
         IProjectEvent projectEvent = JsonSerializer.Deserialize(payload, eventType, StateJsonOptions) as IProjectEvent
             ?? throw new InvalidOperationException("Project aggregate history contains an invalid event payload.");
+        if (projectEvent is ProjectFolderSet { FolderMetadata: null }
+            or FileReferenceLinked { FileMetadata: null }
+            or MemoryLinked { MemoryMetadata: null })
+        {
+            throw new JsonException("The Project event is missing its reference metadata.");
+        }
+
         return ProjectStateApply.Apply(state, projectEvent, identity);
     }
 

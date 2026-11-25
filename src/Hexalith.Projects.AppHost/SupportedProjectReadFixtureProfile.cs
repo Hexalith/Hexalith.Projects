@@ -90,7 +90,7 @@ public static class SupportedProjectReadFixtureProfile
         }
         else if (configuration[Prefix + "Browser:TokenEndpoint"] is not null)
             throw new InvalidOperationException("A browser token endpoint requires the explicit browser fixture.");
-        foreach (string key in new[] { "CertificatePath", "CertificatePassword", "TrustBundle", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "Tenant", "ForeignTenant", "DiscoveryConfiguration", "CatalogDigestKey", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey", "InvocationDirectory" })
+        foreach (string key in new[] { "CertificatePath", "CertificatePassword", "TrustBundle", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "Tenant", "ForeignTenant", "DiscoveryConfiguration", "CatalogDigestKey", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey", "FolderScanPrivateKey", "FolderScanPublicKey", "FolderWorkersSecret", "FolderWorkerPrivateKey", "FolderWorkerPublicKey", "FolderWorkerScanPrivateKey", "FolderWorkerScanPublicKey", "InvocationDirectory" })
             _ = Required(configuration, Prefix + key);
         foreach (string key in new[] { "CertificatePath", "TrustBundle" })
             if (!File.Exists(configuration[Prefix + key])) throw new InvalidOperationException("Fixture trust material is missing.");
@@ -289,22 +289,36 @@ public static class SupportedProjectReadFixtureProfile
             .WithEnvironment("EventStore__Authentication__ClientId", "supported-read-bootstrap")
             .WithEnvironment("EventStore__Authentication__Username", "actor-1")
             .WithEnvironment("EventStore__Authentication__Password", bootstrapPassword);
-        IResourceBuilder<ParameterResource> foldersSecret = Secret("folders-secret", "FoldersSecret");
-        IResourceBuilder<ParameterResource> folderOwnerKey = Secret("folders-owner-key", "FolderOwnerPrivateKey");
-        ConfigureClient(folders, "folders", foldersSecret);
-        int folderGrant = ordinal;
-        AddGrant("folders-owner-head", "folders", "FoldersSecret", "eventstore", ["eventstore:stream-read"], false);
-        string grant = "Authentication__WorkloadAuthority__Grants__" + folderGrant + "__";
-        _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
-            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
-            .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
-            .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
-        _ = folders.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", folderOwnerKey)
-            .WithEnvironment("Folders__EventStore__OwnerMetadataReads__Enabled", "true")
+        foreach (var source in new[]
+        {
+            (Resource: folders, Workload: "folders", Secret: "FoldersSecret", ReadKey: "FolderOwner", ScanKey: "FolderScan", CallerIndex: 2),
+            (Resource: folderWorkers, Workload: "folders-workers", Secret: "FolderWorkersSecret", ReadKey: "FolderWorker", ScanKey: "FolderWorkerScan", CallerIndex: 3),
+        })
+        {
+            IResourceBuilder<ParameterResource> secret = Secret(source.Workload + "-secret", source.Secret);
+            IResourceBuilder<ParameterResource> readKey = Secret(source.Workload + "-owner-key", source.ReadKey + "PrivateKey");
+            IResourceBuilder<ParameterResource> scanKey = Secret(source.Workload + "-scan-key", source.ScanKey + "PrivateKey");
+            ConfigureClient(source.Resource, source.Workload, secret);
+            int folderSourceGrant = ordinal;
+            AddGrant(source.Workload + "-owner-source", source.Workload, source.Secret, "eventstore",
+                ["eventstore:stream-read", "eventstore:stream-scan-native"], false);
+            string grant = "Authentication__WorkloadAuthority__Grants__" + folderSourceGrant + "__";
+            _ = authority.WithEnvironment(grant + "AllowUnbound", "false")
+                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__0", Required(configuration, Prefix + "Tenant"))
+                .WithEnvironment(grant + "Bindings__eventstore:bound-tenant__1", Required(configuration, Prefix + "ForeignTenant"))
+                .WithEnvironment(grant + "Bindings__eventstore:bound-domain__0", "folders");
+            _ = source.Resource.WithEnvironment("Authentication__BoundStreamRead__PrivateKey", readKey)
+                .WithEnvironment("Authentication__NativeSourceScan__PrivateKey", scanKey).WaitFor(authority);
+            _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__" + source.CallerIndex, source.Workload)
+                .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__" + source.Workload, Required(configuration, Prefix + source.ReadKey + "PublicKey"))
+                .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__" + source.Workload, "folders")
+                .WithEnvironment("Authentication__NativeSourceScan__PublicKeys__" + source.Workload, Required(configuration, Prefix + source.ScanKey + "PublicKey"))
+                .WithEnvironment("Authentication__NativeSourceScan__AllowedDomains__" + source.Workload, "folders");
+            if (source.Workload == "folders-workers")
+                _ = eventStore.WithEnvironment("Authentication__BoundStreamRead__MetadataOnlyCallers__folders-workers", "true");
+        }
+        _ = folders.WithEnvironment("Folders__EventStore__OwnerMetadataReads__Enabled", "true")
             .WithEnvironment("Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled", "true");
-        _ = eventStore.WithEnvironment("Authentication__DaprInternal__AllowedCallers__2", "folders")
-            .WithEnvironment("Authentication__BoundStreamRead__PublicKeys__folders", Required(configuration, Prefix + "FolderOwnerPublicKey"))
-            .WithEnvironment("Authentication__BoundStreamRead__AllowedDomains__folders", "folders");
         _ = eventStore.WaitFor(authority);
         _ = tenants.WaitFor(authority);
         _ = projects.WithReference(eventStore).WithReference(tenants).WithReference(folders).WaitFor(eventStore).WaitFor(tenants).WaitFor(authority);

@@ -318,7 +318,7 @@ def test_group_members(group: int) -> dict[int, str]:
             continue
         try:
             fields = (path / "stat").read_text().rsplit(")", 1)[1].split()
-        except FileNotFoundError:
+        except (FileNotFoundError, ProcessLookupError):
             continue
         if int(fields[2]) == group and fields[0] != "Z":
             members[int(path.name)] = fields[19]
@@ -2582,15 +2582,13 @@ def _main() -> int:
         execute(["openssl", "pkcs12", "-export", "-in", str(private / "certificate.pem"), "-inkey", str(private / "certificate.key"),
                  "-out", str(private / "certificate.pfx"), "-passout", "file:" + str(private / "password")])
         execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(private / "user.pem")])
-        execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(private / "owner.pem")])
-        execute(["openssl", "pkcs8", "-topk8", "-nocrypt", "-in", str(private / "owner.pem"), "-outform", "DER", "-out", str(private / "owner.der")])
-        execute(["openssl", "pkey", "-in", str(private / "owner.pem"), "-pubout", "-outform", "DER", "-out", str(private / "owner-public.der")])
-        execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(private / "tenant-owner.pem")])
-        execute(["openssl", "pkcs8", "-topk8", "-nocrypt", "-in", str(private / "tenant-owner.pem"), "-outform", "DER", "-out", str(private / "tenant-owner.der")])
-        execute(["openssl", "pkey", "-in", str(private / "tenant-owner.pem"), "-pubout", "-outform", "DER", "-out", str(private / "tenant-owner-public.der")])
-        execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(private / "folder-owner.pem")])
-        execute(["openssl", "pkcs8", "-topk8", "-nocrypt", "-in", str(private / "folder-owner.pem"), "-outform", "DER", "-out", str(private / "folder-owner.der")])
-        execute(["openssl", "pkey", "-in", str(private / "folder-owner.pem"), "-pubout", "-outform", "DER", "-out", str(private / "folder-owner-public.der")])
+        proof_keys = {"Owner": "owner", "TenantOwner": "tenant-owner", "FolderOwner": "folder-owner",
+                      "FolderScan": "folder-scan", "FolderWorker": "folder-worker", "FolderWorkerScan": "folder-worker-scan"}
+        for name in proof_keys.values():
+            pem = private / (name + ".pem")
+            execute(["openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", str(pem)])
+            execute(["openssl", "pkcs8", "-topk8", "-nocrypt", "-in", str(pem), "-outform", "DER", "-out", str(private / (name + ".der"))])
+            execute(["openssl", "pkey", "-in", str(pem), "-pubout", "-outform", "DER", "-out", str(private / (name + "-public.der"))])
         for path in private.iterdir():
             os.chmod(path, 0o700 if path.is_dir() else 0o600)
         for name in ("eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers"):
@@ -2636,20 +2634,18 @@ def _main() -> int:
                    "CertificatePath": str(private / "certificate.pfx"), "CertificatePassword": password,
                    "TrustBundle": str(private / "certificate.pem"), "EventStoreSecret": secrets.token_hex(32),
                    "ProjectsSecret": secrets.token_hex(32), "ChannelToken": secrets.token_hex(32),
-                   "TenantsSecret": secrets.token_hex(32), "FoldersSecret": secrets.token_hex(32), "BootstrapPassword": bootstrap_password,
+                   "TenantsSecret": secrets.token_hex(32), "FoldersSecret": secrets.token_hex(32),
+                   "FolderWorkersSecret": secrets.token_hex(32), "BootstrapPassword": bootstrap_password,
                    "CatalogDigestKey": base64.b64encode(secrets.token_bytes(32)).decode(),
                    "InvocationDirectory": str(private / "catalog-invocations"),
                    "OwnerSourceReadDirectory": str(owner_source_directory),
                    "ReceiptKey": base64.b64encode(secrets.token_bytes(32)).decode(),
-                   "OwnerPrivateKey": base64.b64encode((private / "owner.der").read_bytes()).decode(),
-                   "OwnerPublicKey": base64.b64encode((private / "owner-public.der").read_bytes()).decode(),
-                   "TenantOwnerPrivateKey": base64.b64encode((private / "tenant-owner.der").read_bytes()).decode(),
-                   "TenantOwnerPublicKey": base64.b64encode((private / "tenant-owner-public.der").read_bytes()).decode(),
-                   "FolderOwnerPrivateKey": base64.b64encode((private / "folder-owner.der").read_bytes()).decode(),
-                   "FolderOwnerPublicKey": base64.b64encode((private / "folder-owner-public.der").read_bytes()).decode(),
                    "Tenant": isolation + "-tenant", "ForeignTenant": isolation + "-foreign",
                    "WriterProtocolSourceCommit": revisions["references/Hexalith.EventStore"],
                    "WriterProtocolSourceManifestSha256": hashlib.sha256((evidence / "source-manifest.json").read_bytes()).hexdigest()}
+        for key, name in proof_keys.items():
+            fixture[key + "PrivateKey"] = base64.b64encode((private / (name + ".der")).read_bytes()).decode()
+            fixture[key + "PublicKey"] = base64.b64encode((private / (name + "-public.der")).read_bytes()).decode()
         if browser is not None:
             fixture["Browser"] = dict(browser, Enabled=True, TokenEndpoint=browser["Authority"] + "/protocol/openid-connect/token")
         discovery_configuration = private / "discovery.json"

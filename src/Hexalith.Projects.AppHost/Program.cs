@@ -157,11 +157,23 @@ try
 }
 finally
 {
-    if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
-    if (daprCertificateDirectory is not null && Directory.Exists(daprCertificateDirectory))
-        Directory.Delete(daprCertificateDirectory, recursive: true);
-    if (daprRunDirectory is not null && Directory.Exists(daprRunDirectory))
-        Directory.Delete(daprRunDirectory, recursive: true);
+    try
+    {
+        if (supportedReadCatalog is not null) await supportedReadCatalog.DisposeAsync().ConfigureAwait(false);
+    }
+    finally
+    {
+        try
+        {
+            if (daprCertificateDirectory is not null && Directory.Exists(daprCertificateDirectory))
+                Directory.Delete(daprCertificateDirectory, recursive: true);
+        }
+        finally
+        {
+            if (daprRunDirectory is not null && Directory.Exists(daprRunDirectory))
+                Directory.Delete(daprRunDirectory, recursive: true);
+        }
+    }
 }
 
 static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<DotnetProjectResource> eventStore)

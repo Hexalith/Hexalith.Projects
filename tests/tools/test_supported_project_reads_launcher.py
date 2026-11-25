@@ -1083,6 +1083,11 @@ class SupportedReadRestartDeadlineControls(unittest.TestCase):
             self.assertLess(time.monotonic() - started, 2)
             self.assertIsNone(LAUNCHER.process_start(int(ready.read_text())))
 
+    def test_group_members_treats_process_lookup_error_as_an_exited_process(self):
+        with patch.object(Path, "iterdir", return_value=[Path("/proc/123")]), \
+                patch.object(Path, "read_text", side_effect=ProcessLookupError()):
+            self.assertEqual({}, LAUNCHER.test_group_members(123))
+
     def test_runner_timeout_and_cancellation_reap_helpers_and_preserve_unrelated_process(self):
         code = "import os,subprocess,sys,time; child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)']);open(sys.argv[1],'w').write(str(os.getpid())+' '+str(child.pid));time.sleep(30)"
         outsider = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"])

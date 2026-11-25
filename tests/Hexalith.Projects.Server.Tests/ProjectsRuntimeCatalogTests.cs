@@ -67,6 +67,83 @@ public sealed class ProjectsRuntimeCatalogTests
         }
     }
 
+    /// <summary>Checks the manifest POST grants against the actual restricted SDK receiver.</summary>
+    [Fact]
+    public async Task ManifestGrantsMatchTheRestrictedSdkReceiver()
+    {
+        using var manifest = JsonDocument.Parse(File.ReadAllBytes(
+            Path.Combine(AppContext.BaseDirectory, "hexalith.module-manifest.v2.json")));
+        var domain = manifest.RootElement.GetProperty("modules").EnumerateArray().Single()
+            .GetProperty("surfaces").GetProperty("interfaces").EnumerateArray()
+            .Single(item => item.GetProperty("name").GetString() == "projects-domain");
+        RouteCatalogDeclaredInvocation[] grants = domain.GetProperty("invocationRules").EnumerateArray()
+            .Select(rule => new RouteCatalogDeclaredInvocation(
+                rule.GetProperty("caller").GetString()!,
+                rule.GetProperty("path").GetString()!.TrimStart('/'),
+                rule.GetProperty("verbs").EnumerateArray().Select(verb => verb.GetString()!).ToArray()))
+            .ToArray();
+        grants.ShouldAllBe(grant => grant.CallerAppId == "eventstore");
+        grants.Select(grant => grant.Method).ShouldContain("project/v2/reconcile");
+        grants.Select(grant => grant.Method).ShouldContain("project/rebuild/part/v1");
+
+        DirectoryInfo workspace = Directory.CreateTempSubdirectory("projects-sdk-grants-");
+        try
+        {
+            CancellationToken token = TestContext.Current.CancellationToken;
+            string accessControl = Path.Combine(workspace.FullName, "access-control.json");
+            await File.WriteAllTextAsync(accessControl, JsonSerializer.Serialize(new
+            {
+                spec = new
+                {
+                    accessControl = new
+                    {
+                        policies = new[]
+                        {
+                            new { operations = grants.Select(grant => new { name = grant.Method, httpVerb = grant.HttpMethods, action = "allow" }) },
+                        },
+                    },
+                },
+            }), token);
+            const string section = "EventStore:RouteCatalog:DevelopmentBootstrap:";
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+            builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["urls"] = "http://127.0.0.1:0",
+                ["Projects:DevelopmentRouteCatalog:Enabled"] = "true",
+                ["Authentication:JwtBearer:Authority"] = "https://catalog-fixture.example.test",
+                ["Authentication:JwtBearer:Issuer"] = "https://catalog-fixture.example.test",
+                ["Authentication:JwtBearer:Audience"] = "projects-fixture",
+                [DaprAppChannelToken.ConfigurationKey] = "isolated-catalog-channel",
+                [section + "Directory"] = workspace.FullName,
+                [section + "AccessControlPath"] = accessControl,
+                [section + "HostId"] = "projects",
+                [section + "CoordinatorHostId"] = "eventstore",
+                [section + "AttemptId"] = "projects-manifest-grants",
+                [section + "RequiredHostIds:0"] = "projects",
+                [section + "RequiredHostIds:1"] = "eventstore",
+                [section + "DeclaredInvocations"] = JsonSerializer.Serialize(grants, JsonSerializerOptions.Web),
+            });
+            builder.AddProjectsDomainService();
+            // This lane observes the real receiver fence without activating a shared catalog.
+            builder.Services.Remove(builder.Services.Last(service => service.ServiceType == typeof(IHostedService)));
+            WebApplication app = builder.Build();
+            await using (app.ConfigureAwait(true))
+            {
+                app.UseEventStoreDomainService();
+                app.MapProjectsHumanEndpoints();
+                await app.StartAsync(token);
+                var restricted = app.Services.GetRequiredService<FiniteRouteCatalogReceiver>().Observe();
+                restricted.Endpoints.Where(endpoint => endpoint.Admitted)
+                    .SelectMany(endpoint => endpoint.Methods.Select(method => (endpoint.Pattern, method))).Order()
+                    .ShouldBe(grants.SelectMany(grant => grant.HttpMethods.Select(method => ("/" + grant.Method, method))).Order());
+            }
+        }
+        finally
+        {
+            workspace.Delete(recursive: true);
+        }
+    }
+
     /// <summary>The actual compiled owner produces a complete schema-three catalog accepted by the SDK, without activating any authority.</summary>
     [Fact]
     public void CompleteGeneratedCatalogPassesTheSharedValidator()

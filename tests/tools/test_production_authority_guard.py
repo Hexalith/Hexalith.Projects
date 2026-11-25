@@ -234,6 +234,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         symlink_record: bool = False,
         p2_pin: dict[str, object] | bytes | None = None,
         p2_artifacts: dict[str, bytes] | None = None,
+        p2_symlink: str | None = None,
     ) -> tuple[int, ...]:
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory)
@@ -270,7 +271,12 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             for relative, data in (p2_artifacts or {}).items():
                 artifact_path = artifacts_root / relative
                 artifact_path.parent.mkdir(parents=True, exist_ok=True)
-                artifact_path.write_bytes(data)
+                if relative == p2_symlink:
+                    target_path = artifact_path.with_suffix(".retained")
+                    target_path.write_bytes(data)
+                    artifact_path.symlink_to(target_path.name)
+                else:
+                    artifact_path.write_bytes(data)
             return GUARD.validate_index(
                 sprint_path,
                 deferred_path,
@@ -1110,6 +1116,17 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         del artifacts[artifact_path]
                     with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*artifact"):
                         self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+    def test_p2_recovery_receipt_symlink_fails_closed(self) -> None:
+        pin, artifacts = self.p2_fixture()
+        receipt = pin["qualification"]["persistedCases"]["recovery"]["receipts"][0]
+        with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*recovery.*symlink"):
+            self.validate_boundary(
+                sprint=self.p2_sprint(),
+                p2_pin=pin,
+                p2_artifacts=artifacts,
+                p2_symlink=receipt["path"],
+            )
 
     def test_invalid_p2_evidence_values_fail_closed(self) -> None:
         sprint = self.p2_sprint()

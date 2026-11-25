@@ -20,6 +20,7 @@
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Server\Hexalith.Conversations.Server.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\module\hexalith.module-manifest.v2.json" Link="hexalith.module-manifest.v2.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- 7.1-P1 creation-contract fixtures: exact request bodies with their pinned outcomes. -->
     <None Include="Fixtures\CreationContract\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

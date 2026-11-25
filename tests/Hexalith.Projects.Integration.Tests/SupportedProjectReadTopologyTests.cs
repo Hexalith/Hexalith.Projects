@@ -178,7 +178,16 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
         environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
         environment["Authentication__WorkloadAuthority__Grants__6__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
-        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__6__Operations__", StringComparison.Ordinal)).ShouldBe(1);
+        environment["Authentication__WorkloadAuthority__Grants__6__Operations__1"].ShouldBe("eventstore:stream-scan-native");
+        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__6__Operations__", StringComparison.Ordinal)).ShouldBe(2);
+        environment["Authentication__WorkloadAuthority__Grants__7__Workload"].ShouldBe("folders-workers");
+        environment["Authentication__WorkloadAuthority__Grants__7__Operations__0"].ShouldBe("eventstore:stream-read");
+        environment["Authentication__WorkloadAuthority__Grants__7__Operations__1"].ShouldBe("eventstore:stream-scan-native");
+        environment.Keys.Count(key => key.StartsWith("Authentication__WorkloadAuthority__Grants__7__Operations__", StringComparison.Ordinal)).ShouldBe(2);
+        environment["Authentication__WorkloadAuthority__Grants__7__AllowUnbound"].ShouldBe("false");
+        environment["Authentication__WorkloadAuthority__Grants__7__Bindings__eventstore:bound-domain__0"].ShouldBe("folders");
+        environment["Authentication__WorkloadAuthority__Grants__7__Bindings__eventstore:bound-tenant__0"].ShouldBe("fixture-tenant");
+        environment["Authentication__WorkloadAuthority__Grants__7__Bindings__eventstore:bound-tenant__1"].ShouldBe("fixture-foreign");
         environment["Authentication__WorkloadAuthority__Grants__5__Operations__0"].ShouldBe("eventstore:stream-read");
         environment["Authentication__WorkloadAuthority__Grants__5__AllowUnbound"].ShouldBe("false");
         environment["Authentication__WorkloadAuthority__Grants__5__Workload"].ShouldBe("tenants");
@@ -190,6 +199,16 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         folderEnvironment["Folders__EventStore__OwnerMetadataReads__Enabled"].ShouldBe("true");
         folderEnvironment["Folders__EventStore__OwnerMetadataReads__DiagnosticsEnabled"].ShouldBe("true");
         folderEnvironment["Authentication__BoundStreamRead__PrivateKey"].ShouldBeOfType<ParameterResource>().Secret.ShouldBeTrue();
+        var scanKey = folderEnvironment["Authentication__NativeSourceScan__PrivateKey"].ShouldBeOfType<ParameterResource>();
+        scanKey.Secret.ShouldBeTrue();
+        scanKey.ShouldNotBeSameAs(folderEnvironment["Authentication__BoundStreamRead__PrivateKey"]);
+        var workerEnvironment = await EnvironmentAsync(builder.Resources.Single(resource => resource.Name == "folders-workers"), builder.ExecutionContext);
+        var workerKey = workerEnvironment["Authentication__NativeSourceScan__PrivateKey"].ShouldBeOfType<ParameterResource>();
+        workerKey.Secret.ShouldBeTrue();
+        workerKey.ShouldNotBeSameAs(scanKey);
+        workerEnvironment["Authentication__WorkloadIssuer__Workload"].ShouldBe("folders-workers");
+        workerEnvironment["Authentication__WorkloadIssuer__ClientSecret"].ShouldBeOfType<ParameterResource>()
+            .ShouldNotBeSameAs(folderEnvironment["Authentication__WorkloadIssuer__ClientSecret"]);
         IReadOnlyDictionary<string, object> tenantEnvironment = await EnvironmentAsync(tenants.Resource, builder.ExecutionContext);
         tenantEnvironment["EventStore__Authentication__TokenEndpoint"].ShouldBe("https://127.0.0.1:54321/users/token");
         tenantEnvironment["EventStore__Authentication__ClientId"].ShouldBe("supported-read-bootstrap");
@@ -202,6 +221,9 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
         tenantEnvironment["Tenants__BootstrapGlobalAdminUserId"].ShouldBe("actor-1");
         IReadOnlyDictionary<string, object> gatewayEnvironment = await EnvironmentAsync(gateway.Resource, builder.ExecutionContext);
         gatewayEnvironment["Authentication__BoundCommand__AllowedDomains__tenants"].ShouldBe("global-administrators");
+        gatewayEnvironment["Authentication__BoundStreamRead__MetadataOnlyCallers__folders-workers"].ShouldBe("true");
+        gatewayEnvironment["Authentication__NativeSourceScan__AllowedDomains__folders"].ShouldBe("folders");
+        gatewayEnvironment["Authentication__NativeSourceScan__AllowedDomains__folders-workers"].ShouldBe("folders");
         // Replay the removed, later Infrastructure assignments through Aspire's actual callbacks.
         // Equal final dictionaries prove that they rewrote only identical existing values.
         _ = tenants.WithEnvironment("Tenants__BootstrapBoundWorkloadEnabled", "true")
@@ -429,7 +451,7 @@ public sealed class SupportedProjectReadTopologyTests : IDisposable
             ["Projects:SupportedReads:CatalogDigestKey"] = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)),
             ["Projects:SupportedReads:Tenant"] = "fixture-tenant", ["Projects:SupportedReads:ForeignTenant"] = "fixture-foreign",
         };
-        foreach (string key in new[] { "CertificatePassword", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey" })
+        foreach (string key in new[] { "CertificatePassword", "EventStoreSecret", "ProjectsSecret", "OwnerPrivateKey", "OwnerPublicKey", "ReceiptKey", "ChannelToken", "TenantsSecret", "TenantOwnerPrivateKey", "TenantOwnerPublicKey", "BootstrapPassword", "FoldersSecret", "FolderOwnerPrivateKey", "FolderOwnerPublicKey", "FolderScanPrivateKey", "FolderScanPublicKey", "FolderWorkersSecret", "FolderWorkerPrivateKey", "FolderWorkerPublicKey", "FolderWorkerScanPrivateKey", "FolderWorkerScanPublicKey" })
             inputs["Projects:SupportedReads:" + key] = "synthetic-structural-placeholder";
         return inputs;
     }

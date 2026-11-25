@@ -58,6 +58,23 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         fixture.Routes.HumanBearerForwarded.ShouldBeFalse(); await fixture.AssertUnchangedAsync(before);
     }
 
+    /// <summary>Verifies the SDK query receiver maps an invalid supported-read cursor to 400 through the Projects policy.</summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task SdkQueryReceiverMapsAnInvalidCursorToBadRequest()
+    {
+        var fixture = await ProjectReadAuthorityFixture.CreateAsync().ConfigureAwait(true);
+        await using var fixtureLifetime = fixture.ConfigureAwait(true);
+        ProjectAuthoritySnapshot[] before = await fixture.SnapshotAsync().ConfigureAwait(true);
+
+        using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries",
+            fixture.List(new(Cursor: "not-a-protected-cursor")), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        fixture.Routes.Hops.Last(hop => hop.Target == "projects").Status.ShouldBe(400);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        await fixture.AssertUnchangedAsync(before).ConfigureAwait(true);
+    }
+
     /// <summary>Proves delegated Chatbot descriptions and continuation depend on real Folder authorization.</summary>
     [Fact]
     public async Task DelegatedChatbotListsAndOpensOnlyCurrentFolderAuthorizedProjects()

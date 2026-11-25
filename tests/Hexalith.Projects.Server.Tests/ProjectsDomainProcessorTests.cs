@@ -20,6 +20,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Server;
 
@@ -79,10 +80,65 @@ public sealed class ProjectsDomainProcessorTests
         malformed.FailedSequenceNumber.ShouldBe(1L);
         malformed.FailedEventType.ShouldBe(typeof(ProjectCreated).FullName);
         malformed.StateJson.ShouldBeNull();
+
+        foreach (var invalid in new[] { request with { TenantId = "bad:tenant" }, request with { AggregateId = "bad:project" } })
+        {
+            AggregateReconstructionResult rejected = await processor.ReplayAsync(invalid, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            rejected.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+            rejected.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.Conflict);
+            rejected.StateJson.ShouldBeNull();
+        }
+
+        AggregateReconstructionResult missingMetadata = await processor.ReplayAsync(request with
+        {
+            Events =
+            [
+                replayEvents[0],
+                replayEvents[1] with
+                {
+                    EventTypeName = typeof(ProjectFolderSet).FullName!,
+                    Payload = JsonSerializer.SerializeToUtf8Bytes(new { tenantId = Tenant, projectId = ProjectIdValue, folderId = "folder-a" }),
+                },
+            ],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        missingMetadata.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+        missingMetadata.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.DeserializationFailed);
+        missingMetadata.FailedSequenceNumber.ShouldBe(2L);
+        missingMetadata.StateJson.ShouldBeNull();
+
         AggregateReconstructionResult incomplete = await processor.ReplayAsync(request with { Events = [replayEvents[0]] },
             TestContext.Current.CancellationToken).ConfigureAwait(true);
         incomplete.Status.ShouldBe(AggregateReconstructionStatus.Failed);
         incomplete.StateJson.ShouldBeNull();
+
+        var rejection = replayEvents[0] with
+        {
+            EventTypeName = typeof(ProjectCreationRejected).FullName!,
+            Payload = JsonSerializer.SerializeToUtf8Bytes(new ProjectCreationRejected(Tenant, ReferenceState.Conflict)),
+        };
+        var rejectionOnly = request with { Events = [rejection], UpToSequence = 1 };
+        AggregateReconstructionResult acceptedRejection = await processor.ReplayAsync(rejectionOnly,
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        acceptedRejection.Status.ShouldBe(AggregateReconstructionStatus.Succeeded);
+        acceptedRejection.LastAppliedSequenceNumber.ShouldBe(1L);
+        JsonSerializer.Deserialize<ProjectState>(acceptedRejection.StateJson!, JsonSerializerOptions.Web)!.IsCreated.ShouldBeFalse();
+
+        AggregateReconstructionResult foreignRejection = await processor.ReplayAsync(rejectionOnly with
+        {
+            Events = [rejection with
+            {
+                Payload = JsonSerializer.SerializeToUtf8Bytes(new ProjectCreationRejected("foreign-tenant", ReferenceState.Conflict)),
+            }],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        foreignRejection.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.ApplyFailed);
+        foreignRejection.StateJson.ShouldBeNull();
+
+        AggregateReconstructionResult invalidRejection = await processor.ReplayAsync(rejectionOnly with
+        {
+            Events = [rejection with { Payload = "[]"u8.ToArray() }],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        invalidRejection.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.DeserializationFailed);
+        invalidRejection.StateJson.ShouldBeNull();
     }
 
     [Fact]

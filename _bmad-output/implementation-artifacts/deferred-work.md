@@ -884,7 +884,7 @@ origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host
 location: src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs, IsolatedLiveE2EFixtureProfile.cs and SupportedProjectReadDevelopmentInfrastructure.cs (projects receiver Calls); tests/Hexalith.Projects.PackageFixtures.AppHost compositions; src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs (restrictAuxiliaryToInvocations)
 source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
 reason: Review finding EC2-6. EventStore's NamedProjectionDispatchCoordinator invokes project/rebuild/part/v1 for large rebuild transports and project/v2/reconcile for terminal reconciliation. The Projects grant lists omit both, and restricted Development receivers refuse ungranted callbacks, so a large Project rebuild or a reconciliation fails in these lanes. The pre-DW-63 host mapped neither route, so both flows already failed with 404 before this change. Severity medium. Owner: Projects maintainer.
-removal_condition: Every restricted Projects composition grants both callbacks, and a test drives a rebuild part upload and a reconcile call through a restricted receiver.
+removal_condition: Every restricted Projects composition grants both callbacks, and a test drives a rebuild part upload and a reconcile call through a restricted receiver. The working-tree candidate declares both exact POST grants and checks receiver admission. Persisted large rebuild and terminal reconciliation evidence is pending.
 status: open
 
 ### DW-98: Move the allow-all authorization registrations out of shipped composition and add the production startup guard.

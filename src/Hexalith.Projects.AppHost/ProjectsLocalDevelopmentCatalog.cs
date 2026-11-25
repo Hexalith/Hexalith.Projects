@@ -55,7 +55,7 @@ internal static class ProjectsLocalDevelopmentCatalog
                 new(projects, "api/v1/streams/read/workload", ["POST"]),
             ]) { TechnicalHttp = true },
             new(tenants, Calls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
-            new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
+            new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/v2/reconcile", "project/rebuild/v1", "project/rebuild/part/v1", "admin/operational-index-metadata")),
         ];
 
         DirectoryInfo componentDirectory = Directory.CreateTempSubdirectory("projects-catalog-component-");
@@ -109,6 +109,10 @@ internal static class ProjectsLocalDevelopmentCatalog
         string tokenEndpoint = GetRequired("TokenEndpoint");
         string clientId = GetRequired("GatewayClientId");
         string clientSecret = GetRequired("GatewayClientSecret");
+        string receiptKey = GetRequired("HumanAuthorityReceiptSigningKey");
+        var receiptSigningKey = builder.AddParameter("projects-catalog-human-authority-receipt-key", () => receiptKey, secret: true);
+        _ = gateway.WithEnvironment("Authentication__HumanAuthorityReceipt__SigningKey", receiptSigningKey);
+        _ = projects.WithEnvironment("Authentication__HumanAuthorityReceipt__SigningKey", receiptSigningKey);
         foreach (var resource in new[] { gateway, projects, tenants })
         {
             _ = resource.WithEnvironment("Authentication__WorkloadJwtBearer__Authority", authority)

@@ -234,6 +234,36 @@ public sealed class ProjectsServerModuleTests
             () => ProjectProjectionHandler.Project(ProjectionRequestOf(ProjectionEvent(CreatedEvent(), 1), second)));
     }
 
+    /// <summary>Verifies the hosted SDK projection replays an ordered historical pending Folder.</summary>
+    [Fact]
+    public async Task HostedProjectCallbackReplaysHistoricalPendingFolder()
+    {
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-full-projection" };
+        WebApplication app = await SupportedProjectReadHttpTests.StartAsync(null, null, key, workload: true).ConfigureAwait(true);
+        await using (app.ConfigureAwait(true))
+        {
+            CancellationToken token = TestContext.Current.CancellationToken;
+            using HttpClient client = await CallbackClientAsync(app, key, EventStoreWorkloadOperations.DomainServiceProject).ConfigureAwait(true);
+            var pending = new ProjectFolderCreationPending("tenant-a", "project-a", "Pending Folder", "owner-unavailable", true,
+                "actor-a", "correlation-pending", "task-pending", "key-pending", "fingerprint-pending", DateTimeOffset.UnixEpoch);
+            var request = ProjectionRequestOf(ProjectionEvent(CreatedEvent(), 1), ProjectionEvent(pending, 2));
+            using HttpResponseMessage response = await client.PostAsJsonAsync(ProjectsServerModule.ProjectRoute, request, token).ConfigureAwait(true);
+
+            response.EnsureSuccessStatusCode();
+            ProjectionResponse projected = (await response.Content.ReadFromJsonAsync<ProjectionResponse>(token).ConfigureAwait(true)).ShouldNotBeNull();
+            projected.ProjectionType.ShouldBe(ProjectsServerModule.ProjectionType);
+            var state = projected.State.Deserialize<ProjectState>(JsonSerializerOptions.Web).ShouldNotBeNull();
+            state.IsCreated.ShouldBeTrue();
+            state.TenantId.ShouldBe("tenant-a");
+            state.ProjectId.ShouldBe("project-a");
+            state.Name.ShouldBe("Project A");
+            var folder = state.ProjectFolder.ShouldNotBeNull();
+            folder.ReferenceState.ShouldBe(ReferenceState.Pending);
+            folder.ReasonCode.ShouldBe("owner-unavailable");
+        }
+    }
+
     /// <summary>Verifies the SDK projection callback answers a foreign domain with 404 instead of replaying it.</summary>
     /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
@@ -256,21 +286,17 @@ public sealed class ProjectsServerModuleTests
         }
     }
 
-    /// <summary>Verifies the SDK query receiver maps an invalid supported-read cursor to 400 through the Projects policy.</summary>
-    /// <returns>A task representing the asynchronous test.</returns>
+    /// <summary>Verifies an embedded runtime can construct its owner authority client.</summary>
     [Fact]
-    public async Task SdkQueryReceiverMapsAnInvalidCursorToBadRequest()
+    public void StandaloneRuntimeRegistersTheOwnerAuthorityIssuer()
     {
-        var fixture = await ProjectReadAuthorityFixture.CreateAsync().ConfigureAwait(true);
-        await using var fixtureLifetime = fixture.ConfigureAwait(true);
-        ProjectAuthoritySnapshot[] before = await fixture.SnapshotAsync().ConfigureAwait(true);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.Services.AddProjectsServer();
+        builder.Services.AddProjectsServerRuntimeInfrastructure();
+        using WebApplication app = builder.Build();
 
-        using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries",
-            fixture.List(new(Cursor: "not-a-protected-cursor")), TestContext.Current.CancellationToken).ConfigureAwait(true);
-
-        fixture.Routes.Hops.Last(hop => hop.Target == "projects").Status.ShouldBe(400);
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        await fixture.AssertUnchangedAsync(before).ConfigureAwait(true);
+        app.Services.GetRequiredService<IWorkloadAssertionIssuer>().ShouldNotBeNull();
+        app.Services.GetRequiredService<Hexalith.Projects.Server.Authorization.ProjectChatBotAuthorityGateway>().ShouldNotBeNull();
     }
 
     /// <summary>

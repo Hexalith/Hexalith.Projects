@@ -246,7 +246,7 @@ public static class PackageCompatibilityComposition
                 new(projects, "api/v1/queries/owner-authority/workload", ["POST"]),
                 new(projects, "api/v1/streams/read/workload", ["POST"]), new(projects, "api/v1/commands", ["POST"])]) { TechnicalHttp = true },
             new(tenants, Calls("process", "replay-state", "query", "project", "admin/operational-index-metadata")),
-            new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/rebuild/v1", "admin/operational-index-metadata")),
+            new(projects, Calls("process", "replay-state", "query", "project", "project/v2", "project/v2/reconcile", "project/rebuild/v1", "project/rebuild/part/v1", "admin/operational-index-metadata")),
             new(workers, []),
         ];
         Dictionary<string, PackageOwnerLoadContext> ownerContexts = [];
