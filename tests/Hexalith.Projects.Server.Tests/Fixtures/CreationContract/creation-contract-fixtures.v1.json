@@ -634,6 +634,36 @@
       }
     },
     {
+      "id": "malformed-class-unquoted-value",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-56",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":tenant_sensitive}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "malformed-class-truncated-string",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-57",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant_sens",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
+      "id": "malformed-class-invalid-escape",
+      "scenario": "other-invalid",
+      "idempotencyKey": "p1-case-58",
+      "body": "{\"requestSchemaVersion\":\"v1\",\"projectMetadata\":{\"displayName\":\"Tracer Bullet\",\"metadataClass\":\"tenant\\qsensitive\"}}",
+      "expect": {
+        "status": 400,
+        "rejectedField": "body"
+      }
+    },
+    {
       "id": "empty-body",
       "scenario": "other-invalid",
       "idempotencyKey": "p1-case-34",

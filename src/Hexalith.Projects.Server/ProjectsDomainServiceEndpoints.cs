@@ -589,6 +589,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 correlationId,
                 taskId,
                 string.Equals(ex.Path, "$.projectMetadata.metadataClass", StringComparison.OrdinalIgnoreCase)
+                    && ex.InnerException is not JsonException
                     ? "projectMetadata.metadataClass"
                     : "body");
         }
