@@ -887,6 +887,171 @@ reason: Review finding EC2-6. EventStore's NamedProjectionDispatchCoordinator in
 removal_condition: Every restricted Projects composition grants both callbacks, and a test drives a rebuild part upload and a reconcile call through a restricted receiver.
 status: open
 
+### DW-98: Move the allow-all authorization registrations out of shipped composition and add the production startup guard.
+
+origin: Architecture Spine 2026-11-25 update, finding C1(a) (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects Server owner
+location: src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs (AddProjectsServerRuntimeInfrastructure at :218, registrations at :240-243); src/Hexalith.Projects/Authorization/AllowingProjectEventStoreAuthorizationValidator.cs; src/Hexalith.Projects.Server/Authorization/AllowingProjectDaprPolicyEvidenceProvider.cs
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: The shipped path calls AddProjectsServerRuntimeInfrastructure, which replaces the deny-all defaults with AllowingProjectEventStoreAuthorizationValidator and AllowingProjectDaprPolicyEvidenceProvider, so a test-only allow-all validator authorizes every command. AD-20 allows allow-all implementations only in explicit test or local-development composition, and a production-capable host must refuse to start with one. This needs no G-5 input. Land it no later than the real validator (8.8-P1), so no deployed host runs deny-all writes, and before the writer cutover. DW-63 stays behavior-preserving.
+removal_condition: Both Allowing registrations exist only in explicit test and local-development composition, and a test shows that a production-capable host refuses to start when either is registered.
+gate: no later than the real EventStore-authorization validator (8.8-P1); 7-17-cut-over-project-writes-to-the-sdk-writer
+status: open
+
+### DW-99: Publish an EventStore release that carries IDomainQueryResponsePolicy, select it in Builds, then advance the Projects Builds gitlink.
+
+origin: Architecture Spine 2026-11-25 update, finding H1 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: EventStore release owner, then Builds owner, then Projects owner for the Builds gitlink advance (gitlink policy owned by Hexalith.CiCd)
+location: src/Hexalith.Projects.Server/Queries/ProjectsQueryResponsePolicy.cs:8; references/Hexalith.Builds catalog selection; EventStore 208af26a (untagged)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: Published EventStore up to 5.5.2 lacks IDomainQueryResponsePolicy, first present in untagged 208af26a. CI builds in package mode, so build-and-test fails with CS0246 on every revision that uses the type and the downstream jobs are skipped; CI therefore supplies no DW-63 acceptance evidence. Project references in CI stay forbidden. Rechecked during the 2026-11-25 spine finalization: nuget.org still lists 5.5.2 as the latest DomainService release.
+removal_condition: EventStore publishes a release after 5.5.2 that carries the type, Builds selects it, Projects advances its Builds gitlink, and main CI build-and-test passes in package mode.
+gate: DW-63 acceptance
+status: open
+
+### DW-100: Bind each v1 request to exactly one Tenant instead of the first Tenant claim.
+
+origin: Architecture Spine 2026-11-25 update, finding H8 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Story 7.1 owner (Projects Server)
+location: src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs:46-48 and :80-82; src/Hexalith.Projects.Server/ProjectsClaimsTransformation.cs; ProjectAuthorizationGate.cs
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: The v1 Tenant accessor takes the first matching Tenant claim, so a principal with more than one Tenant is bound by token claim order. AD-18: each request binds exactly one Tenant, either the Gateway envelope Tenant verified against the principal's Tenant set or, on retained v1 routes, a single current-tenant claim. A multi-Tenant principal without a verified selection gets the safe 404. First-claim selection is forbidden.
+removal_condition: Tests show that a principal with more than one Tenant and no verified selection receives the safe 404 on v1 routes, that a single current-tenant claim binds that Tenant, and that no code path selects the first of several Tenant claims.
+gate: 7-1-activate-a-project-with-exactly-one-authorized-folder
+status: open
+
+### DW-101: Run Dapr runtime 1.19.2 in G-6 and CI.
+
+origin: Architecture Spine 2026-11-25 update, finding H11 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: G-6 policy owner; the CI runtime change is a proposal to Hexalith.CiCd
+location: tools/qualification/g6-current-policy-2026-11-23-toolkit-preview.json ("daprRuntime": "1.19.1"); tools/qualification/run_g6_current.py (Redis and PostgreSQL lanes); tests/tools/test_current_g6_policy.py and tests/tools/run-ci-workflow-gates.ps1 pins; .github/workflows/ci.yml (owned by Hexalith.CiCd)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: Dapr runtime 1.19.2 fixes ETag and first-write enforcement on the Redis, PostgreSQL and in-memory stores, plus three CVEs. Evidence for AD-15 serialization, AD-17 fencing and the AD-35 claim must run on 1.19.2 or later unless the owner records an explicit risk acceptance on each affected evidence row; 1.19.1 results do not qualify those invariants. The Builds catalog already sets HexalithDaprRuntimeVersion to 1.19.2.
+removal_condition: G-6 qualifies on runtime 1.19.2 or later and the accepted Hexalith.CiCd proposal moves CI to it, or the owner records a risk acceptance on each affected evidence row.
+gate: Story 7.1 claim-race proof; 7-17-cut-over-project-writes-to-the-sdk-writer
+status: open
+
+### DW-102: Remove the preview audit and task-status Contracts decorations and enforce the AD-29 inventory with a reflection test.
+
+origin: Architecture Spine 2026-11-25 update, finding H15 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects Contracts owner
+location: src/Hexalith.Projects.Contracts/Queries/GetProjectAuditQuery.cs:10; src/Hexalith.Projects.Contracts/Queries/GetProjectTaskStatusQuery.cs:6 (decorated in 95f2984c)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: AD-29: decoration is enrollment. In every Projects.Contracts version the set of [HexalithQuery] and [HexalithCommand] types equals the approved AD-29 inventory, and a Projects-owned reflection test fails the build on any difference. The audit and task-status queries are preview operations, decorated before Story 8.1 is approved, so McpCli would discover them on the next publication. Re-adding them needs an AD-29 inventory amendment and G-3 evidence. The Gateway remains the only runtime authorization.
+removal_condition: Both decorations are removed, and a reflection test that compares the decorated types with the approved inventory fails the build on any difference.
+gate: next Projects.Contracts publication (DW-82)
+status: open
+
+### DW-103: Import v1 idempotency keys at the writer cutover.
+
+origin: Architecture Spine 2026-11-25 update, finding M7 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: AD-17 cutover inventory owner (Story 7.17)
+location: retained v1 create and proposal-confirmation idempotency (aggregate fingerprints; src/Hexalith.Projects.Server/Proposals/InMemoryProjectProposalConfirmationIdempotencyLedger.cs); platform admission records
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: AD-5: the platform admission record is the only equivalence authority, and aggregate fingerprints are defence in depth. Nothing carries v1 keys across the cutover, so a v1 retry after it could admit duplicate work. At the cutover, every v1 idempotency key seen in the previous 30 days is imported as an AD-5 record resolving to its original outcome, or fenced to the AD-19 nondisclosing 409. The caller-projectId rule follows AD-18.
+removal_condition: The cutover record shows every v1 key from the prior 30 days imported or fenced, and a test replays a pre-cutover key after the cutover and receives either the original outcome or the nondisclosing 409.
+gate: 7-17-cut-over-project-writes-to-the-sdk-writer
+status: open
+
+### DW-104: Code the AD-19 invalid-input exception as a four-type allow-list.
+
+origin: Architecture Spine 2026-11-25 update, finding M11 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: DW-63 owner (Projects Server)
+location: src/Hexalith.Projects.Server/Queries/ProjectsQueryResponsePolicy.cs
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: AD-19 keeps the safe 404 for invalid input on exactly GetProjectContext, GetConversationStartSetup, ExplainContextSelection and ResolveProjectChatBotAuthority for the life of v1, and every other registered Projects query type uses the AD-19 mapping (400). The policy is coded as a deny-list of six types, so a new query type gets one behavior or the other without review.
+removal_condition: The policy names the four types as an allow-list, and a test enumerates every registered IDomainQueryHandler query type and asserts the mapping each receives.
+gate: before the first new Projects query type
+status: open
+
+### DW-105: Reconcile the Builds Module CLI pin and pin hexalith-evidence.
+
+origin: Architecture Spine 2026-11-25 update, finding M25 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects build-tooling owner
+location: Directory.Packages.props:6 (HexalithBuildsModuleCliVersion 6.4.2); .config/dotnet-tools.json (no hexalith-evidence entry)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: Module.Cli and Evidence.Cli versions must match the pinned Builds release or the published version Builds selects, CI builds Module.Cli from the gitlink, and hexalith-evidence must be pinned before any AD-30 row is recorded as validated. Module.Cli is pinned at 6.4.2 while 6.8.2 is published, and `dotnet tool run hexalith-evidence validate` exits 1 because the tool is absent from the manifest.
+removal_condition: The Module.Cli pin matches the Builds selection or its reason is recorded, hexalith-evidence is pinned in .config/dotnet-tools.json, and the prescribed validate command runs from the Projects root.
+gate: AD-30 evidence rows (Epic 8 release)
+status: open
+
+### DW-106: Bump the FrontComposer CLI tool to the 6.1.0 package line.
+
+origin: Architecture Spine 2026-11-25 update, finding L5 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects tooling owner
+location: .config/dotnet-tools.json (hexalith.frontcomposer.cli 6.0.1)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: The FrontComposer CLI tool is pinned at 6.0.1 while the FrontComposer packages are 6.1.0 (tool 6.1.0 was published on 2026-11-23). Until it is bumped, 6.0.1 output is not evidence for 6.1.0 descriptors.
+removal_condition: The tool manifest pins the FrontComposer CLI version that matches the selected packages.
+gate: none
+status: open
+
+### DW-107: Add v1 proposal-ledger orphans to the AD-17 partial-record inventory with a repair disposition.
+
+origin: Architecture Spine 2026-11-25 update, finding L6 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: AD-17 cutover inventory owner; the repair task belongs to Story 7.15
+location: src/Hexalith.Projects.Server/Proposals/InMemoryProjectProposalConfirmationIdempotencyLedger.cs; src/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: The per-replica v1 proposal-confirmation ledger can leave orphans: a Project without membership of its initiating Conversation, or a duplicate Project. AD-17 lists them as partial records, each of which needs an idempotent repair task with durable receipts, status recovery and a terminal disposition before the writer cutover. Reviewer status PLAUSIBLE.
+removal_condition: The Story 7.15 inventory detects both orphan shapes, each has a repair task with a terminal disposition, and the Story 7.17 cutover inventory lists them.
+gate: 7-17-cut-over-project-writes-to-the-sdk-writer
+status: open
+
+### DW-108: Assert a single keyed projects processor and replay, and refuse startup on more than one.
+
+origin: Architecture Spine 2026-11-25 update, finding L7 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Writer cutover owner (Story 7.17)
+location: src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:173-175 (keyed IDomainProcessor registration)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: AD-17: a host build registers exactly one keyed processor per Projects aggregate type, each with its matching replay, and a production-capable host refuses to start with more than one keyed processor per domain. GetRequiredKeyedService returns the last registration, so a second registration, such as the SDK aggregate discovered in Hexalith.Projects, would silently become the writer. No test asserts this today.
+removal_condition: A test asserts that GetKeyedServices<IDomainProcessor>("projects") and the matching replay are each single and refer to the same writer, and a production-capable host fails startup when a second keyed processor is registered for a domain.
+gate: 7-17-cut-over-project-writes-to-the-sdk-writer
+status: open
+
+### DW-109: Name one route-catalog authority and the check that binds the other.
+
+origin: Architecture Spine 2026-11-25 update, finding L8 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: DW-63 owner
+location: src/Hexalith.Projects.Server/ProjectsRuntimeCatalogDeclarations.cs; module/hexalith.module-manifest.v2.json
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: Route-catalog authority is split between ProjectsRuntimeCatalogDeclarations and the module manifest with no reconciling check, and the development catalog's retirement owner (DW-63 or AD-25) is contradictory. DW-95 covers callback grants only.
+removal_condition: One source is named the authority, and a test fails when the other disagrees with it.
+gate: none
+status: open
+
+### DW-110: Move the extra types out of the multi-type Server files.
+
+origin: Architecture Spine 2026-11-25 update, finding L9 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects Server owner (hygiene)
+location: src/Hexalith.Projects.Server: the five multi-type files named by the 2026-11-24 validation, for example IProjectCommandSubmitter.cs
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: Five Server files declare more than one type, against the one-type-per-file convention. Existing cases are tolerated until the types move under AD-24 (H3): code used only by the retained v1 adapter stays in Projects.Server and retires with it, and handler types move to Hexalith.Projects.
+removal_condition: Each remaining Server file declares one type.
+gate: none
+status: open
+
+### DW-111: Replace the raw bound-stream signing key with platform-issued signing material.
+
+origin: Architecture Spine 2026-11-25 update, finding L10 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: G-5 owner with the Projects Server owner
+location: src/Hexalith.Projects.Server/Authorization/ProjectChatBotAuthorityGateway.cs:74-85 (Authentication:BoundStreamRead:PrivateKey)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: The gateway imports a raw PKCS#8 RSA private key from configuration. AD-28 and G-5 require platform-issued signing material, such as a key handle or a remote signer, and Projects owns no private keys (NFR-2).
+removal_condition: The gateway signs through platform-issued signing material, and no Projects configuration carries a private key.
+gate: Epic 8 release
+status: open
+
+### DW-112: Return the safe 404 from ResolveProjectChatBotAuthority unless the delegated actor has current Folder read.
+
+origin: Architecture Spine 2026-11-25 update, finding H2 (architecture/architecture-projects-2026-07-15/.memlog.md); routed by sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+owner: Projects Server owner
+location: src/Hexalith.Projects.Server/Queries/ProjectChatBotAuthorityQueryHandler.cs (an absent stream returns Forbidden; an existing Project without a grant returns 200 with Head, ObservationId and ObservedAt)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
+reason: AD-19 and AD-3 (PRD FR-26): the authority query returns the same safe 404 for an absent Project, a denied caller and no grant, with no stream head or observation, unless the delegated actor has current Folder read. A grant never suffices without current Folder authority, and a Folder revocation wins immediately. Today the query tells an existing Project from an absent one before any Folder check.
+removal_condition: Handler tests return an identical status and body for "Project exists, actor has no Folder read", "no grant" and "Project absent", and a grant whose holder lost Folder read is denied.
+gate: Epic 8 release
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.

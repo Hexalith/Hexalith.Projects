@@ -84,7 +84,7 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 ### Functional Requirements
 
-_Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable consequences in the PRD; abbreviated here._
+_Source: final PRD §6–§8 + addendum (FR-1–FR-26). Each FR has testable consequences in the PRD; abbreviated here._
 
 > **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, and the 2026-09-08 PRD semantic revision is landed by E-31, with broader qualification still contained; the approved 2026-11-02 bounded entry correction governs 6.1 and its 6.5 consumer. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance. Public McpCli CLI and MCP refuse UI-only actions, confirmation-required actions and requests to mint Selection Evidence, including after A-7 and Story 8.11. The actor confirms in the registered confidential Chatbot or Web component for the action and role.
 
@@ -123,7 +123,7 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable con
 
 **Project Setup Quality**
 
-- **FR-19: Validate Project Setup & Classify Metadata** — Validate setup and creation admission before accepting durable work. Reject raw secrets, unrestricted local paths, unsupported reference types, and foreign-context payloads. Require only a Project name on create (the sole v1 name-only compatibility shape); canonical requests also carry a system-supplied **Metadata Classification** — exactly `public_metadata`|`tenant_sensitive`|`credential_sensitive`|`secret` at `projectMetadata.metadataClass`, assigned by authenticated integration policy and never inferred from user text (AD-31/E-9). **Authorization precedes parsing**; one shared `SensitiveMetadataTierValidator` serves both direct create and proposal confirmation; malformed/unknown classification returns `400 ValidationFailure` with `details.rejectedField = projectMetadata.metadataClass` and no echoed value. _Production owner: Story 7.1 (canonical contract cutover supported by Story 6.7)._
+- **FR-19: Validate Project Setup & Classify Metadata** — Validate setup and creation admission before accepting durable work. Reject raw secrets, unrestricted local paths, unsupported reference types, and foreign-context payloads. Require only a Project name on create (the sole v1 name-only compatibility shape); canonical requests also carry a system-supplied **Metadata Classification** — exactly `public_metadata`|`tenant_sensitive`|`credential_sensitive`|`secret` at `projectMetadata.metadataClass`, supplied by the canonical Chatbot or Web adapter (the v1 adapter passes its caller's value through), validated but not persisted in v1, and never inferred from user text (AD-31/E-9). **Authorization precedes parsing**; one shared `SensitiveMetadataTierValidator` serves both direct create and proposal confirmation; malformed/unknown classification returns `400 ValidationFailure` with `details.rejectedField = projectMetadata.metadataClass` and no echoed value. _Production owner: Story 7.1 (canonical contract cutover supported by Story 6.7)._
 - **FR-20: Retrieve Conversation-Start Setup** — Request names the Conversation and follows the FR-16 membership rule. Bound to one authorized `projectVersion` / `asOf` snapshot and §5. First-response admission only for `Complete` or `Partial`.
 
 **Audit and Operations**
@@ -132,6 +132,10 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable con
 - **FR-22: Support Operator Read Access and Task Reconciliation** — Safe Metadata default; Descriptive Metadata only under separately authorized, audited inspection. Pre-activation status allow-list only. Reconciliation is Administrator task-control on an already-admitted task (no artifact, no new task, original bindings, original-actor re-authorization at commit, fail closed to `Rejected`). Quarantined-legacy inventory is readable here; binding a Folder is FR-8. _Production owners: Stories 6.5/6.6, 8.1/8.3/8.4/8.5._
 - **FR-23: Restore Archived Project** — Project User may restore only by rebinding a prior Folder they manage; Tenant Operator may only rebind the prior Folder; replacement or same-name creation is a Tenant Project Administrator operation under FR-8 (no Selection Evidence for the Administrator path; designated-manager on create). Folder-before-activation; `NeedsAttention` on partial; no owner-resource deletion. _Production owner: Story 7.14._
 - **FR-24: Create Safe Diagnostic Export** — A separately authorized Tenant Operator or Tenant Project Administrator creates a bounded `projects.safe-diagnostic-export.v1` export through Web, CLI, or MCP (**Chatbot cannot**). Export permission is distinct from FR-22 read. The complete encoded export (incl. envelope + truncation metadata) is **≤ 1 MiB, ≤ 500 reference rows, ≤ 100 audit rows**; reference ordering is stable/deterministic, audit rows newest-first with stable tie-breaking; truncation reports included/omitted counts and safe reasons without excluded detail; **no continuation cursor, no retention**; two concurrent exports per Tenant; every attempt and outcome audited metadata-only; upstream unavailability represented safely without raw errors or fabricated completeness. _Production owner: Story 8.2._
+
+**Delegated Chatbot Authority**
+
+- **FR-26: Grant Scoped Chatbot Authority** — The Tenant owner grants or revokes, on current `Hexalith.Tenants` Tenant-owner evidence, one scoped, expiring Chatbot authority for a Project (one principal, operation, actor class and origin). It is a delegated-operation record, not Project access: necessary and never sufficient, current Folder authority is still required, and a Folder revocation wins immediately. The authority check returns the same safe denial for an absent Project, a denied caller and a missing grant unless the delegated actor has current Folder read. _Production owner: Story 7.17 (SDK writer equivalence); safe-denial fix by the Epic 8 release (DW-112)._
 
 ### NonFunctional Requirements
 
@@ -289,6 +293,7 @@ _The current production-authority owner is the AC-bearing story in **Epics 6–8
 | FR-22 | Support Operator Read Access | **6.5** / **6.6** + 8.1/8.3/8.4/8.5 | 5.2 | AD-2, AD-19, AD-20, AD-29 |
 | FR-23 | Restore Archived Project | **7.14** | — (new) | AD-3, AD-13, AD-23 |
 | FR-24 | Create Safe Diagnostic Export | **8.2** | — (new) | AD-7, AD-19, AD-21, AD-26 |
+| FR-26 | Grant Scoped Chatbot Authority (delegated-operation record) | **7.17** (SDK writer equivalence); safe-denial fix by the Epic 8 release (DW-112) | — (b7ae7273) | AD-3, AD-17, AD-19, AD-33 |
 
 #### Non-Functional Requirements
 
@@ -1265,7 +1270,7 @@ So that **Epic 5 accessibility, responsive, keyboard, security, and cross-surfac
 
 This section is the **sole future schedulable plan** and the production-authority backlog for
 Hexalith.Projects. It **replaces the 23-placeholder corrective addendum (2026-07-14) atomically**
-with the approved **35-story outcome inventory** — 8 in Epic 6 (includes Story 6.8 / E-30), 16 in Epic 7 (adds Story 7.16 / E-31), 11 in Epic 8 — per
+with the approved **36-story outcome inventory** — 8 in Epic 6 (includes Story 6.8 / E-30), 17 in Epic 7 (adds Story 7.16 / E-31 and Story 7.17 / 2026-11-25), 11 in Epic 8 — per
 `sprint-change-proposal-2026-07-16.md`,
 `sprint-change-proposal-2026-07-16-implementation-readiness-rerun.md`,
 `sprint-change-proposal-2026-09-02.md` (Story 6.8), and
@@ -1314,7 +1319,7 @@ owner disposition and passing focused runtime proof).
 `implementation-readiness-traceability-matrix.yaml` (schema `hexalith.readiness-evidence.v1`) with a
 matching Markdown view, authored/reconciled alongside these stories and gated by
 `dotnet tool run hexalith-evidence validate …` — a **target** gate; rows truthfully record the
-actual blocker and may not be marked `passed` without real covered evidence. FR-2/FR-5 use the existing Development lane under the approved exception; common-runner delivery and full release validation remain Builds/platform and Epic 8 obligations. Required row coverage: FR-1…25, NFR-1…11, all nine P1 and seven P2 audit findings,
+actual blocker and may not be marked `passed` without real covered evidence. FR-2/FR-5 use the existing Development lane under the approved exception; common-runner delivery and full release validation remain Builds/platform and Epic 8 obligations. Required row coverage: FR-1…26, NFR-1…11, all nine P1 and seven P2 audit findings,
 and every critical NFR-11/AD-30 release category.
 
 ## Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
@@ -1616,9 +1621,9 @@ read/manage, current-authorization query, reader-set coverage/delta with version
 create-only creation naming a sole or designated manager with no Tenant-default read;
 Conversations Tenant-role recognition and prior-membership receipt; no degraded fallback per
 §9 A-3; identifier shape for the Safe-channel surrogate map — AD-18). Preserves immutable
-event history and single-writer cutover (Epic 6 read cutover complete; command cutover lands here).
+event history and single-writer cutover (Epic 6 read cutover complete; the one AD-17 writer cutover is Story 7.17).
 
-**SDK-host migration prerequisite — DW-63 (approved 2026-11-16).** Projects Owner (integration) and EventStore Owner (SDK capability) retain the open whole-host migration for `/process`, `/project` and `/query` as a prerequisite of Story 7.1 writer cutover. Require SDK route/catalog, authorization, projection and supported-read regression proof together with AD-17 historical replay, command equivalence, single-writer fencing and executable rollback. The [sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md](sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) removes DW-63 from 6.7; it grants no Epic 7 scheduling or runtime-retirement acceptance.
+**SDK-host migration prerequisite — DW-63 (approved 2026-11-16).** Projects Owner (integration) and EventStore Owner (SDK capability) retain the open whole-host migration for `/process`, `/project` and `/query` as a prerequisite of Story 7.1. Require SDK route/catalog, authorization, projection and supported-read regression proof together with AD-17 historical replay, command equivalence, single-writer fencing and executable rollback. The [sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md](sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) removes DW-63 from 6.7; it grants no Epic 7 scheduling or runtime-retirement acceptance.
 
 **Shared durable-workflow invariants (apply to every Epic 7 story; each story adds its specifics).**
 
@@ -1638,7 +1643,8 @@ event history and single-writer cutover (Epic 6 read cutover complete; command c
    A-6); otherwise they are Inferred Associations (`RequestPreview`). Setup update and no-Folder
    creation remain task-only.
 3. **Idempotency (AD-5):** scope `(Tenant, actor, operation, key)`; equivalent retry returns the same
-   task; changed requests conflict; retained ≥ 30 days / result lifetime. Equivalent retry resolves
+   task; changed requests conflict; the record never expires while its task is nonterminal, then is retained ≥ 30 days
+   from the terminal transition or the result lifetime. Equivalent retry resolves
    to the admitted task **before** Selection Evidence or a Confirmation Artifact is re-validated.
 4. **Forward-recovery saga (AD-12):** deterministic idempotency key + expected owner version; persist
    the owner receipt **before** advancing; query authoritative owner status before retrying an
@@ -1646,6 +1652,15 @@ event history and single-writer cutover (Epic 6 read cutover complete; command c
    Projects never auto-deletes an owner (Folders/Conversations/Memories) resource. `task.reconcile`
    uses original bindings only and re-evaluates the original actor at commit (§9 A-3 capabilities
    do not widen this bound).
+   Projects' own commit is a saga step keyed by task and step, independent of MessageId, and
+   carries the expected Project version. `Handle` checks the task/step key first, so an equivalent
+   redelivery returns the original outcome; a version mismatch is a rejection event that changes no
+   state and ends the task `Rejected` (`RenewPreview` if confirmation-bound, else a retryable
+   conflict code) with no automatic retry. Before each Project commit, Projects rechecks the original
+   actor's current Tenant membership and action authority: a confirmed denial ends the task
+   `Rejected` (`NeedsAttention` under AD-8 once a Folder exists) with one audit outcome, and an
+   unavailable check means `WaitingForDependency`, never a commit. Later owner steps use task-bounded
+   G-5 delegated credentials, never the interactive token.
 5. **Audit (AD-26) & privacy:** confirmed admissions, mutations, confirmation use/rejection,
    reconciliation, and terminal outcomes emit a **Safe Metadata** audit receipt; never Descriptive
    Metadata or a payload.
@@ -1660,6 +1675,8 @@ event history and single-writer cutover (Epic 6 read cutover complete; command c
    membership is an FR-7 move, never an additive link; the prior-membership record is retained for
    the Conversation lifetime and discloses the prior Project only to a permitted actor
    (`PriorMembershipRecorded` otherwise).
+
+**Writer model (AD-17, 2026-11-25).** Stories 7.1–7.15 each qualify their slice on the SDK writer in test composition (host and two-instance lanes). Until the cutover, the SDK `projects` and AD-35 claim aggregates live in a separate non-shipped project that only test composition loads, and deployed environments keep the current processor. The writer cutover is one fenced, drained deploy (Story 7.17) after G-5 delegated credentials for saga owner steps and the real EventStore-authorization validator, and before the Epic 8 release. No story enables a slice, freezes a route or runs two writers. After the cutover, writer rollback means freezing mutation and rolling forward. New `IDomainQueryHandler`, projection and read-model adapter types land in `Hexalith.Projects`; a story that touches an existing Server resident moves it there (AD-24).
 
 _Shared attributes for all Epic 7 stories: **repository authority** Hexalith.Projects (workflow
 definitions + aggregate + Contracts) on platform-owned Durable Tasks; **owner** Product Owner +
@@ -1691,7 +1708,7 @@ I want **an accepted creation request to activate through the proven Folder-firs
 So that **the Project becomes caller-visible and Active only after exactly one authorized Folder is bound and the authoritative read model confirms completion (FR-1, FR-19), with no observable folderless-Active interval**.
 
 - **Traceability:** FR-1, FR-19, FR-25 (when a Folder is supplied); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31, AD-33, AD-35; UJ-2, UJ-3; findings REL-001, E-9; §9 A-2, A-3; canonical evidence rows `fr-1`, `fr-19`.
-- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1, and 7.1-P2 accepted at immutable revisions with executable rollback. After those inputs and DW-63 SDK-host acceptance, Projects may qualify the Folder-first writer in an isolated persisted fixture under the bounded prerequisite scope. Cutover requires accepted DW-63, the pinned contracts, AD-17 historical replay and command equivalence with old ingress drained and fenced, and AD-35 persisted exclusive claim, replica recovery, legacy-incumbent fencing and executable rollback proof. Before opening an affected writer slice, resolve its applicable legacy partial-record obligations under AD-17. If the retained writer cannot replay and write compliantly, keep mutations fenced and execute the approved forward recovery. Production routing and release remain governed by their existing approvals.
+- **Entry gate:** Epic 7 gate, Story 6.7, 7.1-P1 and 7.1-P2 accepted at immutable revisions with executable rollback, and accepted DW-63 SDK-host integration. Story 7.1 qualifies creation only, on the SDK writer in test composition (host and two-instance lanes); it does not deploy the writer. Its evidence covers single-Tenant request binding (AD-18), one authorized Folder before activation, the AD-35 claim, durable owner receipts, AD-17 historical replay and command equivalence for creation, and single-writer fencing. The claim-race proof runs on Dapr runtime 1.19.2 or later unless the owner records a risk acceptance on that evidence row. The deployed writer selection is Story 7.17. Production routing and release remain governed by their existing approvals.
 - **Persona note:** A Tenant Project Administrator is **not** a creation persona.
 
 **Selection sequencing.** The Projects Owner, Solution Architect and Test Architect record the
@@ -1708,7 +1725,7 @@ the delivered 7.16 component before recording complete integrated FR-1/FR-25 cov
 
 **Given** an authorized request accepted through 7.1-P1, **When** admission runs, **Then** the task reserves one hidden ProjectId, invokes the accepted 7.1-P2 Folder contract using a deterministic task-step key and expected owner version, and persists the owner receipt before advancing.
 
-**Given** current Folders resource and actor authorization, **when** activating a Project, **then** Projects atomically acquires the exclusive `(TenantId, FolderId)` claim under AD-35. Its durable receipt binds Project, task, step and generation. Commit one `ProjectCreated` event containing the Folder binding against the expected Project version, fenced by the winning claim receipt. Expose the Project only after the Active read model confirms it.
+**Given** current Folders resource and actor authorization, **when** activating a Project, **then** Projects atomically acquires the exclusive claim on the AD-35 claim aggregate (`Tenant/project-folder-claims/FolderId`; generation is that stream's version at acquisition). Its durable receipt binds Project, task, step and generation. Commit one `ProjectCreated` event containing the Folder binding against the expected Project version, fenced by the winning claim receipt. Expose the Project only after the Active read model confirms it.
 
 **Given** Folder creation for a no-Folder request, **When** Folders creates the Folder, **Then** it names the original actor as sole manager with no Tenant-default read, and Projects' workload identity holds no Folder authorization.
 
@@ -1718,9 +1735,9 @@ the delivered 7.16 component before recording complete integrated FR-1/FR-25 cov
 
 **Given** a target Folder that is already another Active Project's Folder or belongs to another Tenant, **When** bind is attempted, **Then** it fails closed (exclusive Folder). Same-name creation is create-only; a collision fails closed (A-2). An orphaned or reserved Folder stays `NeedsAttention` and is never an implicit target.
 
-**Given** two Projects racing for one free Folder, **when** the winner loses its reply and resumes on another replica, **then** query authoritative claim status by task and step and recover the same receipt. The competing Project receives a nondisclosing refusal. The receipts and both Project histories must prove at most one Active holder. An uncertain commit retains the claim. Fence the outstanding commit before releasing an abandoned reservation. A stale commit or release from an older generation must leave a later holder intact.
+**Given** two Projects racing for one free Folder, **when** the winner loses its reply and resumes on another replica, **then** query authoritative claim status by task and step and recover the same receipt. The competing Project receives a nondisclosing refusal. The receipts and both Project histories must prove at most one Active holder. An uncertain commit retains the claim. Before releasing an abandoned reservation, commit the terminal creation-abandoned fence event to the reserved ProjectId stream so a late create is rejected; that release runs before the task's terminal transition as a Projects-internal step, or the task stays `NeedsAttention`. A stale commit or release from an older generation must leave a later holder intact.
 
-**Given** legacy writers at cutover, **when** enabling a Tenant/Folder key, **then** fence legacy writes under AD-17, reconstruct the incumbent from authoritative Project history and reserve its claim first. Reject new claims to an occupied key and keep incomplete or conflicting histories closed. Include incumbent, ambiguous history and free-Folder cases in the first writer evidence.
+**Given** legacy Project histories in test composition, **when** the AD-35 cutover reconstruction runs, **then** reconstruct each incumbent from authoritative Project history and reserve its claim first. Reject new claims to an occupied key, keep a key with incomplete or conflicting history closed, and quarantine each Project on a conflicting key as `Unavailable` with no context. Include incumbent, ambiguous history and free-Folder cases in the creation evidence.
 
 **Given** an equivalent retry, changed request, duplicate delivery, restart, concurrency, or lost response, **When** the task resumes, **Then** equivalent retries converge to the original task and outcome, changed requests conflict, and unknown owner responses are resolved through authoritative status before retry.
 
@@ -2074,7 +2091,7 @@ So that **archival is consequential, recoverable, and auditable (FR-4) while ref
 
 **Given** duplicate delivery / lost response, **When** retried, **Then** the equivalent retry converges to the single archived outcome.
 
-**Given** a retained v1 archive request containing only the literal confirmation intent, **when** the writer is gated or the replacement writer is selected, **then** the request alone cannot archive a Project. Test both outcomes at the existing route. A fresh, authorized Preview and its bound single-use artifact admit at most one task through the supported confirmation flow.
+**Given** a retained v1 archive request carrying the Boolean confirmation flag, **when** it reaches the SDK writer in test composition, **then** the route returns `409 RequestPreview` in the v1 problem shape, ignores the flag, admits no task and sends no command, and governed admission writes one AD-26 denial audit row. Until Story 7.17, deployed environments keep the Boolean route under the recorded accepted risk (AD-24). A fresh, authorized Preview and its bound single-use artifact admit at most one task through the supported confirmation flow.
 
 - **Estimate:** M. **Completion boundary:** durable confirmed archive; **restore is 7.14**. Supersedes Story 1.8 archive criteria.
 
@@ -2116,13 +2133,13 @@ So that **restore is the safe counterpart to archive (FR-23, UJ-5) with no inval
 
 As a **Solution Architect / platform operator**,
 I want **compensating durable tasks that detect and reconcile folderless, pending-Folder, and in-flight legacy records without rewriting committed history**,
-So that **legacy partial records reach a safe terminal disposition before their value slice cuts over (NFR-4, NFR-10)**.
+So that **legacy partial records reach a safe terminal disposition before the AD-17 writer cutover in Story 7.17 (NFR-4, NFR-10)**.
 
 - **Traceability:** NFR-4, NFR-10; FR-1/FR-4/FR-23 (reconciliation evidence); AD-12, AD-17, AD-22; findings REL-001; reconciliation evidence contribution to canonical row `nfr-4`.
 
 **Acceptance Criteria** (plus shared invariants 1, 3–8):
 
-**Given** the AD-17 inventory of legacy records (Active-folderless, `ProjectFolderCreationPending`, in-flight), **When** the compensating task runs per record, **Then** it uses durable receipts, status recovery, and a terminal disposition; historical folderless state is excluded from Active reads and routed to compensation; no owner resource is auto-deleted.
+**Given** the AD-17 inventory of legacy records (Active-folderless, `ProjectFolderCreationPending`, in-flight, and v1 proposal-ledger orphans: a Project without membership or a duplicate), **When** the compensating task runs per record, **Then** it uses durable receipts, status recovery, and a terminal disposition; historical folderless state is excluded from Active reads and routed to compensation; no owner resource is auto-deleted.
 
 **Given** Active-folderless records, **When** inventory runs, **Then** they are quarantined and inventoried, never auto-bound. Binding is Story 7.6 / FR-8 by a Tenant Project Administrator.
 
@@ -2134,7 +2151,7 @@ For legacy Folder repair, resolve the incumbent from authoritative history and a
 
 **Given** a record that cannot be safely reconciled, **When** processed, **Then** it enters `NeedsAttention` with an honest recorded blocker rather than a false success.
 
-- **Estimate:** L. **Completion boundary:** every legacy/interrupted record reaches a safe terminal or `NeedsAttention` disposition with evidence; single-writer command cutover complete.
+- **Estimate:** L. **Completion boundary:** every legacy/interrupted record reaches a safe terminal or `NeedsAttention` disposition with evidence, qualified on the SDK writer in test composition; the cutover itself is Story 7.17.
 
 ### Story 7.16: Select an association target
 
@@ -2150,7 +2167,7 @@ So that **actor-selected links and initial Folder binding are distinguishable fr
 
 **Given** a Project User session on Chatbot, **When** the selection component renders, **Then** the enumeration is Projects-served and limited to Projects on whose Folder the actor holds manage, or, for Folder targets, Folders on which `Hexalith.Folders` confirms manage at pick time; Tenant-role identities never appear.
 
-**Given** the actor’s pick inside the component, **When** evidence is minted, **Then** it is bound to Tenant, actor, interactive session, action, subject reference, target, and current versions; it is minted by the pick, never by an API call a caller makes on the actor’s behalf; the component authenticates with a Projects-issued credential bound to the actor’s session and unavailable to the host adapter.
+**Given** the actor’s pick inside the component, **When** evidence is minted, **Then** it is bound to Tenant, actor, interactive session, action, subject reference, target, and current versions; it is minted by the pick, never by an API call a caller makes on the actor’s behalf; the component authenticates with a platform-issued credential for the Projects component (G-5), bound to the actor’s session and unavailable to the host adapter; Projects holds no signing keys.
 
 **Given** minted evidence, **When** it is held, **Then** it is single-use, expires within 5 minutes (NFR-8), and is never attached to open, list, resolution, or proposal responses.
 
@@ -2161,6 +2178,37 @@ So that **actor-selected links and initial Folder binding are distinguishable fr
 **Given** either public McpCli head, **when** an association is requested, **then** classify it as inferred, refuse confirmation and mint no Selection Evidence.
 
 - **Estimate:** L. **Completion boundary:** Chatbot selection component mints session-bound Selection Evidence; no mint/confirm API; Web/MCP hosting not in the v1 completion boundary.
+
+### Story 7.17: Cut over Project writes to the SDK writer in one fenced deploy
+
+As the **Projects Owner operating deployed environments**,
+I want **one recorded, fenced and drained deploy that selects the SDK `projects` processor after every write slice has qualified on it**,
+So that **deployed environments move to the qualified Folder-first writer with no per-slice enablement, frozen route or mixed-writer state (AD-17, NFR-4, NFR-10)**.
+
+- **Traceability:** FR-26 (writer equivalence); NFR-4, NFR-10; AD-5, AD-17, AD-18, AD-20, AD-24, AD-35; evidence rows `fr-26`, `nfr-4`, `nfr-10`.
+- **Entry gate:** Stories 7.1–7.15 each qualified on the SDK writer in test composition (host and two-instance lanes). G-5 platform-issued delegated credentials for saga owner steps and the real EventStore-authorization validator accepted (AD-20, 8.8-P1 evidence). The allow-all registrations removed from shipped composition with the production startup guard (DW-98). The G-5 production state-store and pub/sub provider class selected. AD-15, AD-17 and AD-35 cutover evidence on Dapr runtime 1.19.2 or later, or a recorded risk acceptance per evidence row (DW-101). Every `IDomainQueryHandler`, projection and read-model adapter in `Hexalith.Projects` except adapter-only code, enforced by the AD-24 build check.
+
+**Acceptance Criteria:**
+
+**Given** the AD-17 inventory (events, state keys, read models, cursors, routes, clients, identities, in-flight work, consumers and partial records, including v1 proposal-ledger orphans), **when** the cutover is prepared, **then** every partial record has its Story 7.15 repair task and terminal disposition, and the cutover record carries the inventory, the consumer inventory and the 25-pair v1 before/after table as the NFR-10 behavior-change evidence.
+
+**Given** the cutover deploy, **when** it runs, **then** old ingress is fenced and drained, the SDK `projects` and claim aggregates move from the non-shipped test-composition project into `Hexalith.Projects`, the Projects-owned `IDomainProcessor` retires, and processor and replay are replaced together. Aggregate snapshots are invalidated or re-keyed; a processor re-folds from events instead of using a snapshot it did not write.
+
+**Given** a production-capable host with more than one keyed processor registered for a domain, **when** it starts, **then** it refuses to start. A test asserts that `GetKeyedServices<IDomainProcessor>("projects")` and the matching replay are each single and refer to the same writer (DW-108).
+
+**Given** the AD-17 SDK writer gate, **when** its evidence is recorded, **then** it covers instance `Apply` replay of every historical event (including `ProjectFolderCreationPending`, the ChatBot authority events and the creation-abandoned fence event), command equivalence for unchanged commands including `GrantProjectChatBotAuthority` and `RevokeProjectChatBotAuthority`, the approved deltas only, and retained-fold state equivalence with rehydration from the other writer's snapshot.
+
+**Given** legacy Folder bindings, **when** the claim keys open, **then** Active bindings are reconstructed from Project histories and each occupied key is reserved for its incumbent first. A key with incomplete history or conflicting holders stays closed, and each Project on it is quarantined `Unavailable` with no context until Story 7.15 repair or the Story 7.6 binding leaves at most one holder.
+
+**Given** v1 idempotency keys seen in the prior 30 days, **when** the cutover runs, **then** each is imported as an AD-5 record resolving to its original outcome, or fenced to the nondisclosing `409` (DW-103).
+
+**Given** the retained v1 routes after the cutover, **when** they are called, **then** create and Setup return `202` with the Gateway task location. Proposal confirm, resolution confirm, Conversation link, move and unlink, `PUT …/folder` (including `replacementConfirmed`), File and Memory link and unlink, archive and restore return `409 RequestPreview` in the v1 problem shape, admit no task and send no command, and governed admission writes one AD-26 denial audit row. A supplied `projectId` or `X-Hexalith-Task-Id` on create returns `400` naming the field.
+
+**Given** the retained adapter after the cutover, **when** it calls EventStore, Conversations or Folders, **then** it uses G-5 delegated credentials and never forwards the human bearer token.
+
+**Given** a post-cutover writer defect, **when** rollback is needed, **then** mutation is frozen and the fix rolls forward; the retired processor is never reselected.
+
+- **Estimate:** L. **Completion boundary:** one recorded cutover deploy with its inventory, route table and evidence. The Epic 8 release follows it.
 
 ---
 
@@ -2228,8 +2276,8 @@ rows/fixtures) + Product Owner + Solution Architect (AD/G conformance); **prior-
 value slices + the Epic 8 entry gate; **fixture** — the entry-gate persisted-boundary fixtures;
 **verification** — `dotnet tool run hexalith-module test --profile <lane> --filter Story=<id>` +
 `dotnet tool run hexalith-evidence validate …`; **evidence** — `evidence/epic8/<id>-*.{trx,json}` +
-the matching `hexalith.readiness-evidence.v1` rows; **compatibility/rollback** — legacy routing
-retained and reversible until 8.11 acceptance. Every story's completion requires honest pass/fail;
+the matching `hexalith.readiness-evidence.v1` rows; **compatibility/rollback** — legacy read routing
+retained and reversible until 8.11 acceptance; after the Story 7.17 writer cutover, writer rollback is a mutation freeze plus roll-forward. Every story's completion requires honest pass/fail;
 an unavailable environment records "not verified," never `passed`._
 
 ### Story 8.1: Inspect task, audit, and reconciliation truth
@@ -2244,7 +2292,7 @@ So that **operators have truthful operational visibility (FR-21) with correct re
 
 **Acceptance Criteria:**
 
-**Given** an authorized operator, **When** the audit timeline / task-status / reconciliation views load, **Then** they show metadata-only records (admission, terminal outcome, confirmation use/rejection, auth denial, confirmed mutations, reconciliation, receipt IDs), Tenant-scoped, with audit retained ≥ 365 days and task/idempotency records ≥ 30 days / result lifetime; Resolution Traces and exports are absent (not persisted). Canonical FR-21 inclusion also covers Folder re-anchoring (counts for Project User; `NoLoss`/`Loss` for Administrator; never Administrator counts); each descriptive-metadata inspection as **one audit event per request** carrying the inspected Project set as counts plus field class (quarantine-inventory name exception: one inspection event **per Project returned**); Setup credential kind; Selection Evidence consumption is not a durable audit event unless tied to task admission. Pre-activation task status for every role is task identity, Task Status, safe reason and Recovery Action Codes, timestamps, and expiry only. Audit, traces, and export rows carry opaque / Tenant-salted surrogates only (AD-18). Single-target reads, Preview, and task-status use generalized `Denied`.
+**Given** an authorized operator, **When** the audit timeline / task-status / reconciliation views load, **Then** they show metadata-only records (admission, terminal outcome, confirmation use/rejection, auth denial, confirmed mutations, reconciliation, receipt IDs), Tenant-scoped, with audit retained ≥ 365 days and task/idempotency records kept while nonterminal and ≥ 30 days from the terminal transition or the result lifetime; Resolution Traces and exports are absent (not persisted). Canonical FR-21 inclusion also covers Folder re-anchoring (counts for Project User; `NoLoss`/`Loss` for Administrator; never Administrator counts); each descriptive-metadata inspection as **one audit event per request** carrying the inspected Project set as counts plus field class (quarantine-inventory name exception: one inspection event **per Project returned**); Setup credential kind; Selection Evidence consumption is not a durable audit event unless tied to task admission. Pre-activation task status for every role is task identity, Task Status, safe reason and Recovery Action Codes, timestamps, and expiry only. Audit, traces, and export rows carry opaque / Tenant-salted surrogates only (AD-18). Single-target reads, Preview, and task-status use generalized `Denied`.
 
 
 **Given** a reconciliation that changes targets, confirms a resolution/proposal, or admits new intent, **When** submitted, **Then** it is rejected; a new Preview is required. Reconciliation creates no Confirmation Artifact and no new task, uses original bindings only, re-authorizes the original actor at commit, fails closed to `Rejected`, and is audited.
@@ -2767,7 +2815,7 @@ change the Chatbot repository.
 
 | ID | Repository authority | Required accepted outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
-| 8.8-P1 | Projects/platform adapters + Identity platform | Authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and `NoPayloadLeakage` evidence over the accepted live topology | Test Architect + Platform Adapter Owners + Identity/Security Owner | open; blocked by Stories 8.3–8.5, G-4, G-5, and the current implementation-readiness freeze |
+| 8.8-P1 | Projects/platform adapters + Identity platform | Authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and `NoPayloadLeakage` evidence over the accepted live topology; before the Story 7.17 writer cutover, the real EventStore-authorization validator on G-5 evidence and G-5 delegated credentials for saga owner steps, accepted independently of the Stories 8.3–8.5 parity evidence | Test Architect + Platform Adapter Owners + Identity/Security Owner | open; the parity evidence is blocked by Stories 8.3–8.5, G-4, G-5 and the current implementation-readiness freeze; the validator and delegated-credential evidence by G-5 and that freeze |
 | 8.8-P2 | FrontComposer/Web presentation | Operator WCAG 2.2 AA automated and authenticated manual keyboard, focus, live-region, screen-reader, 200%-zoom, and 320px evidence at small, median, and maximum shapes | FrontComposer/Web Owner + Test Architect | open; blocked by Story 8.3, G-3, G-6, and the current implementation-readiness freeze |
 | 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Authenticated companion journey including the shipped 7.16 component, candidate and proposal presentation, confirm/cancel, expiry/staleness, lost response, task status, recovery, first-response admission and NFR-9 | Chatbot Presentation Owner + Chatbot Test Owner | blocked-external pending accepted 8.8-P3-H, delivered 7.16, applicable journey capabilities and the full owner-approved manifest and pin. Full acceptance gates Story 8.8 and release. |
 
@@ -2865,7 +2913,7 @@ So that **scale/performance (NFR-5), pagination/export bounds (NFR-6), and back-
 
 **Given** per-Tenant limits (100 reads/s burst 200, 20 mutations/s burst 40, 1,000 nonterminal tasks, 2 export leases, 2 s interactive / 10 s durable timeouts, ≤ 3 retries in 30 s), **When** exceeded, **Then** platform admission rejects **before** partial durable work with structured retry guidance; domain handlers carry no retry/quota logic.
 
-**Given** the duplicate-heavy advisory fixture, **when** testing candidate selection, **then** control the deadline and assert the bounded distinct lookups independently of a cancellation test. Measure authenticated supported and rollback reads and concurrent appends on Dapr/Redis at the PRD shapes. Record bytes, allocation, p95 and write conflicts by path. If a required path misses its budget, compare the affected keyed view or checkpoint against full replay before switching readers.
+**Given** the duplicate-heavy advisory fixture, **when** testing candidate selection, **then** control the deadline and assert the bounded distinct lookups independently of a cancellation test. Measure authenticated supported and rollback reads and concurrent appends on the G-5-selected production state-store class at the PRD shapes. Record bytes, allocation, p95 and write conflicts by path. If a required path misses its budget, compare the affected keyed view or checkpoint against full replay before switching readers.
 
 - **Estimate:** L. **Completion boundary:** authenticated performance + back-pressure evidence at supported scale.
 
@@ -2885,7 +2933,7 @@ So that **availability/recovery (NFR-3) and durability/idempotency (NFR-4) hold 
 
 **Given** a mid-saga partial failure, **When** recovered, **Then** compensation or `NeedsAttention` applies and reconciliation (7.15) reaches a terminal disposition.
 
-**Given** a malformed or conflicted legacy journal and a healthy control Tenant in a persistent store, **when** an operator follows the recovery runbook, **then** rebuild the affected Tenant into a fresh generation, verify list/detail/audit parity against authoritative replay through a recorded watermark, and atomically switch readers. Interrupt and restart the rebuild, including delivery during catch-up. Verify the affected Tenant stays fail-closed until validation, the control stays readable and the old generation remains available for investigation.
+**Given** a malformed or conflicted legacy journal and a healthy control Tenant in a persistent store, **when** an operator follows the recovery runbook, **then** rebuild the affected Tenant into a fresh generation, verify list/detail parity against authoritative replay through a recorded watermark and inspection audit by count (excluded from the rebuild), and atomically switch readers. Interrupt and restart the rebuild, including delivery during catch-up. Verify the affected Tenant stays fail-closed until validation, the control stays readable and the old generation remains available for investigation.
 
 - **Estimate:** L. **Completion boundary:** adversarial resilience evidence for the durable-workflow platform path.
 
@@ -2899,7 +2947,7 @@ environment is unavailable.
 |---|---|---|---|---|
 | 8.11-P1 | Platform deployment/release | Pinned deployed version and environment, topology/configuration identity, truthful health/readiness, and authenticated smoke evidence | Platform Deployment Owner + Release Engineering + Test Architect | open; blocked by accepted Stories 8.6–8.10, G-4/G-5, and an available deployment environment |
 | 8.11-P2 | Security/KMS/platform | Authenticated encryption in transit, managed encryption at rest, KMS rotation, revocation, fail-fast configuration, and recovery evidence | Security/KMS Owner + Platform Owner + Test Architect | open; blocked by G-5 and an available production-equivalent environment |
-| 8.11-P3 | Release engineering + Projects/platform routing owners | Executed routing/package/deployment rollback drill with commands, timing, resulting health, data-integrity checks, and recovery evidence | Release Engineering + Solution Architect + Test Architect | open; blocked by accepted cutover/package/deployment inputs and an available rollback environment |
+| 8.11-P3 | Release engineering + Projects/platform routing owners | Executed routing/package/deployment rollback drill with commands, timing, resulting health, data-integrity checks, and recovery evidence; the writer drill exercises the AD-17 mutation freeze and roll-forward | Release Engineering + Solution Architect + Test Architect | open; blocked by the accepted Story 6.7 read cutover and Story 7.17 writer cutover, package/deployment inputs and an available rollback environment |
 
 For 8.11-P1, attach the 8.6 dependency-outage results and the candidate-specific 8.7 managed journey. Record the source SHA, profile, run and job identity, recovery result and redacted artifact. A fixture that stops at credential setup leaves the journey unverified.
 
@@ -2914,7 +2962,7 @@ So that **production is enabled only from complete, honest, owner-approved proof
 
 **Acceptance Criteria:**
 
-**Given** the canonical `implementation-readiness-traceability-matrix.yaml`, **When** `hexalith-evidence validate` runs, **Then** it rejects duplicate/missing keys, placeholders, incomplete ownership/version/command/artifact fields, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments; all FR-1…25, NFR-1…11, P1×9, P2×7, and critical release rows are present and honest.
+**Given** the canonical `implementation-readiness-traceability-matrix.yaml`, **When** `hexalith-evidence validate` runs, **Then** it rejects duplicate/missing keys, placeholders, incomplete ownership/version/command/artifact fields, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments; all FR-1…26, NFR-1…11, P1×9, P2×7, and critical release rows are present and honest.
 
 **Given** accepted 8.11-P1/P2/P3 artifacts and all other critical evidence, **When** release is proposed, **Then** Jerome and John review the evidence, record dated residual-risk dispositions, and each records an explicit terminal accept or reject decision.
 

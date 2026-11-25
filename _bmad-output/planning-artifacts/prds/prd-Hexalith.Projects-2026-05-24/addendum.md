@@ -2,7 +2,7 @@
 
 ## Purpose and Downstream Artifact Routing
 
-This addendum records the design, migration, and verification decisions behind the [product requirements](./prd.md). Section 8 indexes the source decisions through November 20, 2026.
+This addendum records the design, migration, and verification decisions behind the [product requirements](./prd.md). Section 8 indexes the source decisions through November 25, 2026.
 
 - **Architecture:** task/receipt persistence, state transitions, confirmation security, idempotency canonicalization, compensation/reconciliation, safe-export schema, migration/cutover, deployment topology, and upstream version gates.
 - **UX:** Chatbot companion journeys and operator task/read/export experiences, including all accessibility behavior.
@@ -189,6 +189,10 @@ Idempotency verification must reject U+2028/U+2029 in identifier and envelope fi
 
 The live Playwright contract has two independent lanes: deterministic checks that require no AppHost and an explicit live opt-in lane that discovers the ready `projects-ui` endpoint dynamically, rejects guessed/invalid URLs, and uses Aspire-managed teardown. Permanent `test.fixme` declarations become conditional live tests; every retained skip names a concrete missing route, fixture, seed, or product prerequisite. Use only root-declared sibling checkouts, never initialize nested submodules, align the Projects-owned AppHost SDK with the shared Aspire hosting toolchain, and never edit generated tool-cache binaries.
 
+### 7.5 NFR-5 audit-record reading
+
+NFR-5's 100,000 retained audit records per Project is the online query-performance shape for read and performance evidence (Story 8.9), not a retention cap. Retention follows the architecture's audit-retention rule (AD-26, never below the NFR-8 365-day minimum), and no record is discarded to stay inside the shape. The archive mechanism for older records is deferred to platform design and revisited before Story 8.1 and Story 8.9 entry.
+
 ## 8. Evidence and Gate Index
 
 Statuses below describe the cited artifact at its stated revision/date. A later artifact supersedes a row only when it explicitly identifies the earlier evidence and records the new disposition.
@@ -236,3 +240,4 @@ Statuses below describe the cited artifact at its stated revision/date. A later 
 | **E-39** | [6.7 entry](../../sprint-change-proposal-2026-11-16-unpin-story-6-7.md) · [Cutover decisions](../../sprint-change-proposal-2026-11-16-story-6-7-cutover-decisions.md) | November 16, 2026 | Projects and EventStore owners | Read cutover became schedulable with explicit rollback. Whole-host migration moved to Story 7.1. | Legacy compatibility, DW-63, AD-17/25 |
 | **E-40** | [Approved read amendments](../../story-6-7-approved-read-cutover-amendments-2026-11-16.md) | November 16, 2026 | Projects and Conversations owners | Requires native Conversation membership and audited v1 names. Defines the v3 comparison and the pending-Folder recovery case. | FR-2/5/16/17/20/22, §5 |
 | **E-41** | [November 20 technical audit proposal](../../sprint-change-proposal-2026-11-20.md) | November 20, 2026, applied to planning | Projects, sibling owners, CiCd, Builds, and Release Engineering | Nine findings assigned to existing stories. The audited candidate lacks a completed managed authenticated journey. | FR-1/4/15, NFR-1/3/4/5/11, Story 8.11 |
+| **E-42** | [Spine upstream sync](../../sprint-change-proposal-2026-11-25-spine-upstream-sync.md) | November 25, 2026 | Projects, Tenants and platform identity owners | Adds FR-26 for the scoped Chatbot authority grant, the platform-issued component credential (A-6) and the NFR-5 audit-record reading. | FR-26, A-3, A-6, NFR-5 |

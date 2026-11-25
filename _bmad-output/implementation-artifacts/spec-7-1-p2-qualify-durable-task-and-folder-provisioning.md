@@ -2,7 +2,8 @@
 title: '7.1-P2: Qualify Durable Task admission and Folder provisioning'
 type: 'chore'
 created: '2026-11-25'
-status: 'ready-for-dev'
+status: 'in-progress'
+baseline_commit: 'fdc8ca69ebe0a656f88d55f9e32c8de71b1262f6'
 route: 'dispatch'
 review_loop_iteration: 0
 context: []
@@ -49,7 +50,7 @@ context: []
 - [x] [`7-1-p2-owner-scope-proposals.md`](7-1-p2-owner-scope-proposals.md) — prepare the G-1 and G-2 owner requests, persisted proof cases and rollback criteria for review.
 - [ ] `evidence/epic7/7.1-P2-capability-pin.json` — collect immutable owner revisions and records, contract versions, retained native receipt hashes, commands and exercised rollback evidence. Verify the matrix against real persisted task and Folder state across restart, competing replicas and lost replies.
 - [ ] `evidence/epic7/7.1-P2-capability-pin.json` — record dated EventStore, Platform and Folders approvals and Solution Architect and Test Architect acceptance against the same coordinates.
-- [ ] `tools/planning/validate_production_authority.py` and `tests/tools/test_production_authority_guard.py` — require the accepted pin when the tracker marks P2 done. Cover missing or mismatched evidence and preserve the Story 7.1 gate.
+- [x] `tools/planning/validate_production_authority.py` and `tests/tools/test_production_authority_guard.py` — require the accepted pin when the tracker marks P2 done. Cover missing or mismatched evidence and preserve the Story 7.1 gate.
 - [ ] `sprint-status.yaml` — link the accepted pin after candidate and active index validation. Route it to the existing 7.1 and 8.1 gates.
 
 **Acceptance Criteria**
@@ -60,6 +61,12 @@ context: []
 
 ## Implementation Notes
 
+- The [Projects guard](../../tools/planning/validate_production_authority.py) requires `evidence/epic7/7.1-P2-capability-pin.json` when the P2 action is `done`. The pin schema `hexalith.projects.7-1-p2-capability-pin.v1` identifies the three owner revisions and capability records, both contract versions, persisted admission/recovery/provisioning/compensation results, and an exercised rollback target and results for each contract. Verification commands and SHA-256 digests accompany the retained receipts. Artifact paths are relative to this implementation-artifacts directory.
+- The pin references five dated, hash-verified approval records. Each UTF-8 JSON record declares `role`, `decision` (`accepted`), `approver`, `timestampUtc`, and `qualificationSha256`. Compute the digest over the pin's `qualification` object serialized as ASCII JSON with sorted keys, no spaces around separators, and no final newline.
+- The owner scope decisions dated 2026-11-25 are recorded locally. [EventStore G-1](../../references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md) · [Platform G-1](../../references/Hexalith.Platform/docs/implementation/g1-durable-task-scope-decision.md) · [Folders G-2](../../references/Hexalith.Folders/docs/governance/g2-folder-provisioning-scope-decision.md)
+- EventStore implemented the scoped admission and atomic confirmation candidate. Platform exercised the conditional state provider with two Dapr 1.19.2 sidecars and a Redis restart. EventStore passed four focused and three live admission cases with zero skips. The Folders investigation identified the native create, restrictive ACL and receipt lookup seams. Delegated provisioning needs verified original-actor evidence bound to the admitted task step.
+- P2 remains open. The full execution and provisioning matrix, exercised owner rollback, immutable capability records and five acceptance decisions are pending. The [owner proposals](7-1-p2-owner-scope-proposals.md) describe the required qualification runs.
+
 ## Spec Change Log
 
 ## Review Triage Log
@@ -68,3 +75,6 @@ context: []
 
 - `python3 tools/planning/validate_production_authority.py --validate-index` must pass for the active index and the isolated candidate using the four project-context path overrides.
 - `run-with-temp python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider` must pass before recording a tracker change.
+- Active index and isolated candidates passed `--validate-index`. The isolated command supplied `--sprint-status`, `--deferred-work`, `--p0-artifact`, and `--workspace-root`. The synthetic done candidate was rejected with exit 1 after its retained recovery receipt changed.
+- `run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m pytest tests/tools/test_production_authority_guard.py -q -p no:cacheprovider` passed 58 tests and 442 subtests.
+- The baseline command `aspire start --non-interactive --isolated --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj` ran under `run-with-temp` and exited 2 during build. `references/Hexalith.Conversations/Directory.Build.props(9,5)` requires the Platform tool-selected source mapping. Runtime qualification still requires the actual owner capabilities and fixtures.

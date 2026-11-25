@@ -11,11 +11,11 @@
 - **P1R observation (2026-08-03):** the pending candidate deliberately separates EventStore source `7854f8e51ce9b852bb6c3cac6012670122e93792` (`v3.89.0-9-g7854f8e5`) from package source `v3.89.0` / `c590590bc581a3f72ef6e67148eda988ba4b8fe6`; Builds catalog `3.89.0` was introduced by `10af541e7b2a5a4664be37c9495930844e0954a8`; runner source remains the superseded unaccepted `3.88.0` candidate at observed Builds `7bdbd293991985d150dfca62f77709e61152de76`; Architecture and rollback remain `3.70.1`
 - **P0 capability observation (2026-08-03):** manifest, module-run-evidence, and readiness-validator foundations are implemented but unaccepted; P0 acceptance validation and supported composition are not implemented; persisted qualification is not run; published tools are stale-pin/not-supported; the Projects consumer pin and owner acceptance are absent
 - **Chatbot host and journey:** Independently accept `8.8-P3-H` before Story 7.16. Full `8.8-P3` then exercises the delivered component and remains required by Stories 8.8 and 8.11. [November 24 correction](sprint-change-proposal-2026-11-24.md)
-- **Rows total:** 64 (FR 25 · NFR 11 · findings 16 · release 12). No feature or release row is passed by this correction; actual covered evidence is required.
+- **Rows total:** 65 (FR 26 · NFR 11 · findings 16 · release 12). No feature or release row is passed by this correction; actual covered evidence is required.
 
 **Status legend:** `pending` = owned + fully specified, not yet executed · `blocked-external` = additionally gated on a G-1…G-6 or explicitly routed external capability · `not-verified` = environment/tool unavailable (never a pass) · `failed` = executed and currently failing · `passed` = real, honest passing evidence. None of `pending`/`blocked-external`/`not-verified`/`failed` counts as a pass.
 
-## Functional Requirements (25)
+## Functional Requirements (26)
 
 | Key | IDs | Description | Primary | Supporting | ADs | Status | Blocker |
 |---|---|---|---|---|---|---|---|
@@ -44,6 +44,7 @@
 | `fr-23` | FR-23 | Restore Archived Project — per-role restore (User prior Folder they manage; Operator prior Folder only; Administrator replacement under FR-8); Folder-before-activation ordering. Acquire the exclusive claim while Archived and verify that a competing holder prevents activation. | 7.14 | — | AD-3, AD-13, AD-23, AD-35 | 🔒 blocked-external | G-1 + G-2 Folders owner |
 | `fr-24` | FR-24 | Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; no exactly-once claim without an approved idempotency contract; Chatbot cannot | 8.2 | — | AD-7, AD-19, AD-21, AD-26, AD-27 | 🟡 pending | — |
 | `fr-25` | FR-25 | Select Association Target — Projects-owned Chatbot component mints session-bound Selection Evidence; no mint/confirm API; 5-minute expiry; never on open/list/resolution/proposal | 7.16 | 7.1, 7.3, 7.7, 7.9, 7.14 | AD-2, AD-5, AD-13, AD-20, AD-33 | 🔒 blocked-external | Epic 7 gate, G-2 Folders manage, G-3, G-5, the accepted 7.1 Folder-first writer capability and 8.8-P3-H Chatbot host pin evidence/epic8/8.8-P3-H-chatbot-host-pin.json. Web/MCP hosting out of v1. |
+| `fr-26` | FR-26 | Grant Scoped Chatbot Authority — Tenant owner grants or revokes, on Hexalith.Tenants evidence, one scoped, expiring delegated-operation record; necessary, never sufficient; current Folder authority required and Folder revocation wins; same safe denial for absent, denied and ungranted | 7.17 | 8.8 | AD-3, AD-17, AD-19, AD-33 | 🔒 blocked-external | G-5 delegated credentials and the real EventStore-authorization validator; Stories 7.1–7.15 qualified on the SDK writer in test composition |
 
 ## Non-Functional Requirements (11)
 
@@ -52,13 +53,13 @@
 | `nfr-1` | NFR-1 | Security & privacy — Tenant/actor/action/target/version scoping including the acting session; fail-closed on stale auth; metadata-only logs/telemetry/errors | 8.8 | 6.1, 6.5, 7.1 | AD-11, AD-13, AD-20 | 🔒 blocked-external | Epic 8 release qualification: 8.8-P1, G-5 identity/enrollment and full P2/P3 platform evidence remain open. 6.1/6.5 feature security proof uses the bounded Development exception and is not gated on this release row. |
 | `nfr-2` | NFR-2 | Encryption & key management — encryption in transit; platform-managed at rest; KMS rotation/revocation evidence; Projects owns no private keys | 8.11 | 8.6, 8.7 | AD-28 | 🔒 blocked-external | 8.11-P2 acceptance; G-5 KMS/secret bindings; deployment environment |
 | `nfr-3` | NFR-3 | Availability & recovery — 99.9% monthly; RTO 15 min; task resume or NeedsAttention within 5 min | 8.10 | 8.6 | AD-4, AD-9, AD-28 | 🔒 blocked-external | G-1 durable-task engine |
-| `nfr-4` | NFR-4 | Durability & idempotency — RPO 0 committed events; Active never folderless; equivalent-retry-same-task; no silent drop/duplicate | 8.10 | 7.1, 7.15 | AD-4, AD-12 | 🔒 blocked-external | G-1 durable-task engine |
+| `nfr-4` | NFR-4 | Durability & idempotency — RPO 0 committed events; Active never folderless; equivalent-retry-same-task; no silent drop/duplicate | 8.10 | 7.1, 7.15, 7.17 | AD-4, AD-12 | 🔒 blocked-external | G-1 durable-task engine |
 | `nfr-5` | NFR-5 | Performance & scale — 10k Projects/Tenant, 5k refs/Project, 100k audit; reads p95 <500ms (<1s max); admission p95 <500ms warm | 8.9 | 6.1, 6.4, 6.7 | AD-14, AD-15, AD-27 | 🔒 blocked-external | Epic 8 scale/back-pressure and package/runner qualification remain open for 8.9. Story 8.9 will measure the authenticated Conversation and supported Folder advisory reads delivered by 6.4 against NFR-5. 6.1 proves bounded paging and reports observed measurements using the existing lane; no 10k/p95 release claim or feature entry dependency follows from this row. |
 | `nfr-6` | NFR-6 | Pagination & export bounds — cursor default 50 / cap 200; export caps + 2 concurrent per Tenant | 8.9 | 8.2 | AD-19, AD-21, AD-27 | 🟡 pending | — |
 | `nfr-7` | NFR-7 | Back-pressure & dependency control — 100 reads/s (burst 200), 20 mutations/s (burst 40), 1000 nonterminal tasks, 2 exports; 2s/10s timeouts; ≤3 retries/30s; structured overload | 8.9 | — | AD-27 | 🟡 pending | — |
 | `nfr-8` | NFR-8 | Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; Selection Evidence 5-minute expiry; audit ≥365 days; traces/exports not persisted | 8.1 | 8.2, 7.2, 7.4 | AD-4, AD-5, AD-21, AD-26 | 🟡 pending | — |
 | `nfr-9` | NFR-9 | Accessibility — WCAG 2.2 AA across operator + Chatbot companion; automated plus authenticated manual keyboard/screen-reader evidence at small/median/max shapes, 200% zoom, and 320 CSS-pixel reflow; critical/serious violations block | 8.8 | 6.5, 8.3 | AD-34, AD-29 | 🔒 blocked-external | 8.8-P2 operator accessibility, G-3 FrontComposer adapters, and full 8.8-P3 acceptance with the delivered 7.16 component, owner-approved authenticated NFR-9 results and Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json |
-| `nfr-10` | NFR-10 | Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite | 6.7 | 6.1, 7.15, 8.7 | AD-6, AD-16, AD-17, AD-22 | 🔒 blocked-external | 6.7 must consume supported list/open output and existing comparator, prove exhaustive legacy output/key/watermark/cursor equivalence with finite approved normalization, consumer compatibility and reversible routing; Epic 8 retains package/rollback qualification. 6.1 only requires additive compatibility and retained routing. |
+| `nfr-10` | NFR-10 | Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite | 6.7 | 6.1, 7.15, 7.17, 8.7 | AD-6, AD-16, AD-17, AD-22 | 🔒 blocked-external | 6.7 must consume supported list/open output and existing comparator, prove exhaustive legacy output/key/watermark/cursor equivalence with finite approved normalization, consumer compatibility and reversible routing; Epic 8 retains package/rollback qualification. 6.1 only requires additive compatibility and retained routing. |
 | `nfr-11` | NFR-11 | Release evidence — all critical categories pass; A-1 companion; SM-2/SM-3 are release-acceptance checks; failed/unexplained-skip critical case blocks; unavailable env = not-verified | 8.11 | 8.1, 8.6, 8.7, 8.8, 8.9, 8.10 | AD-25, AD-28, AD-30 | 🔒 blocked-external | 8.11-P1/P2/P3 and every preceding Epic 8 story; G-4 hexalith-evidence tool (AD-30); terminal gate |
 
 ## Audit Findings (9 P1 + 7 P2) (16)
@@ -130,6 +131,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 | `fr-23` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.14` | `evidence/epic7/7.14-restore.trx` | L |
 | `fr-24` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.2` | `evidence/epic8/8.2-safe-export.trx` | L |
 | `fr-25` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.16` | `evidence/epic7/7.16-selection.trx` | L |
+| `fr-26` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.17` | `evidence/epic7/7.17-writer-cutover.trx` | L |
 | `nfr-1` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1` | `evidence/epic8/8.8-P1-security.trx` | S |
 | `nfr-2` | `dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P2` | `evidence/epic8/8.11-P2-encryption-kms.json` | S |
 | `nfr-3` | `dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=availability` | `evidence/epic8/8.10-availability.trx` | L |
@@ -178,6 +180,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 - **`fr-23`** — NEW FR (2026-07-15 rebaseline). Restore counterpart to FR-4.
 - **`fr-24`** — NEW FR (2026-07-15/16 rebaseline). Release-blocking.
 - **`fr-25`** — Selection Evidence is Chatbot-only in v1. The host pin establishes prerequisite provenance. This row requires executed evidence from the real Story 7.16 component. Full 8.8-P3 journey qualification follows 7.16.
+- **`fr-26`** — NEW FR (2026-11-25 spine upstream sync). The capability exists since b7ae7273. Story 7.17 proves SDK writer equivalence for the grant and revoke commands; DW-112 owns the safe-denial fix by the Epic 8 release.
 - **`nfr-1`** — Story 8.8 performs only integrated manifest and critical-case validation after the package passes.
 - **`nfr-2`** — Evidence acquisition belongs to 8.11-P2; Story 8.11 records only the terminal decision.
 - **`nfr-7`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.

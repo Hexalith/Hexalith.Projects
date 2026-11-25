@@ -1,7 +1,8 @@
-"""Focused tests for the production-authority and minimal P1R gate."""
+"""Focused tests for production authority, P1R acceptance, and the 7.1-P2 pin."""
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -10,6 +11,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 from unittest import mock
 
 
@@ -80,12 +82,19 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "  - epic:",
             "    status",
         )
-        cls.sprint = seed_open_field(
+        sprint = seed_open_field(
             sprint,
             '    id: "6.1-P0"',
             "  - epic:",
             "      stage_1_p1r_baseline",
         )
+        sprint = seed_open_field(sprint, '    id: "7.1-P2"', "  - epic:", "    status")
+        before, marker, after = sprint.partition('    id: "7.1-P2"\n')
+        action, next_item, rest = after.partition("\n  - epic:")
+        cls.sprint = before + marker + "".join(
+            line for line in action.splitlines(keepends=True)
+            if not line.startswith("    projects_evidence_pin:")
+        ) + next_item + rest
         # Keep historical open/accepted fixtures independent of active feature progress.
         index = GUARD._load_yaml_text(cls.sprint, "feature fixture")
         lines = cls.sprint.splitlines(keepends=True)
@@ -223,6 +232,8 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         p0: str | bytes | None = None,
         record: dict[str, object] | bytes | None = None,
         symlink_record: bool = False,
+        p2_pin: dict[str, object] | bytes | None = None,
+        p2_artifacts: dict[str, bytes] | None = None,
     ) -> tuple[int, ...]:
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory)
@@ -249,6 +260,17 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     record_path.symlink_to(target_path.name)
                 else:
                     record_path.write_bytes(payload)
+            artifacts_root = workspace / "_bmad-output/implementation-artifacts"
+            if p2_pin is not None:
+                pin_path = artifacts_root / GUARD.P2_PIN_PATH
+                pin_path.parent.mkdir(parents=True, exist_ok=True)
+                pin_path.write_bytes(
+                    p2_pin if isinstance(p2_pin, bytes) else json.dumps(p2_pin).encode()
+                )
+            for relative, data in (p2_artifacts or {}).items():
+                artifact_path = artifacts_root / relative
+                artifact_path.parent.mkdir(parents=True, exist_ok=True)
+                artifact_path.write_bytes(data)
             return GUARD.validate_index(
                 sprint_path,
                 deferred_path,
@@ -935,6 +957,210 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 snapshot["sprint"] = self.set_story(snapshot["sprint"], story_7_1, "ready-for-dev")
                 with self.assertRaises(GUARD.GuardViolation):
                     self.validate_boundary(**snapshot)
+
+    def p2_sprint(
+        self, *, status: str = "done", link: str | None = GUARD.P2_PIN_PATH
+    ) -> str:
+        candidate = GUARD._load_yaml_text(self.sprint, "fixture")
+        action = GUARD._action_map(candidate)["7.1-P2"]
+        action["status"] = status
+        if link is not None:
+            action["projects_evidence_pin"] = link
+        return GUARD.yaml.safe_dump(candidate, sort_keys=False)
+
+    def p2_fixture(self) -> tuple[dict[str, Any], dict[str, bytes]]:
+        artifacts: dict[str, bytes] = {}
+
+        def artifact(name: str, data: bytes | None = None) -> dict[str, str]:
+            path = f"evidence/epic7/7.1-P2-test/{name}.txt"
+            if data is None:
+                data = f"Synthetic guard fixture for {name}\n".encode()
+            artifacts[path] = data
+            return {"path": path, "sha256": hashlib.sha256(data).hexdigest()}
+
+        def run(name: str) -> dict[str, Any]:
+            return {
+                "commands": [f"./qualification.sh {name}"],
+                "result": "passed",
+                "receipts": [artifact(name)],
+            }
+
+        qualification = {
+            "owners": {
+                "EventStore": {"revision": "a" * 40, "record": artifact("EventStore")},
+                "Platform": {"revision": "b" * 40, "record": artifact("Platform")},
+                "Folders": {"revision": "c" * 40, "record": artifact("Folders")},
+            },
+            "contractVersions": {"durableTask": "1.0.0", "folderProvisioning": "2.0.0"},
+            "persistedCases": {
+                "admission": run("admission"),
+                "recovery": run("recovery"),
+                "provisioning": run("provisioning"),
+                "compensation": {**run("compensation"), "disposition": "retain"},
+            },
+            "rollback": {
+                "durableTask": {
+                    **run("rollback-tasks"),
+                    "revisions": {"EventStore": "d" * 40, "Platform": "e" * 40},
+                },
+                "folderProvisioning": {
+                    **run("rollback-folders"),
+                    "revisions": {"Folders": "f" * 40},
+                },
+            },
+        }
+        approved_sha = hashlib.sha256(
+            json.dumps(qualification, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        decisions = {}
+        for role in (
+            "EventStore Owner", "Platform Owner", "Folders Owner",
+            "Solution Architect", "Test Architect",
+        ):
+            decision = {
+                "role": role,
+                "decision": "accepted",
+                "approver": f"Fixture {role}",
+                "timestampUtc": "2026-11-25T07:00:00Z",
+                "qualificationSha256": approved_sha,
+            }
+            decisions[role] = artifact(role, json.dumps(decision).encode())
+        pin = {
+            "schema": "hexalith.projects.7-1-p2-capability-pin.v1",
+            "package": "7.1-P2",
+            "qualification": qualification,
+            "decisions": decisions,
+        }
+        return pin, artifacts
+
+    def test_p2_closure_requires_its_fixed_link_and_local_pin(self) -> None:
+        pin, artifacts = self.p2_fixture()
+        for status, link, error in (
+            ("done", None, "fixed capability pin link"),
+            ("done", "evidence/another-pin.json", "fixed capability pin link"),
+            ("open", GUARD.P2_PIN_PATH, "only when done"),
+            ("in-progress", None, "status must be open or done"),
+        ):
+            with self.subTest(status=status, link=link):
+                with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*" + error):
+                    self.validate_boundary(
+                        sprint=self.p2_sprint(status=status, link=link),
+                        p2_pin=pin,
+                        p2_artifacts=artifacts,
+                    )
+        with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2 capability pin"):
+            self.validate_boundary(sprint=self.p2_sprint())
+        with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*duplicate JSON key"):
+            self.validate_boundary(
+                sprint=self.p2_sprint(), p2_pin=b'{"package":"7.1-P2","package":"other"}'
+            )
+
+    def test_matching_p2_pin_closes_only_the_prerequisite(self) -> None:
+        sprint = self.p2_sprint()
+        pin, artifacts = self.p2_fixture()
+        self.assertEqual(
+            (6, 7, 8),
+            self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts),
+        )
+        for key, status in (
+            ("7-1-activate-a-project-with-exactly-one-authorized-folder", "ready-for-dev"),
+            (GUARD.STORY_8_1_KEY, "review"),
+            (GUARD.STORY_8_1_KEY, "done"),
+        ):
+            with self.subTest(story=key, status=status):
+                with self.assertRaises(GUARD.GuardViolation):
+                    self.validate_boundary(
+                        sprint=self.set_story(sprint, key, status),
+                        p2_pin=pin,
+                        p2_artifacts=artifacts,
+                    )
+
+    def test_incomplete_p2_qualification_fails_closed(self) -> None:
+        sprint = self.p2_sprint()
+        for fields, error in (
+            (("owners", "Platform"), "owners"),
+            (("owners", "Folders", "record"), "Folders capability"),
+            (("contractVersions", "folderProvisioning"), "contract versions"),
+            (("persistedCases", "admission"), "persisted cases"),
+            (("persistedCases", "recovery", "receipts"), "persisted recovery"),
+            (("persistedCases", "provisioning", "commands"), "persisted provisioning"),
+            (("persistedCases", "compensation", "disposition"), "persisted compensation"),
+            (("rollback", "durableTask"), "rollback"),
+            (("rollback", "folderProvisioning", "result"), "folderProvisioning rollback"),
+        ):
+            with self.subTest(fields=fields):
+                pin, artifacts = self.p2_fixture()
+                container = pin["qualification"]
+                for field in fields[:-1]:
+                    container = container[field]
+                del container[fields[-1]]
+                with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*" + error):
+                    self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+    def test_missing_or_changed_p2_artifacts_fail_closed(self) -> None:
+        sprint = self.p2_sprint()
+        _, fixture = self.p2_fixture()
+        for artifact_path in fixture:
+            for present in (False, True):
+                with self.subTest(path=artifact_path, present=present):
+                    pin, artifacts = self.p2_fixture()
+                    if present:
+                        artifacts[artifact_path] += b"modified"
+                    else:
+                        del artifacts[artifact_path]
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*artifact"):
+                        self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+    def test_invalid_p2_evidence_values_fail_closed(self) -> None:
+        sprint = self.p2_sprint()
+        for section, key, field, value, error in (
+            ("owners", "EventStore", "revision", "ae1143bd", "full commit revision"),
+            ("persistedCases", "admission", "commands", [" "], "verification commands"),
+            ("persistedCases", "compensation", "disposition", "delete", "compensation disposition"),
+            ("rollback", "durableTask", "result", "failed", "passing result"),
+            ("rollback", "folderProvisioning", "receipts", [], "native receipts"),
+        ):
+            with self.subTest(section=section, key=key, field=field):
+                pin, artifacts = self.p2_fixture()
+                pin["qualification"][section][key][field] = value
+                with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*" + error):
+                    self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+        pin, artifacts = self.p2_fixture()
+        pin["qualification"]["owners"]["Folders"]["record"]["path"] = "../Folders.txt"
+        with self.assertRaisesRegex(GUARD.GuardViolation, "Folders.*relative artifact path"):
+            self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
+
+    def test_p2_approvals_require_each_role_and_the_same_qualification(self) -> None:
+        sprint = self.p2_sprint()
+        pin, _ = self.p2_fixture()
+        for role in pin["decisions"]:
+            for field, value in (
+                (None, None),
+                ("role", "Unrelated Owner"),
+                ("decision", "pending"),
+                ("timestampUtc", "2026-11-25"),
+                ("qualificationSha256", "0" * 64),
+            ):
+                with self.subTest(role=role, field=field):
+                    candidate, artifacts = self.p2_fixture()
+                    decisions = candidate["decisions"]
+                    if field is None:
+                        del decisions[role]
+                    else:
+                        reference = decisions[role]
+                        path = reference["path"]
+                        decision = json.loads(artifacts[path])
+                        decision[field] = value
+                        artifacts[path] = json.dumps(decision).encode()
+                        reference["sha256"] = hashlib.sha256(artifacts[path]).hexdigest()
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "7.1-P2.*" + role):
+                        self.validate_boundary(sprint=sprint, p2_pin=candidate, p2_artifacts=artifacts)
+
+        pin, artifacts = self.p2_fixture()
+        pin["qualification"]["owners"]["Platform"]["revision"] = "1" * 40
+        with self.assertRaisesRegex(GUARD.GuardViolation, "qualification SHA-256 differs"):
+            self.validate_boundary(sprint=sprint, p2_pin=pin, p2_artifacts=artifacts)
 
     def test_dw1_status_and_inventory_fail_closed(self) -> None:
         for candidate in (

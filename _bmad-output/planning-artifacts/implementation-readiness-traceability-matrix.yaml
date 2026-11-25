@@ -3,8 +3,8 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-11-24
-generated_by: "November 24 Chatbot host prerequisite course correction"
+generated: 2026-11-25
+generated_by: "November 25 Architecture Spine upstream sync"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -27,6 +27,7 @@ sources:
   entry_gate_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md
   course_correction_e31: _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   course_correction_chatbot_host: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-24.md
+  course_correction_spine_sync: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-25-spine-upstream-sync.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -44,7 +45,7 @@ validation:
     - unexplained-critical-skip
     - passed-on-unavailable-environment
   required_coverage:
-    fr: FR-1..FR-25
+    fr: FR-1..FR-26
     nfr: NFR-1..NFR-11
     finding: "9 P1 + 7 P2 (E-7)"
     release: "12 NFR-11/AD-30 critical categories"
@@ -87,7 +88,7 @@ defaults:
   release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
 
 rows:
-  # ═══════════════════════ FUNCTIONAL REQUIREMENTS (FR-1..FR-25) ═══════════════════════
+  # ═══════════════════════ FUNCTIONAL REQUIREMENTS (FR-1..FR-26) ═══════════════════════
   - key: fr-1
     category: fr
     ids: [FR-1]
@@ -464,6 +465,21 @@ rows:
     status: blocked-external
     blocker: "Epic 7 gate, G-2 Folders manage, G-3, G-5, the accepted 7.1 Folder-first writer capability and 8.8-P3-H Chatbot host pin evidence/epic8/8.8-P3-H-chatbot-host-pin.json. Web/MCP hosting out of v1."
     notes: "The host pin establishes prerequisite provenance. This row requires executed evidence from the real Story 7.16 component. Full 8.8-P3 journey qualification follows 7.16."
+  - key: fr-26
+    category: fr
+    ids: [FR-26]
+    description: "Grant Scoped Chatbot Authority — Tenant owner grants or revokes, on Hexalith.Tenants evidence, one scoped, expiring delegated-operation record; necessary, never sufficient; current Folder authority required and Folder revocation wins; same safe denial for absent, denied and ungranted"
+    architecture_decisions: [AD-3, AD-17, AD-19, AD-33]
+    primary_story: "7.17"
+    supporting_stories: ["8.8"]
+    entry_gates: [Epic-7-gate, G-5]
+    fixture: epic7/7.17-writer-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.17"
+    evidence_artifact: evidence/epic7/7.17-writer-cutover.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-5 delegated credentials and the real EventStore-authorization validator; Stories 7.1–7.15 qualified on the SDK writer in test composition"
+    notes: "NEW FR (2026-11-25 spine upstream sync). The capability exists since b7ae7273. Story 7.17 proves SDK writer equivalence for the grant and revoke commands; DW-112 owns the safe-denial fix by the Epic 8 release."
 
   # ═══════════════════════ NON-FUNCTIONAL REQUIREMENTS (NFR-1..NFR-11) ═══════════════════════
   - key: nfr-1
@@ -516,7 +532,7 @@ rows:
     description: "Durability & idempotency — RPO 0 committed events; Active never folderless; equivalent-retry-same-task; no silent drop/duplicate"
     architecture_decisions: [AD-4, AD-12]
     primary_story: "8.10"
-    supporting_stories: ["7.1", "7.15"]
+    supporting_stories: ["7.1", "7.15", "7.17"]
     entry_gates: [Epic-8-gate, G-1]
     fixture: epic8/8.10-resilience
     verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=durability"
@@ -598,7 +614,7 @@ rows:
     description: "Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite"
     architecture_decisions: [AD-6, AD-16, AD-17, AD-22]
     primary_story: "6.7"
-    supporting_stories: ["6.1", "7.15", "8.7"]
+    supporting_stories: ["6.1", "7.15", "7.17", "8.7"]
     entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P1R"]
     fixture: epic6/6.7-read-cutover
     verification_command: "6.7 E1 lane (extended 2026-11-16): individual Debug Projects test projects named in the 6.7 spec, run as built xUnit v3 assemblies with native XML; no common runner."

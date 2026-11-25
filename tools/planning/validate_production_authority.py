@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed scheduling and 6.1-P1R acceptance guard."""
+"""Fail-closed scheduling, 6.1-P1R acceptance, and 7.1-P2 qualification guard."""
 
 from __future__ import annotations
 
@@ -90,6 +90,23 @@ ACCEPTED_ROLES = (
 )
 SELECTED_REFERENCE = "#/selected"
 
+P2_ACTION_ID = "7.1-P2"
+P2_PIN_SCHEMA = "hexalith.projects.7-1-p2-capability-pin.v1"
+P2_PIN_PATH = "evidence/epic7/7.1-P2-capability-pin.json"
+P2_ARTIFACTS_DIR = Path("_bmad-output/implementation-artifacts")
+P2_CONTRACT_OWNERS = {
+    "durableTask": ("EventStore", "Platform"),
+    "folderProvisioning": ("Folders",),
+}
+P2_OWNERS = ("EventStore", "Platform", "Folders")
+P2_APPROVAL_ROLES = (
+    "EventStore Owner", "Platform Owner", "Folders Owner",
+    "Solution Architect", "Test Architect",
+)
+P2_PERSISTED_CASES = (
+    "admission", "recovery", "provisioning", "compensation",
+)
+
 EPIC6_RETRO_KEY = "epic-6-retrospective"
 EPIC6_RETRO_ACTION_IDS = (
     "epic-6-retro-requalify-v4",
@@ -144,7 +161,7 @@ ACTION_STATUSES = {
     "6.1-P3": (8, "open"),
     "6.1-P4": (6, "superseded"),
     "7.1-P1": (7, "done"),
-    "7.1-P2": (7, "open"),
+    P2_ACTION_ID: (7, None),
     "8.3-P1": (8, "open"),
     "8.3-P2": (8, "open"),
     "8.3-P3": (8, "open"),
@@ -381,21 +398,34 @@ def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def _load_acceptance_record(path: Path) -> dict[str, Any] | None:
+def _load_acceptance_record(
+    path: Path, *, label: str = "acceptance record"
+) -> dict[str, Any] | None:
     if not os.path.lexists(path):
         return None
     if path.is_symlink():
-        raise GuardViolation("acceptance record path must not be a symlink")
+        raise GuardViolation(f"{label} path must not be a symlink")
     if not path.is_file():
-        raise GuardViolation("acceptance record path is not a regular file")
+        raise GuardViolation(f"{label} path is not a regular file")
     try:
         with path.open(encoding="utf-8") as stream:
             value = json.load(stream, object_pairs_hook=_unique_json_object)
     except (OSError, UnicodeError, json.JSONDecodeError, GuardViolation) as error:
-        raise GuardViolation(f"malformed acceptance record: {error}") from error
+        raise GuardViolation(f"malformed {label}: {error}") from error
     if not isinstance(value, dict):
-        raise GuardViolation("malformed acceptance record: root must be an object")
+        raise GuardViolation(f"malformed {label}: root must be an object")
     return value
+
+
+def _validate_utc_timestamp(timestamp: Any, context: str) -> None:
+    if not isinstance(timestamp, str):
+        raise GuardViolation(f"{context} must be a string")
+    try:
+        parsed = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError as error:
+        raise GuardViolation(f"{context} is not canonical UTC") from error
+    if parsed.strftime("%Y-%m-%dT%H:%M:%SZ") != timestamp:
+        raise GuardViolation(f"{context} is not canonical UTC")
 
 
 def _validate_acceptance_record(record: dict[str, Any]) -> None:
@@ -415,15 +445,7 @@ def _validate_acceptance_record(record: dict[str, Any]) -> None:
     if rollback != ROLLBACK_TUPLE:
         raise GuardViolation("acceptance record rollback coordinate mismatch")
 
-    timestamp = record["timestamp_utc"]
-    if not isinstance(timestamp, str):
-        raise GuardViolation("acceptance record timestamp_utc must be a string")
-    try:
-        parsed = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    except ValueError as error:
-        raise GuardViolation("acceptance record timestamp_utc is not canonical UTC") from error
-    if parsed.strftime("%Y-%m-%dT%H:%M:%SZ") != timestamp:
-        raise GuardViolation("acceptance record timestamp_utc is not canonical UTC")
+    _validate_utc_timestamp(record["timestamp_utc"], "acceptance record timestamp_utc")
 
     decisions = _mapping(record["decisions"], "acceptance record decisions")
     _exact_keys(decisions, ACCEPTED_ROLES, "acceptance record decisions")
@@ -444,6 +466,164 @@ def _validate_acceptance_record(record: dict[str, Any]) -> None:
             raise GuardViolation(f"invalid record path for {role}")
         if decision["selected"] != SELECTED_REFERENCE:
             raise GuardViolation(f"invalid selected tuple reference for {role}")
+
+
+def _p2_artifact_path(artifacts_root: Path, value: Any, context: str) -> Path:
+    if not isinstance(value, str) or not value or "\\" in value:
+        raise GuardViolation(f"{context} requires a relative artifact path")
+    relative = Path(value)
+    if relative.anchor or ".." in relative.parts or relative.as_posix() != value:
+        raise GuardViolation(f"{context} requires a relative artifact path")
+    path = artifacts_root / relative
+    try:
+        resolved = path.resolve(strict=True)
+    except (OSError, RuntimeError, ValueError) as error:
+        raise GuardViolation(f"{context} artifact cannot be resolved: {error}") from error
+    if resolved != path or not path.is_file():
+        raise GuardViolation(f"{context} requires a regular file without symlinks")
+    return path
+
+
+def _read_p2_artifact(value: Any, artifacts_root: Path, context: str) -> bytes:
+    artifact = _mapping(value, context)
+    _exact_keys(artifact, ("path", "sha256"), context)
+    path = _p2_artifact_path(artifacts_root, artifact["path"], context)
+    try:
+        data = path.read_bytes()
+    except OSError as error:
+        raise GuardViolation(f"{context} artifact cannot be read: {error}") from error
+    if not data or hashlib.sha256(data).hexdigest() != artifact["sha256"]:
+        raise GuardViolation(f"{context} artifact is empty or its SHA-256 differs")
+    return data
+
+
+def _validate_p2_revision(revision: Any, context: str) -> None:
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise GuardViolation(f"{context} requires a full commit revision")
+
+
+def _validate_p2_run(run: dict[str, Any], artifacts_root: Path, context: str) -> None:
+    commands = run["commands"]
+    if not isinstance(commands, list) or not commands or not all(
+        isinstance(command, str) and command.strip() for command in commands
+    ):
+        raise GuardViolation(f"{context} requires recorded verification commands")
+    if run["result"] != "passed":
+        raise GuardViolation(f"{context} requires a passing result")
+    receipts = run["receipts"]
+    if not isinstance(receipts, list) or not receipts:
+        raise GuardViolation(f"{context} requires retained native receipts")
+    for receipt in receipts:
+        _read_p2_artifact(receipt, artifacts_root, f"{context} receipt")
+
+
+def _validate_p2_pin(pin: dict[str, Any], artifacts_root: Path) -> None:
+    context = "7.1-P2 capability pin"
+    _exact_keys(pin, ("schema", "package", "qualification", "decisions"), context)
+    if pin["schema"] != P2_PIN_SCHEMA or pin["package"] != P2_ACTION_ID:
+        raise GuardViolation(f"{context} has an unsupported schema or package")
+
+    qualification = _mapping(pin["qualification"], f"{context} qualification")
+    _exact_keys(
+        qualification, ("owners", "contractVersions", "persistedCases", "rollback"),
+        f"{context} qualification",
+    )
+    owners = _mapping(qualification["owners"], f"{context} owners")
+    _exact_keys(owners, P2_OWNERS, f"{context} owners")
+    for owner in P2_OWNERS:
+        owner_context = f"{context} {owner} capability"
+        source = _mapping(owners[owner], owner_context)
+        _exact_keys(source, ("revision", "record"), owner_context)
+        _validate_p2_revision(source["revision"], owner_context)
+        _read_p2_artifact(source["record"], artifacts_root, f"{owner_context} record")
+
+    versions_context = f"{context} contract versions"
+    contracts = _mapping(qualification["contractVersions"], versions_context)
+    _exact_keys(contracts, tuple(P2_CONTRACT_OWNERS), versions_context)
+    for contract, version in contracts.items():
+        if not isinstance(version, str) or not version.strip():
+            raise GuardViolation(f"{context} {contract} requires a contract version")
+
+    cases = _mapping(qualification["persistedCases"], f"{context} persisted cases")
+    _exact_keys(cases, P2_PERSISTED_CASES, f"{context} persisted cases")
+    for case, value in cases.items():
+        case_context = f"{context} persisted {case}"
+        run = _mapping(value, case_context)
+        fields = ("commands", "result", "receipts")
+        if case == "compensation":
+            fields += ("disposition",)
+        _exact_keys(run, fields, case_context)
+        if case == "compensation" and run["disposition"] not in (
+            "retain", "approved-idempotent-command",
+        ):
+            raise GuardViolation(f"{case_context} requires an explicit compensation disposition")
+        _validate_p2_run(run, artifacts_root, case_context)
+
+    rollbacks = _mapping(qualification["rollback"], f"{context} rollback")
+    _exact_keys(rollbacks, tuple(P2_CONTRACT_OWNERS), f"{context} rollback")
+    for contract, contract_owners in P2_CONTRACT_OWNERS.items():
+        rollback_context = f"{context} {contract} rollback"
+        run = _mapping(rollbacks[contract], rollback_context)
+        _exact_keys(run, ("revisions", "commands", "result", "receipts"), rollback_context)
+        revisions = _mapping(run["revisions"], rollback_context)
+        _exact_keys(revisions, contract_owners, f"{rollback_context} revisions")
+        for owner, revision in revisions.items():
+            _validate_p2_revision(revision, f"{rollback_context} {owner}")
+        _validate_p2_run(run, artifacts_root, rollback_context)
+
+    # Bind all approvals to the same owner revisions, contract versions, and evidence bytes.
+    approved_bytes = json.dumps(
+        qualification, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("ascii")
+    qualification_sha256 = hashlib.sha256(approved_bytes).hexdigest()
+    decisions = _mapping(pin["decisions"], f"{context} decisions")
+    _exact_keys(decisions, P2_APPROVAL_ROLES, f"{context} decisions")
+    for role in P2_APPROVAL_ROLES:
+        decision_context = f"{context} decision for {role}"
+        data = _read_p2_artifact(decisions[role], artifacts_root, decision_context)
+        try:
+            record = json.loads(data.decode("utf-8"), object_pairs_hook=_unique_json_object)
+        except (UnicodeError, json.JSONDecodeError, GuardViolation) as error:
+            raise GuardViolation(f"malformed {decision_context}: {error}") from error
+        decision = _mapping(record, decision_context)
+        _exact_keys(
+            decision,
+            ("role", "decision", "approver", "timestampUtc", "qualificationSha256"),
+            decision_context,
+        )
+        if decision["role"] != role:
+            raise GuardViolation(f"{decision_context} role differs")
+        approver = decision["approver"]
+        if decision["decision"] != "accepted" or not (
+            isinstance(approver, str) and approver.strip()
+        ):
+            raise GuardViolation(f"{decision_context} requires named acceptance")
+        _validate_utc_timestamp(decision["timestampUtc"], f"{decision_context} timestampUtc")
+        if decision["qualificationSha256"] != qualification_sha256:
+            raise GuardViolation(f"{decision_context} qualification SHA-256 differs")
+
+
+def _validate_p2_action(
+    action: dict[str, Any], expected_epic: int, workspace_root: Path
+) -> None:
+    if action.get("epic") != expected_epic:
+        raise GuardViolation(f"7.1-P2 must remain an Epic {expected_epic} action item")
+    status = action.get("status")
+    if status == "open":
+        if "projects_evidence_pin" in action:
+            raise GuardViolation("7.1-P2 can link its capability pin only when done")
+        return
+    if status != "done":
+        raise GuardViolation("7.1-P2 status must be open or done")
+    if action.get("projects_evidence_pin") != P2_PIN_PATH:
+        raise GuardViolation("7.1-P2 done requires the fixed capability pin link")
+    artifacts_root = workspace_root.resolve() / P2_ARTIFACTS_DIR
+    context = "7.1-P2 capability pin"
+    path = _p2_artifact_path(artifacts_root, P2_PIN_PATH, context)
+    pin = _load_acceptance_record(path, label=context)
+    if pin is None:
+        raise GuardViolation(f"{context} is missing")
+    _validate_p2_pin(pin, artifacts_root)
 
 
 def _frontmatter_lines(text: str, source: str) -> list[str]:
@@ -604,11 +784,15 @@ def _validate_closure_boundary(
     deferred_work: str,
     p0_frontmatter: dict[str, Any],
     accepted: bool,
+    workspace_root: Path,
 ) -> None:
     expected_gate_status = "done" if accepted else "open"
     actions = _action_map(sprint)
     for item_id, (expected_epic, configured_status) in ACTION_STATUSES.items():
         action = actions[item_id]
+        if item_id == P2_ACTION_ID:
+            _validate_p2_action(action, expected_epic, workspace_root)
+            continue
         expected_status = expected_gate_status if item_id == "6.1-P1R" else configured_status
         if action.get("epic") != expected_epic or action.get("status") != expected_status:
             raise GuardViolation(
@@ -730,7 +914,9 @@ def _validated_index_entries(
     record = _load_acceptance_record(record_path)
     if record is not None:
         _validate_acceptance_record(record)
-    _validate_closure_boundary(sprint, deferred, p0_frontmatter, record is not None)
+    _validate_closure_boundary(
+        sprint, deferred, p0_frontmatter, record is not None, workspace_root
+    )
     _validate_optional_readiness_metadata(sprint, record)
     return entries
 
@@ -742,7 +928,7 @@ def validate_index(
     *,
     workspace_root: Path = PROJECT_ROOT,
 ) -> tuple[int, ...]:
-    """Validate scheduling plus the optional fixed-path acceptance record."""
+    """Validate scheduling and evidence required for prerequisite closures."""
 
     _validated_index_entries(
         sprint_status_path,
