@@ -446,6 +446,8 @@ AI-assisted review.
 **Reviewed baseline:** Projects base commit `5f1d955b13c69a9c24b6a6c2d185770da2197355`
 and the applied planning file bytes identified by the SHA-256 digests below. The commit anchors
 the review and the digests identify the exact working-tree planning baseline for owner decisions.
+The [superseding byte manifest](#superseding-byte-manifest--reviewed-candidate) replaces it for
+owner decisions.
 
 **Recommendation for the Epic 8 structure: RETAIN.** The 8.1–8.6 operator track delivers
 independently consumable internal capabilities after each story’s own entry and acceptance gates.
@@ -501,6 +503,42 @@ and has SHA-256 `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb
 | Epic 8 — operator evidence | 8.1 is `blocked` at acceptance after the internal preview. It still requires 7.1-P2, 7.15, Epic 8 authenticated fixtures and blocking CI. `fr-21` and `nfr-8` are pending. `finding-test-001` and `release-authenticated-persisted-boundary` are blocked externally. The Story 8.1 record reports a managed-browser fixture failure before Playwright, unsupported runner filters in the direct Builds 6.6.1 invocation and evidence-validator exit 6. Test Architect and the platform/Builds owners must supply and validate the governed evidence. [Story 8.1 implementation notes](../implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md#implementation-notes) |
 | Epic 8 — platform and release evidence | G-4/G-5 acceptance and the current persisted qualification remain open. The tracker scopes G-6 qualification to the recorded checkout `0f03582b3457a6d9212d60e2f9146a6043af5f7e`. Its preserved pending candidate is marked unusable. This packet records no exact-source G-6 qualification for the reviewed commit. `release-smoke` remains `failed` (historical 19 passed / 56 failed). 8.8 and 8.11 are blocked. 8.11 requires all preceding Epic 8 stories, immutable deployment/smoke, KMS and rollback evidence, and dated terminal decisions from Jerome and John. [Canonical matrix](implementation-readiness-traceability-matrix.yaml) · [Story 8.11](epics.md#story-811-record-the-terminal-production-release-decision) |
 
+#### Superseding byte manifest — reviewed candidate
+
+**Candidate:** Projects commit `31b3563780fc4e42a04e6982780a2a38c71a7acb` plus the listed
+working-tree bytes, recorded on 2026-11-24 after the Architecture Spine update. This manifest
+supersedes the [baseline table](#baseline-artifacts) for owner decisions. That table remains the
+applied Chatbot correction's provenance. If any listed file changes before both owners sign,
+record a new manifest and reverify the affected checks.
+
+| Artifact | SHA-256 | Since the baseline table |
+|---|---|---|
+| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `573b924eca9d62feb1836635320f34cc8308750ecda283695de8a1f9a5b41135` | Unchanged |
+| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `5a4aff9731cff36fab819b66ea6e8c13e3a155e2f01f2cf6ebbed293bf9c7979` | Unchanged |
+| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `01b89a2f5e076a52b17f253417b7472ae85c0c7d26ae5a3c21c428e5868eb5fe` | Changed: 2026-11-24 spine update, uncommitted working-tree bytes |
+| [UX specification](ux-design-specification.md) | `243adfc3df33c5822a20262a6385e97a660a56e87be960d0dd197b7d3430da56` | Unchanged |
+| [Epics](epics.md) | `8e850477656b8d5a93fe3e9742dce40dfd7b9db10098642611fd9bc9ad002230` | Changed and committed at HEAD |
+| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `ef3656e74a2c6b91a59d33af869b547b85a6dfe798e72d5a2d1dada7a2b2fc10` | Changed and committed at HEAD |
+| [Matrix view](implementation-readiness-traceability-matrix.md) | `d391c48b6aec21925285e8d5ef1e1fc1d58d103b06365f3ed7eee685b908b831` | Changed and committed at HEAD |
+| [Sprint tracker](../../_bmad-output/implementation-artifacts/sprint-status.yaml) | `aed5f9e7afc7564f2c3389a4c828364acd15bb771abb118d52c3a69341a418c3` | Changed and committed at HEAD |
+| [Deferred-work ledger](../../_bmad-output/implementation-artifacts/deferred-work.md) | `f5cd5251d8f806b256959bbada8ae68bd3b6076a85c413fc42a91fa61937570b` | Unchanged |
+| [Story 8.1 scheduling decision](sprint-change-proposal-2026-11-22-schedule-story-8-1.md) | `9b9ccd47b0b461bb25abcc5e69ad37d9fb6de20e0c1bc7e512d590af02cef303` | Unchanged |
+| [Story 8.1 specification](../../_bmad-output/implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md) | `2f9a02c0712d8200bb3d86ce15ae744852eb3f7894bccbf8cea6c7e28515c2f3` | Unchanged |
+| [Applied Chatbot host correction](sprint-change-proposal-2026-11-24.md) | `5a2cb0107c33c5725210f9549689dfe9bc1faa54082d170b2d049580dd3a63f8` | Unchanged |
+| [Read cutover runbook](../../docs/read-cutover.md) | `809f2b485431d6e1cebc281487282ad25d0ade125dd4ba6cc3defd1a7d402f76` | Changed and committed at HEAD |
+| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `3c0c0c261412ff2f607aa591c8de93ee7660774f9717b2c2c678cd27be6cb356` | Unchanged |
+| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `850c3324ba7caf9468bf18ddb849ee7f5d7db7426c539fb602bd7089a9774590` | Unchanged |
+| [Readiness-blocker correction](sprint-change-proposal-2026-11-24-readiness-blockers.md) | `92b846e325aefd219930cb4df5f20bbc2e0f25678ba5340b69fda22edb277b80` | Added: the approved correction that requires this manifest |
+| [Readiness trigger report](implementation-readiness.md) | `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb9` | Unchanged |
+
+| Check on this candidate | Result |
+|---|---|
+| Architecture Spine | `lint_spine.py` exited 0 with zero findings and all 27 relative links resolve. Rubric, technology and adversarial reviews passed with fixes, and all fixes are applied. The AD-19 query-mapping question is resolved by a bounded exception that ends at the AD-17 writer cutover. [Reviews](architecture/architecture-projects-2026-07-15/reviews/) |
+| Production authority | `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`. `run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_production_authority_guard.py -q` passed all 51 tests. |
+| Evidence coverage | The YAML and Markdown contain the same 64 unique keys and cover all 25 FRs and 11 NFRs. The YAML records 20 pending, 42 blocked-external, one failed and one blocked. `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` exited 1 because the tool is absent from the Projects tool manifest. Governed validation remains unverified. |
+| Dependency order | Story 7.16 requires the accepted `8.8-P3-H` host pin and not full 8.8-P3. The tracker makes full 8.8-P3 depend on `8.8-P3-H` and Story 7.16. Story 8.8 requires 8.8-P1/P2/P3, and 8.11 requires every preceding Epic 8 story. The order `8.8-P3-H → 7.16 → 8.8-P3 → 8.8 → 8.11` has no cycle. |
+| G-6 | The last completed G-6 qualification passed on `26fed89d`, an ancestor of `31b35637`. No G-6 run has completed on the candidate commit. [Run 45417404832](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45417404832) |
+| Unlisted working-tree changes | At recording, concurrent work had modified the DW-63 specification, `docs/runbooks/projects-topology.md` and `tests/Hexalith.Projects.Integration.Tests/WorkloadCredentialTopologyTests.cs`, and had added an untracked 7.1-P1 specification and `evidence/epic7/`. None is a listed artifact. |
 #### Owner decision record
 
 **Decision requested.** Accept or reject retaining both Epic 8 tracks against the exact reviewed
@@ -518,10 +556,9 @@ readiness, deployment, and the Story 8.11 release decision each require their ow
 | Product Owner | Pending | Pending | Pending | Pending |
 | Authorized Solution Architect | Pending | Pending | Pending | Pending |
 
-The November 24 follow-up verified fourteen listed digests and identified a working-tree
-change in docs/read-cutover.md. The table above preserves the applied Chatbot correction's
-baseline. Before signing, record a superseding byte manifest of the exact reviewed candidate,
-including the current runbook and any applied planning changes. Reverify the affected checks.
+The [superseding byte manifest](#superseding-byte-manifest--reviewed-candidate) records the
+exact candidate both owners review, including the current runbook and the applied planning
+changes. The baseline table preserves the applied Chatbot correction's provenance.
 Each owner records name, authority, decision, date, shared base commit and digest set, and
 rationale or conditions. The authorized Solution Architect also records a separate conformance
 verdict and date against those bytes. Sprint regeneration requires a passing independent

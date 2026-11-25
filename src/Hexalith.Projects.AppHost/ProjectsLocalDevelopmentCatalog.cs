@@ -89,7 +89,8 @@ internal static class ProjectsLocalDevelopmentCatalog
             componentDirectory.Delete(recursive: true);
         }
 #else
-        throw new InvalidOperationException("The local catalog requires the Debug source build of its executable owners.");
+        throw new InvalidOperationException("The ordinary local topology composes its route catalog only from a local Debug source build "
+            + "(UseHexalithProjectReferences=true, without CI=true), so package mode cannot start it.");
 #endif
     }
 
@@ -136,7 +137,14 @@ internal static class ProjectsLocalDevelopmentCatalog
             throw new InvalidOperationException("Build the selected Debug source owner before composing its catalog: " + path);
         }
 
-        return Assembly.LoadFrom(path);
+        Assembly loaded = Assembly.LoadFrom(path);
+        if (!System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(loaded.Location)).AsSpan()
+            .SequenceEqual(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(path))))
+        {
+            throw new InvalidOperationException("The loaded owner differs from the selected executable artifact.");
+        }
+
+        return loaded;
     }
 #endif
 }

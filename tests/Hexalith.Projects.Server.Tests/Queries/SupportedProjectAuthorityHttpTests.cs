@@ -315,6 +315,30 @@ public sealed class SupportedProjectAuthorityHttpTests(ITestOutputHelper output)
         await fixture.AssertUnchangedAsync(before);
     }
 
+    /// <summary>Refuses an advisory envelope whose bound administrator flag the SDK host cannot verify.</summary>
+    [Fact]
+    public async Task AdvisoryQueryRefusesAnUnverifiedBoundAdministratorFlag()
+    {
+        var fixture = await ProjectReadAuthorityFixture.CreateAsync(includeAdvisoryQueries: true).ConfigureAwait(true);
+        await using var fixtureLifetime = fixture.ConfigureAwait(true);
+        // The Gateway binds the caller's claimed flag; no Projects administrator verifier confirms it.
+        fixture.Client.DefaultRequestHeaders.Authorization = new("Bearer", fixture.HumanToken(projectUser: true, globalAdminClaim: true));
+        var before = await fixture.SnapshotAsync();
+        fixture.Routes.ClearAttempts();
+        var query = new SubmitQueryRequest(fixture.Tenant, "projects", "projects", ResolveProjectFromAttachmentsQuery.QueryType,
+            Payload: JsonSerializer.SerializeToElement(new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")]), JsonSerializerOptions.Web));
+
+        using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries", query, TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var hop = fixture.Routes.Hops.ShouldHaveSingleItem();
+        hop.Target.ShouldBe("projects"); hop.Status.ShouldBe(400); hop.Query.IsGlobalAdmin.ShouldBeTrue();
+        (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldContain(QueryAdapterFailureReason.InvalidEnvelope);
+        fixture.Routes.Invocations.ShouldAllBe(attempt => attempt.Target == "projects");
+        fixture.Audit.Keys.ShouldBeEmpty();
+        await fixture.AssertUnchangedAsync(before);
+    }
+
     /// <summary>Rejects user-issuer assertions despite otherwise valid workload shape and bindings.</summary>
     /// <param name="target">The receiving workload.</param>
     [Theory]

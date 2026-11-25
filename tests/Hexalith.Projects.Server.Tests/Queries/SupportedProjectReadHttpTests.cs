@@ -369,7 +369,8 @@ public sealed partial class SupportedProjectReadHttpTests
             app.Services.GetRequiredService<IOptions<ProjectionDispatchOptions>>().Value,
             app.Services.GetRequiredService<IOptions<DomainProjectionIdentityOptions>>().Value, TestContext.Current.CancellationToken);
 
-    private static string WorkloadToken(SecurityKey key, string operation, string audience = "projects", string caller = "eventstore")
+    /// <summary>Signs an EventStore workload assertion for one canonical callback operation.</summary>
+    internal static string WorkloadToken(SecurityKey key, string operation, string audience = "projects", string caller = "eventstore")
     {
         JwtSecurityTokenHandler handler = new(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor
@@ -381,7 +382,8 @@ public sealed partial class SupportedProjectReadHttpTests
         });
     }
 
-    private static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false, IProjectAdvisoryConversationDirectory? conversations = null, Action<IServiceCollection>? configure = null)
+    /// <summary>Starts a Projects receiver; <paramref name="workload"/> selects the SDK host with a committed fixture catalog.</summary>
+    internal static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false, IProjectAdvisoryConversationDirectory? conversations = null, Action<IServiceCollection>? configure = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = "Production" });
         builder.Configuration["urls"] = "http://127.0.0.1:0";

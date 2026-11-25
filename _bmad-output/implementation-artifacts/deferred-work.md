@@ -824,6 +824,51 @@ reason: All ten accepted 7.1-P1 fixture cases share IdempotencyFingerprint sha25
 removal_condition: A create replay with a different description or setupMetadata returns 409, or the replay rule is accepted and documented in the create contract.
 status: open
 
+### DW-91: Compose the ordinary local route catalog in package mode.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25), human decision on review Group A
+location: src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs (package-mode branch); IsolatedLiveE2EFixtureProfile.cs, SupportedProjectReadFixtureProfile.cs and SupportedProjectReadDevelopmentInfrastructure.cs; Hexalith.Projects.AppHost.csproj
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: SDK receivers refuse every canonical callback with 503 until a catalog generation is committed, and every catalog composition in this AppHost compiles only in Debug source mode. CI must build packages (Directory.Build.props rejects project references with CI=true), so Release `aspire run` and the scheduled managed E2E lane cannot start a topology that serves callbacks. That lane currently stops earlier, in tests/e2e/run-live-apphost.sh, because PROJECTS_E2E_TEST_USER_PASSWORD is empty (run 45391323833, before DW-63). The work needs the released EventStore catalog API, Platform mTLS in package builds, an assembly loader for package outputs, and CI catalog custody and workload-issuer secrets through Hexalith.CiCd. Owner: Projects Owner with the EventStore and CiCd owners.
+removal_condition: A CI=true package build starts the ordinary AppHost with a committed catalog and serves a Projects command and query.
+status: open
+
+### DW-92: Model-test the ordinary run-mode AppHost composition.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25)
+location: src/Hexalith.Projects.AppHost/Program.cs (run-mode branch); src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs; tests/Hexalith.Projects.Integration.Tests/WorkloadCredentialTopologyTests.cs
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: Review findings VG-3, BH-5 and EC-15. The only AppHost model test now runs with --operation publish and no longer asserts that KeycloakPersistent=true persists the workload secret. Dropping replay-state from a receiver grant list, inverting the credential skip or removing persist: fails no test outside the live lanes. Run mode needs owner custody and Dapr mTLS before a model test can build it. Severity medium. Owner: Projects maintainer.
+removal_condition: Run-mode model tests pin the receiver grants, the workload binding environment, the credential skip and workload-secret persistence.
+status: open
+
+### DW-93: Settle whether projects-workers must be enrolled in the ordinary catalog.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25)
+location: src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs (receivers)
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: Review finding BH-2, unverified. The catalog builder selects every sidecar app but throws only for shared app IDs, and the workers sidecar keeps the ordinary accesscontrol.yaml with no catalog binding. Settle it with a positive-admission run under real custody: does bootstrap or the workers ACL depend on enrolment? Medium if confirmed. Owner: Projects maintainer.
+removal_condition: A positive-admission run shows the workers subscriber either needs enrolment (then enrolled and tested) or does not (then recorded).
+status: open
+
+### DW-94: Settle whether the gateway comparison fixture must strip resilience from every client.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25)
+location: tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:495-504
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: Review finding EC-16, unverified. SDK service defaults add standard resilience to every HTTP client, and the comparison fixture strips it only from IConversationClient, so an injected Folder or owner fault could be retried or open a shared circuit across comparison cells. The 77-cell run passed twice. Settle it by checking whether any cutover cell injects a Folder or owner fault through a client that keeps SDK resilience. Medium if confirmed. Owner: Projects maintainer.
+removal_condition: Every faulted client in the comparison fixture runs without SDK resilience, or no cell injects faults through one, and the result is recorded.
+status: open
+
+### DW-95: Keep manifest callback grants aligned with SDK receivers and composition grants.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25)
+location: module/hexalith.module-manifest.v2.json; src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs, IsolatedLiveE2EFixtureProfile.cs and SupportedProjectReadDevelopmentInfrastructure.cs
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: Review finding BH-13. DW-63 added the /replay-state grant by hand to the manifest and to the compositions, and no test compares manifest callbacks with SDK-mapped receivers or composition grants. That drift is how replay-state was missing before this change. A cross-check is new test infrastructure. Severity medium. Owner: Projects maintainer.
+removal_condition: A test fails when the manifest callbacks, the SDK-mapped receivers and the composition grant lists disagree.
+status: open
+
 ### DW-96: Authorize proposal confirmation before parsing its body.
 
 origin: spec-7-1-p1-qualify-projects-creation-contracts.md, decision Q2=A (2026-11-25)
@@ -831,6 +876,15 @@ location: src/Hexalith.Projects.Server/Queries/ProposeNewProjectEndpoint.cs Conf
 source_spec: _bmad-output/implementation-artifacts/spec-7-1-p1-qualify-projects-creation-contracts.md
 reason: Direct create authorizes before it reads the body, and 7.1-P1 pins that with zero body bytes read for every denial mode. Confirm still reads and validates the body first, so an unauthorized caller gets 400 validation_error with a rejectedField for a malformed or invalid body instead of the 404 safe denial. 7.1-P1 covered confirm for validator parity only (Q2=A). Route to Story 7.12 together with DW-87. Owner: Projects maintainer.
 removal_condition: Confirm authorizes before reading the body, and unauthorized callers get the 404 safe denial with zero body bytes read for valid, malformed and invalid bodies, pinned by tests.
+status: open
+
+### DW-97: Grant the rebuild-part and reconcile callbacks in restricted Projects catalogs.
+
+origin: code review of spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md (2026-11-25), review loop 2
+location: src/Hexalith.Projects.AppHost/ProjectsLocalDevelopmentCatalog.cs, IsolatedLiveE2EFixtureProfile.cs and SupportedProjectReadDevelopmentInfrastructure.cs (projects receiver Calls); tests/Hexalith.Projects.PackageFixtures.AppHost compositions; src/Hexalith.Projects.Server/ProjectsDevelopmentCatalogExtensions.cs (restrictAuxiliaryToInvocations)
+source_spec: _bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md
+reason: Review finding EC2-6. EventStore's NamedProjectionDispatchCoordinator invokes project/rebuild/part/v1 for large rebuild transports and project/v2/reconcile for terminal reconciliation. The Projects grant lists omit both, and restricted Development receivers refuse ungranted callbacks, so a large Project rebuild or a reconciliation fails in these lanes. The pre-DW-63 host mapped neither route, so both flows already failed with 404 before this change. Severity medium. Owner: Projects maintainer.
+removal_condition: Every restricted Projects composition grants both callbacks, and a test drives a rebuild part upload and a reconcile call through a restricted receiver.
 status: open
 
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`

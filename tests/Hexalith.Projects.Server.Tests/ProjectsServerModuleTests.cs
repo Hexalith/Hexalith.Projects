@@ -5,12 +5,17 @@
 
 namespace Hexalith.Projects.Server.Tests;
 
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 using Hexalith.EventStore.Contracts.Projections;
+using Hexalith.EventStore.Contracts.Routing;
 using Hexalith.EventStore.DomainService;
+using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.EventStore.Indexes;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Events;
@@ -18,6 +23,7 @@ using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Server;
+using Hexalith.Projects.Server.Tests.Queries;
 using Hexalith.Projects.Workers;
 
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +31,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 using Shouldly;
 
@@ -44,82 +51,90 @@ public sealed class ProjectsServerModuleTests
         ProjectsServerModule.Name.ShouldBe("Hexalith.Projects.Server");
     }
 
-    /// <summary>Verifies the EventStore aggregate callback is reachable at the registered route.</summary>
+    /// <summary>Verifies the SDK host maps the EventStore aggregate callback at the canonical route.</summary>
     [Fact]
     public void ServerEndpointsMapCanonicalProcessCallback()
-    {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        builder.Services.AddProjectsServer();
-        WebApplication app = builder.Build();
+        => SdkRoute(ProjectsServerModule.ProcessRoute).Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldBe(["POST"]);
 
-        app.MapProjectsServerEndpoints();
-
-        RouteEndpoint endpoint = ((IEndpointRouteBuilder)app)
-            .DataSources
-            .SelectMany(static source => source.Endpoints)
-            .OfType<RouteEndpoint>()
-            .Single(item => string.Equals(item.RoutePattern.RawText, ProjectsServerModule.ProcessRoute, StringComparison.Ordinal));
-        endpoint.Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldContain("POST");
-    }
-
-    /// <summary>Verifies the EventStore full-replay projection callback is reachable at the canonical route.</summary>
+    /// <summary>Verifies the SDK host maps the EventStore full-replay projection callback at the canonical route.</summary>
     [Fact]
     public void ServerEndpointsMapCanonicalProjectCallback()
-    {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        builder.Services.AddProjectsServer();
-        WebApplication app = builder.Build();
+        => SdkRoute(ProjectsServerModule.ProjectRoute).Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldBe(["POST"]);
 
-        app.MapProjectsServerEndpoints();
-
-        RouteEndpoint endpoint = ((IEndpointRouteBuilder)app)
-            .DataSources
-            .SelectMany(static source => source.Endpoints)
-            .OfType<RouteEndpoint>()
-            .Single(item => string.Equals(item.RoutePattern.RawText, ProjectsServerModule.ProjectRoute, StringComparison.Ordinal));
-        endpoint.Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldContain("POST");
-    }
-
-    /// <summary>Verifies EventStore can discover the Projects handler routes through protected metadata.</summary>
+    /// <summary>Verifies the SDK metadata callback advertises exactly the Projects query handlers.</summary>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
-    public void OperationalIndexMetadataAdvertisesTheBoundProjectQueryHandlers()
+    public async Task OperationalIndexMetadataAdvertisesTheBoundProjectQueryHandlers()
     {
-        var request = new AdminOperationalIndexMetadata.Request([ProjectsServerModule.DomainName])
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-metadata" };
+        WebApplication app = await SupportedProjectReadHttpTests.StartAsync(null, null, key, workload: true).ConfigureAwait(true);
+        await using (app.ConfigureAwait(true))
         {
-            AppId = ProjectsServerModule.DomainName,
-            ServiceVersion = "v1",
-        };
-
-        AdminOperationalIndexMetadata.Response response =
-            ProjectsCompatibilityTestEndpoints.CreateOperationalIndexMetadata(request).ShouldNotBeNull();
-        AdminOperationalIndexMetadata.DomainMetadata domain = response.Domains.ShouldHaveSingleItem();
-        domain.Domain.ShouldBe(ProjectsServerModule.DomainName);
-        domain.QueryTypes.ShouldContain(ResolveProjectChatBotAuthority.QueryType);
-        domain.QueryTypes.ShouldContain(ResolveProjectFromConversationQuery.QueryType);
-        domain.QueryTypes.ShouldContain(ResolveProjectFromAttachmentsQuery.QueryType);
-        domain.QueryTypes.ShouldContain(ProjectsServerModule.GetConversationStartSetupQueryType);
-        domain.QueryTypes.ShouldContain(ProjectsServerModule.GetProjectContextQueryType);
-        domain.QueryTypes.ShouldContain(ProjectsServerModule.ExplainContextSelectionQueryType);
-        JsonSerializer.Deserialize<AdminOperationalIndexMetadataResponse>(JsonSerializer.Serialize(response))!
-            .Domains.ShouldHaveSingleItem().QueryTypes.ShouldNotBeNull()
-            .ShouldContain(ResolveProjectChatBotAuthority.QueryType);
+            using HttpClient client = await CallbackClientAsync(app, key, EventStoreWorkloadOperations.DomainServiceMetadata).ConfigureAwait(true);
+            using HttpResponseMessage response = await client.PostAsJsonAsync("/admin/operational-index-metadata",
+                MetadataRequest(ProjectsServerModule.DomainName, ProjectsServerModule.DomainName, "v1"), TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            AdminOperationalIndexMetadata.DomainMetadata domain = JsonSerializer
+                .Deserialize<AdminOperationalIndexMetadata.Response>(body, JsonSerializerOptions.Web)!.Domains.ShouldHaveSingleItem();
+            domain.Domain.ShouldBe(ProjectsServerModule.DomainName);
+            domain.QueryTypes.Order(StringComparer.Ordinal).ShouldBe(ProjectQueryTypes(app));
+            JsonSerializer.Deserialize<AdminOperationalIndexMetadataResponse>(body, JsonSerializerOptions.Web)!
+                .Domains.ShouldHaveSingleItem().QueryTypes.ShouldNotBeNull()
+                .ShouldContain(ResolveProjectChatBotAuthority.QueryType);
+        }
     }
 
-    /// <summary>Verifies metadata cannot advertise another domain or deployment identity.</summary>
+    /// <summary>Pins the SDK metadata status for foreign request identities and refuses foreign advertisement.</summary>
+    /// <param name="domain">The single requested domain.</param>
+    /// <param name="appId">The requested application identity.</param>
+    /// <param name="version">The requested service version.</param>
+    /// <param name="status">The pinned SDK status.</param>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Theory]
-    [InlineData("other", "projects", "v1")]
-    [InlineData("projects", "other", "v1")]
-    [InlineData("projects", "projects", "v2")]
-    [InlineData("projects", null, "v1")]
-    public void OperationalIndexMetadataRejectsForeignIdentity(string domain, string? appId, string version)
+    [InlineData("other", "projects", "v1", HttpStatusCode.ServiceUnavailable)]
+    [InlineData("projects", "other", "v1", HttpStatusCode.BadRequest)]
+    [InlineData("projects", "projects", "v2", HttpStatusCode.BadRequest)]
+    public async Task OperationalIndexMetadataRejectsForeignIdentity(string domain, string? appId, string version, HttpStatusCode status)
     {
-        var request = new AdminOperationalIndexMetadata.Request([domain])
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-metadata-identity" };
+        WebApplication app = await SupportedProjectReadHttpTests.StartAsync(null, null, key, workload: true).ConfigureAwait(true);
+        await using (app.ConfigureAwait(true))
         {
-            AppId = appId,
-            ServiceVersion = version,
-        };
+            using HttpClient client = await CallbackClientAsync(app, key, EventStoreWorkloadOperations.DomainServiceMetadata).ConfigureAwait(true);
+            using HttpResponseMessage response = await client.PostAsJsonAsync("/admin/operational-index-metadata",
+                MetadataRequest(domain, appId, version), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(status);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            if (domain != ProjectsServerModule.DomainName)
+            {
+                foreach (string queryType in ProjectQueryTypes(app)) body.ShouldNotContain(queryType);
+                body.ShouldNotContain("\"" + ProjectsServerModule.DomainName + "\"");
+            }
+        }
+    }
 
-        ProjectsCompatibilityTestEndpoints.CreateOperationalIndexMetadata(request).ShouldBeNull();
+    /// <summary>Verifies a blank AppId receives the SDK's legacy Projects metadata.</summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task OperationalIndexMetadataReturnsLegacyProjectsMetadataForBlankAppId()
+    {
+        // Only EventStore calls this endpoint, with its registered identity (review decision EC-11).
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-metadata-blank-identity" };
+        WebApplication app = await SupportedProjectReadHttpTests.StartAsync(null, null, key, workload: true).ConfigureAwait(true);
+        await using (app.ConfigureAwait(true))
+        {
+            using HttpClient client = await CallbackClientAsync(app, key, EventStoreWorkloadOperations.DomainServiceMetadata).ConfigureAwait(true);
+            using HttpResponseMessage response = await client.PostAsJsonAsync("/admin/operational-index-metadata",
+                MetadataRequest(ProjectsServerModule.DomainName, null, "v1"), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            (await response.Content.ReadFromJsonAsync<AdminOperationalIndexMetadata.Response>(TestContext.Current.CancellationToken).ConfigureAwait(true))!
+                .Domains.ShouldHaveSingleItem().Domain.ShouldBe(ProjectsServerModule.DomainName);
+        }
     }
 
     /// <summary>Verifies runtime metadata route requires the EventStore metadata operation policy.</summary>
@@ -219,23 +234,17 @@ public sealed class ProjectsServerModuleTests
             () => ProjectProjectionHandler.Project(ProjectionRequestOf(ProjectionEvent(CreatedEvent(), 1), second)));
     }
 
-    /// <summary>Verifies the hosted projection callback answers a foreign domain with 404 instead of replaying it.</summary>
+    /// <summary>Verifies the SDK projection callback answers a foreign domain with 404 instead of replaying it.</summary>
     /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
     public async Task HostedProjectCallbackReturnsNotFoundForAForeignDomain()
     {
-        WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+        using RSA rsa = RSA.Create(2048);
+        RsaSecurityKey key = new(rsa) { KeyId = "projects-sdk-foreign-projection" };
+        WebApplication app = await SupportedProjectReadHttpTests.StartAsync(null, null, key, workload: true).ConfigureAwait(true);
+        await using (app.ConfigureAwait(true))
         {
-            EnvironmentName = Environments.Development,
-        });
-        builder.Configuration["urls"] = "http://127.0.0.1:0";
-        builder.Services.AddProjectsServer();
-        WebApplication app = builder.Build();
-        app.MapProjectsServerEndpoints();
-        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
-        try
-        {
-            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpClient client = await CallbackClientAsync(app, key, EventStoreWorkloadOperations.DomainServiceProject).ConfigureAwait(true);
             ProjectionRequest foreign = ProjectionRequestOf(ProjectionEvent(CreatedEvent(), 1)) with { Domain = "orders" };
 
             using HttpResponseMessage response = await client
@@ -243,12 +252,25 @@ public sealed class ProjectsServerModuleTests
                 .ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldNotContain("Project A");
         }
-        finally
-        {
-            await app.StopAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
-            await app.DisposeAsync().ConfigureAwait(true);
-        }
+    }
+
+    /// <summary>Verifies the SDK query receiver maps an invalid supported-read cursor to 400 through the Projects policy.</summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task SdkQueryReceiverMapsAnInvalidCursorToBadRequest()
+    {
+        var fixture = await ProjectReadAuthorityFixture.CreateAsync().ConfigureAwait(true);
+        await using var fixtureLifetime = fixture.ConfigureAwait(true);
+        ProjectAuthoritySnapshot[] before = await fixture.SnapshotAsync().ConfigureAwait(true);
+
+        using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries",
+            fixture.List(new(Cursor: "not-a-protected-cursor")), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        fixture.Routes.Hops.Last(hop => hop.Target == "projects").Status.ShouldBe(400);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        await fixture.AssertUnchangedAsync(before).ConfigureAwait(true);
     }
 
     /// <summary>
@@ -259,6 +281,37 @@ public sealed class ProjectsServerModuleTests
     {
         ProjectsWorkersModule.Name.ShouldBe("Hexalith.Projects.Workers");
     }
+
+    private static RouteEndpoint SdkRoute(string route)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.AddProjectsDomainService();
+        WebApplication app = builder.Build();
+        app.UseEventStoreDomainService();
+        return ((IEndpointRouteBuilder)app).DataSources
+            .SelectMany(static source => source.Endpoints)
+            .OfType<RouteEndpoint>()
+            .Single(item => string.Equals(item.RoutePattern.RawText, route, StringComparison.Ordinal));
+    }
+
+    private static async Task<HttpClient> CallbackClientAsync(WebApplication app, SecurityKey key, string operation)
+    {
+        HttpClient client = new() { BaseAddress = new Uri(app.Urls.Single()) };
+        client.DefaultRequestHeaders.Add(DaprAppChannelToken.HeaderName, "story61-isolated-channel-fixture");
+        client.DefaultRequestHeaders.Add(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName, SupportedProjectReadHttpTests.WorkloadToken(key, operation));
+        RouteCatalogGenerationReadback catalog = await app.Services.GetRequiredService<IRouteCatalogAuthority>()
+            .ReadbackAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.RootHeader, catalog.RootDigest);
+        client.DefaultRequestHeaders.Add(RouteCatalogInvocationHandler.EpochHeader, catalog.Epoch.ToString(CultureInfo.InvariantCulture));
+        return client;
+    }
+
+    private static AdminOperationalIndexMetadata.Request MetadataRequest(string domain, string? appId, string version)
+        => new([domain]) { AppId = appId, ServiceVersion = version };
+
+    private static string[] ProjectQueryTypes(WebApplication app) => [.. app.Services.GetServices<IDomainQueryHandler>()
+        .Where(static handler => handler.Domain == ProjectsServerModule.DomainName).Select(static handler => handler.QueryType)
+        .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
 
     private static ProjectionRequest ProjectionRequestOf(params ProjectionEventDto[] events)
         => new("tenant-a", ProjectsServerModule.DomainName, "project-a", events);

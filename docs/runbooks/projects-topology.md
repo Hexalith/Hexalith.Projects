@@ -16,6 +16,9 @@ Prerequisites:
 - The Dapr-initialized Redis backing endpoint must be reachable from the host. By default the AppHost uses
   `localhost:6379`; override
   with `Dapr:RedisHost` when your local Dapr Redis is exposed elsewhere.
+- Owner-held route catalog custody and bound workload issuer settings under `Projects:DevelopmentRouteCatalog`
+  in the AppHost user secrets, as described in [the ordinary local catalog](../../module/README.md#ordinary-local-catalog).
+  Without them, the ordinary AppHost stops before composing its resources.
 - Root-level sibling repositories already available through the workspace layout.
 
 Before upgrading an existing `KeycloakPersistent=true` instance, export/back up its realm and verify
@@ -104,9 +107,11 @@ existing dependency waits; disabling security does not verify recovery of the au
 ### EventStore exits with missing workload credentials
 
 Once Keycloak is healthy, EventStore requires `Authentication:WorkloadIssuer:ClientId` and
-`ClientSecret` to obtain assertions for its internal domain-service calls. The AppHost supplies a
-generated secret parameter to both Keycloak's `eventstore` service-account client and EventStore through
-the platform's `WithEventStoreWorkloadClientCredentials` helper. The secret follows `KeycloakPersistent`:
+`ClientSecret` to obtain assertions for its internal domain-service calls. In the ordinary run topology,
+the AppHost takes them from the bound workload issuer settings under `Projects:DevelopmentRouteCatalog:Workload`.
+A published composition instead supplies a generated secret parameter to both Keycloak's `eventstore`
+service-account client and EventStore through the platform's `WithEventStoreWorkloadClientCredentials` helper.
+Keycloak receives that secret in both modes. It follows `KeycloakPersistent`:
 ephemeral by default, persisted with an explicitly persistent local Keycloak container.
 
 The local realm grants no audience or operation by default. Its optional scopes cover the `projects`

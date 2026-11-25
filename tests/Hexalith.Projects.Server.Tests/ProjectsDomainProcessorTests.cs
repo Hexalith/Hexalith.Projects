@@ -68,7 +68,17 @@ public sealed class ProjectsDomainProcessorTests
         AggregateReconstructionResult foreign = await processor.ReplayAsync(request with { TenantId = "foreign-tenant" },
             TestContext.Current.CancellationToken).ConfigureAwait(true);
         foreign.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+        foreign.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.ApplyFailed);
         foreign.StateJson.ShouldBeNull();
+        AggregateReconstructionResult malformed = await processor.ReplayAsync(request with
+        {
+            Events = [replayEvents[0] with { Payload = "{"u8.ToArray() }, replayEvents[1]],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        malformed.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+        malformed.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.DeserializationFailed);
+        malformed.FailedSequenceNumber.ShouldBe(1L);
+        malformed.FailedEventType.ShouldBe(typeof(ProjectCreated).FullName);
+        malformed.StateJson.ShouldBeNull();
         AggregateReconstructionResult incomplete = await processor.ReplayAsync(request with { Events = [replayEvents[0]] },
             TestContext.Current.CancellationToken).ConfigureAwait(true);
         incomplete.Status.ShouldBe(AggregateReconstructionStatus.Failed);

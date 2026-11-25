@@ -187,6 +187,15 @@ public sealed class ProjectsRuntimeCatalogTests
         Should.Throw<InvalidOperationException>(() => builder.AddProjectsDevelopmentCatalog());
     }
 
+    /// <summary>The executable refuses the anonymous Development bypass.</summary>
+    [Fact]
+    public void DomainServiceRefusesAnonymousDevelopment()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+        builder.Configuration["Authentication:JwtBearer:AllowAnonymousDevelopment"] = "true";
+        Should.Throw<InvalidOperationException>(() => builder.AddProjectsDomainService());
+    }
+
     /// <summary>Ordinary production registration leaves the existing runtime composition selected.</summary>
     [Fact]
     public void NoBootstrapKeepsOrdinaryHostComposition()

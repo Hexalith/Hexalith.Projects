@@ -8,7 +8,11 @@ using Shouldly;
 
 using Xunit;
 
-/// <summary>Verifies the actual AppHost shares one secret across the local workload issuer and authority.</summary>
+/// <summary>Verifies the actual AppHost shares one secret across the Keycloak workload issuer and authority.</summary>
+/// <remarks>
+/// These checks use the published composition. Run mode composes the ordinary route catalog instead, whose
+/// owner-held custody supplies the bound workload issuer for EventStore.
+/// </remarks>
 public sealed class WorkloadCredentialTopologyTests
 {
     /// <summary>Verifies both local container lifetime modes wire the exact same secret parameter.</summary>
@@ -20,21 +24,14 @@ public sealed class WorkloadCredentialTopologyTests
     {
         IDistributedApplicationTestingBuilder builder = await DistributedApplicationTestingBuilder
             .CreateAsync<global::Projects.Hexalith_Projects_AppHost>(
-                ["--EnableKeycloak=true", $"--KeycloakPersistent={persistent}", "--Projects:E2E:LiveFixtures=false"],
+                ["--operation", "publish", "--EnableKeycloak=true", $"--KeycloakPersistent={persistent}", "--Projects:E2E:LiveFixtures=false"],
                 TestContext.Current.CancellationToken).ConfigureAwait(true);
         await using var lifetime = builder.ConfigureAwait(true);
         ParameterResource secret = builder.Resources.OfType<ParameterResource>()
             .Single(static resource => resource.Name == "eventstore-workload-client-secret");
         secret.Secret.ShouldBeTrue();
-        if (persistent)
-        {
-            // Aspire's persistence wrapper is internal; inspect it without resolving or storing a credential.
-            secret.Default.ShouldNotBeNull().GetType().Name.ShouldBe("UserSecretsParameterDefault");
-        }
-        else
-        {
-            secret.Default.ShouldBeOfType<GenerateParameterDefault>().MinLength.ShouldBeGreaterThanOrEqualTo(32);
-        }
+        // User-secrets persistence is local run state; the published composition keeps the generated default.
+        secret.Default.ShouldBeOfType<GenerateParameterDefault>().MinLength.ShouldBeGreaterThanOrEqualTo(32);
 
         IResource keycloak = builder.Resources.Single(static resource => resource.Name == "security");
         IResource gateway = builder.Resources.Single(static resource => resource.Name == "eventstore");
@@ -53,7 +50,7 @@ public sealed class WorkloadCredentialTopologyTests
     {
         IDistributedApplicationTestingBuilder builder = await DistributedApplicationTestingBuilder
             .CreateAsync<global::Projects.Hexalith_Projects_AppHost>(
-                ["--EnableKeycloak=false", "--Projects:E2E:LiveFixtures=false"],
+                ["--operation", "publish", "--EnableKeycloak=false", "--Projects:E2E:LiveFixtures=false"],
                 TestContext.Current.CancellationToken).ConfigureAwait(true);
         await using var lifetime = builder.ConfigureAwait(true);
         builder.Resources.ShouldNotContain(static resource => resource.Name == "eventstore-workload-client-secret");

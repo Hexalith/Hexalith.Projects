@@ -66,6 +66,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     private readonly List<WebApplication> _hosts = [];
     private readonly X509Certificate2 _certificate;
     private readonly bool _failCleanup;
+    private bool _includeAdvisoryQueries;
     private bool _disposed;
     private bool _certificateDisposed;
     private bool _userKeyDisposed;
@@ -128,17 +129,17 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     public ProjectAuthorityAuditObserver Audit { get; private set; } = null!;
 
     /// <summary>Starts owned hosts and seeds real persisted domain projections.</summary>
-    public static async Task<ProjectReadAuthorityFixture> CreateAsync(bool failCleanup = false)
+    public static async Task<ProjectReadAuthorityFixture> CreateAsync(bool failCleanup = false, bool includeAdvisoryQueries = false)
     {
         string? http = Environment.GetEnvironmentVariable("STORY61_DAPR_HTTP_ENDPOINT"), grpc = Environment.GetEnvironmentVariable("STORY61_DAPR_GRPC_ENDPOINT");
         Assert.True(http is not null && grpc is not null, "Qualification requires owned isolated STORY61_DAPR_HTTP_ENDPOINT and STORY61_DAPR_GRPC_ENDPOINT; missing persistence is a failure.");
-        var fixture = new ProjectReadAuthorityFixture(http!, grpc!, failCleanup);
+        var fixture = new ProjectReadAuthorityFixture(http!, grpc!, failCleanup) { _includeAdvisoryQueries = includeAdvisoryQueries };
         try { await fixture.StartAsync().ConfigureAwait(false); return fixture; }
         catch { await fixture.DisposeAsync().ConfigureAwait(false); throw; }
     }
 
     /// <summary>Signs a synthetic user credential using separate public trust.</summary>
-    public string HumanToken(bool inspection = false, bool projectUser = false)
+    public string HumanToken(bool inspection = false, bool projectUser = false, bool globalAdminClaim = false)
     {
         List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", Tenant), new("eventstore:tenant", Tenant),
             new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"),
@@ -148,6 +149,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
             new("eventstore:permission", "read_metadata"), new("eventstore:permission", ProjectAuthorizationGate.ReadProjectAction),
             new("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction)];
         if (inspection) claims.Add(new("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission));
+        if (globalAdminClaim) claims.Add(new("global_admin", "true"));
         var handler = new JwtSecurityTokenHandler(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor { Issuer = UserIssuer, Audience = UserAudience,
             NotBefore = DateTime.UtcNow.AddSeconds(-1), Expires = DateTime.UtcNow.AddMinutes(5), Subject = new(claims),
@@ -446,8 +448,8 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         {
             foreach (var resilience in handlers.OfType<Microsoft.Extensions.Http.Resilience.ResilienceHandler>().ToArray()) handlers.Remove(resilience);
         }));
-        GatewayFixtureCatalogComposition.AddProjectsReceiver(projectsBuilder, Tenant,
-            createLoopback: () => new ProjectAuthorityLoopbackHandler(Routes, Channel));
+        GatewayFixtureCatalogComposition.AddProjectsReceiver(projectsBuilder, Tenant, _includeAdvisoryQueries,
+            () => new ProjectAuthorityLoopbackHandler(Routes, Channel));
         projectsBuilder.Services.AddSingleton<Hexalith.Projects.Projections.TenantAccess.IUtcClock>(new ProjectReadTestClock(Now.AddSeconds(1)));
         projectsBuilder.Services.AddSingleton<TimeProvider>(new ProjectReadTestClock(Now.AddSeconds(1)));
         projectsBuilder.Services.AddSingleton(sp => new ProjectAuthorityAuditObserver(sp.GetRequiredService<IReadModelStore>()));
@@ -505,6 +507,11 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:0"] = ListProjectsQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:1"] = GetProjectQuery.QueryType;
+        if (_includeAdvisoryQueries)
+        {
+            builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:2"] = ResolveProjectFromConversationQuery.QueryType;
+            builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:3"] = ResolveProjectFromAttachmentsQuery.QueryType;
+        }
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;
@@ -525,7 +532,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         builder.Services.AddSingleton<IDomainServiceResolver, GatewayFixtureRoutesResolver>();
         builder.Services.AddSingleton<IDomainQueryHandlerRegistry, DaprDomainQueryHandlerRegistry>();
         builder.Services.AddSingleton<IDomainQueryInvoker, DaprDomainQueryInvoker>();
-        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(Tenant));
+        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(Tenant, _includeAdvisoryQueries));
         builder.Services.AddSingleton<IRouteCatalogAuthority>(sp => sp.GetRequiredService<GatewayFixtureRouteCatalog>());
         builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
