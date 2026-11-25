@@ -1913,3 +1913,9 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-7-1-p2-qualify-durable-task-and-folder-provisioning.md`
   summary: Verify that Durable Task rows written before the failure count existed load and resume under the new candidate.
   evidence: Review finding VG-4 (pre-verified). DurableTaskProgress adds a persisted attempt count (Attempts) with new IsConsistent rules, and every test writes rows with the new types, so no fixture reads old-format JSON such as a WaitingForDependency row with a pending step. Belongs with the EventStore G-1 rollback item in references/Hexalith.EventStore/docs/architecture/g1-durable-task-scope-decision.md.
+
+## Deferred from: DW-63 live requalification
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Diagnose an intermittent HTTP 500 on the protected full-prefix Project rebuild.
+  evidence: At Projects `928f66f552c041efa306a445587a6ae9a9fb5486` with its tracked gitlinks, three rebuilds completed and the fourth `POST /project/rebuild/v1` returned HTTP 500 without a durable outcome. The same source passed all four rebuilds and the persisted replay assertions on one standalone retry. The first run preserved preexisting resources. The retry removed its own resources and exited 1 when two preexisting containers disappeared. The DW-63 spec records the native receipt hashes and paths. The cause of the 500 is unconfirmed.
