@@ -1052,6 +1052,17 @@ removal_condition: Handler tests return an identical status and body for "Projec
 gate: Epic 8 release
 status: open
 
+### DW-113: Qualify scoped Chatbot authority for the Epic 8 release.
+
+origin: 2026-11-25 implementation-readiness report, FR-26 acceptance coverage
+owner: Projects owner, with the 8.8-P1 Test Architect accepting the evidence
+location: Projects grant/revoke admission, delegated-operation authorization and Folder-derived permitted-set reads
+source_spec: _bmad-output/planning-artifacts/epics.md#story-88-integrate-authenticated-isolation-privacy-parity-and-accessibility-evidence
+reason: Story 7.17 compares SDK writer behavior with the existing grant and revoke commands. FR-26 also needs authenticated evidence of owner-only admission, exact grant scope and lifetime, current Folder authority and an unchanged permitted set.
+removal_condition: The 8.8-P1 release security package passes the DW-113 cases in Story 8.8 at an immutable revision. The safe-404 cases close under DW-112.
+gate: Epic 8 release (8.8-P1 release security evidence)
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.

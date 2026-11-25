@@ -470,16 +470,16 @@ rows:
     ids: [FR-26]
     description: "Grant Scoped Chatbot Authority — Tenant owner grants or revokes, on Hexalith.Tenants evidence, one scoped, expiring delegated-operation record; necessary, never sufficient; current Folder authority required and Folder revocation wins; same safe denial for absent, denied and ungranted"
     architecture_decisions: [AD-3, AD-17, AD-19, AD-33]
-    primary_story: "7.17"
-    supporting_stories: ["8.8"]
-    entry_gates: [Epic-7-gate, G-5]
-    fixture: epic7/7.17-writer-cutover
-    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.17"
-    evidence_artifact: evidence/epic7/7.17-writer-cutover.trx
+    primary_story: "8.8"
+    supporting_stories: ["7.17"]
+    entry_gates: [Epic-8-gate, G-5, "8.8-P1"]
+    fixture: epic8/8.8-P1-authenticated-security
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1"
+    evidence_artifact: evidence/epic8/8.8-P1-security.trx
     estimate: L
     status: blocked-external
-    blocker: "G-5 delegated credentials and the real EventStore-authorization validator; Stories 7.1–7.15 qualified on the SDK writer in test composition"
-    notes: "NEW FR (2026-11-25 spine upstream sync). The capability exists since b7ae7273. Story 7.17 proves SDK writer equivalence for the grant and revoke commands; DW-112 owns the safe-denial fix by the Epic 8 release."
+    blocker: "Accepted 8.8-P1 authenticated release security evidence covering DW-113 and DW-112"
+    notes: "Story 8.8 validates FR-26 behavior in 8.8-P1 release security evidence (DW-113 for grant semantics and DW-112 for safe denial). Supporting Story 7.17 proves grant/revoke SDK writer equivalence in evidence/epic7/7.17-writer-cutover.trx under its own entry gates and acceptance criteria."
 
   # ═══════════════════════ NON-FUNCTIONAL REQUIREMENTS (NFR-1..NFR-11) ═══════════════════════
   - key: nfr-1

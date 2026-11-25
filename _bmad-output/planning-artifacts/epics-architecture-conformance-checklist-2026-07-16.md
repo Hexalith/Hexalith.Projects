@@ -252,7 +252,7 @@ _Shared invariants 1–6 (AD-4/5/9/12/13/22/26) apply to every 7.x story — con
   - [x] `RequestPreview` validates the authorized Archived Project, authority, version, and exactly-one-Folder/replacement plan before issuing a bound artifact; only a later valid confirm atomically admits the task.
   - [x] Folder validity established **while Archived**; `ProjectFolderSet` before `ProjectRestored` in one commit; Folder-created/failed-activation → `NeedsAttention`, no auto-delete; no invalid Active exposed on stale/replay/cancel/duplicate/lost-response.
 - **7.15 Reconcile legacy/interrupted** — ADs 12,17,22,30 · Epic-7 gate + G-4/G-5/G-6
-  - [x] Compensating task per legacy record; no history rewrite/dual writer; unreconcilable → `NeedsAttention` (honest blocker, not false success); single-writer command cutover completes. Active-folderless records are quarantined, never auto-bound.
+  - [x] Compensating task per legacy record with history preserved and single-writer fencing. Unreconcilable records enter `NeedsAttention` and Active-folderless records stay quarantined pending explicit binding. Story 7.15 qualifies reconciliation on the SDK writer in test composition. Story 7.17 owns the single-writer cutover.
 - **7.16 Select an association target** — ADs 2,5,13,20,33 · Epic-7 gate + G-2/G-3/G-5 · **selection mint**
   - [x] Chatbot Projects-owned component mints session-bound Selection Evidence; no mint/confirm API; 5-minute expiry; never on open/list/resolution/proposal; CLI/MCP-before-gate remain Inferred Associations.
   - _Verdict: ☐ conforms ☒ with-note ☐ blocking_
@@ -506,44 +506,44 @@ and has SHA-256 `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb
 
 #### Superseding byte manifest — reviewed candidate
 
-**Candidate:** Projects commit `b575922ef8e9e59748cee937b53b290f20018162` plus the listed
-working-tree bytes, recorded on 2026-11-25 after the Architecture Spine was finalized at SHA-256
-`17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae` and the
-[spine upstream sync](sprint-change-proposal-2026-11-25-spine-upstream-sync.md) was applied. This
-manifest supersedes the 2026-11-24 manifest and the [baseline table](#baseline-artifacts) for owner
-decisions. The baseline table remains the applied Chatbot correction's provenance, and the
-2026-11-24 manifest stays in git history at `fdc8ca69`. If any listed file changes before both
+**Candidate:** Projects commit `294181274e2c02530d2cf417e8b94ffec69d1e2c` plus the listed working-tree bytes, recorded on
+2026-11-25 after the [readiness-gap correction](sprint-change-proposal-2026-11-25.md). It includes the Section C wording
+that assigns the SDK writer cutover to Story 7.17. This manifest supersedes the earlier
+2026-11-25 manifest at `b865844d` for owner decisions. The [baseline table](#baseline-artifacts)
+preserves the applied Chatbot correction's provenance. If any listed file changes before both
 owners sign, record a new manifest and reverify the affected checks.
 
-| Artifact | SHA-256 | Since the 2026-11-24 manifest |
+| Artifact | SHA-256 | Since the 2026-11-25 manifest |
 |---|---|---|
-| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `acb6f47120b30593e50206ed733c5f3d0807ff1c92c5b5314753c8b6286c6d36` | Changed: FR-26, A-3 and A-6 (spine upstream sync); committed at `b575922e` |
-| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `b2a7e24ab67a2b93cf62f12efd00f5c1df3292e49338e9085d22c217680a7ba3` | Changed: NFR-5 reading and E-42 (spine upstream sync); committed at `b575922e` |
-| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae` | Changed: 2026-11-25 Update, finalized; committed at `fdc8ca69` |
+| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `acb6f47120b30593e50206ed733c5f3d0807ff1c92c5b5314753c8b6286c6d36` | Unchanged |
+| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `b2a7e24ab67a2b93cf62f12efd00f5c1df3292e49338e9085d22c217680a7ba3` | Unchanged |
+| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae` | Unchanged |
 | [UX specification](ux-design-specification.md) | `243adfc3df33c5822a20262a6385e97a660a56e87be960d0dd197b7d3430da56` | Unchanged |
-| [Epics](epics.md) | `cf98e75d270d1581b0c60289038a90c359d57a77619104d377a0a2226462b68d` | Changed: spine upstream sync, including Story 7.17 and FR-26; committed at `b575922e` |
-| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `1d5f5ea65c4639896d04cd90ba1b0535e14586265dc82928ebf113603ae1fed1` | Changed: row `fr-26` and Story 7.17 traceability; committed at `b575922e` |
-| [Matrix view](implementation-readiness-traceability-matrix.md) | `007619dfe6a1a198c2e533d202b440dc1dfd7c257537498f60b816d2b89758d8` | Changed: row `fr-26` and Story 7.17 traceability; committed at `b575922e` |
-| [Sprint tracker](../../_bmad-output/implementation-artifacts/sprint-status.yaml) | `42a4f5a32a995bb676e016a879f8db259218a54e43fda603552340a13ed1dcdd` | Changed: 7.1-P1 `done` (`60afa7a7`) and the 8.8-P1 validator wording (`b575922e`); the Story 7.17 key is uncommitted working-tree bytes |
-| [Deferred-work ledger](../../_bmad-output/implementation-artifacts/deferred-work.md) | `aeeaffb186332ff6ed806f77ba13db097bfd6de79ebade63bc6f817932bdb885` | Changed: entries added in `60afa7a7` and `5e42ac65`, and DW-98–DW-112 from the spine upstream sync in `b575922e` |
+| [Epics](epics.md) | `9343e0639b07e5828714cf522223886607bf96d35b16ee16f596ea3baef528c6` | Changed. FR-26 evidence ownership, story entry and acceptance criteria, and epic bookkeeping. |
+| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `58086718fba2fc77e0fdb6401fb3a42e9dc628aae1d9b43bb67a6475c2226467` | Changed. `fr-26` primary verification points to Story 8.8 and 8.8-P1. |
+| [Matrix view](implementation-readiness-traceability-matrix.md) | `e85bfe337511c5452e2481fe9acdd0aa2c71517fbe100756910de79b50f4e05d` | Changed. Mirrors the canonical `fr-26` row. |
+| [Sprint tracker](../../_bmad-output/implementation-artifacts/sprint-status.yaml) | `42a4f5a32a995bb676e016a879f8db259218a54e43fda603552340a13ed1dcdd` | Unchanged |
+| [Deferred-work ledger](../../_bmad-output/implementation-artifacts/deferred-work.md) | `6f4ebf91af04d4ce09dc2cd40ceda8e38321b20b874122e841333f264dc52138` | Changed. Added DW-113 for FR-26 behavior. |
 | [Story 8.1 scheduling decision](sprint-change-proposal-2026-11-22-schedule-story-8-1.md) | `9b9ccd47b0b461bb25abcc5e69ad37d9fb6de20e0c1bc7e512d590af02cef303` | Unchanged |
 | [Story 8.1 specification](../../_bmad-output/implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md) | `2f9a02c0712d8200bb3d86ce15ae744852eb3f7894bccbf8cea6c7e28515c2f3` | Unchanged |
 | [Applied Chatbot host correction](sprint-change-proposal-2026-11-24.md) | `5a2cb0107c33c5725210f9549689dfe9bc1faa54082d170b2d049580dd3a63f8` | Unchanged |
 | [Read cutover runbook](../../docs/read-cutover.md) | `809f2b485431d6e1cebc281487282ad25d0ade125dd4ba6cc3defd1a7d402f76` | Unchanged |
-| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `50f3679e0916abf38002034006ec4a1fc32b9ae71f3802f489e791865733979e` | Changed: 7.1-P1 status (`60afa7a7`) and 7.1-P2 checks (`b575922e`); the Story 7.17 pin is uncommitted working-tree bytes |
-| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `e5f547b4c3a9bb6be705c5f0f988809ac27a9bd28616a29c4169aa4f7b426dac` | Changed: 7.1-P1 and 7.1-P2 tests (`60afa7a7`, `b575922e`) |
+| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `50f3679e0916abf38002034006ec4a1fc32b9ae71f3802f489e791865733979e` | Unchanged |
+| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `e5f547b4c3a9bb6be705c5f0f988809ac27a9bd28616a29c4169aa4f7b426dac` | Unchanged |
 | [Readiness-blocker correction](sprint-change-proposal-2026-11-24-readiness-blockers.md) | `92b846e325aefd219930cb4df5f20bbc2e0f25678ba5340b69fda22edb277b80` | Unchanged |
 | [Readiness trigger report](implementation-readiness.md) | `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb9` | Unchanged |
-| [Spine upstream sync correction](sprint-change-proposal-2026-11-25-spine-upstream-sync.md) | `e81109e106cfe5caf59c9d97e337576ed03f9720063b04e8a8502a3b556890ac` | Added: the approved correction that requires this manifest; committed at `b575922e`, with its application record updated in the working tree |
+| [Spine upstream sync correction](sprint-change-proposal-2026-11-25-spine-upstream-sync.md) | `e81109e106cfe5caf59c9d97e337576ed03f9720063b04e8a8502a3b556890ac` | Unchanged |
+| [November 25 readiness-gap correction](sprint-change-proposal-2026-11-25.md) | `a0de909bc03fe39cfbb6f13a35006c58ee2ce906a87ef4e8a14a7483ba8b490f` | Added. Records the applied planning correction and implementation ownership. |
 
 | Check on this candidate | Result |
 |---|---|
-| Architecture Spine | The digest matches the memlog finalize entry. `lint_spine.py` exited 0 with zero findings, and the AD IDs stay AD-1…AD-35. The AD-19 invalid-input exception now holds for the life of v1, independent of the writer cutover, which supersedes the 2026-11-24 note. [Reviews](architecture/architecture-projects-2026-07-15/reviews/) |
+| Architecture Spine | The digest matches the preceding manifest and the memlog finalize entry (AD-1…AD-35). The Section C Story 7.15 entry now agrees with AD-17 on the Story 7.17 writer cutover. |
 | Production authority | `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`. `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_production_authority_guard.py -q` passed all 58 tests. |
-| Evidence coverage | The YAML and Markdown contain the same 65 unique keys and cover all 26 FRs and 11 NFRs. The YAML records 20 pending, 43 blocked-external, one failed and one blocked. `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` exited 1 because the tool is absent from the Projects tool manifest (DW-105). Governed validation remains unverified. |
-| Dependency order | Story 7.17 requires Stories 7.1–7.15, the separately accepted 8.8-P1 validator and delegated-credential evidence (gated on G-5 and the readiness freeze), DW-98, DW-101 and the G-5 provider-class selection. 8.11-P3 requires Story 7.17, and 8.11 requires 8.11-P3. Nothing that Story 7.17 depends on depends on it. The order `8.8-P3-H → 7.16 → 8.8-P3 → 8.8 → 8.11` is unchanged. There is no cycle. |
-| G-6 | G-6 current runtime qualification passed on `fdc8ca69`, the candidate's parent ([run 45585405980](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45585405980), job 139126312968). `ci / build-and-test` failed in the same run, and under the spine evidence rule a red build-and-test blocks qualification. The candidate commit is not pushed (`main` is one commit ahead of `origin/main`), so no CI run exists for it. |
-| Unlisted working-tree changes | At recording, other work had moved the `references/Hexalith.EventStore`, `references/Hexalith.Folders` and `references/Hexalith.Platform` gitlinks, uncommitted. None is a listed artifact. |
+| Evidence coverage | The YAML and Markdown contain the same 65 unique keys, including 26 FRs and 11 NFRs. Their status counts remain 20 pending, 43 blocked-external, one failed and one blocked. The prior manifest records governed validation blocked by the missing `hexalith-evidence` tool (DW-105). |
+| Dependency order | Story 7.17 keeps its existing writer cutover gates and ACs. 8.8-P1 evaluates DW-113 and DW-112 in the release security package. Acceptance of the pre-cutover validator and delegated-credential evidence is independent of those release cases. 8.11-P3 still follows 7.17. The architect-owned package and hosting contract gate 7.11, 7.12 and 7.16. |
+| Sprint tracker | Scratch-only `sprint_plan.py generate --dry-run` reproduced the same pre-existing parser drift as the baseline. The hand-reconciled tracker is byte-identical to `29418127`. |
+| G-6 | The prior manifest records G-6 current runtime qualification passing on `fdc8ca69` ([run 45585405980](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45585405980), job 139126312968). `ci / build-and-test` failed in that run and blocks qualification under the spine evidence rule. |
+| Unlisted working-tree changes | The user-supplied `implementation-readiness-report-2026-11-25.md` remains an untracked input. |
 
 #### Owner decision record
 

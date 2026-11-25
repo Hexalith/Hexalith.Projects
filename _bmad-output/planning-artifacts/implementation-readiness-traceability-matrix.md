@@ -44,7 +44,7 @@
 | `fr-23` | FR-23 | Restore Archived Project — per-role restore (User prior Folder they manage; Operator prior Folder only; Administrator replacement under FR-8); Folder-before-activation ordering. Acquire the exclusive claim while Archived and verify that a competing holder prevents activation. | 7.14 | — | AD-3, AD-13, AD-23, AD-35 | 🔒 blocked-external | G-1 + G-2 Folders owner |
 | `fr-24` | FR-24 | Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; no exactly-once claim without an approved idempotency contract; Chatbot cannot | 8.2 | — | AD-7, AD-19, AD-21, AD-26, AD-27 | 🟡 pending | — |
 | `fr-25` | FR-25 | Select Association Target — Projects-owned Chatbot component mints session-bound Selection Evidence; no mint/confirm API; 5-minute expiry; never on open/list/resolution/proposal | 7.16 | 7.1, 7.3, 7.7, 7.9, 7.14 | AD-2, AD-5, AD-13, AD-20, AD-33 | 🔒 blocked-external | Epic 7 gate, G-2 Folders manage, G-3, G-5, the accepted 7.1 Folder-first writer capability and 8.8-P3-H Chatbot host pin evidence/epic8/8.8-P3-H-chatbot-host-pin.json. Web/MCP hosting out of v1. |
-| `fr-26` | FR-26 | Grant Scoped Chatbot Authority — Tenant owner grants or revokes, on Hexalith.Tenants evidence, one scoped, expiring delegated-operation record; necessary, never sufficient; current Folder authority required and Folder revocation wins; same safe denial for absent, denied and ungranted | 7.17 | 8.8 | AD-3, AD-17, AD-19, AD-33 | 🔒 blocked-external | G-5 delegated credentials and the real EventStore-authorization validator; Stories 7.1–7.15 qualified on the SDK writer in test composition |
+| `fr-26` | FR-26 | Grant Scoped Chatbot Authority — Tenant owner grants or revokes, on Hexalith.Tenants evidence, one scoped, expiring delegated-operation record; necessary, never sufficient; current Folder authority required and Folder revocation wins; same safe denial for absent, denied and ungranted | 8.8 | 7.17 | AD-3, AD-17, AD-19, AD-33 | 🔒 blocked-external | Accepted 8.8-P1 authenticated release security evidence covering DW-113 and DW-112 |
 
 ## Non-Functional Requirements (11)
 
@@ -131,7 +131,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 | `fr-23` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.14` | `evidence/epic7/7.14-restore.trx` | L |
 | `fr-24` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.2` | `evidence/epic8/8.2-safe-export.trx` | L |
 | `fr-25` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.16` | `evidence/epic7/7.16-selection.trx` | L |
-| `fr-26` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.17` | `evidence/epic7/7.17-writer-cutover.trx` | L |
+| `fr-26` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1` | `evidence/epic8/8.8-P1-security.trx` | L |
 | `nfr-1` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1` | `evidence/epic8/8.8-P1-security.trx` | S |
 | `nfr-2` | `dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P2` | `evidence/epic8/8.11-P2-encryption-kms.json` | S |
 | `nfr-3` | `dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=availability` | `evidence/epic8/8.10-availability.trx` | L |
@@ -180,7 +180,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 - **`fr-23`** — NEW FR (2026-07-15 rebaseline). Restore counterpart to FR-4.
 - **`fr-24`** — NEW FR (2026-07-15/16 rebaseline). Release-blocking.
 - **`fr-25`** — Selection Evidence is Chatbot-only in v1. The host pin establishes prerequisite provenance. This row requires executed evidence from the real Story 7.16 component. Full 8.8-P3 journey qualification follows 7.16.
-- **`fr-26`** — NEW FR (2026-11-25 spine upstream sync). The capability exists since b7ae7273. Story 7.17 proves SDK writer equivalence for the grant and revoke commands; DW-112 owns the safe-denial fix by the Epic 8 release.
+- **`fr-26`** — Story 8.8 validates FR-26 behavior in 8.8-P1 release security evidence (DW-113 for grant semantics and DW-112 for safe denial). Supporting Story 7.17 proves grant/revoke SDK writer equivalence in evidence/epic7/7.17-writer-cutover.trx under its own entry gates and acceptance criteria.
 - **`nfr-1`** — Story 8.8 performs only integrated manifest and critical-case validation after the package passes.
 - **`nfr-2`** — Evidence acquisition belongs to 8.11-P2; Story 8.11 records only the terminal decision.
 - **`nfr-7`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.

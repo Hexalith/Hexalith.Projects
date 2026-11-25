@@ -6,9 +6,9 @@ stepsCompleted:
   - 4
 status: corrected-pending-external-acceptance-and-independent-readiness-rerun
 reconciledAgainst:
-  - 'final PRD FR-1..FR-25 / NFR-1..NFR-11 (updated 2026-09-08; E-31)'
-  - 'ARCHITECTURE-SPINE.md AD-1..AD-34 (FR-25 and 2026-09-06 G-6 index via E-31)'
-productionAuthority: 'Epics 6-8 (35 stories: 8/16/11) plus explicit prerequisite/evidence work-package ledgers'
+  - 'final PRD FR-1..FR-26 / NFR-1..NFR-11 (updated 2026-11-25)'
+  - 'ARCHITECTURE-SPINE.md AD-1..AD-35 (finalized 2026-11-25)'
+productionAuthority: 'Epics 6-8 (36 stories: 8/17/11) plus explicit prerequisite/evidence work-package ledgers'
 productionAuthoritySchedulingGuard: '_bmad-output/implementation-artifacts/sprint-status.yaml::production_authority_epics, enforced by tools/planning/validate_production_authority.py'
 planningReadinessGate: 'READY on 2026-07-17 for story-file creation and sprint reconciliation; completed'
 implementationReadiness: 'Historical NOT READY retained; bounded 6.1/6.5 feature exception approved 2026-11-02'
@@ -135,7 +135,7 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-26). Each FR has testable con
 
 **Delegated Chatbot Authority**
 
-- **FR-26: Grant Scoped Chatbot Authority** — The Tenant owner grants or revokes, on current `Hexalith.Tenants` Tenant-owner evidence, one scoped, expiring Chatbot authority for a Project (one principal, operation, actor class and origin). It is a delegated-operation record, not Project access: necessary and never sufficient, current Folder authority is still required, and a Folder revocation wins immediately. The authority check returns the same safe denial for an absent Project, a denied caller and a missing grant unless the delegated actor has current Folder read. _Production owner: Story 7.17 (SDK writer equivalence); safe-denial fix by the Epic 8 release (DW-112)._
+- **FR-26: Grant Scoped Chatbot Authority** — The Tenant owner grants or revokes, on current `Hexalith.Tenants` Tenant-owner evidence, one scoped, expiring Chatbot authority for a Project (one principal, operation, actor class and origin). It is a delegated-operation record, not Project access: necessary and never sufficient, current Folder authority is still required, and a Folder revocation wins immediately. The authority check returns the same safe denial for an absent Project, a denied caller and a missing grant unless the delegated actor has current Folder read. _Production evidence: Story 8.8 integrates 8.8-P1 behavior evidence (DW-113 and DW-112). Story 7.17 proves SDK writer equivalence._
 
 ### NonFunctional Requirements
 
@@ -263,7 +263,7 @@ _Source: UX Design Specification + FrontComposer web-UX research. The UX scope i
 
 ### FR Coverage Map
 
-_The current production-authority owner is the AC-bearing story in **Epics 6–8**. The "Historical impl." column is completed Epic 1–5 implementation history/evidence, **not** release authority. Each row also maps to an identically keyed `hexalith.readiness-evidence.v1` matrix row and applicable Architecture Decisions (AD-1…AD-34)._
+_The current production-authority owner is the AC-bearing story in **Epics 6–8**. The "Historical impl." column is completed Epic 1–5 implementation history/evidence, **not** release authority. Each row also maps to an identically keyed `hexalith.readiness-evidence.v1` matrix row and applicable Architecture Decisions (AD-1…AD-35)._
 
 #### Functional Requirements
 
@@ -293,7 +293,8 @@ _The current production-authority owner is the AC-bearing story in **Epics 6–8
 | FR-22 | Support Operator Read Access | **6.5** / **6.6** + 8.1/8.3/8.4/8.5 | 5.2 | AD-2, AD-19, AD-20, AD-29 |
 | FR-23 | Restore Archived Project | **7.14** | — (new) | AD-3, AD-13, AD-23 |
 | FR-24 | Create Safe Diagnostic Export | **8.2** | — (new) | AD-7, AD-19, AD-21, AD-26 |
-| FR-26 | Grant Scoped Chatbot Authority (delegated-operation record) | **7.17** (SDK writer equivalence); safe-denial fix by the Epic 8 release (DW-112) | — (b7ae7273) | AD-3, AD-17, AD-19, AD-33 |
+| FR-25 | Select Association Target | **7.16** | — (new) | AD-2, AD-5, AD-13, AD-20, AD-33 |
+| FR-26 | Grant Scoped Chatbot Authority (delegated-operation record) | **8.8** (behavior via 8.8-P1; DW-113 and DW-112); **7.17** (SDK writer equivalence) | — (b7ae7273) | AD-3, AD-17, AD-19, AD-33 |
 
 #### Non-Functional Requirements
 
@@ -368,8 +369,8 @@ production-release authority**. Epics 1–5 above are completed implementation h
 production-release authority (production-correct FR-1, FR-4/FR-23, FR-14/FR-15, FR-19, and FR-21
 behavior completes in Epic 7, and all release evidence in Epic 8).
 
-- **Epic 6 — Chatbot and Operators Retrieve Authorized Project Truth** (7 stories, 6.1–6.7): authorization-filtered list/open/context/resolution reads over supported DomainService read models + authenticated Web/CLI read surfaces + shadow-read cutover.
-- **Epic 7 — Users Complete Durable Project Decisions and Recover Them** (15 stories, 7.1–7.15): every consequential write as a durable, restart-safe workflow using the action's canonical admission class — incl. Folder-first create (7.1), archive (7.13), restore/FR-23 (7.14), and legacy reconciliation (7.15).
+- **Epic 6 — Chatbot and Operators Retrieve Authorized Project Truth** (8 stories, 6.1–6.8): authorization-filtered list/open/context/resolution reads over supported DomainService read models + authenticated Web/CLI read surfaces + shadow-read cutover.
+- **Epic 7 — Users Complete Durable Project Decisions and Recover Them** (17 stories, 7.1–7.17): every consequential write as a durable, restart-safe workflow using the action's canonical admission class — incl. Folder-first create (7.1), archive (7.13), restore/FR-23 (7.14), and legacy reconciliation (7.15).
 - **Epic 8 — Operators Run Projects Safely and Release Owners Decide from Evidence** (11 stories, 8.1–8.11): operator surfaces, Safe Diagnostic Export/FR-24 (8.2), health/telemetry, packaging/supply chain, independently owned parity/privacy/accessibility evidence packages integrated by Story 8.8, performance/back-pressure, cross-workflow resilience, environment evidence packages 8.11-P1/P2/P3, and the terminal release decision in Story 8.11.
 
 Full AC-bearing detail is in the **Corrective Production Plan (Epics 6–8)** section below. The
@@ -1610,7 +1611,7 @@ running on platform **Durable Tasks** — create, setup, association linking/unl
 replacement, association-target selection (FR-25), ambiguous/proposed confirmation, archive, restore, and legacy reconciliation. Durable
 task state (not acknowledgements or notifications) is the only completion truth. It closes REL-001
 and AGENT-001 and provides restart-safe evidence for FR-1, FR-3, FR-4, FR-6–FR-11, FR-14, FR-15,
-FR-19, FR-21, FR-23, and FR-25.
+FR-19, FR-21, FR-23, FR-25, and FR-26.
 
 **Epic 7 entry gate (prerequisite, not delivered value).** Requires **G-1** (approved, pinned
 platform Durable Task engine + Confirmation Artifact record: task IDs, admission, leases,
@@ -2020,6 +2021,7 @@ I want **to confirm one accessible candidate from an Inferred Association throug
 So that **the confirmed Project-to-Conversation association is recorded (FR-14) with no preselection and no silent attachment**.
 
 - **Traceability:** FR-14; NFR-1, NFR-4; AD-5, AD-13, AD-20, AD-32, AD-33; UJ-3; UX candidate-comparison journey (AD-34); evidence row `fr-14`.
+- **Entry gate:** Epic 7 gate and the architect-owned Projects selection and confirmation component package and FrontComposer hosting contract.
 
 **Acceptance Criteria** (plus shared invariants 1–8; confirmation-required):
 
@@ -2050,12 +2052,15 @@ I want **to confirm creation of a proposed Project bound to a server Preview thr
 So that **a Project is created from inference only after authorized confirmation (FR-15), linking the initiating Conversation and authorized attachments**.
 
 - **Traceability:** FR-15, FR-1/FR-19 (reuses Folder-first create + classification); NFR-1, NFR-4; AD-5, AD-8, AD-13, AD-31; UJ-3; evidence row `fr-15`.
+- **Entry gate:** Epic 7 gate and the architect-owned Projects selection and confirmation component package and FrontComposer hosting contract.
 
 **Acceptance Criteria** (plus shared invariants 1–8; confirmation-required):
 
 **Given** a proposed Project with suggested name + initial setup and a bound Preview, **When** the user confirms, **Then** creation runs the **same Folder-first idempotent path as 7.1** (metadata classified, exactly-one-Folder), then links the initiating Conversation/attachments via the owner; no Project exists before confirmation. Reuse the AD-35 claim receipt. Task success requires owner-confirmed membership of the initiating Conversation and outcomes for the authorized attachments.
 
 **Given** a stale/replayed Preview or denied authority, **When** confirm is attempted, **Then** it fails closed with no Project and no Folder side effect.
+
+**Given** a retained v1 proposal-confirmation request, **When** confirmation is attempted, **Then** authorize before reading or parsing its body (DW-96). With a valid request envelope, test that denied callers receive the same safe `404` with zero body bytes read for valid, malformed and invalid bodies. For authorized callers, test that duplicate or non-string Metadata Classification values return `400` naming `projectMetadata`, with no task admission or command submission (DW-87).
 
 **Given** Folder created but activation cannot commit, **When** recovered, **Then** `NeedsAttention` with no auto-deletion, converging on retry.
 
@@ -2160,7 +2165,7 @@ I want **to pick the target of an additive association inside the Projects-owned
 So that **actor-selected links and initial Folder binding are distinguishable from Inferred Associations (FR-25, §4, §9 A-6) without a mint or confirm API**.
 
 - **Traceability:** FR-25; NFR-1, NFR-8; AD-2, AD-5, AD-13, AD-20, AD-33; UJ-1, UJ-2 (PRD Realizes claim; story journeys also exercise UJ-3); evidence row `fr-25`.
-- **Entry gate:** Epic 7 gate, G-2, G-3, G-5 and the independently accepted `8.8-P3-H` confidential Chatbot host pin. Only a registered confidential Project User component may mint Selection Evidence. Story 7.16 delivers the Projects-owned component and its executable `fr-25` evidence. Full 8.8-P3 journey qualification follows.
+- **Entry gate:** Epic 7 gate, G-2, G-3, G-5, the architect-owned Projects selection and confirmation component package and FrontComposer hosting contract, and the independently accepted `8.8-P3-H` confidential Chatbot host pin. Only a registered confidential Project User component may mint Selection Evidence. Story 7.16 delivers the Projects-owned component and its executable `fr-25` evidence. Full 8.8-P3 journey qualification follows.
 - **Prior capabilities:** Story 6.1 permitted-set enumeration and Story 7.1’s independently accepted immutable Folder-first writer capability record. Stories 7.3, 7.7, 7.9, and 7.14 retain their own admission and acceptance contracts. Their positive Chatbot selection composition uses the delivered 7.16 component.
 
 **Acceptance Criteria** (plus shared invariants 1–8):
@@ -2821,6 +2826,8 @@ change the Chatbot repository.
 
 For 8.8-P1, exercise the ordinary Release Workers and Server executables. Both worker callbacks require the platform sidecar identity. Server authorization decisions require verified EventStore and Dapr policy evidence. Record successful authorized delivery, denial when either authority is missing or denies, and unchanged persisted rows on denial. The deployment owner supplies the effective ingress and workload-identity policy.
 
+For 8.8-P1 release security evidence, the Projects owner supplies authenticated FR-26 results for the Story 8.8 cases (DW-113 and DW-112). The Test Architect verifies those results in the release security package. Acceptance of the pre-cutover validator and delegated-credential evidence is independent of FR-26 release evidence.
+
 #### 8.8-P3-H confidential Chatbot host prerequisite
 
 The Chatbot Presentation Owner and Chatbot Test Owner independently accept 8.8-P3-H under the
@@ -2878,7 +2885,7 @@ As a **Test Architect**,
 I want **the accepted 8.8-P1, 8.8-P2, and 8.8-P3 evidence packages validated together**,
 So that **NFR-1, NFR-9, NFR-11, AD-34, and SM-5 are proven without one cross-repository implementation story and the 19/56 live failures are superseded honestly**.
 
-- **Traceability:** NFR-1, NFR-9, NFR-11; AD-19, AD-20, AD-29, AD-33, AD-34; UX-DR27; SM-5; findings SEC-001/leakage/E-6; canonical evidence rows `nfr-1`, `nfr-9`, `release-cross-tenant-isolation`, `release-accessibility`, `release-privacy`, `release-smoke`.
+- **Traceability:** FR-26 (release behavior); NFR-1, NFR-9, NFR-11; AD-3, AD-19, AD-20, AD-29, AD-33, AD-34; UX-DR27; SM-5; findings SEC-001/leakage/E-6; canonical evidence rows `fr-26`, `nfr-1`, `nfr-9`, `release-cross-tenant-isolation`, `release-accessibility`, `release-privacy`, `release-smoke`.
 - **Entry gate:** Stories 8.3, 8.4, and 8.5 plus 8.8-P1, 8.8-P2, and 8.8-P3 accepted at immutable revisions.
 
 **Acceptance Criteria:**
@@ -2888,6 +2895,15 @@ So that **NFR-1, NFR-9, NFR-11, AD-34, and SM-5 are proven without one cross-rep
 **Given** a host-only 8.8-P3-H pin, **When** it is submitted as the 8.8-P3 input, **Then** reject it and retain the full Chatbot journey blocker.
 
 **Given** 8.8-P1, **When** its evidence is integrated, **Then** Web/CLI/MCP facts are semantically equivalent and every cross-Tenant, authorization-freshness, and payload-leakage critical case passes.
+
+**Given** authenticated 8.8-P1 release security evidence for FR-26, **When** Story 8.8 validates it, **Then** require passing cases for each of the following (DW-113):
+
+- Verify that a Tenant owner with current `Hexalith.Tenants` Tenant-owner evidence can grant and revoke a valid grant. Both commands deny a Tenant Project Administrator, other non-owners and callers whose owner evidence is missing or stale, with no change to grant state.
+- One grant binds one Project to exactly one principal, operation, actor class and origin and carries an expiry. Use an authorized exact match as the control. With current Folder authority held constant, changing any one of those scope fields or omitting the grant denies the operation. Revocation and reaching expiry each independently end the grant.
+- An exact, live grant is necessary and never sufficient. The delegated actor must also have current authority for the operation on the Project Folder. Revoking that Folder authority denies the operation immediately, even while the grant is still live.
+- Granting authority never adds a permitted Project (FR-2/FR-5). The same actor's permitted set is unchanged when only the grant changes.
+
+**Given** 8.8-P1 evidence for `ResolveProjectChatBotAuthority`, **When** Story 8.8 validates the DW-112 cases, **Then** an absent Project, a denied caller and a missing grant yield the same safe `404` and response body, with no stream position or observation. Only current Folder read held by the delegated actor can permit a different grant-state response. Include a live grant whose holder has lost Folder read.
 
 **Given** 8.8-P2 and 8.8-P3, **When** their evidence is integrated, **Then** operator and Chatbot accessibility coverage includes every required journey and small/median/maximum shape with no unresolved critical or serious violation. Companion feed for SM-7 / SM-8 / SM-C4 follows A-1; SM-2 and SM-3 are release-acceptance checks, not outcome metrics.
 
