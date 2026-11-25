@@ -139,6 +139,7 @@ TRANSITIVE_EPIC_STATUSES = {
     "7-14-restore-an-archived-project": "backlog",
     "7-15-reconcile-legacy-and-interrupted-workflows": "backlog",
     "7-16-select-an-association-target": "backlog",
+    "7-17-cut-over-project-writes-to-the-sdk-writer": "backlog",
     "epic-7-retrospective": "optional",
     "8-2-create-a-bounded-safe-diagnostic-export": "backlog",
     "8-3-integrate-conformant-project-maintenance-in-the-web-console": "backlog",

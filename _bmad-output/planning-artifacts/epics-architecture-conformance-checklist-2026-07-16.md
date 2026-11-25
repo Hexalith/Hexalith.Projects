@@ -16,8 +16,9 @@ reviews:
   - sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
   - sprint-change-proposal-2026-09-08.md
   - sprint-change-proposal-2026-11-24.md
+  - sprint-change-proposal-2026-11-25-spine-upstream-sync.md
   - ../implementation-artifacts/sprint-status.yaml
-updated: 2026-11-24
+updated: 2026-11-25
 status: corrected-planning-reviewed-owner-decisions-pending
 ---
 
@@ -505,40 +506,45 @@ and has SHA-256 `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb
 
 #### Superseding byte manifest — reviewed candidate
 
-**Candidate:** Projects commit `31b3563780fc4e42a04e6982780a2a38c71a7acb` plus the listed
-working-tree bytes, recorded on 2026-11-24 after the Architecture Spine update. This manifest
-supersedes the [baseline table](#baseline-artifacts) for owner decisions. That table remains the
-applied Chatbot correction's provenance. If any listed file changes before both owners sign,
-record a new manifest and reverify the affected checks.
+**Candidate:** Projects commit `b575922ef8e9e59748cee937b53b290f20018162` plus the listed
+working-tree bytes, recorded on 2026-11-25 after the Architecture Spine was finalized at SHA-256
+`17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae` and the
+[spine upstream sync](sprint-change-proposal-2026-11-25-spine-upstream-sync.md) was applied. This
+manifest supersedes the 2026-11-24 manifest and the [baseline table](#baseline-artifacts) for owner
+decisions. The baseline table remains the applied Chatbot correction's provenance, and the
+2026-11-24 manifest stays in git history at `fdc8ca69`. If any listed file changes before both
+owners sign, record a new manifest and reverify the affected checks.
 
-| Artifact | SHA-256 | Since the baseline table |
+| Artifact | SHA-256 | Since the 2026-11-24 manifest |
 |---|---|---|
-| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `573b924eca9d62feb1836635320f34cc8308750ecda283695de8a1f9a5b41135` | Unchanged |
-| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `5a4aff9731cff36fab819b66ea6e8c13e3a155e2f01f2cf6ebbed293bf9c7979` | Unchanged |
-| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `01b89a2f5e076a52b17f253417b7472ae85c0c7d26ae5a3c21c428e5868eb5fe` | Changed: 2026-11-24 spine update, uncommitted working-tree bytes |
+| [PRD](prds/prd-Hexalith.Projects-2026-05-24/prd.md) | `acb6f47120b30593e50206ed733c5f3d0807ff1c92c5b5314753c8b6286c6d36` | Changed: FR-26, A-3 and A-6 (spine upstream sync); committed at `b575922e` |
+| [PRD addendum](prds/prd-Hexalith.Projects-2026-05-24/addendum.md) | `b2a7e24ab67a2b93cf62f12efd00f5c1df3292e49338e9085d22c217680a7ba3` | Changed: NFR-5 reading and E-42 (spine upstream sync); committed at `b575922e` |
+| [Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md) | `17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae` | Changed: 2026-11-25 Update, finalized; committed at `fdc8ca69` |
 | [UX specification](ux-design-specification.md) | `243adfc3df33c5822a20262a6385e97a660a56e87be960d0dd197b7d3430da56` | Unchanged |
-| [Epics](epics.md) | `8e850477656b8d5a93fe3e9742dce40dfd7b9db10098642611fd9bc9ad002230` | Changed and committed at HEAD |
-| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `ef3656e74a2c6b91a59d33af869b547b85a6dfe798e72d5a2d1dada7a2b2fc10` | Changed and committed at HEAD |
-| [Matrix view](implementation-readiness-traceability-matrix.md) | `d391c48b6aec21925285e8d5ef1e1fc1d58d103b06365f3ed7eee685b908b831` | Changed and committed at HEAD |
-| [Sprint tracker](../../_bmad-output/implementation-artifacts/sprint-status.yaml) | `aed5f9e7afc7564f2c3389a4c828364acd15bb771abb118d52c3a69341a418c3` | Changed and committed at HEAD |
-| [Deferred-work ledger](../../_bmad-output/implementation-artifacts/deferred-work.md) | `f5cd5251d8f806b256959bbada8ae68bd3b6076a85c413fc42a91fa61937570b` | Unchanged |
+| [Epics](epics.md) | `cf98e75d270d1581b0c60289038a90c359d57a77619104d377a0a2226462b68d` | Changed: spine upstream sync, including Story 7.17 and FR-26; committed at `b575922e` |
+| [Canonical matrix](implementation-readiness-traceability-matrix.yaml) | `1d5f5ea65c4639896d04cd90ba1b0535e14586265dc82928ebf113603ae1fed1` | Changed: row `fr-26` and Story 7.17 traceability; committed at `b575922e` |
+| [Matrix view](implementation-readiness-traceability-matrix.md) | `007619dfe6a1a198c2e533d202b440dc1dfd7c257537498f60b816d2b89758d8` | Changed: row `fr-26` and Story 7.17 traceability; committed at `b575922e` |
+| [Sprint tracker](../../_bmad-output/implementation-artifacts/sprint-status.yaml) | `42a4f5a32a995bb676e016a879f8db259218a54e43fda603552340a13ed1dcdd` | Changed: 7.1-P1 `done` (`60afa7a7`) and the 8.8-P1 validator wording (`b575922e`); the Story 7.17 key is uncommitted working-tree bytes |
+| [Deferred-work ledger](../../_bmad-output/implementation-artifacts/deferred-work.md) | `aeeaffb186332ff6ed806f77ba13db097bfd6de79ebade63bc6f817932bdb885` | Changed: entries added in `60afa7a7` and `5e42ac65`, and DW-98–DW-112 from the spine upstream sync in `b575922e` |
 | [Story 8.1 scheduling decision](sprint-change-proposal-2026-11-22-schedule-story-8-1.md) | `9b9ccd47b0b461bb25abcc5e69ad37d9fb6de20e0c1bc7e512d590af02cef303` | Unchanged |
 | [Story 8.1 specification](../../_bmad-output/implementation-artifacts/spec-8-1-inspect-task-audit-and-reconciliation-truth.md) | `2f9a02c0712d8200bb3d86ce15ae744852eb3f7894bccbf8cea6c7e28515c2f3` | Unchanged |
 | [Applied Chatbot host correction](sprint-change-proposal-2026-11-24.md) | `5a2cb0107c33c5725210f9549689dfe9bc1faa54082d170b2d049580dd3a63f8` | Unchanged |
-| [Read cutover runbook](../../docs/read-cutover.md) | `809f2b485431d6e1cebc281487282ad25d0ade125dd4ba6cc3defd1a7d402f76` | Changed and committed at HEAD |
-| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `3c0c0c261412ff2f607aa591c8de93ee7660774f9717b2c2c678cd27be6cb356` | Unchanged |
-| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `850c3324ba7caf9468bf18ddb849ee7f5d7db7426c539fb602bd7089a9774590` | Unchanged |
-| [Readiness-blocker correction](sprint-change-proposal-2026-11-24-readiness-blockers.md) | `92b846e325aefd219930cb4df5f20bbc2e0f25678ba5340b69fda22edb277b80` | Added: the approved correction that requires this manifest |
+| [Read cutover runbook](../../docs/read-cutover.md) | `809f2b485431d6e1cebc281487282ad25d0ade125dd4ba6cc3defd1a7d402f76` | Unchanged |
+| [Production-authority guard](../../tools/planning/validate_production_authority.py) | `50f3679e0916abf38002034006ec4a1fc32b9ae71f3802f489e791865733979e` | Changed: 7.1-P1 status (`60afa7a7`) and 7.1-P2 checks (`b575922e`); the Story 7.17 pin is uncommitted working-tree bytes |
+| [Guard tests](../../tests/tools/test_production_authority_guard.py) | `e5f547b4c3a9bb6be705c5f0f988809ac27a9bd28616a29c4169aa4f7b426dac` | Changed: 7.1-P1 and 7.1-P2 tests (`60afa7a7`, `b575922e`) |
+| [Readiness-blocker correction](sprint-change-proposal-2026-11-24-readiness-blockers.md) | `92b846e325aefd219930cb4df5f20bbc2e0f25678ba5340b69fda22edb277b80` | Unchanged |
 | [Readiness trigger report](implementation-readiness.md) | `35414cf5be4c95f4259ef5891207e80da3a26309402659cc008409aa06d1fcb9` | Unchanged |
+| [Spine upstream sync correction](sprint-change-proposal-2026-11-25-spine-upstream-sync.md) | `e81109e106cfe5caf59c9d97e337576ed03f9720063b04e8a8502a3b556890ac` | Added: the approved correction that requires this manifest; committed at `b575922e`, with its application record updated in the working tree |
 
 | Check on this candidate | Result |
 |---|---|
-| Architecture Spine | `lint_spine.py` exited 0 with zero findings and all 27 relative links resolve. Rubric, technology and adversarial reviews passed with fixes, and all fixes are applied. The AD-19 query-mapping question is resolved by a bounded exception that ends at the AD-17 writer cutover. [Reviews](architecture/architecture-projects-2026-07-15/reviews/) |
-| Production authority | `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`. `run-with-temp env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_production_authority_guard.py -q` passed all 51 tests. |
-| Evidence coverage | The YAML and Markdown contain the same 64 unique keys and cover all 25 FRs and 11 NFRs. The YAML records 20 pending, 42 blocked-external, one failed and one blocked. `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` exited 1 because the tool is absent from the Projects tool manifest. Governed validation remains unverified. |
-| Dependency order | Story 7.16 requires the accepted `8.8-P3-H` host pin and not full 8.8-P3. The tracker makes full 8.8-P3 depend on `8.8-P3-H` and Story 7.16. Story 8.8 requires 8.8-P1/P2/P3, and 8.11 requires every preceding Epic 8 story. The order `8.8-P3-H → 7.16 → 8.8-P3 → 8.8 → 8.11` has no cycle. |
-| G-6 | The last completed G-6 qualification passed on `26fed89d`, an ancestor of `31b35637`. No G-6 run has completed on the candidate commit. [Run 45417404832](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45417404832) |
-| Unlisted working-tree changes | At recording, concurrent work had modified the DW-63 specification, `docs/runbooks/projects-topology.md` and `tests/Hexalith.Projects.Integration.Tests/WorkloadCredentialTopologyTests.cs`, and had added an untracked 7.1-P1 specification and `evidence/epic7/`. None is a listed artifact. |
+| Architecture Spine | The digest matches the memlog finalize entry. `lint_spine.py` exited 0 with zero findings, and the AD IDs stay AD-1…AD-35. The AD-19 invalid-input exception now holds for the life of v1, independent of the writer cutover, which supersedes the 2026-11-24 note. [Reviews](architecture/architecture-projects-2026-07-15/reviews/) |
+| Production authority | `python3 tools/planning/validate_production_authority.py --validate-index` passed with `[6, 7, 8]`. `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_production_authority_guard.py -q` passed all 58 tests. |
+| Evidence coverage | The YAML and Markdown contain the same 65 unique keys and cover all 26 FRs and 11 NFRs. The YAML records 20 pending, 43 blocked-external, one failed and one blocked. `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` exited 1 because the tool is absent from the Projects tool manifest (DW-105). Governed validation remains unverified. |
+| Dependency order | Story 7.17 requires Stories 7.1–7.15, the separately accepted 8.8-P1 validator and delegated-credential evidence (gated on G-5 and the readiness freeze), DW-98, DW-101 and the G-5 provider-class selection. 8.11-P3 requires Story 7.17, and 8.11 requires 8.11-P3. Nothing that Story 7.17 depends on depends on it. The order `8.8-P3-H → 7.16 → 8.8-P3 → 8.8 → 8.11` is unchanged. There is no cycle. |
+| G-6 | G-6 current runtime qualification passed on `fdc8ca69`, the candidate's parent ([run 45585405980](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45585405980), job 139126312968). `ci / build-and-test` failed in the same run, and under the spine evidence rule a red build-and-test blocks qualification. The candidate commit is not pushed (`main` is one commit ahead of `origin/main`), so no CI run exists for it. |
+| Unlisted working-tree changes | At recording, other work had moved the `references/Hexalith.EventStore`, `references/Hexalith.Folders` and `references/Hexalith.Platform` gitlinks, uncommitted. None is a listed artifact. |
+
 #### Owner decision record
 
 **Decision requested.** Accept or reject retaining both Epic 8 tracks against the exact reviewed

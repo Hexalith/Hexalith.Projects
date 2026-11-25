@@ -5,7 +5,7 @@ date: 2026-11-25
 mode: batch
 status: approved
 approved_date: 2026-11-25
-application_status: partially-applied
+application_status: applied
 classification: moderate
 baseline_commit: fdc8ca69ebe0a656f88d55f9e32c8de71b1262f6
 authority: architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md (SHA-256 17d45f2cfe0ad0b499aa1c94e10f0be97f6fd9e894aaeb50617e3f2f62b99cae, final, AD-1…AD-35)
@@ -301,6 +301,6 @@ Jerome approved the proposal on 2026-11-25 ("continue") without separate answers
 
 Applied: PRD-1 to PRD-6, ADD-1 and ADD-2, EP-1 to EP-24, MX-1 and MX-2, T-3, and DW-98 to DW-112. One detail differs from 4.8: row `fr-26` is `blocked-external`, not `pending`, because the matrix legend requires that status for a row gated on G-5.
 
-Pending: T-1 (tracker key), T-2 (guard line) and the Section G manifest (G-1, G-2). The guard and its tests carry another session's uncommitted 7.1-P2 changes. T-1 and T-2 must land together, or the guard fails, and the manifest hashes both files, so these three wait for that session's commit or Jerome's direction.
+T-1, T-2 and the Section G manifest waited for the concurrent 7.1-P2 guard work. Commit b575922e ("fix: story 7.2") committed that work together with every edit above and this proposal; their diff stats match the applied edits. T-1 and T-2 were then applied together. The guard passed `--validate-index` with `[6, 7, 8]`, and all 58 tests in `tests/tools/test_production_authority_guard.py` passed. Section G (G-1, G-2) was recorded last, with both owner decision rows still Pending.
 
 `sprint_plan.py generate --dry-run` (run on a scratchpad copy) reports Story 7.17 as the only new Epic 7 story. It derives the truncated key `7-17-cut-over-project-writes-to-the-sdk-writer-in-one-fenced-depl`, renames existing keys and drops `blocked` statuses, so the tracker stays hand-reconciled with the approved key `7-17-cut-over-project-writes-to-the-sdk-writer`.
