@@ -142,6 +142,69 @@ public sealed class ProjectsDomainProcessorTests
     }
 
     [Fact]
+    public async Task ReplayRefusesForeignOrIncompleteHistoryWithTypedFailures()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        DomainResult written = await processor.ProcessAsync(Envelope(), currentState: null).ConfigureAwait(true);
+        ReplayEventEnvelope[] history = DomainServiceWireResult.FromDomainResult(written).Events.Select((item, index) =>
+            new ReplayEventEnvelope(index + 1, item.EventTypeName, item.Payload, item.SerializationFormat,
+                1, "project-event-" + (index + 1).ToString(System.Globalization.CultureInfo.InvariantCulture), null, null)).ToArray();
+        history.Length.ShouldBe(2);
+        var request = new AggregateReconstructionRequest(Tenant, ProjectsServerModule.DomainName, "projects",
+            ProjectIdValue, 3, history, false, "replay-refusals");
+        ReplayEventEnvelope Tail(string eventTypeName, object payload)
+            => new(3, eventTypeName, JsonSerializer.SerializeToUtf8Bytes(payload), "json", 1, "project-event-3", null, null);
+
+        AggregateReconstructionResult unsupported = await processor.ReplayAsync(request with
+        {
+            UpToSequence = 2,
+            Events = [history[0], history[1] with { SerializationFormat = "protobuf" }],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        unsupported.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.UnsupportedVersion);
+        unsupported.FailedSequenceNumber.ShouldBe(2L);
+        unsupported.LastAppliedSequenceNumber.ShouldBe(1L);
+        unsupported.StateJson.ShouldBeNull();
+
+        ReplayEventEnvelope[] missingReferenceMetadata =
+        [
+            Tail(typeof(FileReferenceLinked).FullName!, new { tenantId = Tenant, projectId = ProjectIdValue, fileReferenceId = "file-a", folderId = "folder-a" }),
+            Tail(typeof(MemoryLinked).FullName!, new { tenantId = Tenant, projectId = ProjectIdValue, memoryReferenceId = "memory-a" }),
+        ];
+        foreach (ReplayEventEnvelope tail in missingReferenceMetadata)
+        {
+            AggregateReconstructionResult refused = await processor.ReplayAsync(request with { Events = [.. history, tail] },
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+            refused.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+            refused.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.DeserializationFailed);
+            refused.FailedSequenceNumber.ShouldBe(3L);
+            refused.FailedEventType.ShouldBe(tail.EventTypeName);
+            refused.LastAppliedSequenceNumber.ShouldBe(2L);
+            refused.StateJson.ShouldBeNull();
+        }
+
+        string rejection = typeof(ProjectCreationRejected).FullName!;
+        AggregateReconstructionResult ownRejection = await processor.ReplayAsync(request with
+        {
+            Events = [.. history, Tail(rejection, new { tenantId = Tenant, projectId = ProjectIdValue })],
+        }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        ownRejection.Status.ShouldBe(AggregateReconstructionStatus.Succeeded);
+        ownRejection.LastAppliedSequenceNumber.ShouldBe(3L);
+
+        foreach (object foreignPayload in new object[] { new { tenantId = Tenant, projectId = "01HZ9K8YQ3W6V2N4R7T5P0X1ZZ" }, new { tenantId = Tenant.ToUpperInvariant() } })
+        {
+            AggregateReconstructionResult foreign = await processor.ReplayAsync(request with
+            {
+                Events = [.. history, Tail(rejection, foreignPayload)],
+            }, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            foreign.Status.ShouldBe(AggregateReconstructionStatus.Failed);
+            foreign.ErrorCategory.ShouldBe(AggregateReconstructionErrorCategory.ApplyFailed);
+            foreign.FailedSequenceNumber.ShouldBe(3L);
+            foreign.LastAppliedSequenceNumber.ShouldBe(2L);
+            foreign.StateJson.ShouldBeNull();
+        }
+    }
+
+    [Fact]
     public async Task ProcessCreate_NewAggregate_YieldsSuccessDomainResultWithProjectCreated()
     {
         ProjectsDomainProcessor processor = CreateProcessor();

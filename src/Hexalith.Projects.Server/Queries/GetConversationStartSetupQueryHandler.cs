@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Context;
@@ -18,6 +19,7 @@ using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>Handles the supported Conversation-start setup query over the persisted Conversation-start projection.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class GetConversationStartSetupQueryHandler(ProjectContextQueryExecutor executor) : IDomainQueryHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);

@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.DomainService;
@@ -20,6 +21,7 @@ using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 
 /// <summary>Projects the bounded Conversation-start source from the durable Project event stream.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class ConversationStartSetupProjectionHandler(IReadModelStore readModelStore) : IAsyncDomainProjectionHandler
 {
     /// <summary>The named persisted read-model store backing this projection.</summary>

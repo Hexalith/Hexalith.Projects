@@ -1881,3 +1881,11 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
   summary: Diagnose intermittent Folder owner unavailability during fresh paging after full Project replay.
   evidence: The prior full-replay lane rebuilt all four Projects and rejected the stale cursor, then received FolderUnavailable on a fresh second page. The isolated rerun at 5025fde60965b77b4e7a5662b26ce31867a8b4c3 passed fresh paging and the remaining replay assertions. Retain the owner operation deadlines and distinguish a Folder dependency failure from a paging gap in the diagnostics.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Declare the projects-conversation-start-setup state component for the published Projects composition.
+  evidence: Projects always registers ConversationStartSetupProjectionHandler, which writes to that fixed store, but only the ordinary run-mode catalog, the supported-read profile and the package fixture declare the component. The pre-DW-63 baseline declared it only in the supported-read profile, so the publish gap predates DW-63. module/README.md lists it as a runtime prerequisite.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-63-migrate-projects-server-to-eventstore-sdk-host.md`
+  summary: Cover the advisory original-admin-flag refusal in the package-mode CI lane.
+  evidence: ProjectAdvisoryQueryExecutor.cs:72 refuses an SDK-normalized envelope whose original administrator flag was true. Its only test, SupportedProjectAuthorityHttpTests.AdvisoryQueryRefusesAnUnverifiedBoundAdministratorFlag, compiles only with HEXALITH_SOURCE_FIXTURE. VerifiedQueryCaller has a private constructor, so a package-mode test needs an SDK test seam or a package-mode caller-bound host harness.

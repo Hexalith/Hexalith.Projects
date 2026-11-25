@@ -1,10 +1,12 @@
 namespace Hexalith.Projects.Server.Queries;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Routes the supported authorized Project enumeration.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class ListProjectsQueryHandler(ProjectReadQueryExecutor executor) : IDomainQueryHandler
 {
     /// <inheritdoc/>

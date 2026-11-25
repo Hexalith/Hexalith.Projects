@@ -1,10 +1,12 @@
 namespace Hexalith.Projects.Server.Queries;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Routes the supported singleton authorized Project read.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class GetProjectQueryHandler(ProjectReadQueryExecutor executor) : IDomainQueryHandler
 {
     /// <inheritdoc/>

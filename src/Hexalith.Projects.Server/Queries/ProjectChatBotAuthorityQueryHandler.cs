@@ -1,5 +1,6 @@
 using System.Text.Json;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Client.Streams;
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.EventStore.Contracts.Identity;
@@ -15,6 +16,7 @@ using Hexalith.Projects.Contracts.Ui;
 namespace Hexalith.Projects.Server.Queries;
 
 /// <summary>Returns current exact project grant evidence to a bound ChatBot requester.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class ProjectChatBotAuthorityQueryHandler(
     IAuthoritativeEventStreamReader reader, TimeProvider clock) : IDomainQueryHandler
 {

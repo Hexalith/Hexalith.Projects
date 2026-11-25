@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Server;
 using System;
 using System.Text.Json;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Aggregates.Project;
@@ -16,6 +17,7 @@ using Hexalith.Projects.Contracts.Identifiers;
 /// <summary>
 /// Rebuilds the canonical Project aggregate state for EventStore's stateless full-replay projection callback.
 /// </summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 internal sealed class ProjectProjectionHandler : IDomainProjectionHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);

@@ -10,12 +10,14 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Attributes;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
 using Hexalith.Projects.Context;
 using Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Handles the supported Explain Context Selection query over persisted Project detail.</summary>
+[EventStoreDomain(ProjectsServerModule.DomainName)]
 public sealed class ExplainContextSelectionQueryHandler(ProjectContextQueryExecutor executor) : IDomainQueryHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);

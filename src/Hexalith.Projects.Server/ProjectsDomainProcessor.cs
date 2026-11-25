@@ -130,13 +130,13 @@ public sealed class ProjectsDomainProcessor(
             if (item.SequenceNumber != lastApplied + 1)
             {
                 return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
-                    "The replay request has incomplete Project history.");
+                    "The replay request has incomplete Project history.", lastAppliedSequenceNumber: lastApplied);
             }
 
             if (!string.Equals(item.SerializationFormat, "json", StringComparison.OrdinalIgnoreCase))
             {
                 return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.UnsupportedVersion,
-                    "The Project event serialization format is unsupported.", item.SequenceNumber, item.EventTypeName);
+                    "The Project event serialization format is unsupported.", item.SequenceNumber, item.EventTypeName, lastApplied);
             }
 
             try
@@ -153,12 +153,12 @@ public sealed class ProjectsDomainProcessor(
             catch (JsonException)
             {
                 return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.DeserializationFailed,
-                    "The Project event payload is invalid.", item.SequenceNumber, item.EventTypeName);
+                    "The Project event payload is invalid.", item.SequenceNumber, item.EventTypeName, lastApplied);
             }
             catch (Exception exception) when (exception is InvalidOperationException or ArgumentException)
             {
                 return AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.ApplyFailed,
-                    "The Project event could not be applied.", item.SequenceNumber, item.EventTypeName);
+                    "The Project event could not be applied.", item.SequenceNumber, item.EventTypeName, lastApplied);
             }
 
             lastApplied = item.SequenceNumber;
@@ -169,7 +169,7 @@ public sealed class ProjectsDomainProcessor(
         return lastApplied == request.UpToSequence
             ? AggregateReconstructionResult.Succeeded(JsonSerializer.Serialize(state, StateJsonOptions), lastApplied, timeline)
             : AggregateReconstructionResult.Failed(AggregateReconstructionErrorCategory.Conflict,
-                "The replay request has incomplete Project history.");
+                "The replay request has incomplete Project history.", lastAppliedSequenceNumber: lastApplied);
     }
 
     private static void ValidateReplayRejection(byte[] payload, ProjectIdentity identity)
@@ -183,7 +183,7 @@ public sealed class ProjectsDomainProcessor(
         foreach (JsonProperty property in document.RootElement.EnumerateObject())
         {
             if (property.Name.Equals("tenantId", StringComparison.OrdinalIgnoreCase)
-                && (property.Value.ValueKind != JsonValueKind.String || !string.Equals(property.Value.GetString(), identity.TenantId, StringComparison.OrdinalIgnoreCase)))
+                && (property.Value.ValueKind != JsonValueKind.String || !string.Equals(property.Value.GetString(), identity.TenantId, StringComparison.Ordinal)))
             {
                 throw new InvalidOperationException("The Project rejection belongs to a different Tenant.");
             }

@@ -236,6 +236,52 @@ Loop 2 left one patch entry (BH2-3, VG2-3: the metadata theory name) and one new
 | VG4-3 | Actual AppHost rebuild-part and reconcile grants are unverified | medium | See BH4-4. |
 | VG4-4 | Ordinary credential selection is unverified | medium | Carried VG-3. DW-92 tracks the ordinary run proof. |
 
+### Resumed review 2 (2026-11-25)
+
+The layers reviewed the DW-63 paths of the `5f1d955b..` diff. Planning artifacts, 7.1-P1 creation-contract files and the P1/P2 guard tooling were excluded.
+
+| ID | Finding | Verdict | Evidence and disposition |
+|---|---|---|---|
+| BH5-1 | The live lane's ordinary-startup phase fails without ordinary custody, and the docs describe it as routine | medium | `run_live_project_fixtures.py:1131-1142` starts the ordinary source AppHost without `Projects:DevelopmentRouteCatalog`, so `ProjectsLocalDevelopmentCatalog.Add` refuses. Patched `tests/e2e/README.md` and the topology runbook to state the requirement. Supplying fresh custody and a bound issuer in the runner stays open under the unchecked AppHost task. |
+| BH5-2 | The ordinary catalog omits the Tenants gateway grants and trust | medium | The gateway receiver grants only `projects` (`ProjectsLocalDevelopmentCatalog.cs:51-56`), while Tenants always registers `TenantOwnerSourceGateway`. The isolated profile grants `tenants` both workload calls and sets its allowed caller and bound-read keys. Same family as BH3-3 and BH4-2; open under the unchecked AppHost task. |
+| BH5-3 | The manifest-grant test cannot detect a callback missing from the manifest | medium | carried BH-13 (DW-95). Defer (carried). |
+| BH5-4 | A test removes the last hosted service by position | low | `ProjectsRuntimeCatalogTests.cs:128` removes the catalog activator today. A reorder would surface as a catalog activation failure, and matching the SDK-internal type adds code for a hypothetical change. Reject. |
+| BH5-5 | The Projects callback list is copied into five compositions | medium | carried BH-13 (DW-95). Defer (carried). |
+| BH5-6 | Replay rejection identity compares the tenant case-insensitively and accepts a null projectId | low | The processor compares stored tenants ordinally elsewhere (`ProjectsDomainProcessor.cs:298`, `:966`). Patched to `Ordinal`; the new replay test covers a case-variant tenant. The null projectId is carried EC4-5. |
+| BH5-7 | Partial custody configuration surfaces a binder error | low | The binder names the missing constructor parameter at startup. Per-key guards add code for a loud misconfiguration. Reject. |
+| BH5-8 | The Conversation-start setup store is missing outside the ordinary run and private profiles | medium | The baseline declared it only in the supported-read profile, so the publish gap predates this change. `module/README.md` lists it as a runtime prerequisite. The isolated browser profile is carried BH4-3. Defer. |
+| BH5-9 | The module README overstates the ordinary catalog's readiness | low | The disclaimer was removed while positive admission, owner credentials and two callbacks remain unqualified. Patched with a limitation sentence naming DW-92 and DW-97. |
+| BH5-10 | The README omits the workload issuer constraints | low | carried EC-7 for HTTPS. The README already states that the issuer grants the exact operation and audience for each callback. Reject. |
+| BH5-11 | The supported-read docs omit the Folders scan inputs, and the `Add` pre-check is partial | low | The profile's input check (`SupportedProjectReadFixtureProfile.cs:93`) already requires every Folders key and names a missing one. Patched `docs/supported-project-reads.md` with the Folders grant and the metadata-only worker read. |
+| BH5-12 | Replay format, sequence-bound, paging, domain and cancellation branches are untested | medium | carried BH-9. The format branch is covered by the VG5-5 patch. |
+| BH5-13 | The response policy lacks direct table-driven tests | medium | carried BH-6. |
+| EC5-1 | Unknown event types are reported as `ApplyFailed` | low | carried BH-8. Reject (carried). |
+| EC5-2 | Replay failures report `LastAppliedSequenceNumber` 0 | low | `AdminStreamQueryController.cs:1875` and the manual snapshot log expose the value, and the `ApplyFailed` contract preserves the prefix. Patched every in-loop failure to pass the applied prefix; the new test pins it. |
+| EC5-3 | Unlisted Apply exceptions return 500 | low | carried EC2-2. Reject (carried). |
+| EC5-4 | A JSON null event payload is reported as `ApplyFailed` | low | carried BH-8. Reject (carried). |
+| EC5-5 | A rejection without identity properties passes replay | low | carried EC4-5. Reject (carried). |
+| EC5-6 | A case-variant tenant rejection is accepted | low | Same as BH5-6. Patched. |
+| EC5-7 | Calling `AddProjectsServer` twice registers two replay owners | false | Only `AddProjectsDomainService` composes the SDK host, and it calls `AddProjectsServer` once. An ambiguous router fails loudly, and DW-108 tracks the startup guard. Reject. |
+| EC5-8 | A host-registered `IDomainProcessor` splits process and replay | false | carried EC-8. Reject (carried). |
+| EC5-9 | Projects handlers lack `EventStoreDomain` | medium | `GetHandlerDomainNames` (`EventStoreDomainServiceExtensions.cs:849-873`) omits `projects` from domain telemetry and logs a warning for each unattributed handler. Patched the 12 type-registered handlers; the package and source suites pass. |
+| EC5-10 | An exception between `Add` and `try` leaks directories | low | carried BH-4. Reject (carried). |
+| EC5-11 | A cleanup exception replaces the AppHost failure | low | carried EC-4. Reject (carried). |
+| EC5-12 | A component-directory deletion failure loses the composed catalog | low | The directory is a just-created private temp directory. A guard adds code for an unshown failure. Reject. |
+| EC5-13 | A test removes a hosted service by position | low | Same as BH5-4. Reject. |
+| EC5-14 | The fixture `Lazy` caches a capabilities exception | low | Test-only; a throwing callback still fails every dependent test loudly. Reject. |
+| EC5-15 | The deleted endpoints change the `/project/v2` error mapping | false | carried VG-8. Reject (carried). |
+| EC5-16 | The persistent workload secret assertion was removed | medium | carried VG-3 and EC-15 (DW-92). Defer (carried). |
+| EC5-17 | The test replica maps `/api/v1` without the human policy | medium | carried BH-6. |
+| EC5-18 | Formatted log messages are exported | low | carried BH-14. Reject (carried). |
+| EC5-19 | Server tests do not admit the ordinary profile | medium | carried VG-3 (DW-92). Defer (carried). |
+| EC5-20 | Replay validates rejections that the legacy fold skips | low | carried BH4-5. Reject (carried). |
+| VG5-1 | The ordinary run-mode composition is never executed | medium | carried VG-3 (DW-92). Defer (carried). |
+| VG5-2 | The AppHost grant lists are not tied to the manifest | medium | carried BH-13 and VG2-2 (DW-95). Defer (carried). |
+| VG5-3 | The persistent workload secret lost its assertion | medium | carried VG-3 and EC-15 (DW-92). Defer (carried). |
+| VG5-4 | The advisory original-admin refusal is pinned only by a source-only test | medium | Pre-verified. `VerifiedQueryCaller` has a private constructor, so a package-mode unit test cannot bind the original envelope. The source lane runs the existing test. Defer. |
+| VG5-5 | Replay refusal branches beyond the tenant and Folder cases are untested | medium | Pre-verified. Added `ReplayRefusesForeignOrIncompleteHistoryWithTypedFailures` for a foreign projectId, a case-variant tenant, File and Memory links without metadata, and an unsupported format. |
+| VG5-O1 | Two launchers start the ordinary topology without catalog settings | medium | Same as BH5-1 for the live runner. The scheduled `run-live-apphost.sh` lane is VG-7. Open under the unchecked AppHost task. |
+
 ## Verification
 
 - Prepare local Debug source mapping using `hexalith-module prepare-build --manifest module/hexalith.module-manifest.v2.json --mode source --workspace "$TMPDIR/source-mapping" --output json`. Run the focused Server tests in `ProjectsRuntimeCatalogTests`, `ProjectsDomainProcessorTests`, `SupportedProjectReadHttpTests` and `ProjectsAuthenticationContractTests`, plus the domain `ReadCutoverHistoryTests`. Use `run-with-temp` and the emitted mapping environment.
@@ -247,3 +293,5 @@ Loop 2 left one patch entry (BH2-3, VG2-3: the metadata theory name) and one new
 - The separate `--scenario main --regressions --timeout 600` run passed the distributed scenario. The Integration regression assembly reported 349 passes and six failures. Five tests looked for the checkout beside the disposable build artifacts. The Production adapter test inherited the launcher's Development WebHost setting. The tests now use the existing repository-root resolver and select their WebHost environment explicitly. The initial run verified cleanup. Its results are under `~/.local/state/hexalith-projects/dw-63-resume-main-8p48BuLV/main/`.
 - The live main rerun passed the distributed scenario again and verified cleanup. In the following Integration lane, three declaration checks refused mismatched SDK bytes from the separate AppHost and test builds. The metadata test now takes prebuilt owner binaries from the same MSBuild artifact tree as its SDK assemblies. It retains the existing byte-identity check and conventional output lookup.
 - A separate mapped Debug run with those fixture changes built both test projects using `--artifacts-path "$TMPDIR/artifacts" -p:SupportedProjectReadDistributed=true -m:1`. It ran the launcher's Integration regression selection against disposable build outputs and the complete Server project with an owned Dapr sidecar. Integration passed 355 and Server passed 1,721, with zero failures or skips. Native XML hashes are `146b03bb660ea884490c9060a7942314f0bd2c3096ce742c5a735a25ec9ccfa0` and `8bc9a725433a417747ed7e760047fb07ee8eee3b8fab8c946180781346907083` respectively. The separate run retained its test overlay and logs under `~/.local/state/hexalith-projects/dw-63-source-suites-epBBAxNJ/`.
+- Resumed review 2 patches were verified on the working tree over Projects `602816fc5f3bb206beafcbf5a61eed0a43b75416`. The package-mode Release Server.Tests build (`CI=true`, Builds `a6abb7908ec38dcb3fbd99d69e7ed29ae25794d2`, isolated NuGet cache) had zero warnings and passed 1,651 tests. The mapped source Debug build, which includes the uncommitted 7.1-P2 EventStore overlay, had zero warnings and passed 1,722 tests. Both runs had zero failures or skips and used a disposable in-memory daprd. `--validate-index` passed. The live lanes, v4 matrix and rollback reads were not rerun; the patches change replay failure metadata, handler telemetry attributes, one test and docs.
+- Main CI for `602816fc` first failed at submodule initialization, because EventStore `be511806` and Platform `7b4cc722` were not on their remotes. After both were pushed, the rerun built the CI solution in Release package mode with zero errors, so `IDomainQueryResponsePolicy` now resolves. It then failed the release package check, because `tools/release-packages.json` still pinned EventStore 5.5.1 and Commons.UniqueIds 3.0.2. The aligned manifest validated all five packages and their consumers locally. G-6 fails separately with NU1109, because Parties pins Commons 3.0.2 under the EventStore 5.6.0 catalog. [CI run](https://github.com/Hexalith/Hexalith.Projects/actions/runs/45639277367)
