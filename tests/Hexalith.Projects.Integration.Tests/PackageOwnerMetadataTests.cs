@@ -92,7 +92,7 @@ public sealed class PackageOwnerMetadataTests
         (string project, string executable, string declarations, string adapters) = owner switch
         {
             "tenants" => (Path.Combine(SelectedRoot("PackageFixtureTenantsRoot"), "src/Hexalith.Tenants"), "Hexalith.Tenants.dll", "Hexalith.Tenants.Contracts.dll", "Hexalith.Tenants.Server.dll"),
-            "folders" => (Path.Combine(SelectedRoot("PackageFixtureFoldersRoot"), "src/Hexalith.Folders.Server"), "Hexalith.Folders.Server.dll", "Hexalith.Folders.Server.dll", "Hexalith.Folders.Server.dll"),
+            "folders" => (Path.Combine(SelectedRoot("PackageFixtureFoldersRoot"), "src/Hexalith.Folders.Server"), "Hexalith.Folders.Server.dll", "Hexalith.Folders.Contracts.dll", "Hexalith.Folders.EventStoreExtensions.dll"),
             "projects" => ("src/Hexalith.Projects.Server", "Hexalith.Projects.Server.dll", "Hexalith.Projects.Contracts.dll", "Hexalith.Projects.EventStoreExtensions.dll"),
             _ => throw new InvalidOperationException("Unknown actual owner."),
         };
